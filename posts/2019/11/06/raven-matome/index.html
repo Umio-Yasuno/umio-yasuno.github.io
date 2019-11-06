@@ -275,7 +275,7 @@ DCN1.0と1.01の違いだが、正直わからない。<br />
 
 <tr>
 <td align="left">DeviceID</td>
-<td align="center">15DD</td>
+<td align="center">15DD/15D8</td>
 <td align="center">15D8</td>
 </tr>
 
@@ -292,6 +292,22 @@ DCN1.0と1.01の違いだが、正直わからない。<br />
 </tr>
 </tbody>
 </table>
+
+<p>(2019-11-07追記//)よくよく考えたらRaven2が15DDだというソースを見たことがなく、探しても完全にそうと言えるものはなかった。<br />
+Picassoに関しては15D8で確定している。<br />
+<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=e7ad88553aa1d48e950ca9a4934d246c1bee4be4" target="_blank">drm/amdkfd: Add picasso pci id</a><br />
+どうもRaven2はRevisionIDで区別してるらしい。<br />
+こういった記述があれば、
+<a href="https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/os/nullDevice/ndDevice.cpp#L85" target="_blank">https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/os/nullDevice/ndDevice.cpp#L85</a><br />
+こういったコメントもある、<br />
+<a href="https://lists.freedesktop.org/archives/dri-devel/2019-October/240407.html" target="_blank">[RFC] drm: Add AMD GFX9+ format modifiers.</a></p>
+
+<blockquote>
+<p>We use family_id + external_rev to distinguish between incompatible GPUs.  PCI ID is not enough, as RAVEN and RAVEN2 have the same PCI device id,</p>
+</blockquote>
+
+<p>そのためRaven2のDeviceIDには15DD/15D8の2つがある、ということにしておく。<br />
+(//追記終了)</p>
 
 <p>使われた製品は、</p>
 
@@ -350,16 +366,17 @@ PicassoはRavenをまんま12nmにした、<br />
 
 <p>DaliがRaven2ベースと言うが、RenoirもGPU IDはraven2と同一であり、どう差別化するのかうまく想像できない。 <a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/src/amd/llvm/ac_llvm_util.c#L145" target="_blank">ac_llvm_util.c</a><br />
 RenoirはCPUがZen2であると噂されており、それならわかりやすいが、Daliの方はどうするのだろうか。<br />
-海外メディアの推測では、より低消費電力用途向けではないかということだったが、Raven2からさらに削るつもりかプロセスを14/12nmより進んだものにするのか。<br />
-(2019-11-07) Athlon 3000Gの名前を聞いて思いついたのだが、DaliはRaven2をまんま12nmにしたものかもしれない。<a href="https://northwood.blog.fc2.com/blog-entry-10024.html" target="_blank">Athlon 3000G? - 北森瓦版</a></p>
+海外メディアの推測では、より低消費電力用途向けではないかということだったが、Raven2からさらに削るつもりかプロセスを14/12nmより進んだものにするのか。</p>
 
-<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=c4cacce7850042ad6b65d518d47497c0ae70c8b6" target="_blank">drm/amd/display: add Asic ID for Dali</a><br />
+<p>(2019-11-07追記//)  Athlon 3000Gの名前を聞いて思いついたのだが、DaliはRaven2をまんま12nmにしたものかもしれない。<a href="https://northwood.blog.fc2.com/blog-entry-10024.html" target="_blank">Athlon 3000G? - 北森瓦版</a><br />
+それなら特にパッチが投稿されないのも噂されないのも納得が行くような気がする。<br />
+<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=c4cacce7850042ad6b65d518d47497c0ae70c8b6" target="_blank">drm/amd/display: add Asic ID for Dali</a><br />
 これを見るにDaliはPicassoの新リビジョン(E3、E4)のように読める。<br />
-まだ確定した訳ではないが、最初からちゃんと読んでおくべきだった。</p>
-
-<p>それと今回は追記日時を書いたが、このサイトはGithub Pageを利用しているため、<br />
+まだ確定した訳ではないが、最初からちゃんと読んでおくべきだった。<br />
+それと今回は追記日時を書いたが、このサイトはGithub Pageを利用しているため、<br />
 ここを見れば更新日時と内容がわかるようになっている。<br />
-<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank">https://github.com/Umio-Yasuno/umio-yasuno.github.io</a></p>
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank">https://github.com/Umio-Yasuno/umio-yasuno.github.io</a><br />
+(//追記終了)</p>
 </div>
 
 		<p class="meta">Posted on <span class="postdate">06. November 2019</span></p>
