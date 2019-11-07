@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		
+
+		<title>新機能と高速化と不具合と</title>
+
+		
+		<link rel="stylesheet" href="https://umio-yasuno.github.io/css/colors-dark.min.217a2547e8e6c808986d22ef70b50263c2d6a4bbc80ed42e97e280a41103f9b5.css">
+
+		
+	</head>
+	<body>
+		<header id="header">
+			<h1><a href="https://umio-yasuno.github.io">Coelacanth&#39;s Dream</a></h1>
+			<p></p>
+		</header>
+
+		<div id="page">
+			<div id="sidebar">
+				<nav>
+	
+		<ul class="nav">
+			
+				<li><a href="/about/about/"><span>About</span></a></li>
+			
+		</ul>
+	
+</nav>
+
+			</div>
+
+			<div id="content">
+				
+	<article class="post">
+		<h1><a href="https://umio-yasuno.github.io/posts/2019/11/07/firefox-webrender/">新機能と高速化と不具合と</a> </h1>
+
+		<div class="post-content">
+
+<p>2019-10-26、Debian10(buster)にFirefoxESR 68.2が降りてきた。<br />
+それまでが60.9だったからだいぶバージョンが進んだ。<br />
+そのことによる不具合は当然あり、前のバージョンでの設定が残っていたせいで最初は全くページが表示されなかった。<br />
+Debianのパッケージから入れていたumatrixとublock originが、バージョンに合わせて更新されなかったせいでデータが残ってることを祈りながら最新版を公式サイトから入れ直したりもした。<br />
+メディアの自動再生設定の項目が変わってムカついたりもした。<br />
+about:addons のお節介度が増してたけどまあそれはいい。</p>
+
+<p>途中で諦めてダウングレードし、そのまま apt-mark hold firefox-esr*としても良かっただろうが、そうはしなかった。<br />
+こうした面倒を乗り越えることで手に入る、新機能と高速化があると信じているからだ。<br />
+GPUドライバやM/BのUEFIのβバージョンを速攻インストールする人ならこの気持ちがわかるはずだ。<br />
+新しいのでどこが変わったのだろう、どこが改良されたのだろう、どこが修正されたのだろう、（無いことを祈りつつ）どこに不具合があるのだろう、としばらくいじり続ける。<br />
+それを探求している時間は間違いなく楽しくて有益だ。</p>
+
+<p>そして個人的な60.9-&gt;68.2の新機能はYoutubeサムネイル再生とWebRenderだった。</p>
+
+<h3 id="youtubeサムネイル再生">Youtubeサムネイル再生</h3>
+
+<p>正直いらない。<br />
+スクロールしてる時にサムネイルが動くのは鬱陶しいし、その分余計な通信が行われる。<br />
+最近の動画投稿者はサムネに凝り、一枚の画像とタイトルで動画の中身を伝え、興味を惹こうとしている。<br />
+それをわざわざアニメーションして何の意味があるのだろうか。<br />
+いつかプッツン来てこの機能を切る方法を見つけたなら、単体で記事にするか追記にするつもりだ。</p>
+
+<h3 id="webrender">WebRender</h3>
+
+<p>WebRenderは新機能にふさわしい高速化、そして少々の不具合を与えてくれる。</p>
+
+<p><a href="https://www.phoronix.com/scan.php?page=article&amp;item=firefox-68b-webrender&amp;num=1" target="_blank">Firefox 68 Performance Is Looking Good With WebRender On Linux - Phoronix</a>
+これを見てわかるように、処理によっては倍近くのパフォーマンスを叩き出している。<br />
+そうとなれば有効化するのが人の性というものだろう。<br />
+普段遣いでも確かに速くなったと思う場面は多い。<br />
+だがそれと同時に不具合に遭遇する場面も多い。</p>
+
+<p>よくある不具合では、新規タブ-&gt;D&amp;Dでウィンドウ化をするとページ内が透明になるものだ。<br />
+ただ実害としてはほとんどなく、元々新規タブにはブランクページを設定していたから、<br />
+真っ白が透明になっただけだ。<br />
+ページを開く時は問題ない。<br />
+もう1つは仮想デスクトップ?の切り替えをおこなうと、切り替え前にあるウィンドウのページ内表示が消えるものだ。<br />
+これはウィンドウ数が多く、かつ複数の仮想デスクトップにウィンドウがあると起こりやすい。<br />
+探しもの中や記事を書いている時はどうしてもタブ、ウィンドウが増えるため困りものだ。<br />
+スクロールするなどでフレーム更新するようなアクションを起こせば直るが、手間が増える。</p>
+
+<p>別にFirefoxだけが悪いというわけではなく、<br />
+AMDGPU+RadeonSIがまだ資格ありと見なされていないことと、</p>
+
+<p><img src="/image/2019/11/07/firefox-webrender-info.png" alt="Firefox WebRender Info" /></p>
+
+<p>私のデスクトップ環境が未だにLXDE+Openboxというのも少なからず関係していると思われるため、<br />
+使えるだけマシなのかもしれない。</p>
+
+<p>今の環境ではイマイチ使い勝手は悪いが、ハードウェアを換えることなくパフォーマンスが向上するというのは大変魅力的だ。<br />
+AMDGPU+RadeonSIが早く資格ありレベルになって欲しいが、ドライバ側のアップデートだけで可能なのかFirefox側の対応も必要なのかはわからないため、<br />
+気長に待つ他ない。</p>
+
+<p>しばらくは気分次第でWebRender有効/無効を切り替えていくと思う。</p>
+
+<h3 id="おまけ">おまけ</h3>
+
+<p>68.2でWebPに対応した。<br />
+もしかしたら60.9でも対応していたのかもいしれないが、about:configにそれらしい項目はなかった。</p>
+
+<p>物は試しということで、上の画像をクオリティ80の設定でWebPにエンコードしてみた。</p>
+
+<p><img src="/image/2019/11/07/firefox-webrender-info.webp" alt="Firefox WebRender Info WebP" /></p>
+
+<p>少しくすんだ感じにはなったものの、文字は問題なく読めるレベルであるし、サイズはQuality90でPNG 75.0 KiB -&gt; WebP 37.4 KiBと約半分になった。<br />
+ロスレスにすると25.5 KiBに。どういうこっちゃ。<br />
+元画像をJPGにしたらかえってサイズが増加したため、元画像はPNGなのが関係しているのだろう。</p>
+
+<p>まだ全面的にWebPを使う気はないが、警告が届くGithubのリポジトリサイズ1GBに近くなったら画像を置き換えることになるかもしれない。<br />
+それまでこのブログが続いてるかは疑問符が付くが。</p>
+</div>
+
+		<p class="meta">Posted on <span class="postdate">07. November 2019</span></p>
+	</article>
+
+			</div>
+
+			<footer id="footer">
+				<p class="copyright">
+					
+						Powered by <a href="https://gohugo.io/">Hugo</a> and the
+						<a href="https://github.com/bake/solar-theme-hugo">Solar</a>-theme.
+					
+				</p>
+			</footer>
+		</div>
+
+		
+	</body>
+</html>
