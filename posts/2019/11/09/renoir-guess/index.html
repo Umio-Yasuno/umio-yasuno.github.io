@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		
+
+		<title>Renoirの構造推測</title>
+
+		
+		<link rel="stylesheet" href="https://umio-yasuno.github.io/css/colors-dark.min.217a2547e8e6c808986d22ef70b50263c2d6a4bbc80ed42e97e280a41103f9b5.css">
+
+		
+	</head>
+	<body>
+		<header id="header">
+			<h1><a href="https://umio-yasuno.github.io">Coelacanth&#39;s Dream</a></h1>
+			<p></p>
+		</header>
+
+		<div id="page">
+			<div id="sidebar">
+				<nav>
+	
+		<ul class="nav">
+			
+				<li><a href="/posts/about/"><span>About</span></a></li>
+			
+				<li><a href="/categories"><span>Categories</span></a></li>
+			
+		</ul>
+	
+</nav>
+
+			</div>
+
+			<div id="content">
+				
+	<article class="post">
+		<h1><a href="https://umio-yasuno.github.io/posts/2019/11/09/renoir-guess/">Renoirの構造推測</a> </h1>
+
+		<div class="post-content">
+
+<p>Renoirの個人的な推測。</p>
+
+<p><img src="/image/2019/11/09/renoir-guess.webp" alt="renoir-guess" /><br />
+自分で作っておいて言うのもあれだが、この画像にはいくつかの問題がある。<br />
+CCDは実際のサイズに沿っておらず、適当に正方形としている。<br />
+IO HUB Controllerが 64B/C となっているのは、第三世代Ryzenの図に従ったのだが、<br />
+それまで 32B/Cだったものが 64B/C になった理由を私が理解していない。<br />
+<a href="https://ascii.jp/elem/000/001/882/1882171/index-3.html" target="_blank">判明した第3世代Ryzenの内部構造を大解説　AMD CPUロードマップ - ASCII.jp</a><br />
+PCIeGen3からGen4で帯域が倍になったからだろうか?<br />
+そして転載と誤解を防ぐためにやったウォーターマークが思いの外邪魔。</p>
+
+<p>その点を承知で見て欲しい。</p>
+
+<p>まずGPUをIOD側に統合した理由だが、<br />
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c?h=amd-staging-drm-next#n153" target="_blank">dcn21_resource.c</a><br />
+この部分のコードにて、fabricclk(fclk)、ディスプレイ周りのクロック、メモリ転送クロックが1つのステートでまとめて管理されている。<br />
+そのことから同一のSMU(System Management Unit)で管理している、=同一のダイに収まっている、と考えた。<br />
+GPUを別ダイにしたところで、メモリが大きなボトルネックとなるためやる意味はそこまでないはずだ。<br />
+それに別ダイにしてしまうと、GPU-IODのバスが電力を消費するため、モバイルが主戦場のAPUでやるとは思いにくい。</p>
+
+<p>メモリとfclkに関しても同一部分からだ。</p>
+
+<p>メモリは .drm_speed_mts の値が最大4266.0となっており、<br />
+これはLPDDR4Xがターゲットとする最高クロックと一致する。<br />
+競合のモバイルCPU、IcelakeがLPDDR4Xをサポートしているため、AMDも最新APUで対応するのは当然と言える。</p>
+
+<p>.fabricclk_mhz が1600.0までとなっているが、第三世代Ryzenがデフォルトでは1800MHzまで、OCで1900MHzとかだったのを考えると抑えてると見える。<br />
+大方省電力目的だろう。</p>
+
+<p>ここからは根拠は特になく、推測ばかりとなる。</p>
+
+<p>IOD+GFXは12nmで製造するはずだが、さすがにcIODのスペックそのままにGPUを追加したりはしないだろう。<br />
+ある程度I/Oを削ると思われる。<br />
+RyzenG(Raven Ridge)でも、Ryzen(Summit/Pinnacle Ridge)ではGPU用にあったx16がx8に、NVMe用にあったx4がx2になっている。（チップセットとの接続はx4のまま。）<br />
+ただこれは製品としての差別化であり、実際はここまで減っていないかもしれない。<br />
+ダイサイズがSummit/Pinnacleの192mm2から、Ravenでは210mm2に増加している。<br />
+第三世代Ryzenに使われているcIODは125mm2。<br />
+パッケージングの問題もあるため、あまり大きくはできないだろう。<br />
+どのくらいの大きさにするかはキリがないだろうから考えないでおく。<br />
+削りはするだろうとだけ。</p>
+
+<h3 id="追伸">追伸</h3>
+
+<p>Aboutページにメールアドレス（画像）を追加した。<br />
+私はやらないと言ってすぐに手のひらを反す人間だと実感した。</p>
+</div>
+
+		<p class="meta">Posted on <span class="postdate">09. November 2019</span></p>
+	</article>
+
+			</div>
+
+			<footer id="footer">
+				<p class="copyright">
+					
+						Powered by <a href="https://gohugo.io/">Hugo</a> and the
+						<a href="https://github.com/bake/solar-theme-hugo">Solar</a>-theme.
+					
+				</p>
+			</footer>
+		</div>
+
+		
+	</body>
+</html>
