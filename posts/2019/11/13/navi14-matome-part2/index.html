@@ -69,7 +69,9 @@
 	<article class="post">
 		<h1><a href="https://umio-yasuno.github.io/posts/2019/11/13/navi14-matome-part2/">Navi14 Matome Part2</a> </h1>
 
-		<div class="post-content"><p>Navi14のSKU、DeviceID、RevisionID、GameClock、Productをまとめた表。<br />
+		<div class="post-content">
+
+<p>Navi14のSKU、DeviceID、RevisionID、GameClock、Productをまとめた表。<br />
 CSSのtable部をいじったことで実用的になったため掲載する。</p>
 
 <table>
@@ -175,7 +177,7 @@ CSSのtable部をいじったことで実用的になったため掲載する。
 <tr>
 <td align="center">WKS Pro-XLM</td>
 <td align="center">734F</td>
-<td align="center"></td>
+<td align="center">00</td>
 <td align="center">1181?</td>
 <td align="center"></td>
 </tr>
@@ -183,9 +185,25 @@ CSSのtable部をいじったことで実用的になったため掲載する。
 </table>
 
 <p><br>
-あくまで個人による推測であり、確定情報ではない。<br />
+WKS Pro-XLMのRevisionIDははっきりと出ていないが、<br />
+<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=73e5bc910eb3e697f0bf33aa63ad64549db4212a" target="_blank">add support for wks firmware loading</a><br />
+デバイスを判定する部分のコードが、DeviceIDが7340以外かつRevisionIDが00のものはwksが付いたファームウェアを読み込む、<br />
+となっていることから、WKS Pro-XLMもRevisionIDは00と推測される。</p>
+
+<p>あくまで個人による推測であり、確定情報ではない。<br />
 元となる情報は出来る限り載せているため、そちらを確かめた上で判断してもらいたい、というのが自分のスタンス。<br />
 <a href="https://umio-yasuno.github.io/posts/2019/11/04/navi14-matome">Navi14 Matome</a></p>
+
+<h3 id="shadearrayについて">ShadeArrayについて</h3>
+
+<p>1WGP=2CUということで、NaviでもCU数を基準に考えてしまいがちだが（私がそう考えてた）、<br />
+CUの片方だけをオフになんてことはできない（はず）なので、WGPを基準に考える方が正確だ。</p>
+
+<p>Navi14で言えば、チップとして12WGP（24CU）中、11WGP（22CU）を有効にされた製品が公式から発表されている。<br />
+そして、Navi14は1ShaderEngine、2ShaderArrayという構成であり、<br />
+ShadeArrayあたりのWGP数は5、または6となる。<br />
+そしてこのことからShaderArrayあたりのWGP数は同数（=ShaderArrayが対称）である必要はないということがわかる。<br />
+だから何だと言われそうだが、これは今後の推測に役立つだろうし、頭の片隅に置いておけばShaderArrayあたり11CUなんて勘違いもせずに済むかもしれない。</p>
 </div>
 
 		<p class="meta">Posted on <span class="postdate">13. November 2019</span></p>
