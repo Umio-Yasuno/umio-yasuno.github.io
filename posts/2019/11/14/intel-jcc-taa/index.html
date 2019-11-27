@@ -48,7 +48,7 @@ Intelは既に対策を施したマイクロコードを配布しており、Lin
 
 <h3 id="jcc-jump-conditional-code">JCC (Jump Conditional Code)</h3>
 
-<p><a href="https://www.phoronix.com/scan.php?page=article&amp;item=intel-jcc-microcode&amp;num=1" target="_blank">Benchmarks Of JCC Erratum: A New Intel CPU Bug With Performance Implications On Skylake Through Cascade Lake - Phoronix</a><br />
+<p><a href="https://www.phoronix.com/scan.php?page=article&amp;item=intel-jcc-microcode&amp;num=1" rel="nofollow noreferrer" target="_blank">Benchmarks Of JCC Erratum: A New Intel CPU Bug With Performance Implications On Skylake Through Cascade Lake - Phoronix</a><br />
 命令を格納するICache（Decoded Streaming Buffer、またはDSBとも呼ばれる）周りにエラッタがあり、<br />
 Jump命令がキャッシュライン32Byteの境界を越えるとエラーが引き起こされるとのこと。<br />
 マイクロコードの更新で、Jump命令が32Byteの境界を越える、または境界で終わる際、ICacheに格納されるのを防がられるようになる。<br />
@@ -71,32 +71,32 @@ JCCは広範囲のワークロードに影響がある。</p>
 </ul>
 
 <p>(追記)
-<a href="https://metadata.ftp-master.debian.org/changelogs//non-free/i/intel-microcode/intel-microcode_3.20191112.1_changelog" target="_blank">intel-microcode (3.20191112.1)  Changelog - Debian</a><br />
+<a href="https://metadata.ftp-master.debian.org/changelogs//non-free/i/intel-microcode/intel-microcode_3.20191112.1_changelog" rel="nofollow noreferrer" target="_blank">intel-microcode (3.20191112.1)  Changelog - Debian</a><br />
 DebianでのChangelogでは通常0〜3%、最悪10%と書かれていた。<br />
 (追記終了)</p>
 
 <h3 id="taa-tsx-asynchronous-abort-br-cve-2019-11135">TAA (TSX Asynchronous Abort) <br> CVE-2019-11135</h3>
 
-<p><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=iITLB-Multihit-TAA-Kernel-Code" target="_blank">Linux Kernel Gets Mitigations For TSX Async Abort Plus Another New Issue: iITLB Multihit - Phoronix</a></p>
+<p><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=iITLB-Multihit-TAA-Kernel-Code" rel="nofollow noreferrer" target="_blank">Linux Kernel Gets Mitigations For TSX Async Abort Plus Another New Issue: iITLB Multihit - Phoronix</a></p>
 
 <p>詳細な解説は無理なので諦める。</p>
 
-<p><a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/hw-vuln/tsx_async_abort.rst?id=a7a248c593e4fd7a67c50b5f5318fe42a0db335e" target="_blank">TAA - TSX Asynchronous Abort - Kernel.org</a><br />
-<a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/x86/tsx_async_abort.rst?id=a7a248c593e4fd7a67c50b5f5318fe42a0db335e" target="_blank">TSX Async Abort (TAA) mitigation - Kernel.org</a></p>
+<p><a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/hw-vuln/tsx_async_abort.rst?id=a7a248c593e4fd7a67c50b5f5318fe42a0db335e" rel="nofollow noreferrer" target="_blank">TAA - TSX Asynchronous Abort - Kernel.org</a><br />
+<a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/x86/tsx_async_abort.rst?id=a7a248c593e4fd7a67c50b5f5318fe42a0db335e" rel="nofollow noreferrer" target="_blank">TSX Async Abort (TAA) mitigation - Kernel.org</a></p>
 
 <p>TSXのトランザクション処理のためのバッファが読み取れてしまう、ということなのだろうか？<br />
 マイクロアーキテクチャによるもので、同じ公開範囲ということでMDS、Zombieloadの亜種とされているらしい。<br />
 バッファはハイパースレッド間で共有される可能性があるということで、HTT（ハイパースレッティング）を無効化することで、ある程度緩和できる。<br />
 対策としては、TSXを無効化することが望ましいとのこと。<br />
-Linux Kernelでは対策として、デフォルトで<a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/hw-vuln/tsx_async_abort.rst?id=a7a248c593e4fd7a67c50b5f5318fe42a0db335e#n274" target="_blank">TSXを無効化&amp;MDS対策を有効</a>することとなった。<br />
-RHELでは<a href="https://access.redhat.com/solutions/tsx-asynchronousabort" target="_blank">TSXは有効&amp;MDS対策を有効</a>にするとのこと。<br />
+Linux Kernelでは対策として、デフォルトで<a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/admin-guide/hw-vuln/tsx_async_abort.rst?id=a7a248c593e4fd7a67c50b5f5318fe42a0db335e#n274" rel="nofollow noreferrer" target="_blank">TSXを無効化&amp;MDS対策を有効</a>することとなった。<br />
+RHELでは<a href="https://access.redhat.com/solutions/tsx-asynchronousabort" rel="nofollow noreferrer" target="_blank">TSXは有効&amp;MDS対策を有効</a>にするとのこと。<br />
 Windowsでは直近のセキュリティアップデートで対策したとのことだが、TSXの有効/無効がどうなっているかは不明。<br />
-<a href="https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/164aa83e-499c-e911-a994-000d3a33c573" target="_blank">November 2019 Security Updates </a></p>
+<a href="https://portal.msrc.microsoft.com/en-us/security-guidance/releasenotedetail/164aa83e-499c-e911-a994-000d3a33c573" rel="nofollow noreferrer" target="_blank">November 2019 Security Updates </a></p>
 
 <p>TSXと言えばHaswell世代から導入された新機能であり、メモリーロック処理とトランザクション機能をハードウェアで高速におこなうことで、<br />
 最大6倍もの処理能力が謳われていたが、<br />
 Haswell初期においてエラッタがあり、無効化され普及にブレーキがかかった。<br />
-その後もあるモデルでは有効にされたり、無効にされたりとしていたが、（例: <a href="https://ark.intel.com/content/www/us/en/ark/products/190883/intel-core-i5-9400f-processor-9m-cache-up-to-4-10-ghz.html" target="_blank">i5-9400F</a> i5-9400では有効になっている）<br />
+その後もあるモデルでは有効にされたり、無効にされたりとしていたが、（例: <a href="https://ark.intel.com/content/www/us/en/ark/products/190883/intel-core-i5-9400f-processor-9m-cache-up-to-4-10-ghz.html" rel="nofollow noreferrer" target="_blank">i5-9400F</a> i5-9400では有効になっている）<br />
 今回の件ではブレーキどころか後退することとなるかもしれない。</p>
 
 <footer>
