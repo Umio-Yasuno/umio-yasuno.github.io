@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width"><title>AMDは8 GPUのシステムを計画している？</title>
+<title itemprop="name">AMDは8 GPUのシステムを計画している？ | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="AMDは8 GPUのシステムを計画している？ | Coelacanth&#39;s Dream" />
+	<meta name="twitter:title" content="AMDは8 GPUのシステムを計画している？ | Coelacanth&#39;s Dream" />
+	<meta itemprop="name" content="AMDは8 GPUのシステムを計画している？ | Coelacanth&#39;s Dream" />
+	<meta name="application-name" content="AMDは8 GPUのシステムを計画している？ | Coelacanth&#39;s Dream" />
+	<meta property="og:site_name" content="" />
+	
+	<meta name="description" content="" />
+	<meta itemprop="description" content="" />
+	<meta property="og:description" content="" />
+	<meta name="twitter:description" content="" />
+
+	<base href="https://umio-yasuno.github.io/posts/2019/11/26/amd-planning-8gpus-system/">
+	<link rel="canonical" href="https://umio-yasuno.github.io/posts/2019/11/26/amd-planning-8gpus-system/" itemprop="url" /> 
+	<meta name="url" content="https://umio-yasuno.github.io/posts/2019/11/26/amd-planning-8gpus-system/" />
+	<meta name="twitter:url" content="https://umio-yasuno.github.io/posts/2019/11/26/amd-planning-8gpus-system/" /> 
+	<meta property="og:url" content="https://umio-yasuno.github.io/posts/2019/11/26/amd-planning-8gpus-system/" />
+
+	<meta name="author" content="Umio Yasuno" />
+
+	<meta name="keywords" content=" Radeon, Arcturus" />
+
+	<meta name="robots" content="index,follow" />
+	<meta name="googlebot" content="index,follow" />
+
+	
+
+	<link rel="preload" href="https://umio-yasuno.github.io/css/lain.min.css" as="style" importance="high">
+	<link rel="preload" href="https://umio-yasuno.github.io/css/animation.min.css" as="style" importance="high">
+
+	<link rel="stylesheet" href="https://umio-yasuno.github.io/css/lain.min.css">
+	<link rel="stylesheet" href="https://umio-yasuno.github.io/css/animation.min.css">
+	</head>
+    <body>
+<h1><span class="title"><a href="https://umio-yasuno.github.io/" style="color:black">Coelacanth&#39;s Dream</a><span class="blink">_</span></span></h1>
+<article class="text">
+
+		<h2><span class="page-title">AMDは8 GPUのシステムを計画している？ </span></h2>
+			
+
+<h3 id="びみょうな妄想話">びみょうな妄想話。</h3>
+
+<p>根拠とするのは以下のパッチ/プルリクエストだ。</p>
+
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-November/043149.html" target="_blank">[PATCH 1/1] drm/amdgpu: Optimize KFD page table reservation</a><br />
+<a href="https://github.com/ROCmSoftwarePlatform/dlrm/pull/5" target="_blank">Add -emulate-8-gpu option #5</a></p>
+
+<p>上のパッチは、ページサイズを大きくすることで必要なVRAMのページテーブルを減らすというもので、<br />
+多くのGPUを搭載するシステムにおいて、ページテーブルに割かなければならないメモリ量を大きく減らすことができると説明されている。<br />
+そして気になるのはExampleのところで、</p>
+
+<blockquote>
+<p>Example: 8 GPUs with 32GB VRAM each + 256GB system memory = 512GB<br />
+Old page table reservation per GPU:  1GB<br />
+New page table reservation per GPU: 32MB</p>
+</blockquote>
+
+<p>とある。</p>
+
+<p>下のは題通り、8 GPUでのエミュレート機能を実装し、スケーリングの効果をテストするというもの。<br />
+この動きから、AMDは8 GPUでのシステムを計画している――と言いたいがそのシステムは既にあったりする。<br />
+<a href="https://news.mynavi.jp/article/20181227-20181227-amd_next_horizon/3" target="_blank">深掘り！「AMD Next Horizon」 - Vega 7nm Deep Dive。7nmのVegaはコンシューマに来ない？ - マイナビニュース</a><br />
+Rome + Vega20のお披露目の際、Infinity Fabricでの接続が4枚ずつではあるものの8 GPUのシステムを構成している。<br />
+VRAM容量もMI60であれば32GB持っているため、上パッチのExampleも満たす。<br />
+最近になってMI50(32GB)も追加されたため、単に上記はそういった製品を使った4 GPU*2のシステムを、<br />
+より効率良く動かすためと見ることができる。<br />
+というよりそうした見方のが強いだろう。<br />
+その上、AMDは次期エクサスケールスパコン、Frontierの構成において、GPU:CPUが4:1の比率だと発表している。<br />
+<a href="https://www.amd.com/en/products/frontier" target="_blank">Powering the Exascale Era - AMD</a></p>
+
+<p>それでもこんな記事を書いたのは<a href="https://umio-yasuno.github.io/tags/arcturus">Arcturus</a>がSDMAを8個持っているからだ。<br />
+内6個はXGMI（X Global Memory Interconnect）に最適化されている。<br />
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdgpu/sdma_v4_0.c?h=amd-staging-drm-next#n1668" target="_blank">sdma_v4_0.c#n1668</a><br />
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdkfd/kfd_device.c?h=amd-staging-drm-next#n371" target="_blank">kfd_device.c#n371</a></p>
+
+<p>そしてNVIDIAはNVLINKにおいて、1 CPUに4 GPUというのは同じでも、GPUが反対側のCPUに接続された1 GPUに、 直接接続する構成を可能としている。<br />
+<a href="https://news.mynavi.jp/article/pascal-4/" target="_blank">ユニファイドメモリの改良によりCPUとGPUの連携を強化 - マイナビニュース</a><br />
+<a href="https://news.mynavi.jp/article/20170915-hotchips29_volta/2" target="_blank">Hot Chips 29 - NVIDIAの最強GPU「Volta」</a></p>
+
+<p>Frontierは4 GPU: 1 CPUをクラスターとしているが、クラスター同士の接続に関しては明らかにしていない。</p>
+
+<p>要はAMDもGPUがクラスターの違うGPUへの接続をサポートするかもしれない。<br />
+その接続にはInfinity Fabricが使われ、コヒーレントが取れ、256（32*8）GBをローカルメモリとして使える</p>
+
+<p>――かもしれないという<strong>妄想話</strong>だ。</p>
+
+<footer>
+	<hr>
+	
+			<a href="https://umio-yasuno.github.io/tags">Tags</a>:
+		
+			<a href="https://umio-yasuno.github.io/tags/radeon">Radeon</a>
+		
+			<a href="https://umio-yasuno.github.io/tags/gcn">GCN</a>
+		
+			<a href="https://umio-yasuno.github.io/tags/gfx908">gfx908</a>
+		
+			<a href="https://umio-yasuno.github.io/tags/gfx9">GFX9</a>
+		
+			<a href="https://umio-yasuno.github.io/tags/arcturus">Arcturus</a>
+		
+	<br>
+		<a href="https://umio-yasuno.github.io/categories">Categories</a>: 
+		
+			<a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a>
+		
+			<a href="https://umio-yasuno.github.io/categories/gpu">GPU</a>
+		
+			<a href="https://umio-yasuno.github.io/categories/amd">AMD</a>
+		
+	<br>
+		<br><a href="https://umio-yasuno.github.io/about/about">About</a>
+	
+		<a href="https://umio-yasuno.github.io/image/mail.webp" target="_blank">Email</a><br>
+	
+		Lastmod : Nov 27, 09:45<br>
+	
+	
+		Author : Umio Yasuno
+	
+		<br><br><br>
+</footer>
+
+		</article>
+		<span class="lace"></span> 
+    </body>
+</html>
