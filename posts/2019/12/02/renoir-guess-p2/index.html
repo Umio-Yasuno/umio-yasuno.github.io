@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width"><title>Renoirの構造推測 Part2</title>
+<title itemprop="name">Renoirの構造推測 Part2 | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="Renoirの構造推測 Part2 | Coelacanth&#39;s Dream" />
+	<meta name="twitter:title" content="Renoirの構造推測 Part2 | Coelacanth&#39;s Dream" />
+	<meta itemprop="name" content="Renoirの構造推測 Part2 | Coelacanth&#39;s Dream" />
+	<meta name="application-name" content="Renoirの構造推測 Part2 | Coelacanth&#39;s Dream" />
+	<meta property="og:site_name" content="" />
+
+	<meta name="description" content="Renoir推測の更新。 以前はZen2 CCDに、GPUを統合したIODを組み合わ" />
+	<meta itemprop="description" content="Renoir推測の更新。 以前はZen2 CCDに、GPUを統合したIODを組み合わ" />
+	<meta property="og:description" content="Renoir推測の更新。 以前はZen2 CCDに、GPUを統合したIODを組み合わ" />
+	<meta name="twitter:description" content="Renoir推測の更新。 以前はZen2 CCDに、GPUを統合したIODを組み合わ" />
+
+	<base href="https://umio-yasuno.github.io/posts/2019/12/02/renoir-guess-p2/">
+	<link rel="canonical" href="https://umio-yasuno.github.io/posts/2019/12/02/renoir-guess-p2/" itemprop="url" /> 
+	<meta name="url" content="https://umio-yasuno.github.io/posts/2019/12/02/renoir-guess-p2/" />
+	<meta name="twitter:url" content="https://umio-yasuno.github.io/posts/2019/12/02/renoir-guess-p2/" /> 
+	<meta property="og:url" content="https://umio-yasuno.github.io/posts/2019/12/02/renoir-guess-p2/" />
+
+	<meta name="author" content="Umio Yasuno" />
+
+	<meta name="keywords" content=" Radeon, Renoir, APU" />
+
+
+	
+
+	<link rel="preload" href="https://umio-yasuno.github.io/css/lain.min.css" as="style" importance="high">
+	<link rel="preload" href="https://umio-yasuno.github.io/css/animation.min.css" as="style" importance="high">
+
+	<link rel="stylesheet" href="https://umio-yasuno.github.io/css/lain.min.css">
+	<link rel="stylesheet" href="https://umio-yasuno.github.io/css/animation.min.css">
+
+	<link rel="icon" href="https://umio-yasuno.github.io/favicon.svg">
+	</head>
+    <body>
+<h1><span class="title"><a href="https://umio-yasuno.github.io/" style="color:black">Coelacanth&#39;s Dream</a><span class="blink">_</span></span></h1>
+<article class="text">
+		<h2><span class="page-title">Renoirの構造推測 Part2 </span></h2>
+			
+
+<p>Renoir推測の更新。</p>
+
+<p>以前はZen2 CCDに、GPUを統合したIODを組み合わせると予想していたが、<br />
+<a href="https://umio-yasuno.github.io/posts/2019/11/09/renoir-guess/">Renoirの構造推測</a><br />
+どうもそうでない可能性が高くなった。</p>
+
+<p>きっかけはこのツイート。<br />
+<a href="https://twitter.com/TUM_APISAK/status/1201295232916062208" rel="nofollow noreferrer" target="_blank">https://twitter.com/TUM_APISAK/status/1201295232916062208</a><br />
+<a href="https://twitter.com/TUM_APISAK" rel="nofollow noreferrer" target="_blank">APISAK - Twitter</a>氏はリーカー、というよりはベンチマーク結果から未発表のハードウェアを見つけ出す達人のように私は思う。</p>
+
+<p>ツイートの画像だが、恐らくSiSoftware Sandraの実行結果で、左はハードウェア名、右はスペックを表しているように読める。</p>
+
+<p>&ldquo;Celadon-RN Renoir&rdquo;という名前自体は以前にも確認されており、この画像が初出という訳ではない。<br />
+<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/039826.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdkfd: fix the missed asic name while inited renoir_device_info</a></p>
+
+<p>スペックだが、512SPはそのままの意味、8CというのはCU数だと思われる。<br />
+8 [CU] * 64 [SP] = 512 [SP] で計算も合う。<br />
+そして1.75GHzだが、GPUクロックを意味する、はずだ。</p>
+
+<p>似たような記述をされるハードウェアにVega M GLがあり、<br />
+<a href="https://ranker.sisoftware.co.uk/show_device.php?q=c9a598d994d0f0a2c3a7c2adc3e3b1e9c99ffa9dfcdc91b1f6ba9cfbc6ebdafc8eb383a5ccf1d7bf82a4dce1c7a2c7facaec9fa29a&amp;l=en" rel="nofollow noreferrer" target="_blank">Details for Component AMD Radeon RX Vega M GL - SiSoftware</a><br />
+CU数の後、一様に550MHzとある。<br />
+550MHzというのは最低GPUクロックだと思われるが、Vega M GLのPPTableを読まない限り確定ではない。<br />
+CPUクロックである可能性は、Intel CPUでも最低クロックは800MHzとかで、Zen2だと2.2GHzとかなので無いと思われる。<br />
+APUであるRenoirの最低GPUクロックが1.75GHzなんてのは高すぎるが、<br />
+テスト用に省電力機能を無効にした結果、最高クロックが取得されたと考えれば不自然ではない。</p>
+
+<p>ただGPU L1$が、L2と表示されていたり、リストの方ではメモリクロックと思われる500MHzをSpeedとしていたりと、SiSoftware Sandraの見方がよくわからない。</p>
+
+<p>まあとりあえず、Renoirの最高GPUクロックは1.75GHzとして話を進める。</p>
+
+<h3 id="7nmダイに統合">7nmダイに統合?</h3>
+
+<p>この1.75GHzというクロックだが、14/12nmではまず無理だ。<br />
+dGPUになるが、14nm Vega64で1546MHz、12nm RX590で1545MHzなため、7nmでないと1.75GHzは出せない。<br />
+そしてGPUが7nmということは、以前のIOD側にGPUが統合されるという推測は外れていた、となる。<br />
+改めて考えると、以前の推測はかなりガバガバだ。<br />
+既にAMDはAPUにおいてチップレット構造は取り入れないと語っている。<br />
+<a href="https://www.anandtech.com/show/13852/amd-no-chiplet-apu-variant-on-matisse-cpu-tdp-range-same-as-ryzen2000" rel="nofollow noreferrer" target="_blank">AMD: “No Chiplet APU Variant on Matisse, CPU TDP Range same as Ryzen-2000” - AnandTech</a><br />
+それでもチップレット構造として推測したのは、CCDを使い回すことができ、7nmより相対的にコストが低い14/12nm IODを新たに立ち上げるだけで済み、<br />
+LPDDR4をサポートするとは言え、メモリ帯域がボトルネックとなるのだからAPUでGPU部分を強化してもあまり意味がないと思ったからだ。<br />
+モバイル向けで不利となるダイ間接続による消費電力増は、まあ fclk 抑えることでどうにかなるんじゃないかとテキトーに考えていた。</p>
+
+<p>数が必要となるモバイル市場において、7nmで新たにダイを起こすことのコストはあまり考えなくてもいいのだろうか？</p>
+
+<h3 id="推測図">推測図</h3>
+
+<p>前回作った画像を1ダイ構造に変更したが、あまり詰めていないのはご愛嬌。<br />
+<img src="https://umio-yasuno.github.io/image/2019/12/03/renoir-guess-p2.webp" alt="renoir-guess-p2" /></p>
+
+<p>7nmなのにNaviではなくVegaにしたのは、NaviだとL1キャッシュ 128KB等でGPU部が必要とするダイサイズが大きくなってしまうからと思われる。</p>
+
+<p>2CCXの8C/16Tとなっているが、図を使い回した結果なので自信はあまりない。<br />
+RenoirにRyzen 7/9が付いた名前があった、という「噂」はあるが、根拠にするには微妙なのでここでは無視する。<br />
+コスト的にも消費電力的にもダイサイズは抑えたいだろうし、Zen2ではまだCCX単位が4C/8Tなため、現行APUと同じ4C/8Tで続けるかもしれない。<br />
+今の所、対抗となるIce Lakeも4C/8Tであり、CPU性能はZen2で十分戦えるはずで、<br />
+GPU性能もクロック向上とLPDDR4で問題ないだろう。<br />
+（上記と若干矛盾しそうだが、dGPUのGDDR5/6程ではないとは言え、DDR4よりは性能が出る。）</p>
+
+<p>IO部も個人的な考えではPCIeGen4は必要ないように思えるが、まあわからない。<br />
+PCIeGen3とするなら、IO HUBへの接続が32B/Cで済むだろうし、まだ発熱の厳しいPCIeGen4 SSDがモバイル向けで支持されるかは怪しいはず。Ice LakeもGen3止まりだ。<br />
+だが、発表されるのが2020年CESだとしても、実際に出るまではもっと時間がかかるため、その時の需要を考えればGen4になるかもしれない。</p>
+
+<p><br></p>
+
+<h4 id="dc-patches-2-dec-2019">DC Patches - 2 Dec 2019</h4>
+
+<p>これを書いてる最中、少し久しぶりな気がするDC（Display Core）へのパッチが投稿された。<br />
+<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-December/043394.html" rel="nofollow noreferrer" target="_blank">[PATCH 00/51] DC Patches - 2 Dec 2019</a><br />
+内容にはRenoir用のパッチが含まれ、レイテンシが削減されたりと開発がある程度順調なことを窺える。<br />
+<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-December/043419.html" rel="nofollow noreferrer" target="_blank">[PATCH 26/51] drm/amd/display: update p-state latency for renoir when using lpddr4</a><br />
+<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-December/043423.html" rel="nofollow noreferrer" target="_blank">[PATCH 32/51] drm/amd/display: update sr latency for renoir when using lpddr4</a><br />
+Daliのもあり、中身としてはほぼRaven2だという話がより強固となった。<br />
+<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-December/043395.html" rel="nofollow noreferrer" target="_blank">[PATCH 04/51] drm/amd/display: Fix Dali clk mgr construct</a></p>
+
+<footer>
+	<hr>
+	
+			<a href="https://umio-yasuno.github.io/tags">Tags</a>:
+		
+			<a href="https://umio-yasuno.github.io/tags/radeon">Radeon</a>
+		
+			<a href="https://umio-yasuno.github.io/tags/gcn">GCN</a>
+		
+			<a href="https://umio-yasuno.github.io/tags/raven">Raven</a>
+		
+			<a href="https://umio-yasuno.github.io/tags/gfx9">GFX9</a>
+		
+			<a href="https://umio-yasuno.github.io/tags/gfx909">gfx909</a>
+		
+			<a href="https://umio-yasuno.github.io/tags/renoir">Renoir</a>
+		
+			<a href="https://umio-yasuno.github.io/tags/zen2">Zen2</a>
+		
+	<br>
+		<a href="https://umio-yasuno.github.io/categories">Categories</a>: 
+		
+			<a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a>
+		
+			<a href="https://umio-yasuno.github.io/categories/amd">AMD</a>
+		
+			<a href="https://umio-yasuno.github.io/categories/apu">APU</a>
+		
+			<a href="https://umio-yasuno.github.io/categories/gpu">GPU</a>
+		
+	<br>
+			Lastmod : Dec 3, 04:52<br>
+	
+	
+		Author : Umio Yasuno
+	
+	<br><a href="https://umio-yasuno.github.io/about/about">About</a>
+	
+		<a href="https://umio-yasuno.github.io/image/mail.webp" target="_blank">Email</a><br>
+	
+		<br><br><br>
+</footer>
+</article>
+		<span class="lace"></span> 
+    </body>
+</html>
