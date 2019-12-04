@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width"><title>Radeon向けMesaビルド方法</title>
+<title itemprop="name">Radeon向けMesaビルド方法 | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="Radeon向けMesaビルド方法 | Coelacanth&#39;s Dream" />
+	<meta name="twitter:title" content="Radeon向けMesaビルド方法 | Coelacanth&#39;s Dream" />
+	<meta itemprop="name" content="Radeon向けMesaビルド方法 | Coelacanth&#39;s Dream" />
+	<meta name="application-name" content="Radeon向けMesaビルド方法 | Coelacanth&#39;s Dream" />
+	<meta property="og:site_name" content="" />
+
+	<meta name="description" content="https://dri.freedesktop.org/wiki/Building/ を元に、なんやかんやである程度確立させたMesaのビルド方法をまとめてみた。 私の環境がDebianなた... " />
+	<meta itemprop="description" content="https://dri.freedesktop.org/wiki/Building/ を元に、なんやかんやである程度確立させたMesaのビルド方法をまとめてみた。 私の環境がDebianなた... " />
+	<meta property="og:description" content="https://dri.freedesktop.org/wiki/Building/ を元に、なんやかんやである程度確立させたMesaのビルド方法をまとめてみた。 私の環境がDebianなた... " />
+	<meta name="twitter:description" content="https://dri.freedesktop.org/wiki/Building/ を元に、なんやかんやである程度確立させたMesaのビルド方法をまとめてみた。 私の環境がDebianなた... " />
+
+	<base href="https://umio-yasuno.github.io/posts/2019/12/04/how-to-build-mesa-for-radeon/">
+	<link rel="canonical" href="https://umio-yasuno.github.io/posts/2019/12/04/how-to-build-mesa-for-radeon/" itemprop="url" /> 
+	<meta name="url" content="https://umio-yasuno.github.io/posts/2019/12/04/how-to-build-mesa-for-radeon/" />
+	<meta name="twitter:url" content="https://umio-yasuno.github.io/posts/2019/12/04/how-to-build-mesa-for-radeon/" /> 
+	<meta property="og:url" content="https://umio-yasuno.github.io/posts/2019/12/04/how-to-build-mesa-for-radeon/" />
+
+	<meta name="author" content="Umio Yasuno" />
+
+	<meta name="keywords" content=" Mesa, RadeonSI, OpenGL" />
+
+
+		
+	<link rel="preload" href="https://umio-yasuno.github.io/css/lain.min.css" as="style" importance="high">
+	<link rel="preload" href="https://umio-yasuno.github.io/css/animation.min.css" as="style" importance="high">
+		<link rel="stylesheet" href="https://umio-yasuno.github.io/css/lain.min.css">
+		<link rel="stylesheet" href="https://umio-yasuno.github.io/css/animation.min.css">
+		<link rel="icon" href="https://umio-yasuno.github.io/favicon.svg">
+	</head>
+    <body>
+<h1><span class="title"><a href="https://umio-yasuno.github.io/" style="color:black">Coelacanth&#39;s Dream</a><span class="blink">_</span></span></h1>
+<article class="text">
+		<h2><span class="page-title">Radeon向けMesaビルド方法 </span></h2>
+			
+
+<p><a href="https://dri.freedesktop.org/wiki/Building/" rel="nofollow noreferrer" target="_blank">https://dri.freedesktop.org/wiki/Building/</a>
+を元に、なんやかんやである程度確立させたMesaのビルド方法をまとめてみた。<br />
+私の環境がDebianなため、基本Debian/Ubuntu向けとなる。</p>
+
+<p><strong>このサイトを参考にコマンドを実行し、何かしらの損害が発生したとしても筆者は責任は持たない</strong>ことを留意していただきたい。</p>
+
+<p><br></p>
+
+<h3 id="libdrm">libdrm</h3>
+
+<p><a href="https://umio-yasuno.github.io/posts/2019/11/29/radeonsi-enable-gl4_6">RadeonSIでOpenGL 4.6がサポート</a>でも書いたが、最新版のMesaをビルドするにはバージョン2.4.99以上のlibdrmが必要となる。<br />
+厳密には、mesa-19.2.6では<strong>2.4.99</strong>、git、mesa-19.3.0-rc5では<strong>2.4.100</strong>だが、<br />
+どうせなら最新版の<strong>2.4.100</strong>をビルド、インストールしてしまった方がいい。</p>
+
+<p>まず、下記リンク内からダウンロード、展開する。<br />
+<a href="https://lists.x.org/archives/xorg-announce/2019-October/003028.html" rel="nofollow noreferrer" target="_blank">[ANNOUNCE] libdrm 2.4.100</a></p>
+
+<p>次に以下のコマンドでlibdrmのビルドに必要なパッケージをインストールする。</p>
+
+<pre><code># apt build-dep libdrm
+</code></pre>
+
+<p>そしてビルドツールだが、Meson、Ninjaが推奨となっている。<br />
+これはMesaも同じだ。</p>
+
+<p>Mesonの使い方は簡単で、</p>
+
+<pre><code>$ meson [適当なディレクトリ名]
+</code></pre>
+
+<p>とやるだけで準備は済む。<br />
+オプションを変えるには、[適当なディレクトリ名]の後に -D を付けてからオプション名、= をやりオプションに応じた文字列/真偽値を入力する。<br />
+今後、ここで生成したディレクトリを[ディレクトリ名]と記述する。<br />
+オプションの一覧は、一度準備を済ませた後、</p>
+
+<pre><code>$ meson configure [ディレクトリ名]
+</code></pre>
+
+<p>とすれば、オプションの状態と共に出力される。<br />
+そのままでは見にくいため、</p>
+
+<pre><code>$ meson configure [ディレクトリ名] &gt; meson-configure.txt
+</code></pre>
+
+<p>のようにして一度テキストファイルに出力し、エディタ等で開くと見やすくなる。</p>
+
+<pre><code>オプションの変更例:
+$ meson reconfigure [ディレクトリ名] -Damdgpu=true -Dnouveau=false
+</code></pre>
+
+<p>そこまでビルドの規模は大きくないため、わざわざ削る必要はあまりなかったりする。<br />
+コンパイラの最適化設定は、 -Dc_args=&rdquo;[最適化フラグ]&rdquo; 。<br />
+Debug周りがそのままだと有効にされ、性能が落ちると言われるが、libdrmでは気にする必要はない、と思う。<br />
+肝心のビルドをするには、</p>
+
+<pre><code>$ ninja -C [ディレクトリ名] -j [並列数]
+</code></pre>
+
+<p>そしてビルドが完了したら、</p>
+
+<pre><code># ninja -C [ディレクトリ名] install
+</code></pre>
+
+<p>でインストールされる。</p>
+
+<h3 id="mesa">Mesa</h3>
+
+<p>これも事前に</p>
+
+<pre><code># apt build-dep mesa
+</code></pre>
+
+<p>ただ、これでインストールされるのは、Debian/Ubuntuの公式レポジトリにて配布しているバージョンのMesaをビルドするのに必要なパッケージなため、<br />
+最新版をビルドするには追加で必要なものもある。<br />
+必須という訳ではないが、 libzstd-dev がシェーダーキャッシュに使われるためインストールするのをオススメする。<br />
+libdrm同様、</p>
+
+<pre><code>$ meson [適当なディレクトリ名]
+</code></pre>
+
+<p>で準備はされるが、そのままだといろいろと問題が出てくる。<br />
+コンパイラにgccが使われたり、llvm-configが/usr/bin下のものになってたり、デバッグ機能が有効で性能が落ちたり、ビルドされるものが多く、時間がかかったり。<br />
+これらの解決方法は簡潔に書く。</p>
+
+<p>コンパイラにclang-Xを使うには、（Xにはclangのバージョンを表す数字が入る）</p>
+
+<pre><code>$ CC=&quot;clang-X&quot; CXX=&quot;clang++-X&quot;
+</code></pre>
+
+<p>llvm-configをclangのバージョンと合わせるには、custom-llvm.iniといったファイルを作成し、そこへ</p>
+
+<pre><code>[binaries]
+llvm-config = '/usr/local/bin/llvm/llvm-config'
+</code></pre>
+
+<p>のようにしてllvm-configのパスを記述、mesonの実行時に、</p>
+
+<pre><code>--native-file custom-llvm.ini
+</code></pre>
+
+<p>のようにする。<br />
+<a href="https://www.mesa3d.org/meson.html#advanced" rel="nofollow noreferrer" target="_blank">Compilation and Installation Using Meson - Mesa3D</a></p>
+
+<p>デバッグ機能を無効にするには、オプションで buildtype=plain、b_ndebug=trueを追加する。-Dを忘れずに。</p>
+
+<p>ビルドされるものを減らすには、</p>
+
+<pre><code>$ meson configure [ディレクトリ名] &gt; meson-configure.txt
+</code></pre>
+
+<p>を見ながら、取捨選択する……というのは投げやり過ぎるのでRadeon向けの設定を最低限書くと、</p>
+
+<pre><code>-Dgallium-drivers=&quot;radeonsi,r300,r600&quot; -Dvulkan-drivers=&quot;amd&quot;
+</code></pre>
+
+<p>となる。GCN以上の世代のRadeonを使っているのならradeonsiだけで良いかもしれない。<br />
+あとはgallium-openclなんかも基本削る。<br />
+OpenCLを使いたいなら、Mesaとは別にROCmかAMDGPU-PROをインストールしてRadeonを活かした方がいい。</p>
+
+<p>ここまでを踏まえると、このようになる。</p>
+
+<pre><code>CC=&quot;clang-X&quot; CXX=&quot;clang++-X&quot; meson  [ディレクトリ名] -Dbackend=ninja -Dbuildtype=plain -Ddri-drivers=&quot;r100,r200&quot; -Dgallium-drivers=&quot;radeonsi,r300,r600&quot; -Dvulkan-drivers=&quot;amd&quot; -Dgallium-opencl=disabled --native-file custom-llvm.ini
+</code></pre>
+
+<p>それでもそれなりに時間はかかるため、気長に待とう。<br />
+コンパイラへの最適化フラグ等には特に触れない。</p>
+
+<p>インストール場所（prefix）だが、<a href="https://dri.freedesktop.org/wiki/Building/" rel="nofollow noreferrer" target="_blank">https://dri.freedesktop.org/wiki/Building/</a>にあるように、ホームディレクトリ下に適当なディレクトリを作成、<br />
+そしてそこにインストール、環境変数設定の方がトラブルを回避しやすく、気軽に試せる。<br />
+ただ、glxinfo や vainfo の結果を見るだけならスクリプトを書いたり、.bashrcの編集でいいのだが、それではデスクトップ上のメニューからアプリケーションを起動した際に反映されない。<br />
+すべてのアプリをターミナルから起動する訳にもいかないので、私は .xsessionrc をに記述するようにしている。<br />
+実際には、</p>
+
+<pre><code>PROJECT=&quot;[ホーム]/gfx/11-29-0351_20.0.0-devel&quot;
+PROJECT_LIB=$PROJECT/lib/x86_64-linux-gnu
+export LD_LIBRARY_PATH=$PROJECT_LIB:$LD_LIBRARY_PATH
+export PKG_CONFIG_PATH=$PROJECT_LIB/pkgconfig:$PKG_CONFIG_PATH
+export LIBGL_DRIVERS_PATH=$PROJECT_LIB/dri:$LIBGL_DRIVERS_PATH
+export EGL_DRIVERS_PATH=$PROJECT_LIB:$EGL_DRIVERS_PATH
+export LIBVA_DRIVERS_PATH=$PROJECT_LIB/dri:$LIBVA_DRIVERS_PATH
+export VK_ICD_FILENAMES=$PROJECT/share/vulkan/icd.d/radeon_icd.x86_64.json:$VK_ICD_FILENAMES
+export PATH=$PROJECT/bin:$PATH
+LIBVDPAU_DRIVERS_PATH=$PROJECT_LIB/vdpau:$LIBVDPAU_DRIVERS_PATH
+</code></pre>
+
+<p>となる。こうすればFirefoxといったアプリにもちゃんと反映される。<br />
+Mesaビルド一連の流れはbash シェルスクリプトで実行してるが、人様に見せられるようなクオリティではないので公開は控える。</p>
+
+<p>最後に、最新版のMesaを自力でビルドすることの意義だが、最新の機能、ハードウェアを試せるというロマンにあると思う。</p>
+
+<footer>
+	<hr>
+	
+			<a href="https://umio-yasuno.github.io/tags">Tags</a>:
+			<a href="https://umio-yasuno.github.io/tags/radeon">Radeon</a>		<a href="https://umio-yasuno.github.io/tags/radeonsi">RadeonSI</a>		<a href="https://umio-yasuno.github.io/tags/mesa">Mesa</a>		
+		<br><a href="https://umio-yasuno.github.io/categories">Categories</a>: 
+			<a href="https://umio-yasuno.github.io/categories/software">Software</a>		<a href="https://umio-yasuno.github.io/categories/amd">AMD</a>		<a href="https://umio-yasuno.github.io/categories/gpu">GPU</a>	
+		<br>Lastmod : Dec 5, 05:50<br>
+	
+		Author : Umio Yasuno	
+		<br><a href="https://umio-yasuno.github.io/about/about">About</a>
+		<a href="https://umio-yasuno.github.io/image/mail.webp" target="_blank">Email</a><br>	
+		<br><br><br>
+</footer>
+</article>
+		<span class="lace"></span> 
+    </body>
+</html>
