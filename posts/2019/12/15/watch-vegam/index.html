@@ -54,7 +54,54 @@ Sashleycat 氏はCPU/GPUの情報、分析を発信しており、集約され�
 <a href="https://news.mynavi.jp/photo/article/20180108-568850/images/006l.jpg" rel="nofollow noreferrer" target="_blank">拡大画像 006l - マイナビニュース</a><br />
 I$ K$はパターンからで、GCNでは最大4CUで共有する構成ができ、VegaMでは3CUで共有するようだ。</p>
 
-<p>Shader Engine、Render Backendの数は<a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/src/amd/common/ac_gpu_info.c#L964" rel="nofollow noreferrer" target="_blank">ac_gpu_info.c#L964 - Mesa/mesa ・ Gitlab</a>より。</p>
+<p>Shader Engine、Render Backendの数は<a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/src/amd/common/ac_gpu_info.c#L964" rel="nofollow noreferrer" target="_blank">ac_gpu_info.c#L964 - Mesa/mesa ・ Gitlab</a>より。<br />
+Polaris10とそれらを比較すると、(RB=Render Backend)</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">GFX8</th>
+<th align="center">VegaM</th>
+<th align="center">Polaris10</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Shader Engine</td>
+<td align="center">4</td>
+<td align="center">4</td>
+</tr>
+
+<tr>
+<td align="left">CU</td>
+<td align="center">24</td>
+<td align="center">36</td>
+</tr>
+
+<tr>
+<td align="left">TMU</td>
+<td align="center">96</td>
+<td align="center">144</td>
+</tr>
+
+<tr>
+<td align="left">RB</td>
+<td align="center">16</td>
+<td align="center">8</td>
+</tr>
+</tbody>
+</table>
+
+<p>CUこそ2/3の数だが、Render Backend数が倍あり、コンピュート性能よりもグラフィックを取ったと見える。<br />
+ただCUには4基のTexture Mapping Unitが含まれるため、若干アンバランスな気はする。<br />
+実際の製品で比較すると、<br />
+Peak Texture Fill-Rate (GT/s) が、VegaM GHは114.24 (GT/s)、RX 580は172.80 (GT/s)、<br />
+Peak Pixel Fill-Rate (GP/s)が、76.16 (GP/s)、38.40 (GP/s)。</p>
+
+<p>TMU:RB の比率で言えば、Vega64が19:1、RX 5700 XTが10:1、VegaMが6:1。<br />
+他のAMDGPUのバランスから外れているが、それは転用されることのないグラフィック重視のカスタム品らしいと言える。<br />
+ダイサイズは、VegaMが207.69mm2、Polaris10が243.78mm2、とそのグラフィック重視な構成はコスト削減にも貢献している。</p>
 
 <p>フロントエンド部はある程度同一のブロックは判別できそうだが、同数のもの（Geometry Processor、ACE）があるため、これと判断することは一旦諦める。</p>
 
@@ -73,7 +120,7 @@ HBM2を使い、Render Backendを16基搭載しておきながらL2キャッシ�
 </ul>
 
 <footer>
-	<hr><a href="https://umio-yasuno.github.io/tags">Tags</a>:<a href="https://umio-yasuno.github.io/tags/radeon">Radeon</a><a href="https://umio-yasuno.github.io/tags/gcn">GCN</a><a href="https://umio-yasuno.github.io/tags/vegam">VegaM</a><a href="https://umio-yasuno.github.io/tags/gfx8">GFX8</a><a href="https://umio-yasuno.github.io/tags/gfx804">gfx804</a><a href="https://umio-yasuno.github.io/tags/kabylake-g">Kabylake-G</a><br><a href="https://umio-yasuno.github.io/categories">Categories</a>:<a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a><a href="https://umio-yasuno.github.io/categories/gpu">GPU</a><a href="https://umio-yasuno.github.io/categories/amd">AMD</a><a href="https://umio-yasuno.github.io/categories/database">Database</a><br>Lastmod : Dec 15, 12:57<br> Author : Umio Yasuno 
+	<hr><a href="https://umio-yasuno.github.io/tags">Tags</a>:<a href="https://umio-yasuno.github.io/tags/radeon">Radeon</a><a href="https://umio-yasuno.github.io/tags/gcn">GCN</a><a href="https://umio-yasuno.github.io/tags/vegam">VegaM</a><a href="https://umio-yasuno.github.io/tags/gfx8">GFX8</a><a href="https://umio-yasuno.github.io/tags/gfx804">gfx804</a><a href="https://umio-yasuno.github.io/tags/kabylake-g">Kabylake-G</a><br><a href="https://umio-yasuno.github.io/categories">Categories</a>:<a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a><a href="https://umio-yasuno.github.io/categories/gpu">GPU</a><a href="https://umio-yasuno.github.io/categories/amd">AMD</a><a href="https://umio-yasuno.github.io/categories/database">Database</a><br>Lastmod : Dec 15, 14:45<br> Author : Umio Yasuno 
 		<br><a href="https://umio-yasuno.github.io/about/">About</a>
 	 <a href="https://umio-yasuno.github.io/image/mail.webp" target="_blank">Email</a><br> 
 		<br><br><br>
