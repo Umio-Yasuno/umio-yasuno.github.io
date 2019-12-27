@@ -37,7 +37,8 @@
 
 <h3 id="hbcc-high-bandwidth-cache-controller">HBCC（High Bandwidth Cache Controller）</h3>
 
-<p>広帯域なHBM2をキャッシュに使い、CPU側のメインメモリもVRAMとして効率的に扱う機能。</p>
+<p>広帯域なHBM2をキャッシュに使い、CPU側のDRAMもVRAMとして効率的に扱う機能。<br />
+スライドでは、HBCCからDRAM以外にNV(Non-volatile) RAMやNetwork Storageにも繋げられるようだったが、一般ではDRAMまでで、Radeon Pro SSGでは2TBのSSDがオンボードに搭載された。</p>
 
 <p>Vega10/12/20では有効に出来るはずだが、それ以降のArcturus、Naviでは削除されたと思われる。</p>
 
@@ -54,7 +55,10 @@ GDDR6を搭載するNaviはまだしも、HBM2を使うであろうArcturusで�
 <p>そもそも<strong><em>gfx905、gfx907</em></strong>が追加された痕跡がLLVMのリポジトリにないことから、割と早い段階でそれ以上の改良を諦めたのではと勘ぐってしまう。</p>
 
 <p>ゲーム向けの機能としては、使用可能なVRAMを倍以上まで増やしつつ効果的に使えるということで、VRや最新のゲームを高プリセットでやりたいゲーマーから一定の支持はあった、はず。<br />
-Vegaが発売初期はマイニング需要で狩られてゲーマーが買えない状況が続いたり、後継のRadeonVIIが16GBとGPUとしては破格の容量を持っていたため、影は薄くなってしまったが。</p>
+Vegaが発売初期はマイニング需要で狩られてゲーマーが買えない状況が続いたり、後継のRadeonVIIが16GBとGPUとしては破格の容量を持っていたため、影は薄くなってしまった。</p>
+
+<p>コンピュート機能としても、HPC用途においてGPUの比率が高まっていたことから、GPU側でSSD等を扱える機能は、方向が間違っていないはずだったが……
+<img src="https://umio-yasuno.github.io/image/2019/11/30/4gpus-system.webp" alt="4GPUs System" /></p>
 
 <h3 id="dsbr-draw-stream-binning-rasterrizer">DSBR（Draw Stream Binning Rasterrizer）</h3>
 
@@ -69,7 +73,7 @@ HBM2が広帯域といっても、オンチップなL2キャッシュには速�
 DPBBが部分的な、DFSMは全体的なものとなるらしいが、<br />
 決まって速くなる訳ではないため、有効可能ではあるがデフォルトでは無効にされている。</p>
 
-<p>……そしてVega10、Ravenの、指定範囲外の描画を切る scissor 機能にバグが見つかった。<br />
+<p>そしてしばらくしてから、Vega10、Ravenの、指定範囲外の描画を切る scissor 機能にバグが見つかった。<br />
 <a href="https://gitlab.freedesktop.org/mesa/mesa/commit/71eca0780a0cd0794545c1fbfdd96fa4f07c2476" rel="nofollow noreferrer" target="_blank"> radeonsi/gfx9: add a scissor bug workaround - Mesa GitLab</a><br />
 <a href="https://gitlab.freedesktop.org/mesa/mesa/commit/e616743dabe4cdee789c7ad8386fbe9195cbb0ca" rel="nofollow noreferrer" target="_blank"> radeonsi/gfx9: limit the scissor bug workaround to Vega10 and Raven only - Mesa GitLab</a></p>
 
@@ -78,7 +82,7 @@ DPBBが部分的な、DFSMは全体的なものとなるらしいが、<br />
 Vega12/20、Raven2では修正されている。</p>
 
 <p><br>
-後にもわかるが、Raven（APU）向けのチューニングがされていることから、メモリ帯域が狭いAPUでは効果があったが、dGPUではそうでもなかったのかもしれない。<br />
+Raven（APU）向けのチューニングがされていることから、メモリ帯域が狭いAPUでは効果があったが、dGPUではそうでもなかったのかもしれない。<br />
 （じゃあ上述したフレームレート最大10%UP、メモリ帯域33%削減は何なんだとなるが、10fpsが11fpsになれば10%の向上だ。下衆の勘繰りであることは否めないが。バグの影響もあったかもしれない）</p>
 
 <p>それでもGFX10に引き継がれ、改良は進められているらしい。<br />
@@ -92,7 +96,9 @@ DPBBのみだが、GFX10ではデフォルトで有効にされる。<br />
 <h4 id="dpbb-deferred-primitive-batch-binning">DPBB（Deferred Primitive Batch Binning）</h4>
 
 <p>Raven向け。<br />
-<a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/src/gallium/drivers/radeonsi/si_state_binning.c#L547" rel="nofollow noreferrer" target="_blank">si_state_binning.c - Mesa GitLab</a></p>
+<a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/src/gallium/drivers/radeonsi/si_state_binning.c#L547" rel="nofollow noreferrer" target="_blank">si_state_binning.c - Mesa GitLab</a><br />
+Ravenではバグがあったが、Raven2、Renoirでは修正されていることから、有効時にそれらで性能や電力効率に差が出ると考えているが、検証した人はいないし、自分も実物を持ってないため不明。<br />
+また、差が出てもそこまで気にするような程ではないかもしれない。</p>
 
 <h4 id="dfsm-deterministic-finite-state-machine">DFSM（Deterministic Finite State Machine）</h4>
 
@@ -128,7 +134,9 @@ GFX10ではGFX9から設計に変更があったらしいが、GFX9でのNGGに�
 GFX10で変更することが決まったからGFX9では廃止したのか。<br />
 <a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040258.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: remove gfx9 NGG</a></p>
 
-<p><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/226f650d9222a191130ee673d2cb4405da972c4a" rel="nofollow noreferrer" target="_blank"> radeonsi/gfx10: document NGG shader stages - Mesa GitLab</a></p>
+<p><a href="https://github.com/GPUOpen-Drivers/llpc" rel="nofollow noreferrer" target="_blank">LLPC</a>（LLVM-Based Pipeline）を見る限り、GFX10でしっかりと進められている様子。</p>
+
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/226f650d9222a191130ee673d2cb4405da972c4a" rel="nofollow noreferrer" target="_blank">radeonsi/gfx10: document NGG shader stages - Mesa GitLab</a></p>
 
 <h3 id="感想">感想</h3>
 
@@ -146,7 +154,7 @@ Vegaが久しぶりのハイエンドとして登場したために、残念な�
 <a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1073276.html" rel="nofollow noreferrer" target="_blank">AMDが次世代GPU「Radeon RX Vega64」を正式発表 - PC Watch</a></p>
 
 <footer>
-	<hr><a href="https://umio-yasuno.github.io/tags">Tags</a>:<a href="https://umio-yasuno.github.io/tags/radeon">Radeon</a><a href="https://umio-yasuno.github.io/tags/gcn">GCN</a><a href="https://umio-yasuno.github.io/tags/gfx9">GFX9</a><br><a href="https://umio-yasuno.github.io/categories">Categories</a>:<a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a><a href="https://umio-yasuno.github.io/categories/amd">AMD</a><a href="https://umio-yasuno.github.io/categories/gpu">GPU</a><br>Lastmod : Dec 8, 06:54<br> Author : Umio Yasuno 
+	<hr><a href="https://umio-yasuno.github.io/tags">Tags</a>:<a href="https://umio-yasuno.github.io/tags/radeon">Radeon</a><a href="https://umio-yasuno.github.io/tags/gcn">GCN</a><a href="https://umio-yasuno.github.io/tags/gfx9">GFX9</a><br><a href="https://umio-yasuno.github.io/categories">Categories</a>:<a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a><a href="https://umio-yasuno.github.io/categories/amd">AMD</a><a href="https://umio-yasuno.github.io/categories/gpu">GPU</a><br>Lastmod : Dec 27, 19:15<br> Author : Umio Yasuno 
 		<br><a href="https://umio-yasuno.github.io/about/">About</a>
 	 <a href="https://umio-yasuno.github.io/image/mail.webp" target="_blank">Email</a><br> 
 	<br><h1><span class="title"><a href="https://umio-yasuno.github.io/" style="color:black">Coelacanth&#39;s Dream<span class="blink">_</span></span></a></h1></footer>
