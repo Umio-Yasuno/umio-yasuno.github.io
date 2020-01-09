@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<meta http-equiv="Cache-Control" content="max-age=2592000">
+
+	<title itemprop="name">Raven2に新たなリビジョン、Pollock現る | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="Raven2に新たなリビジョン、Pollock現る | Coelacanth&#39;s Dream" />
+	<meta name="twitter:title" content="Raven2に新たなリビジョン、Pollock現る | Coelacanth&#39;s Dream" />
+	<meta itemprop="name" content="Raven2に新たなリビジョン、Pollock現る | Coelacanth&#39;s Dream" />
+	<meta name="application-name" content="Raven2に新たなリビジョン、Pollock現る | Coelacanth&#39;s Dream" />
+	<meta property="og:site_name" content="Coelacanth&#39;s Dream" /><meta name="description" content="Linux Kernel（amd-gfx）へのパッチから新たなASIC、Pollockが判明した。 [PATCH] drm/amd/display: add Pollock IDs, fix Pollock &amp; Dali clk mgr construct DIDは15D8... " />
+	<meta itemprop="description" content="Linux Kernel（amd-gfx）へのパッチから新たなASIC、Pollockが判明した。 [PATCH] drm/amd/display: add Pollock IDs, fix Pollock &amp; Dali clk mgr construct DIDは15D8... " />
+	<meta property="og:description" content="Linux Kernel（amd-gfx）へのパッチから新たなASIC、Pollockが判明した。 [PATCH] drm/amd/display: add Pollock IDs, fix Pollock &amp; Dali clk mgr construct DIDは15D8... " />
+	<meta name="twitter:description" content="Linux Kernel（amd-gfx）へのパッチから新たなASIC、Pollockが判明した。 [PATCH] drm/amd/display: add Pollock IDs, fix Pollock &amp; Dali clk mgr construct DIDは15D8... " /><base href="https://umio-yasuno.github.io/posts/2020/01/09/raven2-dali-pollock/">
+	<link rel="canonical" href="https://umio-yasuno.github.io/posts/2020/01/09/raven2-dali-pollock/" itemprop="url" /> 
+	<meta name="url" content="https://umio-yasuno.github.io/posts/2020/01/09/raven2-dali-pollock/" />
+	<meta name="twitter:url" content="https://umio-yasuno.github.io/posts/2020/01/09/raven2-dali-pollock/" /> 
+	<meta property="og:url" content="https://umio-yasuno.github.io/posts/2020/01/09/raven2-dali-pollock/" />
+	<meta name="author" content="Umio Yasuno" />
+	<meta name="keywords" content=" Raven2, Pollock, APU, AMD" />
+
+	<meta property="og:locale" content="ja">
+	
+
+<link rel="preload" href="https://umio-yasuno.github.io/css/lain.min.css" as="style" importance="high">
+	<link rel="preload" href="https://umio-yasuno.github.io/css/animation.min.css" as="style" importance="high">
+		<link rel="stylesheet" href="https://umio-yasuno.github.io/css/lain.min.css">
+		<link rel="stylesheet" href="https://umio-yasuno.github.io/css/animation.min.css">
+		<link rel="icon" href="https://umio-yasuno.github.io/favicon.ico">
+	</head>
+    <body>
+	<div class="text">
+			<br>
+<div class="title"><a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a></div>
+<br>
+
+		<article>
+		<h2><span class="page-title">Raven2に新たなリビジョン、Pollock現る </span></h2>
+			<p>Linux Kernel（amd-gfx）へのパッチから新たなASIC、Pollockが判明した。<br />
+<a href="https://lists.freedesktop.org/archives/amd-gfx/2020-January/044548.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amd/display: add Pollock IDs, fix Pollock &amp; Dali clk mgr construct</a></p>
+
+<p>DIDは15D8とPicasso、Raven2、Daliと共用であり、RIDは94、95、E9、EA、EBが割り当てられている。<br />
+15DDにRavenとRaven2が、15D8にPicassoとRaven2が共用していた時点でそれなりにややこしかったのだが、これでさらにややこしくなってしまった。<br />
+パッチのPollockの判定部分を見ても中々に面倒くさいことになっている。</p>
+
+<blockquote>
+<p>+#define ASICREV_IS_POLLOCK(eChipRev) (eChipRev == RAVEN2_15D8_REV_94 <br />
++       || eChipRev == RAVEN2_15D8_REV_95 <br />
++           || eChipRev == RAVEN2_15D8_REV_E9 <br />
++               || eChipRev == RAVEN2_15D8_REV_EA <br />
++                   || eChipRev == RAVEN2_15D8_REV_EB)</p>
+</blockquote>
+
+<p>DIDだけで判定できるようにしないのは何か特殊な事情でもあるのだろうか。</p>
+
+<p>Raven2とDali/Pollockの違いは、後者だとディスプレイコントローラー部の電圧のレベルが1つのみで、最低電圧で固定されるというものだと思われる。（読み間違えていたら申し訳ない。）<br />
+<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=e42a34dec68950ebad7904f235ed2dfff5bb27b5" rel="nofollow noreferrer" target="_blank">drm/amd/display: Implement voltage limitation for dali - agd5f/linux</a><br />
+推測するに常時稼働させるシステム向けだろうか。<br />
+ただ今ある情報だけではDaliに割り当てるRIDを追加させず、新たにPollockと付けた理由がわからない。</p>
+
+<p>APU系統では他にDID:15D9も確認されており、これにPollockが追加で割り当てられるのかそれともまた新しいコードネームを持ったASICとなるのかはまだ不明。<br />
+<a href="https://github.com/GPUOpen-Tools/common-src-DeviceInfo/blob/master/DeviceInfoUtils.cpp#L523" rel="nofollow noreferrer" target="_blank">DeviceInfoUtils.cpp#L523</a></p>
+
+<p><br>
+こっちで既に反映させてあるため、ややこしさの解消に役立てていただければ幸いだ。<br />
+<a href="https://umio-yasuno.github.io/posts/2019/12/30/did-rid-product-matome-p2/#pollock-gfx909">AMDGPUのDID、RID、Productのびみょうまとめ Part2</a></p>
+
+<hr>
+<footer><a href="https://umio-yasuno.github.io/tags">Tags</a>:<a href="https://umio-yasuno.github.io/tags/radeon">Radeon</a><a href="https://umio-yasuno.github.io/tags/gcn">GCN</a><a href="https://umio-yasuno.github.io/tags/raven2">Raven2</a><a href="https://umio-yasuno.github.io/tags/dali">Dali</a><a href="https://umio-yasuno.github.io/tags/pollock">Pollock</a><a href="https://umio-yasuno.github.io/tags/gfx9">GFX9</a><a href="https://umio-yasuno.github.io/tags/gfx909">gfx909</a><br><a href="https://umio-yasuno.github.io/categories">Categories</a>:<a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a><a href="https://umio-yasuno.github.io/categories/amd">AMD</a><a href="https://umio-yasuno.github.io/categories/apu">APU</a><a href="https://umio-yasuno.github.io/categories/gpu">GPU</a><br>Lastmod : Jan 9, 16:22<br> Author : Umio Yasuno 
+		<br><a href="https://umio-yasuno.github.io/about/">About</a>
+		<address class="mail"> </address><br>
+<div class="title"><a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a></div>
+<br>
+</footer>
+
+		</article>
+	</div>
+	<span class="lace"></span> 
+    </body>
+</html>
