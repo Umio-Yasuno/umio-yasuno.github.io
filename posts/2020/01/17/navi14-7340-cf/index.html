@@ -50,19 +50,20 @@ CL_DEVICE_MAX_CLOCK_FREQUENCY が 1900 となっているが、これは RX 5500
 これはRX 5500シリーズの11WGP（22CU）からさらに減らして差別化するよりも、メモリバス幅とクロックを下げた方が電力効率という点で優れた製品となるからだろう。<br />
 必要なメモリチップを減らすことで単純にコストも下げられる。</p>
 
-<!--
-| Navi14 RX Product | RX 5300M | RX 5500M | RX 5500 | RX 5500 XT | <span style="color:tomato">RX 5300 XT?</span> |
-| :-- | :---: | :---: | :---: | :---: | :---: |
-| WGPs | 11 | 11 | 11 | 11 | 12 |
-| CUs | 22 | 22 | 22 | 22 | 24 |
-| TMUs | 88 | 88 | 88 | 88 | 96 |
-| ROPs | 32 |
-| Max Memory Size (GB) | 3 | 4 | 8 |
-| Memory Interface (bit) | 96 | 128 | 96 |
-| Memory Speed (Gbps) | 14 |
-| Memory Bandwidth (GB/s) | 168 | 224 | 168 |
-| TGP (W) | ~75? | 85 | 110 | 130 | 90? | 
--->
+<p>ただ1つ不安に覚えることがあり、理由は以下のRADVに対するコミットだ。<br />
+<a href="https://gitlab.freedesktop.org/mesa/mesa/commit/53b50be35cd11dfa1209de63e997256404e51468" rel="nofollow noreferrer" target="_blank">radv/gfx10: enable all CUs if NGG is never used - Mesa/mesa Gitlab</a></p>
+
+<blockquote>
+<pre><code>  * If NGG is never used, enable all CUs.
+</code></pre>
+</blockquote>
+
+<p>とあり、これをそのまま受け取るならばNavi14でWGP（2CU）が全て有効化されたものはNGGを使えないことになる。<br />
+そして RX 5300 XT らしき 7340:CF がそうだ。<br />
+GFX10の中では安く手に入ると言っても、個人的なGFX10の目玉であるNGGが使えないのでは惜しすぎる。<br />
+カーネルパラメータで一部を無効化する方法もあるが、未検証であるし、心情としてはあまりやりたくない。</p>
+
+<p>NGGに関してはAMDの今後の姿勢次第なところがあるが、やはり機能があるなら使いたいものだ。</p>
 
 <table>
 <thead>
@@ -147,7 +148,7 @@ CL_DEVICE_MAX_CLOCK_FREQUENCY が 1900 となっているが、これは RX 5500
 <div class="footer">
 <a href="https://umio-yasuno.github.io/tags">Tags</a>:<a href="https://umio-yasuno.github.io/tags/radeon"> Radeon,</a><a href="https://umio-yasuno.github.io/tags/rdna"> RDNA,</a><a href="https://umio-yasuno.github.io/tags/navi"> Navi,</a><a href="https://umio-yasuno.github.io/tags/navi14"> Navi14,</a><a href="https://umio-yasuno.github.io/tags/gfx10"> GFX10,</a><a href="https://umio-yasuno.github.io/tags/gfx1012"> gfx1012,</a><br>
 			<a href="https://umio-yasuno.github.io/categories">Categories</a>:<a href="https://umio-yasuno.github.io/categories/hardware"> Hardware,</a><a href="https://umio-yasuno.github.io/categories/amd"> AMD,</a><a href="https://umio-yasuno.github.io/categories/gpu"> GPU,</a><br> <span>&nbsp;&nbsp;Author : Umio Yasuno</span>
-		&nbsp;/&nbsp;&nbsp;<span data-lastmod="Jan 17 2020, 02:58">Lastmod : Jan 17, 02:58</span>
+		&nbsp;/&nbsp;&nbsp;<span data-lastmod="Jan 17 2020, 05:01">Lastmod : Jan 17, 05:01</span>
 		<br>
 		<address class="mail"><a href="https://umio-yasuno.github.io/about/">About</a> </address>
 		<br><br>	<span class="title">
