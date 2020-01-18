@@ -133,7 +133,7 @@ a {
 <p>性能は RX 5500 の8割前後と言ったところ。<br />
 <a href="https://compubench.com/compare.jsp?benchmark=compu20d&amp;did1=77523056&amp;os1=Windows&amp;api1=cl&amp;hwtype1=dGPU&amp;hwname1=AMD+7340%3ACF&amp;D2=AMD+7340%3AC7" rel="nofollow noreferrer" target="_blank">AMD 7340:CF vs. AMD 7340:C7 in CompuBench</a></p>
 
-<p>スペックは見る限り12WGP（24CU）、VRAM 3GBという構成。<br />
+<p><del>スペックは見る限り12WGP（24CU）、VRAM 3GBという構成。</del><br />
 CL_DEVICE_MAX_CLOCK_FREQUENCY が 1900 となっているが、これは RX 5500 でも同じであることから実際のクロックを示しているのではなく、Navi14としての最高クロックを取得したのだと思われる。</p>
 
 <p>7340:CF自体は以前から確認されていたが製品名は明らかになっておらず、パターンからして RX 5300 (XT)? だろうと考えていたGPUで、<br />
@@ -141,11 +141,27 @@ CL_DEVICE_MAX_CLOCK_FREQUENCY が 1900 となっているが、これは RX 5500
 今回VRAM 3GBと判明したことでそれが当たっている可能性が高くなった。<br />
 似たナンバリングの RX 5300M はメモリバス幅 96-bitでVRAM 3GB構成だ。</p>
 
-<p>少し変わっているのは12WGP（24CU）とコア部分はNavi14のフルスペックなことだが、RX 5600シリーズ同様に差別化のためメモリバス幅以外にクロックも抑えてくると思われる。<br />
-これはRX 5500シリーズの11WGP（22CU）からさらに減らして差別化するよりも、メモリバス幅とクロックを下げた方が電力効率という点で優れた製品となるからだろう。<br />
-必要なメモリチップを減らすことで単純にコストも下げられる。</p>
+<p><del>少し変わっているのは12WGP（24CU）とコア部分はNavi14のフルスペックなことだが、RX 5600シリーズ同様に差別化のためメモリバス幅以外にクロックも抑えてくると思われる。</del><br />
+<del>これはRX 5500シリーズの11WGP（22CU）からさらに減らして差別化するよりも、メモリバス幅とクロックを下げた方が電力効率という点で優れた製品となるからだろう。<br />
+必要なメモリチップを減らすことで単純にコストも下げられる。</del></p>
 
-<p>ただ1つ不安に覚えることがあり、理由は以下のRADVに対するコミットだ。<br />
+<ins datetime="2020-01-18T14:52:00+09:00">
+	<span class="insbegin">（追記  2020-01-18T14:52:00+09:00 ）</span>
+	<p>7340:C1――RX 5500M――Navi14 XTM―― の結果もあり、それでは CL_DEVICE_MAX_COMPUTE_UNITS が 12 となっていた。<br />
+<a href="https://github.com/GPUOpen-Tools/common-src-DeviceInfo/blob/master/DeviceInfoUtils.cpp#L603" rel="nofollow noreferrer" target="_blank">common-src-DeviceInfo/DeviceInfoUtils.cpp at master · GPUOpen-Tools/common-src-DeviceInfo</a><br />
+<a href="https://compubench.com/device.jsp?benchmark=compu20d&amp;os=Windows&amp;api=cl&amp;D=AMD+7340%3AC1&amp;testgroup=info" rel="nofollow noreferrer" target="_blank">AMD 7340:C1 performance in CompuBench</a></p>
+
+<p>公式の情報では RX 5500M は 22CU のはずだ。<br />
+<a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-5500m#product-specs" rel="nofollow noreferrer" target="_blank">AMD Radeon™ RX 5500 Mobile Graphics | AMD</a></p>
+
+<p>よって 7340:CF が12WGP（24CU）とは言い切れず、この記事ではっきりと言えるのは、 7340:CF の性能が大体 RX 5500 の8割前後であり、VRAM 3GB（メモリバス幅 96-bit）構成、ということだけになる。</p>
+
+	<span class="insend">（追記終了）</span>
+</ins>
+<br>
+
+
+<p><del>ただ1つ不安に覚えることがあり、理由は以下のRADVに対するコミットだ。<br />
 <a href="https://gitlab.freedesktop.org/mesa/mesa/commit/53b50be35cd11dfa1209de63e997256404e51468" rel="nofollow noreferrer" target="_blank">radv/gfx10: enable all CUs if NGG is never used - Mesa/mesa Gitlab</a></p>
 
 <blockquote>
@@ -153,11 +169,12 @@ CL_DEVICE_MAX_CLOCK_FREQUENCY が 1900 となっているが、これは RX 5500
 </code></pre>
 </blockquote>
 
-<p><del>とあり、これをそのまま受け取るならばNavi14で12WGP（24CU）が全て有効化されたものはNGGを使えないことになる。</del><br />
-<del>そして RX 5300 XT らしき 7340:CF がそうだ。</del><br />
-<del>GFX10の中では安く手に入ると言っても、個人的なGFX10の目玉であるNGGが使えないのでは惜しすぎる。</del><br />
-<del>カーネルパラメータで一部を無効化する方法もあるが、未検証であるし、心情としてはあまりやりたくない。</del><br />
-<del>NGGに関してはAMDの今後の姿勢次第なところがあるが、やはり機能があるなら使いたいものだ。</del></p>
+<p></del>
+<del>とあり、これをそのまま受け取るならばNavi14で12WGP（24CU）が全て有効化されたものはNGGを使えないことになる。<br />
+そして RX 5300 XT らしき 7340:CF がそうだ。<br />
+GFX10の中では安く手に入ると言っても、個人的なGFX10の目玉であるNGGが使えないのでは惜しすぎる。<br />
+カーネルパラメータで一部を無効化する方法もあるが、未検証であるし、心情としてはあまりやりたくない。<br />
+NGGに関してはAMDの今後の姿勢次第なところがあるが、やはり機能があるなら使いたいものだ。</del></p>
 
 <ins datetime="2020-01-17T17:00:00+09:00">
 	<span class="insbegin">（追記  2020-01-17T17:00:00+09:00 ）</span>
@@ -253,7 +270,7 @@ CL_DEVICE_MAX_CLOCK_FREQUENCY が 1900 となっているが、これは RX 5500
 <div class="footer">
 <a href="https://umio-yasuno.github.io/tags">Tags</a>:<a href="https://umio-yasuno.github.io/tags/radeon"> Radeon,</a><a href="https://umio-yasuno.github.io/tags/rdna"> RDNA,</a><a href="https://umio-yasuno.github.io/tags/navi"> Navi,</a><a href="https://umio-yasuno.github.io/tags/navi14"> Navi14,</a><a href="https://umio-yasuno.github.io/tags/gfx10"> GFX10,</a><a href="https://umio-yasuno.github.io/tags/gfx1012"> gfx1012,</a><br>
 			<a href="https://umio-yasuno.github.io/categories">Categories</a>:<a href="https://umio-yasuno.github.io/categories/hardware"> Hardware,</a><a href="https://umio-yasuno.github.io/categories/amd"> AMD,</a><a href="https://umio-yasuno.github.io/categories/gpu"> GPU,</a><br> <span>&nbsp;&nbsp;Author : Umio Yasuno</span>
-		&nbsp;/&nbsp;<span data-lastmod="Jan 17 2020, 17:46">Lastmod : Jan 17, 17:46</span>
+		&nbsp;/&nbsp;<span data-lastmod="Jan 18 2020, 15:10">Lastmod : Jan 18, 15:10</span>
 		<br>
 		<address class="mail"><a href="https://umio-yasuno.github.io/about/">About</a> </address>
 		<br><br>	<span class="title">
