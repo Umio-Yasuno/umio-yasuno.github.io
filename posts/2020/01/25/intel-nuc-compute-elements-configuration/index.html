@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<meta http-equiv="Cache-Control" content="max-age=259200, immutable">
+<title>Intel NUC Compute Elementsの軽い解説とまとめ | Coelacanth&#39;s Dream</title>
+	<meta name="description" content="個人的にまとめたハードウェア系の情報や推測を公開するブログ的なもの" />
+	<base href="https://umio-yasuno.github.io/posts/2020/01/25/intel-nuc-compute-elements-configuration/"><meta name="url" content="https://umio-yasuno.github.io/posts/2020/01/25/intel-nuc-compute-elements-configuration/" />
+	<meta name="author" content="Umio Yasuno" />
+	<meta name="keywords" content=" " />
+	<meta name="referrer" content="no-referrer" />
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+
+		<link rel="preload" href="https://umio-yasuno.github.io/css/footer.min.css" as="style">
+		<link rel="preload" href="https://umio-yasuno.github.io/css/page.min.css" as="style">
+		<link rel="preload" href="https://umio-yasuno.github.io/css/anim.min.css" as="style"><style>html {
+	background-size: 100%; background-attachment: fixed; background-image: radial-gradient(darkslategray 90%, black 102%);
+	z-index: -100}
+.title {	
+	font: normal 1.5em monospace;	text-decoration: none;	text-align: end;
+	display: block;	margin: 0 2vw 0 0}
+.page-title, .page-title a {color: #FF9900; font-size: 1em; margin: 0}
+a {color: #66ccff; text-decoration: none; margin: 0 .5em 0 .5em}
+.text {
+	color: snow;
+	box-sizing: border-box;
+	padding: 0 2vw 0 2vw;
+
+	z-index: 100;
+
+	line-height: 1.7em;
+	word-wrap: break-word;
+	text-justify: inter-character;
+scrollbar-width: thin; scrollbar-color: rgba(0,128,128, 0.5) rgba(255,0,0, 0.0)}
+.text::-webkit-scrollbar {width: 4px; background-color: rgba(255,0,0, 0.0)}
+footer {display: none}h2, h3, h4 {color: #FF9900;font: normal 1em sans-serif}
+h2 {font-size: 1.4em}
+h3 {font-size: 1.2em; margin: 2rem 0 0 0.6rem}
+h4 {font-size: 1.1em; margin: 2rem 0 0em 1.6rem}
+h2 ~ p {padding-left: 2%}</style>
+
+			<link rel="stylesheet" href="https://umio-yasuno.github.io/css/page.min.css">
+			
+			<link rel="preload" href="https://umio-yasuno.github.io/css/ins.min.css" as="style">
+		<link rel="icon" href="https://umio-yasuno.github.io/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header>
+		<br><div class="title"><a href="https://umio-yasuno.github.io/" style="color:black">Coelacanth&#39;s Dream</a></div>
+<br>
+		</header>
+			<article class="text">
+		<h2><span class="page-title">Intel NUC Compute Elementsの軽い解説とまとめ </span></h2>
+			
+
+<p>CES2020にて正式発表されたIntel NUC Compute Elementの構成が個人的に気になったため、整理ついでに一度まとめてみることにした。<br />
+主要なソースはIntel公式の資料。<br />
+<a href="https://www.intel.com/content/dam/support/us/en/documents/intel-nuc/nuc-kits/NUC9QN_TechProdSpec.pdf" rel="nofollow noreferrer" target="_blank">NUC9QN_TechProdSpec.pdf - Intel.com</a></p>
+
+<h3 id="概要">概要</h3>
+
+<p>Ghost Canyon をおおまかに言って2つのボードと電源、それとケースで構成される。</p>
+
+<p>1つは<strong>Compute Element</strong>で、こちらにCPU、PCHがあり、2x SODIMM memory、2x M.2 SSD(NVMe/SATA)を搭載できる。<br />
+また、オーディオヘッダー、USBヘッダー、ファンヘッダー、パワースイッチ等のIOヘッダーもこちらにある。EPS12V 8pin 電源コネクタとパワーボタンもあることから Compute Element単体でも起動できそうだが、実際の所はどうなのだろう。<br />
+ExtreamとProの2種類があり、違いは搭載されるCPUとそれによるECCのサポート、vProの有無となる。<br />
+PCHは共通してCM246チップセット。</p>
+
+<p>もう1つは<strong>BBWC1B</strong>ベースボード。<br />
+主にGPU等の拡張カードを差すためのボードで、Compute Elementが必要な機能を統合している分シンプルな構成をしており、Compute Element用のPCIe 3.0 x16スロット、PCIe 3.0 x4接続のM.2スロット(2242/2280/22110)、PCIe 3.0 x16スロット、PCIe 3.0 x4スロット、<br />
+そして電源入力コネクターとPMBUS(Power Management Bus) 5pin ヘッダーが実装されている。<br />
+M.2スロットはCompute Elementとは違い、NVMeのみ対応となる。<br />
+後述する理由からPLXのような特別なチップを搭載している訳でもないらしい。</p>
+
+<p>電源は<strong>FSP500-30AS</strong>という製品名で、Flex-ATX形状、最大定格出力は500W、変換効率は80+Platinumとのこと。</p>
+
+<p>ケースは、前面にパワーボタン、UHS-II SDXCリーダー、2x USB 3.1 Gen2 Type-Aポート、3.5mm オーディオコネクターがあり、<br />
+上面には（恐らく）92mmファンを2基搭載。</p>
+
+<p>これらをまとめて<strong>Intel NUC 9 Extream/Pro Kit</strong>を構成する。</p>
+
+<h3 id="詳細">詳細</h3>
+
+<h4 id="cpu">CPU</h4>
+
+<p>EXtreamはCore i5-9300H /i7-9750H /i9-9980HK、ProはCore i7-9850H /Xeon E2286Mのどれかが搭載されている。<br />
+ソケットはBGAタイプであり、換装は不可能。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">NUC 9 Extream</th>
+<th align="center">i5-9300H</th>
+<th align="center">i7-9750H</th>
+<th align="center">i9-9980HK</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Core / Thread</td>
+<td align="center">4/8</td>
+<td align="center">6/12</td>
+<td align="center">8/16</td>
+</tr>
+
+<tr>
+<td align="left">Base Clock (GHz)</td>
+<td align="center">2.4</td>
+<td align="center">2.6</td>
+<td align="center">2.4</td>
+</tr>
+
+<tr>
+<td align="left">Max Turbo Clock (GHz)</td>
+<td align="center">4.1</td>
+<td align="center">4.5</td>
+<td align="center">5.0</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th align="left">NUC 9 Pro</th>
+<th align="center">i7-9850H</th>
+<th align="center">E2286M</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Core / Thread</td>
+<td align="center">6/12</td>
+<td align="center">8/16</td>
+</tr>
+
+<tr>
+<td align="left">Base Clock (GHz)</td>
+<td align="center">2.6</td>
+<td align="center">2.4</td>
+</tr>
+
+<tr>
+<td align="left">Max Turbo Clock (GHz)</td>
+<td align="center">4.6</td>
+<td align="center">5.0</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="pch">PCH</h4>
+
+<p>上述したように、Extream/Pro共通でCM246。<br />
+<a href="https://ark.intel.com/content/www/us/en/ark/products/135100/mobile-intel-cm246-chipset.html" rel="nofollow noreferrer" target="_blank">Mobile Intel® CM246 Chipset Product Specifications - ark.intel.com</a><br />
+ブロックダイアグラムは以下</p>
+
+<figure>
+    <img src="https://umio-yasuno.github.io/image/2020/01/25/nuc9-kit-block-diagram.webp"/> <figcaption>
+            <p>Source: <a href="https://www.intel.com/content/dam/support/us/en/documents/intel-nuc/nuc-kits/NUC9QN_TechProdSpec.pdf" rel="nofollow noreferrer" target="_blank">NUC9QN_TechProdSpec.pdf - Intel.com</a></p>
+        </figcaption>
+</figure>
+
+
+<p>ark.intel.com<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>にもあるように、Compute Element上のM.2スロットは2つともPCHからのもの。<br />
+それとは別にSATA 6Gbpsが存在し、Compute Elementのボード上にもデータと電源のピンがまとめられたFPCスタイルのコネクターが実装されているが、ケース側にSATAドライブを収めるスペースがない。<br />
+Compute Elementを使った別製品を計画しているのだろうか？</p>
+
+<h4 id="bcwc1b">BCWC1B</h4>
+
+<p>M.2スロット(NVME, PCIe3.0 x4)、PCIe3.0 x16スロット、PCIe3.0 x4スロットがあるが、Compute ElementからはPCIe3.0 x16までしか出ておらず、<br />
+そのためPCIe3.0 x16スロットのみ使用している時はx16の帯域で動作するが、他のBCWC1B上のM.2スロット、PCIe3.0 x4スロットのどちらか1つでもx16スロットと同時に使用している場合はレーンが分配され、<br />
+x16スロットに接続されたデバイスは、x8の帯域で動作することとなる。<br />
+このことからPLXといったPCIeスイッチチップは搭載していないはずだ。<br />
+基板上にもそれらしきものは見当たらない。</p>
+
+<p>電源が10pinの見慣れないコネクタだが、調べた所ATX 10pinで、OEMの小型PCで使われることがある……らしい。<br />
+ピンアサインは各社で微妙に違うため実質独自規格なのだろうか？<br />
+電源には詳しくない……</p>
+
+<p>最近になってIntelが提唱するATX電源コネクタの新規格、<strong>ATX12VO</strong>も10pinだが、やはり微妙に違い、またPCIeスロットに3.3Vを供給する必要があるため、別物なはずだ。<br />
+<a href="https://www.guru3d.com/news-story/atx12vo-future-power-supplies-will-not-have-24-pins-atx-connector-anymorebut-10-pins.html" rel="nofollow noreferrer" target="_blank">ATX12VO: Future Power Supplies will not have 24-pins ATX connector anymore, but 10-pins - guru3d.com</a></p>
+
+<h4 id="fsp500-30as">FSP500-30AS</h4>
+
+<p>Compute Element用のEPS12V 8pin、直角タイプの8pinと直線タイプの6+2pinのPCIe補助電源、PMBUS 5pinのコネクターが引き出されている。<br />
+容量としてはPCIe x16スロットと補助電源を合わせて375W(PCIe 75W + 2x8pin 300W)までのGPUが動作可能なはずだが、<br />
+サポートは225W(PCIe 75W + 8pin 150W)までとなっている。<br />
+<span class="hide">そりゃそうか……</span></p>
+
+<h4 id="エアフロー">エアフロー</h4>
+
+<p>左側面から吸気し、上面の2x 92mmファンによって排気する仕組み。<br />
+Compute Elementのブロアーファンも同じ方向であり、電源もケース内に吐き出す形と思われるため、まとめて排気できる。<br />
+ただGPUの冷却はまだ良いとして、Compute Elementはまともに冷却できるか疑問が残る。<br />
+GPUをx16スロットに差すと隙間がなくなってしまい、ブロアーファンが吸気するための余裕がだいぶなくなる。<br />
+Compute Elementの実装面を逆にして、GPUと別方向から吸気するといった方法は取れなかったのだろうか。もしかしたらPCIe x16の配線による制限等があったのかもしれない。<br />
+それぞれのファンの回転数は不明。<br />
+Ghostを名に冠しているのだから静かだといいが。</p>
+
+<h4 id="感想">感想</h4>
+
+<p>売れるのかな。<br />
+価格を見ると、i5モデルで$945.02 - $947.49、i7モデルで$1104.99 - $1107.45、i9モデルで$1535.66 - $1538.13。<br />
+dGPU無しでこれだ。<span class="hide">普通に自作すれば同額でdGPU有りの構成が組めるだろうし、選択肢も広い</span><br />
+それに省スペースで高性能が可能と言っても、それがどこまで実現できるかはまた別の話が気がする。<br />
+障害になるのはやはり熱だ。<br />
+性能が高ければ当然相応の熱が出る。そして小型にすると排熱が難しくなる。<br />
+VegaMを搭載したSkull Canyonも同じ問題を抱えていたのではないかと思う。<br />
+スペースはないから小型で、価格が高くてもいいから出来る限り性能が高いPCが欲しい、という人がどれだけいるだろうか。<br />
+業務向けならばまだ需要はあるはずだとは思う。</p>
+
+<p>パーツの自由度は一般的なPCより劣るものの、これまでのNUCに比べたら格段に広いため、Intelが今後どういった新Compute Elementを出すか次第かもしれない。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://ark.intel.com/content/www/us/en/ark/products/codename/189255/ghost-canyon.html" rel="nofollow noreferrer" target="_blank">Products formerly Ghost Canyon - ark.intel.com</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+<link rel="stylesheet" href="https://umio-yasuno.github.io/css/footer.min.css">
+		</article>
+<hr>
+<footer>
+		<nav class="foot-tags">
+			<a href="https://umio-yasuno.github.io/tags">Tags</a>&nbsp;:
+			&nbsp;<a href="https://umio-yasuno.github.io/tags/intel">Intel,</a>
+		</nav>
+		<nav class="foot-categories">
+			<a href="https://umio-yasuno.github.io/categories">Categories</a>&nbsp;:
+			&nbsp;<a href="https://umio-yasuno.github.io/categories/hardware"> Hardware,</a>
+			&nbsp;<a href="https://umio-yasuno.github.io/categories/cpu"> CPU,</a>
+		</nav>
+	&nbsp;&nbsp;<span>Author : Umio Yasuno</span>&nbsp;&nbsp;/  <span>Lastmod : 2020-01-26 00:25:41 </span> 
+		<address class="mail"><a href="https://umio-yasuno.github.io/about/">About</a></address>
+</footer>
+<br>
+
+			<br><div class="title"><a href="https://umio-yasuno.github.io/" style="color:black">Coelacanth&#39;s Dream</a></div>
+<br>
+	</main>
+		<link rel="stylesheet" href="https://umio-yasuno.github.io/css/anim.min.css">
+		<div class="lace"></div> 
+    </body>
+</html>
