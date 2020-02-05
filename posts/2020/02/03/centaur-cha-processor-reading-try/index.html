@@ -71,6 +71,13 @@ h2 ~ p {padding-left: 2%}</style>
 知識が及ばない部分や、資料を読むのが一番だと判断した部分は意図的に飛ばしてもいる。<br />
 だが責任を完全に放棄した訳ではないため、間違っていた場合は連絡をくださると嬉しい。</p>
 
+<p>解説にはWikiChipをオススメしたい。</p>
+
+<ul>
+<li><a href="https://fuse.wikichip.org/news/3099/centaur-unveils-its-new-server-class-x86-core-cns-adds-avx-512/" rel="nofollow noreferrer" target="_blank">Centaur Unveils Its New Server-Class x86 Core: CNS; Adds AVX-512 | WikiChip Fuse</a><br /></li>
+<li><a href="https://fuse.wikichip.org/news/3256/centaur-new-x86-server-processor-packs-an-ai-punch/comment-page-1/" rel="nofollow noreferrer" target="_blank">Centaur New x86 Server Processor Packs an AI Punch | WikiChip Fuse</a><br /></li>
+</ul>
+
 <h4 id="table-of-content">Table of Content</h4>
 
 <ul>
@@ -367,7 +374,11 @@ x86 CPU 8-Coreクラスターのおおよそ半分のサイズであり、Ncore�
 </details></p>
 
 <p>SRAMは内部で2つに分かれており（D-RAMとW-RAM、DはData、WはWeightの意だろうか？）、それぞれSIMD幅に合わせて32,768-bit/cycleで接続されており、帯域は10TB/s、合計で20TB/sとなる。<br />
+どちらもECCに対応。<br />
 リングインターフェイスからData Unitへの書き込みを割り込ませることも可能だが、その間D-RAM/W-RAMからの書き込みは中断され、またそれら32,768-bitの接続に対し、リングインターフェイスは512-bitと狭く、十分にデータを供給するには64サイクルも必要とするため、割り込みが行なわれることは稀であるらしい。</p>
+
+<p>INT8に最適化されており、INT16、Bfloat16の精度でも演算できるが、INT8は毎サイクル行なえるのに対し、INT16、Bfloat16では3サイクルかかり、スループットが落ちてしまう。<br />
+積和演算では、32-bit (INT32 or FP32) に飽和演算を行なう。</p>
 
 <h3 id="i-o">I/O</h3>
 
@@ -378,7 +389,7 @@ Redditのスレッドにおける回答では、USBとSATAは外部チップセ�
 
 <p>またマルチソケット用のインターフェイスも存在し、2ソケットのシステムが可能だが、ソケット間接続のプロトコル、帯域等は不明。<br />
 ただ、それもリングバスで接続されていることを考えると、そう高くはなく、実効帯域も低めだろう。<br />
-参考までに記しておくと、Intel Xeon Scalableで双方向2x 10.4 GT/s@20レーン (104GT/s?)、<br />
+参考までに記しておくと、Intel Xeon Scalableで双方向2x 10.4 GT/s@20レーン (104GT/s?)、（Cascade Lakeなら3リンクで156GT/s?）<br />
 AMD EPYC Romeで双方向4x 18GT/s@16レーン (288GT/s, 実帯域 202GB/s)。</p>
 
 <blockquote>
@@ -454,7 +465,7 @@ x86 CPUでmicro-opキャッシュも持たないCNSアーキテクチャは消�
 			&nbsp;<a href="https://umio-yasuno.github.io/categories/hardware"> Hardware</a>,
 			&nbsp;<a href="https://umio-yasuno.github.io/categories/cpu"> CPU</a>,
 		</nav>
-	&nbsp;&nbsp;<span>Author : Umio Yasuno</span>&nbsp;&nbsp;/  <span>Lastmod : 2020-02-05 22:59:26 </span> 
+	&nbsp;&nbsp;<span>Author : Umio Yasuno</span>&nbsp;&nbsp;/  <span>Lastmod : 2020-02-06 04:38:48 </span> 
 		<address class="mail"><a href="https://umio-yasuno.github.io/about/">About</a></address>
 </footer>
 <br>
