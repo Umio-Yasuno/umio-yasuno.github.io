@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<meta http-equiv="Cache-Control" content="max-age=259200, immutable">
+<title>AMD Zen APUを搭載したChromebookの話 | Coelacanth&#39;s Dream</title>
+	<meta name="description" content="個人的にまとめたハードウェア系の情報や推測を公開するブログ的なもの" />
+	<base href="https://umio-yasuno.github.io/posts/2020/02/09/amd-zen-chromebook/"><meta name="url" content="https://umio-yasuno.github.io/posts/2020/02/09/amd-zen-chromebook/" />
+	<meta name="author" content="Umio Yasuno" />
+	<meta name="keywords" content=" Chromebook, Picasso, Dali, Pollock, Ryzen, Athlon" />
+	<meta name="referrer" content="no-referrer" />
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+
+		<link rel="preload" href="https://umio-yasuno.github.io/css/footer.min.css" as="style">
+		<link rel="preload" href="https://umio-yasuno.github.io/css/page.min.css" as="style">
+		<link rel="preload" href="https://umio-yasuno.github.io/css/anim.min.css" as="style"><style>html {
+	background-size: 100%; background-attachment: fixed; background-image: radial-gradient(darkslategray 84%, #00080B 101%);
+	z-index: -100}
+.title {	
+	font: normal 1.7em monospace;	text-decoration: none;	text-align: end;
+	display: block;	margin: .5em 7vw .5em 0;
+	text-shadow: 0 2px 1.2em #538290}
+.title > a {color: #5D91A0}
+.page-title, .page-title a {color: #FF9900; font-size: 1em; margin: 0}
+a {color: #66ccff; text-decoration: none; margin: 0 .5em 0 .5em}
+.text {
+	color: snow;
+	box-sizing: border-box;
+	padding: 0 2vw 0 2vw;
+
+	z-index: 100;
+
+	line-height: 1.6em;
+	word-wrap: break-word;
+	text-justify: inter-character;
+scrollbar-width: thin; scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)}
+.text::-webkit-scrollbar {width: 4px; background-color: rgba(255,0,0, 0)}
+footer {display: none}h2, h3, h4 {color: #FF9900;font: normal 1em sans-serif}
+h2 {font-size: 1.4em}
+h3 {font-size: 1.2em; margin: 2rem 0 0 .6rem}
+h4 {font-size: 1.1em; margin: 2rem 0 0 1.6rem}
+h2 ~ p {padding-left: 2%}</style>
+
+			<link rel="stylesheet" href="https://umio-yasuno.github.io/css/page.min.css">
+			
+			<link rel="preload" href="https://umio-yasuno.github.io/css/ins.min.css" as="style">
+		<link rel="icon" href="https://umio-yasuno.github.io/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header>
+		<br><div class="title"><a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a></div>
+<br>
+		</header>
+			<article class="text">
+		<h2><span class="page-title">AMD Zen APUを搭載したChromebookの話 </span></h2>
+			
+
+<p>ChromiumOSへのパッチから以下の新たなZen Mobile SKUが見つかった。</p>
+
+<ul>
+<li>Ryzen 7 3700C (Picasso)</li>
+<li>Ryzen 5 3500C (Picasso)</li>
+<li>Ryzen 3 3250C (Dali [Raven2])</li>
+<li>Athlon Silver 3050C (Dali [Raven2])</li>
+<li>Athlon Gold 3150C (Dali [Raven2])</li>
+</ul>
+
+<p>基本、既存のMobile向けSKUの末尾をUからCに置き換えたSKU名となるが、<br />
+パッチ内のRevision IDを照らし合わせるとRyzen 7 3700Cのみ、Ryzen 7 3700UではなくRyzen 7 3750Hと共有のものとなっている。<br />
+<a href="https://umio-yasuno.github.io/posts/2019/12/30/did-rid-product-matome-p2/#picasso-gfx902">AMDGPUのDID、RID、Productのびみょうまとめ Part2 | Coelacanth&rsquo;s Dream</a></p>
+
+<p>それとDaliの一部Revision ID、さらにはPollockもSKU名こそ不明だが一部が判明し、個人的には結構嬉しい発見だった。</p>
+
+<h3 id="chromebookとして">Chromebookとして</h3>
+
+<p>これまでChromebook向けにAMD APUはA4-9120CとA6-9220Cしか出ておらず、<br />
+プロセスは28nm、CPUは2-Core/2-Thread、GPUは3CU、メモリは1866MHz 1ch。<br />
+その中では上であるA6-9220CでもCPU Clock Base 1.8GHz /Boost 2.7GHz、GPU 720MHzである。<br />
+<a href="https://www.amd.com/en/products/apu/7th-gen-a4-9120c-apu#product-specs" rel="nofollow noreferrer" target="_blank">7th Generation AMD A4-9120C APU with Radeon™ R4 Graphics | AMD</a><br />
+<a href="https://www.amd.com/en/products/apu/7th-gen-a6-9220c-apu" rel="nofollow noreferrer" target="_blank">7th Generation AMD A6-9220C APU with Radeon™ R5 Graphics | AMD</a></p>
+
+<p>またAMD公式サイトにはSupported TechnologiesにVP9 Decodeがあるが、ハードウェア的には対応していないはずであり、また対応していることを示すコードが見つからなかったため、（見落としている可能性もある）<br />
+CPUによるソフトウェアデコードが可能、という意味かも知れない。<br />
+<a href="https://www.x.org/wiki/RadeonFeature/#radeonuvdunifiedvideodecoderhardware" rel="nofollow noreferrer" target="_blank">RadeonFeature</a></p>
+
+<p>そういう訳で、前世代でコスト低め、TDP 6Wという点を含めても性能はかなり低めで、使い勝手もそれ相応だったと思われる。<br />
+そしてA4-9120Cだけなため、モデル数という点でも競合に当然圧されていた。</p>
+
+<p><br>
+上記のSKUを搭載したChromebookが世に出れば、性能、モデル数の問題は解消されることとなる。</p>
+
+<p>そしてその中のPicasso Ryzen 5/7は、高性能なChromebookブランド、Pixelbookとなると考えられ、<br />
+現状、最新のPixelbook Goでも8th Gen Intel Core m3 /i5 /i7 Y-Series (Amber Lake Y) であるから、CPU性能では同等、GPU性能では圧倒できるだろう。（同時にIntel Ice /Jasper /Elkhart /Tiger lakeあたりの10nm SoCを採用した製品が出る可能性もあるが）</p>
+
+<h3 id="推測">推測</h3>
+
+<p>また、Pollockもしくはパッチ内にあったSKU以外に、TDPをより小さくしたSKUが出るんじゃないかと <strong>個人的に</strong> 予想している。<br />
+IntelとAMDでTDPの意味合いが違うため無視するとしても、Ryzen MobileはデフォルトTDP 15W、下限 12W、上限 25WとA4-9120C/A6-9220Cの6Wと比べると大きな差がある。<br />
+ソケット変更があるため、熱設計に関しては深く考える必要はないのかもしれないが、最新世代でも前世代製品並の消費電力、熱設計を求める声はあるだろう。</p>
+
+<p>そして、AMDはまだ公式発表こそしていないが、より省電力なRaven2ベースの組み込み向けSKUを用意している。</p>
+
+<blockquote>
+<p>Alternativ können auch Prozessoren der Serie R1000 Low-Power mit den Varianten R1305G Dual Core (vier Threads), 1,5 GHz (beziehunsweise 2,8 GHz Boost) mit einer TDP von 8 W (6 bis 8 W) beziehungsweise R1102G Dual Core (zwei Threads), 1,2 GHz (beziehungsweise 2,6 GHz Boost) mit einer TDP von 6 W bestückt werden. Die integrierte Vega-Grafikprozessoreinheit mit drei bis zu 1200 MHz schnellen Compute Units steht für hohe Grafikleistung.</p>
+
+<p>(引用元: <a href="https://www.elektronikpraxis.vogel.de/massgeschneiderte-hmi-systemkomponenten-in-90-tagen-a-901430/" rel="nofollow noreferrer" target="_blank">Maßgeschneiderte HMI-Systemkomponenten in 90 Tagen</a>)</p>
+</blockquote>
+
+<ul>
+<li>R1305G: CPU 2-Core/4-Thread Base 1.5GHz /Boost 2.8GHz, GPU 3CU 1GHz, TDP 8-10W<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></li>
+<li>R1102G: CPU 2-Core/4-Thread Base 1.2GHz /Boost 2.6Ghz, GPU 不明, TDP 6W</li>
+</ul>
+
+<p>R1102GはTDP 6Wと、一致し、後継には丁度いいはずだ。</p>
+
+<p>結論として、R1102Gの全く同じか近い構成のSKUをChromebook向けにも出してくるのではないかと予想している。</p>
+
+<p>そういった理屈抜きにしても最新CPUを低消費電力で動かしてみたいという気持ちがある。<br />
+ChromebookならLinux入れるのも、ドライバー周りのハードルも低いだろう。<br />
+<span class="hide">買うかどうかはかなり怪しいが。自分、Revison IDが判明しただけで喜べるような人間だし。</span></p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://www.kontron.com/products/boards-and-standard-form-factors/motherboards/mini-itx/d3713-v-r-mitx.html" rel="nofollow noreferrer" target="_blank">D3713-V/R mITX | Kontron</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+<link rel="stylesheet" href="https://umio-yasuno.github.io/css/footer.min.css">
+		</article>
+<hr>
+<footer>
+		<nav class="foot-tags">
+			<a href="https://umio-yasuno.github.io/tags">Tags</a>&nbsp;:
+			&nbsp;<a href="https://umio-yasuno.github.io/tags/picasso">Picasso</a>,
+			&nbsp;<a href="https://umio-yasuno.github.io/tags/raven2">Raven2</a>,
+			&nbsp;<a href="https://umio-yasuno.github.io/tags/dali">Dali</a>,
+			&nbsp;<a href="https://umio-yasuno.github.io/tags/pollock">Pollock</a>,
+		</nav>
+		<nav class="foot-categories">
+			<a href="https://umio-yasuno.github.io/categories">Categories</a>&nbsp;:
+			&nbsp;<a href="https://umio-yasuno.github.io/categories/hardware"> Hardware</a>,
+			&nbsp;<a href="https://umio-yasuno.github.io/categories/apu"> APU</a>,
+		</nav>
+	&nbsp;&nbsp;<span>Author : Umio Yasuno</span>&nbsp;&nbsp;/  <span>Lastmod : 2020-02-09 16:32:05 </span> 
+		<address class="mail"><a href="https://umio-yasuno.github.io/about/">About</a></address>
+</footer>
+<br>
+<br><div class="title"><a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a></div>
+<br>
+	</main>
+		<link rel="stylesheet" href="https://umio-yasuno.github.io/css/anim.min.css">
+		<div class="lace"></div> 
+    </body>
+</html>
