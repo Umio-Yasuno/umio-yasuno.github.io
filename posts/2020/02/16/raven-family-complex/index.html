@@ -81,7 +81,7 @@ h1 ~ p {padding-left: 2vw}</style>
 <p>当然これは間違いであり、Raven2 (Dali, Pollock)のCPUコアは、<br />
 EPYC 7002シリーズ (Rome)、Ryzen 3000シリーズ (Matisse)、Ryzen Threadripper 3000シリーズ (Castle Peak)、Ryzen Mobile 4000シリーズ (Renoir)に採用されている、 <em>あの</em> Zen2ではない。</p>
 
-<p>AMDもはっきりと、Raven2ベースのSKU、Athlon 3000Gを発表の際に &ldquo;Zen&rdquo; ベースであると言っているし、</p>
+<p>AMDもはっきりと、Raven2ベースの製品、Athlon 3000Gを発表の際に &ldquo;Zen&rdquo; ベースであると言っているし、</p>
 
 <blockquote>
 <p>The Athlon 3000G is the first “Zen”-based Athlon processor that is unlocked for overclocking potential, delivering the only unlocked processor in its segment10.</p>
@@ -127,7 +127,7 @@ EPYC 7002シリーズ (Rome)、Ryzen 3000シリーズ (Matisse)、Ryzen Threadri
 <p>Zen CPUとVega GPUを組み合わせた <strong>Zen APU</strong> は既に市場にいくつも存在するが、<br />
 それらを開発コードネームで区別すると、Raven、Picasso、Raven2、Dali、Pollock、Renoirの6種類に分けられる。</p>
 
-<p>内Dali と Pollock はRaven2ベース（別リビジョン?）であり、基本 (Raven2 == Dali == Pollock) という認識でいい（はず）。<br />
+<p>内 Dali と Pollock はRaven2ベース（別リビジョン?）であり、基本 (Raven2 == Dali == Pollock) という認識でいい（はず）。<br />
 Dali と Pollock の違いは、i2cコントローラーの数くらいしか（私が）わかっていないが、<br />
 Pollock の方が多く、Pollock は組み込み向けとしての色が強いとは言える。<br />
 <a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2057468" rel="nofollow noreferrer" target="_blank">soc/amd/common: Determine # of i2c controllers at runtime (I397b074e) · Gerrit Code Review</a></p>
@@ -152,6 +152,8 @@ Pollock の方が多く、Pollock は組み込み向けとしての色が強い�
 <li>Ryzen 3 3300U</li>
 <li>Ryzen 5 3500U /3550H /3580U</li>
 <li>Ryzen 7 3700U /3750H /3780U</li>
+<li>Ryzen 7 3780U Surface Edition (Winston)</li>
+<li>Ryzen 5 3580U Surface Edition (Winston)</li>
 </ul></li>
 <li>Raven2
 
@@ -192,7 +194,7 @@ Pollock の方が多く、Pollock は組み込み向けとしての色が強い�
 
 <p>となっている。</p>
 
-<p>複雑に絡まっているのは Raven、Picasso、Raven2 であり、Renoir は今の所</p>
+<p>複雑に絡まっているのは Raven、Picasso、Raven2 であり、Renoir は今の所そこまでではない。</p>
 
 <h3 id="cpu">CPU</h3>
 
@@ -261,7 +263,31 @@ x86_model だ。</p>
 Raven2 には 0x15DD、0x15D8 の両方が割り振られている。<br />
 そして Raven2 のマイナーバージョンとして Dali と Pollock があり、混沌さを加速させている。</p>
 
-<p>判別には Device ID だけでなく Revision ID も使われるため、何か問題がある訳ではないが、ハードウェアの情報を追う趣味を持っている人間にはひたすらにややこしいと不評である。</p>
+<p>判別には Device ID だけでなく Revision ID も使われるため、大きな問題がある訳ではないが、<br />
+コードの判定部分を複雑にさせてしまうし、人為的なミスも起こしやすい。</p>
+
+<p>Linux Kernel では Raven, Picasso, Raven2 に別々の内部的なリビジョンIDを割り振ることで、何とか他のコードでの判定を簡略しているが、<br />
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n130" rel="nofollow noreferrer" target="_blank">Line 130: dal_asic_id.h\include\display\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a><br />
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=amd-staging-drm-next&amp;id=b989531b1f192a77c739a2976953e241d78229a3#n1336" rel="nofollow noreferrer" target="_blank">Line 1336: amdgpu_device.c\amdgpu\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a></p>
+
+<p>Raven2, Dali, Pollock はそうではなく、判定するための部分が長ったらしくなってしまっている。<br />
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n150" rel="nofollow noreferrer" target="_blank">Line 150: dal_asic_id.h\include\display\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a></p>
+
+<p>ハードウェアの情報を追う趣味を持っている人間にもひたすらにややこしいと不評である。</p>
+
+<p>またもChromimu OSへのパッチからとなるが、VBIOS部分もDevice IDの複雑さの影響を受けており、<br />
+こんなことをKconfigの説明部分に書かれたりしている。</p>
+
+<blockquote>
+<p>Even though the hardware has the same vendor/device IDs, the vBIOS<br />
+contains a *different* device ID, confusing the situation even more.</p>
+
+<p>引用元: <a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2040455" rel="nofollow noreferrer" target="_blank">Rework map_oprom_vendev to add revision check and mapping (I2978a569) · Gerrit Code Review</a></p>
+</blockquote>
+
+<p>素直に Raven, Picasso, Raven2, Dali, Pollock へ違うDevice IDを割り振れなかったのだろうか？<br />
+Dali, Pollock は Raven2ベースであるため同一IDであることはまだ納得行くが、<br />
+Raven2自体のDevice IDを Raven, Picasso に被せなかった方が良かったと言える。</p>
 
 <h4 id="アーキテクチャ">アーキテクチャ</h4>
 
@@ -362,7 +388,7 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
 			&nbsp;<a href="https://umio-yasuno.github.io/categories/hardware"> Hardware</a>,
 			&nbsp;<a href="https://umio-yasuno.github.io/categories/apu"> APU</a>,
 		</nav>
-	&nbsp;&nbsp;<span>Author : Umio Yasuno</span>&nbsp;&nbsp;/  <span>Lastmod : 2020-02-17 08:37:48 </span> 
+	&nbsp;&nbsp;<span>Author : Umio Yasuno</span>&nbsp;&nbsp;/  <span>Lastmod : 2020-02-17 10:21:20 </span> 
 		<div><a href="https://umio-yasuno.github.io/about/">About</a></div>
 </footer>
 <h1 class="title"><a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a></h1>
