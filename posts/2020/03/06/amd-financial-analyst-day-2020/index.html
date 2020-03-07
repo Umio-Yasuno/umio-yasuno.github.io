@@ -379,18 +379,14 @@ AMDは以前3D積層によってコンピュータを1つのパッケージに�
 </figure>
 
 
-<p>しかしArcturus関連のコードから、ArcturusにはXGMIに最適化されたSDMAエンジンは8基ある。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">3</a></sup><br />
+<p><del>しかしArcturus関連のコードから、ArcturusにはXGMIに最適化されたSDMAエンジンは8基ある。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">3</a></sup><br />
 そしてGPUネットワークの繋がれた線は、隣のGPUとそれより離れたGPUとで太さが違う。<br />
 そこで、隣の2GPUとはそれぞれ2リンク、それより離れた4GPUとはそれぞれ1リンクとすれば、合計リンク数がSDMAエンジンの数 8基と一致する。<br />
-恐らくそういったネットワーク設計になっているのではないかと <em>予想する</em> 。<br />
-<em>Vega20</em> は複数GPUのコヒーレント接続でリングバスを構築していたが、8GPUの場合でもベースとしてそれを残すのだろうか。</p>
+恐らくそういったネットワーク設計になっているのではないかと予想する。</del><br />
+大間違い。XGMIに最適化されたSDMAエンジンは6基だった。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup><br />
+リンク数はどのGPUに対しても変わらない可能性のが高い。<span class="hide">間抜けなシーラカンス……</span></p>
 
-<figure>
-    <img src="https://umio-yasuno.github.io/image/2020/03/06/gpu-network-guess.webp" width="54%"/> <figcaption>
-            <h4>GPU ネットワーク 予想図</h4>
-        </figcaption>
-</figure>
-
+<p><em>Vega20</em> は複数GPUのコヒーレント接続でリングバスを構築していたが、8GPUの場合でもベースとしてそれを残すのだろうか。</p>
 
 
 <link rel="stylesheet" href="https://umio-yasuno.github.io/css/ins.min.css">
@@ -419,7 +415,7 @@ AMDは以前3D積層によってコンピュータを1つのパッケージに�
 <p><em>Frontier</em> は2021年納入予定であり、調整の時間を考えると <em>CDNA</em> を、<br />
 <em>El Captitan</em> は2022年か2023年早期に納入予定、そして <em>3rd Gen Infinity Architecture</em> に対応することから、<em>CDNA 2</em> をGPUに採用するとされる。<br />
 別段スパコンだけがGPGPUを使う訳ではなく、データセンターや別のスパコンでも採用されるはずだが、それらスパコンが GPU 4 : CPU 1となると、今の段階では GPU 8 : CPU 1 の設計の採用予定は無いのかもしれない。<br />
-ボード開発や、8GPUに対応したブリッジに課題が残っている可能性もある。8GPUもの規模になるとIntelがX<sup>e</sup><sub>HPC</sub>を16基搭載する <em>Ponte Vecchio</em> の構想で示したように、GPUをPCIeカードに収めるのではなく、ボード上に8GPUを搭載する形のが良いだろう。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">4</a></sup><br />
+ボード開発や、8GPUに対応したブリッジに課題が残っている可能性もある。8GPUもの規模になるとIntelがX<sup>e</sup><sub>HPC</sub>を16基搭載する <em>Ponte Vecchio</em> の構想で示したように、GPUをPCIeカードに収めるのではなく、ボード上に8GPUを搭載する形のが良いだろう。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">5</a></sup><br />
 AMDが今回、パッケージング技術 <strong>X3D</strong> を発表したのは、その布石かもしれない。もしかしなくてもIntel、AMDで近い形になるか。</p>
 
 <p>そして、<strong>3rd Gen Infinity Architecture</strong> により、CPU-GPU間の帯域はPCIe Gen4の倍近くまで向上する。</p>
@@ -508,6 +504,8 @@ AMDが今回、パッケージング技術 <strong>X3D</strong> を発表した�
  <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
 <li id="fn:1"><a href="http://localhost:1313/posts/2019/11/26/amd-planning-8gpus-system/" rel="noreferrer" target="_blank">AMDは8 GPUsのシステムを計画している？ | Coelacanth&rsquo;s Dream</a>
  <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdkfd?h=amd-staging-drm-next&amp;id=b6689cf7b9cd2600ebd6981e19fb5f697819a60b" rel="noreferrer" target="_blank">drm/amdkfd: Set number of xgmi optimized SDMA engines for arcturus</a><br />
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
 <li id="fn:2"><a href="https://www.anandtech.com/show/15188/analyzing-intels-discrete-xe-hpc-graphics-disclosure-ponte-vecchio/3" rel="noreferrer" target="_blank">Ponte Vecchio: The Old Bridge in the land of Gelato - Analyzing Intel’s Discrete Xe-HPC Graphics Disclosure: Ponte Vecchio, Rambo Cache, and Gelato</a>
  <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
 </ol>
@@ -547,7 +545,7 @@ AMDが今回、パッケージング技術 <strong>X3D</strong> を発表した�
 			</ul>
 		</ul>
 		</nav>
-	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-07 16:04:11 </div>
+	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-07 16:27:24 </div>
 	<div class="side-about"><a href="https://umio-yasuno.github.io/about/">About</a></div>
 </div>
 
@@ -572,7 +570,7 @@ AMDが今回、パッケージング技術 <strong>X3D</strong> を発表した�
 			<a href="https://umio-yasuno.github.io/categories/gpu">GPU</a>,
 		</nav>
 			<a href="https://umio-yasuno.github.io/posts">Posts</a>
-			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-07 16:04:11 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
+			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-07 16:27:24 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
 	</footer>
 </div>
 <div class="title">
