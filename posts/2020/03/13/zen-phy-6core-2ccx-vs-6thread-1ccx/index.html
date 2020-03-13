@@ -414,11 +414,19 @@ Ryzen 5 2600のトポロジを参考にすると、</p>
 <h2 id="考察">考察</h2>
 
 <p>正直、少し意外な結果だった。あんなメモリを使っているため、CCX間通信のオーバーヘッドが大きく、<em>6-Thread 1CCX</em> のが勝つのではないかと思っていた。<br />
-だが <em>6-Core 2CCX</em> が勝った。やはり物理コアは正義ということか。<br />
-<code>Process Creation</code> のみ <em>6-Thread 1CCX</em> が勝っているが、これはテストがメモリ帯域幅を反映する傾向にあり、メモリ割り当てではCPUのキャッシュが効きにくいため、CCX間通信が発生する <em>6-Core 2CCX</em> の方が遅くなった……ということなのだろうか。<br />
-CPUよりはメモリ帯域、プロセス生成の呼び出しを行なうOS、Kernel部を計測するテストであるため、不適当だったかもしれない。</p>
+だが <em>6-Core 2CCX</em> が勝った。やはり物理コアは正義ということか。</p>
 
-<p>ただ気をつけたいのは、今回の検証はCCXを跨ぐ場合のオーバーヘッドがどれだけあるかを確かめるのが主であり、SMTの効果の検証ではないということだ。それなら <em>6-Core/6-Thread</em> と <em>6-Core/12-Thread</em> を比較するのが適当だろう。</p>
+<p><code>Process Creation</code> のみ <em>6-Thread 1CCX</em> が勝っているが、これはテストがメモリ帯域幅を反映する傾向にあり、メモリ割り当てではCPUのキャッシュが効きにくいため、CCX間通信が発生する <em>6-Core 2CCX</em> の方が遅くなった……ということなのだろうか。<br />
+CPUよりはメモリ帯域、プロセス生成の呼び出しを行なうOS、Kernel部を計測するテストであるため、不適当だったかもしれない。<br />
+<a href="https://github.com/akopytov/sysbench" rel="noreferrer" target="_blank">sysbench</a> と <a href="https://github.com/jeffhammond/STREAM" rel="noreferrer" target="_blank">stream</a> でもメモリ帯域を計測したところ、sysbench では <em>6-Thread 1CCX</em> が広いメモリ帯域を示したが、stream では逆に <em>6-Core 2CCX</em> が勝った。<br />
+しかし stream では差が2%程しかなかったのに対し、sysbench は read で約36%、write で約23%の差が見られた。<br />
+CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの部分が原因となっているかは今後の課題としたい。<br />
+より転送速度が高いメモリであれば、InfinityFabricの速度も向上するため、その差が縮まるといった結果が見られるかもしれない。</p>
+
+<p>それと気をつけたいのは、今回の検証はCCXを跨ぐ場合のオーバーヘッドがどれだけあるかを確かめるのが主であり、SMTの効果の検証ではないということだ。それなら <em>6-Core/6-Thread</em> と <em>6-Core/12-Thread</em> を比較するのが適当だろう。</p>
+
+<p>結論として、CCX間通信にオーバーヘッドがあっても、それはSMTによる論理コアで処理するより性能への影響はずっと小さく、物理コアに割り振るメリットで容易にカバーが可能と言える。<br />
+しかし、メモリ帯域に関してそれが確実に当てはまるとは言えない。</p>
 
 <p><em>Zen 2</em> アーキテクチャであれば、ロード/ストアユニットの増設、L3キャッシュの増量、同CCD内のCCXでもI/Oダイ経由する、といったことからもう少し違う結果、差となるかもしれない。<br />
 そういった点を踏まえて検証してみたいが、2018年発売のRyzen 5 2600を今になって検証しているのだから、<em>Zen 2</em> を試せるのは来年あたりだろうか。</p>
@@ -459,7 +467,7 @@ CPUよりはメモリ帯域、プロセス生成の呼び出しを行なうOS、
 			</ul>
 		</ul>
 		</nav>
-	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-13 13:34:49 </div>
+	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-13 14:57:03 </div>
 	<div class="side-about"><a href="https://umio-yasuno.github.io/about/">About</a></div>
 </div>
 
@@ -477,7 +485,7 @@ CPUよりはメモリ帯域、プロセス生成の呼び出しを行なうOS、
 			<a href="https://umio-yasuno.github.io/categories/cpu">CPU</a>,
 		</nav>
 			<a href="https://umio-yasuno.github.io/posts">Posts</a>
-			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-13 13:34:49 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
+			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-13 14:57:03 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
 	</footer>
 </div>
 <div class="title">
