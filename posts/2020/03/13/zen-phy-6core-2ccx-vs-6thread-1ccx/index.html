@@ -252,8 +252,7 @@ h1, h2, h3, h4
 
 <h3 id="ベンチマークソフト">ベンチマークソフト</h3>
 
-<p>ベンチマークソフトには、歴史ある <a href="https://github.com/kdlucas/byte-unixbench" rel="noreferrer" target="_blank">byte-unixbench</a> の一部、<br />
-それとOpenMPを有効にした <a href="https://github.com/sudden6/m-queens" rel="noreferrer" target="_blank">m-queens</a> を採用した。<br />
+<p>ベンチマークソフトには、歴史ある<a href="https://github.com/kdlucas/byte-unixbench" rel="noreferrer" target="_blank">byte-unixbench</a> の一部、それとOpenMPを有効にした<a href="https://github.com/sudden6/m-queens" rel="noreferrer" target="_blank">m-queens</a>、レイテンシの測定に <a href="https://github.com/akopytov/sysbench" rel="noreferrer" target="_blank">sysbench</a> を採用した。<br />
 出来る限り上述したようなテストとは違うものを選んだつもりだが、やはり現実的なベンチマークというのは難しく、他に適したベンチマークソフトがあれば教えて頂けると嬉しい。それがLinuxに対応しており、計測が特別難しくなければ試すつもりでいる。</p>
 
 <h4 id="byte-unixbench">byte-unixbench</h4>
@@ -413,19 +412,120 @@ Ryzen 5 2600のトポロジを参考にすると、</p>
 </tbody>
 </table>
 
+<table>
+<thead>
+<tr>
+<th align="left">sysbench threads</th>
+<th align="center">6-Core 2CCX</th>
+<th align="center">6-Thread 1CCX</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">events/s (eps)</td>
+<td align="center">26374.6090</td>
+<td align="center">25598.8243</td>
+</tr>
+
+<tr>
+<td align="left">Latency (ms)</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">&emsp;&emsp;min</td>
+<td align="center">0.15</td>
+<td align="center">0.15</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;&emsp;avg</td>
+<td align="center">0.23</td>
+<td align="center">0.23</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;&emsp;max</td>
+<td align="center">9.23</td>
+<td align="center">6.15</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;95th percentile</td>
+<td align="center">0.28</td>
+<td align="center">0.25</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th align="left">sysbench mutex (64threads)</th>
+<th align="center">6-Core 2CCX</th>
+<th align="center">6-Thread 1CCX</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">events/s (eps)</td>
+<td align="center">21.2456</td>
+<td align="center">21.2207</td>
+</tr>
+
+<tr>
+<td align="left">Latency (ms)</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">&emsp;&emsp;min</td>
+<td align="center">1602.09</td>
+<td align="center">2318.88</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;&emsp;avg</td>
+<td align="center">2842.96</td>
+<td align="center">2902.36</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;&emsp;max</td>
+<td align="center">3000.67</td>
+<td align="center">2997.10</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;95th percentile</td>
+<td align="center">2985.89</td>
+<td align="center">2985.89</td>
+</tr>
+</tbody>
+</table>
+
 <h2 id="考察">考察</h2>
 
-<p>正直、少し意外な結果だった。あんなメモリを使っているため、CCX間通信のオーバーヘッドが大きく、<em>6-Thread 1CCX</em> のが勝つのではないかと思っていた。<br />
-だが <em>6-Core 2CCX</em> が勝った。やはり物理コアは正義ということか。</p>
+<p>正直、少し意外な結果だった。あんなメモリを使っているため、CCX間通信のオーバーヘッドが大きく、<em>6-Thread 1CCX</em> のが勝つのではないかと思っていた。レイテンシだけではなく一部性能でももしかしたらと。<br />
+だが <em>6-Core 2CCX</em> が勝った。<br />
+やはり物理コアは正義か。</p>
 
-<p><code>Process Creation</code> のみ <em>6-Thread 1CCX</em> が勝っているが、これはテストがメモリ帯域幅を反映する傾向にあり、メモリ割り当てではCPUのキャッシュが効きにくいため、CCX間通信が発生する <em>6-Core 2CCX</em> の方が遅くなった……ということなのだろうか。<br />
-CPUよりはメモリ帯域、プロセス生成の呼び出しを行なうOS、Kernel部を計測するテストであるため、不適当だったかもしれない。<br />
+<p>byte-unixbench では <code>Process Creation</code> のみ <em>6-Thread 1CCX</em> が勝っているが、これはテストがメモリ帯域幅を反映する傾向にあり、メモリ割り当てではCPUのキャッシュが効きにくいため、CCX間通信が発生する <em>6-Core 2CCX</em> の方が遅くなった……ということなのだろうか。<br />
 <a href="https://github.com/akopytov/sysbench" rel="noreferrer" target="_blank">sysbench</a> と <a href="https://github.com/jeffhammond/STREAM" rel="noreferrer" target="_blank">stream</a> でもメモリ帯域を計測したところ、sysbench では <em>6-Thread 1CCX</em> が広いメモリ帯域を示したが、stream では逆に <em>6-Core 2CCX</em> が勝った。<br />
 しかし stream では差が2%程しかなかったのに対し、sysbench は read で約36%、write で約23%の差が見られた。<br />
 CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの部分が原因となっているかは今後の課題としたい。<br />
 より転送速度が高いメモリであれば、InfinityFabricの速度も向上するため、その差が縮まるといった結果が見られるかもしれない。</p>
 
+<p>sysbench では <em>6-Thread 1CCX</em> がレイテンシにおいて、<code>max</code>、<code>95th percentile</code> の値が <em>6-Core 2CCX</em> より小さいが、 <code>events/s</code> では <em>6-Thread 1CCX</em> が負けている。<br />
+1CCX内に収まることで、確かにレイテンシが短くなったが、性能に影響が出る程ではない、またはリソースの競合が発生したか。</p>
+
 <p>それと気をつけたいのは、今回の検証はCCXを跨ぐ場合のオーバーヘッドがどれだけあるかを確かめるのが主であり、SMTの効果の検証ではないということだ。それなら <em>6-Core/6-Thread</em> と <em>6-Core/12-Thread</em> を比較するのが適当だろう。</p>
+
+<h2 id="結論">結論</h2>
 
 <p>結論として、CCX間通信にオーバーヘッドがあっても、それはSMTによる論理コアで処理するより性能への影響はずっと小さく、物理コアに割り振るメリットで容易にカバーが可能と言える。<br />
 しかし、メモリ帯域に関してそれが確実に当てはまるとは言えない。</p>
@@ -469,7 +569,7 @@ CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの�
 			</ul>
 		</ul>
 		</nav>
-	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-13 14:57:03 </div>
+	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-13 18:06:05 </div>
 	<div class="side-about"><a href="https://umio-yasuno.github.io/about/">About</a></div>
 </div>
 
@@ -487,7 +587,7 @@ CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの�
 			<a href="https://umio-yasuno.github.io/categories/cpu">CPU</a>,
 		</nav>
 			<a href="https://umio-yasuno.github.io/posts">Posts</a>
-			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-13 14:57:03 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
+			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-13 18:06:05 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
 	</footer>
 </div>
 <div class="title">
