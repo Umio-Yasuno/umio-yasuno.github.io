@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://umio-yasuno.github.io/posts/2020/03/13/zen-phy-6core-2ccx-vs-6thread-1ccx/"><title>Zen検証 ―― 物理6-Core 2CCX vs 6-Thread 1CCX | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="Zen検証 ―― 物理6-Core 2CCX vs 6-Thread 1CCX | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="Zen検証 ―― 物理6-Core 2CCX vs 6-Thread 1CCX | Coelacanth&#39;s Dream">
+	<meta name="og:type" content="article">
+
+	<meta name="description" content="今更 Ryzen 5 2600 を使って Zen/&#43; の検証。 試したい、というだけの理由で Zen 2 を買える程のお金がない。さらに言うと、2666MHzでCL1も安定しないようなクソメモリを使っている。 前提 1つ前の記事で、「">
+	<meta property="og:description" content="今更 Ryzen 5 2600 を使って Zen/&#43; の検証。 試したい、というだけの理由で Zen 2 を買える程のお金がない。さらに言うと、2666MHzでCL1も安定しないようなクソメモリを使っている。 前提 1つ前の記事で、「">
+	<meta name="twitter:description" content="今更 Ryzen 5 2600 を使って Zen/&#43; の検証。 試したい、というだけの理由で Zen 2 を買える程のお金がない。さらに言うと、2666MHzでCL1も安定しないようなクソメモリを使っている。 前提 1つ前の記事で、「">
+	<meta property="og:image" content="https://umio-yasuno.github.io/image/site-image.png">
+	<meta name="url" content="https://umio-yasuno.github.io/posts/2020/03/13/zen-phy-6core-2ccx-vs-6thread-1ccx/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="Ryzen, ">
+
+		<link rel="preload" href="https://umio-yasuno.github.io/css/footer.min.css" as="style">
+		<link rel="preload" href="https://umio-yasuno.github.io/css/page.min.css" as="style">
+<style>
+html
+	{	background-size: cover;
+		background-attachment: fixed;
+		background-image: radial-gradient(farthest-corner, #2F4F4F 88%, #172727 95%, #040707 100%);
+		font-size: 16px;
+}
+.title
+	{	font: normal 1.6em monospace;
+		text-decoration: none;
+		padding: 1em 7vw 1.2em 0;
+		text-align: end;
+}
+	.title a
+		{	color: #6D9CA9;
+			text-shadow: 0 2px .8em #577C87;
+	}
+	.title a:hover
+		{	color: #98B9C2;
+			text-decoration: none;
+			text-shadow: 0 2px 1em #7EA0A9;
+	}
+.page-title, .page-title a
+	{	color: #FFA319;
+		font-size: 1em;
+		line-height: 1.2em;
+		margin: 0;
+}
+	.page-title a:hover,.sect-page a:hover
+		{	text-decoration: underline #CC8214;
+	}
+.tag-title, .categorie-title
+	{	color: #7FFFFF;
+}
+a
+	{	color: #75D1FF;
+		text-decoration: none;
+		padding: 0 .28em 0 .25em;
+		margin: 0;
+}
+	a:hover
+		{	text-decoration: underline;
+	}
+.text
+	{	color: ghostwhite;
+		box-sizing: border-box;
+		padding: 0 2vw 0 2vw;
+		line-height: 1.6em;
+		word-wrap: break-word;
+		text-justify: inter-character;
+
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+}
+article > p::first-letter
+	{	padding-left: .6em;
+}
+article > p
+	{	padding:  0 1vw 0 1vw;
+}
+h1, h2, h3, h4
+	{	color: #FFA319;
+		font: normal 1em sans-serif;
+		margin: 0;
+}
+	h1
+		{	font-size: 1.4em;
+			padding: .9em 0 .9em .2em;
+	}
+	h2
+		{	font-size: 1.2em;
+			padding: .7em 0 .7em .4em;
+	}
+	h3
+		{	font-size: 1.15em;
+			padding: .5em 0 .5em .6em;
+	}
+	h4
+		{	font-size: 1.1em;
+			padding: .5em 0 .2em 1em;
+	}
+.foot, .side
+	{	display: none;
+}
+@media (min-width: 840px)
+	{	main
+			{	display: grid;
+				grid-template-columns: 2em 200px 1fr;
+				grid-template-rows: 2em 6em 2em 1fr;
+		}
+		.text
+			{	grid-column: 3 / 4;
+				grid-row: 2 / 5;
+				padding: 0 0 8% 2vw;
+		}
+		header > .title
+			{	display: none;
+		}
+		.side
+			{	display: block;
+					height: 96vh;
+					width: 200px;
+				position: fixed;
+					top: 2vh;
+					left: 24px;
+				padding-right: 1.2em;
+				border-right: 1px solid green;
+				font-size: 1em;
+				color: lime;
+				z-index: 101;
+				transform: translateZ(0);
+
+				overflow: scroll;
+				scrollbar-width: thin;
+				scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+		}
+			.side > .title
+				{	text-align: end;
+					padding: 1em 0 0 0;
+					width: 100%;
+					font: normal 1.6em monospace;
+			}
+		.side-pagination
+			{	display: grid;
+				margin: 2em 0 2em 1em;
+				font-size: 1.05em;
+				row-gap: .8em;
+				grid-template-rows: repeat(3, 1fr);
+				grid-template-columns: 1em .9fr 2em;
+				vertical-align: baseline;
+		}
+		.side-prev
+			{	grid-row: 1;
+				grid-column: 1 / 4;
+				margin-right: auto;
+				color: #9EDEFF;
+		}
+			.side-prev::before
+				{	content: '\297C';
+			}
+		.side-next
+			{	grid-row: 3;
+				grid-column: 1 / 4;
+				margin-left: auto;
+				color: #9EDEFF;
+		}
+			.side-next::after
+				{	content: '\297D';
+			}
+		.side-page-number
+			{	color: lime;
+				font-size: .9em;
+				margin: 0 auto 0 auto;
+				grid-row: 2 / 3;
+				grid-column: 2 / 3;
+		}
+		.side-author, .side-lastmod, .side-about
+			{	padding: .5em 0 0 1em;
+				line-height: 1.4em;
+		}
+		.side li::before
+			{	color: #008080;
+				content: '\25AA';
+				padding: 0;
+		}
+		.side-links ul, .side-tags ul, .side-categories ul
+			{	list-style: none none outside;
+				padding: 0 0 0 1em;
+				color: #7FFFD4;
+				line-height: 1.5em;
+		}
+}
+</style>
+
+			<link rel="stylesheet" href="https://umio-yasuno.github.io/css/page.min.css">
+			<link rel="preload" href="https://umio-yasuno.github.io/css/ins.min.css" as="style">
+		<link rel="icon" href="https://umio-yasuno.github.io/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>Zen検証 ―― 物理6-Core 2CCX vs 6-Thread 1CCX</h1>
+	</header>
+
+<p>今更 Ryzen 5 2600 を使って <em>Zen/+</em> の検証。<br />
+試したい、というだけの理由で <em>Zen 2</em> を買える程のお金がない。さらに言うと、2666MHzでCL1も安定しないような<del>クソ</del>メモリを使っている。</p>
+
+<h2 id="前提">前提</h2>
+
+<p><a href="https://umio-yasuno.github.io/posts/2020/03/12/private-conkyrc/">1つ前の記事</a>で、「なんか1CCXで処理が回されやすいっぽい」とか書いたが、それがどの程度性能に影響を与えるのか気になった。<br />
+6スレッドで処理するとして考えられるパターンは主に、1CCX内の3-Core/6-Thread、それと2CCXに跨る6-Coreの2つがある。<br />
+前者は1CCX内に収まるため短いレイテンシでスレッド間の通信、同期を行なえるが、SMT機能によって1-Coreで2-Threadを実行するため、実行ユニットのリソース競合、スレッド切り替えのオーバーヘッド等で性能向上が見られない、もしくは低下することが起こりうる。片方がメモリからデータをロードしている間、もう片方のスレッドを実行する、という風に実行ユニットの有効活用が可能だが、1-Threadあたりのキャッシュ量も単純に半分となるため、処理によってはキャッシュミスが頻発、メモリアクセスが増える要因にもなる。以下、このパターンを <em>6-Thread 1CCX</em> とする。<br />
+後者はCCXを跨るため、その分レイテンシが長くなるが、SMT機能の悪影響をほぼ受けない。以下、このパターンを <em>6-Core 2CCX</em> とする。</p>
+
+<p>ベンチマークについては、整数や浮動小数点の演算性能を測るものでは <em>6-Thread 1CCX</em> において上述したリソースの競合が頻発し、性能が低下しやすく、現実的でないと判断した。<br />
+怖くなって一応計測してみたが、やはり <em>6-Thread 1CCX</em> のスコアが <em>6-Core 2CCX</em> よりもだいぶ低かった。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">6-Core 2CCX</th>
+<th align="center">6-Thread 1CCX</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Dhrystone (整数演算) (lps)</td>
+<td align="center">267065871.8</td>
+<td align="center">177565964.9 (-34%)</td>
+</tr>
+</tbody>
+</table>
+
+<p>lps (Lines Per Second)は1秒あたりの実行回数を表す。</p>
+
+<h2 id="方法">方法</h2>
+
+<h3 id="ベンチマークソフト">ベンチマークソフト</h3>
+
+<p>ベンチマークソフトには、歴史ある <a href="https://github.com/kdlucas/byte-unixbench" rel="noreferrer" target="_blank">byte-unixbench</a> の一部、<br />
+それとOpenMPを有効にした <a href="https://github.com/sudden6/m-queens" rel="noreferrer" target="_blank">m-queens</a> を採用した。<br />
+出来る限り上述したようなテストとは違うものを選んだつもりだが、やはり現実的なベンチマークというのは難しく、他に適したベンチマークソフトがあれば教えて頂けると嬉しい。それがLinuxに対応しており、計測が特別難しくなければ試すつもりでいる。</p>
+
+<h4 id="byte-unixbench">byte-unixbench</h4>
+
+<ul>
+<li>Execl Throughput
+
+<ul>
+<li>1秒間に実行可能な <code>execl</code> 呼び出しの回数を測定するテスト。exec系の関数は現在のプロセスイメージを新しいプロセスイメージに置き換える。</li>
+</ul></li>
+<li>Pipe-based Context Switching
+
+<ul>
+<li>2つのプロセスがパイプを通じて、増加する整数データを交換できる回数を測定するテスト。実際のアプリケーションの動きに近い。</li>
+</ul></li>
+<li>Process Creation
+
+<ul>
+<li>プロセスを作成、取得、終了を繰り返すテスト。それは新しいプロセスの制御とメモリ割り当てを繰り返すことであり、計測結果はメモリ帯域幅を反映する。</li>
+</ul></li>
+<li>Shell Scripts
+
+<ul>
+<li>プロセスが1分間で、データファイルに一連の変換を行なうシェルスクリプトを開始できる回数を測定するテスト。</li>
+</ul></li>
+</ul>
+
+<p><a href="https://github.com/kdlucas/byte-unixbench/blob/master/README.md" rel="noreferrer" target="_blank">https://github.com/kdlucas/byte-unixbench/blob/master/README.md</a></p>
+
+<h4 id="m-queens">m-queens</h4>
+
+<p>Phoronix Test Suiteのプロファイルを参考に、以下のコマンドでビルドした。</p>
+
+<pre><code>CFLAGS=&quot;-O2 -march=znver1&quot; g++-8 -fopenmp main.c -o m-queens.bin
+</code></pre>
+
+<p><a href="https://openbenchmarking.org/innhold/707926477c5cf3e3b33d1b9375523aee5f3d2020" rel="noreferrer" target="_blank">OpenBenchmarking.org - m-queens v1.1.0 Test [m-queens]</a><br />
+N(クイーンの数は)17とし、計測結果５回の平均をスコアとする。</p>
+
+<h3 id="cpu">CPU</h3>
+
+<p>まず、Ryzen 5 2600のトポロジは以下のようになっている。<br />
+<figure>
+    <img src="https://umio-yasuno.github.io/image/2020/03/13/r5-2600-topo.webp"
+         alt="lstopo の実行結果"/> <figcaption>
+            <h4>Ryzen 5 2600 トポロジ</h4><p>lstopo の実行結果</p>
+        </figcaption>
+</figure>
+
+物理コアに数字を割り振ってから、SMTによる論理コアに割り振っている。<br />
+そしてLinuxでは <code>taskset</code> コマンド<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>で起動中のプロセス、または新たなコマンドを実行するCPUコアを指定することができる。<br />
+Ryzen 5 2600のトポロジを参考にすると、</p>
+
+<pre><code>taskset -c 0-5 ./&lt;ベンチマークの実行バイナリ&gt; -c 6
+</code></pre>
+
+<p>で <em>6-Core 2CCX</em> を、</p>
+
+<pre><code>taskset -c 0-2,6-8 ./&lt;ベンチマークの実行バイナリ&gt; -c 6
+</code></pre>
+
+<p>で <em>6-Thread 1CCX</em> を指定して実行させられる。</p>
+
+<p>また、省電力機能による誤差を減らすため、CPUクロックは3.6GHzで固定して計測を行なった。</p>
+
+<h2 id="環境">環境</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center"></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Linux Kernel</td>
+<td align="center">5.4.21 (Custom)</td>
+</tr>
+
+<tr>
+<td align="left">CPU</td>
+<td align="center">Ryzen 5 2600 (6-Core/12-Thread, 3.6GHz)</td>
+</tr>
+
+<tr>
+<td align="left">RAM</td>
+<td align="center">DDR4 16GB 2666MHz</td>
+</tr>
+
+<tr>
+<td align="left">Disk</td>
+<td align="center">SSD 250GB WDS250G2B0A</td>
+</tr>
+
+<tr>
+<td align="left">UnixBench</td>
+<td align="center">ver 5.1.3</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="結果">結果</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">Test</th>
+<th align="center">6-Core 2CCX</th>
+<th align="center">6-Thread 1CCX</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Excel Throughtput (lps)</td>
+<td align="center">24743.5</td>
+<td align="center">24262.5 (-2%)</td>
+</tr>
+
+<tr>
+<td align="left">Process Creation (lps)</td>
+<td align="center">51217.1 (-13%)</td>
+<td align="center">58572.1</td>
+</tr>
+
+<tr>
+<td align="left">Pipe-based Context Switching (lps)</td>
+<td align="center">1734733.0</td>
+<td align="center">1279005.9 (-26%)</td>
+</tr>
+
+<tr>
+<td align="left">Shell Scripts (1 concurrent) (lpm)</td>
+<td align="center">43287.2</td>
+<td align="center">35119.4 (-19%)</td>
+</tr>
+
+<tr>
+<td align="left">Shell Scripts (8 concurrent) (lpm)</td>
+<td align="center">6677.0</td>
+<td align="center">5137.8 (-23%)</td>
+</tr>
+
+<tr>
+<td align="left">Shell Scripts (16 concurrent) (lpm)</td>
+<td align="center">3363.9</td>
+<td align="center">2595.7 (-23%)</td>
+</tr>
+
+<tr>
+<td align="left">m-queens (Solution/s)</td>
+<td align="center">12357498.9</td>
+<td align="center">9799726.6 (-21%)</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="考察">考察</h2>
+
+<p>正直、少し意外な結果だった。あんなメモリを使っているため、CCX間通信のオーバーヘッドが大きく、<em>6-Thread 1CCX</em> のが勝つのではないかと思っていた。<br />
+だが <em>6-Core 2CCX</em> が勝った。やはり物理コアは正義ということか。<br />
+<code>Process Creation</code> のみ <em>6-Thread 1CCX</em> が勝っているが、これはテストがメモリ帯域幅を反映する傾向にあり、メモリ割り当てではCPUのキャッシュが効きにくいため、CCX間通信が発生する <em>6-Core 2CCX</em> の方が遅くなった……ということなのだろうか。<br />
+CPUよりはメモリ帯域、プロセス生成の呼び出しを行なうOS、Kernel部を計測するテストであるため、不適当だったかもしれない。</p>
+
+<p>ただ気をつけたいのは、今回の検証はCCXを跨ぐ場合のオーバーヘッドがどれだけあるかを確かめるのが主であり、SMTの効果の検証ではないということだ。それなら <em>6-Core/6-Thread</em> と <em>6-Core/12-Thread</em> を比較するのが適当だろう。</p>
+
+<p><em>Zen 2</em> アーキテクチャであれば、ロード/ストアユニットの増設、L3キャッシュの増量、同CCD内のCCXでもI/Oダイ経由する、といったことからもう少し違う結果、差となるかもしれない。<br />
+そういった点を踏まえて検証してみたいが、2018年発売のRyzen 5 2600を今になって検証しているのだから、<em>Zen 2</em> を試せるのは来年あたりだろうか。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://linux.die.net/man/1/taskset" rel="noreferrer" target="_blank">taskset(1): retrieve/set process&rsquo;s CPU affinity - Linux man page</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://umio-yasuno.github.io/posts">Posts</a></li><li><a href="https://umio-yasuno.github.io/tags/database">Database</a></li>
+	</ul>
+	</nav><nav class="side-tags">
+		<ul>
+			<li><a href="https://umio-yasuno.github.io/tags" class="tag-title">Tags</a>:</li>
+			<ul>
+			<li><a href="https://umio-yasuno.github.io/tags/ryzen">Ryzen</a></li>
+			</ul>
+		</ul>
+		</nav>
+		<nav class="side-categories">
+		<ul>
+			<li><a href="https://umio-yasuno.github.io/categories" class="categorie-title">Categories</a>:</li>
+			<ul>
+			<li><a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a></li>
+			<li><a href="https://umio-yasuno.github.io/categories/cpu">CPU</a></li>
+			</ul>
+		</ul>
+		</nav>
+	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-13 13:34:49 </div>
+	<div class="side-about"><a href="https://umio-yasuno.github.io/about/">About</a></div>
+</div>
+
+			<link rel="stylesheet" href="https://umio-yasuno.github.io/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://umio-yasuno.github.io/tags" class="tag-title">Tags :</a>
+			<a href="https://umio-yasuno.github.io/tags/ryzen">Ryzen</a>,
+		</nav>
+		<nav class="foot-categories">
+			<a href="https://umio-yasuno.github.io/categories" class="categorie-title">Categories :</a>
+			<a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a>,
+			<a href="https://umio-yasuno.github.io/categories/cpu">CPU</a>,
+		</nav>
+			<a href="https://umio-yasuno.github.io/posts">Posts</a>
+			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-13 13:34:49 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
+	</footer>
+</div>
+<div class="title">
+	<a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a>
+</div>
+</main>
+    </body>
+</html>
