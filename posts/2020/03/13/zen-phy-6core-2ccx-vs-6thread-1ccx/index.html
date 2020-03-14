@@ -247,8 +247,6 @@ h1, h2, h3, h4
 
 <p>lps (Lines Per Second)は1秒あたりの実行回数を表す。</p>
 
-<h2 id="方法">方法</h2>
-
 <h3 id="cpu">CPU</h3>
 
 <p>まず、Ryzen 5 2600のトポロジは以下のようになっている。<br />
@@ -258,22 +256,26 @@ h1, h2, h3, h4
             <h4>Ryzen 5 2600 トポロジ</h4><p>lstopo の実行結果</p>
         </figcaption>
 </figure>
+<br />
+L3キャッシュ 8MBに 3-Core/6-Thread が付く形となり、それがZenアーキテクチャにおけるCCXを構成している。<br />
+Zen/+は本来ならCCXあたり4-Core/8-Threadを構成しているが、Ryzen 5 2600では2CCXそれぞれのCPUコアを1個ずつ無効化し、製品としている。</p>
 
-物理コアに数字を割り振ってから、SMTによる論理コアに割り振っている。<br />
-そしてLinuxでは <code>taskset</code> コマンド<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>で起動中のプロセス、または新たなコマンドを実行するCPUコアを指定することができる。<br />
-Ryzen 5 2600のトポロジを参考にすると、</p>
+<h2 id="方法">方法</h2>
 
-<pre><code>taskset -c 0-5 ./&lt;ベンチマークの実行バイナリ&gt; &lt;コア/スレッド数を指定&gt;
+<p>CPUコアの番号はまず物理コア、SMTによる論理コアの順番に割り振っている。<br />
+そしてLinuxでは <code>taskset</code> コマンド<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>で起動中のプロセス、または新たなコマンドを実行するCPUコアを指定することができ、Ryzen 5 2600のトポロジを参考にすると、</p>
+
+<pre><code>taskset -c 0-5 ./&lt;ベンチマークの実行バイナリ&gt; &lt;6コア/スレッド数を指定&gt;
 </code></pre>
 
 <p>で <em>6-Core 2CCX</em> を、</p>
 
-<pre><code>taskset -c 0-2,6-8 ./&lt;ベンチマークの実行バイナリ&gt; &lt;コア/スレッド数を指定&gt;
+<pre><code>taskset -c 0-2,6-8 ./&lt;ベンチマークの実行バイナリ&gt; &lt;6コア/スレッド数を指定&gt;
 </code></pre>
 
 <p>で <em>6-Thread 1CCX</em> を指定して実行させられる。</p>
 
-<p>また、省電力機能による誤差を減らすため、CPUクロックは3.6GHzで固定して計測を行なった。</p>
+<p>また、省電力機能による誤差を減らすため、CPUクロックは3.6GHzで固定して計測を行なう。</p>
 
 <h3 id="ベンチマークソフト">ベンチマークソフト</h3>
 
@@ -466,54 +468,6 @@ N(クイーンの数)は17とし、計測結果5回の平均をスコアとす�
 </tbody>
 </table>
 
-<table>
-<thead>
-<tr>
-<th align="left">sysbench mutex (64threads)</th>
-<th align="center">6-Core 2CCX</th>
-<th align="center">6-Thread 1CCX</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td align="left">events/s (eps)</td>
-<td align="center">21.2456</td>
-<td align="center">21.2207</td>
-</tr>
-
-<tr>
-<td align="left">Latency (ms)</td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-
-<tr>
-<td align="left">&emsp;&emsp;min</td>
-<td align="center">1602.09</td>
-<td align="center">2318.88</td>
-</tr>
-
-<tr>
-<td align="left">&emsp;&emsp;avg</td>
-<td align="center">2842.96</td>
-<td align="center">2902.36</td>
-</tr>
-
-<tr>
-<td align="left">&emsp;&emsp;max</td>
-<td align="center">3000.67</td>
-<td align="center">2997.10</td>
-</tr>
-
-<tr>
-<td align="left">&emsp;95th percentile</td>
-<td align="center">2985.89</td>
-<td align="center">2985.89</td>
-</tr>
-</tbody>
-</table>
-
 <h2 id="考察">考察</h2>
 
 <p>正直、少し意外な結果だった。あんなメモリを使っているため、CCX間通信のオーバーヘッドが大きく、<em>6-Thread 1CCX</em> のが勝つのではないかと思っていた。レイテンシだけではなく一部性能でももしかしたらと。<br />
@@ -574,7 +528,7 @@ CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの�
 			</ul>
 		</ul>
 		</nav>
-	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-14 15:12:43 </div>
+	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-14 19:21:46 </div>
 	<div class="side-about"><a href="https://umio-yasuno.github.io/about/">About</a></div>
 </div>
 
@@ -592,7 +546,7 @@ CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの�
 			<a href="https://umio-yasuno.github.io/categories/cpu">CPU</a>,
 		</nav>
 			<a href="https://umio-yasuno.github.io/posts">Posts</a>
-			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-14 15:12:43 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
+			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-14 19:21:46 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
 	</footer>
 </div>
 <div class="title">
