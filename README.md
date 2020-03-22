@@ -1,13 +1,13 @@
 # umio-yasuno.github.io
 
 ## このサイトについて
+[About | Coelacanth's Dream](https://umio-yasuno.github.io/about/)
 <img src="/image/site-image.png" style="width:32%; float:left; margin:.3em .5em 0 0">
+![sleeping coelacanth](/image/site-image.png)
 個人的にまとめたハードウェア系の情報や”推測”を公開するブログ的なもの。  
 ネット上で広まっている噂やリーク情報に関する推測を書いたりもすると思いますが、私からリークすることはありません。<span class="hide">たぶん</span>  
 情報元は主にDRMやMesa3Dへのパッチ、Githubのリポジトリ、公式資料。  
 知識はAMD CPU/GPUに偏っています。Intel CPU/GPUは少しだけ。NVIDIAはさっぱり。  
-
-<div style="clear:left"></div>
 
 ### オープンソース
 
@@ -39,12 +39,6 @@
 
 あくまで上記はポリシーであり、別段強制力は持ちません。過去記事に思い切りポリシーから外れているようなのがあるし。ポリシー変更によって記事を削除することは（たぶん）ない。  
 
-<address>
-連絡先:  
-&emsp;Github: [Issues · Umio-Yasuno/umio-yasuno.github.io](https://github.com/Umio-Yasuno/umio-yasuno.github.io/issues)  
-&emsp;Mail: <span class="mail"></span>
-</address>
-<br>
 ハードウェア系の文章に関するお仕事募集中。  
 
 <!--
@@ -61,3 +55,4 @@ Tread softly because you tread on my dreams.
 
 W. B. Yeats
 -->
+
