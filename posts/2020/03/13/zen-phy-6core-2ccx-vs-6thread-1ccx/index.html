@@ -29,10 +29,19 @@ html
 		background-image: radial-gradient(farthest-corner, #2F4F4F 88%, #172727 95%, #040707 100%);
 		font-size: 4vw;
 }
+main
+	{	display: grid;
+		grid-template-columns: 1em 2em auto 1.5em;
+		grid-template-rows: repeat(3, auto);
+		row-gap: 1em;
+}
+header
+	{	grid-row: 2 / 3;
+		grid-column: 3 / 4;
+}
 .title
 	{	font: normal 1.6em monospace;
 		text-decoration: none;
-		padding: 1em 7vw 1.2em 0;
 		text-align: end;
 }
 	.title a
@@ -73,6 +82,8 @@ a
 		line-height: 1.6em;
 		word-wrap: break-word;
 		text-justify: inter-character;
+		grid-row: 3;
+		grid-column: 1 / 5;
 
 		scrollbar-width: thin;
 		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
@@ -107,6 +118,10 @@ h1, h2, h3, h4
 .foot, .side
 	{	display: none;
 }
+.foot
+	{	grid-row: 4;
+		grid-column: 1 / 5;
+}
 @media (min-width: 840px)
 	{	main
 			{	display: grid;
@@ -116,8 +131,8 @@ h1, h2, h3, h4
 		}
 		.text
 			{	grid-column: 3 / 4;
-				grid-row: 2 / 5;
-				padding: 0 0 8% 2vw;
+				grid-row: 1 / 5;
+				padding: 1em 0 8% 2vw;
 		}
 		header > .title
 			{	display: none;
@@ -134,7 +149,7 @@ h1, h2, h3, h4
 				font-size: 1em;
 				color: lime;
 				z-index: 101;
-				transform: translateZ(0);
+
 
 				overflow: scroll;
 				scrollbar-width: thin;
@@ -146,6 +161,57 @@ h1, h2, h3, h4
 					width: 100%;
 					font: normal 1.6em monospace;
 			}
+		.side-pagination
+			{	display: grid;
+				margin: 2em 0 2em 1em;
+				font-size: 1.05em;
+				row-gap: .8em;
+				grid-template-rows: repeat(3, 1fr);
+				grid-template-columns: 1em .9fr 2em;
+		}
+		.side-prev
+			{	grid-row: 1;
+				grid-column: 1 / 4;
+				margin-right: auto;
+				color: #9EDEFF;
+		}
+			.side-prev::before
+				{	
+					content: '\2190';
+			}
+		.side-next
+			{	grid-row: 3;
+				grid-column: 1 / 4;
+				margin-left: auto;
+				color: #9EDEFF;
+		}
+			.side-next::after
+				{	
+					content: '\2192';
+					vertical-align: middle;
+			}
+		.side-page-number
+			{	color: lime;
+				font-size: .9em;
+				margin: 0 auto 0 auto;
+				grid-row: 2 / 3;
+				grid-column: 2 / 3;
+		}
+		.side-author, .side-lastmod, .side-about
+			{	padding: .5em 0 0 1em;
+				line-height: 1.4em;
+		}
+		.side li::before
+			{	color: #008080;
+				content: '\25AA';
+				padding: 0;
+		}
+		.side-links ul, .side-tags ul, .side-categories ul
+			{	list-style: none none outside;
+				padding: 0 0 0 1em;
+				color: #7FFFD4;
+				line-height: 1.5em;
+		}
 		.side-pagination
 			{	display: grid;
 				margin: 2em 0 2em 1em;
@@ -479,6 +545,7 @@ N(クイーンの数)は17とし、計測結果5回の平均をスコアとす�
 <p>byte-unixbench では <code>Process Creation</code> のみ <em>6-Thread 1CCX</em> が勝っているが、これはテストがメモリ帯域幅を反映する傾向にあり、メモリ割り当てではCPUのキャッシュが効きにくいため、CCX間通信が発生する <em>6-Core 2CCX</em> の方が遅くなった……ということなのだろうか。<br />
 <a href="https://github.com/akopytov/sysbench" rel="noreferrer" target="_blank">sysbench</a> と <a href="https://github.com/jeffhammond/STREAM" rel="noreferrer" target="_blank">stream</a> でもメモリ帯域を計測したところ、sysbench では <em>6-Thread 1CCX</em> が広いメモリ帯域を示したが、stream では逆に <em>6-Core 2CCX</em> が勝った。<br />
 しかし stream では差が2%程しかなかったのに対し、sysbench は read で約36%、write で約23%の差が見られた。<br />
+また、レイテンシの点では <em>6-Core 2CCX</em> の方が小さい結果となった。<br />
 CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの部分が原因となっているかは今後の課題としたい。<br />
 より転送速度が高いメモリであれば、InfinityFabricの速度も向上するため、その差が縮まるといった結果が見られるかもしれない。</p>
 
@@ -531,7 +598,7 @@ CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの�
 			</ul>
 		</ul>
 		</nav>
-	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-14 19:21:46 </div>
+	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-24 13:45:26 </div>
 	<div class="side-about"><a href="https://umio-yasuno.github.io/about/">About</a></div>
 </div>
 
@@ -541,19 +608,16 @@ CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの�
 	<footer>
 		<nav class="foot-tags">
 			<a href="https://umio-yasuno.github.io/tags" class="tag-title">Tags :</a>
-			<a href="https://umio-yasuno.github.io/tags/ryzen">Ryzen</a>,
+			<a href="https://umio-yasuno.github.io/tags/ryzen">Ryzen</a>,&nbsp;
 		</nav>
 		<nav class="foot-categories">
 			<a href="https://umio-yasuno.github.io/categories" class="categorie-title">Categories :</a>
-			<a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a>,
-			<a href="https://umio-yasuno.github.io/categories/cpu">CPU</a>,
+			<a href="https://umio-yasuno.github.io/categories/hardware">Hardware</a>,&nbsp;
+			<a href="https://umio-yasuno.github.io/categories/cpu">CPU</a>,&nbsp;
 		</nav>
 			<a href="https://umio-yasuno.github.io/posts">Posts</a>
-			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-14 19:21:46 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
+			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-24 13:45:26 </span><div><a href="https://umio-yasuno.github.io/about/">About</a></div>
 	</footer>
-</div>
-<div class="title">
-	<a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a>
 </div>
 </main>
     </body>
