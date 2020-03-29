@@ -32,12 +32,14 @@ html
 main
 	{	display: grid;
 		grid-template-columns: 1em 2em auto 1.5em;
-		grid-template-rows: repeat(3, auto);
+		grid-template-rows: repeat(4, auto);
 		row-gap: 1em;
 }
 header
 	{	grid-row: 2 / 3;
-		grid-column: 3 / 4;
+		grid-column: 1 / 4;
+
+
 }
 .title
 	{	font: normal 1.6em monospace;
@@ -78,7 +80,7 @@ a
 .text
 	{	color: snow;
 		box-sizing: border-box;
-		padding: 0 2vw 0 2vw;
+
 		line-height: 1.6em;
 		word-wrap: break-word;
 		text-justify: inter-character;
@@ -303,7 +305,7 @@ h1, h2, h3, h4
 <li>4-ShaderEngine</li>
 <li>ShaderEngineあたりのRBE (RenderBackend) 数は4基</li>
 <li>〃 のCU (ComputerUnit) 数は16基</li>
-<li>TCC (L2 cache) ブロック数は16基 (ブロックあたり256KB)</li>
+<li>TCC (L2 cache) ブロック数は16基 (ブロックあたり256KB、計4MB)</li>
 </ul>
 
 <p><a href="https://www.x.org/wiki/RadeonFeature/#radeondisplayhardware" rel="noreferrer" target="_blank">RadeonFeature</a>からの情報では、</p>
@@ -342,7 +344,7 @@ h1, h2, h3, h4
 <li>4-ShaderEngine</li>
 <li>ShaderEngineあたりのRBE (RenderBackend) 数は4基</li>
 <li>〃 のCU (ComputerUnit) 数は16基</li>
-<li>TCC (L2 cache) ブロック数は16基 (ブロックあたり256KB)</li>
+<li>TCC (L2 cache) ブロック数は16基 (ブロックあたり256KB、計4MB)</li>
 </ul>
 
 <p><a href="https://www.x.org/wiki/RadeonFeature/#radeondisplayhardware" rel="noreferrer" target="_blank">RadeonFeature</a>からの情報ではこちらも、</p>
@@ -360,10 +362,25 @@ h1, h2, h3, h4
 <a href="http://localhost:1313/posts/2020/01/22/navi10-dieshot-and-guess/" rel="noreferrer" target="_blank">Navi10のダイ観察 &amp; 推測 | Coelacanth&rsquo;s Dream</a><br />
 設計の最適化に掛けた時間にも結構な違いがあったりするのだろうか？</p>
 
+<h2 id="vega10とvega20の比較">Vega10とVega20の比較</h2>
+
+<figure>
+    <img src="https://umio-yasuno.github.io/image/2020/03/24/compare-vega10-vega20.webp"
+         alt="Process: GF 14nm / TSMC 7nm (N7)
+DieSize: 509.73mm2 / 330.93mm2"/> <figcaption>
+            <h4>L: Vega10 / R: Vega20</h4><p>Process: GF 14nm / TSMC 7nm (N7)<br>DieSize: 509.73mm<sup>2</sup> / 330.93mm<sup>2</sup></p>
+        </figcaption>
+</figure>
+
+
+<p><em>Vega20</em> のShaderEngineのサイズが <em>Vega10</em> のほぼ半分になっているところに、TSMC 7nm(N7)移行の効果が見て取れる。</p>
+
 <h2 id="余談">余談</h2>
 
-<p><em>GCN/GFX9</em> 系であり、8-ShaderEngine構成、AGPR増設、8-SDMAといった変更点がコードの記述から確認されている <a href="https://umio-yasuno.github.io/tags/arcturus">Arcturus</a> ではどうなるかは気になる所だが、<br />
-高コスト&amp;一般向けではないことから、公式以外からのダイショット公開は期待できそうにない。</p>
+<p><em>GCN/GFX9</em> 系であり、8-ShaderEngine構成、AGPR増設、8-SDMAといった変更点がコードの記述から確認されている <a href="https://umio-yasuno.github.io/tags/arcturus">Arcturus</a> ではどうなるかは気になる所だが、高コスト&amp;一般向けではないことから、公式以外からのダイショット公開は期待できそうにない。<br />
+<em>Arcturus</em> が8-ShaderEngine / 最大128(120)CUだとして、内部構成はどのようになるのだろう？<br />
+I/OのPHYを抜いた <em>Vega20</em> をそのまま縦に積む形になのだろうか。その場合、L2$、RBE(あるのかはまだ不明だが)の配置と、フロントエンド部(ACE/HWS/GDS/Geometry等)の規模がどうなるか。<br />
+とにもかくにも楽しみだ。</p>
 
 <p>それとお金を稼ぐ手段として、AMDGPUの解説をまとめた同人誌的なものを出す計画を思い付いた。解説範囲はGFX9、GFX10あたり、頑張ってGFX8も、とかだろうか。さすがにGCNアーキテクチャの最初からとなると新しく情報を集めなければならないため、時間がかかり過ぎる。<br />
 実を言うと、興味を持ち始めたのはそう昔ではなく、知識や情報量に自信が持てるのはGFX9からだ。ハードウェア界隈ではまだまだ新人。</p>
@@ -415,7 +432,7 @@ h1, h2, h3, h4
 			</ul>
 		</ul>
 		</nav>
-	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-26 10:34:36 </div>
+	<div class="side-author">Author : Umio Yasuno</div><div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-03-30 01:40:14 </div>
 	<nav class="side-about">
 		<a href="https://umio-yasuno.github.io/about/">About</a>
 		<a href="https://umio-yasuno.github.io/about/#donate">Donate</a>
@@ -440,7 +457,7 @@ h1, h2, h3, h4
 			<a href="https://umio-yasuno.github.io/categories/gpu">GPU</a>,&nbsp;
 		</nav>
 			<a href="https://umio-yasuno.github.io/posts">Posts</a>
-			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-26 10:34:36 </span><nav>
+			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br>&nbsp;<span>Author : Umio Yasuno</span>&ensp;/ <span>Lastmod : 2020-03-30 01:40:14 </span><nav>
 		<a href="https://umio-yasuno.github.io/about/">About</a>
 		<a href="https://umio-yasuno.github.io/about/#donate">Donate</a>
 	</nav>
