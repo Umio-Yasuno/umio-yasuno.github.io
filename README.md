@@ -2,7 +2,6 @@
 
 ## このサイトについて
 [About | Coelacanth's Dream](https://umio-yasuno.github.io/about/)
-<img src="/image/site-image.png" style="width:32%; float:left; margin:.3em .5em 0 0">
 ![sleeping coelacanth](/image/site-image.png)
 個人的にまとめたハードウェア系の情報や”推測”を公開するブログ的なもの。  
 ネット上で広まっている噂やリーク情報に関する推測を書いたりもすると思いますが、私からリークすることはありません。<span class="hide">たぶん</span>  
