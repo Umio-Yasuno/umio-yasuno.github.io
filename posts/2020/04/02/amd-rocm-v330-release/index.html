@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://umio-yasuno.github.io/posts/2020/04/02/amd-rocm-v330-release/"><title>AMD、ROCm v3.3.0 リリース | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="AMD、ROCm v3.3.0 リリース | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="AMD、ROCm v3.3.0 リリース | Coelacanth&#39;s Dream">
+	<meta name="og:type" content="article">
+
+	<meta name="description" content="レポジトリには既に反映されており、インストール可能となっている。 今回も新しいGPUのサポート追加はなく、複数バージョンのインストールが可能となったこと、GPUのプロセス情報表示機能の改">
+	<meta property="og:description" content="レポジトリには既に反映されており、インストール可能となっている。 今回も新しいGPUのサポート追加はなく、複数バージョンのインストールが可能となったこと、GPUのプロセス情報表示機能の改">
+	<meta name="twitter:description" content="レポジトリには既に反映されており、インストール可能となっている。 今回も新しいGPUのサポート追加はなく、複数バージョンのインストールが可能となったこと、GPUのプロセス情報表示機能の改">
+	<meta property="og:image" content="https://umio-yasuno.github.io/image/site-image.png">
+	<meta name="url" content="https://umio-yasuno.github.io/posts/2020/04/02/amd-rocm-v330-release/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="Radeon, ROCm, ">
+
+		<link rel="preload" href="https://umio-yasuno.github.io/css/footer.min.css" as="style">
+		<link rel="preload" href="https://umio-yasuno.github.io/css/page.min.css" as="style">
+<style>
+
+html
+	{	background-size: cover;
+		background-attachment: fixed;
+		background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 95%, #040707 100%);
+		font-size: 1em;
+}
+main
+	{	display: grid;
+		grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+		row-gap: 1em;
+}
+header
+	{	grid-row: 2 / 3;
+		grid-column: 1 / 4;
+}
+.title
+	{	font: normal 1.6em monospace;
+		text-decoration: none;
+		text-align: end;
+}
+	.title a
+		{	color: #6D9CA9;
+			text-shadow: 0 2px .8em #577C87;
+	}
+	.title a:hover
+		{	color: #98B9C2;
+			text-decoration: none;
+			text-shadow: 0 2px 1em #7EA0A9;
+	}
+.page-title, .page-title a
+	{	color: #FFA319;
+		font-size: 1em;
+		line-height: 1.2em;
+		margin: 0;
+}
+	.page-title a:hover,.sect-page a:hover
+		{	text-decoration: underline #CC8214;
+	}
+.tag-title, .categorie-title
+	{	color: #7FFFFF;
+}
+a
+	{	color: #75D1FF;
+		text-decoration: none;
+		padding: 0 .28em 0 .25em;
+		margin: 0;
+		word-break: break-all;
+}
+	a:hover
+		{	text-decoration: underline;
+	}
+.text
+	{	color: snow;
+		box-sizing: border-box;
+		line-height: 1.6em;
+		overflow-wrap: break-word;
+		text-justify: inter-character;
+		grid-area: 3 / 2 / 4 / 5;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+}
+article > p::first-letter
+	{	padding-left: .6em;
+}
+.copyright
+	{	font-size: .9em;
+		padding: 2em 1em 0 0;
+		display: block;
+}
+.foot, .side
+	{	display: none;
+}
+.foot
+	{	grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px)
+	{	main
+			{	display: grid;
+				grid-template: 2em 6em 2em auto / 2em 200px auto;
+		}
+		.text
+			{	grid-area: 1 / 3 / 5 / 3;
+				padding: 1em .5em 8% 1em;
+		}
+		header > .title
+			{	display: none;
+		}
+		.side
+			{	display: block;
+					height: 96vh;
+					width: 200px;
+				position: fixed;
+					top: 1em;
+					left: 24px;
+				padding-right: 1.2em;
+				border-right: 1px solid green;
+				font-size: 1em;
+				color: #00E500;
+				z-index: 101;
+				transform: translateZ(0);
+
+				overflow: scroll;
+				scrollbar-width: thin;
+				scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+		}
+			.side > .title
+				{	text-align: end;
+					padding: 1em 0 0 0;
+					width: 100%;
+					font: normal 1.6em monospace;
+			}
+		.side-pagination
+			{	display: grid;
+				margin: 2em 0 2em 1em;
+				font-size: 1.05em;
+				row-gap: .8em;
+				grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+		}
+		.side-prev
+			{	grid-area: 1 / 1 / 1 / 4;
+				margin-right: auto;
+				color: #9EDEFF;
+		}
+			.side-prev::before
+				{	content: '\2190';
+			}
+		.side-next
+			{	grid-area: 3 / 1 / 3 / 4;
+				margin-left: auto;
+				color: #9EDEFF;
+		}
+			.side-next::after
+				{	content: '\2192';
+					vertical-align: middle;
+			}
+		.side-page-number
+			{	font-size: .9em;
+				grid-area: 2 / 2 / 3 / 3;
+				margin: 0 auto 0 auto;
+		}
+		.side-author, .side-lastmod, .side-about, .side-time
+			{	padding: .5em 0 .5em 0;
+				margin: 0;
+				font-size: .95rem;
+		}
+		.side li::before
+			{	color: #008080;
+				content: '\25AA';
+				padding: 0;
+		}
+		.side-links ul, .side-tags ul, .side-categories ul
+			{	list-style: none none outside;
+				padding: 0 0 0 1em;
+				color: #7FFFD4;
+				line-height: 1.5em;
+		}
+		.side-pagination
+			{	display: grid;
+				margin: 2em 0 2em 1em;
+				font-size: 1.05em;
+				row-gap: .8em;
+				grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+		}
+		.side-prev
+			{	grid-area: 1 / 1 / 1 /4;
+				margin-right: auto;
+				color: #9EDEFF;
+		}
+			.side-prev::before
+				{	content: '\2190';
+			}
+		.side-next
+			{	grid-area: 3 / 1 / 3 / 4;
+				margin-left: auto;
+				color: #9EDEFF;
+		}
+			.side-next::after
+				{	content: '\2192';
+					vertical-align: middle;
+			}
+}
+</style>
+
+			<link rel="stylesheet" href="https://umio-yasuno.github.io/css/page.min.css">
+			<link rel="preload" href="https://umio-yasuno.github.io/css/ins.min.css" as="style">
+		<link rel="icon" href="https://umio-yasuno.github.io/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>AMD、ROCm v3.3.0 リリース</h1>
+	</header><p>レポジトリには既に反映されており、インストール可能となっている。<br />
+今回も新しいGPUのサポート追加はなく、複数バージョンのインストールが可能となったこと、GPUのプロセス情報表示機能の改良<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>、3Dプーリングレイヤーのサポート<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">2</a></sup>、ONNX(Open Neural Network eXchange)のサポート強化が主な変更点となっている。</p>
+
+<p><a href="https://umio-yasuno.github.io/tags/arcturus">Arcturus</a>対応がメインになるであろう ROCm v3.2 を飛ばしての ROCm v3.3 のリリースとなったが<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">3</a></sup>、リリース方式に何か変更があったのだろうか。<br />
+複数バージョンのインストールが可能となったため、新GPU対応版と既存GPUの機能強化版で分ける、といった感じに。<br />
+ROCm v3.2 は <em>Arcturus</em> のテスト版としてリリース、ROCm v3.4 で正式対応といったシナリオも考えられる。</p>
+
+<hr>
+
+<p><span class="reference">参考</span></p>
+
+<ul>
+<li><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-3.3.0#Whats-New-in-This-Release" rel="noreferrer" target="_blank">RadeonOpenCompute/ROCm at roc-3.3.0</a><br />
+
+<ul>
+<li><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-3.3.0#Whats-New-in-This-Release" rel="noreferrer" target="_blank">https://github.com/RadeonOpenCompute/ROCm/tree/roc-3.3.0#Whats-New-in-This-Release</a></li>
+</ul></li>
+</ul>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1">プロセス情報表示が複数のGPUに対応した。<br><a href="https://github.com/RadeonOpenCompute/ROC-smi/commit/feb441259fd933d8cc5224810157d0e9a34af2bf" rel="noreferrer" target="_blank">SMI: Add &mdash;showpidgpus flag to display GPUs used by a PID · RadeonOpenCompute/ROC-smi@feb4412</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:3">これによりResNext3D等の3D畳込みネットワークの実行が可能となった。
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://github.com/ROCmSoftwarePlatform/rocBLAS/pull/983" rel="noreferrer" target="_blank">merge develop into master for ROCm 3.2 Feature complete by amcamd · Pull Request #983 · ROCmSoftwarePlatform/rocBLAS</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://umio-yasuno.github.io/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://umio-yasuno.github.io/posts">Posts</a></li><li><a href="https://umio-yasuno.github.io/tags/database">Database</a></li>
+	</ul>
+	</nav><nav class="side-tags">
+		<ul>
+			<li><a href="https://umio-yasuno.github.io/tags" class="tag-title">Tags</a>:</li>
+			<ul>
+			<li><a href="https://umio-yasuno.github.io/tags/radeon">Radeon</a></li>
+			<li><a href="https://umio-yasuno.github.io/tags/rocm">ROCm</a></li>
+			</ul>
+		</ul>
+		</nav>
+		<nav class="side-categories">
+		<ul>
+			<li><a href="https://umio-yasuno.github.io/categories" class="categorie-title">Categories</a>:</li>
+			<ul>
+			<li><a href="https://umio-yasuno.github.io/categories/software">Software</a></li>
+			</ul>
+		</ul>
+		</nav>
+	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-02 " class="side-time">Post : 2020-04-02 </time>
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-02 15:35:35 </div><nav class="side-about">
+		<a href="https://umio-yasuno.github.io/about/">About</a>
+		<a href="https://umio-yasuno.github.io/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">Copyright &copy; 2019 - 2020 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://umio-yasuno.github.io/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://umio-yasuno.github.io/tags" class="tag-title">Tags :</a>
+			<a href="https://umio-yasuno.github.io/tags/radeon">Radeon</a>,&nbsp;
+			<a href="https://umio-yasuno.github.io/tags/rocm">ROCm</a>,&nbsp;
+		</nav>
+		<nav class="foot-categories">
+			<a href="https://umio-yasuno.github.io/categories" class="categorie-title">Categories :</a>
+			<a href="https://umio-yasuno.github.io/categories/software">Software</a>,&nbsp;
+		</nav>
+			<a href="https://umio-yasuno.github.io/posts">Posts</a>
+			<a href="https://umio-yasuno.github.io/tags/database">Database</a><br><span class="foot-author">Author : Umio Yasuno</span><br><time datetime="2020-04-02 14:52:49 " class="foot-time">Post : 2020-04-02</time>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-02 15:35:35 </span><nav>
+		<a href="https://umio-yasuno.github.io/about/">About</a>
+		<a href="https://umio-yasuno.github.io/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">Copyright &copy; 2019 - 2020 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
