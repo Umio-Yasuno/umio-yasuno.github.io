@@ -2,7 +2,7 @@
 
 ## このサイトについて
 [About | Coelacanth's Dream](https://blog.coelacanth-dream.com/about/)  
-![sleeping coelacanth](/image/site-image.png)  
+![sleeping coelacanth](/image/site-image.webp)  
 個人的にまとめたハードウェア系の情報や”推測”を公開するブログ的なもの。  
 ネット上で広まっている噂やリーク情報に関する推測を書いたりもすると思いますが、私からリークすることはありません。<span class="hide">たぶん</span>  
 情報元は主にDRMやMesa3Dへのパッチ、Githubのリポジトリ、公式資料。  
