@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/04/10/optimize-git-ryzen-1_5x-faster/"><title>SHA-NI命令セットへの対応で最大1.5倍 Git の高速化が可能 | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="SHA-NI命令セットへの対応で最大1.5倍 Git の高速化が可能 | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="SHA-NI命令セットへの対応で最大1.5倍 Git の高速化が可能 | Coelacanth&#39;s Dream">
+	<meta name="og:type" content="article">
+
+	<meta name="description" content="KeyDB の開発者である John Sully氏が、有名なバージョン管理ソフト Git 内の一部を SHA-NI命令セットに対応させることで、Ryzen CPUにおける実行が最大1.5倍高速されたとする記事を投稿し">
+	<meta property="og:description" content="KeyDB の開発者である John Sully氏が、有名なバージョン管理ソフト Git 内の一部を SHA-NI命令セットに対応させることで、Ryzen CPUにおける実行が最大1.5倍高速されたとする記事を投稿し">
+	<meta name="twitter:description" content="KeyDB の開発者である John Sully氏が、有名なバージョン管理ソフト Git 内の一部を SHA-NI命令セットに対応させることで、Ryzen CPUにおける実行が最大1.5倍高速されたとする記事を投稿し">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/04/10/optimize-git-ryzen-1_5x-faster/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="Zen, Zen2, ">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+
+html {
+	background-size: cover;
+	background-attachment: fixed;
+	background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 95%, #040707 100%);
+	font-size: 1em;
+}
+main {
+	display: grid;
+	grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+	row-gap: 1em;
+}
+header {
+	grid-row: 2 / 3;
+	grid-column: 1 / 4;
+}
+.title {
+	font: normal 1.6em monospace;
+	text-decoration: none;
+	text-align: end;
+}
+	.title a {
+		color: #6D9CA9;
+		text-shadow: 0 2px .8em #577C87;
+	}
+	.title a:hover {
+		color: #98B9C2;
+		text-decoration: none;
+		text-shadow: 0 2px 1em #7EA0A9;
+	}
+.page-title, .page-title a {
+	color: #FFA319;
+	font-size: 1em;
+	line-height: 1.2em;
+	margin: 0;
+	padding: 0;
+	max-width: 95%;
+}
+	.page-title a:hover,.sect-page a:hover {
+		text-decoration: underline #CC8214;
+	}
+.tag-title, .categorie-title {
+	color: #7FFFFF;
+}
+a {
+	color: #75D1FF;
+	text-decoration: none;
+	padding: 0 .28em 0 .25em;
+	margin: 0;
+	word-break: break-all;
+}
+	a:hover {
+		text-decoration: underline;
+	}
+.text {
+	color: snow;
+	box-sizing: border-box;
+	line-height: 1.6em;
+	overflow-wrap: break-word;
+	text-justify: inter-character;
+	grid-area: 3 / 2 / 4 / 5;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+}
+article > p::first-letter {
+	padding-left: .6em;
+}
+.copyright {
+	font-size: .9em;
+	padding: 2em 1em 0 0;
+	display: block;
+}
+.foot, .side {
+	display: none;
+}
+.foot {
+	grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+	main {
+		display: grid;
+		grid-template: 2em 6em 2em auto / 2em 200px auto;
+	}
+	.text {
+		grid-area: 1 / 3 / 5 / 3;
+		padding: 1em .5em 8% 1em;
+	}
+	header > .title {
+		display: none;
+	}
+	.side {
+		display: block;
+			height: 96vh;
+			width: 200px;
+		position: fixed;
+			top: 1em;
+			left: 24px;
+		padding-right: 1.2em;
+		border-right: 1px solid green;
+		font-size: 1em;
+		color: #00E500;
+		z-index: 101;
+		transform: translateZ(0);
+
+		overflow: scroll;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+	}
+		.side > .title {
+			text-align: end;
+			padding: 1em 0 0 0;
+			width: 100%;
+			font: normal 1.6em monospace;
+		}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 / 4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+	.side-page-number {
+		font-size: .9em;
+		grid-area: 2 / 2 / 3 / 3;
+		margin: 0 auto 0 auto;
+	}
+	.side-author, .side-lastmod, .side-about, .side-time {
+		padding: .5em 0 .5em 0;
+		margin: 0;
+		font-size: .95rem;
+	}
+	.side li::before {
+		color: #008080;
+		content: '\25AA';
+		padding: 0;
+	}
+	.side-links ul, .side-tags ul, .side-categories ul {
+		list-style: none none outside;
+		padding: 0 0 0 1em;
+		color: #7FFFD4;
+		line-height: 1.5em;
+	}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 /4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+}
+</style>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+			<link rel="preload" href="https://blog.coelacanth-dream.com/css/ins.min.css" as="style">
+		<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>SHA-NI命令セットへの対応で最大1.5倍 Git の高速化が可能</h1>
+	</header>
+
+<p><a href="https://keydb.dev/" rel="noreferrer" target="_blank">KeyDB</a> の開発者である John Sully氏が、有名なバージョン管理ソフト <a href="https://git-scm.com" rel="noreferrer" target="_blank">Git</a> 内の一部を SHA-NI命令セットに対応させることで、Ryzen CPUにおける実行が最大1.5倍高速されたとする記事を投稿した。</p>
+
+<p><a href="https://docs.keydb.dev/blog/2020/04/08/blog-post/" rel="noreferrer" target="_blank">Optimizing Git For Ryzen CPUs (1.5x Faster) ·</a></p>
+
+<h2 id="sha-ni命令セット">SHA-NI命令セット</h2>
+
+<p>2017年に登場し、ハードウェア業界に新たな風を吹き込んだ <em>Zenアーキテクチャ</em> の特徴の1つとして、SHA-NI命令セットをサポートしているというものがある。<br />
+<em>SHA</em> は <em>Secure Hash Algorithm</em> 、<em>NI</em> は <em>New Instruction</em> の略であり、その名の通り暗号化を高速に行なうために用いられる。</p>
+
+<p>現行で対応しているCPUは、<em>Hygon</em> を除く<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>、<em>AMD Zen</em> 、<em>AMD Zen 2</em> アーキテクチャベースのCPU、(Ryzen、Threadripper、EPYC)<br />
+<em>Intel Sunny Cove</em> アーキテクチャベースの <em>Ice Lake (Client)</em> だけとなる。<br />
+製品が未登場ではあるが対応していることが確認されているCPUは、<em>Ice Lake (Server)</em> 、<em>Tiger Lake</em> 。<br />
+キャンセルされてしまった <em>Cannon Lake</em> も対応していた。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+
+<p>このように対応しているCPUはまだ少なく、シェアを大きく占める Intel CPU では、対応したサーバ向け、デスクトップ向けCPUが出ていないということもあり、ソフトウェア側の対応はまだ進んでいないとされている。</p>
+
+<h2 id="対応により最大1-5倍の高速化">対応により最大1.5倍の高速化</h2>
+
+<p>そんな中、John Sully氏はソフトウェアを SHA-NI命令セットに対応させることで、Ryzen CPUはより優れた性能を発揮できるのではないかと考え、Git への実装に至った。</p>
+
+<p>Git はバージョン管理にSHA-1によりハッシュ値を用いるため<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup>、理論上ではSHA-NI命令セットへの対応、最適化によって一部操作の高速化が期待できる。<br />
+結果、Linuxのレポジトリにおいては、1GBのファイルを追加する <code>git add</code> コマンドで 1.5倍、<br />
+ローカルのブランチ、コミットを切り替える <code>git checkout</code> コマンドで 1.06倍、内部データベースのエラー、整合性をチェックする <code>git fsck</code> コマンドで 1.4倍の高速化が確認された。<br />
+巨大なファイルを取り扱う処理で効果が顕著に見られるようだ。<br />
+一方で、新たなブランチを追加する <code>git merge</code>、単純にGitリポジトリを複製する <code>git clone</code> コマンドでは、SHA-NI命令セット対応前の結果とほぼ変わらないものとなった。</p>
+
+<p>John Sully氏はディスクI/Oがボトルネックとなっていなければ、他のコマンドでも性能の改善が見込めると考えている。<br />
+実際、先の <code>git clone</code> の結果もLinux Kernelのリポジトリは巨大であるため、ディスクI/Oがボトルネックになっていたものと思われる。</p>
+
+<p>新しい機能、命令への対応により、一部ユーザは確かにその恩恵を得られるが、やはりその裏でほとんど得られないユーザも存在する。そこでは得られる(シェア)に対するコスト効率という考えが働くが、John Sully氏は Git のような大規模なソフトウェアに数時間で高速化を成し遂げた。<br />
+氏はAMD EPYCがデータセンタに広く採用され、それによって Zenアーキテクチャへの最適化が為されたソフトウェアが増えることを期待し、<br />
+そして、氏が変更した Git は <a href="https://github.com/JohnSully/git" rel="noreferrer" target="_blank">https://github.com/JohnSully/git</a> に公開しているが、これはデモンストレーション用のプロトタイプであり、本番環境に使用することはまだお勧めしないとして、記事を締めている。</p>
+
+<hr>
+<div class="reference">
+<h2 class="ref-title">参考リンク</h2>
+<ul>
+<li><a href="https://software.intel.com/en-us/ipp-crypto-reference-one-way-hash-primitives" rel="noreferrer" target="_blank">One-Way Hash Primitives</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://www.anandtech.com/show/15493/hygon-dhyana-reviewed-chinese-x86-cpus-amd/2" rel="noreferrer" target="_blank">Our Hygon Systems: 8-core Dhyana and dual 32-core Dhyana Plus &ndash; Testing a Chinese x86 CPU: A Deep Dive into Zen-based Hygon Dhyana Processors</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html" rel="noreferrer" target="_blank">x86 Options (Using the GNU Compiler Collection (GCC))</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://git-scm.com/book/ja/v2/Git-%E3%81%AE%E3%81%95%E3%81%BE%E3%81%96%E3%81%BE%E3%81%AA%E3%83%84%E3%83%BC%E3%83%AB-%E3%83%AA%E3%83%93%E3%82%B8%E3%83%A7%E3%83%B3%E3%81%AE%E9%81%B8%E6%8A%9E" rel="noreferrer" target="_blank">Git &ndash; リビジョンの選択</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Posts</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav><nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags</a>:</li>
+			<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags/zen">Zen</a></li>
+			<li><a href="https://blog.coelacanth-dream.com/tags/zen2">Zen2</a></li>
+			</ul>
+		</ul>
+		</nav>
+		<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories</a>:</li>
+			<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories/software">Software</a></li>
+			</ul>
+		</ul>
+		</nav>
+	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-10 " class="side-time">Post : 2020-04-10 </time>
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-10 13:05:21 </div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">Copyright &copy; 2019 - 2020 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags :</a>
+			<a href="https://blog.coelacanth-dream.com/tags/zen">Zen</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/zen2">Zen2</a>,&nbsp;
+		</nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/software">Software</a>,&nbsp;
+		</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-10 10:56:35 " class="foot-time">Post : 2020-04-10</time>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-10 13:05:21 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">Copyright &copy; 2019 - 2020 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
