@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/04/12/vega12-chromebook/"><title>Vega12を搭載したChromebookが開発中か | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="Vega12を搭載したChromebookが開発中か | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="Vega12を搭載したChromebookが開発中か | Coelacanth&#39;s Dream">
+	<meta name="og:type" content="article">
+
+	<meta name="description" content="ChromiumOSへのパッチから、ボード Mushu がdGPUに Vega12 を搭載することがわかった。1 Vega12 GFX CoreはGFX9であり、名の通り正真正銘 Vega世代のGPU。 GPUの構成としては、4-Sh">
+	<meta property="og:description" content="ChromiumOSへのパッチから、ボード Mushu がdGPUに Vega12 を搭載することがわかった。1 Vega12 GFX CoreはGFX9であり、名の通り正真正銘 Vega世代のGPU。 GPUの構成としては、4-Sh">
+	<meta name="twitter:description" content="ChromiumOSへのパッチから、ボード Mushu がdGPUに Vega12 を搭載することがわかった。1 Vega12 GFX CoreはGFX9であり、名の通り正真正銘 Vega世代のGPU。 GPUの構成としては、4-Sh">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/04/12/vega12-chromebook/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="Vega12, Chromebook, ">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+
+html {
+	background-size: cover;
+	background-attachment: fixed;
+	background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 95%, #040707 100%);
+	font-size: 1em;
+}
+main {
+	display: grid;
+	grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+	row-gap: 1em;
+}
+header {
+	grid-row: 2 / 3;
+	grid-column: 1 / 4;
+}
+.title {
+	font: normal 1.6em monospace;
+	text-decoration: none;
+	text-align: end;
+}
+	.title a {
+		color: #6D9CA9;
+		text-shadow: 0 2px .8em #577C87;
+	}
+	.title a:hover {
+		color: #98B9C2;
+		text-decoration: none;
+		text-shadow: 0 2px 1em #7EA0A9;
+	}
+.page-title, .page-title a {
+	color: #FFA319;
+	font-size: 1em;
+	line-height: 1.2em;
+	margin: 0;
+	padding: 0;
+	max-width: 95%;
+}
+	.page-title a:hover,.sect-page a:hover {
+		text-decoration: underline #CC8214;
+	}
+.tag-title, .categorie-title {
+	color: #7FFFFF;
+}
+a {
+	color: #75D1FF;
+	text-decoration: none;
+	padding: 0 .28em 0 .25em;
+	margin: 0;
+	word-break: break-all;
+}
+	a:hover {
+		text-decoration: underline;
+	}
+.text {
+	color: snow;
+	box-sizing: border-box;
+	line-height: 1.6em;
+	overflow-wrap: break-word;
+	text-justify: inter-character;
+	grid-area: 3 / 2 / 4 / 5;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+}
+article > p::first-letter {
+	padding-left: .6em;
+}
+.copyright {
+	font-size: .9em;
+	padding: 2em 1em 0 0;
+	display: block;
+}
+.foot, .side {
+	display: none;
+}
+.foot {
+	grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+	main {
+		display: grid;
+		grid-template: 2em 6em 2em auto / 2em 200px auto;
+	}
+	.text {
+		grid-area: 1 / 3 / 5 / 3;
+		padding: 1em .5em 8% 1em;
+	}
+	header > .title {
+		display: none;
+	}
+	.side {
+		display: block;
+			height: 96vh;
+			width: 200px;
+		position: fixed;
+			top: 1em;
+			left: 24px;
+		padding-right: 1.2em;
+		border-right: 1px solid green;
+		font-size: 1em;
+		color: #00E500;
+		z-index: 101;
+		transform: translateZ(0);
+
+		overflow: scroll;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+	}
+		.side > .title {
+			text-align: end;
+			padding: 1em 0 0 0;
+			width: 100%;
+			font: normal 1.6em monospace;
+		}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 / 4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+	.side-page-number {
+		font-size: .9em;
+		grid-area: 2 / 2 / 3 / 3;
+		margin: 0 auto 0 auto;
+	}
+	.side-author, .side-lastmod, .side-about, .side-time {
+		padding: .5em 0 .5em 0;
+		margin: 0;
+		font-size: .95rem;
+	}
+	.side li::before {
+		color: #008080;
+		content: '\25AA';
+		padding: 0;
+	}
+	.side-links ul, .side-tags ul, .side-categories ul {
+		list-style: none none outside;
+		padding: 0 0 0 1em;
+		color: #7FFFD4;
+		line-height: 1.5em;
+	}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 /4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+}
+</style>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+			<link rel="preload" href="https://blog.coelacanth-dream.com/css/ins.min.css" as="style">
+		<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>Vega12を搭載したChromebookが開発中か</h1>
+	</header>
+
+<p>ChromiumOSへのパッチから、ボード <em>Mushu</em> がdGPUに <em>Vega12</em> を搭載することがわかった。<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">1</a></sup></p>
+
+<h2 id="vega12">Vega12</h2>
+
+<p>GFX Coreは<a href="https://blog.coelacanth-dream.com/tags/gfx9">GFX9</a>であり、名の通り正真正銘 Vega世代のGPU。<br />
+GPUの構成としては、4-ShaderEngine、総CU数 20基、総RBE数 8基(32 ROP)、L2cache 2MB<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup>。<br />
+メモリにはHBM2を1スタック(1024-bit)使用している。<br />
+<a href="https://blog.coelacanth-dream.com/tags/vega10">Vega10</a>よりも小規模とはいえ確実に <em>GFX9/Vega</em> 世代であることと未だコンシューマ向けGPUでは採用例が少ないHBM2を搭載することから一部で注目と期待を浴びていたが、現在<a href="https://blog.coelacanth-dream.com/tags/vega12">Vega12</a>ベースの製品を組み込んでいるのはMacBook Pro 2018年モデルのみとなっている。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Vega12<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup><sup class="footnote-ref" id="fnref:2"><a href="#fn:2">3</a></sup></th>
+<th align="center"></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">ShaderEngine</td>
+<td align="center">4</td>
+</tr>
+
+<tr>
+<td align="left">Total CU / SP</td>
+<td align="center">20 / 1280</td>
+</tr>
+
+<tr>
+<td align="left">Total TMU</td>
+<td align="center">80</td>
+</tr>
+
+<tr>
+<td align="left">Total ROP</td>
+<td align="center">32</td>
+</tr>
+
+<tr>
+<td align="left">Total L2$</td>
+<td align="center">2 MB</td>
+</tr>
+
+<tr>
+<td align="left">Memory Type<br>/ Bus Width</td>
+<td align="center">HBM2<br>/ 1024-bit</td>
+</tr>
+
+<tr>
+<td align="left">GFX Core</td>
+<td align="center">GFX9</td>
+</tr>
+
+<tr>
+<td align="left">GPU ID</td>
+<td align="center">gfx904</td>
+</tr>
+
+<tr>
+<td align="left">DCE</td>
+<td align="center">v12.0</td>
+</tr>
+
+<tr>
+<td align="left">UVD</td>
+<td align="center">v7.0</td>
+</tr>
+
+<tr>
+<td align="left">VCE</td>
+<td align="center">v4.0</td>
+</tr>
+
+<tr>
+<td align="left">CMOS</td>
+<td align="center">14nm</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="mushu">Mushu</h2>
+
+<p><em>Hatch</em> をベースボードとするIntel CPU搭載のボード。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">4</a></sup><br />
+CPUに関しては、PCHが <em>Cannon Lake PCH</em> とされることから <em>Coffee Lake</em> か <em>Whiskey Lake</em> と考えられる。メモリにDDR4-2666 16Gを想定していることから前者の可能性のが高い。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup><br />
+その他判明している仕様は、ディスプレイ解像度 2400x1600(3:2)<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">1</a></sup>、デュアルファン<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">6</a></sup>。<br />
+バッテリーからして DellのChromebookボードと思われる。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">7</a></sup></p>
+
+<h2 id="嬉しいニュース">嬉しいニュース</h2>
+
+<p><em>Vega12</em> には前から多数のDeviceID、SKUが確認されていたが<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">8</a></sup>、上述したように現在世に出てるのはMacBook Pro 2018に搭載された <strong>Radeon Pro Vega 16</strong> 、<strong>Radeon Pro Vega 20</strong> のみだ。<br />
+それらがまた <em>Mushu</em> に搭載されることとなるか、それとも隠れていた <em>Vega12</em> ベースの製品が出てくるかはまだわからないが、<br />
+<em>Vega12</em> がMacBook Proだけに終わらない、ということは個人的に嬉しいニュースだ。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:4"><a href="https://chromium-review.googlesource.com/c/chromiumos/platform/bmpblk/+/1986097" rel="noreferrer" target="_blank">bmpblk: Add mushu board (Ie0bd4ba4) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+<li id="fn:1"><a href="https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/os/nullDevice/ndDevice.cpp#L854" rel="noreferrer" target="_blank">pal/ndDevice.cpp at dev · GPUOpen-Drivers/pal</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://www.x.org/wiki/RadeonFeature/" rel="noreferrer" target="_blank">RadeonFeature</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/1934468" rel="noreferrer" target="_blank">mb/google/hatch: Add mushu variant (I81b5bf96) · Gerrit Code Review</a><br><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/1934468/9/src/mainboard/google/hatch/variants/mushu/overridetree.cb" rel="noreferrer" target="_blank">https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/1934468/9/src/mainboard/google/hatch/variants/mushu/overridetree.cb</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/1934468" rel="noreferrer" target="_blank">mb/google/hatch: Add mushu variant (I81b5bf96) · Gerrit Code Review</a><br><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/1934468/9/src/mainboard/google/hatch/variants/mushu/overridetree.cb" rel="noreferrer" target="_blank">https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/1934468/9/src/mainboard/google/hatch/variants/mushu/overridetree.cb</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:6"><a href="https://chromium-review.googlesource.com/c/chromiumos/platform/ec/+/2073740" rel="noreferrer" target="_blank">Mushu : add dual fan control by EC (I41ba92ad) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+<li id="fn:7"><a href="https://chromium.googlesource.com/chromiumos/platform/ec/+/refs/heads/master/board/mushu/battery.c#35" rel="noreferrer" target="_blank">board/mushu/battery.c &ndash; chromiumos/platform/ec &ndash; Git at Google</a>
+ <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+<li id="fn:8"><a href="https://blog.coelacanth-dream.com/posts/2019/12/30/did-rid-product-matome-p2/#vega12-gfx904">AMDGPU Database: Device ID/ Revision ID/ Product Name | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Posts</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav><nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags</a>:</li>
+			<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags/vega12">Vega12</a></li>
+			<li><a href="https://blog.coelacanth-dream.com/tags/chromebook">Chromebook</a></li>
+			</ul>
+		</ul>
+		</nav>
+		<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories</a>:</li>
+			<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories/hardware">Hardware</a></li>
+			<li><a href="https://blog.coelacanth-dream.com/categories/amd">AMD</a></li>
+			<li><a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a></li>
+			</ul>
+		</ul>
+		</nav>
+	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-12 " class="side-time">Post : 2020-04-12 </time>
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-12 16:31:36 </div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">Copyright &copy; 2019 - 2020 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags :</a>
+			<a href="https://blog.coelacanth-dream.com/tags/vega12">Vega12</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/chromebook">Chromebook</a>,&nbsp;
+		</nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/hardware">Hardware</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/amd">AMD</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>,&nbsp;
+		</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-12 12:47:09 " class="foot-time">Post : 2020-04-12</time>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-12 16:31:36 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">Copyright &copy; 2019 - 2020 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
