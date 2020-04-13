@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/04/13/rocm-v3_4-optimize-arcturus/"><title>ROCm v3.4 は Arcturus への最適化がメインか | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="ROCm v3.4 は Arcturus への最適化がメインか | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="ROCm v3.4 は Arcturus への最適化がメインか | Coelacanth&#39;s Dream">
+	<meta name="og:type" content="article">
+
+	<meta name="description" content="Tensileから ROCm v3.4 での更新内容が見えてきた。1 Tensileとは、行列演算やN次元のテンソルの縮約、2つの多次元オブジェクトの乗算といった演算のベンチマークに使われるバックエンドラ">
+	<meta property="og:description" content="Tensileから ROCm v3.4 での更新内容が見えてきた。1 Tensileとは、行列演算やN次元のテンソルの縮約、2つの多次元オブジェクトの乗算といった演算のベンチマークに使われるバックエンドラ">
+	<meta name="twitter:description" content="Tensileから ROCm v3.4 での更新内容が見えてきた。1 Tensileとは、行列演算やN次元のテンソルの縮約、2つの多次元オブジェクトの乗算といった演算のベンチマークに使われるバックエンドラ">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta property="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/04/13/rocm-v3_4-optimize-arcturus/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="Radeon, ROCm, Arcturus, gfx908, ">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+
+html {
+	background-size: cover;
+	background-attachment: fixed;
+	background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 95%, #040707 100%);
+	font-size: 1em;
+}
+main {
+	display: grid;
+	grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+	row-gap: 1em;
+}
+header {
+	grid-row: 2 / 3;
+	grid-column: 1 / 4;
+}
+.title {
+	font: normal 1.6em monospace;
+	text-decoration: none;
+	text-align: end;
+}
+	.title a {
+		color: #6D9CA9;
+		text-shadow: 0 2px .8em #577C87;
+	}
+	.title a:hover {
+		color: #98B9C2;
+		text-decoration: none;
+		text-shadow: 0 2px 1em #7EA0A9;
+	}
+.page-title, .page-title a {
+	color: #FFA319;
+	font-size: 1em;
+	line-height: 1.2em;
+	margin: 0;
+	padding: 0;
+	max-width: 95%;
+}
+	.page-title a:hover,.sect-page a:hover {
+		text-decoration: underline #CC8214;
+	}
+.tag-title, .categorie-title {
+	color: #7FFFFF;
+}
+a {
+	color: #75D1FF;
+	text-decoration: none;
+	padding: 0 .28em 0 .25em;
+	margin: 0;
+	word-break: break-all;
+}
+	a:hover {
+		text-decoration: underline;
+	}
+.text {
+	color: snow;
+	box-sizing: border-box;
+	line-height: 1.6em;
+	overflow-wrap: break-word;
+	text-justify: inter-character;
+	grid-area: 3 / 2 / 4 / 5;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+}
+article > p::first-letter {
+	padding-left: .6em;
+}
+.copyright {
+	font-size: .9em;
+	padding: 2em 1em 0 0;
+	display: block;
+}
+.foot, .side {
+	display: none;
+}
+.foot {
+	grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+	main {
+		display: grid;
+		grid-template: 2em 6em 2em auto / 2em 200px auto;
+	}
+	.text {
+		grid-area: 1 / 3 / 5 / 3;
+		padding: 1em .5em 8% 1em;
+	}
+	header > .title {
+		display: none;
+	}
+	.side {
+		display: block;
+			height: 96vh;
+			width: 200px;
+		position: fixed;
+			top: 1em;
+			left: 24px;
+		padding-right: 1.2em;
+		border-right: 1px solid green;
+		font-size: 1em;
+		color: #00E500;
+		z-index: 101;
+		transform: translateZ(0);
+
+		overflow: scroll;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+	}
+		.side > .title {
+			text-align: end;
+			padding: 1em 0 0 0;
+			width: 100%;
+			font: normal 1.6em monospace;
+		}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 / 4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+	.side-page-number {
+		font-size: .9em;
+		grid-area: 2 / 2 / 3 / 3;
+		margin: 0 auto 0 auto;
+	}
+	.side-author, .side-lastmod, .side-about, .side-time {
+		padding: .5em 0 .5em 0;
+		margin: 0;
+		font-size: .95rem;
+	}
+	.side li::before {
+		color: #008080;
+		content: '\25AA';
+		padding: 0;
+	}
+	.side-links ul, .side-tags ul, .side-categories ul {
+		list-style: none none outside;
+		padding: 0 0 0 1em;
+		color: #7FFFD4;
+		line-height: 1.5em;
+	}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 /4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+}
+</style>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+			<link rel="preload" href="https://blog.coelacanth-dream.com/css/ins.min.css" as="style">
+		<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>ROCm v3.4 は Arcturus への最適化がメインか</h1>
+	</header><p><a href="https://github.com/ROCmSoftwarePlatform/Tensile" rel="noreferrer" target="_blank">Tensile</a>から ROCm v3.4 での更新内容が見えてきた。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup><br />
+Tensileとは、行列演算やN次元のテンソルの縮約、2つの多次元オブジェクトの乗算といった演算のベンチマークに使われるバックエンドライブラリを作成するためのツール。</p>
+
+<p>内容としては、行列演算用の命令 MFMA、データ精度 BF16、その他もろもろへの最適化、修正が見られ、<br />
+先2つから ROCm v3.4 は<a href="https://blog.coelacanth-dream.com/tags/arcturus">Arcturus</a>への対応をより進め、性能を引き出すことがメインと考えられる。</p>
+
+<p><em>Arcturus</em> での新機能に対応する ROCm v3.2 を待たず、ROCm v3.3 が不意を打つ形でリリースされたことでリリース形体が分かれた。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+
+<ul>
+<li>ROCm v3.2 &rarr; ROCm v3.4</li>
+<li>ROCm v3.3 &rarr; ROCm v3.5?</li>
+</ul>
+
+<p>と <em>Arcuturs</em> 向けのリリースと一般ユーザー向けのリリースで分けるのか、<br />
+それとも ROCm v3.4 で合流するか。<br />
+ROCm のパッケージには一般ユーザーもそれなりに使うOpenCLドライバも含まれるため、リリース形体を分けることには一応の意味がある。<br />
+また、<em>Zen 4 EPYC Genoa</em> CPU と、時期から <em>CDNA 2</em> GPUを採用すると思われるスーパーコンピューター <strong>El Capitan</strong> ではソフトウェアスタックに ROCm の拡張バージョンを使用するとしており、今後開発を進める上で分けることはありえるはずだ。</p>
+
+<blockquote>
+<p>An enhanced version of the open source ROCm heterogenous programming environment, being developed to tap into the combined performance of AMD CPUs and GPUs, unlocking maximum performance.</p>
+
+<p>引用元: <cite><a href="https://ir.amd.com/news-releases/news-release-details/next-generation-amd-epyctm-cpus-and-radeontm-instinct-gpus" rel="noreferrer" target="_blank">Next-Generation AMD EPYC™ CPUs and Radeon™ Instinct GPUs Enable El Capitan Supercomputer at Lawrence Livermore National Laboratory to Break 2 Exaflops Barrier | Advanced Micro Devices</a></cite></p>
+</blockquote>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://github.com/ROCmSoftwarePlatform/Tensile/pull/922" rel="noreferrer" target="_blank">ROCm 3.4 milestone merge develop into master by zaliu · Pull Request #922 · ROCmSoftwarePlatform/Tensile</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://blog.coelacanth-dream.com/posts/2020/04/02/amd-rocm-v330-release/">AMD、ROCm v3.3.0 リリース | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Posts</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav><nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags</a>:</li>
+			<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags/radeon">Radeon</a></li>
+			<li><a href="https://blog.coelacanth-dream.com/tags/rocm">ROCm</a></li>
+			<li><a href="https://blog.coelacanth-dream.com/tags/arcturus">Arcturus</a></li>
+			<li><a href="https://blog.coelacanth-dream.com/tags/gfx908">gfx908</a></li>
+			</ul>
+		</ul>
+		</nav>
+		<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories</a>:</li>
+			<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories/software">Software</a></li>
+			</ul>
+		</ul>
+		</nav>
+	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-13 " class="side-time">Post : 2020-04-13 </time>
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-13 10:58:48 </div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">Copyright &copy; 2019 - 2020 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags :</a>
+			<a href="https://blog.coelacanth-dream.com/tags/radeon">Radeon</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/rocm">ROCm</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/arcturus">Arcturus</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/gfx908">gfx908</a>,&nbsp;
+		</nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/software">Software</a>,&nbsp;
+		</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-13 09:14:36 " class="foot-time">Post : 2020-04-13</time>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-13 10:58:48 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">Copyright &copy; 2019 - 2020 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
