@@ -30,7 +30,7 @@
 		<link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
 <style>
 html {
-	background-size: 100vw;
+	background-size: cover;
 	background-attachment: fixed;
 	background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 95%, #040707 100%);
 	background-repeat: no-repeat;
@@ -98,7 +98,7 @@ article > p::first-letter {
 }
 .copyright {
 	font-size: .9em;
-	padding: 2em 1em 0 0;
+	padding: 1em 0 0 0;
 	display: block;
 }
 .foot, .side {
@@ -106,14 +106,13 @@ article > p::first-letter {
 }
 .foot {
 	grid-area: 4 / 1 / 5 / 5;
-}
-@media (min-width: 840px) {
+}@media (min-width: 840px) {
 	main {
 		display: grid;
-		grid-template: 2em 6em 2em auto / 2em 200px auto;
+		grid-template: 2em 6em 2em auto / 2em 200px auto;//	grid-template-columns: 2em 200px auto;	grid-template-rows: 2em 6em 2em auto;
 	}
 	.text {
-		grid-area: 1 / 3 / 5 / 3;
+		grid-area: 1 / 3 / 5 / 3;//	grid-row: 1 / 5;	grid-column: 3 / 4;
 		padding: 1em .5em 8% 1em;
 	}
 	header > .title {
@@ -148,28 +147,28 @@ article > p::first-letter {
 		margin: 2em 0 2em 1em;
 		font-size: 1.05em;
 		row-gap: .8em;
-		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;//	grid-template-rows: repeat(3, 1fr);	grid-template-columns: 1em .9fr 2em;
 	}
 	.side-prev {
-		grid-area: 1 / 1 / 1 / 4;
+		grid-area: 1 / 1 / 1 / 4;//	grid-row: 1;	grid-column: 1 / 4;
 		margin-right: auto;
 		color: #9EDEFF;
 	}
 		.side-prev::before {
-			content: '\2190';
+			content: '\2190';//	'\297C'
 		}
 	.side-next {
-		grid-area: 3 / 1 / 3 / 4;
+		grid-area: 3 / 1 / 3 / 4;//	grid-row: 3;	grid-column: 1 / 4;
 		margin-left: auto;
 		color: #9EDEFF;
 	}
 		.side-next::after {
-			content: '\2192';
+			content: '\2192';//	'\297D';
 			vertical-align: middle;
 		}
 	.side-page-number {
 		font-size: .9em;
-		grid-area: 2 / 2 / 3 / 3;
+		grid-area: 2 / 2 / 3 / 3;//	grid-row: 2 / 3;	grid-column: 2 / 3;
 		margin: 0 auto 0 auto;
 	}
 	.side-author, .side-lastmod, .side-about, .side-time {
@@ -193,26 +192,27 @@ article > p::first-letter {
 		margin: 2em 0 2em 1em;
 		font-size: 1.05em;
 		row-gap: .8em;
-		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;//	grid-template-rows: repeat(3, 1fr);	grid-template-columns: 1em .9fr 2em;
 	}
 	.side-prev {
-		grid-area: 1 / 1 / 1 /4;
+		grid-area: 1 / 1 / 1 /4;//	grid-row: 1;	grid-column: 1 / 4;
 		margin-right: auto;
 		color: #9EDEFF;
 	}
 		.side-prev::before {
-			content: '\2190';
+			content: '\2190';//	'\297C'
 		}
 	.side-next {
-		grid-area: 3 / 1 / 3 / 4;
+		grid-area: 3 / 1 / 3 / 4;//	grid-row: 3;	grid-column: 1 / 4;
 		margin-left: auto;
 		color: #9EDEFF;
 	}
 		.side-next::after {
-			content: '\2192';
+			content: '\2192';//	'\297D'
 			vertical-align: middle;
 		}
 }
+
 </style>
 
 			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
@@ -356,8 +356,7 @@ GPU-Zの表示では、PCIe Gen3は8レーン。<br />
 ダイショットから推測したダイアグラムを再配置した、というものであるため、当然正確性には欠けることを留意したい。</p>
 
 <p><em>Vega12</em> が大きくなった理由としては、まず 4-ShaderEngineという構成であることが考えられる。<br />
-言い換えれば、フロントエンド部が占める大きさが <em>Vega10</em> と変わらない。<br />
-総CU数が20基と小規模ながら 4-ShaderEngineとしたのは、コンピュートタスクをより並列に実行し、性能効率を高める目的があったのではないかと思う。</p>
+言い換えれば、<em>Geometry /Rasterizer</em> 、フロントエンド部が占める大きさが <em>Vega10</em> と変わらない。</p>
 
 <p>次に、メモリにHBM2を採用していることが考えられる。<br />
 GDDR系のPHY(物理層)であれば、縦横の比率が大きく、<em>Polaris10</em> のように ShaderEngine をぐるりと囲む配置を取れる<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup>。しかし、HBM2 PHYはGDDR系よりは縦横の比率が小さい。<br />
@@ -414,11 +413,11 @@ GDDR系のPHY(物理層)であれば、縦横の比率が大きく、<em>Polaris
 		</ul>
 		</nav>
 	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-15 " class="side-time">Post : 2020-04-15 </time>
-		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-16 13:50:16 </div><nav class="side-about">
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-18 01:57:04 </div><nav class="side-about">
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
-		<small class="copyright">Copyright &copy; 2019 - 2020 Umio Yasuno</small>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
 </div>
 
 			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
@@ -437,11 +436,11 @@ GDDR系のPHY(物理層)であれば、縦横の比率が大きく、<em>Polaris
 		</nav>
 			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
 			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-15 21:53:34 " class="foot-time">Post : 2020-04-15</time>
-		/ <span class="foot-lastmod">Lastmod : 2020-04-16 13:50:16 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-18 01:57:04 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
-		<small class="copyright">Copyright &copy; 2019 - 2020 Umio Yasuno</small>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
 	</footer>
 </div>
 </main>
