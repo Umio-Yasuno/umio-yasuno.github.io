@@ -328,9 +328,9 @@ article > p::first-letter {
 <p>CPUコア数に関しては若干情報があるのだが、正直怪しいところがある。<br />
 まず<a href="https://github.com/coreboot/coreboot" rel="noreferrer" target="_blank">Coreboot</a>にある <em>Jasper Lake</em> のリファレンスボード、<strong>jasperlake_rvp</strong> の <code>Kconfig</code> は <code>MAX_CPUS</code> の値が <code>8</code> となっている。<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">9</a></sup>このままだと <em>Jasper Lake</em> の最大CPUスレッド数は8、と思われるが、<br />
 <em>Jasper Lake</em> を搭載するChromebookのリファレンスボード、コードネーム <strong>dedede</strong> では <code>MAX_CPUS</code> を <code>4</code> としている。<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">10</a></sup><br />
-どちらを信用するかで言えば、<strong>jasperlake_rvp</strong> には <strong>icelake_rvp</strong> を元にして名前を置き換えた、という経緯があるため、<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">11</a></sup><strong>dedede</strong> に分がある。<em>Ice Lake (Client)</em> の最大CPUスレッド数は8であり、<strong>jasperlake_rvp</strong> はその値をそのまま持ってきた結果と考えられる。<br />
-そういうことで、<em>Jasper Lake</em> は最大4スレッドではないかと個人的に考えている。<br />
-ただそれはあくまでも <strong>dedede</strong> で想定しているスレッド数であり、より多いコア/スレッド数を持つ <em>Jasper Lake</em> が出てくる可能性もある。</p>
+どちらを信用するかで言えば、<strong>jasperlake_rvp</strong> には <strong>icelake_rvp</strong> を元にして名前を置き換えた、という経緯があるため、<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">11</a></sup><strong>dedede</strong> に分がある。<em>Ice Lake (Client)</em> の最大CPUスレッド数は8であり、<strong>jasperlake_rvp</strong> はその値をそのまま持ってきた結果だろう。<br />
+そういうことで、<em>Jasper Lake</em> は最大4スレッドではないかと個人的に考えているが、<br />
+それはあくまでも <strong>dedede</strong> で想定しているスレッド数であり、より多いコア/スレッド数を持つ <em>Jasper Lake</em> が出てくる可能性もある。</p>
 
 <p><em>Jasper Lake</em> はGPUに関連するソフトウェア、<a href="https://github.com/intel/media-driver" rel="noreferrer" target="_blank">intel/media-driver</a> や <a href="https://gitlab.freedesktop.org/mesa/mesa" rel="noreferrer" target="_blank">Mesa3D</a> 等では <em>Elkhart Lake</em> として扱われており、両者の間にGPUの仕様違いは規模以外にないものと思われる。<sup class="footnote-ref" id="fnref:12"><a href="#fn:12">12</a></sup><sup class="footnote-ref" id="fnref:13"><a href="#fn:13">13</a></sup></p>
 
@@ -367,16 +367,16 @@ GPUの機能は同じで、PCHもコードネームこそ違うが、中身と�
 <h2 id="lakefield">Lakefiled</h2>
 
 <p><em>Lakefield</em> は高性能な <em>Sunny Cove</em> ベースのコアと省電力に優れる <em>Tremont</em> ベースのコアを両方併せ持つ非対称ハイブリッドプロセッサであり、<br />
-I/O系を集約し、22nm(P1222)で製造される Base die、CPU、GPU、メモリコントローラを集約した、10nmで製造される Compute dieをFoveros技術で3D積層し、<br />
-DRAMもPOP(Package-on-package)で搭載する、Intelの最新技術が詰め込まれた画期的なSoCでもある。</p>
+I/O系を集約し、22nm(P1222)で製造される Base die、CPU、GPU、メモリコントローラを集約した、10nmで製造される Compute dieをFoveros技術で3D積層する、Intelの最新技術が詰め込まれた画期的なSoCでもある。
+DRAMも積層されるが、それはPOP(Package-on-package)技術による積層となる。</p>
+
+<p>参考: <cite><a href="https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf" rel="noreferrer" target="_blank">https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf</a></cite></p>
 
 <p>ただまだ情報は少なく、CPU関連では先日の Intel 拡張命令リファレンスのアップデートでハイブリッドプロセッサの情報を示すEAXレジスタが追加されたくらいだ。<sup class="footnote-ref" id="fnref:17"><a href="#fn:17">17</a></sup>
-<em>Sunny Cove</em> と <em>Tremont</em> で対応する命令の範囲は異なるが、コンパイラはどのように見ることになるのだろうか。</p>
+<em>Sunny Cove</em> と <em>Tremont</em> で対応する命令の範囲は異なるが、コンパイラやスケジューラはどのように見ることになるのだろうか。</p>
 
 <p>GPUはもう少し明らかにされており、GPUアーキテクチャは <em>Ice Lake /Elkhart Lake /Jasper Lake</em> と同世代の Gen11で、EU数は最大64基、<br />
 メディア関連も Gen11だが、Display Coreは Gen11.5と進んでおり、映像出力数は最大4つ、解像度は最大5k60か4k120となっている。</p>
-
-<p>参考: <cite><a href="https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf" rel="noreferrer" target="_blank">https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf</a></cite></p>
 <div class="footnotes">
 
 <hr />
@@ -450,7 +450,7 @@ DRAMもPOP(Package-on-package)で搭載する、Intelの最新技術が詰め込
 		</ul>
 	</nav>
 	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-20 " class="side-time">Post : 2020-04-20 </time>
-		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-21 01:35:40 </div><nav class="side-about">
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-21 02:01:48 </div><nav class="side-about">
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
@@ -474,7 +474,7 @@ DRAMもPOP(Package-on-package)で搭載する、Intelの最新技術が詰め込
 		</nav>
 			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
 			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-20 14:17:24 " class="foot-time">Post : 2020-04-20</time>
-		/ <span class="foot-lastmod">Lastmod : 2020-04-21 01:35:40 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-21 02:01:48 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
