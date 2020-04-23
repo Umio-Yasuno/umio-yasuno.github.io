@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/04/24/amd-fam17h-ft5-extmodel20h/">
+
+	<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+	<meta name="twitter:card" content="summary"><title>AMD Pollock の x86_Model は &#34;0x20&#34; | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="AMD Pollock の x86_Model は &#34;0x20&#34; | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="AMD Pollock の x86_Model は &#34;0x20&#34; | Coelacanth&#39;s Dream">
+	<meta property="og:type" content="article">
+
+	<meta name="description" content="以前、ややこしいややこしいと書いた Zen APU に関して、Raven2 (Pollock)のx86_Model が 20h となることがわかった。 参考: soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review インデックス x86_Model Pollock の x86_Model は &ldquo;0x20&rdquo;">
+	<meta property="og:description" content="以前、ややこしいややこしいと書いた Zen APU に関して、Raven2 (Pollock)のx86_Model が 20h となることがわかった。 参考: soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review インデックス x86_Model Pollock の x86_Model は &ldquo;0x20&rdquo;">
+	<meta name="twitter:description" content="以前、ややこしいややこしいと書いた Zen APU に関して、Raven2 (Pollock)のx86_Model が 20h となることがわかった。 参考: soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review インデックス x86_Model Pollock の x86_Model は &ldquo;0x20&rdquo;">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/04/24/amd-fam17h-ft5-extmodel20h/">
+	<meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/04/24/amd-fam17h-ft5-extmodel20h/">
+	<link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/04/24/amd-fam17h-ft5-extmodel20h/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="Raven, Picasso, Raven2, Dali, Pollock, Renoir, ">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+	background-size: cover;
+	background-attachment: fixed;
+	background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 95%, #040707 100%);
+	background-repeat: no-repeat;
+	font-size: 1em;
+}
+main {
+	display: grid;
+	grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+	row-gap: 1em;
+}
+header {
+	grid-row: 2 / 3;
+	grid-column: 1 / 4;
+}
+.title {
+	font: normal 1.6em monospace;
+	text-decoration: none;
+	text-align: end;
+}
+	.title a {
+		color: #6D9CA9;
+		text-shadow: 0 2px .8em #577C87;
+	}
+	.title a:hover {
+		color: #98B9C2;
+		text-decoration: none;
+		text-shadow: 0 2px 1em #7EA0A9;
+	}
+.page-title, .page-title a {
+	color: #FFA319;
+	font-size: 1em;
+	line-height: 1.2em;
+	margin: 0;
+	padding: 0;
+	max-width: 95%;
+}
+	.page-title a:hover,.sect-page a:hover {
+		text-decoration: underline #CC8214;
+	}
+.tag-title, .categorie-title {
+	color: #7FFFFF;
+}
+a {
+	color: #75D1FF;
+	text-decoration: none;
+	padding: 0 .28em 0 .25em;
+	margin: 0;
+	word-break: break-all;
+}
+	a:hover {
+		text-decoration: underline;
+	}
+.text {
+	color: snow;
+	box-sizing: border-box;
+	line-height: 1.6em;
+	overflow-wrap: break-word;
+	text-justify: inter-character;
+	grid-area: 3 / 2 / 4 / 5;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+}
+article > p::first-letter {
+	padding-left: .6em;
+}
+.copyright {
+	font-size: .9em;
+	padding: 1em 0 0 0;
+	display: block;
+}
+.foot, .side {
+	display: none;
+}
+.foot {
+	grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+	main {
+		display: grid;
+		grid-template: 2em 6em 2em auto / 2em 200px auto;
+	}
+	.text {
+		grid-area: 1 / 3 / 5 / 3;
+		padding: 1em .5em 8% 1em;
+	}
+	header > .title {
+		display: none;
+	}
+	.side {
+		display: block;
+			height: 96vh;
+			width: 200px;
+		position: fixed;
+			top: 1em;
+			left: 24px;
+		padding-right: 1.2em;
+		border-right: 1px solid green;
+		font-size: 1em;
+		color: #00E500;
+		z-index: 101;
+		transform: translateZ(0);
+
+		overflow: scroll;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+	}
+		.side > .title {
+			text-align: end;
+			padding: 1em 0 0 0;
+			width: 100%;
+			font: normal 1.6em monospace;
+		}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 / 4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+	.side-page-number {
+		font-size: .9em;
+		grid-area: 2 / 2 / 3 / 3;
+		margin: 0 auto 0 auto;
+	}
+	.side-author, .side-lastmod, .side-about, .side-time {
+		padding: .5em 0 .5em 0;
+		margin: 0;
+		font-size: .95rem;
+	}
+	.side li::before {
+		color: #008080;
+		content: '\25AA';
+		padding: 0;
+	}
+	.side-links ul, .side-tags ul, .side-categories ul {
+		list-style: none none outside;
+		padding: 0 0 0 1em;
+		color: #7FFFD4;
+		line-height: 1.5em;
+	}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 /4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+}
+</style>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+			<link rel="preload" href="https://blog.coelacanth-dream.com/css/ins.min.css" as="style">
+		<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>AMD Pollock の x86_Model は &#34;0x20&#34;</h1>
+	</header>
+
+<p>以前、ややこしいややこしいと書いた Zen APU に関して、<a href="https://blog.coelacanth-dream.com/tags/pollock">Raven2 (Pollock)</a>のx86_Model が <code>20h</code> となることがわかった。</p>
+
+<span class="reflink">参考: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2153715" rel="noreferrer" target="_blank">soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review</a></cite></span><br>
+
+
+<h2 id="インデックス">インデックス</h2>
+
+<ul>
+<li><a href="#x86_model">x86_Model</a></li>
+<li><a href="#pollock">Pollock の x86_Model は &ldquo;0x20&rdquo;</a></li>
+</ul>
+
+<h2 id="x86_model">x86_Model</h2>
+
+<p>現在主流の x86-64プロセッサはその判別に Family ID と Model を用いられる。<br />
+基本的に、Family ID は ベースとなるアーキテクチャを、Model はより詳細なプロセッサの種類を表す。<br />
+例で言えば、<strong>Ryzen 5 2600</strong> は Family ID: 0x17、Model: 0x8 となっており、この値は Linux Kernelの温度センサーに関するコードでは <em>Zen+</em> と判別され、<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>GCCでは <code>znver1</code> と判別される。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+
+<p>そして、Linux Kernelの温度センサーに関するコードを読むと、以下のように記述されている。</p>
+
+<blockquote>
+<pre><code> case 0x1:   /* Zen */
+ case 0x8:   /* Zen+ */
+ case 0x11:  /* Zen APU */
+ case 0x18:  /* Zen+ APU */
+</code></pre>
+
+<p>引用元: <cite><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587" rel="noreferrer" target="_blank">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587</a></cite></p>
+</blockquote>
+
+<p>これに従えば、<code>0x18</code> は <em>Zen+ APU</em> 、<a href="https://blog.coelacanth-dream.com/tags/picasso">Picasso</a>となるが、<br />
+<em>Zen APU</em> である<a href="https://blog.coelacanth-dream.com/tags/raven2">Raven2</a>までも x86_Model が <code>0x18</code> となっており、それによって <em>Zen+ APU /Picasso</em> と判別されてしまう――というのを前回記事にした。<br />
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/02/16/raven-family-complex/#cpu">いかに Zen APU は複雑か | Coelacanth&rsquo;s Dream</a></span><br>
+</p>
+
+<h2 id="pollock">Pollock の x86_Model は &ldquo;0x20&rdquo;</h2>
+
+<p>そういうことで <em>Raven2</em> の影が薄いことを勝手に憂いていたが、先日投稿された ChromiumOSのリポジトリにおける Coreboot へのパッチで、<a href="https://blog.coelacanth-dream.com/tags/pollock">Pollock</a>の x86_Model が <code>0x20</code> であることがわかった。</p>
+
+<span class="reflink">参考: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2153715" rel="noreferrer" target="_blank">soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review</a></cite></span><br>
+
+
+<p>コミットメッセージでは <em>FP5ソケット</em> が <code>0x18</code> としているが、これはChromebookに採用される <em>FP5ソケット</em> 搭載のAPUが <em>Raven</em> 以降の <em>Picasso</em> 、<em>Raven2 (Dali)</em> のみであるからと思われる。<br />
+そして、<em>FT5ソケット</em> を <code>0x20</code> としているが、それに搭載するAPUは <em>Raven2 (Pollock)</em> だけとしている。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><br />
+これで 12nm <em>Zen+ APU /Picasso</em> ではなく、14nm <em>Zen APU /Raven2 (Pollock)</em> としっかり判別されるはずだ。</p>
+
+<h3 id="気がかり">気がかり</h3>
+
+<p>気がかりなのは、CPU-Z<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>といったハードウェアの情報を表示するソフトウェアで<em>FT5ソケット</em> <em>Raven2 (Pollock)</em> を見た時、コードネームの項目に表示されるのは <em>Raven2</em> となるか <em>Pollock</em> となるかだ。<br />
+個人的には、<em>Pollock</em> は <em>Raven2</em> のリビジョンの1つというものであるため、<em>Raven2</em> と表示してほしい。</p>
+
+<p>それと、<a href="https://blog.coelacanth-dream.com/tags/dali">Raven2 (Dali)</a>は恐らく <em>Picasso</em> と判別されるままだろう。<br />
+Chromebookには <em>Raven2 (Dali)</em> ベースの <strong>Ryzen 3 3250C</strong> 、<strong>Athlon Silver 3050C</strong> 、 <strong>Athlon Gold 3150C</strong> も採用されるが、これらは数字セグメント的に <em>FP5ソケット</em> に搭載される可能性が高い。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup><br />
+そしてコミットメッセージから x86_Model は <code>0x18</code> となるはずだ。</p>
+
+<p>つまり、<em>AM4ソケット</em> 、<em>FP5ソケット</em> に搭載される <em>Raven2</em> 、<em>Raven2 (Dali)</em> は <em>Picasso</em> と判別され続け、<br />
+<em>FT5ソケット</em> に搭載される <em>Raven2 (Pollock)</em> は正しくそのままに判別される。</p>
+
+<p>やっぱりややこしいままな気も。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L589" rel="noreferrer" target="_blank">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L589</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/i386/cpuinfo.c#L109" rel="noreferrer" target="_blank">https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/i386/cpuinfo.c#L109</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051509" rel="noreferrer" target="_blank">soc/amd/picasso: Add Kconfig option for chip footprint (Ia4663d38) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:4"><a href="https://www.cpuid.com/softwares/cpu-z.html" rel="noreferrer" target="_blank">CPU-Z | Softwares | CPUID</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://www.amd.com/en/products/apu/amd-ryzen-3-3250u#product-specs" rel="noreferrer" target="_blank">AMD Ryzen™ 3 3250U | AMD</a>&emsp;/<a href="https://www.amd.com/en/products/apu/amd-athlon-silver-3050u#product-specs" rel="noreferrer" target="_blank">AMD Athlon™ Silver 3050U | AMD</a>&emsp;/<a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150u#product-specs" rel="noreferrer" target="_blank">AMD Athlon™ Gold 3150U | AMD</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Posts</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav>
+	<nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags</a>:
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/tags/raven">Raven</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/tags/picasso">Picasso</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/tags/raven2">Raven2</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/tags/dali">Dali</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/tags/pollock">Pollock</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/tags/renoir">Renoir</a></li>
+			</ul>
+		</ul>
+	</nav>
+	<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories</a>:
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/categories/hardware">Hardware</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/amd">AMD</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/apu">APU</a></li>
+			</ul>
+		</ul>
+	</nav>
+	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-24 " class="side-time">Post : 2020-04-24 </time>
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-24 02:50:58 </div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags :</a>
+			<a href="https://blog.coelacanth-dream.com/tags/raven">Raven</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/picasso">Picasso</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/raven2">Raven2</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/dali">Dali</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/pollock">Pollock</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/renoir">Renoir</a>,&nbsp;
+		</nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/hardware">Hardware</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/amd">AMD</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/apu">APU</a>,&nbsp;
+		</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-24 01:02:04 " class="foot-time">Post : 2020-04-24</time>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-24 02:50:58 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>

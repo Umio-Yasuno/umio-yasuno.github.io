@@ -15,16 +15,16 @@
 	<meta name="twitter:title" content="いかに Zen APU は複雑か | Coelacanth&#39;s Dream">
 	<meta property="og:type" content="article">
 
-	<meta name="description" content="先日、Chromium OSへのパッチを眺めていたら、Raven2 (Dali, Pollock) を判定するコードの関数名の一部で zen2 が使われていた。 soc/amd/picasso: Add helper functions for finding SOC type (I24b73145) · Gerrit Code Review 当然これは間違いであり、Raven2 (Dali, P">
-	<meta property="og:description" content="先日、Chromium OSへのパッチを眺めていたら、Raven2 (Dali, Pollock) を判定するコードの関数名の一部で zen2 が使われていた。 soc/amd/picasso: Add helper functions for finding SOC type (I24b73145) · Gerrit Code Review 当然これは間違いであり、Raven2 (Dali, P">
-	<meta name="twitter:description" content="先日、Chromium OSへのパッチを眺めていたら、Raven2 (Dali, Pollock) を判定するコードの関数名の一部で zen2 が使われていた。 soc/amd/picasso: Add helper functions for finding SOC type (I24b73145) · Gerrit Code Review 当然これは間違いであり、Raven2 (Dali, P">
+	<meta name="description" content="インデックス Raven2 は Zenベース 前提情報 CPU GPU Device ID アーキテクチャ 製品型番 対策 CPUIDを使う 地道に情報収集 気にしない Raven2 は Zenベース 先日、Chromium OSへのパッチを眺めていたら、Rav">
+	<meta property="og:description" content="インデックス Raven2 は Zenベース 前提情報 CPU GPU Device ID アーキテクチャ 製品型番 対策 CPUIDを使う 地道に情報収集 気にしない Raven2 は Zenベース 先日、Chromium OSへのパッチを眺めていたら、Rav">
+	<meta name="twitter:description" content="インデックス Raven2 は Zenベース 前提情報 CPU GPU Device ID アーキテクチャ 製品型番 対策 CPUIDを使う 地道に情報収集 気にしない Raven2 は Zenベース 先日、Chromium OSへのパッチを眺めていたら、Rav">
 	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
 	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
 	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/02/16/raven-family-complex/">
 	<meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/02/16/raven-family-complex/">
 	<link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/02/16/raven-family-complex/">
 	<meta name="author" content="Umio Yasuno">
-	<meta name="keywords" content="Raven, Renoir, Picasso, Raven2, Dali, Pollock, ">
+	<meta name="keywords" content="Raven, Picasso, Raven2, Dali, Pollock, Renoir, ">
 
 		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
 		<link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
@@ -232,6 +232,33 @@ article > p::first-letter {
 		<h1>いかに Zen APU は複雑か</h1>
 	</header>
 
+<h2 id="インデックス">インデックス</h2>
+
+<ul>
+<li><a href="#raven2-zen-base">Raven2 は Zenベース</a></li>
+<li><a href="#premise">前提情報</a>
+
+<ul>
+<li><a href="#cpu">CPU</a></li>
+<li><a href="#gpu">GPU</a>
+
+<ul>
+<li><a href="#did">Device ID</a></li>
+<li><a href="#arch">アーキテクチャ</a></li>
+</ul></li>
+<li><a href="#product-number">製品型番</a></li>
+</ul></li>
+<li><a href="#measure">対策</a>
+
+<ul>
+<li><a href="#cpuid">CPUIDを使う</a></li>
+<li><a href="#pick">地道に情報収集</a></li>
+<li><a href="#dont-mind">気にしない</a></li>
+</ul></li>
+</ul>
+
+<h2 id="raven2-zen-base">Raven2 は Zenベース</h2>
+
 <p>先日、Chromium OSへのパッチを眺めていたら、<em>Raven2 (Dali, Pollock)</em> を判定するコードの関数名の一部で <em>zen2</em> が使われていた。<br />
 <a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051514" rel="noreferrer" target="_blank">soc/amd/picasso: Add helper functions for finding SOC type (I24b73145) · Gerrit Code Review</a></p>
 
@@ -279,7 +306,7 @@ EPYC 7002シリーズ (Rome)、Ryzen 3000シリーズ (Matisse)、Ryzen Threadri
 
 <p>前置きが少し長くなってしまったが、今回書きたいと思ったのはどれだけ Zen APU がややこしいかについてだ。</p>
 
-<h3 id="前提情報">前提情報</h3>
+<h2 id="premise">前提情報</h2>
 
 <p>Zen CPUとVega GPUを組み合わせた <strong>Zen APU</strong> は既に市場にいくつも存在するが、<br />
 それらを開発コードネームで区別すると、<em>Raven</em> 、<em>Picasso</em> 、<em>Raven2 (Dali /Pollock)</em> 、<em>Renoir</em> の6種類に分けられる。</p>
@@ -416,7 +443,7 @@ x86_model だ。</p>
  case 0x18:  /* Zen+ APU */
 </code></pre>
 
-<p>引用元: <cite><a href="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/hwmon/k10temp.c#n587" rel="noreferrer" target="_blank">k10temp.c\hwmon\drivers &ndash; kernel/git/torvalds/linux.git &ndash; Linux kernel source tree</a></cite></p>
+<p>引用元: <cite><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587" rel="noreferrer" target="_blank">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587</a></cite></p>
 </blockquote>
 
 <p>これが本当にそうなってたらいいのだが、<strong>Zen APU</strong> である <em>Raven2</em> の x86_model までが 0x18 となっている。</p>
@@ -432,7 +459,7 @@ x86_model だ。</p>
 
 <h3 id="gpu">GPU</h3>
 
-<h4 id="device-id">Device ID</h4>
+<h4 id="did">Device ID</h4>
 
 <p>GPUを判別するための Device ID は、<em>Raven</em> に 0x15DD、<em>Picasso</em> に 0x15D8 が割り振られているが、<br />
 <em>Raven2</em> には 0x15DD、0x15D8 の両方が割り振られている。<br />
@@ -464,7 +491,7 @@ contains a *different* device ID, confusing the situation even more.</p>
 <em>Dali, Pollock</em> は Raven2ベースであるため同一IDであることはまだ納得行くが、<br />
 <em>Raven2</em> 自体のDevice IDを <em>Raven, Picasso</em> に被せなかった方が良かったと言える。</p>
 
-<h4 id="アーキテクチャ">アーキテクチャ</h4>
+<h4 id="arch">アーキテクチャ</h4>
 
 <p>前述したように、<em>Raven2、Renoir</em> では <em>Raven、Picasso</em> にGPU部のバグが修正されており、<br />
 GPUアーキテクチャに割り振られる GFX ID は、<em>Raven</em> 、<em>Picasso</em> が <strong>gfx902</strong> 、<br />
@@ -478,7 +505,7 @@ GPUアーキテクチャに割り振られる GFX ID は、<em>Raven</em> 、<em
 というより <em>Picasso</em> と <em>Raven2</em> でGPU部の規模がそれなりに違うため、性能を比較することが難しい。<br />
 LLVMのバージョンが古い場合、<em>Raven2</em> 、<em>Renoir</em> のGPUは <strong>gfx902</strong> として認識されたりもする。</p>
 
-<h3 id="製品型番">製品型番</h3>
+<h3 id="product-number">製品型番</h3>
 
 <p>これは初代Zen APU、Ryzen 5 2400G、Ryzen 3 2200Gが出た時から広くに言われていた。<br />
 型番としてはRyzen 2000シリーズと読めるが、中身は 12nm Zen+ ではなく、14nm Zen だからだ。<br />
@@ -487,9 +514,9 @@ LLVMのバージョンが古い場合、<em>Raven2</em> 、<em>Renoir</em> のGP
 <p>しかしこれは現在進行系で、Ryzen 3000シリーズでAPUでないRyzenは TSMC 7nmプロセス採用と、Zen2アーキテクチャにより、省電力、性能が大きく向上したため、問題として悪化した。<br />
 Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリーズより進んだアーキテクチャ、Zen3となっている、なんて勘違いもたまに見かけたりする。</p>
 
-<h2 id="対策">対策</h2>
+<h2 id="measure">対策</h2>
 
-<h4 id="cpuidを使う">CPUIDを使う</h4>
+<h3 id="cpuid">CPUIDを使う</h3>
 
 <p>CPUID は x86_model のように <em>Picasso</em> と <em>Raven2</em> がごちゃごちゃになっておらず、<br />
 実際にChromium OS内のコードでは CPUID が使われている。<br />
@@ -524,7 +551,7 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
 
 <p><a href="https://github.com/coreboot/coreboot/blob/master/src/soc/amd/picasso/cpu.c#L131" rel="noreferrer" target="_blank">coreboot/cpu.c at master · coreboot/coreboot</a></p>
 
-<h4 id="地道に情報収集">地道に情報収集</h4>
+<h3 id="pick">地道に情報収集</h3>
 
 <p>自分がやっているのがこれ。<br />
 <a href="https://blog.coelacanth-dream.com/posts/2019/12/30/did-rid-product-matome-p2/">AMDGPUのDID、RID、Productのびみょうまとめ Part2 | Coelacanth&rsquo;s Dream</a></p>
@@ -535,7 +562,7 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
 <p>問題点は信頼度と注目度。<br />
 どっちも自分とこのサイトにはない。</p>
 
-<h4 id="気にしない">気にしない</h4>
+<h3 id="dont-mind">気にしない</h3>
 
 <p>複雑に見るから複雑なのだ。</p>
 
@@ -561,11 +588,11 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
 			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags</a>:
 			<ul>
 				<li><a href="https://blog.coelacanth-dream.com/tags/raven">Raven</a></li>
-				<li><a href="https://blog.coelacanth-dream.com/tags/renoir">Renoir</a></li>
 				<li><a href="https://blog.coelacanth-dream.com/tags/picasso">Picasso</a></li>
 				<li><a href="https://blog.coelacanth-dream.com/tags/raven2">Raven2</a></li>
 				<li><a href="https://blog.coelacanth-dream.com/tags/dali">Dali</a></li>
 				<li><a href="https://blog.coelacanth-dream.com/tags/pollock">Pollock</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/tags/renoir">Renoir</a></li>
 			</ul>
 		</ul>
 	</nav>
@@ -574,12 +601,13 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
 			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories</a>:
 			<ul>
 				<li><a href="https://blog.coelacanth-dream.com/categories/hardware">Hardware</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/amd">AMD</a></li>
 				<li><a href="https://blog.coelacanth-dream.com/categories/apu">APU</a></li>
 			</ul>
 		</ul>
 	</nav>
 	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-02-16 " class="side-time">Post : 2020-02-16 </time>
-		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-02-26 11:57:07 </div><nav class="side-about">
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-24 01:19:47 </div><nav class="side-about">
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
@@ -593,20 +621,21 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
 		<nav class="foot-tags">
 			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags :</a>
 			<a href="https://blog.coelacanth-dream.com/tags/raven">Raven</a>,&nbsp;
-			<a href="https://blog.coelacanth-dream.com/tags/renoir">Renoir</a>,&nbsp;
 			<a href="https://blog.coelacanth-dream.com/tags/picasso">Picasso</a>,&nbsp;
 			<a href="https://blog.coelacanth-dream.com/tags/raven2">Raven2</a>,&nbsp;
 			<a href="https://blog.coelacanth-dream.com/tags/dali">Dali</a>,&nbsp;
 			<a href="https://blog.coelacanth-dream.com/tags/pollock">Pollock</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/renoir">Renoir</a>,&nbsp;
 		</nav>
 		<nav class="foot-categories">
 			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories :</a>
 			<a href="https://blog.coelacanth-dream.com/categories/hardware">Hardware</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/amd">AMD</a>,&nbsp;
 			<a href="https://blog.coelacanth-dream.com/categories/apu">APU</a>,&nbsp;
 		</nav>
 			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
 			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-02-16 02:32:47 " class="foot-time">Post : 2020-02-16</time>
-		/ <span class="foot-lastmod">Lastmod : 2020-02-26 11:57:07 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-24 01:19:47 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
