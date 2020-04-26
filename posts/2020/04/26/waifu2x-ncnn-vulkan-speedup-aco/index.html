@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">
+
+	<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+	<meta name="twitter:card" content="summary"><title>RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth&#39;s Dream">
+	<meta property="og:type" content="article">
+
+	<meta name="description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 課題 最適化で Radeon はさらに輝く ACOとは オ">
+	<meta property="og:description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 課題 最適化で Radeon はさらに輝く ACOとは オ">
+	<meta name="twitter:description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 課題 最適化で Radeon はさらに輝く ACOとは オ">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">
+	<meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">
+	<link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="ACO, GCN, ">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+	background-size: cover;
+	background-attachment: fixed;
+	background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+	background-repeat: no-repeat;
+	font-size: 1em;
+}
+main {
+	display: grid;
+	grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+	row-gap: 1em;
+}
+header {
+	grid-row: 2 / 3;
+	grid-column: 1 / 4;
+}
+.title {
+	font: normal 1.6em monospace;
+	text-decoration: none;
+	text-align: end;
+}
+	.title a {
+		color: #6D9CA9;
+		text-shadow: 0 2px .8em #577C87;
+	}
+	.title a:hover {
+		color: #98B9C2;
+		text-decoration: none;
+		text-shadow: 0 2px 1em #7EA0A9;
+	}
+.page-title, .page-title a {
+	color: #FFA319;
+	font-size: 1em;
+	line-height: 1.2em;
+	margin: 0;
+	padding: 0;
+	max-width: 95%;
+}
+	.page-title a:hover,.sect-page a:hover {
+		text-decoration: underline #CC8214;
+	}
+.tag-title, .categorie-title {
+	color: #7FFFD4;
+}
+a {
+	color: #75D1FF;
+	text-decoration: none;
+	padding: 0 .28em 0 .25em;
+	margin: 0;
+	word-break: break-all;
+}
+	a:hover {
+		text-decoration: underline;
+	}
+.text {
+	color: snow;
+	box-sizing: border-box;
+	line-height: 1.6em;
+	overflow-wrap: break-word;
+	text-justify: inter-character;
+	grid-area: 3 / 2 / 4 / 5;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+	letter-spacing: .03em;
+}
+article > p::first-letter {
+	padding-left: .6em;
+}
+.copyright {
+	font-size: .9em;
+	padding: 1em 0 0 0;
+	display: block;
+}
+.foot, .side {
+	display: none;
+}
+.foot {
+	grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+	main {
+		display: grid;
+		grid-template: 2em 6em 2em auto / 2em 200px auto;
+	}
+	.text {
+		grid-area: 1 / 3 / 5 / 3;
+		padding: 1em .5em 8% 1em;
+	}
+	header > .title {
+		display: none;
+	}
+	.side {
+		display: block;
+			height: 96vh;
+			width: 200px;
+		position: fixed;
+			top: 1em;
+			left: 24px;
+		padding-right: 1.2em;
+		border-right: 1px solid green;
+		font-size: 1em;
+		color: #00E500;
+		z-index: 101;
+		transform: translateZ(0);
+
+		overflow: scroll;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+	}
+		.side > .title {
+			text-align: end;
+			padding: 1em 0 0 0;
+			width: 100%;
+			font: normal 1.6em monospace;
+		}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 / 4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+	.side-page-number {
+		font-size: .9em;
+		grid-area: 2 / 2 / 3 / 3;
+		margin: 0 auto 0 auto;
+	}
+	.side-author, .side-lastmod, .side-about, .side-time {
+		padding: .5em 0 .5em 0;
+		margin: 0;
+		font-size: .95rem;
+	}
+	.side li::before {
+		color: #008080;
+		content: '';
+	
+		padding: 0;
+		margin: 0;
+		font-size: 1rem;
+	}
+	.side li ul {
+		padding: 0 0 0 .7em;
+	}
+	.side-tag-lower, .side-categorie-lower {
+	
+		padding: 0 1em 0 0;
+	}
+		.side-tags li li::before, .side-categories li li::before {
+			content: '\2514';
+			vertical-align: sub;
+			padding: 0 .2em 0 0;
+			color: #4C997F;
+			font-size: 1.2em;
+		}
+	.side-links a:hover, .side-tags a:hover, .side-categories a:hover {
+		text-decoration: none;
+		border-bottom: 1px solid #65CCA9;
+	}
+	.side-links ul, .side-tags ul, .side-categories ul {
+		list-style: none none outside;
+		padding: 0 0 0 1em;
+		color: #65CCA9;
+		line-height: 1.5em;
+	}
+	.tag-title, .categorie-title, .side-links a {
+		border-bottom: 2px solid #326654;
+		padding: 0 1em .1em .3em;
+		margin-bottom: 1em;
+	}
+}
+</style>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+			<link rel="preload" href="https://blog.coelacanth-dream.com/css/ins.min.css" as="style">
+		<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に</h1>
+	</header>
+
+<p>Radeonの性能をさらに引き出す <em>ACO</em> だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。</p>
+
+<h2 id="インデックス">インデックス</h2>
+
+<ul>
+<li><a href="#aco">ACOとは</a></li>
+<li><a href="#waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan</a></li>
+<li><a href="#env">環境</a>
+
+<ul>
+<li><a href="#how">計測方法</a></li>
+</ul></li>
+<li><a href="#result">結果</a>
+
+<ul>
+<li><a href="#guess">推測</a></li>
+<li><a href="#issue">課題</a></li>
+</ul></li>
+<li><a href="#shinning-radeon">最適化で Radeon はさらに輝く</a></li>
+</ul>
+
+<h2 id="aco">ACOとは</h2>
+
+<p>オープンソースのAMDGPU向けVulkanドライバー、RADVの新たなシェーダーコンパイラバックエンド。<br />
+<em>ACO</em> の IR(Intermediate Representaions, 中間言語)<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">1</a></sup>は完全に SSA(Static Single Assignment form, 静的単一代入)<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>ベースであり、<br />
+レジスタ割り付けも SSA で行なうため、シェーダーのレジスタ要求を正確に事前計算することができる。<br />
+Just-in-timeコンパイルを念頭に置いてに記述されており、反復の速いデータ構造を使用している。<br />
+記述言語は C++。</p>
+
+<p>RADV はそれまで<a href="https://llvm.org/" rel="noreferrer" target="_blank">LLVM</a>をバックエンドに採用していたが、<em>LLVM</em> のプロジェクト規模は大きく、シェーダーコンパイラバックエンドとして使う上で何かしらの問題が発覚し、修正を行なったとしてもそれがリリースサイクルに乗るまでは時間がかかる。<br />
+バックエンドを別に開発することでそれを避けられるというのが利点の1つであり、また積極的な &ldquo;DivergenceAnalysis&rdquo; の実装と正確なレジスタ割り付けにより、効率的なバイナリの生成を <em>ACO</em> は可能とする。<br />
+(DivergenceAnalysis: 発散分析? SIMD実行モデルにおける性能低下原因となる条件分岐を最適化する手法。日本語の文献が見つけられなかったため、この解説はかなり怪しい。)</p>
+
+<p><a href="https://xdc2019.x.org/event/5/" rel="noreferrer" target="_blank">X.Org Developer&rsquo;s Conference 2019</a>での発表スライドでは、<em>LLVM</em> から使用するレジスタ量は若干増えたが、レジスタあふれの頻度はスカラレジスタで -95.91%、ベクタレジスタで -100.00%(!)とかなり減り、Waveも -5.24%減少、コードサイズは -7.90%に減少したとしている。<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">3</a></sup>　<br />
+(Wave: GPUで実行するスレッドをまとめた単位。スレッド数は GCN は64スレッド、RDNA は基本32スレッド。)<br />
+ゲーミング性能も Doom<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup>では約25%の向上を確認している。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">5</a></sup><br />
+<a href="https://www.phoronix.com/scan.php?page=home" rel="noreferrer" target="_blank">Phoronix</a>による検証でも、平均で概ね20%近くの性能向上が見られている。<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">6</a></sup></p>
+
+<p>それと、<em>ACO</em> は <strong>AMD Compiler</strong> を縮めた名前、と開発者の Daniel Schürmann 氏は述べている。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">7</a></sup></p>
+
+<h2 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan</h2>
+
+<p>高性能なニューラルネットワークの推論フレームワーク、<a href="https://github.com/Tencent/ncnn" rel="noreferrer" target="_blank">ncnn</a>を用いた画像の高解像度化ソフトウェア。<br />
+Vulkan APIでGPGPU処理を行なうため、広いプラットフォームに対応しており、Intel / AMD / NVIDIA GPUで実行できることが特徴。<br />
+<span class="reflink"><a href="https://github.com/nihui/waifu2x-ncnn-vulkan" rel="noreferrer" target="_blank">nihui/waifu2x-ncnn-vulkan: waifu2x converter ncnn version, runs fast on intel / amd / nvidia GPU with vulkan</a></span><br>
+</p>
+
+<p>ビルド方法は別記事にて。<br />
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">waifu2x-ncnn-vulkan ビルド方法(Linux向け)</a></span><br>
+</p>
+
+<p>ncnn はVulkan拡張 <code>VK_KHR_shader_float16_int8</code> に対応しているのだが、RADV/LLVM ではそれが有効となっているのに対し、RADV/ACO では無効とされていた。<br />
+そのため比較検証を見送っていたが、先日 RADV/ACO での対応が mesa の masterリポジトリに組み込まれたため、検証が可能となった。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">8</a></sup></p>
+
+<h2 id="env">環境</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center"></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">CPU</td>
+<td align="center">Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
+</tr>
+
+<tr>
+<td align="left">Memory</td>
+<td align="center">16GB 2933MHz</td>
+</tr>
+
+<tr>
+<td align="left">GPU</td>
+<td align="center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz, VRAM 4GB)</td>
+</tr>
+
+<tr>
+<td align="left">Linux Kernel</td>
+<td align="center">5.4.21</td>
+</tr>
+
+<tr>
+<td align="left">User Mode Driver</td>
+<td align="center">Mesa 20.1.0-devel (git-a64d266134)</td>
+</tr>
+
+<tr>
+<td align="left">Vulkan Driver</td>
+<td align="center">AMD RADV(LLVM) POLARIS11 (LLVM 9.0.1)<br>AMD RADV/ACO POLARIS11 (LLVM 9.0.1)</td>
+</tr>
+
+<tr>
+<td align="left">waifu2x-ncnn-vulkan</td>
+<td align="center">version<br>20200224</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="how">計測方法</h3>
+
+<p>実行コマンド:</p>
+
+<pre><code>RADV/ACO:
+    $ RADV_PERFTEST=&quot;aco&quot; time -p &lt;waifu2x-ncnn-vulkan binary&gt; -i &quot;&lt;input dir&gt;&quot; -o &lt;output dir&gt; -n 1 -s 2 -m &quot;&lt;waifu2x-ncnn-vulkan model&gt;&quot;
+
+RADV/LLVM:
+    $ time -p &lt;waifu2x-ncnn-vulkan binary&gt; -i &quot;&lt;input dir&gt;&quot; -o &lt;output dir&gt; -n 1 -s 2 -m &quot;&lt;waifu2x-ncnn-vulkan model&gt;&quot;
+</code></pre>
+
+<p>waifu2x-ncnn-vulkan の設定はデノイズレベルは 1、拡大率は 2x、tile-size はデフォルトの 400、load:proc:save もデフォルトの 1:2:2。</p>
+
+<p>/tmp ディレクトリ下にテスト用画像を収めるための入力ディレクトリと、実行後の画像を収める出力ディレクトリを作成。使用する画像は5枚。<br />
+waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、その中の画像をまとめて処理することができ、それによってプログラムの呼び出しと終了処理の時間が減るため、GPUの処理時間に焦点を当てた結果を得られる。</p>
+
+<p>使用画像もここに掲載しようと思ったのだが、面倒くさいことを避けるべく、画像に関しては解像度 1136x640、そしてソフトウェア名に似合った感じであることだけを記す。<br />
+さすがに二次元系でパブリック・ドメインな画像は見つからなかった。</p>
+
+<p>それぞれ3回実行し、timeコマンドで得られる現実にかかった時間を平均し、結果とする。</p>
+
+<h2 id="result">結果</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">Result<br>(models-cunet)</th>
+<th align="center">RADV(LLVM)</th>
+<th align="center">RADV/ACO</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">real time<br>(lower is better)</td>
+<td align="center">50.75 s</td>
+<td align="center">34.28 s<br>(1.48x)</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th align="left">Result<br>(models-upconv_7_anime_style_art_rgb)</th>
+<th align="center">RADV(LLVM)</th>
+<th align="center">RADV/ACO</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">real time<br>(lower is better)</td>
+<td align="center">22.19 s</td>
+<td align="center">6.48 s<br>(3.42x)</td>
+</tr>
+</tbody>
+</table>
+
+<p>RADV/ACO は、RADV(LLVM) より <code>models-cunet</code> では 1.48倍、<code>models-upconv_7_anime_style_art_rgb</code> では 3.42倍も高速という結果となった。</p>
+
+<h3 id="guess">推測</h3>
+
+<p>まず、どちらも RADV/ACO の方が高速という結果となったが、これは <em>ACO</em> の正確なレジスタ割り付けが効いているものと思われる。<br />
+レジスタあふれの頻度が減ったことで、そのままメモリにアクセスする頻度も減り、効率的な実行が可能となった。<br />
+そして、Vulkan の Compute Shader で実行される waifu2x-ncnn-vulkan では、CU(Compute Unit)以外のユニットに性能が左右されにくく、<em>ACO</em> の利点が最大限発揮されたはずだ。</p>
+
+<p>また、<code>models-upconv_7_anime_style_art_rgb</code> では差が <code>models-cunet</code> よりも大きくついているが、これはモデルのサイズが前者の方が 1.1MBと半分近く( <code>models-cunet</code> は 2.6MB)小さく、レイヤー数も少ないため、その分キャッシュヒットしやすく、さらにメモリアクセスが少なくなったのではないだろうか。</p>
+
+<h4 id="issue">課題</h4>
+
+<p>何ともぼやけた推測となってしまった。<br />
+AMD が提供する <a href="https://github.com/GPUOpen-Tools/radeon_gpu_analyzer" rel="noreferrer" target="_blank">RGA (Radeon GPU Analyzer)</a>や<a href="https://github.com/GPUOpen-Tools/radeon_gpu_profiler" rel="noreferrer" target="_blank">Radeon™ GPU Profiler</a>といったツールを使いこなせれば、詳細な分析ができたのかもしれないが、<br />
+それらツールでモニタやプロファイル生成することもうまくいかず、<br />
+RADV にあるシェーダーや SPIR-V をダンプする機能から作成したファイルを使おうにもうまくいかず、断念した。</p>
+
+<h2 id="shinning-radeon">最適化で Radeon はさらに輝く</h2>
+
+<p><em>ACO</em> によって <strong>Radeon</strong> の性能はより引き出される。<br />
+ゲームといったグラフィック処理では RADV(LLVM) から 10%近い性能向上を確認でき、この 10%というのは同一ダイベースの製品の性能差に設定されることが多い。Polari10ベースの RX 570 と RX 580、Navi10ベースの RX 5700 と RX 5700 XT 等がそうだ。<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">9</a></sup><br />
+ソフトウェアの最適化によって現在使っているGPUが実質1ランク上がるというのは、消費者からすれば最高と言う他ないだろう。<br />
+今回の検証結果では、Vulkan Compute に限れば上位ダイベースの製品、2か3ランク上の性能を体感できることになる。<br />
+こうなるともう最高という言葉では足りない。</p>
+
+<p>OSS で高性能なGPU性能を得られる。これこそ <strong>AMD Radeon</strong> の魅力の1つであり、何よりも勝っている点だろう。</p>
+
+<p>あと願わくば、Vulkan APIを用いたクロスプラットフォームなソフトウェアの増加と普及を……</p>
+
+<hr>
+<div class="reference">
+<h2 class="ref-title">参考リンク</h2>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/mesa-dev/2019-July/221006.html" rel="noreferrer" target="_blank">[Mesa-dev] [RFC] ACO: A New Compiler Backend for RADV</a></li>
+<li><a href="https://steamcommunity.com/games/221410/announcements/detail/1602634609636894200" rel="noreferrer" target="_blank">Steam :: Steam for Linux :: Help us test ACO, a new Mesa shader compiler for AMD graphics!</a></li>
+<li><a href="https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf" rel="noreferrer" target="_blank">https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf</a></li>
+<li><a href="https://news.mynavi.jp/article/architecture-313/" rel="noreferrer" target="_blank">コンピュータアーキテクチャの話(313) 1つの命令で複数の演算器を動かす「SIMD」 | マイナビニュース</a></li>
+<li><a href="https://ja.wikipedia.org/wiki/%E3%83%AC%E3%82%B8%E3%82%B9%E3%82%BF%E5%89%B2%E3%82%8A%E4%BB%98%E3%81%91" rel="noreferrer" target="_blank">レジスタ割り付け &ndash; Wikipedia</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:3"><a href="https://ja.wikipedia.org/wiki/%E4%B8%AD%E9%96%93%E8%A1%A8%E7%8F%BE" rel="noreferrer" target="_blank">中間表現 &ndash; Wikipedia</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://ja.wikipedia.org/wiki/%E9%9D%99%E7%9A%84%E5%8D%98%E4%B8%80%E4%BB%A3%E5%85%A5" rel="noreferrer" target="_blank">静的単一代入 &ndash; Wikipedia</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:6"><a href="https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf#page=29" rel="noreferrer" target="_blank">https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf#page=29</a>
+ <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://store.steampowered.com/app/379720/DOOM/" rel="noreferrer" target="_blank">Steam：DOOM</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:7"><a href="https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf#page=33" rel="noreferrer" target="_blank">https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf#page=33</a>
+ <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+<li id="fn:4"><a href="https://www.phoronix.com/scan.php?page=article&amp;item=radeon-software-20&amp;num=6" rel="noreferrer" target="_blank">Radeon Software 20.10 vs. Upstream Linux AMD Radeon OpenGL / Vulkan Performance &ndash; Phoronix</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+<li id="fn:1"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/93c8ebfa780ebd1495095e794731881aef29e7d3" rel="noreferrer" target="_blank">aco: Initial commit of independent AMD compiler (93c8ebfa) · Commits · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:8"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/5c5c2dd48fe0910dc79d3187bed99a52b5ed2848" rel="noreferrer" target="_blank">radv/aco: enable 8/16-bit storage and int8/int16 on GFX8+ (5c5c2dd4) · Commits · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
+<li id="fn:9"><a href="https://www.phoronix.com/scan.php?page=article&amp;item=rx-5700-july&amp;num=1" rel="noreferrer" target="_blank">Radeon RX 5700 / RX 5700 XT Linux Gaming Performance With AMDGPU 5.3 + Mesa 19.2-devel &ndash; Phoronix</a>
+ <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Posts</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav>
+	<nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/tags/aco" class="side-tag-lower">ACO</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/tags/gcn" class="side-tag-lower">GCN</a></li></ul>
+		</ul>
+	</nav>
+	<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/categories/software" class="side-categorie-lower">Software</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/amd" class="side-categorie-lower">AMD</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-categorie-lower">GPU</a></li></ul>
+		</ul>
+	</nav>
+	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-26 " class="side-time">Post : 2020-04-26 </time>
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-26 18:45:30 </div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags :</a>
+			<a href="https://blog.coelacanth-dream.com/tags/aco">ACO</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/gcn">GCN</a>,&nbsp;</nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/software">Software</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/amd">AMD</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>,&nbsp;</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-26 00:04:50 " class="foot-time">Post : 2020-04-26</time>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-26 18:45:30 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
