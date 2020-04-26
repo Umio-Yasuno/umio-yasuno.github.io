@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
+
+	<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+	<meta name="twitter:card" content="summary"><title>waifu2x-ncnn-vulkan ビルド方法(Linux向け) | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="waifu2x-ncnn-vulkan ビルド方法(Linux向け) | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="waifu2x-ncnn-vulkan ビルド方法(Linux向け) | Coelacanth&#39;s Dream">
+	<meta property="og:type" content="article">
+
+	<meta name="description" content="Vulkan Computeで使うため、Linux &#43; Radeon 環境でもローカルで実行可能な画像高解像度ソフトウェア、waifu2x-ncnn-vulkan をビルドする方法のメモ。 ncnn のビルド方法 waifu2x-ncnn-vulkan のビルド方">
+	<meta property="og:description" content="Vulkan Computeで使うため、Linux &#43; Radeon 環境でもローカルで実行可能な画像高解像度ソフトウェア、waifu2x-ncnn-vulkan をビルドする方法のメモ。 ncnn のビルド方法 waifu2x-ncnn-vulkan のビルド方">
+	<meta name="twitter:description" content="Vulkan Computeで使うため、Linux &#43; Radeon 環境でもローカルで実行可能な画像高解像度ソフトウェア、waifu2x-ncnn-vulkan をビルドする方法のメモ。 ncnn のビルド方法 waifu2x-ncnn-vulkan のビルド方">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
+	<meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
+	<link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+	background-size: cover;
+	background-attachment: fixed;
+	background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+	background-repeat: no-repeat;
+	font-size: 1em;
+}
+main {
+	display: grid;
+	grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+	row-gap: 1em;
+}
+header {
+	grid-row: 2 / 3;
+	grid-column: 1 / 4;
+}
+.title {
+	font: normal 1.6em monospace;
+	text-decoration: none;
+	text-align: end;
+}
+	.title a {
+		color: #6D9CA9;
+		text-shadow: 0 2px .8em #577C87;
+	}
+	.title a:hover {
+		color: #98B9C2;
+		text-decoration: none;
+		text-shadow: 0 2px 1em #7EA0A9;
+	}
+.page-title, .page-title a {
+	color: #FFA319;
+	font-size: 1em;
+	line-height: 1.2em;
+	margin: 0;
+	padding: 0;
+	max-width: 95%;
+}
+	.page-title a:hover,.sect-page a:hover {
+		text-decoration: underline #CC8214;
+	}
+.tag-title, .categorie-title {
+	color: #7FFFD4;
+}
+a {
+	color: #75D1FF;
+	text-decoration: none;
+	padding: 0 .28em 0 .25em;
+	margin: 0;
+	word-break: break-all;
+}
+	a:hover {
+		text-decoration: underline;
+	}
+.text {
+	color: snow;
+	box-sizing: border-box;
+	line-height: 1.6em;
+	overflow-wrap: break-word;
+	text-justify: inter-character;
+	grid-area: 3 / 2 / 4 / 5;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+	letter-spacing: .03em;
+}
+article > p::first-letter {
+	padding-left: .6em;
+}
+.copyright {
+	font-size: .9em;
+	padding: 1em 0 0 0;
+	display: block;
+}
+.foot, .side {
+	display: none;
+}
+.foot {
+	grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+	main {
+		display: grid;
+		grid-template: 2em 6em 2em auto / 2em 200px auto;
+	}
+	.text {
+		grid-area: 1 / 3 / 5 / 3;
+		padding: 1em .5em 8% 1em;
+	}
+	header > .title {
+		display: none;
+	}
+	.side {
+		display: block;
+			height: 96vh;
+			width: 200px;
+		position: fixed;
+			top: 1em;
+			left: 24px;
+		padding-right: 1.2em;
+		border-right: 1px solid green;
+		font-size: 1em;
+		color: #00E500;
+		z-index: 101;
+		transform: translateZ(0);
+
+		overflow: scroll;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+	}
+		.side > .title {
+			text-align: end;
+			padding: 1em 0 0 0;
+			width: 100%;
+			font: normal 1.6em monospace;
+		}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 / 4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+	.side-page-number {
+		font-size: .9em;
+		grid-area: 2 / 2 / 3 / 3;
+		margin: 0 auto 0 auto;
+	}
+	.side-author, .side-lastmod, .side-about, .side-time {
+		padding: .5em 0 .5em 0;
+		margin: 0;
+		font-size: .95rem;
+	}
+	.side li::before {
+		color: #008080;
+		content: '';
+	
+		padding: 0;
+		margin: 0;
+		font-size: 1rem;
+	}
+	.side li ul {
+		padding: 0 0 0 .7em;
+	}
+	.side-tag-lower, .side-categorie-lower {
+	
+		padding: 0 1em 0 0;
+	}
+		.side-tags li li::before, .side-categories li li::before {
+			content: '\2514';
+			vertical-align: sub;
+			padding: 0 .2em 0 0;
+			color: #4C997F;
+			font-size: 1.2em;
+		}
+	.side-links a:hover, .side-tags a:hover, .side-categories a:hover {
+		text-decoration: none;
+		border-bottom: 1px solid #65CCA9;
+	}
+	.side-links ul, .side-tags ul, .side-categories ul {
+		list-style: none none outside;
+		padding: 0 0 0 1em;
+		color: #65CCA9;
+		line-height: 1.5em;
+	}
+	.tag-title, .categorie-title, .side-links a {
+		border-bottom: 2px solid #326654;
+		padding: 0 1em .1em .3em;
+		margin-bottom: 1em;
+	}
+}
+</style>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+			<link rel="preload" href="https://blog.coelacanth-dream.com/css/ins.min.css" as="style">
+		<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>waifu2x-ncnn-vulkan ビルド方法(Linux向け)</h1>
+	</header>
+
+<p>Vulkan Computeで使うため、Linux + Radeon 環境でもローカルで実行可能な画像高解像度ソフトウェア、waifu2x-ncnn-vulkan をビルドする方法のメモ。</p>
+
+<ul>
+<li><a href="#ncnn">ncnn のビルド方法</a></li>
+<li><a href="#waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan のビルド方法</a></li>
+</ul>
+
+<h2 id="ncnn">ncnn のビルド方法</h2>
+
+<p>waifu2x-ncnn-vulkan をビルドするには、まず ncnn をビルドする必要があるのだが、<br />
+最新版ではビルド時にエラーが出るため、ncnn を <code>git clone</code> した後、waifu2x-ncnn-vulkan のページにあるリンクのコミット時に切り替えるのがいい。<br />
+<span class="reflink"><a href="https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86" rel="noreferrer" target="_blank">https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86</a></span><br>
+</p>
+
+<pre><code>$ git clone https://github.com/Tencent/ncnn
+$ cd ncnn
+$ git checkout 8c537069875a28d5380c6bdcbf7964d73803b7b3
+</code></pre>
+
+<p>ncnn の wiki には VulkanSDK をダウンロード、展開し、環境変数 <code>VULKAN_SDK</code> をそこにセットするようにとあるが、CMake がそれを見つけてくれないため、CMake 実行時、別に指定する必要がある。</p>
+
+<p>まずビルド用のディレクトリを作成。下記のコマンドはディレクトリ名に日付を入れるようにしているが、名前であるから何でもいい。<br />
+そして作成したディレクトリに移動。</p>
+
+<pre><code>$ mkdir build_$(date &quot;+%F&quot;)
+$ cd &lt;build dir&gt;
+</code></pre>
+
+<p>cmake、ビルド、そしてインストール。インストール先はデフォルトで <code>&lt;build dir&gt;/install</code> になっている。</p>
+
+<pre><code>$ cmake -DVulkan_LIBRARY=&quot;${VULKAN_SDK}/lib/libvulkan.so&quot; -DVulkan_INCLUDE_DIR=&quot;${VULKAN_SDK}/include&quot; -DNCNN_VULKAN=ON ../
+$ make -j$(grep -c processor /proc/cpuinfo)
+$ make install
+</code></pre>
+
+<h2 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan のビルド方法</h2>
+
+<p>waifu2x-ncnn-vulkan のバージョンは問わず、最新版でも問題ないが、ここでは version 20200414 を前提とする。<br />
+<span class="reflink"><a href="https://github.com/nihui/waifu2x-ncnn-vulkan/releases/tag/20200414" rel="noreferrer" target="_blank">Release version 20200414 · nihui/waifu2x-ncnn-vulkan</a></span><br>
+</p>
+
+<p>まずは waifu2x-ncnn-vulkan-20200414 の src ディレクトリへ。<br />
+そして先程同様にビルド用のディレクトリを作成、移動。</p>
+
+<pre><code>$ cd waifu2x-ncnn-vulkan-20200414/src
+$ mkdir build_$(date &quot;+%F&quot;)
+$ cd &lt;build dir&gt;
+</code></pre>
+
+<p>cmake を実行前に、CMakeList.txt を編集する必要があり、67行目の一部を先程ビルドした ncnn に合わせて変更する。<br />
+パスはその人の環境で変わる。下は、/home/${USER}/src 下に ncnn をクローン、ビルドした場合のパス。</p>
+
+<pre><code>/home/${USER}/src/&lt;build dir&gt;/install/lib/cmake/ncnn
+</code></pre>
+
+<p>そしてビルド。ここでは特にオプションは必要としない。</p>
+
+<pre><code>$ cmake ../
+$ make -j$(grep -c processor /proc/cpuinfo)
+</code></pre>
+
+<p><code>&lt;build dir&gt;</code> に waifu2x-ncnn-vulkan のバイナリが生成されるため、それを実行すればいいが、推論に用いるモデルは <code>&lt;build dir&gt;</code> 下ではなく、waifu2x-ncnn-vulkan 下にあるため注意。</p>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Posts</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav>
+	<nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags</a>
+			<ul></ul>
+		</ul>
+	</nav>
+	<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/categories/software" class="side-categorie-lower">Software</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-categorie-lower">GPU</a></li></ul>
+		</ul>
+	</nav>
+	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-26 " class="side-time">Post : 2020-04-26 </time>
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-26 09:25:36 </div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags :</a></nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/software">Software</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>,&nbsp;</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-26 07:53:15 " class="foot-time">Post : 2020-04-26</time>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-26 09:25:36 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
