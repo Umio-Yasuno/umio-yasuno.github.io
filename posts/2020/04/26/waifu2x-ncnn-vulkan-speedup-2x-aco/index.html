@@ -15,9 +15,9 @@
 	<meta name="twitter:title" content="RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth&#39;s Dream">
 	<meta property="og:type" content="article">
 
-	<meta name="description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 最適化で Radeon はさらに輝く ACOとは オープ">
-	<meta property="og:description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 最適化で Radeon はさらに輝く ACOとは オープ">
-	<meta name="twitter:description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 最適化で Radeon はさらに輝く ACOとは オープ">
+	<meta name="description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 課題 最適化で Radeon はさらに輝く ACOとは オ">
+	<meta property="og:description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 課題 最適化で Radeon はさらに輝く ACOとは オ">
+	<meta name="twitter:description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 課題 最適化で Radeon はさらに輝く ACOとは オ">
 	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
 	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
 	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-2x-aco/">
@@ -251,6 +251,7 @@ article > p::first-letter {
 
 <ul>
 <li><a href="#guess">推測</a></li>
+<li><a href="#issue">課題</a></li>
 </ul></li>
 <li><a href="#shinning-radeon">最適化で Radeon はさらに輝く</a></li>
 </ul>
@@ -264,7 +265,7 @@ article > p::first-letter {
 
 <p>RADV はそれまで<a href="https://llvm.org/" rel="noreferrer" target="_blank">LLVM</a>をバックエンドに採用していたが、<em>LLVM</em> のプロジェクト規模は大きく、シェーダーコンパイラバックエンドとして使う上で何かしらの問題が発覚し、修正を行なったとしてもそれがリリースサイクルに乗るまでは時間がかかる。<br />
 バックエンドを別に開発することでそれを避けられるというのが利点の1つであり、また積極的な &ldquo;DivergenceAnalysis&rdquo; の実装と正確なレジスタ割り付けにより、効率的なバイナリの生成を <em>ACO</em> は可能とする。<br />
-(DivergenceAnalysis: 発散分析? SIMD実行モデルにおける性能低下原因となる条件分岐を最適化する手法。日本語の文献が見つけられなかったため、この解説は色々と怪しい。)</p>
+(DivergenceAnalysis: 発散分析? SIMD実行モデルにおける性能低下原因となる条件分岐を最適化する手法。日本語の文献が見つけられなかったため、この解説はかなり怪しい。)</p>
 
 <p><a href="https://xdc2019.x.org/event/5/" rel="noreferrer" target="_blank">X.Org Developer&rsquo;s Conference 2019</a>での発表スライドによると、<em>LLVM</em> から使用するレジスタ量は若干増えたが、レジスタあふれの頻度はスカラレジスタで -95.91%、ベクタレジスタで -100.00%(!)とかなり減り、Waveも -5.24%減少、コードサイズは -7.90%に減少したとしている。<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">3</a></sup>　<br />
 (Wave: GPUで実行するスレッドをまとめた単位。スレッド数は GCN は64スレッド、RDNA は基本32スレッド。)<br />
@@ -406,6 +407,13 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 
 <p>また、<code>models-upconv_7_anime_style_art_rgb</code> では差が <code>models-cunet</code> よりも大きくついているが、これはモデルのサイズが前者の方が 1.1MBと半分近く( <code>models-cunet</code> は 2.6MB)小さく、レイヤー数も少ないため、その分キャッシュヒットしやすく、さらにメモリアクセスが少なくなったのではないだろうか。</p>
 
+<h4 id="issue">課題</h4>
+
+<p>何ともぼやけた推測となってしまった。<br />
+AMD が提供する <a href="https://github.com/GPUOpen-Tools/radeon_gpu_analyzer" rel="noreferrer" target="_blank">RGA (Radeon GPU Analyzer)</a>や<a href="https://github.com/GPUOpen-Tools/radeon_gpu_profiler" rel="noreferrer" target="_blank">Radeon™ GPU Profiler</a>といったツールを使いこなせれば、詳細な分析ができたのかもしれないが、<br />
+それらツールでモニタやプロファイル生成することもうまくいかず、<br />
+RADV にあるシェーダーや SPIR-V をダンプする機能から作成したファイルを使おうにもうまくいかず、断念した。</p>
+
 <h2 id="shinning-radeon">最適化で Radeon はさらに輝く</h2>
 
 <p><em>ACO</em> によって <strong>Radeon</strong> の性能はより引き出される。<br />
@@ -484,7 +492,7 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 		</ul>
 	</nav>
 	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-26 " class="side-time">Post : 2020-04-26 </time>
-		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-26 09:26:50 </div><nav class="side-about">
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-26 11:15:35 </div><nav class="side-about">
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
@@ -506,7 +514,7 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 			<a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>,&nbsp;</nav>
 			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
 			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-26 00:04:50 " class="foot-time">Post : 2020-04-26</time>
-		/ <span class="foot-lastmod">Lastmod : 2020-04-26 09:26:50 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-26 11:15:35 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
