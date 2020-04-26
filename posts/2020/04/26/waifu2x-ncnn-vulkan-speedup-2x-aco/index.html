@@ -261,13 +261,14 @@ article > p::first-letter {
 <p>オープンソースのAMDGPU向けVulkanドライバー、RADVの新たなシェーダーコンパイラバックエンド。<br />
 <em>ACO</em> の IR(Intermediate Representaions, 中間言語)<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">1</a></sup>は完全に SSA(Static Single Assignment form, 静的単一代入)<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>ベースであり、<br />
 レジスタ割り付けも SSA で行なうため、シェーダーのレジスタ要求を正確に事前計算することができる。<br />
+Just-in-timeコンパイルを念頭に置いてに記述されており、反復の速いデータ構造を使用している。<br />
 記述言語は C++。</p>
 
 <p>RADV はそれまで<a href="https://llvm.org/" rel="noreferrer" target="_blank">LLVM</a>をバックエンドに採用していたが、<em>LLVM</em> のプロジェクト規模は大きく、シェーダーコンパイラバックエンドとして使う上で何かしらの問題が発覚し、修正を行なったとしてもそれがリリースサイクルに乗るまでは時間がかかる。<br />
 バックエンドを別に開発することでそれを避けられるというのが利点の1つであり、また積極的な &ldquo;DivergenceAnalysis&rdquo; の実装と正確なレジスタ割り付けにより、効率的なバイナリの生成を <em>ACO</em> は可能とする。<br />
 (DivergenceAnalysis: 発散分析? SIMD実行モデルにおける性能低下原因となる条件分岐を最適化する手法。日本語の文献が見つけられなかったため、この解説はかなり怪しい。)</p>
 
-<p><a href="https://xdc2019.x.org/event/5/" rel="noreferrer" target="_blank">X.Org Developer&rsquo;s Conference 2019</a>での発表スライドによると、<em>LLVM</em> から使用するレジスタ量は若干増えたが、レジスタあふれの頻度はスカラレジスタで -95.91%、ベクタレジスタで -100.00%(!)とかなり減り、Waveも -5.24%減少、コードサイズは -7.90%に減少したとしている。<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">3</a></sup>　<br />
+<p><a href="https://xdc2019.x.org/event/5/" rel="noreferrer" target="_blank">X.Org Developer&rsquo;s Conference 2019</a>での発表スライドでは、<em>LLVM</em> から使用するレジスタ量は若干増えたが、レジスタあふれの頻度はスカラレジスタで -95.91%、ベクタレジスタで -100.00%(!)とかなり減り、Waveも -5.24%減少、コードサイズは -7.90%に減少したとしている。<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">3</a></sup>　<br />
 (Wave: GPUで実行するスレッドをまとめた単位。スレッド数は GCN は64スレッド、RDNA は基本32スレッド。)<br />
 ゲーミング性能も Doom<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup>では約25%の向上を確認している。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">5</a></sup><br />
 <a href="https://www.phoronix.com/scan.php?page=home" rel="noreferrer" target="_blank">Phoronix</a>による検証でも、平均で概ね20%近くの性能向上が見られている。<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">6</a></sup></p>
@@ -397,8 +398,6 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 
 <p>RADV/ACO は、RADV(LLVM) より <code>models-cunet</code> では 1.48倍、<code>models-upconv_7_anime_style_art_rgb</code> では 3.42倍も高速という結果となった。</p>
 
-<!-- RADV/ACO は、RADV(LLVM) より `models-cunet` では 33%、`models-upconv_7_anime_style_art_rgb`では 71% 短い時間で実行を完了した。 -->
-
 <h3 id="guess">推測</h3>
 
 <p>まず、どちらも RADV/ACO の方が高速という結果となったが、これは <em>ACO</em> の正確なレジスタ割り付けが効いているものと思われる。<br />
@@ -417,14 +416,14 @@ RADV にあるシェーダーや SPIR-V をダンプする機能から作成し�
 <h2 id="shinning-radeon">最適化で Radeon はさらに輝く</h2>
 
 <p><em>ACO</em> によって <strong>Radeon</strong> の性能はより引き出される。<br />
-ゲームといったグラフィック処理では RADV(LLVM) から 10%近い性能向上を確認でき、この 10%というのは同一ダイベースの製品の性能差に設定されることが多い。Polari10ベースの RX 570 と RX 580、Navi10ベースの RX 5700 と RX 5700 XT 等がそうだ。[^9]<br />
+ゲームといったグラフィック処理では RADV(LLVM) から 10%近い性能向上を確認でき、この 10%というのは同一ダイベースの製品の性能差に設定されることが多い。Polari10ベースの RX 570 と RX 580、Navi10ベースの RX 5700 と RX 5700 XT 等がそうだ。<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">9</a></sup><br />
 ソフトウェアの最適化によって現在使っているGPUが実質1ランク上がるというのは、消費者からすれば最高と言う他ないだろう。<br />
 今回の検証結果では、Vulkan Compute に限れば上位ダイベースの製品、2か3ランク上の性能を体感できることになる。<br />
 こうなるともう最高という言葉では足りない。</p>
 
 <p>OSS で高性能なGPU性能を得られる。これこそ <strong>AMD Radeon</strong> の魅力の1つであり、何よりも勝っている点だろう。</p>
 
-<p>あと願うとするならば、Vulkan APIを用いたクロスプラットフォームなソフトウェアの増加と普及だろうか……</p>
+<p>あと願わくば、Vulkan APIを用いたクロスプラットフォームなソフトウェアの増加と普及を……</p>
 
 <hr>
 <div class="reference">
@@ -460,6 +459,8 @@ RADV にあるシェーダーや SPIR-V をダンプする機能から作成し�
  <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
 <li id="fn:8"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/5c5c2dd48fe0910dc79d3187bed99a52b5ed2848" rel="noreferrer" target="_blank">radv/aco: enable 8/16-bit storage and int8/int16 on GFX8+ (5c5c2dd4) · Commits · Mesa / mesa · GitLab</a>
  <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
+<li id="fn:9"><a href="https://www.phoronix.com/scan.php?page=article&amp;item=rx-5700-july&amp;num=1" rel="noreferrer" target="_blank">Radeon RX 5700 / RX 5700 XT Linux Gaming Performance With AMDGPU 5.3 + Mesa 19.2-devel &ndash; Phoronix</a>
+ <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
 </ol>
 </div>
 </article>
@@ -492,7 +493,7 @@ RADV にあるシェーダーや SPIR-V をダンプする機能から作成し�
 		</ul>
 	</nav>
 	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-26 " class="side-time">Post : 2020-04-26 </time>
-		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-26 11:15:35 </div><nav class="side-about">
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-26 18:45:30 </div><nav class="side-about">
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
@@ -514,7 +515,7 @@ RADV にあるシェーダーや SPIR-V をダンプする機能から作成し�
 			<a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>,&nbsp;</nav>
 			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
 			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-26 00:04:50 " class="foot-time">Post : 2020-04-26</time>
-		/ <span class="foot-lastmod">Lastmod : 2020-04-26 11:15:35 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-26 18:45:30 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
