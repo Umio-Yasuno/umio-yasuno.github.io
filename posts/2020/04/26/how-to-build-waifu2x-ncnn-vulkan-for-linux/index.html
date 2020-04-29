@@ -10,9 +10,9 @@
 	<base href="https://blog.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
 
 	<meta property="og:site_name" content="Coelacanth&#39;s Dream">
-	<meta name="twitter:card" content="summary"><title>waifu2x-ncnn-vulkan ビルド方法(Linux向け) | Coelacanth&#39;s Dream</title>
-	<meta property="og:title" content="waifu2x-ncnn-vulkan ビルド方法(Linux向け) | Coelacanth&#39;s Dream">
-	<meta name="twitter:title" content="waifu2x-ncnn-vulkan ビルド方法(Linux向け) | Coelacanth&#39;s Dream">
+	<meta name="twitter:card" content="summary"><title>waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】 | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】 | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】 | Coelacanth&#39;s Dream">
 	<meta property="og:type" content="article">
 
 	<meta name="description" content="Vulkan Computeで演算するため、Linux &#43; Radeon 環境でもローカルで実行可能な画像高解像度ソフトウェア、waifu2x-ncnn-vulkan をビルドする方法のメモ。 ncnn のビルド方法 waifu2x-ncnn-vulkan のビル">
@@ -241,7 +241,7 @@ article > p::first-letter {
     		
 <article>
 	<header>
-		<h1>waifu2x-ncnn-vulkan ビルド方法(Linux向け)</h1>
+		<h1>waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】</h1>
 	</header>
 
 <p>Vulkan Computeで演算するため、Linux + Radeon 環境でもローカルで実行可能な画像高解像度ソフトウェア、waifu2x-ncnn-vulkan をビルドする方法のメモ。</p>
@@ -254,7 +254,7 @@ article > p::first-letter {
 <h2 id="ncnn">ncnn のビルド方法</h2>
 
 <p>waifu2x-ncnn-vulkan をビルドするには、まず ncnn をビルドする必要があるのだが、<br />
-最新版ではビルド時にエラーが出るため、ncnn を <code>git clone</code> した後、waifu2x-ncnn-vulkan のページにあるリンクのコミット時に切り替えるのがいい。<br />
+<del>最新版ではビルド時にエラーが出るため、ncnn を <code>git clone</code> した後、waifu2x-ncnn-vulkan のページにあるリンクのコミット時に切り替えるのがいい。<br />
 <span class="reflink"><a href="https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86" rel="noreferrer" target="_blank">https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86</a></span><br>
 </p>
 
@@ -263,16 +263,41 @@ $ cd ncnn
 $ git checkout 8c537069875a28d5380c6bdcbf7964d73803b7b3
 </code></pre>
 
-<p>ncnn の wiki には VulkanSDK をダウンロード、展開し、環境変数 <code>VULKAN_SDK</code> をそこにセットするようにとあるが、CMake がそれを見つけてくれないため、CMake 実行時、別に指定する必要がある。</p>
+<p></del></p>
 
-<p>まずビルド用のディレクトリを作成。下記のコマンドはディレクトリ名に日付を入れるようにしているが、名前であるから何でもいい。<br />
-そして作成したディレクトリに移動。</p>
+
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/ins.min.css">
+<ins datetime="2020-04-29:00+09:00">
+	<span class="insbegin">（追記 2020-04-29 ）</span>
+	<p>
+	<p>最新版ではエラーが出ると書いたが、原因が発覚した。<br />
+端的に言えば <code>glslangValidator</code> が最新版でなかった。誰かのせいにするなら cmake が <code>VULKAN_SDK</code> を認識してくれないのが悪い。<br />
+そういうことで以下修正版。</p>
+
+<pre><code>$ cmake -DVulkan_LIBRARY=&quot;${VULKAN_SDK}/lib/libvulkan.so&quot; -DVulkan_INCLUDE_DIR=&quot;${VULKAN_SDK}/include&quot; -DNCNN_VULKAN=ON -DGLSLANGVALIDATOR_EXECUTABLE=${VULKAN_SDK}/bin/glslangValidator ../
+$ make -j$(grep -c processor /proc/cpuinfo)
+$ make install
+</code></pre>
+
+<p>インストール先はデフォルトで <code>&lt;build dir&gt;/install</code></p>
+
+	</p>
+	<span class="insend">（追記終了）</span>
+</ins>
+<br>
+
+
+<p><del>ncnn の wiki には VulkanSDK をダウンロード、展開し、環境変数 <code>VULKAN_SDK</code> をそこにセットするようにとあるが、CMake がそれを見つけてくれないため、CMake 実行時、別に指定する必要がある。</del></p>
+
+<p><del>まずビルド用のディレクトリを作成。下記のコマンドはディレクトリ名に日付を入れるようにしているが、名前であるから何でもいい。<br />
+そして作成したディレクトリに移動。</del></p>
 
 <pre><code>$ mkdir build_$(date &quot;+%F&quot;)
 $ cd &lt;build dir&gt;
 </code></pre>
 
-<p>cmake、ビルド、そしてインストール。インストール先はデフォルトで <code>&lt;build dir&gt;/install</code> になっている。</p>
+<p><del>
+cmake、ビルド、そしてインストール。インストール先はデフォルトで <code>&lt;build dir&gt;/install</code> になっている。</del></p>
 
 <pre><code>$ cmake -DVulkan_LIBRARY=&quot;${VULKAN_SDK}/lib/libvulkan.so&quot; -DVulkan_INCLUDE_DIR=&quot;${VULKAN_SDK}/include&quot; -DNCNN_VULKAN=ON ../
 $ make -j$(grep -c processor /proc/cpuinfo)
@@ -299,13 +324,34 @@ $ cd &lt;build dir&gt;
 <pre><code>/home/${USER}/src/&lt;build dir&gt;/install/lib/cmake/ncnn
 </code></pre>
 
-<p>そしてビルド。ここでは特にオプションは必要としない。</p>
+<p><del>そしてビルド。ここでは特にオプションは必要としない。</del></p>
+
+
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/ins.min.css">
+<ins datetime="2020-04-29:00+09:00">
+	<span class="insbegin">（追記 2020-04-29 ）</span>
+	<p>
+	<p>ここでも cmake で Vulkan系を指定する必要がある。</p>
+
+<pre><code>$ cmake -DVulkan_LIBRARY=&quot;${VULKAN_SDK}/lib/libvulkan.so&quot; -DVulkan_INCLUDE_DIR=&quot;${VULKAN_SDK}/include&quot; -DGLSLANGVALIDATOR_EXECUTABLE=${VULKAN_SDK}/bin/glslangValidator ../src
+$ make -j$(grep -c processor /proc/cpuinfo)
+</code></pre>
+
+	</p>
+	<span class="insend">（追記終了）</span>
+</ins>
+<br>
+
 
 <pre><code>$ cmake ../
 $ make -j$(grep -c processor /proc/cpuinfo)
 </code></pre>
 
 <p><code>&lt;build dir&gt;</code> に waifu2x-ncnn-vulkan のバイナリが生成されるため、それを実行すればいいが、推論に用いるモデルは <code>&lt;build dir&gt;</code> 下ではなく、waifu2x-ncnn-vulkan 下にあるため注意。</p>
+
+<p>ビルドに失敗する時は、以下で質問して頂ければ助けになれるかもしれません。<br />
+<span class="reflink"><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/issues" rel="noreferrer" target="_blank">Issues · Umio-Yasuno/umio-yasuno.github.io</a></span><br>
+</p>
 </article>
 		</div>
 			<div class="side">
@@ -333,7 +379,7 @@ $ make -j$(grep -c processor /proc/cpuinfo)
 		</ul>
 	</nav>
 	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-26 " class="side-time">Post : 2020-04-26 </time>
-		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-27 02:49:09 </div><nav class="side-about">
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-29 16:35:25 </div><nav class="side-about">
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
@@ -352,7 +398,7 @@ $ make -j$(grep -c processor /proc/cpuinfo)
 			<a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>,&nbsp;</nav>
 			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
 			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-26 07:53:15 " class="foot-time">Post : 2020-04-26</time>
-		/ <span class="foot-lastmod">Lastmod : 2020-04-27 02:49:09 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-29 16:35:25 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
