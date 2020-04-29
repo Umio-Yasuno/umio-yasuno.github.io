@@ -51,11 +51,11 @@ header {
 	text-align: end;
 }
 	.title a {
-		color: #90B4BD;
+		color: #819BA1;
 		text-shadow: 0 2px .8em #577C87;
 	}
 	.title a:hover {
-	
+		color: #90B4BD;
 		text-decoration: none;
 		text-shadow: 0 2px 1em #7EA0A9;
 	}
@@ -83,6 +83,9 @@ a {
 	a:hover {
 		text-decoration: underline;
 	}
+p {
+	margin: 1rem 0 .5rem 0;
+}
 .text {
 	color: snow;
 	box-sizing: border-box;
@@ -261,7 +264,7 @@ article > p::first-letter {
 
 <p>現在主流の x86-64プロセッサはその判別に Family ID と Model を用いられる。<br />
 基本的に、Family ID は ベースとなるアーキテクチャを、Model はより詳細なプロセッサの種類を表す。<br />
-例で言えば、<strong>Ryzen 5 2600</strong> は Family ID: 0x17、Model: 0x8 となっており、この値は Linux Kernelの温度センサーに関するコードでは <em>Zen+</em> と判別され、<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>GCCでは <code>znver1</code> と判別される。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+例で言えば、<strong>Ryzen 5 2600</strong> は Family ID: <code>&quot;0x17&quot;</code>、Model: <code>&quot;0x8&quot;</code> となっており、この値は Linux Kernelの温度センサーに関するコードでは <em>Zen+</em> と判別され、<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>GCCでは <code>znver1</code> と判別される。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
 
 <p>そして、Linux Kernelの温度センサーに関するコードを読むと、以下のように記述されている。</p>
 
@@ -275,20 +278,20 @@ article > p::first-letter {
 <p>引用元: <cite><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587" rel="noreferrer" target="_blank">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587</a></cite></p>
 </blockquote>
 
-<p>これに従えば、<code>0x18</code> は <em>Zen+ APU</em> 、<a href="https://blog.coelacanth-dream.com/tags/picasso">Picasso</a>となるが、<br />
-<em>Zen APU</em> である<a href="https://blog.coelacanth-dream.com/tags/raven2">Raven2</a>までも x86_Model が <code>0x18</code> となっており、それによって <em>Zen+ APU /Picasso</em> と判別されてしまう――というのを前回記事にした。<br />
+<p>これに従えば、<code>&quot;0x18&quot;</code> は <em>Zen+ APU</em> 、<a href="https://blog.coelacanth-dream.com/tags/picasso">Picasso</a>となるが、<br />
+<em>Zen APU</em> である<a href="https://blog.coelacanth-dream.com/tags/raven2">Raven2</a>までも x86_Model が <code>&quot;0x18&quot;</code> となっており、それによって <em>Zen+ APU /Picasso</em> と判別されてしまう――というのを前回記事にした。<br />
 <span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/02/16/raven-family-complex/#cpu">いかに Zen APU は複雑か | Coelacanth&rsquo;s Dream</a></span><br>
 </p>
 
 <h2 id="pollock">Pollock の x86_Model は &ldquo;0x20&rdquo;</h2>
 
-<p>そういうことで <em>Raven2</em> の影が薄いことを勝手に憂いていたが、先日投稿された ChromiumOSのリポジトリにおける Coreboot へのパッチで、<a href="https://blog.coelacanth-dream.com/tags/pollock">Pollock</a>の x86_Model が <code>0x20</code> であることがわかった。</p>
+<p>そういうことで <em>Raven2</em> の影が薄いことを勝手に憂いていたが、先日投稿された ChromiumOSのリポジトリにおける Coreboot へのパッチで、<a href="https://blog.coelacanth-dream.com/tags/pollock">Pollock</a>の x86_Model が <code>&quot;0x20&quot;</code> であることがわかった。</p>
 
 <span class="reflink">参考: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2153715" rel="noreferrer" target="_blank">soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review</a></cite></span><br>
 
 
-<p>コミットメッセージでは <em>FP5ソケット</em> が <code>0x18</code> としているが、これはChromebookに採用される <em>FP5ソケット</em> 搭載のAPUが <em>Raven</em> 以降の <em>Picasso</em> 、<em>Raven2 (Dali)</em> のみであるからと思われる。<br />
-そして、<em>FT5ソケット</em> を <code>0x20</code> としているが、それに搭載するAPUは <em>Raven2 (Pollock)</em> だけとなっている。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><br />
+<p>コミットメッセージでは <em>FP5ソケット</em> が <code>&quot;0x18&quot;</code> としているが、これはChromebookに採用される <em>FP5ソケット</em> 搭載のAPUが <em>Raven</em> 以降の <em>Picasso</em> 、<em>Raven2 (Dali)</em> のみであるからと思われる。<br />
+そして、<em>FT5ソケット</em> を <code>&quot;0x20&quot;</code> としているが、それに搭載するAPUは <em>Raven2 (Pollock)</em> だけとなっている。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><br />
 少なくとも <em>Raven2 (Pollock)</em> は、12nm <em>Zen+ APU /Picasso</em> ではなく、14nm <em>Zen APU /Raven2 (Pollock)</em> としっかり判別されるはずだ。</p>
 
 <h3 id="worry">気がかり</h3>
@@ -298,7 +301,7 @@ article > p::first-letter {
 
 <p>それと、<a href="https://blog.coelacanth-dream.com/tags/dali">Raven2 (Dali)</a>は恐らく <em>Picasso</em> と判別されるままだろう。<br />
 Chromebookには <em>Raven2 (Dali)</em> ベースの <strong>Ryzen 3 3250C</strong> 、<strong>Athlon Silver 3050C</strong> 、 <strong>Athlon Gold 3150C</strong> も採用されるが、これらは数字セグメント的に <em>FP5ソケット</em> に搭載される可能性が高い。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup><br />
-そしてコミットメッセージから x86_Model は <code>0x18</code> となるはずだ。</p>
+そしてコミットメッセージから x86_Model は <code>&quot;0x18&quot;</code> となるはずだ。</p>
 
 <p>つまり、<em>AM4ソケット</em> 、<em>FP5ソケット</em> に搭載される <em>Raven2</em> 、<em>Raven2 (Dali)</em> は <em>Picasso</em> と判別され続け、<br />
 <em>FT5ソケット</em> に搭載される <em>Raven2 (Pollock)</em> は正しくそのままに判別される。</p>
@@ -355,7 +358,7 @@ Chromebookには <em>Raven2 (Dali)</em> ベースの <strong>Ryzen 3 3250C</stro
 		</ul>
 	</nav>
 	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-24 " class="side-time">Post : 2020-04-24 </time>
-		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-26 07:10:28 </div><nav class="side-about">
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-28 21:41:10 </div><nav class="side-about">
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
@@ -381,7 +384,7 @@ Chromebookには <em>Raven2 (Dali)</em> ベースの <strong>Ryzen 3 3250C</stro
 			<a href="https://blog.coelacanth-dream.com/categories/apu">APU</a>,&nbsp;</nav>
 			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
 			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-24 01:02:04 " class="foot-time">Post : 2020-04-24</time>
-		/ <span class="foot-lastmod">Lastmod : 2020-04-26 07:10:28 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-28 21:41:10 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
 		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
 	</nav>
