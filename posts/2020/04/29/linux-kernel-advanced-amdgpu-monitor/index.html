@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/04/29/linux-kernel-advanced-amdgpu-monitor/">
+
+	<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+	<meta name="twitter:card" content="summary"><title>スパコンに向けて強化される Linux Kernel の AMDGPU 関連機能 | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="スパコンに向けて強化される Linux Kernel の AMDGPU 関連機能 | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="スパコンに向けて強化される Linux Kernel の AMDGPU 関連機能 | Coelacanth&#39;s Dream">
+	<meta property="og:type" content="article">
+
+	<meta name="description" content="1.5 Exaflopsの演算性能を持ち、2021年納入予定の Frontier 、 2 Exaflopsの演算性能を持ち、2022年か2023年早期に納入予定の El Captitan どちらも AMD CPU &#43; AMD GPU のノード構成になることが明ら">
+	<meta property="og:description" content="1.5 Exaflopsの演算性能を持ち、2021年納入予定の Frontier 、 2 Exaflopsの演算性能を持ち、2022年か2023年早期に納入予定の El Captitan どちらも AMD CPU &#43; AMD GPU のノード構成になることが明ら">
+	<meta name="twitter:description" content="1.5 Exaflopsの演算性能を持ち、2021年納入予定の Frontier 、 2 Exaflopsの演算性能を持ち、2022年か2023年早期に納入予定の El Captitan どちらも AMD CPU &#43; AMD GPU のノード構成になることが明ら">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/04/29/linux-kernel-advanced-amdgpu-monitor/">
+	<meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/04/29/linux-kernel-advanced-amdgpu-monitor/">
+	<link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/04/29/linux-kernel-advanced-amdgpu-monitor/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="Linux_Kernel, ">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+	background-size: cover;
+	background-attachment: fixed;
+	background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+	background-repeat: no-repeat;
+	font-size: 1em;
+}
+main {
+	display: grid;
+	grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+	row-gap: 1em;
+}
+header {
+	grid-row: 2 / 3;
+	grid-column: 1 / 4;
+}
+.title {
+	font: normal 1.6em monospace;
+	text-decoration: none;
+	text-align: end;
+}
+	.title a {
+		color: #819BA1;
+		text-shadow: 0 2px .8em #577C87;
+	}
+	.title a:hover {
+		color: #90B4BD;
+		text-decoration: none;
+		text-shadow: 0 2px 1em #7EA0A9;
+	}
+.page-title, .page-title a {
+	color: #FFA332;
+	font-size: 1em;
+	line-height: 1.2em;
+	margin: 0;
+	padding: 0;
+	max-width: 95%;
+}
+	.page-title a:hover,.sect-page a:hover {
+		text-decoration: underline #CC8214;
+	}
+.tag-title, .categorie-title {
+	color: #7FFFD4;
+}
+a {
+	color: #75D1FF;
+	text-decoration: none;
+	padding: 0 .28em 0 .25em;
+	margin: 0;
+	word-break: break-all;
+}
+	a:hover {
+		text-decoration: underline;
+	}
+p {
+	margin: .8rem 0 .4rem 0;
+}
+.text {
+	color: snow;
+	box-sizing: border-box;
+	overflow-wrap: break-word;
+	text-justify: inter-character;
+	grid-area: 3 / 2 / 4 / 5;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+}
+.text * {
+	line-height: 1.5em;
+}
+.text p {
+	letter-spacing: .025em;
+}
+article > p::first-letter {
+	padding-left: .6em;
+}
+.copyright {
+	font-size: .9em;
+	color: limegreen;
+	padding: 1em 0 0 0;
+	display: block;
+}
+.foot, .side {
+	display: none;
+}
+.foot {
+	grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+	main {
+		display: grid;
+		grid-template: 2em 6em 2em auto / 2em 200px auto;
+	}
+	.text {
+		grid-area: 1 / 3 / 5 / 3;
+		padding: 1em .5em 8% 1em;
+	}
+	header > .title {
+		display: none;
+	}
+	.side {
+		display: block;
+			height: 96vh;
+			width: 200px;
+		position: fixed;
+			top: 1em;
+			left: 24px;
+		padding-right: 1.2em;
+		border-right: 1px solid green;
+		font-size: 1em;
+		color: #00E500;
+		color: #00E500;
+		z-index: 101;
+		transform: translateZ(0);
+
+		overflow: scroll;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+	}
+		.side > .title {
+			text-align: end;
+			padding: 1em 0 0 0;
+			width: 100%;
+			font: normal 1.6em monospace;
+		}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 / 4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+	.side-page-number {
+		font-size: .9em;
+		grid-area: 2 / 2 / 3 / 3;
+		margin: 0 auto 0 auto;
+	}
+	.side-author, .side-lastmod, .side-about, .side-time {
+		padding: 0 .2em 0 0;
+		margin: .5em 0 .5em .4em;
+		font-size: .95rem;
+		border-bottom: 1px solid #2D5A4B;
+		max-width: max-content;
+	}
+	.side li::before {
+		color: #008080;
+		content: '';
+		padding: 0;
+		margin: 0;
+		font-size: 1rem;
+	}
+	.side li ul {
+		padding: 0 0 0 .7em;
+	}
+	.side-tag-lower, .side-categorie-lower {
+		border-bottom: 1px solid #326554;
+	
+	}
+		.side-tags li li::before, .side-categories li li::before {
+			content: '\2514';
+			vertical-align: sub;
+			padding: 0 .2em 0 0;
+			color: #4C997F;
+			font-size: 1.2em;
+		}
+		.side-tags li li:hover::before {
+			color: #65CCA9;
+		}
+	.side-links a:hover, .side-tags a:hover, .side-categories a:hover {
+		text-decoration: none;
+		border-bottom: 1px solid #65CCA9;
+	}
+	.side-links ul, .side-tags ul, .side-categories ul {
+		list-style: none none outside;
+		padding: 0 0 0 1em;
+		color: #65CCA9;
+		line-height: 1.5em;
+	}
+	.tag-title, .categorie-title, .side-links a {
+		border-bottom: 2px solid #326654;
+		padding: 0 1em .1em .3em;
+		margin-bottom: 1em;
+	}
+}
+</style>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+			<link rel="preload" href="https://blog.coelacanth-dream.com/css/ins.min.css" as="style">
+		<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>スパコンに向けて強化される Linux Kernel の AMDGPU 関連機能</h1>
+	</header>
+
+<p>1.5 Exaflopsの演算性能を持ち、2021年納入予定の <em>Frontier</em> 、<br />
+2 Exaflopsの演算性能を持ち、2022年か2023年早期に納入予定の <em>El Captitan</em> どちらも AMD CPU + AMD GPU のノード構成になることが明らかにされているが、<br />
+それらスパコンに向けたソフトウェア側の機能が Linux Kernel に組み込まれつつある。</p>
+
+<h2 id="インデックス">インデックス</h2>
+
+<ul>
+<li><a href="#ras">RAS機能への対応</a></li>
+<li><a href="#vram-per-process">プロセスごとのVRAM使用量が取得可能に</a></li>
+<li><a href="#fru-chip">FRUチップ</a></li>
+<li><a href="#spm">Streaming Performance Monitor</a></li>
+</ul>
+
+<h2 id="ras">RAS機能への対応</h2>
+
+<p>RASは <em>Reliability, Accessibility, and Serviceability</em> の略。<br />
+これは <em>Vega20</em> の頃から対応が進められており、各ユニット<span class="complement">
+&nbsp;&mdash;&mdash; UMC、SDMA、GFX &mdash;&mdash;&nbsp;
+</span>
+へのエラー注入、そこからのGPUリセット機能(BACO)による復帰テストが行なえる。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">1</a></sup><br />
+BACO は <em>Bus Active, Chip Off</em> の略。</p>
+
+<h2 id="vram-per-process">プロセスごとのVRAM使用量が取得可能に</h2>
+
+<span class="reflink"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-April/048643.html" rel="noreferrer" target="_blank">[PATCH] drm/amdkfd: Track GPU memory utilization per process</a></span><br>
+
+
+<p>AMDは現状、<code>rocm-smi</code> というツールを提供しており、それによってVRAMの使用量を確認できるが、VRAM全体であり、どのプロセスがVRAMを多く消費しているか、といったものを知ることはできない。<br />
+だが上記パッチにより、それが可能になるはずだ。</p>
+
+<p>/proc/&lt;pid&gt;/ 下に vram_&lt;gpuid&gt; というファイルを生成するようになり、GPUごとに割り振られるIDをファイル名に使うため複数GPUの環境にも対応されている。<br />
+この機能はアプリケーションの最適化にも役立つだろう。</p>
+
+<p>この機能を、NVIDIAは以前から <code>nvidia-smi</code> <sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup>で提供しており、ツール面でようやくAMDが追いついてきたと言える。ROCmの開発、スーパーコンピュータ採用等で必要に迫られたのかもしれない。<br />
+一応、AMDは<a href="https://gitlab.freedesktop.org/tomstdenis/umr/-/tree/master" rel="noreferrer" target="_blank">umr</a>や<a href="https://github.com/GPUOpen-Tools/radeon_gpu_analyzer" rel="noreferrer" target="_blank">Radeon GPU Analuzer</a>、<a href="https://github.com/GPUOpen-Tools/radeon_gpu_profiler" rel="noreferrer" target="_blank">Radeon™ GPU Profiler</a>等、レジスタレベル、パイプラインのモニタツールは豊富に提供している。</p>
+
+<p>また少し前までは、AMDGPUの場合、上記 <code>rocm-smi</code> や <a href="https://github.com/clbr/radeontop" rel="noreferrer" target="_blank">radeontop</a> 等のソフトウェアを用いなければ全体でもVRAM容量、使用量を知ることが難しかったが、<br />
+現在はそれら情報が sysfs へ出力されるようになっているため、VRAM使用量なんかは</p>
+
+<pre><code>$ cat /sys/class/drm/card0/device/mem_info_vram_used 
+</code></pre>
+
+<p>を実行するだけで知ることができる。</p>
+
+<p>ただこの機能、既に組み込まれているがドキュメント類は 2020/04/29 現在、未だにアップデートされていない。<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">3</a></sup><br />
+自分のような一般ユーザにも恩恵があるため、広く周知されてほしい。<br />
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/03/12/private-conkyrc/">私的conkyrc | Coelacanth&rsquo;s Dream</a></span><br>
+</p>
+
+<h2 id="fru-chip">FRUチップ</h2>
+
+<p>製品名、製品ナンバー、シリアルナンバーを記録した <em>FRUチップ</em> を読み取るためのパッチが 2020/03/19 より投稿されている。<br />
+<span class="reflink"><a href="https://patchwork.freedesktop.org/patch/358146/" rel="noreferrer" target="_blank">Enable reading FRU chip via I2C v3 &ndash; Patchwork</a></span><br>
+
+この <em>FRUチップ</em> によってソフトウェアから問題が発生したハードウェアを特定しやすくなり、大規模なコンピュータにおける障害対応、部品交換を手助けする。</p>
+
+<p><em>FRUチップ</em> は <em>Vega20</em> の一部SKUにも搭載されているがサーバ向けのみとなっており、ゲーミング向けSKUは <em>FRUチップ</em> を搭載していない。実際コード中でもゲーミング向け製品 <strong>Radeon VII</strong> の DeviceID:&ldquo;0x66AF&rdquo;、Apple専用製品 <strong>Radeon Pro Vega II (Duo)</strong> の DeviceID:&ldquo;0x66A3&rdquo; は判定部に含まれていない。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">4</a></sup><br />
+<em>Arcturus</em> はそういった DeviceIDでの判定はせず、すべてが <em>FRUチップ</em> を搭載するとし、また前のパッチリビジョンでは <em>Arcturus</em> にゲーミング向けSKUは存在しないとしている。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">5</a></sup><br />
+やはり、よく言われているように <em>Arcturus</em> はサーバ向けSKUのみとなるだろう。</p>
+
+<h2 id="spm">Streaming Performance Monitor</h2>
+
+<p>先日パッチが投稿されたばかりの機能。<br />
+<span class="reflink"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-April/049049.html" rel="noreferrer" target="_blank">[PATCH] drm/amd: add Streaming Performance Monitor feature</a></span><br>
+
+中身としては、内部バスの利用状況、GPU内部のデータの流れを監視するためのものと読める。</p>
+
+<p>しかし、後のパッチレビューにて様々な問題点が指摘されており、仮に実装するとしても時間が掛かりそうだ。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">6</a></sup></p>
+
+<hr>
+<div class="reference">
+<h2 class="ref-title" id="ref-links">参考リンク</h2>
+<ul>
+<li><a href="https://www.amd.com/en/products/exascale-era" rel="noreferrer" target="_blank">AMD Powering the Exascale Era with El Capitan | AMD</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:5"><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html#amdgpu-ras-support" rel="noreferrer" target="_blank">https://www.kernel.org/doc/html/latest/gpu/amdgpu.html#amdgpu-ras-support</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:1"><a href="http://developer.download.nvidia.com/compute/DCGM/docs/nvidia-smi-367.38.pdf" rel="noreferrer" target="_blank">NVIDIA System Management Interface | NVIDIA Developer</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:4"><a href="https://github.com/torvalds/linux/blob/v5.7-rc3/Documentation/gpu/amdgpu.rst" rel="noreferrer" target="_blank">linux/amdgpu.rst at v5.7-rc3 · torvalds/linux</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://patchwork.freedesktop.org/patch/360462/" rel="noreferrer" target="_blank">drm/amdgpu: Re-enable FRU check for most models v4 &ndash; Patchwork</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://patchwork.freedesktop.org/patch/360005/" rel="noreferrer" target="_blank">drm/amdgpu: Re-enable FRU check for most models v3 &ndash; Patchwork</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:7"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-April/049061.html" rel="noreferrer" target="_blank">[PATCH] drm/amd: add Streaming Performance Monitor feature</a>
+ <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Posts</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav>
+	<nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/tags/linux_kernel" class="side-tag-lower">Linux_Kernel</a></li></ul>
+		</ul>
+	</nav>
+	<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/categories/software" class="side-categorie-lower">Software</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/amd" class="side-categorie-lower">AMD</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-categorie-lower">GPU</a></li></ul>
+		</ul>
+	</nav>
+	<div class="side-author">Author : Umio Yasuno</div><time datetime="2020-04-29 22:16:41" class="side-time">Post : 2020-04-29 </time>
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-04-30 13:30:19 </div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags :</a>
+			<a href="https://blog.coelacanth-dream.com/tags/linux_kernel">Linux_Kernel</a>,&nbsp;</nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/software">Software</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/amd">AMD</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>,&nbsp;</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-04-29 22:16:41" class="foot-time">Post : 2020-04-29</time>
+		/ <span class="foot-lastmod">Lastmod : 2020-04-30 13:30:19 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
