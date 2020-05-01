@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/05/01/intel-cometlake-pch-arr/">
+
+	<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+	<meta name="twitter:card" content="summary"><title>Intel Comet Lake PCHを整理する ――LPDDR4とか22nmとか | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="Intel Comet Lake PCHを整理する ――LPDDR4とか22nmとか | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="Intel Comet Lake PCHを整理する ――LPDDR4とか22nmとか | Coelacanth&#39;s Dream">
+	<meta property="og:type" content="article">
+
+	<meta name="description" content="先日、Intelがデスクトップ向けに第10世代Core Comet Lake-S 、それをサポートする 400シリーズチップセット の情報を公開した。 Intel Delivers World’s Fastest Gaming Processor | Intel Newsroom Intel® 400 Series Chipsets Product Specifications そしてその">
+	<meta property="og:description" content="先日、Intelがデスクトップ向けに第10世代Core Comet Lake-S 、それをサポートする 400シリーズチップセット の情報を公開した。 Intel Delivers World’s Fastest Gaming Processor | Intel Newsroom Intel® 400 Series Chipsets Product Specifications そしてその">
+	<meta name="twitter:description" content="先日、Intelがデスクトップ向けに第10世代Core Comet Lake-S 、それをサポートする 400シリーズチップセット の情報を公開した。 Intel Delivers World’s Fastest Gaming Processor | Intel Newsroom Intel® 400 Series Chipsets Product Specifications そしてその">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/05/01/intel-cometlake-pch-arr/">
+	<meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/05/01/intel-cometlake-pch-arr/">
+	<link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/05/01/intel-cometlake-pch-arr/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="PCH, ">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+	background-size: cover;
+	background-attachment: fixed;
+	background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+	background-repeat: no-repeat;
+	font-size: 1em;
+}
+main {
+	display: grid;
+	grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+	row-gap: 1em;
+}
+header {
+	grid-row: 2 / 3;
+	grid-column: 1 / 4;
+}
+.title {
+	font: normal 1.6em monospace;
+	text-decoration: none;
+	text-align: end;
+}
+	.title a {
+		color: #819BA1;
+		text-shadow: 0 2px .8em #577C87;
+	}
+	.title a:hover {
+		color: #90B4BD;
+		text-decoration: none;
+		text-shadow: 0 2px 1em #7EA0A9;
+	}
+.page-title, .page-title a {
+	color: #FFA332;
+	font-size: 1em;
+	line-height: 1.2em;
+	margin: 0;
+	padding: 0;
+	max-width: 95%;
+}
+	.page-title a:hover,.sect-page a:hover {
+		text-decoration: underline #CC8214;
+	}
+.tag-title, .categorie-title {
+	color: #7FFFD4;
+}
+a {
+	color: #75D1FF;
+	text-decoration: none;
+	padding: 0 .28em 0 .25em;
+	margin: 0;
+	word-break: break-all;
+}
+	a:hover {
+		text-decoration: underline;
+	}
+p {
+	margin: .8rem 0 .4rem 0;
+}
+.text {
+	color: snow;
+	box-sizing: border-box;
+	overflow-wrap: break-word;
+	text-justify: inter-character;
+	grid-area: 3 / 2 / 4 / 5;
+	scrollbar-width: thin;
+	scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+}
+.text {
+	letter-spacing: .025rem;
+	line-height: 1.5em;
+}
+article > p::first-letter {
+	padding-left: .6em;
+}
+.copyright {
+	font-size: .9em;
+	color: limegreen;
+	padding: 1em 0 0 0;
+	display: block;
+}
+.foot, .side {
+	display: none;
+}
+.foot {
+	grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+	main {
+		display: grid;
+		grid-template: 2em 6em 2em auto / 2em 200px auto;
+	}
+	.text {
+		grid-area: 1 / 3 / 5 / 3;
+		padding: 1em .5em 8% 1em;
+	}
+	header > .title {
+		display: none;
+	}
+	.side {
+		display: block;
+			height: 96vh;
+			width: 200px;
+		position: fixed;
+			top: 1em;
+			left: 24px;
+		padding-right: 1.2em;
+		border-right: 1px solid green;
+		font-size: 1em;
+		color: #00E500;
+		color: #00E500;
+		z-index: 101;
+		transform: translateZ(0);
+
+		overflow: scroll;
+		scrollbar-width: thin;
+		scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+	}
+		.side > .title {
+			text-align: end;
+			padding: 1em 0 0 0;
+			width: 100%;
+			font: normal 1.6em monospace;
+		}
+	.side-pagination {
+		display: grid;
+		margin: 2em 0 2em 1em;
+		font-size: 1.05em;
+		row-gap: .8em;
+		grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+	}
+	.side-prev {
+		grid-area: 1 / 1 / 1 / 4;
+		margin-right: auto;
+		color: #9EDEFF;
+	}
+		.side-prev::before {
+			content: '\2190';
+		}
+	.side-next {
+		grid-area: 3 / 1 / 3 / 4;
+		margin-left: auto;
+		color: #9EDEFF;
+	}
+		.side-next::after {
+			content: '\2192';
+			vertical-align: middle;
+		}
+	.side-page-number {
+		font-size: .9em;
+		grid-area: 2 / 2 / 3 / 3;
+		margin: 0 auto 0 auto;
+	}
+	.side-author, .side-lastmod, .side-about, .side-time {
+		padding: 0 .2em 0 0;
+		margin: .5em 0 .5em .4em;
+		font-size: .95rem;
+		border-bottom: 1px solid #2D5A4B;
+		max-width: max-content;
+	}
+	.side li::before {
+		color: #008080;
+		content: '';
+		padding: 0;
+		margin: 0;
+		font-size: 1rem;
+	}
+	.side li ul {
+		padding: 0 0 0 .7em;
+	}
+	.side-tag-lower, .side-categorie-lower {
+		border-bottom: 1px solid #326554;
+	
+	}
+		.side-tags li li::before, .side-categories li li::before {
+			content: '\2514';
+			vertical-align: sub;
+			padding: 0 .2em 0 0;
+			color: #4C997F;
+			font-size: 1.2em;
+		}
+		.side-tags li li:hover::before {
+			color: #65CCA9;
+		}
+	.side-links a:hover, .side-tags a:hover, .side-categories a:hover {
+		text-decoration: none;
+		border-bottom: 1px solid #65CCA9;
+	}
+	.side-links ul, .side-tags ul, .side-categories ul {
+		list-style: none none outside;
+		padding: 0 0 0 1em;
+		color: #65CCA9;
+		line-height: 1.5em;
+	}
+	.tag-title, .categorie-title, .side-links a {
+		border-bottom: 2px solid #326654;
+		padding: 0 1em .1em .3em;
+		margin-bottom: 1em;
+	}
+}
+</style>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+		<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>Intel Comet Lake PCHを整理する ――LPDDR4とか22nmとか</h1>
+	</header>
+
+<p>先日、Intelがデスクトップ向けに第10世代Core <em>Comet Lake-S</em> 、それをサポートする <em>400シリーズチップセット</em> の情報を公開した。<br />
+<span class="reflink"><a href="https://newsroom.intel.com/news/intel-delivers-worlds-fastest-gaming-processor/" rel="noreferrer" target="_blank">Intel Delivers World’s Fastest Gaming Processor | Intel Newsroom</a></span><br>
+
+<span class="reflink"><a href="https://ark.intel.com/content/www/us/en/ark/products/series/201843/intel-400-series-chipsets.html" rel="noreferrer" target="_blank">Intel® 400 Series Chipsets Product Specifications</a></span><br>
+</p>
+
+<p>そしてその <em>400シリーズチップセット</em> だが、ベースとなるPCHが複数存在し、またそれぞれ微妙に違いが存在するため、自分の頭の中を整理するためにも今回記事としてまとめることとした。</p>
+
+<p>主な参考資料:</p>
+
+<ul>
+<li><a href="https://github.com/IntelFsp/FSP" rel="noreferrer" target="_blank">IntelFsp/FSP: Intel&reg; Firmware Support Package (FSP)</a>
+
+<ul>
+<li><a href="https://github.com/IntelFsp/FSP/tree/master/CometLakeFspBinPkg" rel="noreferrer" target="_blank">https://github.com/IntelFsp/FSP/tree/master/CometLakeFspBinPkg</a></li>
+</ul></li>
+</ul>
+
+<h2 id="インデックス">インデックス</h2>
+
+<ul>
+<li><a href="#cometlake1">CometLake1</a></li>
+<li><a href="#cometlake2">CometLake2</a></li>
+<li><a href="#cometlake-s-v">CometLakeS / CometLakeV</a></li>
+</ul>
+
+<h2 id="cometlake1">CometLake1</h2>
+
+<p><em>Comet Lake U-Series /H-Series</em> に用いられるPCH。<br />
+サポートするメモリタイプは LPDDR3 と DDR4だが、ここが面白い点であり、Intelは <em>Comet Lake U-Series</em> 発表時、LPDDR4/xメモリをサポートするとしていた。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup><br />
+<a href="https://www.anandtech.com" rel="noreferrer" target="_blank">AnandTech</a>によれば、最初のB0ステッピングではサポートされず、K1ステッピングでサポートされることになっている。また、そうなった理由として、LPDDR3 と DDR4 はメモリコントローラーのデザインが似通っており、IPをほぼ再利用できるが、LPDDR4はそうではなく、デザインの変更を必要とするため検証に時間が掛かったのではないかと推測している。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
+
+<h2 id="cometlake2">CometLake2</h2>
+
+<p>そしてその LPDDR4メモリをサポートするPCHが <em>CometLake2</em> となっている。代わりに <em>CometLake1</em> でサポートされていた LPDDR3メモリが、サポートから外れている。</p>
+
+<p>違いとしてはそれだけだが、Intelは <em>Comet Lake U-Series</em> のB0ステッピングとK1ステッピングでSKU名を変えていないため、それだけでは判別が不可能となっている。<br />
+具体的な名前を出すと、<strong>Core i7-10710U</strong> に <em>CometLake1</em> と <em>CometLake2</em> が混在している。<br />
+搭載されているシステムのメモリが LPDDR3、または LPDDR4であれば判別は可能だが、この方法だと DDR4を採用している場合破綻する。<br />
+そこで Intel は CPUIDのEAXレジスタの値で判別することを推奨しており、<em>CometLake1 /B0ステッピング</em> は値が <code>0x000A0660</code> または <code>0x000806EC</code> 、<em>CometLake2 /K1ステッピング</em> は値が <code>0x000A0661</code> となる。<br />
+しかしこの方法にも問題があるはずだ。消費者からすれば、自分が買おうとしているPCに搭載されたCPUの CPUID を知ることなんてできない。DDR4メモリを採用している場合は完全に不明となる。<br />
+メモリ以外で性能に関わる変更が為されていないことを願うのみだ。</p>
+
+<h2 id="cometlake-s-v">CometLakeS / CometLakeV</h2>
+
+<p>デスクトップ向けのPCHには <em>CometLakeS</em> と <em>CometLakeV</em> の2種類が存在し、<br />
+<em>CometLakeS</em> は <strong>14nmプロセス</strong> 、<em>CometLakeV</em> は <strong>22nmプロセス</strong> で製造される。これが <em>CometLakeS</em> とのわかりやすい違いとなるだろう。</p>
+
+<p>前世代から <em>CometLakeS</em> に追加された新機能には 2.5G Ethernetコントローラー <strong>I225</strong>、Wi-Fi 6モジュール <strong>AX200/201</strong> のサポートがあげられる。</p>
+
+<p><em>CometLakeS</em> の具体的な製品名は、<em>Z490 /H470</em> 、まだ Intel のサイトには掲載されていないが <em>Q470 /W480</em> 、そして意外なことに <em>B460</em> となっている。</p>
+
+<blockquote>
+<p>For all other Intel® 400 Series Chipsets, use CometLakeS. For the Intel® B460 Chipset use CometLakeS.</p>
+
+<p>引用元:<cite><a href="https://github.com/IntelFsp/FSP/blob/8af76d732b006acceaaee184b597a46f39ec15e3/CometLakeFspBinPkg/README.md" rel="noreferrer" target="_blank">FSP/README.md at 8af76d732b006acceaaee184b597a46f39ec15e3 · IntelFsp/FSP</a></cite></p>
+</blockquote>
+
+<p>意外だと感じたのは、<a href="https://github.com/coreboo" rel="noreferrer" target="_blank">Coreboot</a>のPCI IDリストに <em>Comet Lake PCH</em> の中で <em>H410</em> と <em>B460</em> が無く、<em>CometLakeV</em> だと思っていたからだ。<em>H410</em> と、これも未発表だが <em>B460C</em> は <em>CometLakeV</em> と記述されている。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">3</a></sup><br />
+Intel のサイトを確認すると、確かに <em>B460</em> のブロックダイアグラムには 2.5G Ethernet とWi-Fi 6 <strong>AX200</strong> が描かれているのに対し、<em>H420E /H410</em> にはそれらがない。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup><sup class="footnote-ref" id="fnref:6"><a href="#fn:6">5</a></sup><br />
+Coreboot は単なる記載漏れなのだろうか？<br />
+しかしパターンとして、リネームされたチップセットは記載されていない。(例: Z370)。<br />
+<em>H470</em> と <em>B460</em> で PCI ID を共有している可能性も考えられるだろうか？</p>
+
+<p>言えるのは、少なくとも <em>B460</em> は <em>CometLakeS</em> ということだ。</p>
+
+<p><em>CometLake1</em> 、<em>CometLake2</em> 、<em>CometLakeS</em> は、Linux Kernelからは <em>Comet Lake PCH</em> と、<br />
+<em>CometLakeV</em> は <em>Comet Lake V PCH</em> と判定される。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">6</a></sup><sup class="footnote-ref" id="fnref:4"><a href="#fn:4">7</a></sup></p>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">Process</th>
+<th align="center">Product</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">CometLakeS</td>
+<td align="center">14nm</td>
+<td align="center">Z490 /H470 /B460<br>/W480 /Q470</td>
+</tr>
+
+<tr>
+<td align="left">CometLakeV</td>
+<td align="center">22nm</td>
+<td align="center">B460C /H420E? /H410</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+<div class="reference">
+<h2 class="ref-title" id="ref-title">参考リンク</h2>
+<ul>
+<li><a href="https://github.com/IntelFsp/FSP" rel="noreferrer" target="_blank">IntelFsp/FSP: Intel&reg; Firmware Support Package (FSP)</a>
+
+<ul>
+<li><a href="https://github.com/IntelFsp/FSP/tree/master/CometLakeFspBinPkg" rel="noreferrer" target="_blank">https://github.com/IntelFsp/FSP/tree/master/CometLakeFspBinPkg</a></li>
+</ul></li>
+<li><a href="https://github.com/coreboot/coreboot" rel="noreferrer" target="_blank">coreboot/coreboot: Mirror of https://review.coreboot.org/coreboot.git. We don&rsquo;t handle Pull Requests.</a>
+
+<ul>
+<li><a href="https://github.com/coreboot/coreboot/blob/d7a6d61d51ebf4025484e567a20b2b50fda5a6f9/src/include/device/pci_ids.h#L2845" rel="noreferrer" target="_blank">coreboot/pci_ids.h at d7a6d61d51ebf4025484e567a20b2b50fda5a6f9 · coreboot/coreboot</a></li>
+</ul></li>
+<li><a href="https://github.com/torvalds/linux/blob/50a5065f4474c2dbc1f7462b45a32d33d7b48d88/drivers/gpu/drm/i915/intel_pch.h#L44" rel="noreferrer" target="_blank">linux/intel_pch.h at 50a5065f4474c2dbc1f7462b45a32d33d7b48d88 · torvalds/linux</a></li>
+<li><a href="https://github.com/torvalds/linux/blob/48a1b8d4af01abd38e51cef205a0f2c4deeb092a/drivers/gpu/drm/i915/intel_pch.c" rel="noreferrer" target="_blank">linux/intel_pch.c at 48a1b8d4af01abd38e51cef205a0f2c4deeb092a · torvalds/linux</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://newsroom.intel.com/news/intel-expands-10th-gen-intel-core-mobile-processor-family-offering-double-digit-performance-gains/" rel="noreferrer" target="_blank">Intel Expands 10th Gen Intel Core Mobile Processor Family, Offering Double Digit Performance Gains | Intel Newsroom</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://www.anandtech.com/show/15302/intel-28-w-ice-lake-core-i71068g7-coming-q1" rel="noreferrer" target="_blank">Intel: 28 W Ice Lake Core i7-1068G7 Coming Q1</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:7"><a href="https://github.com/IntelFsp/FSP/blob/8af76d732b006acceaaee184b597a46f39ec15e3/CometLakeFspBinPkg/README.md" rel="noreferrer" target="_blank">FSP/README.md at 8af76d732b006acceaaee184b597a46f39ec15e3 · IntelFsp/FSP</a>
+ <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://www.intel.com/content/www/us/en/products/docs/chipsets/desktop-chipsets/b460-chipset-brief.html?wapkw=b460" rel="noreferrer" target="_blank">Intel® B460 Chipset Product Brief</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:6"><a href="https://www.intel.com/content/www/us/en/design/products-and-solutions/processors-and-chipsets/comet-lake-s/overview.html?wapkw=H410&amp;grouping=EMT_Content%20Type&amp;sort=title:asc" rel="noreferrer" target="_blank">Comet Lake S: Overview and Technical Documentation</a>
+ <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://github.com/coreboot/coreboot/blob/d7a6d61d51ebf4025484e567a20b2b50fda5a6f9/src/include/device/pci_ids.h#L2840" rel="noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/d7a6d61d51ebf4025484e567a20b2b50fda5a6f9/src/include/device/pci_ids.h#L2840</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:4"><a href="https://github.com/torvalds/linux/blob/50a5065f4474c2dbc1f7462b45a32d33d7b48d88/drivers/gpu/drm/i915/intel_pch.h#L44" rel="noreferrer" target="_blank">https://github.com/torvalds/linux/blob/50a5065f4474c2dbc1f7462b45a32d33d7b48d88/drivers/gpu/drm/i915/intel_pch.h#L44</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Posts</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav>
+	<nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/tags/pch" class="side-tag-lower">PCH</a></li></ul>
+		</ul>
+	</nav>
+	<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/categories/hardware" class="side-categorie-lower">Hardware</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/intel" class="side-categorie-lower">Intel</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/chipset" class="side-categorie-lower">Chipset</a></li></ul>
+		</ul>
+	</nav><div class="side-author">Author : Umio Yasuno</div><time datetime="2020-05-01 23:41:56" class="side-time">Post : 2020-05-01 </time>
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-05-02 02:27:02 </div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags :</a>
+			<a href="https://blog.coelacanth-dream.com/tags/pch">PCH</a>,&nbsp;</nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/hardware">Hardware</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/intel">Intel</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/chipset">Chipset</a>,&nbsp;</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-05-01 23:41:56" class="foot-time">Post : 2020-05-01</time>
+		/ <span class="foot-lastmod">Lastmod : 2020-05-02 02:27:02 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
