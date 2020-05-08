@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/05/08/intel-add-dg1-rkl-oss-driver/">
+
+	<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+	<meta name="twitter:card" content="summary"><title>Intel、オープンソースドライバーに DG1 と Rocket Lake の関するコードを追加 | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="Intel、オープンソースドライバーに DG1 と Rocket Lake の関するコードを追加 | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="Intel、オープンソースドライバーに DG1 と Rocket Lake の関するコードを追加 | Coelacanth&#39;s Dream">
+	<meta property="og:type" content="article">
+
+	<meta name="description" content="まだマージリクエストの段階ではあるが、オープンソースなGPUドライバーに DG1 と Rocket Lake に関するコードが追加された。 intel/dev: Add DG1 platform (!4956) · Merge Requests · Mesa / mesa · GitLab intel/dev: Add RKL platform (!4955) · Merge Requests · Mesa / mesa · GitLab DG1 、 Rocket Lake は現段階でG">
+	<meta property="og:description" content="まだマージリクエストの段階ではあるが、オープンソースなGPUドライバーに DG1 と Rocket Lake に関するコードが追加された。 intel/dev: Add DG1 platform (!4956) · Merge Requests · Mesa / mesa · GitLab intel/dev: Add RKL platform (!4955) · Merge Requests · Mesa / mesa · GitLab DG1 、 Rocket Lake は現段階でG">
+	<meta name="twitter:description" content="まだマージリクエストの段階ではあるが、オープンソースなGPUドライバーに DG1 と Rocket Lake に関するコードが追加された。 intel/dev: Add DG1 platform (!4956) · Merge Requests · Mesa / mesa · GitLab intel/dev: Add RKL platform (!4955) · Merge Requests · Mesa / mesa · GitLab DG1 、 Rocket Lake は現段階でG">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/05/08/intel-add-dg1-rkl-oss-driver/">
+	<meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/05/08/intel-add-dg1-rkl-oss-driver/">
+	<link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/05/08/intel-add-dg1-rkl-oss-driver/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="DG1, Rocket_Lake, Gen12, ">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		    <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+    background-size: cover;
+    background-attachment: fixed;
+    background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+    background-repeat: no-repeat;
+    font-size: 1em;
+}
+main {
+    display: grid;
+    grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+    row-gap: 1em;
+}
+header {
+    grid-row: 2 / 3;
+    grid-column: 1 / 4;
+}
+.title {
+    font: normal 1.6em monospace;
+    text-decoration: none;
+    text-align: end;
+}
+.title a {
+    color: #819BA1;
+    text-shadow: 0 2px .8em #577C87;
+}
+.title a:hover {
+    color: #90B4BD;
+    text-decoration: none;
+    text-shadow: 0 2px 1em #7EA0A9;
+}
+.page-title, .page-title a {
+    color: #FFA332;
+    font-size: 1em;
+    line-height: 1.2em;
+    margin: 0;
+    padding: 0;
+    max-width: 95%;
+}
+.page-title a:hover, .sect-page a:hover {
+    text-decoration: underline #CC8214;
+}
+.tag-title, .categorie-title {
+    color: #7FFFD4;
+}
+a {
+    color: #75D1FF;
+    text-decoration: none;
+    padding: 0 .28em 0 .25em;
+    margin: 0;
+    word-break: break-all;
+}
+a:hover {
+    text-decoration: underline;
+}
+p {
+    margin: .8rem 0 .4rem 0;
+}
+.text {
+    color: snow;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    grid-area: 3 / 2 / 4 / 5;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+    line-height: 1.5em;
+}
+article > p {
+    letter-spacing: .025rem;
+}
+article > p::first-letter {
+    padding-left: .6em;
+}
+.copyright {
+    font-size: .9em;
+    color: limegreen;
+    padding: 1em 0 0 0;
+    display: block;
+}
+.foot, .side {
+    display: none;
+}
+.foot {
+    grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+    main {
+        display: grid;
+        grid-template: 2em 6em 2em auto / 2em 200px auto;
+    }
+    .text {
+        grid-area: 1 / 3 / 5 / 3;
+        padding: 1em .5em 8% 1em;
+    }
+    header > .title {
+        display: none;
+    }
+    .side {
+        display: block;
+            height: 96vh;
+            width: 200px;
+        position: fixed;
+            top: 1em;
+            left: 24px;
+        padding-right: 1.2em;
+        border-right: 1px solid green;
+        font-size: 1em;
+        color: #00E500;
+        z-index: 101;
+        transform: translateZ(0);
+
+        overflow: scroll;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+    }
+        .side > .title {
+            text-align: end;
+            padding: 1em 0 0 0;
+            width: 100%;
+            font: normal 1.6em monospace;
+        }
+    .side-pagination {
+        display: grid;
+        margin: 2em 0 2em 1em;
+        font-size: 1.05em;
+        row-gap: .8em;
+        grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+    }
+    .side-prev {
+        grid-area: 1 / 1 / 1 / 4;
+        margin-right: auto;
+        color: #9EDEFF;
+    }
+        .side-prev::before {
+            content: '\2190';
+        }
+    .side-next {
+        grid-area: 3 / 1 / 3 / 4;
+        margin-left: auto;
+        color: #9EDEFF;
+    }
+        .side-next::after {
+            content: '\2192';
+            vertical-align: middle;
+        }
+    .side-page-number {
+        font-size: .9em;
+        grid-area: 2 / 2 / 3 / 3;
+        margin: 0 auto 0 auto;
+    }
+    .side-author, .side-lastmod, .side-about, .side-time {
+        padding: 0 .2em 0 0;
+        margin: .5em 0 1.2em .4em;
+        font-size: .95rem;
+        border-bottom: 1px solid #2D5A4B;
+        max-width: max-content;
+    }
+    .side li::before {
+        color: #008080;
+        content: '';
+        padding: 0;
+        margin: 0;
+        font-size: 1rem;
+    }
+    .side li ul {
+        padding: 0 0 0 .7em;
+    }
+    .side-tag-lower, .side-categorie-lower {
+        border-bottom: 1px solid #326554;
+    }
+        .side li li::before {
+            content: '\2514';
+            vertical-align: sub;
+            padding: 0 .2em 0 0;
+            color: #4C997F;
+            font-size: 1.2em;
+        }
+        .side li li:hover::before {
+            color: #65CCA9;
+        }
+    .side-links a:hover, .side-tags a:hover, .side-categories a:hover, .side-about a:hover {
+        text-decoration: none;
+        border-bottom: 1px solid #65CCA9;
+    }
+    .side-links ul, .side-tags ul, .side-categories ul {
+        list-style: none none outside;
+        padding: 0 0 0 1em;
+        color: #65CCA9;
+        line-height: 1.5em;
+    }
+    .tag-title, .categorie-title, .side-links a {
+        border-bottom: 2px solid #326654;
+        padding: 0 1em .1em .3em;
+        margin-bottom: 1em;
+    }
+}
+</style>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+		<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>Intel、オープンソースドライバーに DG1 と Rocket Lake の関するコードを追加</h1>
+	</header>
+
+<p>まだマージリクエストの段階ではあるが、オープンソースなGPUドライバーに <em>DG1</em> と <em>Rocket Lake</em> に関するコードが追加された。<br />
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4956/diffs" rel="noreferrer" target="_blank">intel/dev: Add DG1 platform (!4956) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
+
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4955/diffs" rel="noreferrer" target="_blank">intel/dev: Add RKL platform (!4955) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
+</p>
+
+<p><em>DG1</em> 、 <em>Rocket Lake</em> は現段階でGPU部の製品名は <strong>Intel&reg; Graphics</strong> となっている。<br />
+<em>Tiger Lake</em> はそれ以外に <strong>Intel&reg; Xe Graphics</strong> 、<strong>Intel&reg; UHD Graphics</strong> という名前が用意されており、GPU性能の違いでも製品展開するつもりがあることが窺える。</p>
+
+<h2 id="gpu規模">GPU規模</h2>
+
+<p>コードを読むに、<em>DG1</em> の規模は <em>Tiger Lake GT2</em> とほぼ変わらない、Dual-SubSlice数 6基、L3キャッシュバンク数 8基というもの。<br />
+しかし、URB(Unified Return Buffer)のサイズは <em>Tiger Lake GT2</em> の 1024KB よりも小さい 768KB となっている。また、統合GPUではないため、CPUと共用するLLC(Last Level Cache)はないとされている。</p>
+
+<p><em>Rocket Lake</em> には GT0.5、GT1 の2種類が用意されており、<br />
+GT0.5 は Dual-SubSlice数は 1基、L3キャッシュバンク数は 4基。<br />
+GT1 は Dual-SubSlice数は 2基、L3キャッシュバンク数は GT0.5 と同数の 4基。</p>
+
+<p>GPUコア部の規模は、プロプライエタリなドライバー等から出てきたものであろう前情報と一致している。<br />
+<span class="reflink"><a href="http://localhost:1313/posts/2019/12/28/intel-dg1-96eu-guess/" rel="noreferrer" target="_blank">Intel DG1は96EU構成? &amp; 推測 | Coelacanth&rsquo;s Dream</a></span><br>
+
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/05/04/rocketlake-rumor-guess/">Rocket Lakeの噂、そこからの推測 | Coelacanth&rsquo;s Dream</a></span><br>
+</p>
+
+<p>Gen12LPアーキテクチャではGen11アーキテクチャから踏襲する、Slice内の SubSlicesを増やして性能を調整する方法を取っているため、<em>DG1</em> でも <em>Tiger Lake</em> でも <em>Rocket Lake</em> でも Slice数は1基で変わらない。<br />
+L3キャッシュバンクあたりの容量はまだ確定していないが、Gen11アーキテクチャから変わらないとすれば 384KBとなる。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Gen12LP</th>
+<th align="center">TGL GT2</th>
+<th align="center">DG1</th>
+<th align="center">RKL GT0.5</th>
+<th align="center">RKL GT1</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Dual-Sub Slices</td>
+<td align="center">6</td>
+<td align="center">6</td>
+<td align="center">1</td>
+<td align="center">2</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;EUs</td>
+<td align="center">96</td>
+<td align="center">96</td>
+<td align="center">16</td>
+<td align="center">32</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;Shading Units</td>
+<td align="center">768</td>
+<td align="center">768</td>
+<td align="center">128</td>
+<td align="center">256</td>
+</tr>
+
+<tr>
+<td align="left">GPU L3$</td>
+<td align="center">3072KB?</td>
+<td align="center">3072KB?</td>
+<td align="center">1536KB?</td>
+<td align="center">1536KB?</td>
+</tr>
+</tbody>
+</table>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Posts</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav>
+	<nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/tags/dg1" class="side-tag-lower">DG1</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/tags/gen12" class="side-tag-lower">Gen12</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/tags/rocket_lake" class="side-tag-lower">Rocket_Lake</a></li></ul>
+		</ul>
+	</nav>
+	<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/categories/intel" class="side-categorie-lower">Intel</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/hardware" class="side-categorie-lower">Hardware</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-categorie-lower">GPU</a></li></ul>
+		</ul>
+	</nav><time datetime="2020-05-08 17:07:08" class="side-time">Post : 2020-05-08 </time>
+		<div class="side-lastmod">Lastmod :<br>&nbsp;&nbsp;2020-05-08 18:10:44 </div>
+	<div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tags :</a>
+			<a href="https://blog.coelacanth-dream.com/tags/dg1">DG1</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/rocket_lake">Rocket_Lake</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/gen12">Gen12</a>,&nbsp;</nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Categories :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/intel">Intel</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/hardware">Hardware</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>,&nbsp;</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Posts</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a><br><br><time datetime="2020-05-08 17:07:08" class="foot-time">Post : 2020-05-08</time>
+		/ <span class="foot-lastmod">Lastmod : 2020-05-08 18:10:44 </span><div class="foot-author">Author : Umio Yasuno</div><nav>
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
