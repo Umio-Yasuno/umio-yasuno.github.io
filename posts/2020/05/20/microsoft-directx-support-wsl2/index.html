@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/05/20/microsoft-directx-support-wsl2/">
+
+	<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+	<meta name="twitter:card" content="summary"><title>Microsoft が WSL2 の DirectX サポートを発表 | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="Microsoft が WSL2 の DirectX サポートを発表 | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="Microsoft が WSL2 の DirectX サポートを発表 | Coelacanth&#39;s Dream">
+	<meta property="og:type" content="article">
+
+	<meta name="description" content="Microsoft は開催中の開発者向けイベント、Microsoft Build 2020の中で、Windows向けグラフィクスAPI DirectX を WSL (Windows Subsystem for Linux 2) でサポートすることを発表した。 DirectX ❤ Linux | DirectX Developer Blog Linux Kernel">
+	<meta property="og:description" content="Microsoft は開催中の開発者向けイベント、Microsoft Build 2020の中で、Windows向けグラフィクスAPI DirectX を WSL (Windows Subsystem for Linux 2) でサポートすることを発表した。 DirectX ❤ Linux | DirectX Developer Blog Linux Kernel">
+	<meta name="twitter:description" content="Microsoft は開催中の開発者向けイベント、Microsoft Build 2020の中で、Windows向けグラフィクスAPI DirectX を WSL (Windows Subsystem for Linux 2) でサポートすることを発表した。 DirectX ❤ Linux | DirectX Developer Blog Linux Kernel">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/05/20/microsoft-directx-support-wsl2/">
+	<meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/05/20/microsoft-directx-support-wsl2/">
+	<link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/05/20/microsoft-directx-support-wsl2/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		    <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+    background-size: cover;
+    background-attachment: fixed;
+    background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+    background-repeat: no-repeat;
+    font-size: .99rem;
+}
+main {
+    display: grid;
+    grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+    row-gap: 1em;
+}
+header {
+    grid-row: 2 / 3;
+    grid-column: 1 / 4;
+}
+.title {
+    font: normal 1.6em monospace;
+    text-decoration: none;
+    text-align: end;
+}
+.title a {
+    color: #819BA1;
+    text-shadow: 0 2px .8em #577C87;
+}
+.title a:hover {
+    color: #90B4BD;
+    text-decoration: none;
+    text-shadow: 0 2px 1em #7EA0A9;
+}
+.page-title, .page-title a {
+    color: #FFA332;
+    font-size: 1em;
+    line-height: 1.2em;
+    margin: 0;
+    padding: 0;
+    max-width: 95%;
+}
+.page-title a:hover, .sect-page a:hover {
+    text-decoration: underline #CC8214;
+}
+.tag-title, .categorie-title {
+    color: #7FFFD4;
+}
+a {
+    color: #75D1FF;
+    text-decoration: none;
+    padding: 0 .28em 0 .25em;
+    margin: 0;
+    word-break: break-all;
+    letter-spacing: 0;
+}
+a:hover {
+    text-decoration: underline;
+}
+p {
+    margin: .8rem 0 .4rem 0;
+}
+.text {
+    color: snow;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    grid-area: 3 / 2 / 4 / 5;
+    line-height: 1.5em;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+}
+article > p {
+    letter-spacing: .025rem;
+}
+article > p::first-letter {
+    padding-left: .6em;
+}
+.copyright {
+    font-size: .9em;
+    color: limegreen;
+    padding: 1em 0 0 0;
+    display: block;
+}
+.foot, .side {
+    display: none;
+}
+.foot {
+    grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+    main {
+        display: grid;
+        grid-template: 2em 6em 2em auto / 2em 200px auto;
+    }
+    .text {
+        grid-area: 1 / 3 / 5 / 3;
+        padding: 1em .5em 8% 1em;
+    }
+    header > .title {
+        display: none;
+    }
+    .side {
+        display: block;
+            height: 96vh;
+            width: 200px;
+        position: fixed;
+            top: 1em;
+            left: 24px;
+        padding-right: 1.2em;
+        border-right: 1px solid green;
+        font-size: 1em;
+        color: #00E500;
+        z-index: 101;
+        transform: translateZ(0);
+
+        overflow: scroll;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+    }
+        .side > .title {
+            text-align: end;
+            padding: 1em 0 0 0;
+            width: 100%;
+            font: normal 1.6em monospace;
+        }
+    .side-pagination {
+        display: grid;
+        margin: 2em 0 2em 1em;
+        font-size: 1.05em;
+        row-gap: .8em;
+        grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+    }
+    .side-prev {
+        grid-area: 1 / 1 / 1 / 4;
+        margin-right: auto;
+        color: #9EDEFF;
+    }
+        .side-prev::before {
+            content: '\2190';
+        }
+    .side-next {
+        grid-area: 3 / 1 / 3 / 4;
+        margin-left: auto;
+        color: #9EDEFF;
+    }
+        .side-next::after {
+            content: '\2192';
+            vertical-align: middle;
+        }
+    .side-page-number {
+        font-size: .9em;
+        grid-area: 2 / 2 / 3 / 3;
+        margin: 0 auto 0 auto;
+    }
+    .side-author, .side-lastmod, .side-about, .side-time {
+        padding: 0 .2em 0 0;
+        margin: .5em 0 1.2em .4em;
+        font-size: .95rem;
+        border-bottom: 1px solid #2D5A4B;
+        max-width: max-content;
+    }
+    .side li::before {
+        color: #008080;
+        content: '';
+        padding: 0;
+        margin: 0;
+        font-size: 1rem;
+    }
+    .side li ul {
+        padding: 0 0 0 .7em;
+    }
+    .side-tag-lower, .side-categorie-lower {
+        border-bottom: 1px solid #326554;
+    }
+        .side li li::before {
+            content: '\2514';
+            vertical-align: sub;
+            padding: 0 .2em 0 0;
+            color: #4C997F;
+            font-size: 1.2em;
+        }
+        .side li li:hover::before {
+            color: #65CCA9;
+        }
+    .side-links a:hover, .side-tags a:hover, .side-categories a:hover, .side-about a:hover {
+        text-decoration: none;
+        border-bottom: 1px solid #65CCA9;
+    }
+    .side-links ul, .side-tags ul, .side-categories ul {
+        list-style: none none outside;
+        padding: 0 0 0 1em;
+        color: #65CCA9;
+        line-height: 1.5em;
+    }
+    .tag-title, .categorie-title, .side-links a {
+        border-bottom: 2px solid #326654;
+        padding: 0 1em .1em .3em;
+        margin-bottom: 1em;
+    }
+}.text > article > p ~ * {
+    display: none;
+}
+article > p {
+    padding:  0 1vw 0 1vw;
+}
+h1 {
+    color: #FFA319;
+    font: normal 1.4em sans-serif;
+    margin: 0 0 1ch 0;
+    padding: .5em 0 1em 1%;
+    max-width: 95%;
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>Microsoft が WSL2 の DirectX サポートを発表</h1>
+	</header><p>Microsoft は開催中の開発者向けイベント、<a href="https://news.microsoft.com/build2020/" rel="noreferrer" target="_blank">Microsoft Build 2020</a>の中で、Windows向けグラフィクスAPI DirectX を WSL (Windows Subsystem for Linux 2) でサポートすることを発表した。<br />
+<span class="reflink"><a href="https://devblogs.microsoft.com/directx/directx-heart-linux/" rel="noreferrer" target="_blank">DirectX ❤ Linux | DirectX Developer Blog</a></span><br>
+</p>
+
+<p>Linux Kernel に <code>Dxgkrnl</code> と呼ぶ新たな KMD (Kernel Mode Driver) を実装し、Windows OS をホストOSとする Linux は <code>Dxgkrnl</code> を、<code>Dxgkrnl</code> は仮想的なバス (VM Bus) を通して Windows OS内のGPUドライバー、そして物理GPUと通信する。<br />
+これは WDDM (Windows Display Driver Model) v2.9 の仕様に統合される。</p>
+
+<p>それと同時に DirectX のライブラリが Linux向けにリリースされる。<br />
+DirectX 12 の Linux向けライブラリ、<code>libd3d12.so</code> は Windows向けである <code>d3d12.dll</code> と同じソースコードからコンパイルされており、仮想化によるオーバーヘッドを除き、同等の機能と性能を提供するとしている。<br />
+現時点で Linux向けの DirextX 12 APIはオフスクリーンレンダリングとコンピュート機能を実行できるが、画面に直接レンダリングするためのスワップチェイン機能はサポートしていない。<br />
+ただこれは、その後に笑顔の顔文字付きで &ldquo;yet&rdquo; と書いており、将来的にサポートするつもりだと思われる。<br />
+UMD (User Mode Driver) と KMD が通信する際に用いられるレイヤー、DXGI の Linux向けライブラリ <code>libdxcore.so</code> もリリースされる。<br />
+そして、WSL2 側の UMD は GPUメーカーと連携し、WSL環境で実行可能となるよう再コンパイルされるとのこと。<br />
+これもまた、WDDM v2.9 ドライバーに統合される。</p>
+
+<p>留意しておきたいのは、<code>libd3d12.so</code> 、<code>libdxcore.so</code> はクローズドソースであり、事前にコンパイルされたバイナリのみが、Windows の一部として出荷される。<br />
+GPUメーカーが提供する DirectX 12 UMD も当然クローズドソースだ。<br />
+そのため、WSL2以外 (WindowsをホストOSとしない Linux OS) は UMD が存在しないため、動作させることはできない。</p>
+
+<p>また、Linux 環境下で DirectX を実行する <a href="https://www.winehq.org/#carouselScreenshots" rel="noreferrer" target="_blank">Wine</a> / <a href="https://github.com/ValveSoftware/Proton/" rel="noreferrer" target="_blank">Proton</a> は、API 呼び出しを変換する形で実現しているため、今回の Microsoft が行なう Linux へのさらなる歩み寄りをそれらに活かせるかは微妙なところだ。</p>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Archive</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav>
+	<nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tag</a>
+			<ul></ul>
+		</ul>
+	</nav>
+	<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Category</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/categories/software" class="side-categorie-lower">Software</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-categorie-lower">GPU</a></li></ul>
+		</ul>
+	</nav><time datetime="2020-05-20 02:44:51" class="side-time">Post : 2020-05-20 </time>
+		<div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-05-20 05:09:20 </div>
+	<div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tag :</a></nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Category :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/software">Software</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>,&nbsp;</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+        <div class="foot-time">
+            <time datetime="2020-05-20 02:44:51">Post : 2020-05-20</time>
+		/ Update : 2020-05-20 05:09:20 
+        </div><div class="foot-author">Author : Umio Yasuno</div>
+	<nav class="foot-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a><a href="#" class="pagetop">Page Top</a></nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
