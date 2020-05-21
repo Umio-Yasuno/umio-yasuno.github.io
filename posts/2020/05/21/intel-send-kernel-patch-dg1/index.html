@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+    <meta name="referrer" content="no-referrer">
+	<meta name="format-detection" content="telephone=no, address=no, email=no">
+	<meta property="og:locale" content="ja">
+	<base href="https://blog.coelacanth-dream.com/posts/2020/05/21/intel-send-kernel-patch-dg1/">
+
+	<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+	<meta name="twitter:card" content="summary"><title>Intel、DG1 に向けた一連の Linux Kernel パッチを投稿 | Coelacanth&#39;s Dream</title>
+	<meta property="og:title" content="Intel、DG1 に向けた一連の Linux Kernel パッチを投稿 | Coelacanth&#39;s Dream">
+	<meta name="twitter:title" content="Intel、DG1 に向けた一連の Linux Kernel パッチを投稿 | Coelacanth&#39;s Dream">
+	<meta property="og:type" content="article">
+
+	<meta name="description" content="Intel は、Gen12アーキテクチャ採用のディスクリートGPU、DG1 をサポートする一連の Linux Kernel パッチを投稿した。パッチには Rocket Lake のためのコードも含まれている。 [Intel-gfx] [PATCH 00/37] Introduce DG1 今回のパ">
+	<meta property="og:description" content="Intel は、Gen12アーキテクチャ採用のディスクリートGPU、DG1 をサポートする一連の Linux Kernel パッチを投稿した。パッチには Rocket Lake のためのコードも含まれている。 [Intel-gfx] [PATCH 00/37] Introduce DG1 今回のパ">
+	<meta name="twitter:description" content="Intel は、Gen12アーキテクチャ採用のディスクリートGPU、DG1 をサポートする一連の Linux Kernel パッチを投稿した。パッチには Rocket Lake のためのコードも含まれている。 [Intel-gfx] [PATCH 00/37] Introduce DG1 今回のパ">
+	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/05/21/intel-send-kernel-patch-dg1/">
+	<meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/05/21/intel-send-kernel-patch-dg1/">
+	<link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/05/21/intel-send-kernel-patch-dg1/">
+	<meta name="author" content="Umio Yasuno">
+	<meta name="keywords" content="DG1, Gen12, ">
+
+		<link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+		    <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+    background-size: cover;
+    background-attachment: fixed;
+    background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+    background-repeat: no-repeat;
+    font-size: .99rem;
+}
+main {
+    display: grid;
+    grid-template: repeat(4, auto) / 1vw 1em auto 8vw;
+    row-gap: 1em;
+}
+header {
+    grid-row: 2 / 3;
+    grid-column: 1 / 4;
+}
+.title {
+    font: normal 1.6em monospace;
+    text-decoration: none;
+    text-align: end;
+}
+.title a {
+    color: #819BA1;
+    text-shadow: 0 2px .8em #577C87;
+}
+.title a:hover {
+    color: #90B4BD;
+    text-decoration: none;
+    text-shadow: 0 2px 1em #7EA0A9;
+}
+.page-title, .page-title a {
+    color: #FFA332;
+    font-size: 1em;
+    line-height: 1.2em;
+    margin: 0;
+    padding: 0;
+    max-width: 95%;
+}
+.page-title a:hover, .sect-page a:hover {
+    text-decoration: underline #CC8214;
+}
+.tag-title, .categorie-title {
+    color: #7FFFD4;
+}
+a {
+    color: #75D1FF;
+    text-decoration: none;
+    padding: 0 .28em 0 .25em;
+    margin: 0;
+    word-break: break-all;
+    letter-spacing: 0;
+}
+a:hover {
+    text-decoration: underline;
+}
+p {
+    margin: .8rem 0 .4rem 0;
+}
+.text {
+    color: snow;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    grid-area: 3 / 2 / 4 / 5;
+    line-height: 1.5em;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+}
+article > p {
+    letter-spacing: .025ch;
+}
+article > p::first-letter {
+    padding-left: .6em;
+}
+.copyright {
+    font-size: .9em;
+    color: limegreen;
+    padding: 1em 0 0 0;
+    display: block;
+}
+.foot, .side {
+    display: none;
+}
+.foot {
+    grid-area: 4 / 1 / 5 / 5;
+}
+@media (min-width: 840px) {
+    main {
+        display: grid;
+        grid-template: 2em 6em 2em auto / 2em 200px auto;
+    }
+    .text {
+        grid-area: 1 / 3 / 5 / 3;
+        padding: 1em .5em 8% 1em;
+    }
+    header .title {
+        display: none;
+    }
+    .side {
+        display: block;
+            height: 96vh;
+            width: 200px;
+        position: fixed;
+            top: 1em;
+            left: 24px;
+        padding-right: 1.2em;
+        border-right: 1px solid green;
+        font-size: 1em;
+        color: #00E500;
+        z-index: 101;
+        transform: translateZ(0);
+
+        overflow: scroll;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+    }
+        .side > .title {
+            text-align: end;
+            padding: 1em 0 0 0;
+            width: 100%;
+            font: normal 1.6em monospace;
+        }
+    .side-pagination {
+        display: grid;
+        margin: 2em 0 2em 1em;
+        font-size: 1.05em;
+        row-gap: .8em;
+        grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+    }
+    .side-prev {
+        grid-area: 1 / 1 / 1 / 4;
+        margin-right: auto;
+        color: #9EDEFF;
+    }
+        .side-prev::before {
+            content: '\2190';
+        }
+    .side-next {
+        grid-area: 3 / 1 / 3 / 4;
+        margin-left: auto;
+        color: #9EDEFF;
+    }
+        .side-next::after {
+            content: '\2192';
+            vertical-align: middle;
+        }
+    .side-page-number {
+        font-size: .9em;
+        grid-area: 2 / 2 / 3 / 3;
+        margin: 0 auto 0 auto;
+    }
+    .side-author, .side-lastmod, .side-about, .side-time {
+        padding: 0 .2em 0 0;
+        margin: .5em 0 1.2em .4em;
+        font-size: .95rem;
+        border-bottom: 1px solid #2D5A4B;
+        max-width: max-content;
+    }
+    .side li::before {
+        color: #008080;
+        content: '';
+        padding: 0;
+        margin: 0;
+        font-size: 1rem;
+    }
+    .side li ul {
+        padding: 0 0 0 .7em;
+    }
+    .side-tag-lower, .side-categorie-lower {
+        border-bottom: 1px solid #326554;
+    }
+        .side li li::before {
+            content: '\2514';
+            vertical-align: sub;
+            padding: 0 .2em 0 0;
+            color: #4C997F;
+            font-size: 1.2em;
+        }
+        .side li li:hover::before {
+            color: #65CCA9;
+        }
+    .side-links a:hover, .side-tags a:hover, .side-categories a:hover, .side-about a:hover {
+        text-decoration: none;
+        border-bottom: 1px solid #65CCA9;
+    }
+    .side-links ul, .side-tags ul, .side-categories ul {
+        list-style: none none outside;
+        padding: 0 0 0 1em;
+        color: #65CCA9;
+        line-height: 1.5em;
+    }
+    .tag-title, .categorie-title, .side-links a {
+        border-bottom: 2px solid #326654;
+        padding: 0 1em .1em .3em;
+        margin-bottom: 1em;
+    }
+}.text > article > p ~ * {
+    display: none;
+}
+article > p {
+    padding:  0 1vw 0 1vw;
+}
+h1 {
+    color: #FFA319;
+    font: normal 1.4em sans-serif;
+    margin: 0 0 1ch 0;
+    padding: .5em 0 1em 1%;
+    max-width: 95%;
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+	</head>
+    <body>
+	<main>
+		<header><div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+</header>
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+		<div class="text">
+    		
+<article>
+	<header>
+		<h1>Intel、DG1 に向けた一連の Linux Kernel パッチを投稿</h1>
+	</header><p>Intel は、<a href="https://blog.coelacanth-dream.com/tags/gen12">Gen12</a>アーキテクチャ採用のディスクリートGPU、<a href="https://blog.coelacanth-dream.com/tags/dg1">DG1</a> をサポートする一連の Linux Kernel パッチを投稿した。パッチには <a href="https://blog.coelacanth-dream.com/tags/rocket_lake">Rocket Lake</a> のためのコードも含まれている。<br />
+<span class="reflink"><a href="https://lists.freedesktop.org/archives/intel-gfx/2020-May/240205.html" rel="noreferrer" target="_blank">[Intel-gfx] [PATCH 00/37] Introduce DG1</a></span><br>
+</p>
+
+<p>今回のパッチからわかる情報としては</p>
+
+<ul>
+<li>システムメモリとのコヒーレントは PCIe を通して取られる<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">1</a></sup></li>
+<li>SLM (Shared Loacal Memory) の ECCカウント機能に対応<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></li>
+<li>4基の ピクセルクロックを生成する DPLL (Digital Phase-Locked Loop) を持つ(=最大4画面出力?)<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">3</a></sup></li>
+</ul>
+
+<p>がある。</p>
+
+<p><em>DG1</em> は先日、オープンソースな UMD (User Mode Driver)、Mesa3D への関連したパッチが投稿されており、Linux 環境におけるサポートは徐々に進んできている。<br />
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/05/08/intel-add-dg1-rkl-oss-driver/">Intel、オープンソースドライバーに DG1 と Rocket Lake の関するコードを追加 ――DG1 は 96EU、RKL は 16EU または 32EU | Coelacanth&rsquo;s Dream</a></span><br>
+
+ただ、PCIeカードタイプの <em>DG1</em> はソフトウェア開発用としてのみ供給され、一般向けにはオンボードで実装したノートPCしか出てこないという話が出てきている。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup><br />
+Intel Gen12アーキテクチャを採用した、初(?)の dGPU ということで、性能関係なく欲しいと考える人はそれなりにいると思われるため、少し残念ではある。<br />
+ドライバーのサポートは為されているため、入手さえ出来れば動作させることはそれほど難しくはないはずだ。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:3"><a href="https://lists.freedesktop.org/archives/intel-gfx/2020-May/240212.html" rel="noreferrer" target="_blank">[Intel-gfx] [PATCH 10/37] drm/i915: add pcie snoop flag</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://lists.freedesktop.org/archives/intel-gfx/2020-May/240226.html" rel="noreferrer" target="_blank">[Intel-gfx] [PATCH 27/37] drm/i915/dg1: Log counter on SLM ECC error</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:4"><a href="https://lists.freedesktop.org/archives/intel-gfx/2020-May/240236.html" rel="noreferrer" target="_blank">[Intel-gfx] [PATCH 20/37] drm/i915/dg1: Add DPLL macros for DG1</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://ecpannualmeeting.com/assets/overview/sessions/Aurora-Public-FULL-talk-Feb-4-2020_for_posting_c.pdf#page=7" rel="noreferrer" target="_blank">https://ecpannualmeeting.com/assets/overview/sessions/Aurora-Public-FULL-talk-Feb-4-2020_for_posting_c.pdf#page=7</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+		</div>
+			<div class="side">
+	<div class="title">
+	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
+</div>
+
+	<nav class="side-links">
+	<ul>
+		<li><a href="https://blog.coelacanth-dream.com/posts">Archive</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
+	</ul>
+	</nav>
+	<nav class="side-tags">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tag</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/tags/dg1" class="side-tag-lower">DG1</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/tags/gen12" class="side-tag-lower">Gen12</a></li></ul>
+		</ul>
+	</nav>
+	<nav class="side-categories">
+		<ul>
+			<li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Category</a>
+			<ul>
+				<li><a href="https://blog.coelacanth-dream.com/categories/hardware" class="side-categorie-lower">Hardware</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/intel" class="side-categorie-lower">Intel</a></li>
+				<li><a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-categorie-lower">GPU</a></li></ul>
+		</ul>
+	</nav><time datetime="2020-05-21 14:01:29" class="side-time">Post : 2020-05-21 </time>
+		<div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-05-21 15:29:37 </div>
+	<div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+	</nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+
+			<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+			<div class="foot">
+	<hr>
+	<footer>
+		<nav class="foot-tags">
+			<a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tag :</a>
+			<a href="https://blog.coelacanth-dream.com/tags/dg1">DG1</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/tags/gen12">Gen12</a>,&nbsp;</nav>
+		<nav class="foot-categories">
+			<a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Category :</a>
+			<a href="https://blog.coelacanth-dream.com/categories/hardware">Hardware</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/intel">Intel</a>,&nbsp;
+			<a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>,&nbsp;</nav>
+			<a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+        <div class="foot-time">
+            <time datetime="2020-05-21 14:01:29">Post : 2020-05-21</time>
+		/ Update : 2020-05-21 15:29:37 
+        </div><div class="foot-author">Author : Umio Yasuno</div>
+	<nav class="foot-about">
+		<a href="https://blog.coelacanth-dream.com/about/">About</a>
+		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a><a href="#" class="pagetop">Page Top</a></nav>
+		<small class="copyright">&copy; 2019 Umio Yasuno</small>
+	</footer>
+</div>
+</main>
+    </body>
+</html>
