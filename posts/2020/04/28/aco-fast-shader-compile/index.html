@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,37 +247,23 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>RADV/ACO 検証: ACOの高速シェーダーコンパイル</h1>
-
-<h2 id="インデックス">インデックス</h2>
-
+    <h1>RADV/ACO 検証: ACOの高速シェーダーコンパイル</h1><h2 id="インデックス">インデックス</h2>
 <ul>
 <li><a href="#aco-shader-compie-speed-test">ACO のシェーダーコンパイル速度検証</a></li>
-<li><a href="#env">環境</a>
-
-<ul>
+<li><a href="#env">環境</a></li>
 <li><a href="#how">計測方法</a></li>
-</ul></li>
-<li><a href="#result">結果</a>
-
-<ul>
+<li><a href="#result">結果</a></li>
 <li><a href="#guess">推測</a></li>
-</ul></li>
 <li><a href="#aco-great">やはり ACO は優秀</a></li>
 </ul>
-
 <h2 id="aco-shader-compie-speed-test">ACO のシェーダーコンパイル速度検証</h2>
-
-<p>前回の検証で <em>ACOバックエンド</em> は Vulakn Compute による GPGPU用途においても、いやそれどころかグラフィック用途よりもずっと効果を発揮することがわかった。<br />
+<p>前回の検証で <em>ACOバックエンド</em> は Vulakn Compute による GPGPU用途においても、いやそれどころかグラフィック用途よりもずっと効果を発揮することがわかった。<br>
 <span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth&rsquo;s Dream</a></span><br>
 
-しかし、<em>ACO</em> の特徴の1つであるコンパイル速度を検証できていなかった。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
-
-<p>そこで、<em>RADVドライバー</em> のデバック機能にある <code>nocache</code> オプションでシェーダーキャッシュを無効化した際と、通常通りキャッシュを有効とした際のユーザーモードのCPU時間(User CPU time)を計測し、それらを比較して大体のシェーダーコンパイルに掛かった時間を割り出すこととした。<br />
+しかし、<em>ACO</em> の特徴の1つであるコンパイル速度を検証できていなかった。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>そこで、<em>RADVドライバー</em> のデバック機能にある <code>nocache</code> オプションでシェーダーキャッシュを無効化した際と、通常通りキャッシュを有効とした際のユーザーモードのCPU時間(User CPU time)を計測し、それらを比較して大体のシェーダーコンパイルに掛かった時間を割り出すこととした。<br>
 時間の計測にはtimeコマンドを用いる。</p>
-
 <h2 id="env">環境</h2>
-
 <table>
 <thead>
 <tr>
@@ -282,49 +271,39 @@ h1 {
 <th align="center"></th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">CPU</td>
 <td align="center">Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
 </tr>
-
 <tr>
 <td align="left">Memory</td>
 <td align="center">16GB 2933MHz</td>
 </tr>
-
 <tr>
 <td align="left">GPU</td>
 <td align="center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 1750MHz/7Gbps)</td>
 </tr>
-
 <tr>
 <td align="left">Linux Kernel</td>
 <td align="center">5.4.21</td>
 </tr>
-
 <tr>
 <td align="left">User Mode Driver</td>
 <td align="center">Mesa 20.1.0-devel (git-a64d266134)</td>
 </tr>
-
 <tr>
 <td align="left">Vulkan Driver</td>
 <td align="center">AMD RADV(LLVM) POLARIS11 (LLVM 9.0.1)<br>AMD RADV/ACO POLARIS11 (LLVM 9.0.1)</td>
 </tr>
-
 <tr>
 <td align="left">waifu2x-ncnn-vulkan</td>
 <td align="center">version<br>20200224</td>
 </tr>
 </tbody>
 </table>
-
 <h3 id="how">計測方法</h3>
-
 <p>実行コマンド:</p>
-
 <pre><code>RADV/LLVM (nocache):
     $ RADV_DEBUG=&quot;nocache&quot; time -p &lt;waifu2x-ncnn-vulkan binary&gt; -i &quot;&lt;input dir (five images)&gt;&quot; -o &lt;output dir&gt; -n 1 -s 2 -m &quot;&lt;waifu2x-ncnn-vulkan model&gt;&quot;
 
@@ -337,16 +316,11 @@ RADV/ACO (nocache):
 RADV/ACO (cache):
     $ RADV_PERFTEST=&quot;aco&quot; time -p &lt;waifu2x-ncnn-vulkan binary&gt; -i &quot;&lt;input dir (five images)&gt;&quot; -o &lt;output dir&gt; -n 1 -s 2 -m &quot;&lt;waifu2x-ncnn-vulkan model&gt;&quot;
 </code></pre>
-
 <p>waifu2x-ncnn-vulkan の設定はデノイズレベルは 1、拡大率は 2x、tile-size はデフォルトの 400、load:proc:save もデフォルトの 1:2:2。</p>
-
-<p>/tmp ディレクトリ下にテスト用画像を収めるための入力ディレクトリと、実行後の画像を収める出力ディレクトリを作成。使用する画像は5枚。<br />
+<p>/tmp ディレクトリ下にテスト用画像を収めるための入力ディレクトリと、実行後の画像を収める出力ディレクトリを作成。使用する画像は5枚。<br>
 waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、その中の画像をまとめて処理することができ、それによってプログラムの呼び出しと終了処理の時間が減るため、GPUの処理時間に焦点を当てた結果を得られる。</p>
-
 <p>それぞれ3回実行し、timeコマンドで得た時間を平均したものを結果とする。</p>
-
 <h2 id="result">結果</h2>
-
 <table>
 <thead>
 <tr>
@@ -357,7 +331,6 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 <th align="center">RADV/ACO<br>(cache)</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">Real time<br>(lower is better)</td>
@@ -366,7 +339,6 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 <td align="center">34.97s</td>
 <td align="center">34.33s<br>(-0.64s)</td>
 </tr>
-
 <tr>
 <td align="left">User CPU time<br>(lower is better)</td>
 <td align="center">11.86s</td>
@@ -376,7 +348,6 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 </tr>
 </tbody>
 </table>
-
 <table>
 <thead>
 <tr>
@@ -387,7 +358,6 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 <th align="center">RADV/ACO<br>(cache)</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">Real time<br>(lower is better)</td>
@@ -396,7 +366,6 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 <td align="center">6.71s</td>
 <td align="center">6.45s<br>(-0.26s)</td>
 </tr>
-
 <tr>
 <td align="left">User CPU time<br>(lower is better)</td>
 <td align="center">7.52s</td>
@@ -406,53 +375,47 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 </tr>
 </tbody>
 </table>
-
 <h3 id="guess">推測</h3>
-
-<p>モデルを変えてもシェーダーキャッシュ有効時のCPU時間はほぼ変わらず誤差の範囲に収まっており、このことから無事キャッシュヒットしていると考えられる。<br />
-そして <em>RADV/ACO</em> は <em>RADV(LLVM)</em> の 9.38〜12.50倍の速度でシェーダーコンパイルを完了している。<br />
-<em>RADV(LLVM)</em> におけるキャッシュ有効時の高速化はもちろん評価すべきだが、それよりもずっと <em>RADV/ACO</em> のコンパイル速度が凄まじい。<br />
+<p>モデルを変えてもシェーダーキャッシュ有効時のCPU時間はほぼ変わらず誤差の範囲に収まっており、このことから無事キャッシュヒットしていると考えられる。<br>
+そして <em>RADV/ACO</em> は <em>RADV(LLVM)</em> の 9.38〜12.50倍の速度でシェーダーコンパイルを完了している。<br>
+<em>RADV(LLVM)</em> におけるキャッシュ有効時の高速化はもちろん評価すべきだが、それよりもずっと <em>RADV/ACO</em> のコンパイル速度が凄まじい。<br>
 キャッシュ有効時の性能向上が小さいことは、それだけシェーダーコンパイラーとして優秀であることを示す。</p>
-
 <h2 id="aco-great">やはり ACO は優秀</h2>
-
-<p><em>ACOバックエンド</em> はレジスタ割り付け等の性能だけでなく、コンパイル速度も <em>LLVM</em> より優ることが証明された。<br />
-グラフィック用途ではGPGPU用途よりも <em>ACOバックエンド</em> の効果が小さいものとなるが、ゲームのような長期的なワークロードではそれも無視できない。<br />
+<p><em>ACOバックエンド</em> はレジスタ割り付け等の性能だけでなく、コンパイル速度も <em>LLVM</em> より優ることが証明された。<br>
+グラフィック用途ではGPGPU用途よりも <em>ACOバックエンド</em> の効果が小さいものとなるが、ゲームのような長期的なワークロードではそれも無視できない。<br>
 性能向上、高速化は言い換えれば省電力化だ。それにCPU時間が短ければバックグラウンド処理にも余裕が出てくる。</p>
-
 <p><em>ACOバックエンド</em> の開発が進み、安定性が向上、そしてデフォルトで有効にされる日が来ることを願って止まない。</p>
-
-<p>余談となるが、個人的に期待しているソフトウェア側の新機能には <em>NGG (Next Generation Geometory) / Primitive Shader</em> がある。<br />
-これは <em>Vegaアーキテクチャ /GFX9</em> と同時に登場した機能ではあるが、その世代でのサポートは廃止されてしまった。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup><br />
-その代わり <em>RDNAアーキテクチャ /GFX9</em> 世代での実装に注力し、開発が進められている。<br />
-そしてPS5でもサポートすることが明言されており、「今度こそ」という気概が感じられる。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></p>
-
-<p>タイムライン的に 現 <em>RDNA</em> ではなく、次 <em>RDNA 2</em> くらいに正式サポートが為されそうだが、楽しみであることに変わりはない。<br />
+<p>余談となるが、個人的に期待しているソフトウェア側の新機能には <em>NGG (Next Generation Geometory) / Primitive Shader</em> がある。<br>
+これは <em>Vegaアーキテクチャ /GFX9</em> と同時に登場した機能ではあるが、その世代でのサポートは廃止されてしまった。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+その代わり <em>RDNAアーキテクチャ /GFX9</em> 世代での実装に注力し、開発が進められている。<br>
+そしてPS5でもサポートすることが明言されており、「今度こそ」という気概が感じられる。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>タイムライン的に 現 <em>RDNA</em> ではなく、次 <em>RDNA 2</em> くらいに正式サポートが為されそうだが、楽しみであることに変わりはない。<br>
 その時はいい加減自分も堪忍して <strong>RX 560</strong> から卒業することだろう、たぶん。</p>
-
 <hr>
 <div class="reference">
-<h2 class="ref-title" id="ref-title">参考リンク</h2>
+<h3 class="ref-title" id="ref-title">参考リンク</h2>
 <ul>
-<li><a href="https://www.mesa3d.org/envvars.html" rel="noreferrer" target="_blank">Environment Variables</a></li>
+<li><a href="https://www.mesa3d.org/envvars.html">Environment Variables</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1"><a href="https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf#page=34" rel="noreferrer" target="_blank">https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf#page=34</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2"><a href="https://lists.freedesktop.org/archives/amd-gfx/2018-August/025320.html" rel="noreferrer" target="_blank">Making a GDS Allocation for NGG</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3"><a href="https://www.4gamer.net/games/990/G999027/20200319173/#PS5ではAMDの「プリミティブシェーダ」を採用" rel="noreferrer" target="_blank">西川善司の3DGE：Mark Cerny氏のPS5技術解説プレゼンテーションを読み解く(前編)。ここまで分かったPS5のSSDとGPUの詳細 &ndash; 4Gamer.net</a>
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf#page=34">https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf#page=34</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2018-August/025320.html">Making a GDS Allocation for NGG</a> <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.4gamer.net/games/990/G999027/20200319173/#PS5%E3%81%A7%E3%81%AFAMD%E3%81%AE%E3%80%8C%E3%83%97%E3%83%AA%E3%83%9F%E3%83%86%E3%82%A3%E3%83%96%E3%82%B7%E3%82%A7%E3%83%BC%E3%83%80%E3%80%8D%E3%82%92%E6%8E%A1%E7%94%A8">西川善司の3DGE：Mark Cerny氏のPS5技術解説プレゼンテーションを読み解く(前編)。ここまで分かったPS5のSSDとGPUの詳細 - 4Gamer.net</a> <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>

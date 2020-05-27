@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,236 +247,207 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Intel Atom Tremont関連のコードネームを整理する</h1>
-
-<p>Intelの次世代低消費電力 x86アーキテクチャ、<em>Tremont</em> ベースのコアを搭載するプロセッサは複数存在し、それぞれにコードネームが与えられている。<br />
+    <h1>Intel Atom Tremont関連のコードネームを整理する</h1><p>Intelの次世代低消費電力 x86アーキテクチャ、<em>Tremont</em> ベースのコアを搭載するプロセッサは複数存在し、それぞれにコードネームが与えられている。<br>
 それ故に複雑なところがあるため、今回はLinux Kernel、Mesa3D、Coreboot等のOSSから情報を集め、Intelが公開している情報を元にしてそれぞれの特徴を整理してみた。</p>
-
 <h2 id="インデックス">インデックス</h2>
-
 <ul>
 <li><a href="#tremont-arch">Tremontアーキテクチャ</a></li>
 <li><a href="#tremont-d">Jacobsville (Tremont-D)</a></li>
 <li><a href="#tremont">Elkhart Lake (Tremont)</a></li>
-<li><a href="#tremont-l">Jasper Lake (Tremont-L)</a>
-
-<ul>
+<li><a href="#tremont-l">Jasper Lake (Tremont-L)</a></li>
 <li><a href="#elkhart-jasper-diff">Elkhart Lake と Jasper Lake の共通点と違い</a></li>
-</ul></li>
 <li><a href="#lakefield">Lakefield</a></li>
 </ul>
-
 <h2 id="tremont-arch">Tremont アーキテクチャ</h2>
-
-<p>Intelの次世代低消費電力 x86アーキテクチャ。<br />
+<p>Intelの次世代低消費電力 x86アーキテクチャ。<br>
 2x 3-way x86デコーダに、実行ポートを10ポートも持つ、これまでのAtomアーキテクチャとはかけ離れた厚い構成となっている。</p>
-
 <p>アーキテクチャの詳細は、ここで自分が無理に解説するより、テクニカルライター 大原雄介氏の記事を紹介するのが一番だと考えられるため、その様にすることとした。</p>
-
-<p>参考: <a href="https://ascii.jp/elem/000/001/981/1981403/2/" rel="noreferrer" target="_blank">ASCII.jp：AtomベースのSmall CoreがTremontと判明　インテル CPUロードマップ (2/4)</a></p>
-
+<p>参考: <a href="https://ascii.jp/elem/000/001/981/1981403/2/">ASCII.jp：AtomベースのSmall CoreがTremontと判明　インテル CPUロードマップ (2/4)</a></p>
 <h2 id="tremont-d">Jacobsville (Tremont-D)</h2>
-
-<p><em>Tremont</em> コアを採用したマイクロサーバ向けプロセッサ。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">1</a></sup><sup class="footnote-ref" id="fnref:3"><a href="#fn:3">2</a></sup><br />
-マイクロサーバということから、10nmで製造され最大24コアの無線基地局向けSoC <strong>Atom P5900</strong> のベースとなるプロセッサを指すと思われる。<br />
-<em>Snow Ridge</em> という名前もあるが、そちらはI/Oといったアンコア部も含めたSoCもしくはプラットフォームを指すコードネームである、はず、たぶん。<br />
-<span class="reflink"><a href="https://ark.intel.com/content/www/us/en/ark/products/codename/87586/snow-ridge.html?wapkw=snow%20ridge" rel="noreferrer" target="_blank">Products formerly Snow Ridge</a></span><br>
+<p><em>Tremont</em> コアを採用したマイクロサーバ向けプロセッサ。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+マイクロサーバということから、10nmで製造され最大24コアの無線基地局向けSoC <strong>Atom P5900</strong> のベースとなるプロセッサを指すと思われる。</p>
+<p><em>Snow Ridge</em> という名前もあるが、そちらはI/Oといったアンコア部も含めたSoCもしくはプラットフォームを指すコードネームである、はず、たぶん。<br>
+<span class="reflink"><a href="https://ark.intel.com/content/www/us/en/ark/products/codename/87586/snow-ridge.html?wapkw=snow%20ridge">Products formerly Snow Ridge</a></span><br>
 
 コードネームのややこしい点は、時にそれがCPU、GPU、SoC、プラットフォームのどれを指すのかはっきりしないところだ。</p>
-
 <p><em>Jacobsville</em> は 4 Tremontコアと L2cache 4.5MBをまとめた <em>Core Tile</em> を6基持つ構成となっている。</p>
-
 <table>
 <thead>
 <tr>
 <th align="left">Tremont-D</th>
-<th align="center">P5962B<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">3</a></sup></th>
+<th align="center">P5962B<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">Core Title</td>
 <td align="center">6</td>
 </tr>
-
 <tr>
 <td align="left">Core/Thread (per Tile)</td>
 <td align="center">24/24 (4)</td>
 </tr>
-
 <tr>
 <td align="left">L2cache (per Tile)</td>
 <td align="center">27 MB (4.5 MB)</td>
 </tr>
-
 <tr>
 <td align="left">Memory Channel</td>
 <td align="center">2</td>
 </tr>
-
 <tr>
 <td align="left">Memory Speed</td>
 <td align="center">2933 MHz</td>
 </tr>
-
 <tr>
 <td align="left">PCIe Gen3</td>
 <td align="center">16 Lane</td>
 </tr>
 </tbody>
 </table>
-
 <h2 id="tremont">Elkhart Lake (Tremont)</h2>
-
-<p>まだ仕様がはっきりとしていないが、現状判明している搭載製品から組み込み向けとされるプロセッサ。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup><br />
+<p>まだ仕様がはっきりとしていないが、現状判明している搭載製品から組み込み向けとされるプロセッサ。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
 またその製品から、メモリはDDR4 1chである可能性がある。</p>
-
-<p>それ以外に判明している仕様はGPUくらいで、GPUアーキテクチャは <em>Ice Lake</em> と同じ<a href="https://blog.coelacanth-dream.com/tags/gen11">Gen11</a>、規模は最大で EU(Execution Unit) 32基、L3cacheバンク 4基(1280KB)。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">5</a></sup><br />
-<em>Ice Lake</em> と同じ世代ではあっても機能面で微妙に違いが存在し、<a href="https://github.com/intel/media-driver" rel="noreferrer" target="_blank">intel/media-driver</a>によると、一部コーデックにてシェーダー(EU)を用いたエンコードがサポートされない。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">6</a></sup><br />
+<p>それ以外に判明している仕様はGPUくらいで、GPUアーキテクチャは <em>Ice Lake</em> と同じ<a href="https://blog.coelacanth-dream.com/tags/gen11">Gen11</a>、規模は最大で EU(Execution Unit) 32基、L3cacheバンク 4基(1280KB)。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
+<em>Ice Lake</em> と同じ世代ではあっても機能面で微妙に違いが存在し、<a href="https://github.com/intel/media-driver">intel/media-driver</a>によると、一部コーデックにてシェーダー(EU)を用いたエンコードがサポートされない。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
 他にも、デノイズやシャーピング、HDR10トーンマッピングといった映像処理のサポートも削られている。</p>
-
-<p><em>Elkhart Lake</em> GPUの規模には3種類あり、L3cacheバンクの構成は変わらず、SubSlice数とその内部のEU数が主な差別化点となっている。<br />
-3種それぞれの総EU数は 32基、16基、8基。<sup class="footnote-ref" id="fnref:18"><a href="#fn:18">7</a></sup></p>
-
-<p>PCHのコードネームは <em>Mule Creek Canyon PCH</em> と、ちょっと凝ったものになっている。<sup class="footnote-ref" id="fnref:15"><a href="#fn:15">8</a></sup></p>
-
+<p><em>Elkhart Lake</em> GPUの規模には3種類あり、L3cacheバンクの構成は変わらず、SubSlice数とその内部のEU数が主な差別化点となっている。<br>
+3種それぞれの総EU数は 32基、16基、8基。<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></p>
+<p>PCHのコードネームは <em>Mule Creek Canyon PCH</em> と、ちょっと凝ったものになっている。<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></p>
 <h2 id="tremont-l">Jasper Lake (Tremont-L)</h2>
-
-<p><em>Tremont</em> コアを採用したモバイル向けプロセッサ。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">9</a></sup></p>
-
-<p>CPUコア数に関しては若干情報があるのだが、正直怪しいところがある。<br />
-まず<a href="https://github.com/coreboot/coreboot" rel="noreferrer" target="_blank">Coreboot</a>にある <em>Jasper Lake</em> のリファレンスボード、<strong>jasperlake_rvp</strong> の <code>Kconfig</code> は <code>MAX_CPUS</code> の値が <code>8</code> となっている。<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">10</a></sup>このままだと <em>Jasper Lake</em> の最大 8-Thread、と思われるが、<br />
-<em>Jasper Lake</em> を搭載するChromebookのリファレンスボード、コードネーム <strong>dedede</strong> では <code>MAX_CPUS</code> を <code>4</code> としている。<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">11</a></sup><br />
-どちらを信用するかで言えば、<strong>jasperlake_rvp</strong> には <strong>icelake_rvp</strong> を元にして名前を置き換えた、という経緯があるため、<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">12</a></sup><strong>dedede</strong> に分がある。<em>Ice Lake (Client)</em> は最大 8-Threadであり、<strong>jasperlake_rvp</strong> はその値をそのまま持ってきた結果とも考えられる。<br />
-そういうことで、<em>Jasper Lake</em> は最大 4-Threadではないかと推測するが、<br />
+<p><em>Tremont</em> コアを採用したモバイル向けプロセッサ。<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup></p>
+<p>CPUコア数に関しては若干情報があるのだが、正直怪しいところがある。<br>
+まず<a href="https://github.com/coreboot/coreboot">Coreboot</a>にある <em>Jasper Lake</em> のリファレンスボード、<strong>jasperlake_rvp</strong> の <code>Kconfig</code> は <code>MAX_CPUS</code> の値が <code>8</code> となっている。<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup>このままだと <em>Jasper Lake</em> の最大 8-Thread、と思われるが、<br>
+<em>Jasper Lake</em> を搭載するChromebookのリファレンスボード、コードネーム <strong>dedede</strong> では <code>MAX_CPUS</code> を <code>4</code> としている。<sup id="fnref:11"><a href="#fn:11" class="footnote-ref" role="doc-noteref">11</a></sup><br>
+どちらを信用するかで言えば、<strong>jasperlake_rvp</strong> には <strong>icelake_rvp</strong> を元にして名前を置き換えた、という経緯があるため、<sup id="fnref:12"><a href="#fn:12" class="footnote-ref" role="doc-noteref">12</a></sup><strong>dedede</strong> に分がある。<em>Ice Lake (Client)</em> は最大 8-Threadであり、<strong>jasperlake_rvp</strong> はその値をそのまま持ってきた結果とも考えられる。<br>
+そういうことで、<em>Jasper Lake</em> は最大 4-Threadではないかと推測するが、<br>
 それはあくまでも <strong>dedede</strong> で想定しているスレッド数であり、より多いコア/スレッド数を持つ <em>Jasper Lake</em> が出てくる可能性もある。</p>
-
 <ins >
 	<span class="insbegin">（追記 ）</span>
     <p>
 	<p><strong>Dedede</strong> に搭載される <em>Jasper Lake</em> に関しては 2-Core/4-Thread と確認できる記述が見つかった。</p>
-
-<p><span class="reflink"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1993735" rel="noreferrer" target="_blank">UPSTREAM: ASoC: SOF: Intel: initial support to JasperLake. (I0aa932c4) · Gerrit Code Review</a></span><br></p>
-
-<p><span class="reflink"><a href="https://github.com/coreboot/coreboot/blob/a02bf7468a5bb22f47be2aaf6186f2c835710fbc/src/mainboard/google/dedede/Kconfig#L60" rel="noreferrer" target="_blank"><a href="https://github.com/coreboot/coreboot/blob/a02bf7468a5bb22f47be2aaf6186f2c835710fbc/src/mainboard/google/dedede/Kconfig#L60" rel="noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/a02bf7468a5bb22f47be2aaf6186f2c835710fbc/src/mainboard/google/dedede/Kconfig#L60</a></a></span><br></p>
+<p><span class="reflink"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/kernel/+/1993735">UPSTREAM: ASoC: SOF: Intel: initial support to JasperLake. (I0aa932c4) · Gerrit Code Review</a></span><br></p>
+<p><span class="reflink"><a href="https://github.com/coreboot/coreboot/blob/a02bf7468a5bb22f47be2aaf6186f2c835710fbc/src/mainboard/google/dedede/Kconfig#L60"><a href="https://github.com/coreboot/coreboot/blob/a02bf7468a5bb22f47be2aaf6186f2c835710fbc/src/mainboard/google/dedede/Kconfig#L60">https://github.com/coreboot/coreboot/blob/a02bf7468a5bb22f47be2aaf6186f2c835710fbc/src/mainboard/google/dedede/Kconfig#L60</a></a></span><br></p>
 
     </p>
 	<span class="insend">（追記終了）</span>
 </ins>
 <br>
 
-
-<p><em>Jasper Lake</em> はGPUに関連するソフトウェア、<a href="https://github.com/intel/media-driver" rel="noreferrer" target="_blank">intel/media-driver</a> や <a href="https://gitlab.freedesktop.org/mesa/mesa" rel="noreferrer" target="_blank">Mesa3D</a> 等では <em>Elkhart Lake</em> として扱われており、両者の間にGPUの仕様違いは規模以外にないものと思われる。<sup class="footnote-ref" id="fnref:12"><a href="#fn:12">13</a></sup><sup class="footnote-ref" id="fnref:13"><a href="#fn:13">14</a></sup><br />
-そして <em>Jasper Lake</em> GPUの規模は、総EU数 24基、L3cacheバンク 4基(1280KB)<sup class="footnote-ref" id="fnref:19"><a href="#fn:19">15</a></sup>。</p>
-
+<p><em>Jasper Lake</em> はGPUに関連するソフトウェア、<a href="https://github.com/intel/media-driver">intel/media-driver</a> や <a href="https://gitlab.freedesktop.org/mesa/mesa">Mesa3D</a> 等では <em>Elkhart Lake</em> として扱われており、両者の間にGPUの仕様違いは規模以外にないものと思われる。<sup id="fnref:13"><a href="#fn:13" class="footnote-ref" role="doc-noteref">13</a></sup><sup id="fnref:14"><a href="#fn:14" class="footnote-ref" role="doc-noteref">14</a></sup><br>
+そして <em>Jasper Lake</em> GPUの規模は、総EU数 24基、L3cacheバンク 4基(1280KB)<sup id="fnref:15"><a href="#fn:15" class="footnote-ref" role="doc-noteref">15</a></sup>。</p>
 <p>メモリの仕様は、<span class="complement">
-&nbsp;&mdash;&mdash; またも<a href="https://github.com/coreboot/coreboot" rel="noreferrer" target="_blank">Coreboot</a>のコードからだが &mdash;&mdash;&nbsp;
+&nbsp;&mdash;&mdash; またも<a href="https://github.com/coreboot/coreboot">Coreboot</a>のコードからだが &mdash;&mdash;&nbsp;
 </span>
-LP/DDR4 2ch(128-bit)だと読める。<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">16</a></sup></p>
-
-<p>PCHのコードネームは <em>Jasper Lake PCH</em> と、こちらはシンプル。<sup class="footnote-ref" id="fnref:14"><a href="#fn:14">17</a></sup></p>
-
+LP/DDR4 2ch(128-bit)だと読める。<sup id="fnref:16"><a href="#fn:16" class="footnote-ref" role="doc-noteref">16</a></sup></p>
+<p>PCHのコードネームは <em>Jasper Lake PCH</em> と、こちらはシンプル。<sup id="fnref:17"><a href="#fn:17" class="footnote-ref" role="doc-noteref">17</a></sup></p>
 <p>モバイル向けとのことから、 <em>Jasper Lake</em> はここであげるプロセッサの中では今後最も見ることになるのはないかと思う。次点で <em>Lakefield</em> か。</p>
-
 <h3 id="elkhart-jasper-diff">Elkhart Lake と Jasper Lake の共通点と違い</h3>
-
-<p><em>Elkhart Lake</em> と <em>Jasper Lake</em> は非常に似ている。<br />
-GPUの機能は同じで、PCHもコードネームこそ違うが、中身としては映像出力1ポートのマッピングが微妙に異なるだけだ。<sup class="footnote-ref" id="fnref:14"><a href="#fn:14">17</a></sup>ついでに言うと、<em>Cannon Lake PCH</em> 以降もIPを再使用しているため、<em>Ice Lake</em> 、<em>Elkhart Lake</em> 、<em>Jasper Lake</em> 、<em>Tiger Lake</em> のPCHに大きな違いはない。<sup class="footnote-ref" id="fnref:16"><a href="#fn:16">18</a></sup><br />
-強いてそれらを分けるとするならば、<em>Mule Creek Canyon PCH</em> は <em>Ice Lake PCH</em> 寄り、<sup class="footnote-ref" id="fnref:15"><a href="#fn:15">8</a></sup><br />
-<em>Jasper Lake PCH</em> は <em>Tiger Lake PCH</em> 寄りの仕様と言える。<sup class="footnote-ref" id="fnref:14"><a href="#fn:14">17</a></sup></p>
-
-<p>他にはメモリのチャネル数の違いが2つを分ける <em>可能性</em> があるが、それだけではないはずだ。<br />
+<p><em>Elkhart Lake</em> と <em>Jasper Lake</em> は非常に似ている。<br>
+GPUの機能は同じで、PCHもコードネームこそ違うが、中身としては映像出力1ポートのマッピングが微妙に異なるだけだ。<sup id="fnref:17"><a href="#fn:17" class="footnote-ref" role="doc-noteref">17</a></sup>ついでに言うと、<em>Cannon Lake PCH</em> 以降もIPを再使用しているため、<em>Ice Lake</em> 、<em>Elkhart Lake</em> 、<em>Jasper Lake</em> 、<em>Tiger Lake</em> のPCHに大きな違いはない。<sup id="fnref:18"><a href="#fn:18" class="footnote-ref" role="doc-noteref">18</a></sup><br>
+強いてそれらを分けるとするならば、<em>Mule Creek Canyon PCH</em> は <em>Ice Lake PCH</em> 寄り、<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup><br>
+<em>Jasper Lake PCH</em> は <em>Tiger Lake PCH</em> 寄りの仕様と言える。<sup id="fnref:17"><a href="#fn:17" class="footnote-ref" role="doc-noteref">17</a></sup></p>
+<p>他にはメモリのチャネル数の違いが2つを分ける <em>可能性</em> があるが、それだけではないはずだ。<br>
 <em>Tremontアーキテクチャ</em> には特定用途向けの <em>Single Cluster Mode</em> が存在し、テクニカルライター 大原雄介氏は以下のように推測している。</p>
-
 <blockquote>
-<p>　ちなみに、気になるのは“Single Cluster Mode”なるモードの搭載で、言葉通りに読めば、ハイパースレッディングを無効にして、最大で6命令/サイクルのデコードが可能なモードもあるように見える。<br />
- 　“on product targets”というのは、現在のAtomは単にローエンドのモバイル製品(や一部NUCなどの製品)のみならず、ネットワーク機器や組み込み機器などにも使われているからだ。<br />
- 　こうした用途の中にはマルチスレッド性能が不要なのでシングルスレッド性能を上げてほしい、というものも存在するので、こうした特定用途向けにSingle Cluster Modeが利用可能、という話であろう。</p>
-
-<p>引用元: <cite><a href="https://ascii.jp/elem/000/001/981/1981403/2/" rel="noreferrer" target="_blank">ASCII.jp：AtomベースのSmall CoreがTremontと判明　インテル CPUロードマップ (2/4)</a></cite></p>
+<p>　ちなみに、気になるのは“Single Cluster Mode”なるモードの搭載で、言葉通りに読めば、ハイパースレッディングを無効にして、最大で6命令/サイクルのデコードが可能なモードもあるように見える。<br>
+　“on product targets”というのは、現在のAtomは単にローエンドのモバイル製品(や一部NUCなどの製品)のみならず、ネットワーク機器や組み込み機器などにも使われているからだ。<br>
+　こうした用途の中にはマルチスレッド性能が不要なのでシングルスレッド性能を上げてほしい、というものも存在するので、こうした特定用途向けにSingle Cluster Modeが利用可能、という話であろう。</p>
 </blockquote>
-
-<p>恐らく、2つのプロセッサを分ける最大の要素は、この <em>Sigle Cluster Mode</em> が有効にされているか否かであり、<br />
+<blockquote>
+<p>引用元: <cite><a href="https://ascii.jp/elem/000/001/981/1981403/2/">ASCII.jp：AtomベースのSmall CoreがTremontと判明　インテル CPUロードマップ (2/4)</a></cite></p>
+</blockquote>
+<p>恐らく、2つのプロセッサを分ける最大の要素は、この <em>Sigle Cluster Mode</em> が有効にされているか否かであり、<br>
 組み込み向けの <em>Elkhaet Lake</em> では有効にされ、モバイル向けの <em>Jasper Lake</em> では無効にされ、代わりに <em>Hyper-Threading</em> が有効にされているのではないだろうか。</p>
-
-<p>しかし、それと上述した <em>Jasper Lake</em> は最大4スレッドという考えを合わせると、<em>Jasper Lake</em> は 2-Core/4-Thread となるが、Atom系にしても小さいように思える。<br />
-現世代Atomプロセッサ、<em>Gemini Lake</em> は 4-Core で <em>Hyper-Threading</em> はサポートしないため、アーキテクチャが <em>Tremont</em> である <em>Jasper Lake</em> では 2-Core/4-Thread でも性能向上が見込めるのか、<br />
-それとも、4-Threadより上の <em>Jasper Lake</em> が予定されているのか、<br />
-または、<em>Single Cluster Mode</em> に関する自分の推測が外れているのか。<br />
+<p>しかし、それと上述した <em>Jasper Lake</em> は最大4スレッドという考えを合わせると、<em>Jasper Lake</em> は 2-Core/4-Thread となるが、Atom系にしても小さいように思える。<br>
+現世代Atomプロセッサ、<em>Gemini Lake</em> は 4-Core で <em>Hyper-Threading</em> はサポートしないため、アーキテクチャが <em>Tremont</em> である <em>Jasper Lake</em> では 2-Core/4-Thread でも性能向上が見込めるのか、<br>
+それとも、4-Threadより上の <em>Jasper Lake</em> が予定されているのか、<br>
+または、<em>Single Cluster Mode</em> に関する自分の推測が外れているのか。<br>
 こればかりは新たな情報が出てこないければわからない。</p>
-
 <ins >
 	<span class="insbegin">（追記 ）</span>
     <p>
-	Linux Kernel documentation の記述から、<em>Jasper Lake</em> はPCHの機能を統合したSoC、<em>Elkhart Lake</em> は I/O の規模を増やすべく外部にPCHを搭載する、という違いも考えられる。<br />
-<a href="https://01.org/linuxgraphics/gfx-docs/drm/i2c/busses/i2c-i801.html" rel="noreferrer" target="_blank">Kernel driver i2c-i801 — The Linux Kernel documentation</a>
+	Linux Kernel documentation の記述から、<em>Jasper Lake</em> はPCHの機能を統合したSoC、<em>Elkhart Lake</em> は I/O の規模を増やすべく外部にPCHを搭載する、という違いも考えられる。<br>
+<a href="https://01.org/linuxgraphics/gfx-docs/drm/i2c/busses/i2c-i801.html">Kernel driver i2c-i801 — The Linux Kernel documentation</a>
     </p>
 	<span class="insend">（追記終了）</span>
 </ins>
 <br>
 
-
 <h2 id="lakefield">Lakefiled</h2>
-
-<p><em>Lakefield</em> は高性能な <em>Sunny Cove</em> ベースのコアと省電力に優れる <em>Tremont</em> ベースのコアを両方併せ持つ非対称ハイブリッドプロセッサであり、<br />
+<p><em>Lakefield</em> は高性能な <em>Sunny Cove</em> ベースのコアと省電力に優れる <em>Tremont</em> ベースのコアを両方併せ持つ非対称ハイブリッドプロセッサであり、<br>
 I/O系を集約し、22nm(P1222)で製造される Base die、CPU、GPU、メモリコントローラを集約した、10nmで製造される Compute dieをFoveros技術で3D積層する、Intelの最新技術が詰め込まれた画期的なSoCでもある。
 DRAMも積層されるが、それはPOP(Package-on-package)技術による積層となる。</p>
-
-<p>参考: <cite><a href="https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf" rel="noreferrer" target="_blank">https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf</a></cite></p>
-
-<p>ただまだ情報は少なく、CPU関連では先日の Intel 拡張命令リファレンスのアップデートでハイブリッドプロセッサの情報を示すEAXレジスタが追加されたくらいだ。<sup class="footnote-ref" id="fnref:17"><a href="#fn:17">19</a></sup>
+<p>参考: <cite><a href="https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf">https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf</a></cite></p>
+<p>ただまだ情報は少なく、CPU関連では先日の Intel 拡張命令リファレンスのアップデートでハイブリッドプロセッサの情報を示すEAXレジスタが追加されたくらいだ。<sup id="fnref:19"><a href="#fn:19" class="footnote-ref" role="doc-noteref">19</a></sup>
 <em>Sunny Cove</em> と <em>Tremont</em> で対応する命令の範囲は異なるが、コンパイラやスケジューラはどのように見ることになるのだろうか。</p>
-
-<p>GPUはもう少し明らかにされており、GPUアーキテクチャは <em>Ice Lake /Elkhart Lake /Jasper Lake</em> と同世代の Gen11で、EU数は最大64基、<br />
-メディア関連も Gen11だが、<em>Ice Lake</em> 同等の機能を持つのか、<em>Elkhart /Jasper Lake</em> と同等になるのかは不明。EU 64基と、<em>Ice Lake</em> 同等であることに期待が持てるが果たして。<br />
+<p>GPUはもう少し明らかにされており、GPUアーキテクチャは <em>Ice Lake /Elkhart Lake /Jasper Lake</em> と同世代の Gen11で、EU数は最大64基、<br>
+メディア関連も Gen11だが、<em>Ice Lake</em> 同等の機能を持つのか、<em>Elkhart /Jasper Lake</em> と同等になるのかは不明。EU 64基と、<em>Ice Lake</em> 同等であることに期待が持てるが果たして。<br>
 Display Coreは Gen11.5と進んでおり、映像出力数は最大4つ、解像度は最大5k60か4k120となっている。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:2"><a href="https://github.com/torvalds/linux/commit/00ae831dfe4474ef6029558f5eb3ef0332d80043" rel="noreferrer" target="_blank">x86/cpu: Add Atom Tremont (Jacobsville) · torvalds/linux@00ae831</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3"><a href="https://github.com/torvalds/linux/commit/5ebb34edbefa8ea6a7e109179d5fc7b3529dbeba#diff-9f27b735203b802ba0162ce1099eea33" rel="noreferrer" target="_blank">x86/intel: Aggregate microserver naming · torvalds/linux@5ebb34e</a>
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:4"><a href="https://ark.intel.com/content/www/us/en/ark/products/202682/intel-atom-processor-p5962b-27m-cache-2-20-ghz.html" rel="noreferrer" target="_blank">Intel Atom® Processor P5962B (27M Cache, 2.20 GHz) Product Specifications</a>
- <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
-<li id="fn:5"><a href="ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf" rel="noreferrer" target="_blank">ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf</a><br>&emsp;&emsp;<a href="ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf#page=7" rel="noreferrer" target="_blank">ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf#page=7</a><br>&emsp;&emsp;<a href="ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf#page=14" rel="noreferrer" target="_blank">ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf#page=14</a>
- <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
-<li id="fn:7"><a href="https://github.com/intel/media-driver/blob/intel-media-20.1.1/media_driver/linux/gen11/ddi/media_sysinfo_g11.cpp#L322" rel="noreferrer" target="_blank">media-driver/media_sysinfo_g11.cpp at intel-media-20.1.1 · intel/media-driver</a>
- <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
-<li id="fn:8"><a href="https://github.com/intel/media-driver/commit/d0cbf53cd4dc23f1ef99b4b2e9bfab74172d9c9d" rel="noreferrer" target="_blank">update readme for TGL/EHL/JSL · intel/media-driver@d0cbf53</a>
- <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
-<li id="fn:18"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/a583f86305875957931fccfa7c4176d07b192fe2" rel="noreferrer" target="_blank">intel: Add Elkhart Lake device info (a583f863) · Commits · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:18"><sup>[return]</sup></a></li>
-<li id="fn:15"><a href="https://github.com/torvalds/linux/commit/c6f7acb80abf5f73be4ee08541e3393a0146b15e" rel="noreferrer" target="_blank">drm/i915/ehl: Introduce Mule Creek Canyon PCH · torvalds/linux@c6f7acb</a>
- <a class="footnote-return" href="#fnref:15"><sup>[return]</sup></a></li>
-<li id="fn:1"><a href="https://github.com/torvalds/linux/commit/b2d32af0bff402b4c1fce28311759dd1f6af058a" rel="noreferrer" target="_blank">x86/cpu: Add Jasper Lake to Intel family · torvalds/linux@b2d32af</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:9"><a href="https://github.com/coreboot/coreboot/blob/630aa4b3db1b7fa459380ec52328d632b53b22de/src/mainboard/intel/jasperlake_rvp/Kconfig#L34" rel="noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/630aa4b3db1b7fa459380ec52328d632b53b22de/src/mainboard/intel/jasperlake_rvp/Kconfig#L34</a>
- <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
-<li id="fn:10"><a href="https://github.com/coreboot/coreboot/blob/aa56c11b1911fa49e53a145926b00670f9939f27/src/mainboard/google/dedede/Kconfig#L59" rel="noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/aa56c11b1911fa49e53a145926b00670f9939f27/src/mainboard/google/dedede/Kconfig#L59</a>
- <a class="footnote-return" href="#fnref:10"><sup>[return]</sup></a></li>
-<li id="fn:11"><a href="https://github.com/coreboot/coreboot/commit/630aa4b3db1b7fa459380ec52328d632b53b22de" rel="noreferrer" target="_blank">mb/intel/jasperlake_rvp: Add initial mainboard code · coreboot/coreboot@630aa4b</a>
- <a class="footnote-return" href="#fnref:11"><sup>[return]</sup></a></li>
-<li id="fn:12"><a href="https://github.com/intel/media-driver/commit/4b5a279dae45f36e7bc42bb4ac662591567b5c2e#diff-56a1f17349b8bf63003aa4674344637b" rel="noreferrer" target="_blank">[Encode] Add some device IDs for JSL · intel/media-driver@4b5a279</a>
- <a class="footnote-return" href="#fnref:12"><sup>[return]</sup></a></li>
-<li id="fn:13"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/11fdd5f52c3db070f33f7ef82d41acf14b1a2670" rel="noreferrer" target="_blank">intel: Add device info for 1x4x6 Jasper Lake (11fdd5f5) · Commits · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:13"><sup>[return]</sup></a></li>
-<li id="fn:19"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/11fdd5f52c3db070f33f7ef82d41acf14b1a2670" rel="noreferrer" target="_blank">intel: Add device info for 1x4x6 Jasper Lake (11fdd5f5) · Commits · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:19"><sup>[return]</sup></a></li>
-<li id="fn:6"><a href="https://github.com/coreboot/coreboot/blob/512b77abb582e6c2566d3873b273dd32731e7bae/src/soc/intel/jasperlake/include/soc/meminit.h#L33" rel="noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/512b77abb582e6c2566d3873b273dd32731e7bae/src/soc/intel/jasperlake/include/soc/meminit.h#L33</a>
- <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
-<li id="fn:14"><a href="https://github.com/torvalds/linux/commit/943682e3bd19385511171d730499120ab7245566" rel="noreferrer" target="_blank">drm/i915: Introduce Jasper Lake PCH · torvalds/linux@943682e</a>
- <a class="footnote-return" href="#fnref:14"><sup>[return]</sup></a></li>
-<li id="fn:16"><a href="https://github.com/torvalds/linux/commit/16292bed9c56a20715d942fd5d9e025f01fa65fe" rel="noreferrer" target="_blank">platform/x86: intel_pmc_core: Add Atom based Jasper Lake (JSL) platfo… · torvalds/linux@16292be</a>
- <a class="footnote-return" href="#fnref:16"><sup>[return]</sup></a></li>
-<li id="fn:17"><a href="https://blog.coelacanth-dream.com/posts/2020/04/01/intel-isa-extensiton-update-sapphirerapids-alderlake/#hybrid-processor">Intel、拡張命令リファレンスをアップデート (Sapphire Rapids /Alder Lake /ハイブリッドプロセッサ) | Coelacanth&rsquo;s Dream</a>
- <a class="footnote-return" href="#fnref:17"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/commit/00ae831dfe4474ef6029558f5eb3ef0332d80043">x86/cpu: Add Atom Tremont (Jacobsville) · torvalds/linux@00ae831</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/commit/5ebb34edbefa8ea6a7e109179d5fc7b3529dbeba#diff-9f27b735203b802ba0162ce1099eea33">x86/intel: Aggregate microserver naming · torvalds/linux@5ebb34e</a> <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://ark.intel.com/content/www/us/en/ark/products/202682/intel-atom-processor-p5962b-27m-cache-2-20-ghz.html">Intel Atom® Processor P5962B (27M Cache, 2.20 GHz) Product Specifications</a> <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf">ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf</a><br>  <a href="ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf#page=7">ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf#page=7</a><br>  <a href="ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf#page=14">ftp://data.aaeon.com.tw/DOWNLOAD/Brochure/2020_Network_Appliances_brochure_AAEON.pdf#page=14</a> <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://github.com/intel/media-driver/blob/intel-media-20.1.1/media_driver/linux/gen11/ddi/media_sysinfo_g11.cpp#L322">media-driver/media_sysinfo_g11.cpp at intel-media-20.1.1 · intel/media-driver</a> <a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://github.com/intel/media-driver/commit/d0cbf53cd4dc23f1ef99b4b2e9bfab74172d9c9d">update readme for TGL/EHL/JSL · intel/media-driver@d0cbf53</a> <a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/a583f86305875957931fccfa7c4176d07b192fe2">intel: Add Elkhart Lake device info (a583f863) · Commits · Mesa / mesa · GitLab</a> <a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/commit/c6f7acb80abf5f73be4ee08541e3393a0146b15e">drm/i915/ehl: Introduce Mule Creek Canyon PCH · torvalds/linux@c6f7acb</a> <a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/commit/b2d32af0bff402b4c1fce28311759dd1f6af058a">x86/cpu: Add Jasper Lake to Intel family · torvalds/linux@b2d32af</a> <a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/blob/630aa4b3db1b7fa459380ec52328d632b53b22de/src/mainboard/intel/jasperlake_rvp/Kconfig#L34">https://github.com/coreboot/coreboot/blob/630aa4b3db1b7fa459380ec52328d632b53b22de/src/mainboard/intel/jasperlake_rvp/Kconfig#L34</a> <a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:11" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/blob/aa56c11b1911fa49e53a145926b00670f9939f27/src/mainboard/google/dedede/Kconfig#L59">https://github.com/coreboot/coreboot/blob/aa56c11b1911fa49e53a145926b00670f9939f27/src/mainboard/google/dedede/Kconfig#L59</a> <a href="#fnref:11" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:12" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/commit/630aa4b3db1b7fa459380ec52328d632b53b22de">mb/intel/jasperlake_rvp: Add initial mainboard code · coreboot/coreboot@630aa4b</a> <a href="#fnref:12" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:13" role="doc-endnote">
+<p><a href="https://github.com/intel/media-driver/commit/4b5a279dae45f36e7bc42bb4ac662591567b5c2e#diff-56a1f17349b8bf63003aa4674344637b">[Encode] Add some device IDs for JSL · intel/media-driver@4b5a279</a> <a href="#fnref:13" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:14" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/11fdd5f52c3db070f33f7ef82d41acf14b1a2670">intel: Add device info for 1x4x6 Jasper Lake (11fdd5f5) · Commits · Mesa / mesa · GitLab</a> <a href="#fnref:14" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:15" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/11fdd5f52c3db070f33f7ef82d41acf14b1a2670">intel: Add device info for 1x4x6 Jasper Lake (11fdd5f5) · Commits · Mesa / mesa · GitLab</a> <a href="#fnref:15" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:16" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/blob/512b77abb582e6c2566d3873b273dd32731e7bae/src/soc/intel/jasperlake/include/soc/meminit.h#L33">https://github.com/coreboot/coreboot/blob/512b77abb582e6c2566d3873b273dd32731e7bae/src/soc/intel/jasperlake/include/soc/meminit.h#L33</a> <a href="#fnref:16" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:17" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/commit/943682e3bd19385511171d730499120ab7245566">drm/i915: Introduce Jasper Lake PCH · torvalds/linux@943682e</a> <a href="#fnref:17" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:18" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/commit/16292bed9c56a20715d942fd5d9e025f01fa65fe">platform/x86: intel_pmc_core: Add Atom based Jasper Lake (JSL) platfo… · torvalds/linux@16292be</a> <a href="#fnref:18" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:19" role="doc-endnote">
+<p><a href="https://blog.coelacanth-dream.com/posts/2020/04/01/intel-isa-extensiton-update-sapphirerapids-alderlake/#hybrid-processor">Intel、拡張命令リファレンスをアップデート (Sapphire Rapids /Alder Lake /ハイブリッドプロセッサ) | Coelacanth&rsquo;s Dream</a> <a href="#fnref:19" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>

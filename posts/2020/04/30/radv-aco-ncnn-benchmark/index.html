@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,31 +247,24 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>RADV/ACO検証: ncnn Benchmark</h1>
-
-<p>おまけ的な記事。</p>
-
-<p>これまで <a href="https://github.com/nihui/waifu2x-ncnn-vulkan" rel="noreferrer" target="_blank">waifu2x-ncnn-vulkan</a> を検証に用いてきたが、そのフレームワークである <a href="https://github.com/Tencent/ncnn" rel="noreferrer" target="_blank">ncnn</a> はビルド時にライブラリだけでなく、ベンチマークのバイナリも生成される。<br />
+    <h1>RADV/ACO検証: ncnn Benchmark</h1><p>おまけ的な記事。</p>
+<p>これまで <a href="https://github.com/nihui/waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan</a> を検証に用いてきたが、そのフレームワークである <a href="https://github.com/Tencent/ncnn">ncnn</a> はビルド時にライブラリだけでなく、ベンチマークのバイナリも生成される。<br>
 waifu2x-ncnn-vulkan のような一般ユーザーにとって実用的なソフトウェアからは少し外れるが、数少ない純粋な Vulkan Compute が実装されたベンチマークだ、試さない理由はないだろう。</p>
-
 <h2 id="インデックス">インデックス</h2>
-
 <ul>
 <li><a href="#env">環境</a></li>
 <li><a href="#how">計測方法</a>
-
 <ul>
 <li><a href="#pre">準備</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#result">結果/Result</a>
-
 <ul>
 <li><a href="#feel">感想</a></li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h2 id="env">環境</h2>
-
 <table>
 <thead>
 <tr>
@@ -276,95 +272,69 @@ waifu2x-ncnn-vulkan のような一般ユーザーにとって実用的なソフ
 <th align="center">Description</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">CPU</td>
 <td align="center">Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
 </tr>
-
 <tr>
 <td align="left">Memory</td>
 <td align="center">16GB 2933MHz</td>
 </tr>
-
 <tr>
 <td align="left">GPU</td>
 <td align="center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 1750MHz/7Gbps)</td>
 </tr>
-
 <tr>
 <td align="left">Linux Kernel</td>
 <td align="center">5.4.21</td>
 </tr>
-
 <tr>
 <td align="left">User Mode Driver</td>
 <td align="center">Mesa 20.1.0-devel (git-a64d266134)</td>
 </tr>
-
 <tr>
 <td align="left">Vulkan Driver</td>
 <td align="center">AMD RADV(LLVM) POLARIS11 (LLVM 9.0.1)<br>AMD RADV/ACO POLARIS11 (LLVM 9.0.1)</td>
 </tr>
-
 <tr>
 <td align="left">ncnn version</td>
 <td align="center">commit: b2d9325c0dec51aafeceb077ff2fadf2510afc19</td>
 </tr>
 </tbody>
 </table>
-
 <h3 id="how">計測方法</h3>
-
 <h4 id="pre">準備</h4>
-
-<p>簡単なビルド方法は以下の記事にまとめているため、ここではベンチマークに関して補足をする。<br />
+<p>簡単なビルド方法は以下の記事にまとめているため、ここではベンチマークに関して補足をする。<br>
 <span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/#ncnn">waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】 | Coelacanth&rsquo;s Dream</a></span><br>
 </p>
-
-<p>これまではGPU <strong>RX 560</strong> だけでの検証だったが、ベンチマーク実行バイナリ <code>benchncnn</code> にはCPUで実行することも可能だ。<br />
-そして cmake オプションに AVX2命令セットをサポートした x86環境への最適化を行なうか選択するものがあり、自分が所有している <strong>Ryzen 5 2600</strong> はネイティブという訳ではないがサポートしているため、それを有効にしてビルドを行なった。<br />
+<p>これまではGPU <strong>RX 560</strong> だけでの検証だったが、ベンチマーク実行バイナリ <code>benchncnn</code> にはCPUで実行することも可能だ。<br>
+そして cmake オプションに AVX2命令セットをサポートした x86環境への最適化を行なうか選択するものがあり、自分が所有している <strong>Ryzen 5 2600</strong> はネイティブという訳ではないがサポートしているため、それを有効にしてビルドを行なった。<br>
 具体的には、cmake 実行時に <code>-DNCNN_AVX2=ON</code> を付けた。</p>
-
-<p><code>benchncnn</code> はデフォルトの状態ではビルドされるようになっており、cmake コマンド実行時に <code>-DNCNN_BUILD_BENCHMARK=OFF</code> のオプションを付けなければ、ビルドに選択したディレクトリ下に benchmark/ ディレクトリが存在するはずだ。<br />
-そしてその下に <code>benchncnn</code> がある。<br />
-これを実行すれば……となるが、これだけでは不十分であり、深層学習ネットワークのパラメータが記述されたファイル達を <code>bechncnn</code> と同一のディレクトリに置く必要がある。<br />
-それらファイルは ncnn/ ルートディレクトリ下の bechmark/ に収められている。<br />
-逆に <code>benchncnn</code> をそっちに移してもいい。こっちの方が手軽かも。<br />
+<p><code>benchncnn</code> はデフォルトの状態ではビルドされるようになっており、cmake コマンド実行時に <code>-DNCNN_BUILD_BENCHMARK=OFF</code> のオプションを付けなければ、ビルドに選択したディレクトリ下に benchmark/ ディレクトリが存在するはずだ。<br>
+そしてその下に <code>benchncnn</code> がある。<br>
+これを実行すれば……となるが、これだけでは不十分であり、深層学習ネットワークのパラメータが記述されたファイル達を <code>bechncnn</code> と同一のディレクトリに置く必要がある。<br>
+それらファイルは ncnn/ ルートディレクトリ下の bechmark/ に収められている。<br>
+逆に <code>benchncnn</code> をそっちに移してもいい。こっちの方が手軽かも。<br>
 だらだらと言葉で説明してややこしくなってしまった。そこで各ディレクトリ、ファイルの関係性を表したのが下図。</p>
-
 <ul>
-<li>ncnn/
-
-<ul>
+<li>ncnn/</li>
 <li>&lt;build dir&gt;
-
-<ul>
+* benchmark/
+* benchncnn</li>
 <li>benchmark/
-
-<ul>
-<li>benchncnn</li>
-</ul></li>
-</ul></li>
-<li>benchmark/
-
 <ul>
 <li>&lt;param files&gt;</li>
-</ul></li>
-</ul></li>
 </ul>
-
-<p><span></p>
-
-<p>検証では実行バイナリとパラメータを収めたファイルを /tmp に置いて行なった。<br />
-また、<strong>Ryzen 5 2600</strong> で実行する際、全12スレッドを使用するのではなく、物理コアのみを使用するように設定した。<br />
-理由をここでは簡潔に書くが、性能が下がるからだ。詳細な理屈は以下の記事で。<br />
-<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/03/13/zen-phy-6core-2ccx-vs-6thread-1ccx/#前提">Zen検証 ―― 物理6-Core 2CCX vs 6-Thread 1CCX | Coelacanth&rsquo;s Dream</a></span><br>
+</li>
+</ul>
+<span>
+<p>検証では実行バイナリとパラメータを収めたファイルを /tmp に置いて行なった。<br>
+また、<strong>Ryzen 5 2600</strong> で実行する際、全12スレッドを使用するのではなく、物理コアのみを使用するように設定した。<br>
+理由をここでは簡潔に書くが、性能が下がるからだ。詳細な理屈は以下の記事で。<br>
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/03/13/zen-phy-6core-2ccx-vs-6thread-1ccx/#%E5%89%8D%E6%8F%90">Zen検証 ―― 物理6-Core 2CCX vs 6-Thread 1CCX | Coelacanth&rsquo;s Dream</a></span><br>
 </p>
-
 <p>実行コマンド:</p>
-
 <pre><code>Ryzen 5 2600:  
     $ taskset -c 0-5 ./benchncnn 64 6 0 -1 0
 
@@ -374,19 +344,14 @@ RADV/LLVM:
 RADV/ACO:  
     $ RADV_PERFTEST=&quot;aco&quot; ./benchncnn 64 1 0 0 0
 </code></pre>
-
-<p>実行コマンドには benchmark/ 下にある README.md を参考とした。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
-
-<p>結果には、 min 、max 、avg の3つが出力されるが、今回の検証では avg をスコアとして採用した。<br />
-また、実行する項目は CPU <strong>Ryzen 5 2600</strong> の方が多いが、GPU <strong>RX 560</strong> と合わせるため、一部項目の結果を省いている。<br />
-実行結果は gist.github.com にほぼそのまま投稿してある。別環境、別デバイスとの比較にはそちらの方が使いやすい。<br />
-<span class="reflink"><a href="https://gist.github.com/Umio-Yasuno/99356254f0d1eb69864955cc9c8d91a3" rel="noreferrer" target="_blank">ncnn benchmark result</a></span><br>
+<p>実行コマンドには benchmark/ 下にある README.md を参考とした。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>結果には、 min 、max 、avg の3つが出力されるが、今回の検証では avg をスコアとして採用した。<br>
+また、実行する項目は CPU <strong>Ryzen 5 2600</strong> の方が多いが、GPU <strong>RX 560</strong> と合わせるため、一部項目の結果を省いている。<br>
+実行結果は gist.github.com にほぼそのまま投稿してある。別環境、別デバイスとの比較にはそちらの方が使いやすい。<br>
+<span class="reflink"><a href="https://gist.github.com/Umio-Yasuno/99356254f0d1eb69864955cc9c8d91a3">ncnn benchmark result</a></span><br>
 </p>
-
-<p></span></p>
-
+</span>
 <h2 id="result">結果</h2>
-
 <table>
 <thead>
 <tr>
@@ -396,7 +361,6 @@ RADV/ACO:
 <th align="center">RX 560<br>RADV/ACO</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">squeezenet</td>
@@ -404,112 +368,96 @@ RADV/ACO:
 <td align="center">6.91</td>
 <td align="center">3.16</td>
 </tr>
-
 <tr>
 <td align="left">mobilenet</td>
 <td align="center">8.45</td>
 <td align="center">8.67</td>
 <td align="center">3.90</td>
 </tr>
-
 <tr>
 <td align="left">mobilenet_v2</td>
 <td align="center">9.88</td>
 <td align="center">8.71</td>
 <td align="center">4.75</td>
 </tr>
-
 <tr>
 <td align="left">mobilenet_v3</td>
 <td align="center">60.50</td>
 <td align="center">14.27</td>
 <td align="center">6.69</td>
 </tr>
-
 <tr>
 <td align="left">shufflenet</td>
 <td align="center">14.93</td>
 <td align="center">4.43</td>
 <td align="center">3.00</td>
 </tr>
-
 <tr>
 <td align="left">shufflenet_v2</td>
 <td align="center">5.66</td>
 <td align="center">6.08</td>
 <td align="center">3.90</td>
 </tr>
-
 <tr>
 <td align="left">mnasnet</td>
 <td align="center">112.48</td>
 <td align="center">11.02</td>
 <td align="center">5.39</td>
 </tr>
-
 <tr>
 <td align="left">proxylessnasnet</td>
 <td align="center">168.46</td>
 <td align="center">11.61</td>
 <td align="center">5.42</td>
 </tr>
-
 <tr>
 <td align="left">googlenet</td>
 <td align="center">32.74</td>
 <td align="center">28.76</td>
 <td align="center">12.15</td>
 </tr>
-
 <tr>
 <td align="left">resnet18</td>
 <td align="center">25.59</td>
 <td align="center">23.13</td>
 <td align="center">7.58</td>
 </tr>
-
 <tr>
 <td align="left">alexnet</td>
 <td align="center">14.51</td>
 <td align="center">22.73</td>
 <td align="center">12.42</td>
 </tr>
-
 <tr>
 <td align="left">vgg16</td>
 <td align="center">174.78</td>
 <td align="center">161.59</td>
 <td align="center">38.17</td>
 </tr>
-
 <tr>
 <td align="left">resnet50</td>
 <td align="center">73.55</td>
 <td align="center">54.83</td>
 <td align="center">18.83</td>
 </tr>
-
 <tr>
 <td align="left">squeezenet_ssd</td>
 <td align="center">30.50</td>
 <td align="center">32.41</td>
 <td align="center">13.46</td>
 </tr>
-
 <tr>
 <td align="left">mobilenet_ssd</td>
 <td align="center">20.53</td>
 <td align="center">18.85</td>
 <td align="center">9.24</td>
 </tr>
-
 <tr>
 <td align="left">mobilenet_yolo</td>
 <td align="center">41.87</td>
 <td align="center">36.49</td>
 <td align="center">14.38</td>
 </tr>
-
 <tr>
 <td align="left">mobilenetv2_yolov3</td>
 <td align="center">28.60</td>
@@ -518,30 +466,25 @@ RADV/ACO:
 </tr>
 </tbody>
 </table>
-
 <h3 id="feel">感想</h3>
-
-<p>waifu2x-ncnn-vulkan でも見られたように、やはり <em>RADV/LLVM</em> より <em>RADV/ACO</em> が高速結果を出した。<br />
+<p>waifu2x-ncnn-vulkan でも見られたように、やはり <em>RADV/LLVM</em> より <em>RADV/ACO</em> が高速結果を出した。<br>
 18項目中全てで <em>RADV/LLVM</em> に勝っており、中でも vgg16 における性能向上が著しく、約4.23倍の速度だ。</p>
-
 <p>実行において、waifu2x-ncnn-vulkan の程 VRAMを使用しなかったあたりメモリコストが小さく、より <em>ACOバックエンド</em> の効果が出たのかもしれない。</p>
-
-<p>benchmark/ の README.md<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup> にある <strong>RTX 2060</strong> 、<strong>RTX 2080</strong> の結果と比較するとさすがに <strong>RX 560</strong> が負けるが、かなり健闘している方ではないかと思う。その点では結構嬉しい。<br />
+<p>benchmark/ の README.md<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> にある <strong>RTX 2060</strong> 、<strong>RTX 2080</strong> の結果と比較するとさすがに <strong>RX 560</strong> が負けるが、かなり健闘している方ではないかと思う。その点では結構嬉しい。<br>
 規模が <strong>RX 560</strong> よりも大きく、FP16のPacked実行にも対応している <em>GFX9</em> 、<em>GFX10</em> のdGPUであれば勝てる可能性がある。</p>
-
-<p><a href="https://github.com/Tencent/ncnn" rel="noreferrer" target="_blank">ncnn</a> はオープンソースで開発されており、広くシステムに対応している。ソースコードからビルドする必要があるとはいえ、Windows、MacOSでも実行可能だ。<br />
-他のRadeon搭載システム環境下での実行結果があれば、<em>RADV/ACO</em> の価値をより正しく測れる。そうでなくとも、純粋な Vulkan Compute で実装されたベンチマークとして ncnn は貴重だろう。<br />
+<p><a href="https://github.com/Tencent/ncnn">ncnn</a> はオープンソースで開発されており、広くシステムに対応している。ソースコードからビルドする必要があるとはいえ、Windows、MacOSでも実行可能だ。<br>
+他のRadeon搭載システム環境下での実行結果があれば、<em>RADV/ACO</em> の価値をより正しく測れる。そうでなくとも、純粋な Vulkan Compute で実装されたベンチマークとして ncnn は貴重だろう。<br>
 ncnn とそのベンチマーク機能の存在がもっと知られることを願っている。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1"><a href="https://github.com/Tencent/ncnn/blob/master/benchmark/README.md" rel="noreferrer" target="_blank">ncnn/README.md at master · Tencent/ncnn</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/Tencent/ncnn/blob/master/benchmark/README.md">ncnn/README.md at master · Tencent/ncnn</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>

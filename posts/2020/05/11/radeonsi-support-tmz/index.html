@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,51 +247,44 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>RadeonSI が Trust Memory Zone をサポート</h1>
-
-<p>AMD GPU向けのオープンソースOpenGLドライバー、<a href="https://blog.coelacanth-dream.com/tags/radeonsi">RadeonSI</a>が最新コミットで TMZ(Trust Memory Zone)機能をサポートした。<br />
-<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4401" rel="noreferrer" target="_blank">radeonsi: tmz support (!4401) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
+    <h1>RadeonSI が Trust Memory Zone をサポート</h1><p>AMD GPU向けのオープンソースOpenGLドライバー、<a href="https://blog.coelacanth-dream.com/tags/radeonsi">RadeonSI</a>が最新コミットで TMZ(Trust Memory Zone)機能をサポートした。<br>
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4401">radeonsi: tmz support (!4401) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
 </p>
-
 <h2 id="trust-memory-zone">Trust Memory Zone</h2>
+<p>Trust Memory Zone はセキュリティに関する機能であり、メモリをページレベルで暗号化することでメモリの内容を保護する。<br>
+カーネルドライバーはそれにより BO(Buffer Object、カーネルドライバーが使用するGPUメモリ単位) を暗号化し、暗号化された内容は GPU内の信頼されたIPブロック(GFX, SDMA, ビデオデコーダー/エンコーダー)のみ復号化することが可能となる。<br>
+そうでないCPUから読み取ることはできない。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>RadeonSI で TMZ を使用するには、それをサポートする Linux Kernel と libdrm が必要となるが、どちらもまだメインラインには組み込まれておらず、それぞれ開発中のリポジトリからビルドする必要がある。<br>
+<span class="reflink"><a href="https://cgit.freedesktop.org/~agd5f/linux/log/?h=drm-next-5.8">https://cgit.freedesktop.org/~agd5f/linux/log/?h=drm-next-5.8</a></span><br>
 
-<p>Trust Memory Zone はセキュリティに関する機能であり、メモリをページレベルで暗号化することでメモリの内容を保護する。<br />
-カーネルドライバーはそれにより BO(Buffer Object、カーネルドライバーが使用するGPUメモリ単位) を暗号化し、暗号化された内容は GPU内の信頼されたIPブロック(GFX, SDMA, ビデオデコーダー/エンコーダー)のみ復号化することが可能となる。<br />
-そうでないCPUから読み取ることはできない。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">1</a></sup></p>
-
-<p>RadeonSI で TMZ を使用するには、それをサポートする Linux Kernel と libdrm が必要となるが、どちらもまだメインラインには組み込まれておらず、それぞれ開発中のリポジトリからビルドする必要がある。<br />
-<span class="reflink"><a href="https://cgit.freedesktop.org/~agd5f/linux/log/?h=drm-next-5.8" rel="noreferrer" target="_blank">https://cgit.freedesktop.org/~agd5f/linux/log/?h=drm-next-5.8</a></span><br>
-
-<span class="reflink"><a href="https://gitlab.freedesktop.org/pepp/drm/-/tree/tmz" rel="noreferrer" target="_blank">Pierre-Eric Pelloux-Prayer / drm · GitLab</a></span><br>
+<span class="reflink"><a href="https://gitlab.freedesktop.org/pepp/drm/-/tree/tmz">Pierre-Eric Pelloux-Prayer / drm · GitLab</a></span><br>
 
 Linux Kernel のメインラインに組み込まれるのは v5.8 からと見られている。(現在のメインラインのバージョンは v5.7-rc5)</p>
-
 <p>今回サポートされたのは RadeonSI だけであり、Vulkanドライバーの RADV はまだサポートされていない。</p>
-
-<p>また、この TMZ は具体的に何が動機となって開発が進められているかは明かされていないが、<a href="https://www.phoronix.com/scan.php?page=home" rel="noreferrer" target="_blank">Phoronix</a>の<a href="https://www.phoronix.com/scan.php?page=michaellarabel" rel="noreferrer" target="_blank">Michael Larabel</a>氏は、AMD APU/GPU を搭載した <a href="https://blog.coelacanth-dream.com/tags/chromebook">Chromebook</a> の開発が起因になっているのではないかと見ている。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup></p>
-
+<p>また、この TMZ は具体的に何が動機となって開発が進められているかは明かされていないが、<a href="https://www.phoronix.com/scan.php?page=home">Phoronix</a>の<a href="https://www.phoronix.com/scan.php?page=michaellarabel">Michael Larabel</a>氏は、AMD APU/GPU を搭載した <a href="https://blog.coelacanth-dream.com/tags/chromebook">Chromebook</a> の開発が起因になっているのではないかと見ている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <hr>
 <div class="reference">
-<h2 class="ref-title" id="ref-title">参考リンク</h2>
+<h3 class="ref-title" id="ref-title">参考リンク</h2>
 <ul>
-<li><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=RadeonSI-TMZ-Mesa-20.2" rel="noreferrer" target="_blank">RadeonSI Driver Now Supports AMD Trusted Memory Zone &ndash; Phoronix</a></li>
-<li><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=AMDGPU-TMZ-Default-Soon" rel="noreferrer" target="_blank">AMDGPU Trusted Memory Zone Support Could Soon Be Enabled By Default &ndash; Phoronix</a></li>
+<li><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=RadeonSI-TMZ-Mesa-20.2">RadeonSI Driver Now Supports AMD Trusted Memory Zone - Phoronix</a></li>
+<li><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=AMDGPU-TMZ-Default-Soon">AMDGPU Trusted Memory Zone Support Could Soon Be Enabled By Default - Phoronix</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:2"><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/039928.html" rel="noreferrer" target="_blank">[PATCH 00/14] drm/amdgpu: introduce secure buffer object support (trusted memory zone)</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:1"><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=AMDGPU-TMZ-Default-Soon" rel="noreferrer" target="_blank">AMDGPU Trusted Memory Zone Support Could Soon Be Enabled By Default &ndash; Phoronix</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/039928.html">[PATCH 00/14] drm/amdgpu: introduce secure buffer object support (trusted memory zone)</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=AMDGPU-TMZ-Default-Soon">AMDGPU Trusted Memory Zone Support Could Soon Be Enabled By Default - Phoronix</a> <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>

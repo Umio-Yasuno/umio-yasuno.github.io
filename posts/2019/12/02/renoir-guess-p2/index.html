@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,83 +247,63 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Renoirの構造推測 Part2</h1>
-
-<p>Renoir推測の更新。</p>
-
-<p>以前はZen2 CCDに、GPUを統合したIODを組み合わせると予想していたが、<br />
-<a href="https://blog.coelacanth-dream.com/posts/2019/11/09/renoir-guess/">Renoirの構造推測</a><br />
+    <h1>Renoirの構造推測 Part2</h1><p>Renoir推測の更新。</p>
+<p>以前はZen2 CCDに、GPUを統合したIODを組み合わせると予想していたが、<br>
+<a href="https://blog.coelacanth-dream.com/posts/2019/11/09/renoir-guess/">Renoirの構造推測</a><br>
 どうもそうでない可能性が高くなった。</p>
-
-<p>きっかけはこのツイート。<br />
-<a href="https://twitter.com/TUM_APISAK/status/1201295232916062208" rel="noreferrer" target="_blank">https://twitter.com/TUM_APISAK/status/1201295232916062208</a><br />
-<a href="https://twitter.com/TUM_APISAK" rel="noreferrer" target="_blank">APISAK &ndash; Twitter</a>氏はリーカー、というよりはベンチマーク結果から未発表のハードウェアを見つけ出す達人のように私は思う。</p>
-
+<p>きっかけはこのツイート。<br>
+<a href="https://twitter.com/TUM_APISAK/status/1201295232916062208">https://twitter.com/TUM_APISAK/status/1201295232916062208</a><br>
+<a href="https://twitter.com/TUM_APISAK">APISAK - Twitter</a>氏はリーカー、というよりはベンチマーク結果から未発表のハードウェアを見つけ出す達人のように私は思う。</p>
 <p>ツイートの画像だが、恐らくSiSoftware Sandraの実行結果で、左はハードウェア名、右はスペックを表しているように読める。</p>
-
-<p>&ldquo;Celadon-RN Renoir&rdquo;という名前自体は以前にも確認されており、この画像が初出という訳ではない。<br />
-<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/039826.html" rel="noreferrer" target="_blank">[PATCH] drm/amdkfd: fix the missed asic name while inited renoir_device_info</a></p>
-
-<p>スペックだが、512SPはそのままの意味、8CというのはCU数だと思われる。<br />
-8 [CU] * 64 [SP] = 512 [SP] で計算も合う。<br />
+<p>&ldquo;Celadon-RN Renoir&quot;という名前自体は以前にも確認されており、この画像が初出という訳ではない。<br>
+<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/039826.html">[PATCH] drm/amdkfd: fix the missed asic name while inited renoir_device_info</a></p>
+<p>スペックだが、512SPはそのままの意味、8CというのはCU数だと思われる。<br>
+8 [CU] * 64 [SP] = 512 [SP] で計算も合う。<br>
 そして1.75GHzだが、GPUクロックを意味する、はずだ。</p>
-
-<p>似たような記述をされるハードウェアにVega M GLがあり、<br />
-<a href="https://ranker.sisoftware.co.uk/show_device.php?q=c9a598d994d0f0a2c3a7c2adc3e3b1e9c99ffa9dfcdc91b1f6ba9cfbc6ebdafc8eb383a5ccf1d7bf82a4dce1c7a2c7facaec9fa29a&amp;l=en" rel="noreferrer" target="_blank">Details for Component AMD Radeon RX Vega M GL &ndash; SiSoftware</a><br />
-CU数の後、一様に550MHzとある。<br />
-550MHzというのは最低GPUクロックだと思われるが、Vega M GLのPPTableを読まない限り確定ではない。<br />
-CPUクロックである可能性は、Intel CPUでも最低クロックは800MHzとかで、Zen2だと2.2GHzとかなので無いと思われる。<br />
-APUであるRenoirの最低GPUクロックが1.75GHzなんてのは高すぎるが、<br />
+<p>似たような記述をされるハードウェアにVega M GLがあり、<br>
+<a href="https://ranker.sisoftware.co.uk/show_device.php?q=c9a598d994d0f0a2c3a7c2adc3e3b1e9c99ffa9dfcdc91b1f6ba9cfbc6ebdafc8eb383a5ccf1d7bf82a4dce1c7a2c7facaec9fa29a&amp;l=en">Details for Component AMD Radeon RX Vega M GL - SiSoftware</a><br>
+CU数の後、一様に550MHzとある。<br>
+550MHzというのは最低GPUクロックだと思われるが、Vega M GLのPPTableを読まない限り確定ではない。<br>
+CPUクロックである可能性は、Intel CPUでも最低クロックは800MHzとかで、Zen2だと2.2GHzとかなので無いと思われる。<br>
+APUであるRenoirの最低GPUクロックが1.75GHzなんてのは高すぎるが、<br>
 テスト用に省電力機能を無効にした結果、最高クロックが取得されたと考えれば不自然ではない。</p>
-
 <p>ただGPU L1$が、L2と表示されていたり、リストの方ではメモリクロックと思われる500MHzをSpeedとしていたりと、SiSoftware Sandraの見方がよくわからない。</p>
-
 <p>まあとりあえず、Renoirの最高GPUクロックは1.75GHzとして話を進める。</p>
-
 <h3 id="7nmダイに統合">7nmダイに統合?</h3>
-
-<p>この1.75 GHz(1750 MHz)というクロックだが、14/12nmではまず無理だ。<br />
-dGPUになるが、14nm Vega64で1.546 MHz、12nm RX590で1545 MHzなため、7nmでないと1750 MHzは出せない。<br />
-そしてGPUが7nmということは、以前のIOD側にGPUが統合されるという推測は外れていた、となる。<br />
-改めて考えると、以前の推測はかなりガバガバだ。<br />
-既にAMDはAPUにおいてチップレット構造は取り入れないと語っている。<br />
-<a href="https://www.anandtech.com/show/13852/amd-no-chiplet-apu-variant-on-matisse-cpu-tdp-range-same-as-ryzen2000" rel="noreferrer" target="_blank">AMD: “No Chiplet APU Variant on Matisse, CPU TDP Range same as Ryzen-2000” &ndash; AnandTech</a><br />
-それでもチップレット構造として推測したのは、CCDを使い回すことができ、7nmより相対的にコストが低い14/12nm IODを新たに立ち上げるだけで済み、<br />
-LPDDR4をサポートするとは言え、メモリ帯域がボトルネックとなるのだからAPUでGPU部分を強化してもあまり意味がないと思ったからだ。<br />
+<p>この1.75 GHz(1750 MHz)というクロックだが、14/12nmではまず無理だ。<br>
+dGPUになるが、14nm Vega64で1.546 MHz、12nm RX590で1545 MHzなため、7nmでないと1750 MHzは出せない。<br>
+そしてGPUが7nmということは、以前のIOD側にGPUが統合されるという推測は外れていた、となる。<br>
+改めて考えると、以前の推測はかなりガバガバだ。<br>
+既にAMDはAPUにおいてチップレット構造は取り入れないと語っている。<br>
+<a href="https://www.anandtech.com/show/13852/amd-no-chiplet-apu-variant-on-matisse-cpu-tdp-range-same-as-ryzen2000">AMD: “No Chiplet APU Variant on Matisse, CPU TDP Range same as Ryzen-2000” - AnandTech</a><br>
+それでもチップレット構造として推測したのは、CCDを使い回すことができ、7nmより相対的にコストが低い14/12nm IODを新たに立ち上げるだけで済み、<br>
+LPDDR4をサポートするとは言え、メモリ帯域がボトルネックとなるのだからAPUでGPU部分を強化してもあまり意味がないと思ったからだ。<br>
 モバイル向けで不利となるダイ間接続による消費電力増は、まあ fclk 抑えることでどうにかなるんじゃないかとテキトーに考えていた。</p>
-
 <p>数が必要となるモバイル市場において、7nmで新たにダイを起こすことのコストはあまり考えなくてもいいのだろうか？</p>
-
 <h3 id="推測図">推測図</h3>
-
-<p>前回作った画像を1ダイ構造に変更したが、あまり詰めていないのはご愛嬌。<br />
-<img src="https://blog.coelacanth-dream.com/image/2019/12/03/renoir-guess-p2.webp" alt="renoir-guess-p2" /></p>
-
+<p>前回作った画像を1ダイ構造に変更したが、あまり詰めていないのはご愛嬌。<br>
+<img src="https://blog.coelacanth-dream.com/image/2019/12/03/renoir-guess-p2.webp" alt="renoir-guess-p2"></p>
 <p>7nmなのにNaviではなくVegaにしたのは、NaviだとL1キャッシュ 128KB等でGPU部が必要とするダイサイズが大きくなってしまうからと思われる。</p>
-
-<p>2CCXの8C/16Tとなっているが、図を使い回した結果なので自信はあまりない。<br />
-RenoirにRyzen 7/9が付いた名前があった、という「噂」はあるが、根拠にするには微妙なのでここでは無視する。<br />
-コスト的にも消費電力的にもダイサイズは抑えたいだろうし、Zen2ではまだCCX単位が4C/8Tなため、現行APUと同じ4C/8Tで続けるかもしれない。<br />
-今の所、対抗となるIce Lakeも4C/8Tであり、CPU性能はZen2で十分戦えるはずで、<br />
-GPU性能もクロック向上とLPDDR4で問題ないだろう。<br />
+<p>2CCXの8C/16Tとなっているが、図を使い回した結果なので自信はあまりない。<br>
+RenoirにRyzen 7/9が付いた名前があった、という「噂」はあるが、根拠にするには微妙なのでここでは無視する。<br>
+コスト的にも消費電力的にもダイサイズは抑えたいだろうし、Zen2ではまだCCX単位が4C/8Tなため、現行APUと同じ4C/8Tで続けるかもしれない。<br>
+今の所、対抗となるIce Lakeも4C/8Tであり、CPU性能はZen2で十分戦えるはずで、<br>
+GPU性能もクロック向上とLPDDR4で問題ないだろう。<br>
 （上記と若干矛盾しそうだが、dGPUのGDDR5/6程ではないとは言え、DDR4よりは性能が出る。）</p>
-
-<p>IO部も個人的な考えではPCIeGen4は必要ないように思えるが、まあわからない。<br />
-PCIeGen3とするなら、IO HUBへの接続が32B/Cで済むだろうし、まだ発熱の厳しいPCIeGen4 SSDがモバイル向けで支持されるかは怪しいはず。Ice LakeもGen3止まりだ。<br />
+<p>IO部も個人的な考えではPCIeGen4は必要ないように思えるが、まあわからない。<br>
+PCIeGen3とするなら、IO HUBへの接続が32B/Cで済むだろうし、まだ発熱の厳しいPCIeGen4 SSDがモバイル向けで支持されるかは怪しいはず。Ice LakeもGen3止まりだ。<br>
 だが、発表されるのが2020年CESだとしても、実際に出るまではもっと時間がかかるため、その時の需要を考えればGen4になるかもしれない。</p>
-
-<p><br></p>
-
-<h4 id="dc-patches-2-dec-2019">DC Patches &ndash; 2 Dec 2019</h4>
-
-<p>これを書いてる最中、少し久しぶりな気がするDC（Display Core）へのパッチが投稿された。<br />
-<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-December/043394.html" rel="noreferrer" target="_blank">[PATCH 00/51] DC Patches &ndash; 2 Dec 2019</a><br />
-内容にはRenoir用のパッチが含まれ、レイテンシが削減されたりと開発がある程度順調なことを窺える。<br />
-<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-December/043419.html" rel="noreferrer" target="_blank">[PATCH 26/51] drm/amd/display: update p-state latency for renoir when using lpddr4</a><br />
-<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-December/043423.html" rel="noreferrer" target="_blank">[PATCH 32/51] drm/amd/display: update sr latency for renoir when using lpddr4</a><br />
-Daliのもあり、中身としてはほぼRaven2だという話がより強固となった。<br />
-<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-December/043395.html" rel="noreferrer" target="_blank">[PATCH 04/51] drm/amd/display: Fix Dali clk mgr construct</a></p>
+<br>
+#### DC Patches - 2 Dec 2019
+これを書いてる最中、少し久しぶりな気がするDC（Display Core）へのパッチが投稿された。  
+[[PATCH 00/51] DC Patches - 2 Dec 2019](https://lists.freedesktop.org/archives/amd-gfx/2019-December/043394.html)  
+内容にはRenoir用のパッチが含まれ、レイテンシが削減されたりと開発がある程度順調なことを窺える。  
+[[PATCH 26/51] drm/amd/display: update p-state latency for renoir when using lpddr4](https://lists.freedesktop.org/archives/amd-gfx/2019-December/043419.html)  
+[[PATCH 32/51] drm/amd/display: update sr latency for renoir when using lpddr4](https://lists.freedesktop.org/archives/amd-gfx/2019-December/043423.html)  
+Daliのもあり、中身としてはほぼRaven2だという話がより強固となった。  
+[[PATCH 04/51] drm/amd/display: Fix Dali clk mgr construct](https://lists.freedesktop.org/archives/amd-gfx/2019-December/043395.html)
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
@@ -337,11 +320,11 @@ Daliのもあり、中身としてはほぼRaven2だという話がより強固�
             <ul>
                 <li><a href="https://blog.coelacanth-dream.com/tags/gcn" class="side-tag-lower">GCN</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/gfx9" class="side-tag-lower">GFX9</a></li>
+                <li><a href="https://blog.coelacanth-dream.com/tags/gfx909" class="side-tag-lower">gfx909</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/radeon" class="side-tag-lower">Radeon</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/raven" class="side-tag-lower">Raven</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/renoir" class="side-tag-lower">Renoir</a></li>
-                <li><a href="https://blog.coelacanth-dream.com/tags/zen2" class="side-tag-lower">Zen2</a></li>
-                <li><a href="https://blog.coelacanth-dream.com/tags/gfx909" class="side-tag-lower">gfx909</a></li></ul>
+                <li><a href="https://blog.coelacanth-dream.com/tags/zen2" class="side-tag-lower">Zen2</a></li></ul>
         </ul>
     </nav>
     <nav class="side-categories">

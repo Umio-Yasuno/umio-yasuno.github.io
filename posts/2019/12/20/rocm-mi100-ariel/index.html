@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,48 +247,39 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>ROCmのコードにMI100、Arielが追加される</h1>
-
-<p>ROCm-OpenCL-Runtimeのコミットにおいて、MI100、Arielの名が確認された。<br />
-2つのGFX IDは、MI100が<strong>gfx908</strong>、Arielが<strong>gfx1000</strong>となっている。<br />
-<a href="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/c0567561d1c2a07c9aa63edf940f8589d2ee1dc6/runtime/device/rocm/rocdefs.hpp#L75" rel="noreferrer" target="_blank">rocdefs.hpp#L75 &ndash; RadeonOpenCompute/ROCm-OpenCL-Runtime</a><br />
-<a href="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/c0567561d1c2a07c9aa63edf940f8589d2ee1dc6/runtime/device/rocm/rocdevice.cpp#L98" rel="noreferrer" target="_blank">rocdevice.cpp#L98 &ndash; RadeonOpenCompute/ROCm-OpenCL-Runtime</a></p>
-
+    <h1>ROCmのコードにMI100、Arielが追加される</h1><p>ROCm-OpenCL-Runtimeのコミットにおいて、MI100、Arielの名が確認された。<br>
+2つのGFX IDは、MI100が<strong>gfx908</strong>、Arielが<strong>gfx1000</strong>となっている。<br>
+<a href="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/c0567561d1c2a07c9aa63edf940f8589d2ee1dc6/runtime/device/rocm/rocdefs.hpp#L75">rocdefs.hpp#L75 - RadeonOpenCompute/ROCm-OpenCL-Runtime</a><br>
+<a href="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/c0567561d1c2a07c9aa63edf940f8589d2ee1dc6/runtime/device/rocm/rocdevice.cpp#L98">rocdevice.cpp#L98 - RadeonOpenCompute/ROCm-OpenCL-Runtime</a></p>
 <h4 id="mi100">MI100</h4>
-
-<p>gfx908というのはチップコードネーム Arcturus に割り振られたGFX IDだが、これまでのROCm関連のコードではArcturusという名が使われることはなく、GFX908そのままが使われていた。<br />
-今回のコミットでちゃんとした名に変わったのだけれど、何故かArcturusではなくMI100となっている。<br />
-MI100自体は過去にもgfx908に対して使われており、関連がない訳ではない。<br />
-<a href="https://github.com/ROCmSoftwarePlatform/MIOpen/commit/bc7d47bd0d65b331667da74ba3cdb04893a77998" rel="noreferrer" target="_blank">MI100 merge (#1951) &ndash; ROCmSoftwarePlatform/MIOpen</a><br />
-ただ、いささか製品的な気が過ぎるように思う。<br />
-Arcturusには現在4つのDeviceIDが確認されており、（内1つはVirtual Function[MxGPU]用）<br />
-<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=48c69cda452f4817d040908d743a818187767f17" rel="noreferrer" target="_blank">drm/amdgpu: add pci DID for Arcturus GL-XL.  &ndash; linux/amd-staging-drm-next</a><br />
-<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/?h=amd-staging-drm-next&amp;id=ea207b29ae7718a8717de6ea784e99d41826e642" rel="noreferrer" target="_blank">amd/amdgpu: add Arcturus vf DID support &ndash; linux/amd-staging-drm-next</a><br />
+<p>gfx908というのはチップコードネーム Arcturus に割り振られたGFX IDだが、これまでのROCm関連のコードではArcturusという名が使われることはなく、GFX908そのままが使われていた。<br>
+今回のコミットでちゃんとした名に変わったのだけれど、何故かArcturusではなくMI100となっている。<br>
+MI100自体は過去にもgfx908に対して使われており、関連がない訳ではない。<br>
+<a href="https://github.com/ROCmSoftwarePlatform/MIOpen/commit/bc7d47bd0d65b331667da74ba3cdb04893a77998">MI100 merge (#1951) - ROCmSoftwarePlatform/MIOpen</a><br>
+ただ、いささか製品的な気が過ぎるように思う。<br>
+Arcturusには現在4つのDeviceIDが確認されており、（内1つはVirtual Function[MxGPU]用）<br>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=48c69cda452f4817d040908d743a818187767f17">drm/amdgpu: add pci DID for Arcturus GL-XL.  - linux/amd-staging-drm-next</a><br>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/?h=amd-staging-drm-next&amp;id=ea207b29ae7718a8717de6ea784e99d41826e642">amd/amdgpu: add Arcturus vf DID support - linux/amd-staging-drm-next</a><br>
 それらすべての製品名がMI100となるということなのだろうか？</p>
-
-<p>Arcturusは最大8 ShaderEngine、128CUという構成になると見られ、そうなるとダイサイズも巨大化するため、歩留まり向上としてMI100という枠内で複数のグレードに分けているのかもしれない。<br />
+<p>Arcturusは最大8 ShaderEngine、128CUという構成になると見られ、そうなるとダイサイズも巨大化するため、歩留まり向上としてMI100という枠内で複数のグレードに分けているのかもしれない。<br>
 GPGPU全振りなアーキテクチャであり、Server Acceleratorsジャンルでしか出せないというものあるだろう。</p>
-
 <h4 id="ariel">Ariel</h4>
-
-<p>あんまりよくわかってない存在。<br />
-gfx1000というGFX IDからNavi10（gfx1010）より早くに開発されたRDNAアーキテクチャと読める。<br />
+<p>あんまりよくわかってない存在。<br>
+gfx1000というGFX IDからNavi10（gfx1010）より早くに開発されたRDNAアーキテクチャと読める。<br>
 聞いた話では、Ariel（gfx1000）こそが次世代PSに使われるGPUらしい。</p>
-
-<p>SonyはPS4のOSにてFreeBSDをベースに採用しており、そういった理由もあってコンパイラにLLVM Clangを開発に採用していた。<br />
-<a href="https://news.mynavi.jp/article/20131225-a269/" rel="noreferrer" target="_blank">PlayStation 4、開発にはLLVM Clang &ndash; マイナビニュース</a><br />
-<a href="https://news.mynavi.jp/article/20150129-a018/" rel="noreferrer" target="_blank">LLVM Clang、PlayStation 4用コードを統合開始 &ndash; マイナビニュース</a><br />
-今回確認されたコードはHSA関連と見られ、<br />
-そしてそのHSAのバックエンドにはLLVMが使われているため、その関係でArielも追加されたのだろう。<br />
+<p>SonyはPS4のOSにてFreeBSDをベースに採用しており、そういった理由もあってコンパイラにLLVM Clangを開発に採用していた。<br>
+<a href="https://news.mynavi.jp/article/20131225-a269/">PlayStation 4、開発にはLLVM Clang - マイナビニュース</a><br>
+<a href="https://news.mynavi.jp/article/20150129-a018/">LLVM Clang、PlayStation 4用コードを統合開始 - マイナビニュース</a><br>
+今回確認されたコードはHSA関連と見られ、<br>
+そしてそのHSAのバックエンドにはLLVMが使われているため、その関係でArielも追加されたのだろう。<br>
 同時に、Sonyは次世代PSでも引き続きFreeBSDベースのOS、コンパイラにLLVM Clangを採用すると見られる。PS4との互換性を予定しているらしいため、当然と言えば当然かもしれないが。</p>
-
 <h4 id="おまけ">おまけ</h4>
-
-<p>Navi1xも追加されている。<br />
-ROCmにてNavi1xのOpenCLがサポートされる日は近いのかもしれない。<br />
-現在進行系で一部騒がれている、Windows版ドライバのOpenCLランタイムのバグも修正されることを願う。<br />
+<p>Navi1xも追加されている。<br>
+ROCmにてNavi1xのOpenCLがサポートされる日は近いのかもしれない。<br>
+現在進行系で一部騒がれている、Windows版ドライバのOpenCLランタイムのバグも修正されることを願う。<br>
 <span style="color:darkslategray">相変わらずAMD GPUの新製品はソフトウェア面が不遇……</span></p>
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
@@ -303,13 +297,13 @@ ROCmにてNavi1xのOpenCLがサポートされる日は近いのかもしれな�
                 <li><a href="https://blog.coelacanth-dream.com/tags/arcturus" class="side-tag-lower">Arcturus</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/gcn" class="side-tag-lower">GCN</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/gfx10" class="side-tag-lower">GFX10</a></li>
+                <li><a href="https://blog.coelacanth-dream.com/tags/gfx1010" class="side-tag-lower">gfx1010</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/gfx9" class="side-tag-lower">GFX9</a></li>
+                <li><a href="https://blog.coelacanth-dream.com/tags/gfx908" class="side-tag-lower">gfx908</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/navi" class="side-tag-lower">Navi</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/navi10" class="side-tag-lower">Navi10</a></li>
-                <li><a href="https://blog.coelacanth-dream.com/tags/rdna" class="side-tag-lower">RDNA</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/radeon" class="side-tag-lower">Radeon</a></li>
-                <li><a href="https://blog.coelacanth-dream.com/tags/gfx1010" class="side-tag-lower">gfx1010</a></li>
-                <li><a href="https://blog.coelacanth-dream.com/tags/gfx908" class="side-tag-lower">gfx908</a></li></ul>
+                <li><a href="https://blog.coelacanth-dream.com/tags/rdna" class="side-tag-lower">RDNA</a></li></ul>
         </ul>
     </nav>
     <nav class="side-categories">

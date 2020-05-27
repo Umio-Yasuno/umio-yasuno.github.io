@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,55 +247,44 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Renoirの構造推測</h1>
-
-<p>Renoirの個人的な推測。</p>
-
-<p><img src="https://blog.coelacanth-dream.com/image/2019/11/09/renoir-guess_1.webp" alt="renoir-guess" /><br />
-自分で作っておいて言うのもあれだが、この画像にはいくつかの問題がある。<br />
-CCDは実際のサイズに沿っておらず、適当に正方形としている。<br />
-IO HUB Controllerが 64B/C となっているのは、第三世代Ryzenの図に従ったのだが、<br />
-それまで 32B/Cだったものが 64B/C になった理由を私が理解していない。<br />
-<a href="https://ascii.jp/elem/000/001/882/1882171/index-3.html" rel="noreferrer" target="_blank">判明した第3世代Ryzenの内部構造を大解説　AMD CPUロードマップ &ndash; ASCII.jp</a><br />
+    <h1>Renoirの構造推測</h1><p>Renoirの個人的な推測。</p>
+<p><img src="https://blog.coelacanth-dream.com/image/2019/11/09/renoir-guess_1.webp" alt="renoir-guess"><br>
+自分で作っておいて言うのもあれだが、この画像にはいくつかの問題がある。<br>
+CCDは実際のサイズに沿っておらず、適当に正方形としている。<br>
+IO HUB Controllerが 64B/C となっているのは、第三世代Ryzenの図に従ったのだが、<br>
+それまで 32B/Cだったものが 64B/C になった理由を私が理解していない。<br>
+<a href="https://ascii.jp/elem/000/001/882/1882171/index-3.html">判明した第3世代Ryzenの内部構造を大解説　AMD CPUロードマップ - ASCII.jp</a><br>
 PCIeGen3からGen4で帯域が倍になったからだろうか?</p>
-
 <p>その点を承知で見て欲しい。</p>
-
-<p>まずGPUをIOD側に統合した理由だが、<br />
-<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c?h=amd-staging-drm-next#n153" rel="noreferrer" target="_blank">dcn21_resource.c</a><br />
-この部分のコードにて、fabricclk(fclk)、ディスプレイ周りのクロック、メモリ転送クロックが1つのステートでまとめて管理されている。<br />
-そのことから同一のSMU(System Management Unit)で管理している、=同一のダイに収まっている、と考えた。<br />
-GPUを別ダイにしたところで、メモリが大きなボトルネックとなるためやる意味はそこまでないはずだ。<br />
-それに別ダイにしてしまうと、GPU-IODのバスが電力を消費するため、モバイルが主戦場のAPUでやるとは思いにくい。<br />
-そして、RDNAが選択肢にある中、APUも含めて14/12nmでも設計されたことのあるVega（GFX9）を選んだということは、<br />
+<p>まずGPUをIOD側に統合した理由だが、<br>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c?h=amd-staging-drm-next#n153">dcn21_resource.c</a><br>
+この部分のコードにて、fabricclk(fclk)、ディスプレイ周りのクロック、メモリ転送クロックが1つのステートでまとめて管理されている。<br>
+そのことから同一のSMU(System Management Unit)で管理している、=同一のダイに収まっている、と考えた。<br>
+GPUを別ダイにしたところで、メモリが大きなボトルネックとなるためやる意味はそこまでないはずだ。<br>
+それに別ダイにしてしまうと、GPU-IODのバスが電力を消費するため、モバイルが主戦場のAPUでやるとは思いにくい。<br>
+そして、RDNAが選択肢にある中、APUも含めて14/12nmでも設計されたことのあるVega（GFX9）を選んだということは、<br>
 RenoirのGPU部分が14/12nmである確率が高いと思われる。</p>
-
 <p>メモリとfclkに関しても同一部分からだ。</p>
-
-<p>メモリは .drm_speed_mts の値が最大4266.0となっており、<br />
-これはLPDDR4Xがターゲットとする最高クロックと一致する。<br />
+<p>メモリは .drm_speed_mts の値が最大4266.0となっており、<br>
+これはLPDDR4Xがターゲットとする最高クロックと一致する。<br>
 競合のモバイルCPU、IcelakeがLPDDR4Xをサポートしているため、AMDも最新APUで対応するのは当然と言えるだろう。</p>
-
-<p>.fabricclk_mhz が1600.0までとなっているが、第三世代Ryzenがデフォルトでは1800MHzまで、OCで1900MHzとかだったのを考えると抑えてると見える。<br />
+<p>.fabricclk_mhz が1600.0までとなっているが、第三世代Ryzenがデフォルトでは1800MHzまで、OCで1900MHzとかだったのを考えると抑えてると見える。<br>
 大方省電力目的だろう。</p>
-
 <p>ここからは根拠は特になく、推測ばかりとなる。</p>
-
-<p>IOD+GFXは12nmで製造するはずだが、さすがにcIODのスペックそのままにGPUを追加したりはしないだろう。<br />
-ある程度I/Oを削ると思われる。<br />
-RyzenG(Raven Ridge)でも、Ryzen(Summit/Pinnacle Ridge)ではGPU用にあったx16がx8に、NVMe用にあったx4がx2になっている。（チップセットとの接続はx4のまま。）<br />
-ただこれは製品としての差別化であり、実際はここまで減っていないかもしれない。<br />
-ダイサイズがSummit/Pinnacleの192mm2から、Ravenでは210mm2に増加している。<br />
-第三世代Ryzenに使われているcIODは125mm2。<br />
-パッケージングの問題もあるため、あまり大きくはできないだろう。<br />
-どのくらいの大きさにするかはキリがないだろうから考えないでおく。<br />
+<p>IOD+GFXは12nmで製造するはずだが、さすがにcIODのスペックそのままにGPUを追加したりはしないだろう。<br>
+ある程度I/Oを削ると思われる。<br>
+RyzenG(Raven Ridge)でも、Ryzen(Summit/Pinnacle Ridge)ではGPU用にあったx16がx8に、NVMe用にあったx4がx2になっている。（チップセットとの接続はx4のまま。）<br>
+ただこれは製品としての差別化であり、実際はここまで減っていないかもしれない。<br>
+ダイサイズがSummit/Pinnacleの192mm2から、Ravenでは210mm2に増加している。<br>
+第三世代Ryzenに使われているcIODは125mm2。<br>
+パッケージングの問題もあるため、あまり大きくはできないだろう。<br>
+どのくらいの大きさにするかはキリがないだろうから考えないでおく。<br>
 削りはするだろうとだけ。</p>
-
 <h3 id="追伸">追伸</h3>
-
-<p>Aboutページにメールアドレス（画像）を追加した。<br />
+<p>Aboutページにメールアドレス（画像）を追加した。<br>
 私はやらないと言ってすぐに手のひらを反す人間だと実感した。</p>
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
@@ -309,11 +301,11 @@ RyzenG(Raven Ridge)でも、Ryzen(Summit/Pinnacle Ridge)ではGPU用にあった
             <ul>
                 <li><a href="https://blog.coelacanth-dream.com/tags/gcn" class="side-tag-lower">GCN</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/gfx9" class="side-tag-lower">GFX9</a></li>
+                <li><a href="https://blog.coelacanth-dream.com/tags/gfx909" class="side-tag-lower">gfx909</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/radeon" class="side-tag-lower">Radeon</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/raven" class="side-tag-lower">Raven</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/renoir" class="side-tag-lower">Renoir</a></li>
-                <li><a href="https://blog.coelacanth-dream.com/tags/zen2" class="side-tag-lower">Zen2</a></li>
-                <li><a href="https://blog.coelacanth-dream.com/tags/gfx909" class="side-tag-lower">gfx909</a></li></ul>
+                <li><a href="https://blog.coelacanth-dream.com/tags/zen2" class="side-tag-lower">Zen2</a></li></ul>
         </ul>
     </nav>
     <nav class="side-categories">

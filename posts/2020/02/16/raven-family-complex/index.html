@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,91 +247,64 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>いかに Zen APU は複雑か</h1>
-
-<h2 id="インデックス">インデックス</h2>
-
+    <h1>いかに Zen APU は複雑か</h1><h2 id="インデックス">インデックス</h2>
 <ul>
 <li><a href="#raven2-zen-base">Raven2 は Zenベース</a></li>
-<li><a href="#premise">前提情報</a>
-
-<ul>
+<li><a href="#premise">前提情報</a></li>
 <li><a href="#cpu">CPU</a></li>
 <li><a href="#gpu">GPU</a>
-
 <ul>
 <li><a href="#did">Device ID</a></li>
 <li><a href="#arch">アーキテクチャ</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#product-number">製品型番</a></li>
-</ul></li>
 <li><a href="#measure">対策</a>
-
 <ul>
 <li><a href="#cpuid">CPUIDを使う</a></li>
 <li><a href="#pick">地道に情報収集</a></li>
 <li><a href="#dont-mind">気にしない</a></li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h2 id="raven2-zen-base">Raven2 は Zenベース</h2>
-
-<p>先日、Chromium OSへのパッチを眺めていたら、<em>Raven2 (Dali, Pollock)</em> を判定するコードの関数名の一部で <em>zen2</em> が使われていた。<br />
-<a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051514" rel="noreferrer" target="_blank">soc/amd/picasso: Add helper functions for finding SOC type (I24b73145) · Gerrit Code Review</a></p>
-
-<p>当然これは間違いであり、Raven2 (Dali, Pollock)のCPUコアは、<br />
+<p>先日、Chromium OSへのパッチを眺めていたら、<em>Raven2 (Dali, Pollock)</em> を判定するコードの関数名の一部で <em>zen2</em> が使われていた。<br>
+<a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051514">soc/amd/picasso: Add helper functions for finding SOC type (I24b73145) · Gerrit Code Review</a></p>
+<p>当然これは間違いであり、Raven2 (Dali, Pollock)のCPUコアは、<br>
 EPYC 7002シリーズ (Rome)、Ryzen 3000シリーズ (Matisse)、Ryzen Threadripper 3000シリーズ (Castle Peak)、Ryzen Mobile 4000シリーズ (Renoir)に採用されている、 あの <em>Zen2</em> ではない。</p>
-
 <p>AMDもはっきりと、Raven2ベースの製品、Athlon 3000Gを発表の際に <em>Zen</em> ベースであると言っているし、</p>
-
 <blockquote>
 <p>The Athlon 3000G is the first “Zen”-based Athlon processor that is unlocked for overclocking potential, delivering the only unlocked processor in its segment10.</p>
-
-<p>引用元: <cite><a href="https://ir.amd.com/news-releases/news-release-details/amd-introduces-worlds-most-powerful-16-core-consumer-desktop" rel="noreferrer" target="_blank">AMD Introduces World’s Most Powerful 16-core Consumer Desktop Processor, the AMD Ryzen™ 9 3950X | Advanced Micro Devices</a></cite></p>
+<p>引用元: <cite><a href="https://ir.amd.com/news-releases/news-release-details/amd-introduces-worlds-most-powerful-16-core-consumer-desktop">AMD Introduces World’s Most Powerful 16-core Consumer Desktop Processor, the AMD Ryzen™ 9 3950X | Advanced Micro Devices</a></cite></p>
 </blockquote>
-
 <p><em>Raven2 (Dali)</em> ベースのAthlon Gold 3150U、Athlon Silver 3050Uでも <em>Zen</em> アーキテクチャだとしている。</p>
-
 <blockquote>
 <p>Bringing consumers more choice, the new AMD Athlon 3000 Series Mobile Processor family expands the reach of the powerful “Zen” architecture to mainstream notebooks.</p>
-
-<p>引用元: <cite><a href="https://ir.amd.com/news-releases/news-release-details/amd-announces-worlds-highest-performance-desktop-and-ultrathin" rel="noreferrer" target="_blank">AMD Announces World’s Highest Performance Desktop and Ultrathin Laptop Processors at CES 2020 | Advanced Micro Devices</a></cite></p>
+<p>引用元: <cite><a href="https://ir.amd.com/news-releases/news-release-details/amd-announces-worlds-highest-performance-desktop-and-ultrathin">AMD Announces World’s Highest Performance Desktop and Ultrathin Laptop Processors at CES 2020 | Advanced Micro Devices</a></cite></p>
 </blockquote>
-
-<p><br>
-パッチ内のメッセージでもその点が突っ込まれまくっており、少し色々とあったが、最終的に zen2 ではなく raven2 を関数名に使うということで納得してくれたようだ。</p>
-
+<br>
+パッチ内のメッセージでもその点が突っ込まれまくっており、少し色々とあったが、最終的に zen2 ではなく raven2 を関数名に使うということで納得してくれたようだ。  
 <blockquote>
 <p>I&rsquo;ll change it to raven2 instead of zen2. Thanks.</p>
-
-<p>引用元: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051514" rel="noreferrer" target="_blank">soc/amd/picasso: Add helper functions for finding SOC type (I24b73145) · Gerrit Code Review</a></cite></p>
+<p>引用元: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051514">soc/amd/picasso: Add helper functions for finding SOC type (I24b73145) · Gerrit Code Review</a></cite></p>
 </blockquote>
-
-<p>ただMartin Roth氏は最初、ソースとして WikiChip の Zen2 のページをあげており、<br />
-そのページのリビジョンを見ると、2020/02/13 に Dali はZen2ベースのCPUコアではないと削除されたことが確認できる。<br />
-<a href="https://en.wikichip.org/w/index.php?title=amd/microarchitectures/zen_2&amp;action=history" rel="noreferrer" target="_blank">Revision history of &ldquo;amd/microarchitectures/zen 2&rdquo; &ndash; WikiChip</a><br />
-<a href="https://en.wikichip.org/w/index.php?title=amd/microarchitectures/zen_2&amp;diff=next&amp;oldid=95311" rel="noreferrer" target="_blank">Latest revision as of 11:22, 13 February 2020</a></p>
-
-<p>氏がパッチを投稿したのは 2020/02/12。<br />
+<p>ただMartin Roth氏は最初、ソースとして WikiChip の Zen2 のページをあげており、<br>
+そのページのリビジョンを見ると、2020/02/13 に Dali はZen2ベースのCPUコアではないと削除されたことが確認できる。<br>
+<a href="https://en.wikichip.org/w/index.php?title=amd/microarchitectures/zen_2&amp;action=history">Revision history of &ldquo;amd/microarchitectures/zen 2&rdquo; - WikiChip</a><br>
+<a href="https://en.wikichip.org/w/index.php?title=amd/microarchitectures/zen_2&amp;diff=next&amp;oldid=95311">Latest revision as of 11:22, 13 February 2020</a></p>
+<p>氏がパッチを投稿したのは 2020/02/12。<br>
 つまりコードを記述している時は WikiChip に Dali は Zen2ベースだよ、とあった訳で、一概に攻める気にはなれない。</p>
-
-<p>さらに言えば、2020/02/13 に削除されるまで、Dali は最大で 4-Core/8-Thread （かも）とも書かれており、これも間違いだ。<br />
-そもそもいつページに追加されたのかを辿ると、2019/12/31 となっており、その時点ではまだ正式に発表はされていない。<br />
-未確定の情報を開発者含む多くの人から信頼されているページに載せる、編集を受け入れるのはどーなの、と思ったりするが、<br />
-これは Wikipedia が設立当初から抱えていた問題であるし、Wiki のシステムを使っているところはどこもそうだ。<br />
+<p>さらに言えば、2020/02/13 に削除されるまで、Dali は最大で 4-Core/8-Thread （かも）とも書かれており、これも間違いだ。<br>
+そもそもいつページに追加されたのかを辿ると、2019/12/31 となっており、その時点ではまだ正式に発表はされていない。<br>
+未確定の情報を開発者含む多くの人から信頼されているページに載せる、編集を受け入れるのはどーなの、と思ったりするが、<br>
+これは Wikipedia が設立当初から抱えていた問題であるし、Wiki のシステムを使っているところはどこもそうだ。<br>
 今更あーだこーだ言ってもどうしようもない。</p>
-
 <p>前置きが少し長くなってしまったが、今回書きたいと思ったのはどれだけ Zen APU がややこしいかについてだ。</p>
-
 <h2 id="premise">前提情報</h2>
-
-<p>Zen CPUとVega GPUを組み合わせた <strong>Zen APU</strong> は既に市場にいくつも存在するが、<br />
+<p>Zen CPUとVega GPUを組み合わせた <strong>Zen APU</strong> は既に市場にいくつも存在するが、<br>
 それらを開発コードネームで区別すると、<em>Raven</em> 、<em>Picasso</em> 、<em>Raven2 (Dali /Pollock)</em> 、<em>Renoir</em> の6種類に分けられる。</p>
-
 <p>内 <em>Dali</em> と <em>Pollock</em> はRaven2ベース（別リビジョン?）であり、基本 (<em>Raven2</em> == <em>Dali</em> == <em>Pollock</em>) という認識でいい（はず）。</p>
-
 <p>それぞれ具体的な製品には、</p>
-
 <details>
 <summary>Raven</summary>
 <p>
@@ -340,11 +316,8 @@ EPYC 7002シリーズ (Rome)、Ryzen 3000シリーズ (Matisse)、Ryzen Threadri
 <li>Ryzen 7 2700U /2800H</li>
 <li>Ryzen Embedded V1202B /V1605B /V1756B /V1807B</li>
 </ul>
-
 </p>
 </details>
-
-
 <details>
 <summary>Picasso</summary>
 <p>
@@ -356,11 +329,8 @@ EPYC 7002シリーズ (Rome)、Ryzen 3000シリーズ (Matisse)、Ryzen Threadri
 <li>Ryzen 7 3780U Surface Edition (Winston)</li>
 <li>Ryzen 5 3580U Surface Edition (Winston)</li>
 </ul>
-
 </p>
 </details>
-
-
 <details>
 <summary>Raven2</summary>
 <p>
@@ -369,22 +339,19 @@ EPYC 7002シリーズ (Rome)、Ryzen 3000シリーズ (Matisse)、Ryzen Threadri
 <li>Athlon 300U</li>
 <li>Athlon 3000G</li>
 <li>Ryzen Embedded R1505G /R1605G
-
 <ul>
 <li>Dali
-
 <ul>
 <li>Ryzen 3 3250U</li>
 <li>Athlon Gold 3150U</li>
 <li>Athlon Silver 3050U</li>
-</ul></li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
+</li>
+</ul>
 </p>
 </details>
-
-
 <details>
 <summary>Renoir</summary>
 <p>
@@ -393,150 +360,110 @@ EPYC 7002シリーズ (Rome)、Ryzen 3000シリーズ (Matisse)、Ryzen Threadri
 <li>Ryzen 5 4500U /4600U /4600H</li>
 <li>Ryzen 3 4300U</li>
 </ul>
-
 </p>
 </details>
-
-
 <p>があげられる。（不確定なものは抜いてある）</p>
-
 <p>それぞれの <em>Raven</em> に対しての違いは、</p>
-
 <ul>
-<li><em>Picasso</em> が Raven のアーキテクチャはそのままに製造プロセスを GF 14nm から GF 12nm に変更。<br /></li>
-<li><em>Raven2</em> は Raven からCPUコア数、GPUコア数、I/Oを一部削り、GPUアーキテクチャの微改良（バグ修正）を行なったもの。製造プロセスは Raven と同じ GF 14nm。<br /></li>
-<li><em>Renoir</em> はCPUアーキテクチャをZen2に、CPUコア数は増量（倍）、GPUアーキテクチャを Raven2 と同じものに、GPUコア数は Raven より減らし、製造プロセスを TSMC 7nm へ変更。<br /></li>
+<li><em>Picasso</em> が Raven のアーキテクチャはそのままに製造プロセスを GF 14nm から GF 12nm に変更。</li>
+<li><em>Raven2</em> は Raven からCPUコア数、GPUコア数、I/Oを一部削り、GPUアーキテクチャの微改良（バグ修正）を行なったもの。製造プロセスは Raven と同じ GF 14nm。</li>
+<li><em>Renoir</em> はCPUアーキテクチャをZen2に、CPUコア数は増量（倍）、GPUアーキテクチャを Raven2 と同じものに、GPUコア数は Raven より減らし、製造プロセスを TSMC 7nm へ変更。</li>
 </ul>
-
 <p>となっている。</p>
-
 <p>複雑に絡まっているのは <em>Raven</em> 、<em>Picasso</em> 、<em>Raven2</em> であり、<em>Renoir</em> は今の所そこまでではない。</p>
-
 <h3 id="cpu">CPU</h3>
-
 <p>まず、Zen APU全体、RavenファミリーをCPUで分け、リストで表すと以下になる。</p>
-
 <ul>
 <li>Raven Family
-
 <ul>
 <li>Zen CPU (14nm)
-
 <ul>
 <li>Raven</li>
 <li>Raven2
-
 <ul>
 <li>Dali</li>
 <li>Pollock</li>
-</ul></li>
-</ul></li>
+</ul>
+</li>
+</ul>
+</li>
 <li>Zen+ CPU (12nm)
-
 <ul>
 <li>Picasso</li>
-</ul></li>
+</ul>
+</li>
 <li>Zen2 CPU (7nm)
-
 <ul>
 <li>Renoir</li>
-</ul></li>
-</ul></li>
 </ul>
-
-<p>これだけだとシンプルだが、内部に複雑にしている要素がある。<br />
+</li>
+</ul>
+</li>
+</ul>
+<p>これだけだとシンプルだが、内部に複雑にしている要素がある。<br>
 x86_model だ。</p>
-
-<p>x86_model はCPU内部のデータの1つであり、主にソフトウェアが判別するのに使われる。<br />
+<p>x86_model はCPU内部のデータの1つであり、主にソフトウェアが判別するのに使われる。<br>
 そして、Linux Kernel内の温度センサーを読み取るためのコードを読むと、Zen系は以下のようになっている。</p>
-
 <blockquote>
-<pre><code> case 0x1:   /* Zen */
- case 0x8:   /* Zen+ */
- case 0x11:  /* Zen APU */
- case 0x18:  /* Zen+ APU */
+<pre><code>  case 0x1:	/* Zen */
+  case 0x8:	/* Zen+ */
+  case 0x11:	/* Zen APU */
+  case 0x18:	/* Zen+ APU */
 </code></pre>
-
-<p>引用元: <cite><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587" rel="noreferrer" target="_blank">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587</a></cite></p>
+<p>引用元: <cite><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587</a></cite></p>
 </blockquote>
-
 <p>これが本当にそうなってたらいいのだが、<strong>Zen APU</strong> である <em>Raven2</em> の x86_model までが 0x18 となっている。</p>
-
-<p><a href="https://www.guru3d.com/articles_pages/amd_athlon_3000g_review,4.html" rel="noreferrer" target="_blank">AMD Athlon 3000G review &ndash; CPU-Z Screenshots &ndash; Guru3D.com</a><br />
+<p><a href="https://www.guru3d.com/articles_pages/amd_athlon_3000g_review,4.html">AMD Athlon 3000G review - CPU-Z Screenshots - Guru3D.com</a><br>
 （Ext. Model が 18）</p>
-
-<p>このため、悲しいことに Raven2 は、CPU-Z 等のソフトでは Picasso と認識される。<br />
+<p>このため、悲しいことに Raven2 は、CPU-Z 等のソフトでは Picasso と認識される。<br>
 個人的に、Raven2 の影が薄い、下手したら全く認知されていない原因はこれなんじゃないかと考えている。</p>
-
-<p>さらに <em>Zen+</em> と言っても、<em>Zen</em> から変更された部分はブースト制御といったソフトウェア部や、物理設計の改良によるキャッシュレイテンシの削減ぐらいで、<br />
+<p>さらに <em>Zen+</em> と言っても、<em>Zen</em> から変更された部分はブースト制御といったソフトウェア部や、物理設計の改良によるキャッシュレイテンシの削減ぐらいで、<br>
 アーキテクチャには全く変更されていないが、そこに拘るとまた面倒くさいことになる。</p>
-
 <h3 id="gpu">GPU</h3>
-
 <h4 id="did">Device ID</h4>
-
-<p>GPUを判別するための Device ID は、<em>Raven</em> に 0x15DD、<em>Picasso</em> に 0x15D8 が割り振られているが、<br />
-<em>Raven2</em> には 0x15DD、0x15D8 の両方が割り振られている。<br />
+<p>GPUを判別するための Device ID は、<em>Raven</em> に 0x15DD、<em>Picasso</em> に 0x15D8 が割り振られているが、<br>
+<em>Raven2</em> には 0x15DD、0x15D8 の両方が割り振られている。<br>
 そして <em>Raven2</em> のマイナーバージョンとして Dali と Pollock があり、混沌さを加速させている。</p>
-
-<p>判別には Device ID だけでなく Revision ID も使われるため、大きな問題がある訳ではないが、<br />
+<p>判別には Device ID だけでなく Revision ID も使われるため、大きな問題がある訳ではないが、<br>
 コードの判定部分を複雑にさせてしまうし、人為的なミスも起こしやすい。</p>
-
-<p>Linux Kernel では <em>Raven</em> , <em>Picasso</em> , <em>Raven2</em> に別々の内部的なリビジョンIDを割り振ることで、何とか他のコードでの判定を簡略しているが、<br />
-<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n130" rel="noreferrer" target="_blank">Line 130: dal_asic_id.h\include\display\amd\drm\gpu\drivers &ndash; ~agd5f/linux &ndash; Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a><br />
-<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=amd-staging-drm-next&amp;id=b989531b1f192a77c739a2976953e241d78229a3#n1336" rel="noreferrer" target="_blank">Line 1336: amdgpu_device.c\amdgpu\amd\drm\gpu\drivers &ndash; ~agd5f/linux &ndash; Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a></p>
-
-<p><em>Raven2</em> , <em>Dali</em> , <em>Pollock</em> はそうではなく、判定するための部分が長ったらしくなってしまっている。<br />
-<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n150" rel="noreferrer" target="_blank">Line 150: dal_asic_id.h\include\display\amd\drm\gpu\drivers &ndash; ~agd5f/linux &ndash; Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a></p>
-
+<p>Linux Kernel では <em>Raven</em> , <em>Picasso</em> , <em>Raven2</em> に別々の内部的なリビジョンIDを割り振ることで、何とか他のコードでの判定を簡略しているが、<br>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n130">Line 130: dal_asic_id.h\include\display\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a><br>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=amd-staging-drm-next&amp;id=b989531b1f192a77c739a2976953e241d78229a3#n1336">Line 1336: amdgpu_device.c\amdgpu\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a></p>
+<p><em>Raven2</em> , <em>Dali</em> , <em>Pollock</em> はそうではなく、判定するための部分が長ったらしくなってしまっている。<br>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n150">Line 150: dal_asic_id.h\include\display\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a></p>
 <p>ハードウェアの情報を追う趣味を持っている人間にもひたすらにややこしいと不評である。</p>
-
-<p>またもChromimu OSへのパッチからとなるが、VBIOS部分もDevice IDの複雑さの影響を受けており、<br />
+<p>またもChromimu OSへのパッチからとなるが、VBIOS部分もDevice IDの複雑さの影響を受けており、<br>
 こんなことをKconfigの説明部分に書かれたりしている。</p>
-
 <blockquote>
-<p>Even though the hardware has the same vendor/device IDs, the vBIOS<br />
+<p>Even though the hardware has the same vendor/device IDs, the vBIOS<br>
 contains a *different* device ID, confusing the situation even more.</p>
-
-<p>引用元: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2040455" rel="noreferrer" target="_blank">Rework map_oprom_vendev to add revision check and mapping (I2978a569) · Gerrit Code Review</a></cite></p>
+<p>引用元: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2040455">Rework map_oprom_vendev to add revision check and mapping (I2978a569) · Gerrit Code Review</a></cite></p>
 </blockquote>
-
-<p>素直に <em>Raven, Picasso, Raven2, Dali, Pollock</em> へ違うDevice IDを割り振れなかったのだろうか？<br />
-<em>Dali, Pollock</em> は Raven2ベースであるため同一IDであることはまだ納得行くが、<br />
+<p>素直に <em>Raven, Picasso, Raven2, Dali, Pollock</em> へ違うDevice IDを割り振れなかったのだろうか？<br>
+<em>Dali, Pollock</em> は Raven2ベースであるため同一IDであることはまだ納得行くが、<br>
 <em>Raven2</em> 自体のDevice IDを <em>Raven, Picasso</em> に被せなかった方が良かったと言える。</p>
-
 <h4 id="arch">アーキテクチャ</h4>
-
-<p>前述したように、<em>Raven2、Renoir</em> では <em>Raven、Picasso</em> にGPU部のバグが修正されており、<br />
-GPUアーキテクチャに割り振られる GFX ID は、<em>Raven</em> 、<em>Picasso</em> が <strong>gfx902</strong> 、<br />
+<p>前述したように、<em>Raven2、Renoir</em> では <em>Raven、Picasso</em> にGPU部のバグが修正されており、<br>
+GPUアーキテクチャに割り振られる GFX ID は、<em>Raven</em> 、<em>Picasso</em> が <strong>gfx902</strong> 、<br>
 <em>Raven2</em> 、<em>Renoir</em> が <strong>gfx909</strong> となっている。</p>
-
 <p>そのため、x86_model で <em>Picasso</em> と <em>Raven2</em> を一緒くたにすることは、この違いが無視されることに繋がる。</p>
-
-<p>ただ、言ってしまうとこれも問題としては全く無い。<br />
-あるとするなら気分の問題だ。<br />
-バグが修正されたと言っても、性能にはこれといった影響は確認されてない。<br />
-というより <em>Picasso</em> と <em>Raven2</em> でGPU部の規模がそれなりに違うため、性能を比較することが難しい。<br />
+<p>ただ、言ってしまうとこれも問題としては全く無い。<br>
+あるとするなら気分の問題だ。<br>
+バグが修正されたと言っても、性能にはこれといった影響は確認されてない。<br>
+というより <em>Picasso</em> と <em>Raven2</em> でGPU部の規模がそれなりに違うため、性能を比較することが難しい。<br>
 LLVMのバージョンが古い場合、<em>Raven2</em> 、<em>Renoir</em> のGPUは <strong>gfx902</strong> として認識されたりもする。</p>
-
 <h3 id="product-number">製品型番</h3>
-
-<p>これは初代Zen APU、Ryzen 5 2400G、Ryzen 3 2200Gが出た時から広くに言われていた。<br />
-型番としてはRyzen 2000シリーズと読めるが、中身は 12nm Zen+ ではなく、14nm Zen だからだ。<br />
+<p>これは初代Zen APU、Ryzen 5 2400G、Ryzen 3 2200Gが出た時から広くに言われていた。<br>
+型番としてはRyzen 2000シリーズと読めるが、中身は 12nm Zen+ ではなく、14nm Zen だからだ。<br>
 ただ、Zen+ で盛り込まれたキャッシュレイテンシの削減によるIPC向上は確認できるため、これも気にする必要はないと思う。</p>
-
-<p>しかしこれは現在進行系で、Ryzen 3000シリーズでAPUでないRyzenは TSMC 7nmプロセス採用と、Zen2アーキテクチャにより、省電力、性能が大きく向上したため、問題として悪化した。<br />
+<p>しかしこれは現在進行系で、Ryzen 3000シリーズでAPUでないRyzenは TSMC 7nmプロセス採用と、Zen2アーキテクチャにより、省電力、性能が大きく向上したため、問題として悪化した。<br>
 Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリーズより進んだアーキテクチャ、Zen3となっている、なんて勘違いもたまに見かけたりする。</p>
-
 <h2 id="measure">対策</h2>
-
 <h3 id="cpuid">CPUIDを使う</h3>
-
-<p>CPUID は x86_model のように <em>Picasso</em> と <em>Raven2</em> がごちゃごちゃになっておらず、<br />
-実際にChromium OS内のコードでは CPUID が使われている。<br />
-<a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2040455/" rel="noreferrer" target="_blank">Rework map_oprom_vendev to add revision check and mapping (I2978a569) · Gerrit Code Review</a><br />
+<p>CPUID は x86_model のように <em>Picasso</em> と <em>Raven2</em> がごちゃごちゃになっておらず、<br>
+実際にChromium OS内のコードでは CPUID が使われている。<br>
+<a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2040455/">Rework map_oprom_vendev to add revision check and mapping (I2978a569) · Gerrit Code Review</a><br>
 （src/soc/amd/picasso/include/soc/cpu.h）</p>
-
 <table>
 <thead>
 <tr>
@@ -544,48 +471,37 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
 <th align="center">CPUID</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">Raven</td>
 <td align="center">0x00810f80</td>
 </tr>
-
 <tr>
 <td align="left">Picasso</td>
 <td align="center">0x00810f81</td>
 </tr>
-
 <tr>
 <td align="left">Raven2 (Dali, Pollock?)</td>
 <td align="center">0x00820f01</td>
 </tr>
 </tbody>
 </table>
-
-<p><a href="https://github.com/coreboot/coreboot/blob/master/src/soc/amd/picasso/cpu.c#L131" rel="noreferrer" target="_blank">coreboot/cpu.c at master · coreboot/coreboot</a></p>
-
+<p><a href="https://github.com/coreboot/coreboot/blob/master/src/soc/amd/picasso/cpu.c#L131">coreboot/cpu.c at master · coreboot/coreboot</a></p>
 <h3 id="pick">地道に情報収集</h3>
-
-<p>自分がやっているのがこれ。<br />
+<p>自分がやっているのがこれ。<br>
 <a href="https://blog.coelacanth-dream.com/posts/2019/12/30/did-rid-product-matome-p2/">AMDGPUのDID、RID、Productのびみょうまとめ Part2 | Coelacanth&rsquo;s Dream</a></p>
-
-<p>ソースコード、ドライバー内のファイル、ハードウェア情報を表示するソフトのスクリーンショット等から地道に集めている。<br />
+<p>ソースコード、ドライバー内のファイル、ハードウェア情報を表示するソフトのスクリーンショット等から地道に集めている。<br>
 あるGPU、APUが何であるか判明するまで時間がかかることもあるが、一度わかってしまえば紐は解ける。</p>
-
-<p>問題点は信頼度と注目度。<br />
+<p>問題点は信頼度と注目度。<br>
 どっちも自分とこのサイトにはない。</p>
-
 <h3 id="dont-mind">気にしない</h3>
-
 <p>複雑に見るから複雑なのだ。</p>
-
 <p>製品を買うのに大半の人はこれまで書いてきたことは気にしないだろうし、公式や各種メディアから、製造プロセス、アーキテクチャ等の結論として存在するベンチマーク結果が示されているのだから、それと価格で決めれば良い。</p>
-
-<p><br>
-それなのにここまで記事を書いたのは、開発者が Wiki系サイトに頼らなくていいようAMDが資料をもっと公表し、<br />
-多くの人の苦労が詰まった半導体がどんな設計で、どんな名前を付けられたか、出来るだけ無視されないことを願っているからだ。</p>
+<br>
+それなのにここまで記事を書いたのは、開発者が Wiki系サイトに頼らなくていいようAMDが資料をもっと公表し、  
+多くの人の苦労が詰まった半導体がどんな設計で、どんな名前を付けられたか、出来るだけ無視されないことを願っているからだ。  
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
@@ -617,7 +533,7 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
                 <li><a href="https://blog.coelacanth-dream.com/categories/apu" class="side-categorie-lower">APU</a></li></ul>
         </ul>
     </nav><time datetime="2020-02-16 02:32:47" class="side-time">Post : 2020-02-16 </time>
-        <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-04-24 01:19:47 </div>
+        <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-05-27 10:25:25 </div>
     <div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
         <a href="https://blog.coelacanth-dream.com/about/">About</a>
         <a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
@@ -646,7 +562,7 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
 			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
         <div class="foot-time">
             <time datetime="2020-02-16 02:32:47">Post : 2020-02-16</time>
-		/ Update : 2020-04-24 01:19:47 
+		/ Update : 2020-05-27 10:25:25 
         </div><div class="foot-author">Author : Umio Yasuno</div>
 	<nav class="foot-about">
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>

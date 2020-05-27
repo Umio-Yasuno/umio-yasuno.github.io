@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,56 +247,43 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Intel、オープンソースドライバーに DG1 と Rocket Lake の関するコードを追加 ――DG1 は 96EU、RKL は 16EU または 32EU</h1>
+    <h1>Intel、オープンソースドライバーに DG1 と Rocket Lake の関するコードを追加 ――DG1 は 96EU、RKL は 16EU または 32EU</h1><p>まだマージリクエストの段階ではあるが、オープンソースなGPUドライバーに <em>DG1</em> と <em>Rocket Lake</em> に関するコードが追加された。<br>
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4956/diffs">intel/dev: Add DG1 platform (!4956) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
 
-<p>まだマージリクエストの段階ではあるが、オープンソースなGPUドライバーに <em>DG1</em> と <em>Rocket Lake</em> に関するコードが追加された。<br />
-<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4956/diffs" rel="noreferrer" target="_blank">intel/dev: Add DG1 platform (!4956) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
-
-<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4955/diffs" rel="noreferrer" target="_blank">intel/dev: Add RKL platform (!4955) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4955/diffs">intel/dev: Add RKL platform (!4955) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
 </p>
-
-<p><em>DG1</em> 、 <em>Rocket Lake</em> は現段階でGPU部の製品名は <strong>Intel&reg; Graphics</strong> となっている。<br />
-<em>Tiger Lake</em> はそれ以外に <strong>Intel&reg; Xe Graphics</strong> 、<strong>Intel&reg; UHD Graphics</strong> という名前が用意されており、GPU性能の違いでも製品展開するつもりがあることが窺える。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
-
+<p><em>DG1</em> 、 <em>Rocket Lake</em> は現段階でGPU部の製品名は <strong>Intel(R) Graphics</strong> となっている。<br>
+<em>Tiger Lake</em> はそれ以外に <strong>Intel(R) Xe Graphics</strong> 、<strong>Intel(R) UHD Graphics</strong> という名前が用意されており、GPU性能の違いでも製品展開するつもりがあることが窺える。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <h2 id="gpu規模">GPU規模</h2>
-
 <h3 id="dg1">DG1</h3>
-
-<p>コードを読むに、<em>DG1</em> の規模は <em>Tiger Lake GT2</em> とほぼ変わらない、Dual-SubSlice数 6基、L3キャッシュバンク数 8基というもの。<br />
-しかし、URB(Unified Return Buffer)のサイズは <em>Tiger Lake GT2</em> の 1024KB よりも小さい 768KB となっている。URBはL3キャッシュに統合されており、各シェーダーの入出力やローカルスレッドの発行のためのバッファとして機能する。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup><br />
-Intel が公開している <em>Ice Lake</em> GPUのドキュメントを読むと、L3キャッシュバンクあたりの URB を 96KBとする設定は1つだけであり、L3キャッシュのタグとして使われる Rest が省かれている。そしてその分をグローバルメモリアクセス等に使用される Data Cluster と、 Read-Only である命令キャッシュや状態管理、テクスチャーを収める分に割り振っている。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><br />
+<p>コードを読むに、<em>DG1</em> の規模は <em>Tiger Lake GT2</em> とほぼ変わらない、Dual-SubSlice数 6基、L3キャッシュバンク数 8基というもの。<br>
+しかし、URB(Unified Return Buffer)のサイズは <em>Tiger Lake GT2</em> の 1024KB よりも小さい 768KB となっている。URBはL3キャッシュに統合されており、各シェーダーの入出力やローカルスレッドの発行のためのバッファとして機能する。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+Intel が公開している <em>Ice Lake</em> GPUのドキュメントを読むと、L3キャッシュバンクあたりの URB を 96KBとする設定は1つだけであり、L3キャッシュのタグとして使われる Rest が省かれている。そしてその分をグローバルメモリアクセス等に使用される Data Cluster と、 Read-Only である命令キャッシュや状態管理、テクスチャーを収める分に割り振っている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 このことから、<span class="complement">
 &nbsp;&mdash;&mdash; L3キャッシュ構成が <em>Ice Lake /Gen11</em> と同様であるという前提付きではあるが &mdash;&mdash;&nbsp;
 </span>
 URBのサイズが <em>DG1</em> で減らされているというのは、データキャッシュをその分増やし、性能をGPGPUにも向ける意図があるのではないかと思う。</p>
-
 <ins >
 	<span class="insbegin">（追記 ）</span>
     <p>
-	一応、 <em>DG1</em> の URBサイズは固定だが、他の Gen7以上の世代のGPUはURBサイズ、L3キャッシュバンクの設定を変更可能とのこと。<br />
-<a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4969" rel="noreferrer" target="_blank">intel: Delete hardcoded devinfo-&gt;urb.size values for Gen7+ (sans DG1). (!4969) · Merge Requests · Mesa / mesa · GitLab</a><br />
+	一応、 <em>DG1</em> の URBサイズは固定だが、他の Gen7以上の世代のGPUはURBサイズ、L3キャッシュバンクの設定を変更可能とのこと。<br>
+<a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/4969">intel: Delete hardcoded devinfo-&gt;urb.size values for Gen7+ (sans DG1). (!4969) · Merge Requests · Mesa / mesa · GitLab</a><br>
 <em>Tiger Lake GT2</em> を <em>DG1</em> は同様の設定で動作させることも可能だろう。
     </p>
 	<span class="insend">（追記終了）</span>
 </ins>
 <br>
 
-
-<h3 id="rocket-lake-gt0-5-gt1">Rocket Lake GT0.5/GT1</h3>
-
-<p><em>Rocket Lake</em> には GT0.5、GT1 の2種類が用意されており、<br />
-GT0.5 は Dual-SubSlice数 1基、L3キャッシュバンク数 4基。<br />
+<h3 id="rocket-lake-gt05gt1">Rocket Lake GT0.5/GT1</h3>
+<p><em>Rocket Lake</em> には GT0.5、GT1 の2種類が用意されており、<br>
+GT0.5 は Dual-SubSlice数 1基、L3キャッシュバンク数 4基。<br>
 GT1 は Dual-SubSlice数 2基、L3キャッシュバンク数は GT0.5 と同数の 4基。</p>
-
-<p>GTの後の数字が示すように、GT0.5 のGPUコア部はGen12LPアーキテクチャでは最小の規模だ。<br />
+<p>GTの後の数字が示すように、GT0.5 のGPUコア部はGen12LPアーキテクチャでは最小の規模だ。<br>
 また <em>Rocket Lake</em> では GT2 が現時点で存在しないが、GPU性能は <em>Tiger Lake</em> で、ということと思われる。</p>
-
 <h2 id="gen12lp">Gen12LP</h2>
-
-<p>Gen12LPアーキテクチャではGen11アーキテクチャから踏襲する、Slice内の SubSlicesを増やして性能を調整する方法を取っているため、<em>DG1</em> でも <em>Tiger Lake</em> でも <em>Rocket Lake</em> でも総Slice数は1基で変わらない。<br />
-L3キャッシュバンクあたりの容量はまだ確定していないが、Gen11アーキテクチャから変わらないとすれば 384KBとなる。<br />
+<p>Gen12LPアーキテクチャではGen11アーキテクチャから踏襲する、Slice内の SubSlicesを増やして性能を調整する方法を取っているため、<em>DG1</em> でも <em>Tiger Lake</em> でも <em>Rocket Lake</em> でも総Slice数は1基で変わらない。<br>
+L3キャッシュバンクあたりの容量はまだ確定していないが、Gen11アーキテクチャから変わらないとすれば 384KBとなる。<br>
 以下はGen12アーキテクチャ採用GPUを比較した表。</p>
-
 <table>
 <thead>
 <tr>
@@ -304,7 +294,6 @@ L3キャッシュバンクあたりの容量はまだ確定していないが、
 <th align="center">RKL GT1</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
 <td align="left">Dual-Sub Slices</td>
@@ -313,23 +302,20 @@ L3キャッシュバンクあたりの容量はまだ確定していないが、
 <td align="center">1</td>
 <td align="center">2</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;EUs</td>
+<td align="left"> EUs</td>
 <td align="center">96</td>
 <td align="center">96</td>
 <td align="center">16</td>
 <td align="center">32</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;Shading Units</td>
+<td align="left"> Shading Units</td>
 <td align="center">768</td>
 <td align="center">768</td>
 <td align="center">128</td>
 <td align="center">256</td>
 </tr>
-
 <tr>
 <td align="left">GPU L3$</td>
 <td align="center">3072KB?</td>
@@ -337,9 +323,8 @@ L3キャッシュバンクあたりの容量はまだ確定していないが、
 <td align="center">1536KB?</td>
 <td align="center">1536KB?</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;URB Size</td>
+<td align="left"> URB Size</td>
 <td align="center">1024KB</td>
 <td align="center">768KB</td>
 <td align="center">512KB</td>
@@ -347,20 +332,22 @@ L3キャッシュバンクあたりの容量はまだ確定していないが、
 </tr>
 </tbody>
 </table>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/1c6ef0165f03a8e8c20a2c33a78584166a73487c" rel="noreferrer" target="_blank">intel: Update TGL PCI strings (1c6ef016) · Commits · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2"><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol07-memory_cache_0.pdf" rel="noreferrer" target="_blank">https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol07-memory_cache_0.pdf</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3"><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol07-memory_cache_0.pdf#page=9" rel="noreferrer" target="_blank">https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol07-memory_cache_0.pdf#page=9</a>
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/1c6ef0165f03a8e8c20a2c33a78584166a73487c">intel: Update TGL PCI strings (1c6ef016) · Commits · Mesa / mesa · GitLab</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol07-memory_cache_0.pdf">https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol07-memory_cache_0.pdf</a> <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol07-memory_cache_0.pdf#page=9">https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol07-memory_cache_0.pdf#page=9</a> <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>

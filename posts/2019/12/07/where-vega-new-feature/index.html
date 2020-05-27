@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,154 +247,121 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Vegaの新機能今いずこ</h1>
-
-<p>色々と新機能をアピールしながら登場したVegaだったが、その新機能はどうなったのか？<br />
+    <h1>Vegaの新機能今いずこ</h1><p>色々と新機能をアピールしながら登場したVegaだったが、その新機能はどうなったのか？<br>
 という個人的なまとめ。</p>
-
-<h2 id="hbcc-high-bandwidth-cache-controller">HBCC（High Bandwidth Cache Controller）</h2>
-
-<p>広帯域なHBM2をキャッシュに使い、CPU側のDRAMもVRAMとして効率的に扱う機能。<br />
+<h2 id="hbcchigh-bandwidth-cache-controller">HBCC（High Bandwidth Cache Controller）</h2>
+<p>広帯域なHBM2をキャッシュに使い、CPU側のDRAMもVRAMとして効率的に扱う機能。<br>
 スライドでは、HBCCからDRAM以外にNV(Non-volatile) RAMやNetwork Storageにも繋げられるようだったが、一般ではDRAMまでで、Radeon Pro SSGでは2TBのSSDがオンボードに搭載された。</p>
-
 <p>Vega10/12/20では有効に出来るはずだが、それ以降のArcturus、Naviでは削除されたと思われる。</p>
-
-<p>まずHBCCのOFF/ONでGFX IDが異なり、Vega10ではOFFがgfx900、ONがgfx901となっているのだが、<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">1</a></sup><br />
-そのgfx901でLLVMのレポジトリを検索したところ、無慈悲な言葉が。<br />
-<span class="reflink"><a href="https://github.com/llvm/llvm-project/commit/1501af4846791c3b52b812c41ec540081343ba38" rel="noreferrer" target="_blank">AMDGPU: Remove remnants of gfx901 (it was deprecated some time ago) &ndash; llvm/llvm-project</a></span><br>
+<p>まずHBCCのOFF/ONでGFX IDが異なり、Vega10ではOFFがgfx900、ONがgfx901となっているのだが、<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+そのgfx901でLLVMのレポジトリを検索したところ、無慈悲な言葉が。<br>
+<span class="reflink"><a href="https://github.com/llvm/llvm-project/commit/1501af4846791c3b52b812c41ec540081343ba38">AMDGPU: Remove remnants of gfx901 (it was deprecated some time ago) - llvm/llvm-project</a></span><br>
 </p>
-
-<p>Ravenが <strong>gfx902</strong> 、Vega12が <strong>gfx904</strong> 、Vega20が <strong>gfx906</strong> であり、HBCC ONのGFX IDがそれに1足した <strong>gxf903/gfx905/gfx907</strong> となる。<br />
-そして、Arcturusが <strong>gfx908</strong> 、Raven2/Renoirが <strong>gfx909</strong> となっており、HBCC ON分の空きが存在しない。<br />
-これはNaviも同様で、Navi10が <strong>gfx1010</strong> 、Navi12が <strong>gfx1011</strong> 、Navi14が <strong>gfx1012</strong> と詰められている。<br />
+<p>Ravenが <strong>gfx902</strong> 、Vega12が <strong>gfx904</strong> 、Vega20が <strong>gfx906</strong> であり、HBCC ONのGFX IDがそれに1足した <strong>gxf903/gfx905/gfx907</strong> となる。<br>
+そして、Arcturusが <strong>gfx908</strong> 、Raven2/Renoirが <strong>gfx909</strong> となっており、HBCC ON分の空きが存在しない。<br>
+これはNaviも同様で、Navi10が <strong>gfx1010</strong> 、Navi12が <strong>gfx1011</strong> 、Navi14が <strong>gfx1012</strong> と詰められている。<br>
 GDDR6を搭載するNaviはまだしも、HBM2を使うであろうArcturusでもないのだから、復活は望み薄だ。</p>
-
 <p>そもそも <strong>gfx905、gfx907</strong> が追加された痕跡がLLVMのリポジトリにないことから、割と早い段階でそれ以上の改良を諦めたのではと勘ぐってしまう。</p>
-
-<p>中身としては、APU向けのレジスタ割り付け機能である <code>xnack</code> を dGPUでも有効にしたというものであり、<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup>そういう意味では CPU と dGPU をまとめあげる機能と言えるかもしれない。<br />
+<p>中身としては、APU向けのレジスタ割り付け機能である <code>xnack</code> を dGPUでも有効にしたというものであり、<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>そういう意味では CPU と dGPU をまとめあげる機能と言えるかもしれない。<br>
 AMD は CPU と GPU のメモリ空間統合を進めており、HBCCはそれに近いように思えるが、メモリ空間、ページテーブルを共有する訳ではなく、それ程進んだ機能ではないはずだ。</p>
-
-<p>ゲーム向けの機能としては、使用可能なVRAMを倍以上まで増やしつつ効果的に使えるということで、VRや最新のゲームを高プリセットでやりたいゲーマーから一定の支持はあった、はず。<br />
+<p>ゲーム向けの機能としては、使用可能なVRAMを倍以上まで増やしつつ効果的に使えるということで、VRや最新のゲームを高プリセットでやりたいゲーマーから一定の支持はあった、はず。<br>
 Vegaが発売初期はマイニング需要で狩られてゲーマーが買えない状況が続いたり、後継のRadeonVIIが16GBとGPUとしては破格の容量を持っていたため、影は薄くなってしまった。</p>
-
 <p>コンピュート機能としても、HPC用途においてGPUの比率が高まっていたことから、GPU側でSSD等を扱える機能は、方向が間違っていないはずだったが……
-<img src="https://blog.coelacanth-dream.com/image/2019/11/30/4gpus-system.webp" alt="4GPUs System" /></p>
-
-<h2 id="dsbr-draw-stream-binning-rasterizer">DSBR（Draw Stream Binning Rasterizer）</h2>
-
-<p>Vega10における改良の目玉であり、レンダリング領域を細かいタイルに分割し、頻繁に使われる部分をL2キャッシュに置くことで効率化するという機能。<br />
-HBM2が広帯域といっても、オンチップなL2キャッシュには速度も電力効率もかなわないため、（Vega64だとメモリ帯域:483.8 GB/s、L2キャッシュ帯域:1.58 TB/s）<br />
-性能向上はもちろん、省電力効果も見込める。<br />
-ゲームによっては、有効時で最大10%のフレームレート向上と33%のメモリ帯域削減が見られたらしい。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">3</a></sup></p>
-
-<p>ソフトウェア側では DPBB、DFSM に分けて実装された。<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup><br />
+<img src="https://blog.coelacanth-dream.com/image/2019/11/30/4gpus-system.webp" alt="4GPUs System"></p>
+<h2 id="dsbrdraw-stream-binning-rasterizer">DSBR（Draw Stream Binning Rasterizer）</h2>
+<p>Vega10における改良の目玉であり、レンダリング領域を細かいタイルに分割し、頻繁に使われる部分をL2キャッシュに置くことで効率化するという機能。<br>
+HBM2が広帯域といっても、オンチップなL2キャッシュには速度も電力効率もかなわないため、（Vega64だとメモリ帯域:483.8 GB/s、L2キャッシュ帯域:1.58 TB/s）<br>
+性能向上はもちろん、省電力効果も見込める。<br>
+ゲームによっては、有効時で最大10%のフレームレート向上と33%のメモリ帯域削減が見られたらしい。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>ソフトウェア側では DPBB、DFSM に分けて実装された。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
 DPBBが部分的な、DFSMは全体的なものとなるらしいが、決まって速くなる訳ではないため、有効可能ではあるがデフォルトでは無効にされている。</p>
+<p>そしてしばらくしてから、Vega10、Ravenの、指定範囲外の描画を切る scissor 機能にバグが見つかった。<br>
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/71eca0780a0cd0794545c1fbfdd96fa4f07c2476"> radeonsi/gfx9: add a scissor bug workaround - Mesa GitLab</a></span><br>
 
-<p>そしてしばらくしてから、Vega10、Ravenの、指定範囲外の描画を切る scissor 機能にバグが見つかった。<br />
-<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/71eca0780a0cd0794545c1fbfdd96fa4f07c2476" rel="noreferrer" target="_blank"> radeonsi/gfx9: add a scissor bug workaround &ndash; Mesa GitLab</a></span><br>
-
-<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/e616743dabe4cdee789c7ad8386fbe9195cbb0ca" rel="noreferrer" target="_blank"> radeonsi/gfx9: limit the scissor bug workaround to Vega10 and Raven only &ndash; Mesa GitLab</a></span><br>
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/e616743dabe4cdee789c7ad8386fbe9195cbb0ca"> radeonsi/gfx9: limit the scissor bug workaround to Vega10 and Raven only - Mesa GitLab</a></span><br>
 </p>
-
-<p>よく使われる部分を判別しておこなうDSBR機能はこのバグの影響を受け、限定的な実装となってしまった。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup><br />
+<p>よく使われる部分を判別しておこなうDSBR機能はこのバグの影響を受け、限定的な実装となってしまった。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
 このバグは Vega12/20、Raven2では修正されている。</p>
-
-<p><br>
-Raven（APU）向けのチューニングがされていることから、メモリ帯域が狭いAPUでは効果があったが、dGPUではそうでもなかったのかもしれない。<br />
-（じゃあ上述したフレームレート最大10%UP、メモリ帯域33%削減は何なんだとなるが、10fpsが11fpsになっても10%の向上だ。下衆の勘繰りであることは否めないが。バグの影響もあったかもしれない）</p>
-
-<p>それでもGFX10に引き継がれ、改良は進められているらしい。DPBBのみだが、GFX10ではデフォルトで有効にされる。<br />
-<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/9f68367d19d9c0394bc935493788dcd189e08f49" rel="noreferrer" target="_blank"> radeonsi/gfx10: implement primitive binning &ndash; Mesa GitLab</a></span><br>
+<br>
+Raven（APU）向けのチューニングがされていることから、メモリ帯域が狭いAPUでは効果があったが、dGPUではそうでもなかったのかもしれない。  
+（じゃあ上述したフレームレート最大10%UP、メモリ帯域33%削減は何なんだとなるが、10fpsが11fpsになっても10%の向上だ。下衆の勘繰りであることは否めないが。バグの影響もあったかもしれない）  
+<p>それでもGFX10に引き継がれ、改良は進められているらしい。DPBBのみだが、GFX10ではデフォルトで有効にされる。<br>
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/9f68367d19d9c0394bc935493788dcd189e08f49"> radeonsi/gfx10: implement primitive binning - Mesa GitLab</a></span><br>
 </p>
-
-<p><br>
-オープンソースドライバーのRadeonSI、RADVでは確認できるが、Windowsのプロプライエタリなドライバーではどうなのかはわからない。</p>
-
-<h3 id="dpbb-deferred-primitive-batch-binning">DPBB（Deferred Primitive Batch Binning）</h3>
-
-<p>Raven向けの機能となる。<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">6</a></sup><br />
-Ravenではバグがあったが、Raven2、Renoirでは修正されていることから、有効時にそれらで性能や電力効率に差が出ると考えているが、検証した人はいないし、自分も実物を持ってないため不明。<br />
-また、差が出てもそこまで気にするような程ではないかもしれない。</p>
-
-<h3 id="dfsm-deterministic-finite-state-machine">DFSM（Deterministic Finite State Machine）</h3>
-
-<p>RADVで2-3%向上するからRavenではデフォルトで有効、と思いきや3%下がるゲームがあったので撤回、とそううまくは行かないようだ。<br />
-<a href="https://gitlab.freedesktop.org/mesa/mesa/commit/17b5a59b4ee3adb9c99f3d850eb4a561196c69a0" rel="noreferrer" target="_blank"> radv: Enable binning and dfsm by default on Raven. &ndash; Mesa GitLab</a><br />
-<a href="https://gitlab.freedesktop.org/mesa/mesa/commit/0fa2740059a05e47854240ff8a6782d879389525" rel="noreferrer" target="_blank"> radv: Disable dfsm by default even on Raven.  &ndash; Mesa GitLab</a></p>
-
+<br>
+オープンソースドライバーのRadeonSI、RADVでは確認できるが、Windowsのプロプライエタリなドライバーではどうなのかはわからない。  
+### DPBB（Deferred Primitive Batch Binning）
+Raven向けの機能となる。[^6]  
+Ravenではバグがあったが、Raven2、Renoirでは修正されていることから、有効時にそれらで性能や電力効率に差が出ると考えているが、検証した人はいないし、自分も実物を持ってないため不明。  
+また、差が出てもそこまで気にするような程ではないかもしれない。  
+<h3 id="dfsmdeterministic-finite-state-machine">DFSM（Deterministic Finite State Machine）</h3>
+<p>RADVで2-3%向上するからRavenではデフォルトで有効、と思いきや3%下がるゲームがあったので撤回、とそううまくは行かないようだ。<br>
+<a href="https://gitlab.freedesktop.org/mesa/mesa/commit/17b5a59b4ee3adb9c99f3d850eb4a561196c69a0"> radv: Enable binning and dfsm by default on Raven. - Mesa GitLab</a><br>
+<a href="https://gitlab.freedesktop.org/mesa/mesa/commit/0fa2740059a05e47854240ff8a6782d879389525"> radv: Disable dfsm by default even on Raven.  - Mesa GitLab</a></p>
 <h2 id="rapid-packed-math">Rapid Packed Math</h2>
-
-<p>INT16/FP16演算において、32レーンのVectorALUでFP16x2とまとめて処理することでスループットを2倍にする機能。<br />
-INT8にも対応しているが、そちらはQSAD/MQSAD命令（動き検出等に使われる）のみ。<br />
+<p>INT16/FP16演算において、32レーンのVectorALUでFP16x2とまとめて処理することでスループットを2倍にする機能。<br>
+INT8にも対応しているが、そちらはQSAD/MQSAD命令（動き検出等に使われる）のみ。<br>
 FP16、FP32の混合演算にも対応。</p>
-
-<p>これはVegaの新機能というよりNCUの機能なため、Vega以降も引き継がれている。<br />
+<p>これはVegaの新機能というよりNCUの機能なため、Vega以降も引き継がれている。<br>
 Vega20ではINT4のPacked、INT4/8、FP16/32/64の混合演算にも対応した。</p>
-
-<p>それとNaviでは呼び方がNCUではなくCUと戻った。<br />
+<p>それとNaviでは呼び方がNCUではなくCUと戻った。<br>
 もう Next-Generation ではないから？</p>
-
-<h2 id="ngg-next-generation-geometory-primitive-shader">NGG（Next Generation Geometory） / Primitive Shader</h2>
-
-<p>解説に関しては、こちらの4Gamer.netの記事を見るのが早い。<br />
-<span class="reflink"><a href="https://www.4gamer.net/games/337/G033714/20170804085/" rel="noreferrer" target="_blank">西川善司の3DGE：新設の「プリミティブシェーダ」を搭載し，Radeon RX Vegaはどこへ行く？</a></span><br>
+<h2 id="nggnext-generation-geometory--primitive-shader">NGG（Next Generation Geometory） / Primitive Shader</h2>
+<p>解説に関しては、こちらの4Gamer.netの記事を見るのが早い。<br>
+<span class="reflink"><a href="https://www.4gamer.net/games/337/G033714/20170804085/">西川善司の3DGE：新設の「プリミティブシェーダ」を搭載し，Radeon RX Vegaはどこへ行く？</a></span><br>
 </p>
-
-<p>注目の新機能ではあったが Vega（GFX9）では廃止、諦め、GFX10での実装に注力することとなった。<br />
-<span class="reflink"><a href="https://lists.freedesktop.org/archives/amd-gfx/2018-August/025320.html" rel="noreferrer" target="_blank">Making a GDS Allocation for NGG</a></span><br>
+<p>注目の新機能ではあったが Vega（GFX9）では廃止、諦め、GFX10での実装に注力することとなった。<br>
+<span class="reflink"><a href="https://lists.freedesktop.org/archives/amd-gfx/2018-August/025320.html">Making a GDS Allocation for NGG</a></span><br>
 </p>
-
 <p>DFSMと相性が良いはずで、廃止になってしまったのは残念。もしかしたら、DFSMの効果があまりなかったのに関係しているかもしれない。</p>
-
-<p>具体的に何が原因で廃止になったかは不明。<br />
-GFX10ではGFX9から設計に変更があったらしいが、<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">7</a></sup>GFX9でのNGGに何らかの問題があって変更したのか、<br />
+<p>具体的に何が原因で廃止になったかは不明。<br>
+GFX10ではGFX9から設計に変更があったらしいが、<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>GFX9でのNGGに何らかの問題があって変更したのか、<br>
 GFX10で変更することが決まったからGFX9では廃止したのか。</p>
-
-<p><a href="https://github.com/GPUOpen-Drivers/llpc" rel="noreferrer" target="_blank">LLPC</a>（LLVM-Based Pipeline）を見る限り、GFX10での実装はしっかりと進められている様子。<br />
-<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/226f650d9222a191130ee673d2cb4405da972c4a" rel="noreferrer" target="_blank">radeonsi/gfx10: document NGG shader stages &ndash; Mesa GitLab</a></span><br>
+<p><a href="https://github.com/GPUOpen-Drivers/llpc">LLPC</a>（LLVM-Based Pipeline）を見る限り、GFX10での実装はしっかりと進められている様子。<br>
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/226f650d9222a191130ee673d2cb4405da972c4a">radeonsi/gfx10: document NGG shader stages - Mesa GitLab</a></span><br>
 </p>
-
 <h2 id="感想">感想</h2>
-
-<p>新機能にバグは付き物……<br />
-Vegaが久しぶりのハイエンドとして登場したために、残念なところが際立ってしまったように思う。<br />
+<p>新機能にバグは付き物……<br>
+Vegaが久しぶりのハイエンドとして登場したために、残念なところが際立ってしまったように思う。<br>
 だがHBCC以外GFX10に引き継がれ、改良されているため決して無駄ではなかった。</p>
-
 <hr>
 <div class="reference">
-<h2 class="ref-title" id="ref-title">参考リンク</h2>
+<h3 class="ref-title" id="ref-title">参考リンク</h2>
 <ul>
-<li><a href="https://news.mynavi.jp/article/20181227-20181227-amd_next_horizon" rel="noreferrer" target="_blank">深掘り！「AMD Next Horizon」 &ndash; Vega 7nm Deep Dive。7nmのVegaはコンシューマに来ない？ &ndash; マイナビニュース</a><br /></li>
-<li><a href="https://news.mynavi.jp/article/20170830-hotchips29_vega/" rel="noreferrer" target="_blank">Hot Chips 29 &ndash; AMDの新フラグシップGPU「Vega 10」を読み解く &ndash; マイナビニュース</a><br /></li>
-<li><a href="https://www.4gamer.net/games/337/G033714/20170101002/" rel="noreferrer" target="_blank">西川善司の3DGE：AMD，次世代GPU「Vega」における4つの技術ポイントを公開。HBM2はキャッシュで使う!? &ndash; 4Gamer.net</a><br /></li>
-<li><a href="https://www.4gamer.net/games/337/G033714/20170804085/" rel="noreferrer" target="_blank">西川善司の3DGE：新設の「プリミティブシェーダ」を搭載し，Radeon RX Vegaはどこへ行く？ &ndash; 4Gamer.net</a><br /></li>
-<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1073276.html" rel="noreferrer" target="_blank">AMDが次世代GPU「Radeon RX Vega64」を正式発表 &ndash; PC Watch</a><br /></li>
+<li><a href="https://news.mynavi.jp/article/20181227-20181227-amd_next_horizon">深掘り！「AMD Next Horizon」 - Vega 7nm Deep Dive。7nmのVegaはコンシューマに来ない？ - マイナビニュース</a></li>
+<li><a href="https://news.mynavi.jp/article/20170830-hotchips29_vega/">Hot Chips 29 - AMDの新フラグシップGPU「Vega 10」を読み解く - マイナビニュース</a></li>
+<li><a href="https://www.4gamer.net/games/337/G033714/20170101002/">西川善司の3DGE：AMD，次世代GPU「Vega」における4つの技術ポイントを公開。HBM2はキャッシュで使う!? - 4Gamer.net</a></li>
+<li><a href="https://www.4gamer.net/games/337/G033714/20170804085/">西川善司の3DGE：新設の「プリミティブシェーダ」を搭載し，Radeon RX Vegaはどこへ行く？ - 4Gamer.net</a></li>
+<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1073276.html">AMDが次世代GPU「Radeon RX Vega64」を正式発表 - PC Watch</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:3"><a href="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/master/runtime/device/rocm/rocdefs.hpp#L68" rel="noreferrer" target="_blank">rocdefs.hpp &ndash; RadeonOpenCompute/ROCm-OpenCL-Runtime</a><br />
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:1"><a href="https://github.com/ROCm-Developer-Tools/ROCm-ComputeABI-Doc/blob/ae8a47b10845931cee63b3b8f08e22d093e2a03e/AMDGPU-ABI.md#instruction-set-architecture" rel="noreferrer" target="_blank">https://github.com/ROCm-Developer-Tools/ROCm-ComputeABI-Doc/blob/ae8a47b10845931cee63b3b8f08e22d093e2a03e/AMDGPU-ABI.md#instruction-set-architecture</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2"><a href="https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf" rel="noreferrer" target="_blank">https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf</a><br />
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:4"><a href="https://lists.freedesktop.org/archives/mesa-dev/2017-October/172054.html" rel="noreferrer" target="_blank">[Mesa-dev] [PATCH 2/2] radeonsi: disable primitive binning on Vega10 (v2)</a><br />
- <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
-<li id="fn:5"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/519bebdb40d9df5926e8b16dedd36b8e0f356f60" rel="noreferrer" target="_blank"> radeonsi: limit DPBB context_states_per_bin batches when using gfx9 workaround &ndash; Mesa GitLab</a>
- <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
-<li id="fn:6"><a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/src/gallium/drivers/radeonsi/si_state_binning.c#L547" rel="noreferrer" target="_blank">si_state_binning.c &ndash; Mesa GitLab</a><br />
- <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
-<li id="fn:7"><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040258.html" rel="noreferrer" target="_blank">[PATCH] drm/amdgpu: remove gfx9 NGG</a><br />
- <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/master/runtime/device/rocm/rocdefs.hpp#L68">rocdefs.hpp - RadeonOpenCompute/ROCm-OpenCL-Runtime</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/ROCm-Developer-Tools/ROCm-ComputeABI-Doc/blob/ae8a47b10845931cee63b3b8f08e22d093e2a03e/AMDGPU-ABI.md#instruction-set-architecture">https://github.com/ROCm-Developer-Tools/ROCm-ComputeABI-Doc/blob/ae8a47b10845931cee63b3b8f08e22d093e2a03e/AMDGPU-ABI.md#instruction-set-architecture</a> <a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf">https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf</a> <a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/mesa-dev/2017-October/172054.html">[Mesa-dev] [PATCH 2/2] radeonsi: disable primitive binning on Vega10 (v2)</a> <a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/519bebdb40d9df5926e8b16dedd36b8e0f356f60"> radeonsi: limit DPBB context_states_per_bin batches when using gfx9 workaround - Mesa GitLab</a> <a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040258.html">[PATCH] drm/amdgpu: remove gfx9 NGG</a> <a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>

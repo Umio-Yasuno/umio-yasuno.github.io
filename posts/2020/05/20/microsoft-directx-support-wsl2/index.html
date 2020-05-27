@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,46 +247,39 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Microsoft が WSL2 で DirectX をサポートする計画を発表</h1>
+    <h1>Microsoft が WSL2 で DirectX をサポートする計画を発表</h1><p>Microsoft は開催中の開発者向けイベント、<a href="https://news.microsoft.com/build2020/">Microsoft Build 2020</a>の中で、Windows向けグラフィクスAPI DirectX を WSL2 (Windows Subsystem for Linux 2) でサポートすることを発表した。<br>
+機械学習 API DirectML や NVIDIA CUDA といった GPUコンピューティングも WSL2 下で実行可能となる。<br>
+また、リモートデスクトップを用いて、Linux向けGUIアプリケーションを WSL2 から動作させる機能の将来的なサポートも発表している。<br>
+<span class="reflink"><cite><a href="https://devblogs.microsoft.com/directx/directx-heart-linux/">DirectX ❤ Linux | DirectX Developer Blog</a></cite></span><br>
 
-<p>Microsoft は開催中の開発者向けイベント、<a href="https://news.microsoft.com/build2020/" rel="noreferrer" target="_blank">Microsoft Build 2020</a>の中で、Windows向けグラフィクスAPI DirectX を WSL2 (Windows Subsystem for Linux 2) でサポートすることを発表した。<br />
-機械学習 API DirectML や NVIDIA CUDA といった GPUコンピューティングも WSL2 下で実行可能となる。<br />
-また、リモートデスクトップを用いて、Linux向けGUIアプリケーションを WSL2 から動作させる機能の将来的なサポートも発表している。<br />
-<span class="reflink"><cite><a href="https://devblogs.microsoft.com/directx/directx-heart-linux/" rel="noreferrer" target="_blank">DirectX ❤ Linux | DirectX Developer Blog</a></cite></span><br>
-
-<span class="reflink"><cite><a href="https://devblogs.microsoft.com/commandline/the-windows-subsystem-for-linux-build-2020-summary/" rel="noreferrer" target="_blank">The Windows Subsystem for Linux BUILD 2020 Summary | Windows Command Line</a></span><br>
+<span class="reflink"><cite><a href="https://devblogs.microsoft.com/commandline/the-windows-subsystem-for-linux-build-2020-summary/">The Windows Subsystem for Linux BUILD 2020 Summary | Windows Command Line</a></span><br>
 </p>
-
 <h2 id="direct-x-on-wsl">Direct X on &ldquo;WSL&rdquo;</h2>
-
-<p>仕組みとしては、Linux Kernel に <code>Dxgkrnl</code> と呼ぶ新たな KMD (Kernel Mode Driver) を実装し、Windows OS をホストOSとする Linux は <code>Dxgkrnl</code> を、<code>Dxgkrnl</code> は仮想的なバス (VM Bus) を通して Windows OS内のGPUドライバー、そして物理GPUと通信することで、DirectX 12 API を使用する。<br />
+<p>仕組みとしては、Linux Kernel に <code>Dxgkrnl</code> と呼ぶ新たな KMD (Kernel Mode Driver) を実装し、Windows OS をホストOSとする Linux は <code>Dxgkrnl</code> を、<code>Dxgkrnl</code> は仮想的なバス (VM Bus) を通して Windows OS内のGPUドライバー、そして物理GPUと通信することで、DirectX 12 API を使用する。<br>
 これは WDDM (Windows Display Driver Model) v2.9 の仕様に統合される。</p>
-
-<p>それと同時に DirectX のライブラリが Linux向けにリリースされる。<br />
-DirectX 12 の Linux向けライブラリ、<code>libd3d12.so</code> は Windows向けである <code>d3d12.dll</code> と同じソースコードからコンパイルされており、仮想化によるオーバーヘッドを除き、同等の機能と性能を提供するとしている。<br />
-現時点で Linux向けの DirextX 12 APIはオフスクリーンレンダリングとコンピュート機能を実行できるが、画面に直接レンダリングするためのスワップチェイン機能はサポートしていない。<br />
-ただこれは、その後に笑顔の顔文字付きで &ldquo;yet&rdquo; と書いており、将来的にサポートするつもりだと思われる。<br />
-UMD (User Mode Driver) と KMD が通信する際に用いられるレイヤー、DXGI の Linux向けライブラリ <code>libdxcore.so</code> もリリースされる。<br />
-そして、WSL2 側の UMD は GPUメーカーと連携し、WSL環境で実行可能となるよう再コンパイルされるとのこと。<br />
+<p>それと同時に DirectX のライブラリが Linux向けにリリースされる。<br>
+DirectX 12 の Linux向けライブラリ、<code>libd3d12.so</code> は Windows向けである <code>d3d12.dll</code> と同じソースコードからコンパイルされており、仮想化によるオーバーヘッドを除き、同等の機能と性能を提供するとしている。<br>
+現時点で Linux向けの DirextX 12 APIはオフスクリーンレンダリングとコンピュート機能を実行できるが、画面に直接レンダリングするためのスワップチェイン機能はサポートしていない。<br>
+ただこれは、その後に笑顔の顔文字付きで &ldquo;yet&rdquo; と書いており、将来的にサポートするつもりだと思われる。<br>
+UMD (User Mode Driver) と KMD が通信する際に用いられるレイヤー、DXGI の Linux向けライブラリ <code>libdxcore.so</code> もリリースされる。<br>
+そして、WSL2 側の UMD は GPUメーカーと連携し、WSL環境で実行可能となるよう再コンパイルされるとのこと。<br>
 これもまた、WDDM v2.9 ドライバーに統合される。</p>
-
-<p>留意しておきたいのは、<code>libd3d12.so</code> 、<code>libdxcore.so</code> はクローズドソースであり、事前にコンパイルされたバイナリのみが、Windows の一部として出荷される。<br />
-GPUメーカーが提供する DirectX 12 UMD も当然クローズドソースだ。<br />
+<p>留意しておきたいのは、<code>libd3d12.so</code> 、<code>libdxcore.so</code> はクローズドソースであり、事前にコンパイルされたバイナリのみが、Windows の一部として出荷される。<br>
+GPUメーカーが提供する DirectX 12 UMD も当然クローズドソースだ。<br>
 そのため、WSL2以外 (WindowsをホストOSとしない Linux OS) は UMD が存在しないため、動作させることはできない。</p>
-
-<p>また、Linux 環境下で DirectX を実行するソフトウェアでは、<a href="https://www.winehq.org/#carouselScreenshots" rel="noreferrer" target="_blank">Wine</a> / <a href="https://github.com/ValveSoftware/Proton/" rel="noreferrer" target="_blank">Proton</a>が有名だが、Wine は API 呼び出しを変換する形で実行しているため、今回の Microsoft が行なう Linux へのさらなる歩み寄りを、それらに活かせるかは微妙なところと思われる。</p>
-
+<p>また、Linux 環境下で DirectX を実行するソフトウェアでは、<a href="https://www.winehq.org/#carouselScreenshots">Wine</a> / <a href="https://github.com/ValveSoftware/Proton/">Proton</a>が有名だが、Wine は API 呼び出しを変換する形で実行しているため、今回の Microsoft が行なう Linux へのさらなる歩み寄りを、それらに活かせるかは微妙なところと思われる。</p>
 <hr>
 <div class="reference">
-<h2 class="ref-title" id="ref-title">参考リンク</h2>
+<h3 class="ref-title" id="ref-title">参考リンク</h2>
 <ul>
-<li><a href="https://devblogs.microsoft.com/directx/directx-heart-linux/" rel="noreferrer" target="_blank">DirectX ❤ Linux | DirectX Developer Blog</a></li>
-<li><cite><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Microsoft-DX12-WSL2" rel="noreferrer" target="_blank">Microsoft Announces Direct3D 12 For Linux / WSL2 &ndash; Phoronix</a></cite></li>
+<li><a href="https://devblogs.microsoft.com/directx/directx-heart-linux/">DirectX ❤ Linux | DirectX Developer Blog</a></li>
+<li><cite><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Microsoft-DX12-WSL2">Microsoft Announces Direct3D 12 For Linux / WSL2 - Phoronix</a></cite></li>
 </ul>
 
 </div>
 
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>

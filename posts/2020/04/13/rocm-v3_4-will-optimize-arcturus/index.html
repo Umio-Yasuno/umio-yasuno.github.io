@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,44 +247,38 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>ROCm v3.4 は Arcturus への最適化がメインか</h1><p><a href="https://github.com/ROCmSoftwarePlatform/Tensile" rel="noreferrer" target="_blank">Tensile</a>へのプルリクエストから ROCm v3.4 での更新内容が見えてきた。<br />
+    <h1>ROCm v3.4 は Arcturus への最適化がメインか</h1><p><a href="https://github.com/ROCmSoftwarePlatform/Tensile">Tensile</a>へのプルリクエストから ROCm v3.4 での更新内容が見えてきた。<br>
 Tensileとは、行列演算やN次元のテンソルの縮約、2つの多次元オブジェクトの乗算といった演算のベンチマークに使われるバックエンドライブラリを作成するためのツール。</p>
-
-<p><a href="https://github.com/ROCmSoftwarePlatform/Tensile/pull/922" rel="noreferrer" target="_blank">ROCm 3.4 milestone merge develop into master by zaliu · Pull Request #922 · ROCmSoftwarePlatform/Tensile</a></p>
-
-<p>内容としては、行列演算用の命令 MFMA、データ精度 BF16、その他もろもろへの最適化、修正が見られ、<br />
+<p><a href="https://github.com/ROCmSoftwarePlatform/Tensile/pull/922">ROCm 3.4 milestone merge develop into master by zaliu · Pull Request #922 · ROCmSoftwarePlatform/Tensile</a></p>
+<p>内容としては、行列演算用の命令 MFMA、データ精度 BF16、その他もろもろへの最適化、修正が見られ、<br>
 先2つから ROCm v3.4 は<a href="https://blog.coelacanth-dream.com/tags/arcturus">Arcturus</a>への対応をより進め、性能を引き出すことがメインと考えられる。</p>
-
-<p><em>Arcturus</em> での新機能に対応する ROCm v3.2 を待たず、ROCm v3.3 が不意を打つ形でリリースされたことでリリース形体が分かれた。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">1</a></sup></p>
-
+<p><em>Arcturus</em> での新機能に対応する ROCm v3.2 を待たず、ROCm v3.3 が不意を打つ形でリリースされたことでリリース形体が分かれた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <ul>
-<li>ROCm v3.2 &rarr; ROCm v3.4</li>
-<li>ROCm v3.3 &rarr; ROCm v3.5?</li>
+<li>ROCm v3.2 → ROCm v3.4</li>
+<li>ROCm v3.3 → ROCm v3.5?</li>
 </ul>
-
-<p>と <em>Arcuturs</em> 向けのリリースと一般ユーザー向けのリリースで分けるのか、<br />
-それとも ROCm v3.4 で合流するか。<br />
-ROCm のパッケージには一般ユーザーもそれなりに使うOpenCLドライバも含まれるため、リリース形体を分けることには一応の意味がある。<br />
+<p>と <em>Arcuturs</em> 向けのリリースと一般ユーザー向けのリリースで分けるのか、<br>
+それとも ROCm v3.4 で合流するか。<br>
+ROCm のパッケージには一般ユーザーもそれなりに使うOpenCLドライバも含まれるため、リリース形体を分けることには一応の意味がある。<br>
 また、<em>Zen 4 EPYC Genoa</em> CPU と、時期から <em>CDNA 2</em> GPUを採用すると思われるスーパーコンピューター <strong>El Capitan</strong> ではソフトウェアスタックに ROCm の拡張バージョンを使用するとしており、今後開発を進める上で分けることはありえるはずだ。</p>
-
 <blockquote>
 <p>An enhanced version of the open source ROCm heterogenous programming environment, being developed to tap into the combined performance of AMD CPUs and GPUs, unlocking maximum performance.</p>
-
-<p>引用元: <cite><a href="https://ir.amd.com/news-releases/news-release-details/next-generation-amd-epyctm-cpus-and-radeontm-instinct-gpus" rel="noreferrer" target="_blank">Next-Generation AMD EPYC™ CPUs and Radeon™ Instinct GPUs Enable El Capitan Supercomputer at Lawrence Livermore National Laboratory to Break 2 Exaflops Barrier | Advanced Micro Devices</a></cite></p>
 </blockquote>
-
-<p>それならそれで番号以外に違いを付けてほしい。それか合流するか。<br />
+<blockquote>
+<p>引用元: <cite><a href="https://ir.amd.com/news-releases/news-release-details/next-generation-amd-epyctm-cpus-and-radeontm-instinct-gpus">Next-Generation AMD EPYC™ CPUs and Radeon™ Instinct GPUs Enable El Capitan Supercomputer at Lawrence Livermore National Laboratory to Break 2 Exaflops Barrier | Advanced Micro Devices</a></cite></p>
+</blockquote>
+<p>それならそれで番号以外に違いを付けてほしい。それか合流するか。<br>
 詰まるところ、わかりやすくしてくれというのが個人的な気持ちだ。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:2"><a href="https://blog.coelacanth-dream.com/posts/2020/04/02/amd-rocm-v330-release/">AMD、ROCm v3.3.0 リリース | Coelacanth&rsquo;s Dream</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://blog.coelacanth-dream.com/posts/2020/04/02/amd-rocm-v330-release/">AMD、ROCm v3.3.0 リリース | Coelacanth&rsquo;s Dream</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
@@ -297,9 +294,9 @@ ROCm のパッケージには一般ユーザーもそれなりに使うOpenCLド
             <li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tag</a>
             <ul>
                 <li><a href="https://blog.coelacanth-dream.com/tags/arcturus" class="side-tag-lower">Arcturus</a></li>
-                <li><a href="https://blog.coelacanth-dream.com/tags/rocm" class="side-tag-lower">ROCm</a></li>
+                <li><a href="https://blog.coelacanth-dream.com/tags/gfx908" class="side-tag-lower">gfx908</a></li>
                 <li><a href="https://blog.coelacanth-dream.com/tags/radeon" class="side-tag-lower">Radeon</a></li>
-                <li><a href="https://blog.coelacanth-dream.com/tags/gfx908" class="side-tag-lower">gfx908</a></li></ul>
+                <li><a href="https://blog.coelacanth-dream.com/tags/rocm" class="side-tag-lower">ROCm</a></li></ul>
         </ul>
     </nav>
     <nav class="side-categories">

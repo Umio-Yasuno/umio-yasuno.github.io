@@ -33,7 +33,7 @@ html {
     background-attachment: fixed;
     background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
     background-repeat: no-repeat;
-    font-size: .99rem;
+    font-size: .95em;
 }
 main {
     display: grid;
@@ -100,7 +100,7 @@ p {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article > p {
-    letter-spacing: .025ch;
+    letter-spacing: .020ch;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -127,9 +127,11 @@ article > p::first-letter {
         display: none;
     }
     .side {
-        display: block;
-            height: 96vh;
-            width: 200px;
+        display: flex;
+        flex-direction: column;
+        row-gap: 24px;
+        height: 96vh;
+        width: 200px;
         position: fixed;
             top: 2vh;
             left: 24px;
@@ -146,7 +148,7 @@ article > p::first-letter {
     }
     .side-pagination {
         display: grid;
-        margin: 2em 0 2em 1em;
+        margin: 0 0 0 1em;
         font-size: 1.05em;
         row-gap: .8em;
         grid-template: repeat(3, 1fr) / 1em .9fr 2em;
@@ -175,7 +177,7 @@ article > p::first-letter {
     }
     .side-author, .side-lastmod, .side-about, .side-time {
         padding: 0 .2em 0 0;
-        margin: .5em 0 1.2em .4em;
+        margin: 0 0 0 .4em;
         font-size: .95rem;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
@@ -210,11 +212,12 @@ article > p::first-letter {
     .side-links ul, .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
+        margin: 0;
         color: #65CCA9;
         line-height: 1.5em;
     }
     .tag-title, .categorie-title, .side-links a {
-        border-bottom: 2px solid #326654;
+        border-bottom: 1px solid #326654;
         padding: 0 1em .1em .3em;
         margin-bottom: 1em;
     }
@@ -244,66 +247,53 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Intel Alder Lake、Sapphire Rapids にて追加される2つの命令 ――AVX2 VNNI /HFNI</h1>
-
-<p>Intel の次世代プロセッサ、<a href="https://blog.coelacanth-dream.com/tags/alder_lake">Alder Lake</a>、<a href="https://blog.coelacanth-dream.com/tags/sapphire_rapids">Sapphire Rapids</a>では新たな拡張命令が2つ追加される。<br />
-そのことが新機能のバグ報告プラットフォーム、<a href="https://launchpad.net/intel" rel="noreferrer" target="_blank">intel in Launchpad</a>からわかった。</p>
-
+    <h1>Intel Alder Lake、Sapphire Rapids にて追加される2つの命令 ――AVX2 VNNI /HFNI</h1><p>Intel の次世代プロセッサ、<a href="https://blog.coelacanth-dream.com/tags/alder_lake">Alder Lake</a>、<a href="https://blog.coelacanth-dream.com/tags/sapphire_rapids">Sapphire Rapids</a>では新たな拡張命令が2つ追加される。<br>
+そのことが新機能のバグ報告プラットフォーム、<a href="https://launchpad.net/intel">intel in Launchpad</a>からわかった。</p>
 <h2 id="avx2-vnni">AVX2 VNNI</h2>
+<p>VNNI(Vector Neural Network Instructions) というと、<em>Cascade Lake</em> 、<em>Cooper Lake</em> 、 <em>Ice Lake (client/server)</em> 、<em>Tiger Lake</em> がサポートする <code>AVX512 VNNI</code>命令 が思い浮かぶが、<br>
+<code>AVX2 VNNI</code>命令は、既存のそれとは異なる feature bit を追加するとしている。<br>
+<span class="reflink"><a href="https://bugs.launchpad.net/intel/+bug/1879836">Bug #1879836 “[ADL]Add CPUID feature bit for AVX2 VNNI” : Bugs : intel</a></span><br>
 
-<p>VNNI(Vector Neural Network Instructions) というと、<em>Cascade Lake</em> 、<em>Cooper Lake</em> 、 <em>Ice Lake (client/server)</em> 、<em>Tiger Lake</em> がサポートする <code>AVX512 VNNI</code>命令 が思い浮かぶが、<br />
-<code>AVX2 VNNI</code>命令は、既存のそれとは異なる feature bit を追加するとしている。<br />
-<span class="reflink"><a href="https://bugs.launchpad.net/intel/+bug/1879836" rel="noreferrer" target="_blank">Bug #1879836 “[ADL]Add CPUID feature bit for AVX2 VNNI” : Bugs : intel</a></span><br>
-
-<span class="reflink"><a href="https://bugs.launchpad.net/intel/+bug/1880162" rel="noreferrer" target="_blank">Bug #1880162 “[EGS] Add CPUID feature bit for AVX2 VNNI” : Bugs : intel</a></span><br>
+<span class="reflink"><a href="https://bugs.launchpad.net/intel/+bug/1880162">Bug #1880162 “[EGS] Add CPUID feature bit for AVX2 VNNI” : Bugs : intel</a></span><br>
 </p>
-
-<p>AVX の後の数字から、用いるベクトル演算器のSIMDベクトル幅が異なるのだろう。(AVX2 は 256-bit、AVX512 はまんま 512-bit)<br />
+<p>AVX の後の数字から、用いるベクトル演算器のSIMDベクトル幅が異なるのだろう。(AVX2 は 256-bit、AVX512 はまんま 512-bit)<br>
 512-bit から 256-bit となることで、サイクルあたりのピーク処理能力は小さくなるが、ハードウェアへの実装に割かなければならないリソースもまた減ると思われる。(演算器、レジスタファイル、レジスタポート)</p>
-
 <p>それと、EGS は <em>Eagle Stream</em> の略であり、<em>Eagle Stream</em> は Intel の次世代サーバ向けプロセッサ <em>Sapphire Rapids</em> のプラットフォームとされている。</p>
-
 <h2 id="hfni">HFNI</h2>
-
-<p><code>HFNI</code> 命令はその概要から、64個の単精度浮動小数点(FP32) のパック実行に対応していた <code>AVX-512</code> 命令を、半精度浮動小数点(FP16) のパック実行にも対応させたものと推察される。<br />
-<span class="reflink"><a href="https://bugs.launchpad.net/intel/+bug/1879865" rel="noreferrer" target="_blank">Bug #1879865 “[ADL] Enable 5G ISA (FP16) / HFNI” : Bugs : intel</a></span><br>
+<p><code>HFNI</code> 命令はその概要から、64個の単精度浮動小数点(FP32) のパック実行に対応していた <code>AVX-512</code> 命令を、半精度浮動小数点(FP16) のパック実行にも対応させたものと推察される。<br>
+<span class="reflink"><a href="https://bugs.launchpad.net/intel/+bug/1879865">Bug #1879865 “[ADL] Enable 5G ISA (FP16) / HFNI” : Bugs : intel</a></span><br>
 </p>
-
-<p>想定される用途として、5G基地局のソフトウェア、FSI(Financial Services Industry)<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>、科学計算、開発等をあげている。</p>
-
-<p><br>
-上記2つの命令は、幅の小さいベクトル演算器を意識しているように見える。<br />
-以前、Intel 拡張命令リファレンス資料がアップデートされた際、 <em>Alder Lake</em> と <em>Tiger Lake</em> で対応する命令が一致していないと書いたが、<br />
+<p>想定される用途として、5G基地局のソフトウェア、FSI(Financial Services Industry)<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、科学計算、開発等をあげている。</p>
+<h2 id="alder-lake-のsimd幅はどうなるか">Alder Lake のSIMD幅はどうなるか</h2>
+<p>上記2つの命令は、幅の小さいベクトル演算器を意識しているように見える。<br>
+以前、Intel 拡張命令リファレンス資料がアップデートされた際、 <em>Alder Lake</em> と <em>Tiger Lake</em> で対応する命令が一致していないと書いたが、<em>Alder Lake</em> は <em>Tiger Lake</em> よりもベクトル演算器の規模を小さく変更するかもしれない。<br>
 <span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/04/01/intel-isa-extensiton-update-sapphirerapids-alderlake/">Intel、拡張命令リファレンスをアップデート (Sapphire Rapids /Alder Lake /ハイブリッドプロセッサ) | Coelacanth&rsquo;s Dream</a></span><br>
 
-<em>Alder Lake</em> は <em>Tiger Lake</em> よりもベクトル演算器の規模を小さく変更するかもしれない。<br />
-また、 <em>Alder Lake</em> には2種類のプロセッサが確認されており(Alder Lake-S /Alder Lake-P)、<em>Skylake</em> と <em>Skylake-SP</em> のように、それぞれでベクトル演算器周りの構成が異なるということも考えられる。<br />
+また、 <em>Alder Lake</em> には2種類のプロセッサが確認されており(Alder Lake-S /Alder Lake-P)、<em>Skylake</em> と <em>Skylake-SP</em> のように、それぞれでベクトル演算器周りの構成が異なるということも考えられる。<br>
 <span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/05/01/vboot-code-add-alderlake/">ChromiumOSへのパッチから Alderlake-S / Alderlake-P を確認 | Coelacanth&rsquo;s Dream</a></span><br>
 </p>
-
 <p>AVX-512 の改良が進められていることは興味が引かれるが、またもプロセッサが対応する範囲が混沌としそうな予感がする。</p>
-
 <hr>
 <div class="reference">
-<h2 class="ref-title" id="ref-title">参考リンク</h2>
+<h3 class="ref-title" id="ref-title">参考リンク</h2>
 <ul>
-<li><a href="https://twitter.com/KOMACHI_ENSAKA/status/1263727714210426880" rel="noreferrer" target="_blank">https://twitter.com/KOMACHI_ENSAKA/status/1263727714210426880</a></li>
-<li><a href="https://www.intel.co.jp/content/www/jp/ja/architecture-and-technology/avx-512-overview.html" rel="noreferrer" target="_blank">インテル® アドバンスト・ベクトル・エクステンション 512 (インテル® AVX-512) の概要</a></li>
-<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1167662.html" rel="noreferrer" target="_blank">【後藤弘茂のWeekly海外ニュース】Intelの10nm世代CPUコア「Sunny Cove」のカギとなるAVX-512 &ndash; PC Watch</a></li>
+<li><a href="https://twitter.com/KOMACHI_ENSAKA/status/1263727714210426880">https://twitter.com/KOMACHI_ENSAKA/status/1263727714210426880</a></li>
+<li><a href="https://www.intel.co.jp/content/www/jp/ja/architecture-and-technology/avx-512-overview.html">インテル® アドバンスト・ベクトル・エクステンション 512 (インテル® AVX-512) の概要</a></li>
+<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1167662.html">【後藤弘茂のWeekly海外ニュース】Intelの10nm世代CPUコア「Sunny Cove」のカギとなるAVX-512 - PC Watch</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1"><a href="https://www.intel.com/content/www/us/en/financial-services-it/fsi-multi-cloud-webinar.html" rel="noreferrer" target="_blank">FSI Multi-Cloud Strategies Webinar</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.intel.com/content/www/us/en/financial-services-it/fsi-multi-cloud-webinar.html">FSI Multi-Cloud Strategies Webinar</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 </article>
+
 		</div>
 			<div class="side"><div class="title">
 	<a href="https://blog.coelacanth-dream.com/">Coelacanth&#39;s Dream</a>
@@ -331,7 +321,7 @@ h1 {
                 <li><a href="https://blog.coelacanth-dream.com/categories/cpu" class="side-categorie-lower">CPU</a></li></ul>
         </ul>
     </nav><time datetime="2020-05-26 20:08:55" class="side-time">Post : 2020-05-26 </time>
-        <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-05-26 21:23:52 </div>
+        <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-05-27 09:52:08 </div>
     <div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
         <a href="https://blog.coelacanth-dream.com/about/">About</a>
         <a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
@@ -356,7 +346,7 @@ h1 {
 			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
         <div class="foot-time">
             <time datetime="2020-05-26 20:08:55">Post : 2020-05-26</time>
-		/ Update : 2020-05-26 21:23:52 
+		/ Update : 2020-05-27 09:52:08 
         </div><div class="foot-author">Author : Umio Yasuno</div>
 	<nav class="foot-about">
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
