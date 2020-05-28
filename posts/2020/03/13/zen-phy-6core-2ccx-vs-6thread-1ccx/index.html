@@ -247,15 +247,21 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Zen検証 ―― 物理6-Core 2CCX vs 6-Thread 1CCX</h1><p>今更 Ryzen 5 2600 を使って <em>Zen/+</em> の検証。<br>
+    <h1>Zen検証 ―― 物理6-Core 2CCX vs 6-Thread 1CCX</h1>
+
+<p>今更 Ryzen 5 2600 を使って <em>Zen/+</em> の検証。<br />
 試したい、というだけの理由で <em>Zen 2</em> を買える程のお金がない。さらに言うと、2666MHzでCL1も安定しないような<del>クソ</del>メモリを使っている。</p>
+
 <h2 id="前提">前提</h2>
-<p><a href="https://blog.coelacanth-dream.com/posts/2020/03/12/private-conkyrc/">1つ前の記事</a>で、「なんか1CCXで処理が回されやすいっぽい」とか書いたが、それがどの程度性能に影響を与えるのか気になった。<br>
-6スレッドで処理するとして考えられるパターンは主に、1CCX内の3-Core/6-Thread、それと2CCXに跨る6-Coreの2つがある。<br>
-前者は1CCX内に収まるため短いレイテンシでスレッド間の通信、同期を行なえるが、SMT機能によって1-Coreで2-Threadを実行するため、実行ユニットのリソース競合、スレッド切り替えのオーバーヘッド等で性能向上が見られない、もしくは低下することが起こりうる。片方がメモリからデータをロードしている間、もう片方のスレッドを実行する、という風に実行ユニットの有効活用が可能だが、1-Threadあたりのキャッシュ量も単純に半分となるため、処理によってはキャッシュミスが頻発、メモリアクセスが増える要因にもなる。以下、このパターンを <em>6-Thread 1CCX</em> とする。<br>
+
+<p><a href="https://blog.coelacanth-dream.com/posts/2020/03/12/private-conkyrc/">1つ前の記事</a>で、「なんか1CCXで処理が回されやすいっぽい」とか書いたが、それがどの程度性能に影響を与えるのか気になった。<br />
+6スレッドで処理するとして考えられるパターンは主に、1CCX内の3-Core/6-Thread、それと2CCXに跨る6-Coreの2つがある。<br />
+前者は1CCX内に収まるため短いレイテンシでスレッド間の通信、同期を行なえるが、SMT機能によって1-Coreで2-Threadを実行するため、実行ユニットのリソース競合、スレッド切り替えのオーバーヘッド等で性能向上が見られない、もしくは低下することが起こりうる。片方がメモリからデータをロードしている間、もう片方のスレッドを実行する、という風に実行ユニットの有効活用が可能だが、1-Threadあたりのキャッシュ量も単純に半分となるため、処理によってはキャッシュミスが頻発、メモリアクセスが増える要因にもなる。以下、このパターンを <em>6-Thread 1CCX</em> とする。<br />
 後者はCCXを跨るため、その分レイテンシが長くなるが、SMT機能の悪影響をほぼ受けない。以下、このパターンを <em>6-Core 2CCX</em> とする。</p>
-<p>ベンチマークについては、整数や浮動小数点の演算性能を測るものでは <em>6-Thread 1CCX</em> において上述したリソースの競合が頻発し、性能が低下しやすく、現実的でないと判断した。<br>
+
+<p>ベンチマークについては、整数や浮動小数点の演算性能を測るものでは <em>6-Thread 1CCX</em> において上述したリソースの競合が頻発し、性能が低下しやすく、現実的でないと判断した。<br />
 怖くなって一応計測してみたが、やはり <em>6-Thread 1CCX</em> のスコアが <em>6-Core 2CCX</em> よりもだいぶ低かった。</p>
+
 <table>
 <thead>
 <tr>
@@ -264,6 +270,7 @@ h1 {
 <th align="center">6-Thread 1CCX</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">Dhrystone (整数演算) (lps)</td>
@@ -272,63 +279,76 @@ h1 {
 </tr>
 </tbody>
 </table>
+
 <p>lps (Lines Per Second)は1秒あたりの実行回数を表す。</p>
+
 <h3 id="cpu">CPU</h3>
-<p>まず、Ryzen 5 2600のトポロジは以下のようになっている。<br>
+
+<p>まず、Ryzen 5 2600のトポロジは以下のようになっている。<br />
 <figure>
     <img src="https://blog.coelacanth-dream.com/image/2020/03/13/r5-2600-topo.webp"
          alt="lstopo の実行結果"/> <figcaption>
             <h4>Ryzen 5 2600 トポロジ</h4><p>lstopo の実行結果</p>
         </figcaption>
 </figure>
-<br>
-L3キャッシュ 8MBに 3-Core/6-Thread が付く形となり、それがZenアーキテクチャにおけるCCXを構成している。<br>
+<br />
+L3キャッシュ 8MBに 3-Core/6-Thread が付く形となり、それがZenアーキテクチャにおけるCCXを構成している。<br />
 Zen/+は本来ならCCXあたり4-Core/8-Threadを構成しているが、Ryzen 5 2600では2CCXそれぞれのCPUコアを1個ずつ無効化し、製品としている。</p>
+
 <h2 id="方法">方法</h2>
-<p>CPUコアの番号はまず物理コア、SMTによる論理コアの順番に割り振っている。<br>
-そしてLinuxでは <code>taskset</code> コマンド<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>で起動中のプロセス、または新たなコマンドを実行するCPUコアを指定することができ、Ryzen 5 2600のトポロジを参考にすると、</p>
-<pre><code>taskset -c 0-5 ./&lt;ベンチマークの実行バイナリ&gt; &lt;6コア/スレッド数を指定&gt;
-</code></pre>
+
+<p>CPUコアの番号はまず物理コア、SMTによる論理コアの順番に割り振っている。<br />
+そしてLinuxでは <code>taskset</code> コマンド<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>で起動中のプロセス、または新たなコマンドを実行するCPUコアを指定することができ、Ryzen 5 2600のトポロジを参考にすると、</p>
+<pre><code>taskset -c 0-5 ./&lt;ベンチマークの実行バイナリ&gt; &lt;6コア/スレッド数を指定&gt;</code></pre>
 <p>で <em>6-Core 2CCX</em> を、</p>
-<pre><code>taskset -c 0-2,6-8 ./&lt;ベンチマークの実行バイナリ&gt; &lt;6コア/スレッド数を指定&gt;
-</code></pre>
+<pre><code>taskset -c 0-2,6-8 ./&lt;ベンチマークの実行バイナリ&gt; &lt;6コア/スレッド数を指定&gt;</code></pre>
 <p>で <em>6-Thread 1CCX</em> を指定して実行させられる。</p>
+
 <p>また、省電力機能による誤差を減らすため、CPUクロックは3.6GHzで固定して計測を行なう。</p>
+
 <h3 id="ベンチマークソフト">ベンチマークソフト</h3>
-<p>ベンチマークソフトには、歴史ある<a href="https://github.com/kdlucas/byte-unixbench">byte-unixbench</a> の一部、それとOpenMPを有効にした<a href="https://github.com/sudden6/m-queens">m-queens</a>、レイテンシの測定に <a href="https://github.com/akopytov/sysbench">sysbench</a> を採用した。<br>
+
+<p>ベンチマークソフトには、歴史ある<a href="https://github.com/kdlucas/byte-unixbench" rel="noreferrer" target="_blank">byte-unixbench</a> の一部、それとOpenMPを有効にした<a href="https://github.com/sudden6/m-queens" rel="noreferrer" target="_blank">m-queens</a>、レイテンシの測定に <a href="https://github.com/akopytov/sysbench" rel="noreferrer" target="_blank">sysbench</a> を採用した。<br />
 出来る限り上述したようなテストとは違うものを選んだつもりだが、やはり現実的なベンチマークというのは難しく、他に適したベンチマークソフトがあれば教えて頂けると嬉しい。それがLinuxに対応しており、計測が特別難しくなければ試すつもりでいる。</p>
+
 <h4 id="byte-unixbench">byte-unixbench</h4>
+
 <p>テストする項目の詳細。</p>
+
 <ul>
 <li>Execl Throughput
+
 <ul>
 <li>1秒間に実行可能な <code>execl</code> 呼び出しの回数を測定するテスト。exec系の関数は現在のプロセスイメージを新しいプロセスイメージに置き換える。</li>
-</ul>
-</li>
+</ul></li>
 <li>Pipe-based Context Switching
+
 <ul>
 <li>2つのプロセスがパイプを通じて、増加する整数データを交換できる回数を測定するテスト。実際のアプリケーションの動きに近い。</li>
-</ul>
-</li>
+</ul></li>
 <li>Process Creation
+
 <ul>
 <li>プロセスを作成、取得、終了を繰り返すテスト。それは新しいプロセスの制御とメモリ割り当てを繰り返すことであり、計測結果はメモリ帯域幅を反映する。</li>
-</ul>
-</li>
+</ul></li>
 <li>Shell Scripts
+
 <ul>
 <li>プロセスが1分間で、データファイルに一連の変換を行なうシェルスクリプトを開始できる回数を測定するテスト。</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<p><a href="https://github.com/kdlucas/byte-unixbench/blob/master/README.md">https://github.com/kdlucas/byte-unixbench/blob/master/README.md</a></p>
+
+<p><a href="https://github.com/kdlucas/byte-unixbench/blob/master/README.md" rel="noreferrer" target="_blank">https://github.com/kdlucas/byte-unixbench/blob/master/README.md</a></p>
+
 <h4 id="m-queens">m-queens</h4>
+
 <p>Phoronix Test Suiteのプロファイルを参考に、以下のコマンドでビルドした。</p>
-<pre><code>CFLAGS=&quot;-O2 -march=znver1&quot; g++-8 -fopenmp main.c -o m-queens.bin
-</code></pre>
-<p><a href="https://openbenchmarking.org/innhold/707926477c5cf3e3b33d1b9375523aee5f3d2020">OpenBenchmarking.org - m-queens v1.1.0 Test [m-queens]</a><br>
+<pre><code>CFLAGS=&#34;-O2 -march=znver1&#34; g++-8 -fopenmp main.c -o m-queens.bin</code></pre>
+<p><a href="https://openbenchmarking.org/innhold/707926477c5cf3e3b33d1b9375523aee5f3d2020" rel="noreferrer" target="_blank">OpenBenchmarking.org &ndash; m-queens v1.1.0 Test [m-queens]</a><br />
 N(クイーンの数)は17とし、計測結果5回の平均をスコアとする。</p>
+
 <h2 id="環境">環境</h2>
+
 <table>
 <thead>
 <tr>
@@ -336,34 +356,42 @@ N(クイーンの数)は17とし、計測結果5回の平均をスコアとす�
 <th align="center"></th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">Linux Kernel</td>
 <td align="center">5.4.21 (Custom)</td>
 </tr>
+
 <tr>
 <td align="left">CPU</td>
 <td align="center">Ryzen 5 2600 <br> (6-Core/12-Thread, 3.6GHz)</td>
 </tr>
+
 <tr>
 <td align="left">RAM</td>
 <td align="center">DDR4 16GB 2666MHz</td>
 </tr>
+
 <tr>
 <td align="left">Disk</td>
 <td align="center">SSD 250GB WDS250G2B0A</td>
 </tr>
+
 <tr>
 <td align="left">UnixBench</td>
 <td align="center">ver 5.1.3</td>
 </tr>
+
 <tr>
 <td align="left">sysbench</td>
 <td align="center">1.1.0-74f3b6b <br> (using bundled LuaJIT 2.1.0-beta3)</td>
 </tr>
 </tbody>
 </table>
+
 <h2 id="結果">結果</h2>
+
 <table>
 <thead>
 <tr>
@@ -372,37 +400,44 @@ N(クイーンの数)は17とし、計測結果5回の平均をスコアとす�
 <th align="center">6-Thread 1CCX</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">Excel Throughtput (lps)</td>
 <td align="center">24743.5</td>
 <td align="center">24262.5 (-2%)</td>
 </tr>
+
 <tr>
 <td align="left">Process Creation (lps)</td>
 <td align="center">51217.1 (-13%)</td>
 <td align="center">58572.1</td>
 </tr>
+
 <tr>
 <td align="left">Pipe-based Context Switching (lps)</td>
 <td align="center">1734733.0</td>
 <td align="center">1279005.9 (-26%)</td>
 </tr>
+
 <tr>
 <td align="left">Shell Scripts (1 concurrent) (lpm)</td>
 <td align="center">43287.2</td>
 <td align="center">35119.4 (-19%)</td>
 </tr>
+
 <tr>
 <td align="left">Shell Scripts (8 concurrent) (lpm)</td>
 <td align="center">6677.0</td>
 <td align="center">5137.8 (-23%)</td>
 </tr>
+
 <tr>
 <td align="left">Shell Scripts (16 concurrent) (lpm)</td>
 <td align="center">3363.9</td>
 <td align="center">2595.7 (-23%)</td>
 </tr>
+
 <tr>
 <td align="left">m-queens (Solution/s)</td>
 <td align="center">12357498.9</td>
@@ -410,6 +445,7 @@ N(クイーンの数)は17とし、計測結果5回の平均をスコアとす�
 </tr>
 </tbody>
 </table>
+
 <table>
 <thead>
 <tr>
@@ -418,65 +454,80 @@ N(クイーンの数)は17とし、計測結果5回の平均をスコアとす�
 <th align="center">6-Thread 1CCX</th>
 </tr>
 </thead>
+
 <tbody>
 <tr>
 <td align="left">events/s (eps)</td>
 <td align="center">26374.6090</td>
 <td align="center">25598.8243</td>
 </tr>
+
 <tr>
 <td align="left">Latency (ms)</td>
-<td></td>
-<td></td>
+<td align="center"></td>
+<td align="center"></td>
 </tr>
+
 <tr>
-<td align="left">  min</td>
+<td align="left">&emsp;&emsp;min</td>
 <td align="center">0.15</td>
 <td align="center">0.15</td>
 </tr>
+
 <tr>
-<td align="left">  avg</td>
+<td align="left">&emsp;&emsp;avg</td>
 <td align="center">0.23</td>
 <td align="center">0.23</td>
 </tr>
+
 <tr>
-<td align="left">  max</td>
+<td align="left">&emsp;&emsp;max</td>
 <td align="center">9.23</td>
 <td align="center">6.15</td>
 </tr>
+
 <tr>
-<td align="left"> 95th percentile</td>
+<td align="left">&emsp;95th percentile</td>
 <td align="center">0.28</td>
 <td align="center">0.25</td>
 </tr>
 </tbody>
 </table>
+
 <h2 id="考察">考察</h2>
-<p>正直、少し意外な結果だった。あんなメモリを使っているため、CCX間通信のオーバーヘッドが大きく、<em>6-Thread 1CCX</em> のが勝つのではないかと思っていた。レイテンシだけではなく一部性能でももしかしたらと。 <br>
+
+<p>正直、少し意外な結果だった。あんなメモリを使っているため、CCX間通信のオーバーヘッドが大きく、<em>6-Thread 1CCX</em> のが勝つのではないかと思っていた。レイテンシだけではなく一部性能でももしかしたらと。<br />
 だが <em>6-Core 2CCX</em> が勝った。やはり物理コアは正義か。</p>
-<p>byte-unixbench では <code>Process Creation</code> のみ <em>6-Thread 1CCX</em> が勝っているが、これはテストがメモリ帯域幅を反映する傾向にあり、メモリ割り当てではCPUのキャッシュが効きにくいため、CCX間通信が発生する <em>6-Core 2CCX</em> の方が遅くなった……ということなのだろうか。<br>
-<a href="https://github.com/akopytov/sysbench">sysbench</a> と <a href="https://github.com/jeffhammond/STREAM">stream</a> でもメモリ帯域を計測したところ、sysbench では <em>6-Thread 1CCX</em> が広いメモリ帯域を示したが、stream では逆に <em>6-Core 2CCX</em> が勝った。<br>
-しかし stream では差が2%程しかなかったのに対し、sysbench は read で約36%、write で約23%の差が見られた。<br>
-また、レイテンシの点では <em>6-Core 2CCX</em> の方が小さい結果となった。<br>
-CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの部分が原因となっているかは今後の課題としたい。<br>
-思いつくのは、CCX間のトラフィックでInfinityFabric内の帯域が圧迫され、結果メモリ帯域が若干小さくなる、とかだろうか。<br>
+
+<p>byte-unixbench では <code>Process Creation</code> のみ <em>6-Thread 1CCX</em> が勝っているが、これはテストがメモリ帯域幅を反映する傾向にあり、メモリ割り当てではCPUのキャッシュが効きにくいため、CCX間通信が発生する <em>6-Core 2CCX</em> の方が遅くなった……ということなのだろうか。<br />
+<a href="https://github.com/akopytov/sysbench" rel="noreferrer" target="_blank">sysbench</a> と <a href="https://github.com/jeffhammond/STREAM" rel="noreferrer" target="_blank">stream</a> でもメモリ帯域を計測したところ、sysbench では <em>6-Thread 1CCX</em> が広いメモリ帯域を示したが、stream では逆に <em>6-Core 2CCX</em> が勝った。<br />
+しかし stream では差が2%程しかなかったのに対し、sysbench は read で約36%、write で約23%の差が見られた。<br />
+また、レイテンシの点では <em>6-Core 2CCX</em> の方が小さい結果となった。<br />
+CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの部分が原因となっているかは今後の課題としたい。<br />
+思いつくのは、CCX間のトラフィックでInfinityFabric内の帯域が圧迫され、結果メモリ帯域が若干小さくなる、とかだろうか。<br />
 より転送速度が高いメモリであれば、InfinityFabricの速度も向上するため、その差が縮まるといった結果が見られるかもしれない。</p>
-<p>sysbench では <em>6-Thread 1CCX</em> がレイテンシにおいて、<code>max</code>、<code>95th percentile</code> の値が <em>6-Core 2CCX</em> より小さいが、 <code>events/s</code> では <em>6-Thread 1CCX</em> が負けている。<br>
+
+<p>sysbench では <em>6-Thread 1CCX</em> がレイテンシにおいて、<code>max</code>、<code>95th percentile</code> の値が <em>6-Core 2CCX</em> より小さいが、 <code>events/s</code> では <em>6-Thread 1CCX</em> が負けている。<br />
 1CCX内に収まることで、確かにレイテンシが短くなったが、性能に影響が出る程ではない、またはリソースの競合が発生したか。</p>
+
 <p>それと気をつけたいのは、今回の検証はCCXを跨ぐ場合のオーバーヘッドがどれだけあるかを確かめるのが主であり、SMTの効果の検証ではないということだ。それなら <em>6-Core/6-Thread</em> と <em>6-Core/12-Thread</em> を比較するのが適当だろう。</p>
+
 <h2 id="結論">結論</h2>
-<p>結論として、CCX間通信にオーバーヘッドがあっても、それはSMTによる論理コアで処理するより性能への影響はずっと小さく、物理コアに割り振るメリットで容易にカバーが可能と言える。<br>
+
+<p>結論として、CCX間通信にオーバーヘッドがあっても、それはSMTによる論理コアで処理するより性能への影響はずっと小さく、物理コアに割り振るメリットで容易にカバーが可能と言える。<br />
 ただし、メモリ帯域に関してはその限りではない。</p>
-<p><em>Zen 2</em> アーキテクチャであれば、ロード/ストアユニットの増設、L3キャッシュの増量、同CCD内のCCXでもI/Oダイ経由する、といったことからもう少し違う結果、差となるかもしれない。<br>
+
+<p><em>Zen 2</em> アーキテクチャであれば、ロード/ストアユニットの増設、L3キャッシュの増量、同CCD内のCCXでもI/Oダイ経由する、といったことからもう少し違う結果、差となるかもしれない。<br />
 そういった点を踏まえて検証してみたいが、2018年発売のRyzen 5 2600を今になって検証しているのだから、<em>Zen 2</em> を試せるのは来年あたりだろうか。</p>
-<section class="footnotes" role="doc-endnotes">
-<hr>
+<div class="footnotes">
+
+<hr />
+
 <ol>
-<li id="fn:1" role="doc-endnote">
-<p><a href="https://linux.die.net/man/1/taskset">taskset(1): retrieve/set process&rsquo;s CPU affinity - Linux man page</a> <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
-</li>
+<li id="fn:1"><a href="https://linux.die.net/man/1/taskset" rel="noreferrer" target="_blank">taskset(1): retrieve/set process&rsquo;s CPU affinity &ndash; Linux man page</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
 </ol>
-</section>
+</div>
 </article>
 
 		</div>

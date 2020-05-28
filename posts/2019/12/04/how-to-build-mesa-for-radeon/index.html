@@ -247,99 +247,101 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Radeon向けMesaビルド方法</h1><p><a href="https://dri.freedesktop.org/wiki/Building/">https://dri.freedesktop.org/wiki/Building/</a>
-を元に、なんやかんやである程度確立させたMesaのビルド方法をまとめてみた。<br>
+    <h1>Radeon向けMesaビルド方法</h1>
+
+<p><a href="https://dri.freedesktop.org/wiki/Building/" rel="noreferrer" target="_blank">https://dri.freedesktop.org/wiki/Building/</a>
+を元に、なんやかんやである程度確立させたMesaのビルド方法をまとめてみた。<br />
 私の環境がDebianなため、基本Debian/Ubuntu向けとなる。</p>
+
 <p><strong>このサイトを参考にコマンドを実行し、何かしらの損害が発生したとしても筆者は責任は持たない</strong>ことを留意していただきたい。</p>
+
 <h2 id="インデックス">インデックス</h2>
+
 <ul>
 <li><a href="#libdrm">libdrm</a></li>
 <li><a href="#mesa">Mesa</a></li>
 </ul>
+
 <h2 id="libdrm">libdrm</h2>
-<p><a href="https://blog.coelacanth-dream.com/posts/2019/11/29/radeonsi-enable-gl4_6">RadeonSIでOpenGL 4.6がサポート</a>でも書いたが、最新版のMesaをビルドするにはバージョン2.4.99以上のlibdrmが必要となる。<br>
-厳密には、mesa-19.2.6では<strong>2.4.99</strong>、git、mesa-19.3.0-rc5では<strong>2.4.100</strong>だが、<br>
+
+<p><a href="https://blog.coelacanth-dream.com/posts/2019/11/29/radeonsi-enable-gl4_6">RadeonSIでOpenGL 4.6がサポート</a>でも書いたが、最新版のMesaをビルドするにはバージョン2.4.99以上のlibdrmが必要となる。<br />
+厳密には、mesa-19.2.6では<strong>2.4.99</strong>、git、mesa-19.3.0-rc5では<strong>2.4.100</strong>だが、<br />
 どうせなら最新版の<strong>2.4.100</strong>をビルド、インストールしてしまった方がいい。</p>
-<p>まず、下記リンク内からダウンロード、展開する。<br>
-<a href="https://lists.x.org/archives/xorg-announce/2019-October/003028.html">[ANNOUNCE] libdrm 2.4.100</a></p>
+
+<p>まず、下記リンク内からダウンロード、展開する。<br />
+<a href="https://lists.x.org/archives/xorg-announce/2019-October/003028.html" rel="noreferrer" target="_blank">[ANNOUNCE] libdrm 2.4.100</a></p>
+
 <p>次に以下のコマンドでlibdrmのビルドに必要なパッケージをインストールする。</p>
-<pre><code># apt build-dep libdrm
-</code></pre>
-<p>そしてビルドツールだが、Meson、Ninjaが推奨となっている。<br>
+<pre><code># apt build-dep libdrm</code></pre>
+<p>そしてビルドツールだが、Meson、Ninjaが推奨となっている。<br />
 これはMesaも同じだ。</p>
+
 <p>Mesonの使い方は簡単で、</p>
-<pre><code>$ meson [適当なディレクトリ名]
-</code></pre>
-<p>とやるだけで準備は済む。<br>
-オプションを変えるには、[適当なディレクトリ名]の後に -D を付けてからオプション名、= をやりオプションに応じた文字列/真偽値を入力する。<br>
-今後、ここで生成したディレクトリを[ディレクトリ名]と記述する。<br>
+<pre><code>$ meson [適当なディレクトリ名]</code></pre>
+<p>とやるだけで準備は済む。<br />
+オプションを変えるには、[適当なディレクトリ名]の後に -D を付けてからオプション名、= をやりオプションに応じた文字列/真偽値を入力する。<br />
+今後、ここで生成したディレクトリを[ディレクトリ名]と記述する。<br />
 オプションの一覧は、一度準備を済ませた後、</p>
-<pre><code>$ meson configure [ディレクトリ名]
-</code></pre>
-<p>とすれば、オプションの状態と共に出力される。<br>
+<pre><code>$ meson configure [ディレクトリ名]</code></pre>
+<p>とすれば、オプションの状態と共に出力される。<br />
 そのままでは見にくいため、</p>
-<pre><code>$ meson configure [ディレクトリ名] &gt; meson-configure.txt
-</code></pre>
+<pre><code>$ meson configure [ディレクトリ名] &gt; meson-configure.txt</code></pre>
 <p>のようにして一度テキストファイルに出力し、エディタ等で開くと見やすくなる。</p>
 <pre><code>オプションの変更例:
-$ meson reconfigure [ディレクトリ名] -Damdgpu=true -Dnouveau=false
-</code></pre>
-<p>そこまでビルドの規模は大きくないため、わざわざ削る必要はあまりなかったりする。<br>
-コンパイラの最適化設定は、 -Dc_args=&rdquo;[最適化フラグ]&rdquo; 。<br>
-Debug周りがそのままだと有効にされ、性能が落ちると言われるが、libdrmでは気にする必要はない、と思う。<br>
+$ meson reconfigure [ディレクトリ名] -Damdgpu=true -Dnouveau=false</code></pre>
+<p>そこまでビルドの規模は大きくないため、わざわざ削る必要はあまりなかったりする。<br />
+コンパイラの最適化設定は、 -Dc_args=&rdquo;[最適化フラグ]&rdquo; 。<br />
+Debug周りがそのままだと有効にされ、性能が落ちると言われるが、libdrmでは気にする必要はない、と思う。<br />
 肝心のビルドをするには、</p>
-<pre><code>$ ninja -C [ディレクトリ名] -j [並列数]
-</code></pre>
+<pre><code>$ ninja -C [ディレクトリ名] -j [並列数]</code></pre>
 <p>そしてビルドが完了したら、</p>
-<pre><code># ninja -C [ディレクトリ名] install
-</code></pre>
+<pre><code># ninja -C [ディレクトリ名] install</code></pre>
 <p>でインストールされる。</p>
+
 <h2 id="mesa">Mesa</h2>
+
 <p>これも事前に</p>
-<pre><code># apt build-dep mesa
-</code></pre>
-<p>ただ、これでインストールされるのは、Debian/Ubuntuの公式レポジトリにて配布しているバージョンのMesaをビルドするのに必要なパッケージなため、<br>
-最新版をビルドするには追加で必要なものもある。<br>
-必須という訳ではないが、 libzstd-dev がシェーダーキャッシュに使われるためインストールするのをオススメする。<br>
+<pre><code># apt build-dep mesa</code></pre>
+<p>ただ、これでインストールされるのは、Debian/Ubuntuの公式レポジトリにて配布しているバージョンのMesaをビルドするのに必要なパッケージなため、<br />
+最新版をビルドするには追加で必要なものもある。<br />
+必須という訳ではないが、 libzstd-dev がシェーダーキャッシュに使われるためインストールするのをオススメする。<br />
 libdrm同様、</p>
-<pre><code>$ meson [適当なディレクトリ名]
-</code></pre>
-<p>で準備はされるが、そのままだといろいろと問題が出てくる。<br>
-コンパイラにgccが使われたり、llvm-configが/usr/bin下のものになってたり、デバッグ機能が有効で性能が落ちたり、ビルドされるものが多く、時間がかかったり。<br>
+<pre><code>$ meson [適当なディレクトリ名]</code></pre>
+<p>で準備はされるが、そのままだといろいろと問題が出てくる。<br />
+コンパイラにgccが使われたり、llvm-configが/usr/bin下のものになってたり、デバッグ機能が有効で性能が落ちたり、ビルドされるものが多く、時間がかかったり。<br />
 これらの解決方法は簡潔に書く。</p>
+
 <p>コンパイラにclang-Xを使うには、（Xにはclangのバージョンを表す数字が入る）</p>
-<pre><code>$ CC=&quot;clang-X&quot; CXX=&quot;clang++-X&quot;
-</code></pre>
+<pre><code>$ CC=&#34;clang-X&#34; CXX=&#34;clang++-X&#34;</code></pre>
 <p>llvm-configをclangのバージョンと合わせるには、custom-llvm.iniといったファイルを作成し、そこへ</p>
 <pre><code>[binaries]
-llvm-config = '/usr/local/bin/llvm/llvm-config'
-</code></pre>
+llvm-config = &#39;/usr/local/bin/llvm/llvm-config&#39;</code></pre>
 <p>のようにしてllvm-configのパスを記述、mesonの実行時に、</p>
-<pre><code>--native-file custom-llvm.ini
-</code></pre>
-<p>のようにする。<br>
-<a href="https://www.mesa3d.org/meson.html#advanced">Compilation and Installation Using Meson - Mesa3D</a></p>
+<pre><code>--native-file custom-llvm.ini</code></pre>
+<p>のようにする。<br />
+<a href="https://www.mesa3d.org/meson.html#advanced" rel="noreferrer" target="_blank">Compilation and Installation Using Meson &ndash; Mesa3D</a></p>
+
 <p>デバッグ機能を無効にするには、オプションで buildtype=plain、b_ndebug=trueを追加する。-Dを忘れずに。</p>
+
 <p>ビルドされるものを減らすには、</p>
-<pre><code>$ meson configure [ディレクトリ名] &gt; meson-configure.txt
-</code></pre>
+<pre><code>$ meson configure [ディレクトリ名] &gt; meson-configure.txt</code></pre>
 <p>を見ながら、取捨選択する……というのは投げやり過ぎるのでRadeon向けの設定を最低限書くと、</p>
-<pre><code>-Ddri-drivers=&quot;r100,r200&quot; -Dgallium-drivers=&quot;radeonsi,r300,r600&quot; -Dvulkan-drivers=&quot;amd&quot;
-</code></pre>
-<p>となる。GCN以上の世代のRadeonを使っているのならradeonsiだけで良いかもしれない。<br>
-あとはgallium-openclなんかも基本削る。<br>
+<pre><code>-Ddri-drivers=&#34;r100,r200&#34; -Dgallium-drivers=&#34;radeonsi,r300,r600&#34; -Dvulkan-drivers=&#34;amd&#34;</code></pre>
+<p>となる。GCN以上の世代のRadeonを使っているのならradeonsiだけで良いかもしれない。<br />
+あとはgallium-openclなんかも基本削る。<br />
 OpenCLを使いたいなら、Mesaとは別にROCmかAMDGPU-PROをインストールしてRadeonを活かした方がいい。</p>
+
 <p>ここまでを踏まえると、このようになる。</p>
-<pre><code>CC=&quot;clang-X&quot; CXX=&quot;clang++-X&quot; meson  [ディレクトリ名] -Dbackend=ninja -Dbuildtype=plain -Ddri-drivers=&quot;r100,r200&quot; -Dgallium-drivers=&quot;radeonsi,r300,r600&quot; -Dvulkan-drivers=&quot;amd&quot; -Dgallium-opencl=disabled --native-file custom-llvm.ini
-</code></pre>
-<p>それでもそれなりに時間はかかるため、気長に待とう。<br>
+<pre><code>CC=&#34;clang-X&#34; CXX=&#34;clang++-X&#34; meson  [ディレクトリ名] -Dbackend=ninja -Dbuildtype=plain -Ddri-drivers=&#34;r100,r200&#34; -Dgallium-drivers=&#34;radeonsi,r300,r600&#34; -Dvulkan-drivers=&#34;amd&#34; -Dgallium-opencl=disabled --native-file custom-llvm.ini</code></pre>
+<p>それでもそれなりに時間はかかるため、気長に待とう。<br />
 コンパイラへの最適化フラグ等には特に触れない。</p>
-<p>インストール場所（prefix）だが、<a href="https://dri.freedesktop.org/wiki/Building/">https://dri.freedesktop.org/wiki/Building/</a>にあるように、ホームディレクトリ下に適当なディレクトリを作成、<br>
-そしてそこにインストール、環境変数設定の方がトラブルを回避しやすく、気軽に試せる。<br>
-ただ、glxinfo や vainfo の結果を見るだけならスクリプトを書いたり、.bashrcの編集でいいのだが、それではデスクトップ上のメニューからアプリケーションを起動した際に反映されない。<br>
-すべてのアプリをターミナルから起動する訳にもいかないので、私は .xsessionrc をに記述するようにしている。<br>
+
+<p>インストール場所（prefix）だが、<a href="https://dri.freedesktop.org/wiki/Building/" rel="noreferrer" target="_blank">https://dri.freedesktop.org/wiki/Building/</a>にあるように、ホームディレクトリ下に適当なディレクトリを作成、<br />
+そしてそこにインストール、環境変数設定の方がトラブルを回避しやすく、気軽に試せる。<br />
+ただ、glxinfo や vainfo の結果を見るだけならスクリプトを書いたり、.bashrcの編集でいいのだが、それではデスクトップ上のメニューからアプリケーションを起動した際に反映されない。<br />
+すべてのアプリをターミナルから起動する訳にもいかないので、私は .xsessionrc をに記述するようにしている。<br />
 実際には、</p>
-<pre><code>PROJECT=&quot;[ホーム]/gfx/11-29-0351_20.0.0-devel&quot;
+<pre><code>PROJECT=&#34;[ホーム]/gfx/11-29-0351_20.0.0-devel&#34;
 PROJECT_LIB=$PROJECT/lib/x86_64-linux-gnu
 export LD_LIBRARY_PATH=$PROJECT_LIB:$LD_LIBRARY_PATH
 export PKG_CONFIG_PATH=$PROJECT_LIB/pkgconfig:$PKG_CONFIG_PATH
@@ -348,15 +350,15 @@ export EGL_DRIVERS_PATH=$PROJECT_LIB:$EGL_DRIVERS_PATH
 export LIBVA_DRIVERS_PATH=$PROJECT_LIB/dri:$LIBVA_DRIVERS_PATH
 export VK_ICD_FILENAMES=$PROJECT/share/vulkan/icd.d/radeon_icd.x86_64.json:$VK_ICD_FILENAMES
 export PATH=$PROJECT/bin:$PATH
-LIBVDPAU_DRIVERS_PATH=$PROJECT_LIB/vdpau:$LIBVDPAU_DRIVERS_PATH
-</code></pre>
-<p>となる。こうすればFirefoxといったアプリにもちゃんと反映される。<br>
+LIBVDPAU_DRIVERS_PATH=$PROJECT_LIB/vdpau:$LIBVDPAU_DRIVERS_PATH</code></pre>
+<p>となる。こうすればFirefoxといったアプリにもちゃんと反映される。<br />
 Mesaビルド一連の流れはbash シェルスクリプトで実行してるが、人様に見せられるようなクオリティではないので公開は控える。</p>
-<p>とはいえこれでもまだ不十分であり、Xorgを再起動させる必要がある。<br>
+
+<p>とはいえこれでもまだ不十分であり、Xorgを再起動させる必要がある。<br />
 システムごと再起動させるのはだるいので、私は</p>
-<pre><code># systemctl restart [ディスプレイマネージャー]
-</code></pre>
+<pre><code># systemctl restart [ディスプレイマネージャー]</code></pre>
 <p>としている。</p>
+
 <p>最後に、最新版のMesaを自力でビルドすることの意義だが、最新の機能、ハードウェアを試せるというロマンに尽きると思う。</p>
 </article>
 

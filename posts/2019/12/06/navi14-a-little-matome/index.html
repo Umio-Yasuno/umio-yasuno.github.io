@@ -247,47 +247,64 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Navi14のちょっとしたまとめ</h1><p>別タイトル「時間稼ぎ」<br>
+    <h1>Navi14のちょっとしたまとめ</h1>
+
+<p>別タイトル「時間稼ぎ」<br />
 Navi14のあまり大したことのない、新鮮でもない情報まとめ。</p>
+
 <h3 id="navi14-スペック">Navi14 スペック</h3>
-<p>AMDGPUのハードウェア抽象化に使われるライブラリ、PAL（Platform Abstraction Library）にNavi14の情報が追加された。<br>
-<a href="https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/os/nullDevice/ndDevice.cpp#L950">https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/os/nullDevice/ndDevice.cpp#L950</a></p>
-<p>PALにはハードウェアの詳細なスペックが記述されており、私的にはとてもありがたい。<br>
+
+<p>AMDGPUのハードウェア抽象化に使われるライブラリ、PAL（Platform Abstraction Library）にNavi14の情報が追加された。<br />
+<a href="https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/os/nullDevice/ndDevice.cpp#L950" rel="noreferrer" target="_blank">https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/os/nullDevice/ndDevice.cpp#L950</a></p>
+
+<p>PALにはハードウェアの詳細なスペックが記述されており、私的にはとてもありがたい。<br />
 具体的には、ShaderEngine（以後SE）数、SEあたりのShaderArray（以後SA）数、SAあたりのRenderBackend数、SAあたりのCU数、そしてL2キャッシュのブロック数（ブロックあたり256KB）がある。</p>
-<p>そこにNavi14が追加されたが、特に目新しい情報はなく、以前画像から推測したスペックが確定したくらい。<br>
-<a href="https://blog.coelacanth-dream.com/posts/2019/11/04/navi14-matome/">Navi14 Matome</a><br>
+
+<p>そこにNavi14が追加されたが、特に目新しい情報はなく、以前画像から推測したスペックが確定したくらい。<br />
+<a href="https://blog.coelacanth-dream.com/posts/2019/11/04/navi14-matome/">Navi14 Matome</a><br />
 （見直したところ、今頃表内のSP数が間違っていることに気付いたため修正した。申し訳ない……）</p>
-<h3 id="ropの犠牲なくメモリバス幅削減l2キャッシュ一部無効">ROPの犠牲なくメモリバス幅削減、L2キャッシュ一部無効</h3>
-<p>少し前の<a href="https://lists.freedesktop.org/archives/amd-gfx/">The amd-gfx Archives</a>を漁ったところ、GFX10（Navi1x）向けのあるパッチを見つけた。<br>
-<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040619.html">[PATCH] drm/amdgpu: return tcc_disabled_mask to userspace</a><br>
-UMD（User Mode Driver）にてL2キャッシュを一部を無効可能にするためのものと思われる。<br>
-パッチレビューでも突っ込まれているが、L2キャッシュにはメモリコントローラーが接続され、メモリアドレスを保存するため、<br>
+
+<h3 id="ropの犠牲なくメモリバス幅削減-l2キャッシュ一部無効">ROPの犠牲なくメモリバス幅削減、L2キャッシュ一部無効</h3>
+
+<p>少し前の<a href="https://lists.freedesktop.org/archives/amd-gfx/" rel="noreferrer" target="_blank">The amd-gfx Archives</a>を漁ったところ、GFX10（Navi1x）向けのあるパッチを見つけた。<br />
+<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040619.html" rel="noreferrer" target="_blank">[PATCH] drm/amdgpu: return tcc_disabled_mask to userspace</a><br />
+UMD（User Mode Driver）にてL2キャッシュを一部を無効可能にするためのものと思われる。<br />
+パッチレビューでも突っ込まれているが、L2キャッシュにはメモリコントローラーが接続され、メモリアドレスを保存するため、<br />
 普通だったら一部でも無効にしたりはしない。</p>
+
 <p>だが普通ではないパターンがあり、それはメモリバス幅を削減した下位モデルだ。</p>
+
 <h4 id="解説">解説</h4>
-<p>NVIDIAは以前、こっそりとGTX1050の3GBモデルをリリースした。<br>
-GTX1050に使われるGP107はメモリバス幅を128-bitまでしか持たないため、3GBという仕様を満たすには96-bitに減らし、<br>
-GDDR5 8Gbit x3という構成を取る他ない。<br>
-そしてメモリバス幅削減はメモリコントローラーの一部無効化を意味し、繋がれたL2キャッシュも自然と無効化される。<br>
-これだけで済めばいいのだが、L2キャッシュにはROP（Render Output Unit）が繋がれているため、ROPも一部無効にされてしまう。<br>
+
+<p>NVIDIAは以前、こっそりとGTX1050の3GBモデルをリリースした。<br />
+GTX1050に使われるGP107はメモリバス幅を128-bitまでしか持たないため、3GBという仕様を満たすには96-bitに減らし、<br />
+GDDR5 8Gbit x3という構成を取る他ない。<br />
+そしてメモリバス幅削減はメモリコントローラーの一部無効化を意味し、繋がれたL2キャッシュも自然と無効化される。<br />
+これだけで済めばいいのだが、L2キャッシュにはROP（Render Output Unit）が繋がれているため、ROPも一部無効にされてしまう。<br />
 ROPが少なくなるというのは、グラフィック処理におけるスループットが下がることを意味するため、GPUとしては中々に痛い。</p>
-<p>それを見越してか、NVIDIAはGTX1050 3GBのCUDAコア数をGTX1050Tiと同数にし、クロックはGTX1050Tiよりも引き上げたが、<br>
-それでも実際の性能ではGTX1050Ti 4GBに劣る結果となった。<br>
-<a href="https://www.tomshardware.com/reviews/geforce-gtx-1050-3gb-benchmarks,5654-3.html">Nvidia GeForce GTX 1050 3GB Review: (Mostly) Faster Than 1050 2GB - Tom&rsquo;s Hardware</a></p>
+
+<p>それを見越してか、NVIDIAはGTX1050 3GBのCUDAコア数をGTX1050Tiと同数にし、クロックはGTX1050Tiよりも引き上げたが、<br />
+それでも実際の性能ではGTX1050Ti 4GBに劣る結果となった。<br />
+<a href="https://www.tomshardware.com/reviews/geforce-gtx-1050-3gb-benchmarks,5654-3.html" rel="noreferrer" target="_blank">Nvidia GeForce GTX 1050 3GB Review: (Mostly) Faster Than 1050 2GB &ndash; Tom&rsquo;s Hardware</a></p>
+
 <p>こうした問題があるからNVIDIAはこっそりとリリースしたのだろうし、NVIDIAもAMDも基本CUDAコア、CUを削減する方向で同一ダイにおけるモデルの差別化をおこなってきたと思われる。</p>
-<p>（追記:2020/01/02）RX 640、RX 630ではメモリバス幅が64-bitでありながら16ROP構成だが、これは恐らくそれぞれのメモリチップを16-bitで接続していると思われる。<br>
-その証拠に64-bit幅なのに最大メモリサイズが4GBとなっている。GDDR5では8Gbit（1GB）チップまでで、16Gbit（2GB）チップの製品はないはず。<br>
-GDDR5では、16-bitでのメモリコントローラー、メモリチップ間接続がサポートされており、主にメモリバス幅そのままでメモリ容量を倍にしたい時にこの機能が使われる。<br>
-メモリ容量を増やすことなく16-bit接続することのメリットは、製品としてそこまでのメモリ帯域は必要はないが容量は欲しい際、消費電力（熱）を減らすことができることだと思われる。<br>
+
+<p>（追記:2020/01/02）RX 640、RX 630ではメモリバス幅が64-bitでありながら16ROP構成だが、これは恐らくそれぞれのメモリチップを16-bitで接続していると思われる。<br />
+その証拠に64-bit幅なのに最大メモリサイズが4GBとなっている。GDDR5では8Gbit（1GB）チップまでで、16Gbit（2GB）チップの製品はないはず。<br />
+GDDR5では、16-bitでのメモリコントローラー、メモリチップ間接続がサポートされており、主にメモリバス幅そのままでメモリ容量を倍にしたい時にこの機能が使われる。<br />
+メモリ容量を増やすことなく16-bit接続することのメリットは、製品としてそこまでのメモリ帯域は必要はないが容量は欲しい際、消費電力（熱）を減らすことができることだと思われる。<br />
 （追記終了）</p>
-<br>
-だがRDNAではROPが増設されたL1キャッシュに接続されるようになり、メモリバス幅を削減（= L2キャッシュの一部無効）してもROPを犠牲にする必要がなくなった。  
-これならグラフィック性能の低下を抑えられる。  
-上記パッチはそれをドライバに伝えるためのものだろう。  
-<p>実際、AMDはNavi14のバス幅を128-bitから96-bitに削減したモデル、RX 5300Mのスペックを公表しているが、ROPは32と他のNavi14を使ったモデルと変わりない。<br>
-<a href="https://www.amd.com/en/product/8976">AMD Radeon™ RX 5300M</a></p>
-<p>これはNavi10でもメモリバス幅を削減したモデルの可能性を示唆する。<br>
-<em><strong>もし</strong></em>、やるとするならば128-bitと256-bitの中間、192-bitあたりが妥当だろうか。</p>
+
+<p><br>
+だがRDNAではROPが増設されたL1キャッシュに接続されるようになり、メモリバス幅を削減（= L2キャッシュの一部無効）してもROPを犠牲にする必要がなくなった。<br />
+これならグラフィック性能の低下を抑えられる。<br />
+上記パッチはそれをドライバに伝えるためのものだろう。</p>
+
+<p>実際、AMDはNavi14のバス幅を128-bitから96-bitに削減したモデル、RX 5300Mのスペックを公表しているが、ROPは32と他のNavi14を使ったモデルと変わりない。<br />
+<a href="https://www.amd.com/en/product/8976" rel="noreferrer" target="_blank">AMD Radeon™ RX 5300M</a></p>
+
+<p>これはNavi10でもメモリバス幅を削減したモデルの可能性を示唆する。<br />
+<strong><em>もし</em></strong>、やるとするならば128-bitと256-bitの中間、192-bitあたりが妥当だろうか。</p>
 </article>
 
 		</div>

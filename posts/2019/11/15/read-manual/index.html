@@ -247,21 +247,25 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>デフォルト放置は時に悪、マニュアル読まずは常に悪</h1><p>まったくもってその通りだと思う。<br>
+    <h1>デフォルト放置は時に悪、マニュアル読まずは常に悪</h1><p>まったくもってその通りだと思う。<br />
 経緯としてはまずGithubのコミットログだ。</p>
-<p>私はコミットログを更新履歴として利用しようと考えていたのだが、<br>
-いざ見るとcss部のリンクが毎回変わり、結果すべてのindex.htmlが書き換わることとなり、<br>
+
+<p>私はコミットログを更新履歴として利用しようと考えていたのだが、<br />
+いざ見るとcss部のリンクが毎回変わり、結果すべてのindex.htmlが書き換わることとなり、<br />
 それがすべて表示されるため、とても更新履歴には使えなかった。</p>
-<p>原因として、このサイトに使っている<a href="https://github.com/bake/solar-theme-hugo">Solar-Theme</a>のbaseof.htmlが、</p>
-<pre><code> {{ $style := resources.Get (printf &quot;css/colors-%s.scss&quot; (.Site.Params.scheme | default &quot;dark&quot;)) | toCSS | minify | fingerprint }}
- &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ $style.Permalink }}&quot;&gt;
-</code></pre>
+
+<p>原因として、このサイトに使っている<a href="https://github.com/bake/solar-theme-hugo" rel="noreferrer" target="_blank">Solar-Theme</a>のbaseof.htmlが、</p>
+<pre><code> {{ $style := resources.Get (printf &#34;css/colors-%s.scss&#34; (.Site.Params.scheme | default &#34;dark&#34;)) | toCSS | minify | fingerprint }}
+ &lt;link rel=&#34;stylesheet&#34; href=&#34;{{ $style.Permalink }}&#34;&gt;</code></pre>
 <p>となっており、scssをcssに変換する際、パイプライン最後段でフィンガープリントを付与するようになっていた。</p>
+
 <p>そこをさくっと削除し、css名は固定され、平穏が訪れた。</p>
-<p>それと同時に、自動的に生成される tags と categories を無効化、削除した。<br>
+
+<p>それと同時に、自動的に生成される tags と categories を無効化、削除した。<br />
 理由としては、tagsがこのサイトで一番容量が多いディレクトリと化していた。
-自分で使おうにも目的のタグに辿り着きにくく、必要ないと感じられる。<br>
+自分で使おうにも目的のタグに辿り着きにくく、必要ないと感じられる。<br />
 自前で tags を用意するのか、諦めてまた自動的に生成させるかはまだわからない。</p>
+
 <p>あとテーマ、というよりcssも出来れば誰も見られていない内に自分で作っておきたい。</p>
 </article>
 

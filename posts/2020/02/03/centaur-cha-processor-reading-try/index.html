@@ -247,324 +247,332 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>Centaur CHAプロセッサーについて読んでみたかった</h1><p>かつてx86 CPU市場にてある程度の存在感を示していたVIA/Centaur Technologyが、新たに推論用のアクセラレーターを組み込んだサーバー向けCPUを発表し、話題になっていたが、<br>
+    <h1>Centaur CHAプロセッサーについて読んでみたかった</h1>
+
+<p>かつてx86 CPU市場にてある程度の存在感を示していたVIA/Centaur Technologyが、新たに推論用のアクセラレーターを組み込んだサーバー向けCPUを発表し、話題になっていたが、<br />
 先日、Centaur Technologyが資料の一部公開とRedditのスレッドで質疑応答を行ない、より詳細が明らかになったため、紹介してみようと思い立った次第だ。</p>
+
 <ul>
-<li><a href="https://www.reddit.com/r/hardware/comments/ep0lf4/x86_cpu_design_house_centaur_technology_will_host/">x86 CPU Design House Centaur Technology will host an AMA next week, Thursday Jan 23, 2020 @ 12:00pm-3:00pm CST - r/hardware Reddit</a></li>
-<li><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf">MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a></li>
-<li><a href="https://centtech.com/wp-content/uploads/PRSlides_1118_Release.pdf">Centaur’s x86 SoC with AI Coprocessor Technology - PRSlides_1118_Release.pdf</a></li>
+<li><a href="https://www.reddit.com/r/hardware/comments/ep0lf4/x86_cpu_design_house_centaur_technology_will_host/" rel="noreferrer" target="_blank">x86 CPU Design House Centaur Technology will host an AMA next week, Thursday Jan 23, 2020 @ 12:00pm-3:00pm CST &ndash; r/hardware Reddit</a><br /></li>
+<li><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf" rel="noreferrer" target="_blank">MPR Article Template &ndash; MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a><br /></li>
+<li><a href="https://centtech.com/wp-content/uploads/PRSlides_1118_Release.pdf" rel="noreferrer" target="_blank">Centaur’s x86 SoC with AI Coprocessor Technology &ndash; PRSlides_1118_Release.pdf</a><br /></li>
 </ul>
-<p>ただ、最初に断りを入れさせていただくと、自分はテクニカルライターではなく、ブロガーと言うのも怪しい存在だ。<br>
-そのため、内容の正確性には責任を持てない。<br>
-知識が及ばない部分や、資料を読むのが一番だと判断した部分は意図的に飛ばしてもいる。<br>
+
+<p>ただ、最初に断りを入れさせていただくと、自分はテクニカルライターではなく、ブロガーと言うのも怪しい存在だ。<br />
+そのため、内容の正確性には責任を持てない。<br />
+知識が及ばない部分や、資料を読むのが一番だと判断した部分は意図的に飛ばしてもいる。<br />
 だが責任を完全に放棄した訳ではないため、間違っていた場合は連絡をくださると嬉しい。</p>
+
 <p>解説にはWikiChipをオススメしたい。</p>
+
 <ul>
-<li><a href="https://fuse.wikichip.org/news/3099/centaur-unveils-its-new-server-class-x86-core-cns-adds-avx-512/">Centaur Unveils Its New Server-Class x86 Core: CNS; Adds AVX-512 | WikiChip Fuse</a></li>
-<li><a href="https://fuse.wikichip.org/news/3256/centaur-new-x86-server-processor-packs-an-ai-punch/comment-page-1/">Centaur New x86 Server Processor Packs an AI Punch | WikiChip Fuse</a></li>
+<li><a href="https://fuse.wikichip.org/news/3099/centaur-unveils-its-new-server-class-x86-core-cns-adds-avx-512/" rel="noreferrer" target="_blank">Centaur Unveils Its New Server-Class x86 Core: CNS; Adds AVX-512 | WikiChip Fuse</a><br /></li>
+<li><a href="https://fuse.wikichip.org/news/3256/centaur-new-x86-server-processor-packs-an-ai-punch/comment-page-1/" rel="noreferrer" target="_blank">Centaur New x86 Server Processor Packs an AI Punch | WikiChip Fuse</a><br /></li>
 </ul>
+
 <h4 id="table-of-content">Table of Content</h4>
+
 <ul>
 <li><a href="#cns-x86-cpu">CNS (x86 CPU)</a>
+
 <ul>
-<li><a href="#%E3%83%95%E3%83%AD%E3%83%B3%E3%83%88%E3%82%A8%E3%83%B3%E3%83%89">フロントエンド</a></li>
-<li><a href="#%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89">バックエンド</a></li>
-<li><a href="#%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%82%B3%E3%83%8D%E3%82%AF%E3%83%88">インターコネクト</a></li>
-<li><a href="#%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3-spectre-meltdown">セキュリティ</a></li>
-</ul>
-</li>
+<li><a href="#フロントエンド">フロントエンド</a></li>
+<li><a href="#バックエンド">バックエンド</a></li>
+<li><a href="#インターコネクト">インターコネクト</a></li>
+<li><a href="#セキュリティ-spectre-meltdown">セキュリティ</a></li>
+</ul></li>
 <li><a href="#ncore">Ncore</a></li>
 <li><a href="#i-o">I/O</a></li>
-<li><a href="#%E3%81%9D%E3%81%AE%E4%BB%96">その他</a></li>
+<li><a href="#その他">その他</a></li>
 </ul>
+
 <h4 id="概略">概略</h4>
+
 <p>名称は、SoC全体のコードネームが<strong>CHA</strong>、x86 CPU部のマイクロアーキテクチャ名が<strong>CNS</strong>、DLA（deep-learning accelarator）部が<strong>Ncore</strong>とされている。</p>
-<p>製造プロセスはTSMC 16FFC。ダイサイズは194mm<sup>2</sup>。<br>
-CHAのx86 CPU 8コアはそれぞれL3キャッシュ 2MBを持つ。<br>
-CNSは前世代のCPUよりもはるかに高いIPCを目標に設計された。<br>
+
+<p>製造プロセスはTSMC 16FFC。ダイサイズは194mm<sup>2</sup>。<br />
+CHAのx86 CPU 8コアはそれぞれL3キャッシュ 2MBを持つ。<br />
+CNSは前世代のCPUよりもはるかに高いIPCを目標に設計された。<br />
 クロックは2.5GHz。</p>
-<p>Ncoreはデータ精度 INT8で20TOPS（trillion operations per second）のピーク性能。<br>
-NVIDIA Tensor CoreやIntel Spring Hillに見られる流行りのMACアレイではなく、SIMDエンジンで構成されるが、SIMD幅は極端に広く、4096-Byte(32,768-bit)を並列に処理できる。<br>
-NcoreアーキテクトであるGlenn Henry氏はこれを「AVX-32,768」に喩えており、これはIntelが推すAVX-512の64倍も広い。<br>
-これによりデータ精度 INT8で20TOPS（trillion operations per second）ものピーク性能を持つ。<br>
+
+<p>Ncoreはデータ精度 INT8で20TOPS（trillion operations per second）のピーク性能。<br />
+NVIDIA Tensor CoreやIntel Spring Hillに見られる流行りのMACアレイではなく、SIMDエンジンで構成されるが、SIMD幅は極端に広く、4096-Byte(32,768-bit)を並列に処理できる。<br />
+NcoreアーキテクトであるGlenn Henry氏はこれを「AVX-32,768」に喩えており、これはIntelが推すAVX-512の64倍も広い。<br />
+これによりデータ精度 INT8で20TOPS（trillion operations per second）ものピーク性能を持つ。<br />
 大量のデータをSIMDユニットに供給するため、専用のSRAM 16MBが設けられている。</p>
-<p>また2ソケットのシステムにも対応する。<br>
+
+<p>また2ソケットのシステムにも対応する。<br />
 ターゲットにはエッジサーバー、2ソケットシステムでは低コストのサーバーを想定している。</p>
+
 <h3 id="cns-x86-cpu">CNS (x86 CPU)</h3>
+
 <details>
 <summary>Centaur CNS microarchitecture</summary>
 <figure>
     <img src="https://blog.coelacanth-dream.com/image/2020/02/03/centaur-cns-microarchitecture.webp"
-         alt="出典: MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf"/> <figcaption>
-            <h4>Centaur CNS microarchitecture</h4><p>出典: <cite><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf">MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a></cite></p>
+         alt="出典: MPR Article Template &amp;ndash; MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf"/> <figcaption>
+            <h4>Centaur CNS microarchitecture</h4><p>出典: <cite><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf" rel="noreferrer" target="_blank">MPR Article Template &ndash; MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a></cite></p>
         </figcaption>
 </figure>
 
 </details>
+
 <h4 id="フロントエンド">フロントエンド</h4>
+
 <p>前アーキテクチャである <em>VIA Isaiah</em> から大きな前進を果たしたとし、Isaishがピークで、</p>
+
 <ul>
 <li>サイクルあたり <em>3個</em> のx86命令デコード</li>
 <li><em>7個</em> のmicro-opsをout-of-order実行</li>
 </ul>
+
 <p>を可能だったのに対し、CNSはピークで、</p>
+
 <ul>
 <li>サイクルあたり <em>4個</em> のx86命令デコード</li>
 <li><em>10個</em> のmicro-opsをout-of-order実行</li>
 </ul>
-<p>が可能となり、他にも、リオーダーウィンドウの増量、分岐予測の精度向上、スケジューラーの強化、AVX /AVX2 /AVX-512 命令のサポート、DLA（Ncore）へデータを送るための独自命令の追加が施された。<br>
+
+<p>が可能となり、他にも、リオーダーウィンドウの増量、分岐予測の精度向上、スケジューラーの強化、AVX /AVX2 /AVX-512 命令のサポート、DLA（Ncore）へデータを送るための独自命令の追加が施された。<br />
 資料中には特別記述されていないが、スケジューラーからリタイア（実行完了）可能なmicro-opsが、サイクルあたり3個から4個へ拡張されている。</p>
-<p>流れとしては、まず分岐予測段で次の命令アドレスを定め、命令キャッシュから32 Byte分を取り込む。<br>
-次にプリデコーダーが命令の境界を決め、4個のx86命令を命令キューへ送る。<br>
-デコーダーは通常サイクルあたり4個のx86命令を処理できるのだが、特定の組み合わせに対しては同時に処理できるため、最大でサイクルあたり5個のx86命令デコードが行えるとされている。<br>
-そのため資料中にあるIntelのアーキテクチャと比較した表では、x86 Decodersの行が 4-5 instr という書き方となっている。<br>
+
+<p>流れとしては、まず分岐予測段で次の命令アドレスを定め、命令キャッシュから32 Byte分を取り込む。<br />
+次にプリデコーダーが命令の境界を決め、4個のx86命令を命令キューへ送る。<br />
+デコーダーは通常サイクルあたり4個のx86命令を処理できるのだが、特定の組み合わせに対しては同時に処理できるため、最大でサイクルあたり5個のx86命令デコードが行えるとされている。<br />
+そのため資料中にあるIntelのアーキテクチャと比較した表では、x86 Decodersの行が 4-5 instr という書き方となっている。<br />
 そしてデコーダーはそれらのx86命令ををmicro-opsへ変換する。</p>
-<p>micro-opキャッシュを持たないが、これは設計スケジュールの考慮事項に基づいて追加しなかったとのことで、他の設計部分に比べると優先度が低かったのだろう。必要ないと考えている訳ではらしい。<br>
-micro-opキャッシュにヒットすれば、複雑なx86デコードをバイパスできるため、デコード性能の向上と消費電力の削減という2つのメリットを得られる。<br>
+
+<p>micro-opキャッシュを持たないが、これは設計スケジュールの考慮事項に基づいて追加しなかったとのことで、他の設計部分に比べると優先度が低かったのだろう。必要ないと考えている訳ではらしい。<br />
+micro-opキャッシュにヒットすれば、複雑なx86デコードをバイパスできるため、デコード性能の向上と消費電力の削減という2つのメリットを得られる。<br />
 持たないことがIntel、AMDのCPUと比較した時にどれくらいの差を生むかは気になるところだ。</p>
+
 <p>Intel CoreアーキテクチャやAMD Zen/2アーキテクチャのようなSMT機能は搭載されておらず、コアあたり1スレッドとなる。</p>
+
 <h4 id="バックエンド">バックエンド</h4>
-<p>MAC（multiply-accumulate, 積和演算）ユニットを含んだFP/AVXユニットが2基、3基目のFP/AVXユニットは除算と暗号化(AES)アクセラレーションを担当する。<br>
-3基のFP/AVXユニットはAVX-512をサポートしているが、256-bit幅であるため、AVX-512命令は2個のmicro-opsに分解されて実行される。<br>
-FP/AVXユニットからは2つのリードポートがレジスタファイルにあるように見えるが、積和演算には3つのソースオペランドが必要なはずだ。<br>
+
+<p>MAC（multiply-accumulate, 積和演算）ユニットを含んだFP/AVXユニットが2基、3基目のFP/AVXユニットは除算と暗号化(AES)アクセラレーションを担当する。<br />
+3基のFP/AVXユニットはAVX-512をサポートしているが、256-bit幅であるため、AVX-512命令は2個のmicro-opsに分解されて実行される。<br />
+FP/AVXユニットからは2つのリードポートがレジスタファイルにあるように見えるが、積和演算には3つのソースオペランドが必要なはずだ。<br />
 もしかしたらZenアーキテクチャのように、MACユニットを含まない3基目のポートを使用するのかもしれない。</p>
+
 <blockquote>
 <p>ZENの4つの浮動小数点/SIMD演算ユニットは、それぞれ2つのレジスタリードポートを備える。1サイクルに、各ユニットで2つのソースオペランドのリードが可能だ。しかし積和算時には、3つのソースオペランドをリードする必要がある。</p>
+
 <p>「積和算では、3つの(ソース)オペランドが必要だ。レジスタファイルから読み出す場合、リードポートが足りなくなる。そのため、ちょっとしたトリックを使っている。積和算時には、加算パイプからレジスタファイルリードポートを1つ借用している。積和算時には、加算ユニットは使っていないため、加算ユニット自体は空いている。しかし、加算ユニットにはレジスタリードポートが1つしか残らない。そのため、加算(の命令発行)はスケジューラがブロックする」(Mike Clark氏, Senior Fellow, AMD)</p>
+
+<p>(引用元: <a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1039027.html" rel="noreferrer" target="_blank">相対的に大人しい設計のAMD次世代CPU「ZEN」の浮動小数点/SIMDユニット &ndash; PC Watch</a>)</p>
 </blockquote>
-<blockquote>
-<p>(引用元: <a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1039027.html">相対的に大人しい設計のAMD次世代CPU「ZEN」の浮動小数点/SIMDユニット - PC Watch</a>)</p>
-</blockquote>
+
 <p>AVX-512のロードとストアはそれぞれ2つのmicro-opsに分解されるものの、L1 Data Cacheはサイクルあたり合計512-bitのデータを受け渡せるようになっており、将来FP/AVXユニットを512-bit幅へ拡張したりするのかもしれない。</p>
+
 <p>そしてAVX-512命令は、x86コアがNcoreへ高速に読み書きを行なうのに活かされているとのこと。</p>
+
 <h4 id="インターコネクト">インターコネクト</h4>
-<p>512-bit幅の2重リングバスの構成を取り、CPUは各コアL3 cache 2MBのスライスを経由してリングに接続される。<br>
+
+<p>512-bit幅の2重リングバスの構成を取り、CPUは各コアL3 cache 2MBのスライスを経由してリングに接続される。<br />
 CPUのクロックと同じ速度であり、理論ピーク帯域は320 GB/s (2 * 32B(256b) * 2.5[GHz] = 320 [GB/s]) となるが、データの通過に複数サイクルを要するため、使用可能なスループットは半分以下に留まる。</p>
+
 <h4 id="アーキテクチャ比較">アーキテクチャ比較</h4>
+
 <figure>
     <img src="https://blog.coelacanth-dream.com/image/2020/02/03/cpu-microarch-comparison.webp"
-         alt="出典: MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf"/> <figcaption>
-            <h4>CPU-microarchitecture comparison</h4><p>出典: <cite><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf">MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a></cite></p>
+         alt="出典: MPR Article Template &amp;ndash; MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf"/> <figcaption>
+            <h4>CPU-microarchitecture comparison</h4><p>出典: <cite><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf" rel="noreferrer" target="_blank">MPR Article Template &ndash; MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a></cite></p>
         </figcaption>
 </figure>
+
 
 <details>
 <summary>Zen/2 Architecture</summary>
 Zen/2アーキテクチャをその表のフォーマットに合わせたものが以下となるが、Zen/2アーキテクチャは整数ユニットと浮動小数点ユニットでスケジューラーが分けられており、単純に比較は出来ないことを留意したい。  
-<table>
-<thead>
-<tr>
-<th align="left"></th>
-<th align="center">AMD Zen</th>
-<th align="center">AMD Zen2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="left">Threads/CPU</td>
-<td align="center">2 threads</td>
-<td align="center">2 threads</td>
-</tr>
-<tr>
-<td align="left">x86 Decoders</td>
-<td align="center">4 instr</td>
-<td align="center">4 instr</td>
-</tr>
-<tr>
-<td align="left">Instr Extensions</td>
-<td align="center">AVX2</td>
-<td align="center">AVX2</td>
-</tr>
-<tr>
-<td align="left">Micro-op Cache</td>
-<td align="center">2048 uops</td>
-<td align="center">4096 uops</td>
-</tr>
-<tr>
-<td align="left">Max Ops/Cycle</td>
-<td align="center">10 (6 int, 4 FP)</td>
-<td align="center">10 (6 int, 4 FP)</td>
-</tr>
-<tr>
-<td align="left">Reorder Buffer</td>
-<td align="center">192 uops</td>
-<td align="center">224 uops</td>
-</tr>
-<tr>
-<td align="left">Load Buffer</td>
-<td align="center">72 loads</td>
-<td align="center">72 loads</td>
-</tr>
-<tr>
-<td align="left">Store Buffer</td>
-<td align="center">44 stores</td>
-<td align="center">48 stores</td>
-</tr>
-<tr>
-<td align="left">Integer Scheduler</td>
-<td align="center">84 entries</td>
-<td align="center">92 entries</td>
-</tr>
-<tr>
-<td align="left">FP Scheduler</td>
-<td align="center">96 (NSQ+SQ) entries</td>
-<td align="center">96 (64 NSQ + 36 SQ) entries</td>
-</tr>
-<tr>
-<td align="left">Interger Rename</td>
-<td align="center">168 int regs</td>
-<td align="center">180 int regs</td>
-</tr>
-<tr>
-<td align="left">FP Rename</td>
-<td align="center">160 FP regs</td>
-<td align="center">160 FP regs</td>
-</tr>
-<tr>
-<td align="left">Interconnect</td>
-<td align="center">2x256b cross</td>
-<td align="center">2x256b cross</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>参考:</p>
-</blockquote>
-<ul>
-<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1192135.html">AMD Zen 2の高い性能効率を支えるフロントエンドアーキテクチャ - PC Watch</a></li>
-<li><a href="https://www.anandtech.com/show/14525/amd-zen-2-microarchitecture-analysis-ryzen-3000-and-epyc-rome">AMD Zen 2 Microarchitecture Analysis: Ryzen 3000 and EPYC Rome - AnandTech</a></li>
-</ul>
+
+| | AMD Zen | AMD Zen2 |
+| :-- | :--: | :---: |
+| Threads/CPU | 2 threads | 2 threads |
+| x86 Decoders | 4 instr | 4 instr |
+| Instr Extensions | AVX2 | AVX2 |
+| Micro-op Cache | 2048 uops | 4096 uops |
+| Max Ops/Cycle | 10 (6 int, 4 FP) | 10 (6 int, 4 FP)
+| Reorder Buffer | 192 uops | 224 uops |
+| Load Buffer | 72 loads | 72 loads |
+| Store Buffer | 44 stores | 48 stores |
+| Integer Scheduler | 84 entries | 92 entries |
+| FP Scheduler | 96 (NSQ+SQ) entries | 96 (64 NSQ + 36 SQ) entries |
+| Interger Rename | 168 int regs | 180 int regs |
+| FP Rename | 160 FP regs | 160 FP regs |
+| Interconnect | 2x256b cross | 2x256b cross |
+
+ > 参考:  
+ * [AMD Zen 2の高い性能効率を支えるフロントエンドアーキテクチャ - PC Watch](https://pc.watch.impress.co.jp/docs/column/kaigai/1192135.html)  
+ * [AMD Zen 2 Microarchitecture Analysis: Ryzen 3000 and EPYC Rome - AnandTech](https://www.anandtech.com/show/14525/amd-zen-2-microarchitecture-analysis-ryzen-3000-and-epyc-rome)
 </details>
+
 <p>Centaurは客観的に、公正に見て、CHAをHaswellクラスの性能と評価している。</p>
-<p>CHAはHaswellに対して、上記の表における数値の多くで同等以上を示し、特にRenameレジスタは多く、インターコネクトは広い。<br>
-しかし、CHAはSMT機能（Intelで言うHyper-Threading）とmicro-opキャッシュを持たない。<br>
-SMTはサーバーに求められる処理の多くで20-30%の性能向上が見込める。<br>
+
+<p>CHAはHaswellに対して、上記の表における数値の多くで同等以上を示し、特にRenameレジスタは多く、インターコネクトは広い。<br />
+しかし、CHAはSMT機能（Intelで言うHyper-Threading）とmicro-opキャッシュを持たない。<br />
+SMTはサーバーに求められる処理の多くで20-30%の性能向上が見込める。<br />
 micro-opキャッシュは上述したように、デコード性能の向上と消費電力の削減という2つの恩恵を受けられる。</p>
-<p>Centaur CHAとIntelのプロセッサーとの大きな違いに、最大動作クロックもあげられる。<br>
-CHAが最大2.5GHzで動作するのに対し、IntelはSkylakeアーキテクチャ、14nm++プロセスにて最大5.0GHzが可能と、クロックでは倍も違うことになる。<br>
+
+<p>Centaur CHAとIntelのプロセッサーとの大きな違いに、最大動作クロックもあげられる。<br />
+CHAが最大2.5GHzで動作するのに対し、IntelはSkylakeアーキテクチャ、14nm++プロセスにて最大5.0GHzが可能と、クロックでは倍も違うことになる。<br />
 ただサーバー向けでそこまでクロックを引き上げることはまず無く、消費電力効率も悪化するためXeonではクロックが抑えられており、Intelが持つアドバンテージは小さくなる。</p>
+
 <p>結論として、CHAはローエンド帯のXeonと競合するとしている。</p>
+
 <h4 id="セキュリティ-spectre-meltdown">セキュリティ (Spectre, Meltdown)</h4>
-<p>言ってしまえば、不明。<br>
-ただ正式には公表されていないものの、過去のVIAプロセッサはSpectre、Meltdownの影響を受けるとされている。<br>
-<a href="https://pc.watch.impress.co.jp/docs/news/1180455.html">Windows月例更新でVIAプロセッサにもSpectre/Meltdown対策が盛り込まれる - PC Watch</a></p>
+
+<p>言ってしまえば、不明。<br />
+ただ正式には公表されていないものの、過去のVIAプロセッサはSpectre、Meltdownの影響を受けるとされている。<br />
+<a href="https://pc.watch.impress.co.jp/docs/news/1180455.html" rel="noreferrer" target="_blank">Windows月例更新でVIAプロセッサにもSpectre/Meltdown対策が盛り込まれる &ndash; PC Watch</a></p>
+
 <p>資料でもRedditのスレッド（後になってからだが質問をしたユーザーはいた）でも特に述べられていないことから、ハードウェアでの対策は施されていない可能性が高い。</p>
-<p>余談だが、Centaur Technologyが設計した中国市場向けCPU、Zhaoxin（兆芯）は、<br>
-次世代の7-Seriesにて、SpsctreV2とSWAPGSの対策が施されている。<br>
-<a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Zhaoxin-7-Series-Mitigations">Zhaoxin 7-Series x86 CPUs Mitigated For Spectre V2 + SWAPGS - Phoronix</a><br>
-<a href="http://lkml.iu.edu/hypermail/linux/kernel/2001.1/08763.html">[PATCH] x86/speculation/spectre_v2: Exclude Zhaoxin CPUs from SPECTRE_V2 - Linux-Lernel Archive</a></p>
-<p>このパッチを読む限り、x86 CPUでSpectreV2への対策が為されたのはZhaxin 7-Seriesが何気に初となるのだろうか。<br>
+
+<p>余談だが、Centaur Technologyが設計した中国市場向けCPU、Zhaoxin（兆芯）は、<br />
+次世代の7-Seriesにて、SpsctreV2とSWAPGSの対策が施されている。<br />
+<a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Zhaoxin-7-Series-Mitigations" rel="noreferrer" target="_blank">Zhaoxin 7-Series x86 CPUs Mitigated For Spectre V2 + SWAPGS &ndash; Phoronix</a><br />
+<a href="http://lkml.iu.edu/hypermail/linux/kernel/2001.1/08763.html" rel="noreferrer" target="_blank">[PATCH] x86/speculation/spectre_v2: Exclude Zhaoxin CPUs from SPECTRE_V2 &ndash; Linux-Lernel Archive</a></p>
+
+<p>このパッチを読む限り、x86 CPUでSpectreV2への対策が為されたのはZhaxin 7-Seriesが何気に初となるのだろうか。<br />
 AMDはZen2アーキテクチャでSpectre対策強化のため一部設計を変更したが、あくまで強化であり、ソフトウェア側（OS Kernel、ファームウェア）での対策が不要になる訳ではなかった。</p>
+
 <blockquote>
-<p>参考:</p>
+<p>参考:<br />
+ * <a href="https://japan.cnet.com/article/35114046/" rel="noreferrer" target="_blank">AMD、「Spectre」対策で次世代チップ「Zen 2」の設計を変更 &ndash; CNET Japan</a><br />
+ * <a href="https://ascii.jp/elem/000/001/882/1882171/3/" rel="noreferrer" target="_blank">ASCII.jp：判明した第3世代Ryzenの内部構造を大解説　AMD CPUロードマップ (&frac34;)</a></p>
 </blockquote>
-<ul>
-<li><a href="https://japan.cnet.com/article/35114046/">AMD、「Spectre」対策で次世代チップ「Zen 2」の設計を変更 - CNET Japan</a></li>
-<li><a href="https://ascii.jp/elem/000/001/882/1882171/3/">ASCII.jp：判明した第3世代Ryzenの内部構造を大解説　AMD CPUロードマップ (3/4)</a></li>
-</ul>
+
 <h3 id="ncore">Ncore</h3>
+
 <details>
 <summary>CHA die plot</summary>
 <figure>
     <img src="https://blog.coelacanth-dream.com/image/2020/02/03/ncore-dieshot.webp"
-         alt="出典: MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf"/> <figcaption>
-            <h4>CHA die plot</h4><p>出典: <cite><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf">MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a></cite></p>
+         alt="出典: MPR Article Template &amp;ndash; MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf"/> <figcaption>
+            <h4>CHA die plot</h4><p>出典: <cite><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf" rel="noreferrer" target="_blank">MPR Article Template &ndash; MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a></cite></p>
         </figcaption>
 </figure>
 
 </details>
+
 <figure>
     <img src="https://blog.coelacanth-dream.com/image/2020/02/03/ncore-slide.webp"
-         alt="出典: MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf"/> <figcaption>
-            <h4>Current Version of Centaur AI Coprocessor</h4><p>出典: <cite><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf">MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a></cite></p>
+         alt="出典: MPR Article Template &amp;ndash; MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf"/> <figcaption>
+            <h4>Current Version of Centaur AI Coprocessor</h4><p>出典: <cite><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf" rel="noreferrer" target="_blank">MPR Article Template &ndash; MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a></cite></p>
         </figcaption>
 </figure>
 
-<p>学習（トレーニング）は行わず、推論専用のアクセラレータ。<br>
-Ncore部のダイサイズはTSMC 16FFCプロセスで34.4mm<sup>2</sup>、<br>
+
+<p>学習（トレーニング）は行わず、推論専用のアクセラレータ。<br />
+Ncore部のダイサイズはTSMC 16FFCプロセスで34.4mm<sup>2</sup>、<br />
 x86 CPU 8-Coreクラスターのおおよそ半分のサイズであり、Ncoreの約2/3は16MB SRAMが占める。</p>
-<p>Computer unitは16スライスに分割されており、これによって設計をシンプルにしている。<br>
-緑色の部分はData Unit内の密集した金属配線を示し、この配線は主にデータの再配置するため。<br>
+
+<p>Computer unitは16スライスに分割されており、これによって設計をシンプルにしている。<br />
+緑色の部分はData Unit内の密集した金属配線を示し、この配線は主にデータの再配置するため。<br />
 そして16スライスの中央にある横長の部分に、Instruction UnitとRing Interfaceが含まれる。</p>
-<p>クロックはx86コアと同じ2.5GHzであり、Ncore有効時にクロックが下がることはないとのこと。<br>
-ハードウェアレベルのコンテキストスイッチと仮想機能は持たず、シングルスレッドでの実行となる。<br>
+
+<p>クロックはx86コアと同じ2.5GHzであり、Ncore有効時にクロックが下がることはないとのこと。<br />
+ハードウェアレベルのコンテキストスイッチと仮想機能は持たず、シングルスレッドでの実行となる。<br />
 ソフトウェアベースでの仮想機能サポートは予定されているらしい。</p>
-<p>x86コアはWindowsを動作させられるが、Ncoreのためのソフトウェアは現在Linux向けに開発されているとのこと。<br>
+
+<p>x86コアはWindowsを動作させられるが、Ncoreのためのソフトウェアは現在Linux向けに開発されているとのこと。<br />
 こちらもWindows等の主流のOSで実行可能にする予定はあるらしい。</p>
+
 <details>
 <summary>Ncore block diagram</summary>
 <figure>
     <img src="https://blog.coelacanth-dream.com/image/2020/02/03/ncore-diagram.webp"
-         alt="出典: Centaur’s x86 SoC with AI Coprocessor Technology - PRSlides_1118_Release.pdf"/> <figcaption>
-            <h4>Ncore block diagram</h4><p>出典: <cite><a href="https://centtech.com/wp-content/uploads/PRSlides_1118_Release.pdf">Centaur’s x86 SoC with AI Coprocessor Technology - PRSlides_1118_Release.pdf</a></cite></p>
+         alt="出典: Centaur’s x86 SoC with AI Coprocessor Technology &amp;ndash; PRSlides_1118_Release.pdf"/> <figcaption>
+            <h4>Ncore block diagram</h4><p>出典: <cite><a href="https://centtech.com/wp-content/uploads/PRSlides_1118_Release.pdf" rel="noreferrer" target="_blank">Centaur’s x86 SoC with AI Coprocessor Technology &ndash; PRSlides_1118_Release.pdf</a></cite></p>
         </figcaption>
 </figure>
 
 </details>
-<p>SRAMは内部で2つに分かれており（D-RAMとW-RAM、DはData、WはWeightの意だろうか？）、それぞれSIMD幅に合わせて32,768-bit/cycleで接続されており、帯域は10TB/s、合計で20TB/sとなる。<br>
-どちらもECCに対応。<br>
+
+<p>SRAMは内部で2つに分かれており（D-RAMとW-RAM、DはData、WはWeightの意だろうか？）、それぞれSIMD幅に合わせて32,768-bit/cycleで接続されており、帯域は10TB/s、合計で20TB/sとなる。<br />
+どちらもECCに対応。<br />
 リングインターフェイスからData Unitへの書き込みを割り込ませることも可能だが、その間D-RAM/W-RAMからの書き込みは中断され、またそれら32,768-bitの接続に対し、リングインターフェイスは512-bitと狭く、十分にデータを供給するには64サイクルも必要とするため、割り込みが行なわれることは稀であるらしい。</p>
-<p>INT8に最適化されており、INT16、Bfloat16の精度でも演算できるが、INT8は毎サイクル行なえるのに対し、INT16、Bfloat16では3サイクルかかり、スループットが落ちてしまう。<br>
+
+<p>INT8に最適化されており、INT16、Bfloat16の精度でも演算できるが、INT8は毎サイクル行なえるのに対し、INT16、Bfloat16では3サイクルかかり、スループットが落ちてしまう。<br />
 積和演算では、32-bit (INT32 or FP32) に飽和演算を行なう。</p>
-<h3 id="io">I/O</h3>
-<p>DDR4-3200 4-Channel ECCに対応し、ピークメモリ帯域は102 GB/sとなる。<br>
-PCIe Gen3 44-Laneを有し、サーバーにおいて標準的なサウスブリッジ機能（レガシーI/O）も内蔵されているため、統合されたソリューションを作成可能としている……が、<br>
-Redditのスレッドにおける回答では、USBとSATAは外部チップセットを必要とし、またグラフィック機能は内蔵されていない、とのこと。<br>
+
+<h3 id="i-o">I/O</h3>
+
+<p>DDR4-3200 4-Channel ECCに対応し、ピークメモリ帯域は102 GB/sとなる。<br />
+PCIe Gen3 44-Laneを有し、サーバーにおいて標準的なサウスブリッジ機能（レガシーI/O）も内蔵されているため、統合されたソリューションを作成可能としている……が、<br />
+Redditのスレッドにおける回答では、USBとSATAは外部チップセットを必要とし、またグラフィック機能は内蔵されていない、とのこと。<br />
 （そこらへんはAspeedのBMCをボード側に搭載すればいい、ということだろうか）</p>
-<p>またマルチソケット用のインターフェイスも存在し、2ソケットのシステムが可能だが、ソケット間接続のプロトコル、帯域等は不明。<br>
-ただ、それもリングバスで接続されていることを考えると、そう高くはなく、実効帯域も低めだろう。<br>
-参考までに記しておくと、Intel Xeon Scalableで双方向2x 10.4 GT/s@20レーン (104GT/s?)、（Cascade Lakeなら3リンクで156GT/s?）<br>
+
+<p>またマルチソケット用のインターフェイスも存在し、2ソケットのシステムが可能だが、ソケット間接続のプロトコル、帯域等は不明。<br />
+ただ、それもリングバスで接続されていることを考えると、そう高くはなく、実効帯域も低めだろう。<br />
+参考までに記しておくと、Intel Xeon Scalableで双方向2x 10.4 GT/s@20レーン (104GT/s?)、（Cascade Lakeなら3リンクで156GT/s?）<br />
 AMD EPYC Romeで双方向4x 18GT/s@16レーン (288GT/s, 実帯域 202GB/s)。</p>
+
 <blockquote>
 <p>参考:</p>
-</blockquote>
-<blockquote>
+
 <ul>
-<li><a href="https://software.intel.com/en-us/articles/intel-xeon-processor-scalable-family-technical-overview">Intel® Xeon® Processor Scalable Family Technical Overview | Intel® Software</a></li>
-<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1201352.html">AMDが最高性能のx86 CPUと謳う「AMD EPYC 7002」シリーズ - PC Watch</a></li>
-<li><a href="https://pc.watch.impress.co.jp/img/pcw/docs/1201/352/html/23_o.jpg.html">[画像] 【後藤弘茂のWeekly海外ニュース】AMDが最高性能のx86 CPUと謳う「AMD EPYC 7002」シリーズ (25/28) - PC Watch</a></li>
+<li><a href="https://software.intel.com/en-us/articles/intel-xeon-processor-scalable-family-technical-overview" rel="noreferrer" target="_blank">Intel® Xeon® Processor Scalable Family Technical Overview | Intel® Software</a><br /></li>
+<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1201352.html" rel="noreferrer" target="_blank">AMDが最高性能のx86 CPUと謳う「AMD EPYC 7002」シリーズ &ndash; PC Watch</a><br /></li>
+<li><a href="https://pc.watch.impress.co.jp/img/pcw/docs/1201/352/html/23_o.jpg.html" rel="noreferrer" target="_blank">[画像] 【後藤弘茂のWeekly海外ニュース】AMDが最高性能のx86 CPUと謳う「AMD EPYC 7002」シリーズ (25/28) &ndash; PC Watch</a><br /></li>
 </ul>
 </blockquote>
+
 <h3 id="その他">その他</h3>
-<p>製造プロセスはTSMC 16nm FinFet Compact(16FFC)。<br>
+
+<p>製造プロセスはTSMC 16nm FinFet Compact(16FFC)。<br />
 ハイパフォーマンス向けの16FF+を低コストにしたのが16FFC (16FF Compact) であり、メインストリーム向けや低消費電力 (Ultra Low Power) 向けに位置付けされている。</p>
+
 <blockquote>
 <p>参考:</p>
-</blockquote>
-<blockquote>
+
 <ul>
-<li><a href="https://ascii.jp/elem/000/001/516/1516220/2/">10nmに見切りをつけ低コストの12FFCに注力　TSMC 半導体ロードマップ - ASCII.jp</a></li>
-<li><a href="https://www.tsmc.com/english/dedicatedFoundry/technology/16nm.htm">16/12nm Technology - Taiwan Semiconductor Manufacturing Company Limited</a></li>
-<li><a href="https://community.cadence.com/cadence_blogs_8/b/ii/posts/tsmc-symposium-new-16ffc-and-28hpc-processes-target-mainstream-designers-and-internet-of-things-iot">TSMC Symposium: New 16FFC and 28HPC+ Processes Target “Mainstream” Designers and Internet of Things (IoT) - Industry Insights - Cadence Blogs - Cadence Community</a></li>
+<li><a href="https://ascii.jp/elem/000/001/516/1516220/2/" rel="noreferrer" target="_blank">10nmに見切りをつけ低コストの12FFCに注力　TSMC 半導体ロードマップ &ndash; ASCII.jp</a><br /></li>
+<li><a href="https://www.tsmc.com/english/dedicatedFoundry/technology/16nm.htm" rel="noreferrer" target="_blank">16/12nm Technology &ndash; Taiwan Semiconductor Manufacturing Company Limited</a><br /></li>
+<li><a href="https://community.cadence.com/cadence_blogs_8/b/ii/posts/tsmc-symposium-new-16ffc-and-28hpc-processes-target-mainstream-designers-and-internet-of-things-iot" rel="noreferrer" target="_blank">TSMC Symposium: New 16FFC and 28HPC+ Processes Target “Mainstream” Designers and Internet of Things (IoT) &ndash; Industry Insights &ndash; Cadence Blogs &ndash; Cadence Community</a><br /></li>
 </ul>
 </blockquote>
-<p>余談だが、Habanaの推論用アクセラレーター Goya、Cerebrasの学習用プロセッサー WSE (Wafer Scale Engine)もTSMC 16nmで製造されている。（16FFCかどうかは不明）<br>
+
+<p>余談だが、Habanaの推論用アクセラレーター Goya、Cerebrasの学習用プロセッサー WSE (Wafer Scale Engine)もTSMC 16nmで製造されている。（16FFCかどうかは不明）<br />
 ユニットを増やし、並列に実行するのが効果的なディープラーニング用途ではコストの低さから人気なのかもしれない。</p>
+
 <p>CPUのクロックは2.5GHzと、IntelやAMDのCPUと比べれば低いが、CPUの最高速度を制限することで、物理設計の最適化に費やす時間を大幅に短縮したとのこと。</p>
-<p>Centaurは目標に、サーバークラスのシステムに1ドルあたりで最高のニューラルネットワーク性能を届けることを掲げている。<br>
+
+<p>Centaurは目標に、サーバークラスのシステムに1ドルあたりで最高のニューラルネットワーク性能を届けることを掲げている。<br />
 TSMC 16FFCプロセスを選び、物理設計の最適化に費やす時間を減らしたのもそのためだと考えられる。</p>
-<p>まだCHAの具体的な価格とTDPは決まっていないが、I/O性能が近い Intel Xeon Silver 4209 ($417, Cascade Lake, 6ch DDR4-2400, PCIe Gen3 48-Lane)より高いピーク周波数で動作しつつ、少ない消費電力になることを <strong>期待</strong> しているとのこと。<br>
+
+<p>まだCHAの具体的な価格とTDPは決まっていないが、I/O性能が近い Intel Xeon Silver 4209 ($417, Cascade Lake, 6ch DDR4-2400, PCIe Gen3 48-Lane)より高いピーク周波数で動作しつつ、少ない消費電力になることを <strong>期待</strong> しているとのこと。<br />
 そして価格も近くなるだろう、とも言っている。</p>
-<p>そしてNcoreの、MLPerfで MobileNetとResNet-50 をモデルに計測した推論性能は、AVX-512VNNI命令を使用した$5,000のXeon Platinumとほぼ同じくらい強力であり、<br>
+
+<p>そしてNcoreの、MLPerfで MobileNetとResNet-50 をモデルに計測した推論性能は、AVX-512VNNI命令を使用した$5,000のXeon Platinumとほぼ同じくらい強力であり、<br />
 先程挙げた、CHAと同等のXeon Silverよりも5倍高速と推定している。</p>
-<p>Intelには推論用のアクセラレーター、NNP-Iがあり、Xeon Silverと組み合わせることができるが、当然システムにかかるコストは高価となり、（Intelはまだ価格を公表していないが$500~1,000になると見ているらしい）<br>
-また、NvidiaのT4といったカードを搭載しようとすると、追加で約$2,000のコストがかかる。<br>
+
+<p>Intelには推論用のアクセラレーター、NNP-Iがあり、Xeon Silverと組み合わせることができるが、当然システムにかかるコストは高価となり、（Intelはまだ価格を公表していないが$500~1,000になると見ているらしい）<br />
+また、NvidiaのT4といったカードを搭載しようとすると、追加で約$2,000のコストがかかる。<br />
 どちらも性能こそ高いが、システムのプロセッサーよりも高価であることがほとんどだ。</p>
-<p>CHAならば外部DLA無しに、低いコストで優れた性能を得ることができ、<br>
-ソフトウェアもまだ最適化中の段階にあるため、製品が市場に出るまでに性能が向上することも考えられる。<br>
+
+<p>CHAならば外部DLA無しに、低いコストで優れた性能を得ることができ、<br />
+ソフトウェアもまだ最適化中の段階にあるため、製品が市場に出るまでに性能が向上することも考えられる。<br />
 そうなればCHAのアドバンテージはさらに広がるだろう。</p>
+
 <h4 id="感想とか">感想とか</h4>
+
 <p>ここから先は完全に個人的な感想と推測。</p>
-<p>今後の展開が気になる所。<br>
-微細化が進めばx86 CPUのアーキテクチャを拡張する余裕ができるだろうし、コアとバスが同じクロックで動作するCHAはクロック向上がそのまま全体の帯域に反映される。<br>
+
+<p>今後の展開が気になる所。<br />
+微細化が進めばx86 CPUのアーキテクチャを拡張する余裕ができるだろうし、コアとバスが同じクロックで動作するCHAはクロック向上がそのまま全体の帯域に反映される。<br />
 micro-opキャッシュの追加はまずあるだろう。</p>
-<p>Ncoreも専用SRAMを増やす、Ncoreのクラスタを追加するといった拡張が考えられるだろう。<br>
+
+<p>Ncoreも専用SRAMを増やす、Ncoreのクラスタを追加するといった拡張が考えられるだろう。<br />
 SIMD幅をさらに増やすかは、今もソフトウェアの最適化で忙しいだろうに、その時にまた最適化の手間がかかることを考えるとまだやらないのではないかと思う。</p>
+
 <p>メモリ、I/Oも、7nmで製造されるZhaoxin 7-SeriesがDDR5、PCIe Gen4に対応することを考えれば、次世代CHAでの対応も期待できる。</p>
-<p>16FFCのままでx86 CPU、メモリーコントローラー、I/Oをスケールダウンさせ、より小型な推論用エッジサーバー向けのSoCがあっても面白そうだが、そのターゲット層だと絶対的な消費電力が課題となるのかもしれない。<br>
+
+<p>16FFCのままでx86 CPU、メモリーコントローラー、I/Oをスケールダウンさせ、より小型な推論用エッジサーバー向けのSoCがあっても面白そうだが、そのターゲット層だと絶対的な消費電力が課題となるのかもしれない。<br />
 x86 CPUでmicro-opキャッシュも持たないCNSアーキテクチャは消費電力の点で、他のARM+コプロセッサーの構成を取る製品より劣るはずだ。</p>
-<br>
-色んなことを期待しつつ、今後も情報を追っていきたい。  
+
+<p><br>
+色んなことを期待しつつ、今後も情報を追っていきたい。</p>
 </article>
 
 		</div>

@@ -247,41 +247,46 @@ h1 {
 		<div class="text">
     		
 <article>
-    <h1>waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】</h1><ins datetime="2020-05-27:00+09:00">
+    <h1>waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】</h1>
+
+<ins datetime="2020-05-27:00+09:00">
 	<span class="insbegin">（追記 2020-05-27 ）</span>
     <p>
-	ビルドプロセスが改良されて別に ncnn をビルドして、パスを指定する必要がなくなった。<br>
-<a href="https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source">https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source</a>
+	ビルドプロセスが改良されて別に ncnn をビルドして、パスを指定する必要がなくなった。<br />
+<a href="https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source" rel="noreferrer" target="_blank">https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source</a>
     </p>
 	<span class="insend">（追記終了）</span>
 </ins>
 <br>
 
+
 <p>Vulkan Computeで演算するため、Linux + Radeon 環境でもローカルで実行可能な画像高解像度ソフトウェア、waifu2x-ncnn-vulkan をビルドする方法のメモ。</p>
+
 <ul>
 <li><a href="#ncnn">ncnn のビルド方法</a></li>
 <li><a href="#waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan のビルド方法</a></li>
 </ul>
+
 <h2 id="ncnn">ncnn のビルド方法</h2>
-<p>waifu2x-ncnn-vulkan をビルドするには、まず ncnn をビルドする必要があるのだが、<br>
-<del>最新版ではビルド時にエラーが出るため、ncnn を <code>git clone</code> した後、waifu2x-ncnn-vulkan のページにあるリンクのコミット時に切り替えるのがいい。<br>
-<span class="reflink"><a href="https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86">https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86</a></span><br>
+
+<p>waifu2x-ncnn-vulkan をビルドするには、まず ncnn をビルドする必要があるのだが、<br />
+<del>最新版ではビルド時にエラーが出るため、ncnn を <code>git clone</code> した後、waifu2x-ncnn-vulkan のページにあるリンクのコミット時に切り替えるのがいい。<br />
+<span class="reflink"><a href="https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86" rel="noreferrer" target="_blank">https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86</a></span><br>
 </p>
 <pre><code>$ git clone https://github.com/Tencent/ncnn
 $ cd ncnn
-$ git checkout 8c537069875a28d5380c6bdcbf7964d73803b7b3
-</code></pre>
-</del>
+$ git checkout 8c537069875a28d5380c6bdcbf7964d73803b7b3</code></pre>
+<p></del></p>
+
 <ins datetime="2020-04-29:00+09:00">
 	<span class="insbegin">（追記 2020-04-29 ）</span>
     <p>
-	<p>最新版ではエラーが出ると書いたが、原因が発覚した。<br>
-端的に言えば <code>glslangValidator</code> が最新版でなかった。誰かのせいにするなら cmake が <code>VULKAN_SDK</code> を認識してくれないのが悪い。<br>
+	<p>最新版ではエラーが出ると書いたが、原因が発覚した。<br />
+端的に言えば <code>glslangValidator</code> が最新版でなかった。誰かのせいにするなら cmake が <code>VULKAN_SDK</code> を認識してくれないのが悪い。<br />
 そういうことで以下修正版。</p>
-<pre><code>$ cmake -DVulkan_LIBRARY=&quot;${VULKAN_SDK}/lib/libvulkan.so&quot; -DVulkan_INCLUDE_DIR=&quot;${VULKAN_SDK}/include&quot; -DNCNN_VULKAN=ON -DGLSLANGVALIDATOR_EXECUTABLE=${VULKAN_SDK}/bin/glslangValidator ../
+<pre><code>$ cmake -DVulkan_LIBRARY=&#34;${VULKAN_SDK}/lib/libvulkan.so&#34; -DVulkan_INCLUDE_DIR=&#34;${VULKAN_SDK}/include&#34; -DNCNN_VULKAN=ON -DGLSLANGVALIDATOR_EXECUTABLE=${VULKAN_SDK}/bin/glslangValidator ../
 $ make -j$(grep -c processor /proc/cpuinfo)
-$ make install
-</code></pre>
+$ make install</code></pre>
 <p>インストール先はデフォルトで <code>&lt;build dir&gt;/install</code></p>
 
     </p>
@@ -289,51 +294,50 @@ $ make install
 </ins>
 <br>
 
+
 <p><del>ncnn の wiki には VulkanSDK をダウンロード、展開し、環境変数 <code>VULKAN_SDK</code> をそこにセットするようにとあるが、CMake がそれを見つけてくれないため、CMake 実行時、別に指定する必要がある。</del></p>
-<p><del>まずビルド用のディレクトリを作成。下記のコマンドはディレクトリ名に日付を入れるようにしているが、名前であるから何でもいい。<br>
+
+<p><del>まずビルド用のディレクトリを作成。下記のコマンドはディレクトリ名に日付を入れるようにしているが、名前であるから何でもいい。<br />
 そして作成したディレクトリに移動。</del></p>
-<pre><code>$ mkdir build_$(date &quot;+%F&quot;)
-$ cd &lt;build dir&gt;
-</code></pre>
+<pre><code>$ mkdir build_$(date &#34;+%F&#34;)
+$ cd &lt;build dir&gt;</code></pre>
 <p><del>cmake、ビルド、そしてインストール。インストール先はデフォルトで <code>&lt;build dir&gt;/install</code> になっている。</del></p>
-<pre><code>$ cmake -DVulkan_LIBRARY=&quot;${VULKAN_SDK}/lib/libvulkan.so&quot; -DVulkan_INCLUDE_DIR=&quot;${VULKAN_SDK}/include&quot; -DNCNN_VULKAN=ON ../
+<pre><code>$ cmake -DVulkan_LIBRARY=&#34;${VULKAN_SDK}/lib/libvulkan.so&#34; -DVulkan_INCLUDE_DIR=&#34;${VULKAN_SDK}/include&#34; -DNCNN_VULKAN=ON ../
 $ make -j$(grep -c processor /proc/cpuinfo)
-$ make install
-</code></pre>
+$ make install</code></pre>
 <h2 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan のビルド方法</h2>
-<p>waifu2x-ncnn-vulkan のバージョンは問わず、最新版でも問題ないが、ここでは version 20200414 を前提とする。<br>
-<span class="reflink"><a href="https://github.com/nihui/waifu2x-ncnn-vulkan/releases/tag/20200414">Release version 20200414 · nihui/waifu2x-ncnn-vulkan</a></span><br>
+
+<p>waifu2x-ncnn-vulkan のバージョンは問わず、最新版でも問題ないが、ここでは version 20200414 を前提とする。<br />
+<span class="reflink"><a href="https://github.com/nihui/waifu2x-ncnn-vulkan/releases/tag/20200414" rel="noreferrer" target="_blank">Release version 20200414 · nihui/waifu2x-ncnn-vulkan</a></span><br>
 </p>
-<p>まずは waifu2x-ncnn-vulkan-20200414 の src ディレクトリへ。<br>
+
+<p>まずは waifu2x-ncnn-vulkan-20200414 の src ディレクトリへ。<br />
 そして先程同様にビルド用のディレクトリを作成、移動。</p>
 <pre><code>$ cd waifu2x-ncnn-vulkan-20200414/src
-$ mkdir build_$(date &quot;+%F&quot;)
-$ cd &lt;build dir&gt;
-</code></pre>
-<p>cmake を実行前に、CMakeList.txt を編集する必要があり、67行目の一部を先程ビルドした ncnn に合わせて変更する。<br>
+$ mkdir build_$(date &#34;+%F&#34;)
+$ cd &lt;build dir&gt;</code></pre>
+<p>cmake を実行前に、CMakeList.txt を編集する必要があり、67行目の一部を先程ビルドした ncnn に合わせて変更する。<br />
 パスはその人の環境で変わる。下は、/home/${USER}/src 下に ncnn をクローン、ビルドした場合のパス。</p>
-<pre><code>/home/${USER}/src/&lt;build dir&gt;/install/lib/cmake/ncnn
-</code></pre>
+<pre><code>/home/${USER}/src/&lt;build dir&gt;/install/lib/cmake/ncnn</code></pre>
 <p><del>そしてビルド。ここでは特にオプションは必要としない。</del></p>
+
 <ins datetime="2020-04-29:00+09:00">
 	<span class="insbegin">（追記 2020-04-29 ）</span>
     <p>
 	<p>ここでも cmake で Vulkan系を指定する必要がある。</p>
-<pre><code>$ cmake -DVulkan_LIBRARY=&quot;${VULKAN_SDK}/lib/libvulkan.so&quot; -DVulkan_INCLUDE_DIR=&quot;${VULKAN_SDK}/include&quot; -DGLSLANGVALIDATOR_EXECUTABLE=${VULKAN_SDK}/bin/glslangValidator ../src
-$ make -j$(grep -c processor /proc/cpuinfo)
-</code></pre>
-
+<pre><code>$ cmake -DVulkan_LIBRARY=&#34;${VULKAN_SDK}/lib/libvulkan.so&#34; -DVulkan_INCLUDE_DIR=&#34;${VULKAN_SDK}/include&#34; -DGLSLANGVALIDATOR_EXECUTABLE=${VULKAN_SDK}/bin/glslangValidator ../src
+$ make -j$(grep -c processor /proc/cpuinfo)</code></pre>
     </p>
 	<span class="insend">（追記終了）</span>
 </ins>
 <br>
 
 <pre><code>$ cmake ../
-$ make -j$(grep -c processor /proc/cpuinfo)
-</code></pre>
+$ make -j$(grep -c processor /proc/cpuinfo)</code></pre>
 <p><code>&lt;build dir&gt;</code> に waifu2x-ncnn-vulkan のバイナリが生成されるため、それを実行すればいいが、推論に用いるモデルは <code>&lt;build dir&gt;</code> 下ではなく、waifu2x-ncnn-vulkan 下にあるため注意。</p>
-<p>ビルドに失敗する時は、以下で質問して頂ければ助けになれるかもしれません。<br>
-<span class="reflink"><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/issues">Issues · Umio-Yasuno/umio-yasuno.github.io</a></span><br>
+
+<p>ビルドに失敗する時は、以下で質問して頂ければ助けになれるかもしれません。<br />
+<span class="reflink"><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/issues" rel="noreferrer" target="_blank">Issues · Umio-Yasuno/umio-yasuno.github.io</a></span><br>
 </p>
 </article>
 
