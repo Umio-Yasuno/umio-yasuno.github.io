@@ -37,14 +37,16 @@ html {
 }
 main {
     display: grid;
-    grid-template: repeat(5, auto) / 2vw 1vw auto 4vw;
+    grid-template: repeat(5, auto) 3em / 2vw 1vw auto 4vw;
     row-gap: 1em;
 }
 header {
-    grid-area: 2 /1 / 3 /4;
+    grid-row: 2 / 3;
+    grid-column: 3 / -2;
 }
 .ptitle {
-    grid-area: 3 /3 / 4 /5;
+    grid-row: 3 / 4;
+    grid-column: 3 / -2;
     font: normal 1.3rem monospace;
     color: #90B4BD;
 }
@@ -95,12 +97,14 @@ p {
 .text {
     color: snow;
     box-sizing: border-box;
-    overflow-wrap: break-word;grid-area: 3 /1 / 5 /5;line-height: 1.5em;
+    overflow-wrap: break-word;grid-row: 3 / 5;
+    grid-column: 1 / -1;line-height: 1.5em;
     scrollbar-width: thin;
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
-article > p {
+article >  p {
     letter-spacing: .020ch;
+    margin: 0;
 }
 article > p::first-letter {
     padding-left: .6em;
@@ -111,18 +115,27 @@ article > p::first-letter {
     padding: 1em 0 0 0;
     display: block;
 }
+hr {
+    background-color: limegreen;
+    margin: .5em auto .5em auto;
+    border-width: 0;
+    width: 98%;
+    height: 1px;
+}
 .foot, .side {
     display: none;
 }
 .foot {
-    grid-area: 5 /1 / 5 /5;
+    grid-row: 5 / -2;
+    grid-column: 2 / -1;
 }
 @media (min-width: 840px) {
     main {
         display: grid;
         grid-template: 1vh 2vh repeat(3, auto) 6vh / 2vw 225px 2vw auto;
     }
-    .text {grid-area: 2 /3 /6 / 5;}
+    .text {grid-row: 2 / 6;
+        grid-column: 3 / -1;}
     header .title {
         display: none;
     }
@@ -130,55 +143,59 @@ article > p::first-letter {
         display: flex;
         flex-direction: column;
         row-gap: 24px;
-        height: 96vh;
+        height: 90vh;
         width: 200px;
         position: fixed;
             top: 2vh;
-            left: 24px;
-        padding: 4vh 1vw 0 0;
+        padding: 3em 8px 0 24px;
         border-right: 1px solid green;
         font-size: 1em;
         color: #00E500;
         overflow: scroll;
         scrollbar-width: thin;
-        scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0)
+        scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+        transform: translateZ(0);
     }
     .ptitle {
-        grid-area: 2 /3 / 3 /5;
+        grid-row: 2 / 3;
+        grid-column: 3 / -1;
+    }
+    .side-links {
+        display: flex;
+        flex-direction: column;
+        max-width: 64%;
+        row-gap: .5em;
     }
     .side-pagination {
-        display: grid;
-        margin: 0 0 0 1em;
-        font-size: 1.05em;
-        row-gap: .8em;
-        grid-template: repeat(3, 1fr) / 1em .9fr 2em;
+        display: flex;
+        flex-direction: column;
+        row-gap: .5em;
+        font-family: monospace;
+        font-size: 1.1em;
+    }
+    .side-prev, .side-next {
+        color: #9EDEFF;
+        border-bottom: 1px solid rgba(0, 0, 0, 0);
+        line-height: 1.1em;
     }
     .side-prev {
-        grid-area: 1 /1 / 1 /4;
         margin-right: auto;
-        color: #9EDEFF;
     }
         .side-prev::before {
             content: '\2190';
         }
     .side-next {
-        grid-area: 3 /1 / 3 /4;
         margin-left: auto;
-        color: #9EDEFF;
     }
         .side-next::after {
             content: '\2192';
-            vertical-align: middle;
+            vertical-align: sub;
         }
     .side-page-number {
-        font-size: .9em;
-        grid-area: 2 /2 / 3 /3;
         margin: 0 auto 0 auto;
     }
     .side-author, .side-lastmod, .side-about, .side-time {
-        padding: 0 .2em 0 0;
-        margin: 0 0 0 .4em;
-        font-size: .95rem;
+        font-size: .98em;
         border-bottom: 1px solid #2D5A4B;
         max-width: max-content;
     }
@@ -205,11 +222,12 @@ article > p::first-letter {
         .side li li:hover::before {
             color: #65CCA9;
         }
-    .side-links a:hover, .side-tags a:hover, .side-categories a:hover, .side-about a:hover {
+
+    .side .title ~ * a:hover {
         text-decoration: none;
         border-bottom: 1px solid #65CCA9;
     }
-    .side-links ul, .side-tags ul, .side-categories ul {
+    .side-tags ul, .side-categories ul {
         list-style: none none outside;
         padding: 0 0 0 1em;
         margin: 0;
@@ -218,21 +236,23 @@ article > p::first-letter {
     }
     .tag-title, .categorie-title, .side-links a {
         border-bottom: 1px solid #326654;
-        padding: 0 1em .1em .3em;
-        margin-bottom: 1em;
     }
-}.text > article > p ~ * {
+}article {
+    display: grid;
+    grid-template-rows: auto;
+    grid-template-columns: 1% 2% 1% auto 1%;
+    row-gap: .7em;
+}
+.text > article > p ~ * {
     display: none;
 }
-article > p {
-    padding:  0 1vw 0 1vw;
+article > * {
+    grid-column: 3 / -2;
 }
 h1 {
     color: #FFA319;
     font: normal 1.4em sans-serif;
-    margin: 0 0 1ch 0;
-    padding: .5em 0 1em 1%;
-    max-width: 95%;
+    grid-column: 2 / -1;
 }
 </style>
 <link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
@@ -1204,7 +1224,7 @@ h1 {
 
 <!--
     VANGOGH 163F:00
-    gfx1032 / gfx1033 [^13]
+    gfx1\0\32 / gfx\10\33 [^13]
 
 -->
 
@@ -2226,20 +2246,20 @@ SubSystem ID? (Pro 5500M:0x020F, Pro 5300M:0x0210)
 <p><a href="#table-of-content">Page Top</a></p>
 
 <!--
-    Navi21: gfx1030 [^12]
+    Na\vi2\1: gf\x 1\ 03\ 0 [^12]
 
     [^12]: [P4 to Git Change 1759681 by asalmanp@asalmanp-ocl-stg on 2019/03/21 1… · ROCm-Developer-Tools/ROCclr@42c005d](https://github.com/ROCm-Developer-Tools/ROCclr/commit/42c005d656a8bd99f87fa4fc86ad086701c59a86)
 
-    Navi22: gfx1031?
-    Navi23: gfx1032?
+    Nav\i2\2: gf\x 10/3\ 1?
+    Na/vi\23: gf\x 10\32?
 
-    MI200: gfx909??? maybe temp id
+    M\I20\0: gf\x9\0\9??? maybe temp id
 
 -->
 
-<hr>
 <div class="reference">
-<h3 class="ref-title" id="ref-title">参考リンク</h2>
+<hr>
+<h3 class="ref-title" id="ref-title">参考リンク</h3>
 <ul>
 <li><a href="https://github.com/GPUOpen-Tools/common-src-DeviceInfo/blob/master/DeviceInfoUtils.cpp" rel="noreferrer" target="_blank">DeviceInfoUtils.cpp &ndash; GPUOpen-Tools/common-src-DeviceInfo</a></li>
 </ul>
@@ -2283,9 +2303,8 @@ SubSystem ID? (Pro 5500M:0x020F, Pro 5300M:0x0210)
 </div>
 
     <nav class="side-links">
-    <ul>
-        <li><a href="https://blog.coelacanth-dream.com/posts">Archive</a></li><li><a href="https://blog.coelacanth-dream.com/tags/database">Database</a></li>
-    </ul>
+        <a href="https://blog.coelacanth-dream.com/posts">Archive</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+
     </nav>
     <nav class="side-tags">
         <ul>
@@ -2304,10 +2323,10 @@ SubSystem ID? (Pro 5500M:0x020F, Pro 5300M:0x0210)
                 <li><a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-categorie-lower">GPU</a></li></ul>
         </ul>
     </nav><time datetime="2019-12-30 10:59:25" class="side-time">Post : 2019-12-30 </time>
-        <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-05-27 09:57:26 </div>
+        <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-05-29 01:56:32 </div>
     <div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
         <a href="https://blog.coelacanth-dream.com/about/">About</a>
-        <a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a>
+    
     </nav>
         <small class="copyright">&copy; 2019 Umio Yasuno</small>
 </div>
@@ -2329,11 +2348,11 @@ SubSystem ID? (Pro 5500M:0x020F, Pro 5300M:0x0210)
 			<a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
         <div class="foot-time">
             <time datetime="2019-12-30 10:59:25">Post : 2019-12-30</time>
-		/ Update : 2020-05-27 09:57:26 
+		/ Update : 2020-05-29 01:56:32 
         </div><div class="foot-author">Author : Umio Yasuno</div>
 	<nav class="foot-about">
 		<a href="https://blog.coelacanth-dream.com/about/">About</a>
-		<a href="https://blog.coelacanth-dream.com/about/#donate">Donate</a><a href="#" class="pagetop">Page Top</a></nav>
+	<a href="#" class="pagetop">Page Top</a></nav>
 		<small class="copyright">&copy; 2019 Umio Yasuno</small>
 	</footer>
 </div>
