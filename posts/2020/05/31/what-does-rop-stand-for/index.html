@@ -15,9 +15,9 @@
 	<meta name="twitter:title" content="ROP は何の略 | Coelacanth&#39;s Dream">
 	<meta property="og:type" content="article">
 
-	<meta name="description" content="GPU のグラフィック性能を推し量る際の指標として用いられる ROP 。 それが何の略称かはあんまり気にされなかったりする。 ROP の役割 ROP は GPU のレンダリングパイプラ">
-	<meta property="og:description" content="GPU のグラフィック性能を推し量る際の指標として用いられる ROP 。 それが何の略称かはあんまり気にされなかったりする。 ROP の役割 ROP は GPU のレンダリングパイプラ">
-	<meta name="twitter:description" content="GPU のグラフィック性能を推し量る際の指標として用いられる ROP 。 それが何の略称かはあんまり気にされなかったりする。 ROP の役割 ROP は GPU のレンダリングパイプラ">
+	<meta name="description" content="GPU のグラフィック性能を推し量る際の指標として用いられる ROP 。 その役割はともかく、何の略称かはあんまり気にされなかったりする。 ROP の役割 ROP は GPU のレンダ">
+	<meta property="og:description" content="GPU のグラフィック性能を推し量る際の指標として用いられる ROP 。 その役割はともかく、何の略称かはあんまり気にされなかったりする。 ROP の役割 ROP は GPU のレンダ">
+	<meta name="twitter:description" content="GPU のグラフィック性能を推し量る際の指標として用いられる ROP 。 その役割はともかく、何の略称かはあんまり気にされなかったりする。 ROP の役割 ROP は GPU のレンダ">
 	<meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
 	<meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
 	<meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/05/31/what-does-rop-stand-for/">
@@ -104,7 +104,7 @@ a:hover {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article >  p {
-    letter-spacing: .020ch;
+    letter-spacing: .02rem;
     margin: 0;
 }
 article > p::first-letter {
@@ -133,7 +133,7 @@ footer {
     main {
         display: grid;
         grid-template-rows: 1vh 2vh repeat(3, auto) 6vh;
-        grid-template-columns: 2vw 225px 1vw 1vw auto;
+        grid-template-columns: 2vw 228px 1vw 1vw auto;
     }
     .text {
         grid-row: 2 / 6;
@@ -150,7 +150,7 @@ footer {
         width: 200px;
         position: fixed;
             top: 2vh;
-        padding: 3em 8px 0 24px;
+        padding: 3em 12px 0 24px;
         border-right: 1px solid green;
         font-size: 1em;
         color: #00E500;
@@ -271,12 +271,12 @@ h1 {
     <h1>ROP は何の略</h1>
 
 <p>GPU のグラフィック性能を推し量る際の指標として用いられる <em>ROP</em> 。<br />
-それが何の略称かはあんまり気にされなかったりする。</p>
+その役割はともかく、何の略称かはあんまり気にされなかったりする。</p>
 
 <h2 id="rop-の役割">ROP の役割</h2>
 
 <p><em>ROP</em> は GPU のレンダリングパイプライン最終段に位置し、結果をピクセルに対応させ、メモリ(フレームバッファ) に書き出す役割を持つ。<br />
-<em>AMD GCNアーキテクチャ GPU</em> では効率を良くするために ROP 相当のユニットを L2cache経由でメモリコントローラにアクセス、書き出しを行なっていた。<br />
+<em>AMD GCNアーキテクチャ GPU</em> では効率を良くするために ROP 相当のユニットを L2cache経由でメモリコントローラにアクセス、書き出しを行なう。<br />
 <em>NVIDIA GPU</em> も似た構成を取っている。</p>
 
 <p>この構成によって、製品の差別化のため搭載メモリチップ数を減らす(=一部メモリコントローラを無効化)と、合わせて L2cache、ROP も一部無効化される。<br />
@@ -301,13 +301,15 @@ Raster から離れたのは、ROP とは別に <em>Raster Unit</em> 、<em>Rast
 
 <p>そして、今日では ROP は記号と化している。<br />
 <a href="https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/technologies/turing-architecture/NVIDIA-Turing-Architecture-Whitepaper.pdf" rel="noreferrer" target="_blank">NVIDIA-Turing-Architecture-Whitepaper.pdf</a> を見ても、わざわざ ROP が何の略かは説明していない。<br />
-これは AMD もそうだ。それに AMD GPU は、ROP 4基相当の RB(Render Backend)を単位としているため、公式のスペックで ROP数を出すのは競合との比較という意義があるのではないかと思う。</p>
+2015年時点でも、<em>Render Output Unit</em> としているのに、ROP Unit と書いていたりと、既に記号化が進んでいた。<br />
+これは AMD もそうで、そも <em>AMD GPU</em> は ROP 4基相当の RB(Render Backend)を単位としているのに、<br />
+公式のスペックで ROP数を出すのは、競合との比較のためという意味合いがあるのではないかと思う。</p>
 
 <p>Intel はどうなのかというと、Slice Common が ROP としての機能を含んでおり、その中で結果をメモリ出力するユニットを PBE(Picel Backend) と呼んでいる。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">7</a></sup><br />
-わかりやすさを重視してか、NVIDIA、AMDも ROP を <em>Pixel Engine</em> 、<em>Pixel Unit</em> とした資料もある。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">8</a></sup><sup class="footnote-ref" id="fnref:9"><a href="#fn:9">9</a></sup></p>
+わかりやすさを重視してか、NVIDIA、AMDも ROP を <em>Pixel Engine</em> 、<em>Pixel Unit</em> とする資料もある。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">8</a></sup><sup class="footnote-ref" id="fnref:9"><a href="#fn:9">9</a></sup></p>
 
-<p>一般的に見てもその方がわかりやすいと個人的には思うが、今後 Intel が本格的に ハイパフォーマンスGPU へ進出すれば、<br />
-その時は競合 NVIDIA、AMD を意識し、記号として ROP を使い始めるかもしれない。</p>
+<p>個人的にもその方がまだ直感的にわかりやすいと思うが、今後 Intel が本格的に ハイパフォーマンスGPU へ進出すれば、<br />
+その時は競合 NVIDIA、AMD を意識し、Intel もまた記号として ROP を使い始めるかもしれない。</p>
 
 <div class="reference">
 <hr>
@@ -370,7 +372,7 @@ Raster から離れたのは、ROP とは別に <em>Raster Unit</em> 、<em>Rast
                 <li><a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-categorie-lower">GPU</a></li></ul>
         </ul>
     </nav><time datetime="2020-05-31 20:12:14" class="side-time">Post : 2020-05-31 </time>
-        <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-01 02:53:28 </div>
+        <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-01 07:32:14 </div>
     <div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
         <a href="https://blog.coelacanth-dream.com/about/">About</a>
         <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
@@ -401,7 +403,7 @@ Raster から離れたのは、ROP とは別に <em>Raster Unit</em> 、<em>Rast
 		<a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
 	<a href="#" class="pagetop">Page Top</a></nav><div class="foot-time">
         <time datetime="2020-05-31 20:12:14">Post : 2020-05-31</time>
-		<div>/ Update : 2020-06-01 02:53:28 </div>
+		<div>/ Update : 2020-06-01 07:32:14 </div>
     </div><div class="foot-author">Author : Umio Yasuno</div><small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
 </main>
