@@ -105,7 +105,7 @@ a:hover {
     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article >  p {
-    letter-spacing: .02rem;
+    letter-spacing: .01em;
     margin: 0;
 }
 article > p::first-letter {
@@ -277,37 +277,42 @@ h1 {
 <h2 id="rop-の役割">ROP の役割</h2>
 
 <p><em>ROP</em> は GPU のレンダリングパイプライン最終段に位置し、結果をピクセルに対応させ、メモリ(フレームバッファ) に書き出す役割を持つ。<br />
-<em>AMD GCNアーキテクチャ GPU</em> では効率を良くするために ROP 相当のユニットを L2cache経由でメモリコントローラにアクセス、書き出しを行なう。<br />
+他にも、MSAAやEQAAといったアンチエイリアス処理を行なうための処理ユニットも ROP に含まれる。</p>
+
+<p><em>AMD GCNアーキテクチャ GPU</em> では効率を良くするために ROP 相当のユニットを L2cache経由でメモリコントローラにアクセス、書き出しを行なう。<br />
 <em>NVIDIA GPU</em> も似た構成を取っている。</p>
 
 <p>この構成によって、製品の差別化のため搭載メモリチップ数を減らす(=一部メモリコントローラを無効化)と、合わせて L2cache、ROP も一部無効化される。<br />
-それだけではないとも思うが、このことが性能に関係する印象を強め、指標に用いられやすくなったのかもしれない。</p>
-
-<p>また、MSAAやEQAAといったアンチエイリアス処理を行なうための処理ユニットも ROP に含まれる。</p>
+それだけではないとも思うが、このことが性能に関係する印象を強め、指標に用いられやすくなったのかもしれない。<br />
+しかし、<em>AMD RDNAアーキテクチャ GPU</em> からは新たに増設された L1cache に ROP を直接接続するようになったため、メモリコントローラを一部無効化しても ROP をそれに応じて無効化しなくてもいいようになった。<br />
+実際に、メモリコントローラを一部無効化し、フル構成となる <strong>AMD Radeon RX 5700シリーズ</strong> の 256-bit から 192-bit に減った <strong>RX 5600シリーズ</strong> の ROP数は変わらず 64基となっている。<br />
+そのため、<em>AMD RDNAアーキテクチャ GPU</em> においては、ROP数を指標に使うにはズレが生じることを考慮しなければいけない。<br />
+(ただ L2cache は無効化される。また、する必要がなくとも今後製品差別化のため ROP を無効化することがあり得るかもしれない。)</p>
 
 <h2 id="rop-のフルネーム">ROP のフルネーム</h2>
 
 <p>ROP のフルネームはあやふやだ。<br />
 <em>Render OutPut</em> または <em>Render OutPut Unit</em> とされたり、<em>Raster OPeration</em> の略だったり、少し変わって <em>Raster Operations Pipeline</em> だったり、またさらに少し変えた <em>Raster Operation Processor</em> だったりする。</p>
 
-<p>NVIDIA の各資料から見るに、2004年時点では <em>Raster Operation</em> <sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup><sup class="footnote-ref" id="fnref:3"><a href="#fn:3">2</a></sup> と <em>Raster Operation Unit</em> <sup class="footnote-ref" id="fnref:2"><a href="#fn:2">3</a></sup>の両方を使っていた。</p>
+<p>NVIDIA の各資料から見るに、2004年時点では <em>Raster OPeration</em> <sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup><sup class="footnote-ref" id="fnref:3"><a href="#fn:3">2</a></sup> と <em>Raster OPeration Unit</em> <sup class="footnote-ref" id="fnref:2"><a href="#fn:2">3</a></sup>の両方を使っていた。</p>
 
-<p>2007年の NVIDIA Teslaブランドの立ち上げ後<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>に、2008年の HotChips19 に合わせて発表したと思われる資料では <em>Raster Operation Processor</em> の略としており、<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup><br />
-この影響か、その後も一部メディアや GPUコンピューティング関連の資料では <em>Raster Operation Processor</em> が使われている。<br />
-しかし、NVIDIA が ROP をその略称としたのはそれきりである。<br />
-単に見落としてるかもしれないが、少なくとも検索エンジンを駆使し、資料を漁った限りでは他に見つからなかった。</p>
+<p>2007年の NVIDIA Teslaブランドの立ち上げ後<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>に、2008年の HotChips19 に合わせて発表したと思われる資料では <em>Raster Operation Processor</em> の略としている。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup></p>
 
-<p>2015年には <em>Render Output Unit</em> の略としている。<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">6</a></sup><br />
-Raster から離れたのは、ROP とは別に <em>Raster Unit</em> 、<em>Raster Engine</em> があるため混同を避けたかったのだろう。</p>
+<p>2007年の <strong>NVIDIA GeForce 8800</strong> の資料では先の <em>Raster Operation Processor</em> と <em>Raster Operation Pipeline</em> の両方を使っている。<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">6</a></sup><br />
+何だかややこしいが、<em>Raster Operation Processor</em> は ROPのユニット全体を示し、<em>Raster Operation Pipeline</em> は ROP内部のパイプラインを示しているのだろうか？<br />
+この2つは ROP の名称としてはしっくり来るためか、公式以外のメディアやユーザーコミュニティ内で ROP を解説する際はどちらかが名称に使われることが多い。</p>
+
+<p>2015年には <em>Render Output Unit</em> の略としている。<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">7</a></sup><br />
+Raster から離れたのは、ROP とは別に、それより前のレンダリングパイプライン段でラスタライザ処理を行なう <em>Raster Unit /Raster Engine</em> があるため混同を避けたかったのだろう。</p>
 
 <p>そして、今日では ROP は記号と化している。<br />
 <a href="https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/technologies/turing-architecture/NVIDIA-Turing-Architecture-Whitepaper.pdf" rel="noreferrer" target="_blank">NVIDIA-Turing-Architecture-Whitepaper.pdf</a> を見ても、わざわざ ROP が何の略かは説明していない。<br />
 2015年時点でも、<em>Render Output Unit</em> としているのに、ROP Unit と書いていたりと、既に記号化が進んでいた。<br />
 これは AMD もそうで、そも <em>AMD GPU</em> は ROP 4基相当の RB(Render Backend)を単位としているのに、<br />
-公式のスペックで ROP数を出すのは、競合との比較のためという意味合いがあるのではないかと思う。</p>
+公式のスペックで相当ROP数を出すのは、競合との比較のためという意味合いがあるのではないかと思う。</p>
 
-<p>Intel はどうなのかというと、Slice Common が ROP としての機能を含んでおり、その中で結果をメモリ出力するユニットを PBE(Picel Backend) と呼んでいる。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">7</a></sup><br />
-関連して、わかりやすさを重視してか、NVIDIA、AMDも ROP を <em>Pixel Engine</em> 、<em>Pixel Unit</em> としている資料もある。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">8</a></sup><sup class="footnote-ref" id="fnref:9"><a href="#fn:9">9</a></sup></p>
+<p>Intel はどうなのかというと、 Slice Common が ROP としての機能を含んでおり、その中で結果をメモリ出力するユニットを PBE(Picel Back-End) と呼んでいる。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">8</a></sup><br />
+関連して、わかりやすさを重視してか、NVIDIA、AMDも ROP を <em>Pixel Engine /Pixel Unit</em> としている資料もある。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">9</a></sup><sup class="footnote-ref" id="fnref:9"><a href="#fn:9">10</a></sup></p>
 
 <p>個人的にもその方がまだ直感的にわかりやすいと思うが、今後 Intel が本格的に ハイパフォーマンスGPU へ進出すれば、<br />
 その時は競合 NVIDIA、AMD を意識し、Intel もまた記号として ROP を使い始めるかもしれない。</p>
@@ -319,6 +324,7 @@ Raster から離れたのは、ROP とは別に <em>Raster Unit</em> 、<em>Rast
 <li><a href="https://en.wikipedia.org/wiki/Render_output_unit" rel="noreferrer" target="_blank">Render output unit &ndash; Wikipedia</a></li>
 <li><a href="https://ascii.jp/elem/000/001/877/1877938/2/" rel="noreferrer" target="_blank">ASCII.jp：詳細が判明したRDNAの内部構造　AMD GPUロードマップ (2/4)</a></li>
 <li><a href="https://www.4gamer.net/games/274/G027467/20150130109/" rel="noreferrer" target="_blank">NVIDIAのGPU開発部門責任者に聞く「GeForce GTX 970のVRAM 3.5GB問題」 &ndash; 4Gamer.net</a></li>
+<li><a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-5600-xt#product-specs" rel="noreferrer" target="_blank">AMD Radeon™ RX 5600 XT Graphics | AMD</a></li>
 </ul>
 
 </div>
@@ -338,6 +344,8 @@ Raster から離れたのは、ROP とは別に <em>Raster Unit</em> 、<em>Rast
  <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
 <li id="fn:5"><a href="https://people.cs.umass.edu/~emery/classes/cmpsci691st/readings/Arch/gpu.pdf" rel="noreferrer" target="_blank">micr-28-02-lind 39..55 &ndash; gpu.pdf</a>
  <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:10"><a href="https://www.hotchips.org/wp-content/uploads/hc_archives/hc19/2_Mon/HC19.02/HC19.02.01.pdf" rel="noreferrer" target="_blank">HC19.20.210.The NVIDIA GeForce 8800 GPU.v3.ppt &ndash; HC19.02.01.pdf</a>
+ <a class="footnote-return" href="#fnref:10"><sup>[return]</sup></a></li>
 <li id="fn:6"><a href="https://developer.nvidia.com/content/life-triangle-nvidias-logical-pipeline" rel="noreferrer" target="_blank">Life of a triangle &ndash; NVIDIA&rsquo;s logical pipeline | NVIDIA Developer</a>
  <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
 <li id="fn:7"><a href="https://software.intel.com/content/dam/develop/public/us/en/documents/the-architecture-of-intel-processor-graphics-gen11-r1new.pdf#page=17" rel="noreferrer" target="_blank">the-architecture-of-intel-processor-graphics-gen11-r1new.pdf</a>
@@ -373,7 +381,7 @@ Raster から離れたのは、ROP とは別に <em>Raster Unit</em> 、<em>Rast
                 <li><a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-categorie-lower">GPU</a></li></ul>
         </ul>
     </nav><time datetime="2020-05-31 20:12:14" class="side-time">Post : 2020-05-31 </time>
-        <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-01 07:41:00 </div>
+        <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-01 14:39:56 </div>
     <div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
         <a href="https://blog.coelacanth-dream.com/about/">About</a>
         <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
@@ -404,7 +412,7 @@ Raster から離れたのは、ROP とは別に <em>Raster Unit</em> 、<em>Rast
 		<a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
 	<a href="#" class="pagetop">Page Top</a></nav><div class="foot-time">
         <time datetime="2020-05-31 20:12:14">Post : 2020-05-31</time>
-		<div>/ Update : 2020-06-01 07:41:00 </div>
+		<div>/ Update : 2020-06-01 14:39:56 </div>
     </div><div class="foot-author">Author : Umio Yasuno</div><small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
 </main>
