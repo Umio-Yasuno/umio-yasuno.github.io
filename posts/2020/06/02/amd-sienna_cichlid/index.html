@@ -24,7 +24,7 @@
    <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/02/amd-sienna_cichlid/">
    <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/02/amd-sienna_cichlid/">
    <meta name="author" content="Umio Yasuno">
-   <meta name="keywords" content="Navi21, Sienna_Cichlid, GFX10, ">
+   <meta name="keywords" content="Navi21, Sienna_Cichlid, GFX10, Hardware, GPU, AMD, ">
 
       <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
       <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
@@ -171,30 +171,32 @@ footer {
       row-gap: .5em;
    }
    .side-pagination {
-      display: flex;
-      flex-direction: column;
-      row-gap: .5em;
       font-family: monospace;
       font-size: 1.1em;
+      display: grid;
+      grid-template-rows: repeat(3, 1.5em);
    }
    .side-prev, .side-next {
      color: #9EDEFF;
      border-bottom: 1px solid rgba(0, 0, 0, 0);
    }
    .side-prev {
-     margin-right: auto;
+      margin-right: auto;
+      grid-row: 1 / 2;
    }
      .side-prev::before {
        content: '\2190';
      }
    .side-next {
      margin-left: auto;
+     grid-row: 3 / 4;
    }
      .side-next::after {
        content: '\2192';
      }
    .side-page-number {
      margin: 0 auto 0 auto;
+     grid-row: 2 / 3;
    }
    .side-author, .side-lastmod, .side-about a, .side-time {
      font-size: .98em;
@@ -234,7 +236,7 @@ footer {
      }
    .side-links a:hover, .side-tags a:hover, .side-categories a:hover, .side-about a:hover {
      text-decoration: none;
-     border-bottom: 1px solid #65CCA9;
+     border-bottom: 1px solid #5AB798;
    }
    .tag-title, .categorie-title, .side-links a {
      border-bottom: 1px solid #326654;
@@ -280,30 +282,42 @@ gfx103x となる <a href="https://blog.coelacanth-dream.com/tags/rdna_2">RDNA 2
 
 <p>ディスプレイコントローラの eChipRev は <code>40</code> であり、過去に投稿されたパッチと照らし合わせると、<em>Navi21</em> のものと一致する。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">1</a></sup> <code>Sienna Cichlid == Navi21?</code></p>
 
+<p>VRAMには Navi1x から続いて GDDR6 を採用すると見られる。<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">2</a></sup></p>
+
+<h3 id="インデックス">インデックス</h3>
+
+<ul>
+<li><a href="#gfx">GFX</a></li>
+<li><a href="#sdma">SDMA</a></li>
+<li><a href="#vcn3">VCN 3.0</a></li>
+<li><a href="#dcn3">DCN 3</a></li>
+<li><a href="#aside">余談</a></li>
+</ul>
+
 <h2 id="gfx">GFX</h2>
 
-<p>Navi1x では無効化されていた 3D pipe、Async ring が <em>Sienna Cichlid</em> ではサポートされている。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">2</a></sup><br />
+<p>Navi1x では無効化されていた 3D pipe、Async ring が <em>Sienna Cichlid</em> ではサポートされている。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">3</a></sup><br />
 ring とは CP(Command Processor) が各ユニットへコマンドを発行する単位。</p>
 
-<p>Navi1x で無効化したのはユースケースがないため、という理由だったが<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">3</a></sup>、<em>Sienna Cichlid /RDNA 2</em> ではあるということだろうか？<br />
+<p>Navi1x で無効化したのはユースケースがないため、という理由だったが<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">4</a></sup>、<em>Sienna Cichlid /RDNA 2</em> ではあるということだろうか？<br />
 <em>RDNA 2</em> で追加される新機能にはコンソール機から、レイトレーシング、メッシュシェーダーへの対応が確認されているが、それらに関係しているのかもしれない。</p>
 
 <h2 id="sdma">SDMA</h2>
 
-<p><em>Sienna Cichlid</em> は SDMAコントローラを 4基持ち、これは従来の一般向けGPUの倍の数だ。<sup class="footnote-ref" id="fnref:HPC-Arcturus-8"><a href="#fn:HPC-Arcturus-8">0</a></sup><br />
-コントローラあたりのキュー数が減らされていないため、純粋に倍となる。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">4</a></sup><br />
+<p><em>Sienna Cichlid</em> は SDMAコントローラを 4基持ち、これは従来の一般向けGPUの倍の数だ。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup>(HPC向けの <em>Arcturus</em> は 8基)<br />
+コントローラあたりのキュー数が減らされていないため、純粋に倍となる。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">6</a></sup><br />
 増やした意図ははっきりせず、<em>Arctturus</em> のように XGMI/マルチGPU に最適化された SDMAコントローラという訳でもないようだ。<br />
-追加された <code>atom_smc_dpm_info_v4_9</code> には XGMIに関するコードがあるが、<em>Arcturus</em> の v4_6 と同一であり、ハードウェアが実際にサポートしているかは定かでない。</p>
+追加された <code>atom_smc_dpm_info_v4_9</code> には XGMIに関するコードがあるが、<em>Arcturus</em> の v4_6 と同一であることから流用したものと思われ、<em>Sienna Cichlid</em> が実際にサポートしているかは定かでない。</p>
 
 <p>また、これまでは SDMAコントローラそれぞれのファームウェアイメージが用意され、それぞれロードするという形だったが、この部分が改良され、1つのファームウェアイメージを共有するようになった。<br />
 <em>Arcturus</em> は末尾の番号が違う 8つのファームウェアイメージを用意することになったため、さすがに面倒、冗長だと感じたのだろうか。</p>
 
-<h2 id="vcn-3-0">VCN 3.0</h2>
+<h2 id="vcn3">VCN 3.0</h2>
 
 <p>動画のデコード/エンコードを担当するマルチメディア部の VCN も更新されている。<br />
-<em>Sienna Cichlid</em> は 2つの VCN3インスタンスを持つが、それらは非対称であり、片方がデコードのみ、もう片方がエンコードのみを担当する。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">5</a></sup></p>
+<em>Sienna Cichlid</em> は 2つの VCN3インスタンスを持つが、それらは非対称であり、片方がデコードのみ、もう片方がエンコードのみを担当する。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">7</a></sup></p>
 
-<p>Unified Video Decoder という名前ながらエンコードも担当していた UVD と VCE(Video Compression Engine) が VCN(Video Core Next) に統合され、<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">6</a></sup><br />
+<p>Unified Video Decoder という名前ながらエンコードも担当していた UVD と VCE(Video Compression Engine) が VCN(Video Core Next) に統合され、<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">8</a></sup><br />
 VCN3 ではデコード担当とエンコード担当がはっきり分かれる訳だ。</p>
 
 <h2 id="dcn3">DCN3</h2>
@@ -311,9 +325,16 @@ VCN3 ではデコード担当とエンコード担当がはっきり分かれる
 <p>DCN も更新され、DCN3 となった。<br />
 どういった新機能があるかはまだ不明。(読み取れていない)</p>
 
-<p>一応、リソースから最大6画面出力ということは読み取れる。<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">7</a></sup></p>
+<p>一応、リソースから最大6画面出力ということは読み取れる。<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">9</a></sup>一般向けでミドル帯以上のGPUとして普通の規模だろう。</p>
 
-<p><em>Arcturus</em> ではそのコードネームの長さから略称が安定しない印象があるが、<em>Sienna Cichlid</em> はどうなるのか。</p>
+<h2 id="aside">余談</h2>
+
+<p>最後に余談を。<br />
+<em>Arcturus</em> ではそのコードネームの長さから略称が安定しない印象があるが、<em>Sienna Cichlid</em> はどうなるのか。<br />
+それと、コードネームの <em>Cichlid (シクリッド)</em> は調べるまで知らなかったが、カワスズメ科の硬骨魚の総称らしい。<br />
+分布は主にアフリカと中南米、一部が熱帯アジアであり、観賞用、食用とされている。<br />
+<em>Sienna (シエナ)</em> には黄褐色または赤褐色の意味があり、イタリア中部の都市 Siena(シエーナ) が由来らしい。<br />
+AMD が EPYC CPU のコードネームにイタリアの都市を用いていたことを考えると、<em>Sienna Cichlid</em> が突拍子もないコードネームという感じはしない。</p>
 <div class="footnotes">
 
 <hr />
@@ -321,10 +342,14 @@ VCN3 ではデコード担当とエンコード担当がはっきり分かれる
 <ol>
 <li id="fn:3"><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-June/035497.html" rel="noreferrer" target="_blank">[PATCH 316/459] drm/amd/display: Add DCN2 and NV ASIC ID</a>
  <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:11"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050059.html" rel="noreferrer" target="_blank">[PATCH 095/207] drm/amdgpu: add vram_info v2_5 in atomfirmware header</a>
+ <a class="footnote-return" href="#fnref:11"><sup>[return]</sup></a></li>
 <li id="fn:8"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050077.html" rel="noreferrer" target="_blank">[PATCH 113/207] drm/amdgpu: enable 3D pipe 1 on Sienna_Cichlid</a>
  <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
 <li id="fn:9"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c?h=amd-staging-drm-next&amp;id=f091c1c70e89adca93c4f4f35dfa0abf90611453" rel="noreferrer" target="_blank">https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c?h=amd-staging-drm-next&amp;id=f091c1c70e89adca93c4f4f35dfa0abf90611453</a>
  <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049985.html" rel="noreferrer" target="_blank">[PATCH 021/207] drm/amdgpu: add sdma ip block for sienna_cichlid (v5)</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
 <li id="fn:7"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050080.html" rel="noreferrer" target="_blank">[PATCH 116/207] drm/amdkfd: Support Sienna_Cichlid KFD v4</a>
  <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
 <li id="fn:1"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050116.html" rel="noreferrer" target="_blank">[PATCH 152/207] drm/amdgpu/vcn3.0: schedule instance 0 for decode and 1 for encode</a>
@@ -345,8 +370,7 @@ VCN3 ではデコード担当とエンコード担当がはっきり分かれる
    <nav class="side-links">
      <a href="https://blog.coelacanth-dream.com/posts">Archive</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
 
-   </nav>
-   <nav class="side-tags">
+   </nav><nav class="side-tags">
      <ul>
        <li><a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tag</a>
        <ul>
@@ -354,8 +378,7 @@ VCN3 ではデコード担当とエンコード担当がはっきり分かれる
          <li><a href="https://blog.coelacanth-dream.com/tags/navi21" class="side-tag-lower">Navi21</a></li>
          <li><a href="https://blog.coelacanth-dream.com/tags/sienna_cichlid" class="side-tag-lower">Sienna_Cichlid</a></li></ul>
      </ul>
-   </nav>
-   <nav class="side-categories">
+   </nav><nav class="side-categories">
      <ul>
        <li><a href="https://blog.coelacanth-dream.com/categories" class="categorie-title">Category</a>
        <ul>
@@ -364,7 +387,7 @@ VCN3 ではデコード担当とエンコード担当がはっきり分かれる
          <li><a href="https://blog.coelacanth-dream.com/categories/amd" class="side-categorie-lower">AMD</a></li></ul>
      </ul>
    </nav><time datetime="2020-06-02 15:39:35" class="side-time">Post : 2020-06-02 </time>
-     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-02 18:16:09 </div>
+     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-02 18:42:29 </div>
    <div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
      <a href="https://blog.coelacanth-dream.com/about/">About</a>
    <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
@@ -399,7 +422,7 @@ VCN3 ではデコード担当とエンコード担当がはっきり分かれる
      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
    <a href="#" class="pagetop">Page Top</a></nav><div class="foot-time">
      <time datetime="2020-06-02 15:39:35">Post : 2020-06-02</time>
-     <div>/ Update : 2020-06-02 18:16:09 </div>
+     <div>/ Update : 2020-06-02 18:42:29 </div>
    </div><div class="foot-author">Author : Umio Yasuno</div><small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
 </main>
