@@ -284,6 +284,43 @@ gfx103x となる <a href="https://blog.coelacanth-dream.com/tags/rdna_2">RDNA 2
 
 <p>VRAMには Navi1x から続いて GDDR6 を採用すると見られる。<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">2</a></sup></p>
 
+<ins >
+	<span class="insbegin">（追記 ）</span>
+    <p>
+	<p><a href="https://www.guru3d.com" rel="noreferrer" target="_blank">Guru3D</a> は <em>Sienna Cichlid</em> が VRAMバス幅 128-bit なんて書いているが、<br />
+<span class="reflink"><a href="https://www.guru3d.com/news-story/amd-sienna-cichlid-spotted-in-linux-kernel-patchesbig-navi.html" rel="noreferrer" target="_blank">AMD Sienna Cichlid spotted in Linux Kernel patches, Big Navi?</a></span><br></p>
+
+<p>その根拠としている部分を見ると、まず判定部分に <code>amdgpu_emu_mode == 1</code> があることからエミュレータで実行している場合を対象としていることがわかる。<br />
+<span class="reflink"><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html" rel="noreferrer" target="_blank">drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a></span><br></p>
+<pre><code>-	if (!amdgpu_emu_mode)
+-		adev-&gt;gmc.vram_width = vram_width;
+-	else
++	if (adev-&gt;asic_type == CHIP_SIENNA_CICHLID &amp;&amp; amdgpu_emu_mode == 1) {
++		adev-&gt;gmc.vram_type = AMDGPU_VRAM_TYPE_GDDR6;
+ 		adev-&gt;gmc.vram_width = 1 * 128; /* numchan * chansize */
++	} else {
++		r = amdgpu_atomfirmware_get_vram_info(adev,
++				&amp;vram_width, &amp;vram_type, &amp;vram_vendor);
++		adev-&gt;gmc.vram_width = vram_width;
++
++		adev-&gt;gmc.vram_type = vram_type;
++		adev-&gt;gmc.vram_vendor = vram_vendor;
++	}</code></pre>
+<p>引用元: <cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049981.html" rel="noreferrer" target="_blank">[PATCH 017/207] drm/amdgpu: add gmc ip block for sienna_cichlid</a></cite></p>
+
+<p>128-bit の根拠としている行に + マークが付いていないことから、追加されたコードではなく元々あったものだということもわかる。<br />
+そして、 &ndash; マークの付いている部分を見るに、元々 Navi1x系をエミュレータで実行した時は VRAM 128-bit としていたらしい。</p>
+
+<p>だから <em>Sienna Cichlid</em> が VRAM 128-bit だという根拠にはなり得ない。</p>
+
+<p>本来なら影響力のあるメディアや個人が指摘すべきなんだろうけど、嘘と誤解ばかりで真実がどこにも無いよりはマシなはず。</p>
+
+    </p>
+	<span class="insend">（追記終了）</span>
+</ins>
+<br>
+
+
 <h2 id="インデックス">インデックス</h2>
 
 <ul>
@@ -387,7 +424,7 @@ AMD が EPYC CPU のコードネームにイタリアの都市を用いていた
          <li><a href="https://blog.coelacanth-dream.com/categories/amd" class="side-categorie-lower">AMD</a></li></ul>
      </ul>
    </nav><time datetime="2020-06-02 15:39:35" class="side-time">Post : 2020-06-02 </time>
-     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-02 21:38:45 </div>
+     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-02 23:53:28 </div>
    <div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
      <a href="https://blog.coelacanth-dream.com/about/">About</a>
    <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
@@ -420,7 +457,7 @@ AMD が EPYC CPU のコードネームにイタリアの都市を用いていた
      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
    <a href="#" class="pagetop">Page Top</a></nav><div class="foot-time">
      <time datetime="2020-06-02 15:39:35">Post : 2020-06-02</time>
-     <div>/ Update : 2020-06-02 21:38:45 </div>
+     <div>/ Update : 2020-06-02 23:53:28 </div>
    </div><div class="foot-author">Author : Umio Yasuno</div><small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
 </main>
