@@ -340,7 +340,12 @@ ring とは CP(Command Processor) が各ユニットへコマンドを発行す�
 <p><em>Sienna Cichlid</em> は SDMAコントローラを 4基持ち、これは従来の一般向けGPUの倍の数だ。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup>(HPC向けの <em>Arcturus</em> は 8基)<br />
 コントローラあたりのキュー数が減らされていないため、純粋に倍となる。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">6</a></sup><br />
 増やした意図ははっきりせず、<em>Arctturus</em> のように XGMI/マルチGPU に最適化された SDMAコントローラという訳でもないようだ。<br />
-追加された <code>atom_smc_dpm_info_v4_9</code> には XGMIに関するコードがあるが、<em>Arcturus</em> の v4_6 と同一であることから流用したものと思われ、<em>Sienna Cichlid</em> が実際にサポートしているかは定かでない。</p>
+追加された <code>atom_smc_dpm_info_v4_9</code> には XGMIに関するコードがあるが<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">7</a></sup>、<em>Arcturus</em> の v4_6 と同一であることから流用したものと思われ、<em>Sienna Cichlid</em> が実際にサポートしているかは定かでない。<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">2</a></sup></p>
+
+<p>SMU(System Management Unit) のバージョンが <em>Sienna Cichlid</em> と <em>Arcturus</em> とで同じであるため、コードの流用は普通だ。<br />
+しかし、<code>arcturus_ppt.c</code> と <code>sienna_ciclid_ppt.c</code> を見比べると、(ppt = PPTable)<br />
+後者は <code>SMC_DPM_FEATURE</code> に <code>FEATURE_DPM_XGMI_MASK</code> が無い、message_map に SetXgmiMode が無いといった違いがある。<sup class="footnote-ref" id="fnref:12"><a href="#fn:12">8</a></sup><sup class="footnote-ref" id="fnref:13"><a href="#fn:13">9</a></sup><br />
+そのため、やはり <em>Sienna Cichlid</em> が XGMI /Inifnity Fabric を介したマルチGPUをサポートするかは微妙、というのが現在の個人的姿勢だ。</p>
 
 <p>また、これまでは SDMAコントローラそれぞれのファームウェアイメージが用意され、それぞれロードするという形だったが、この部分が改良され、1つのファームウェアイメージを共有するようになった。<br />
 <em>Arcturus</em> は末尾の番号が違う 8つのファームウェアイメージを用意することになったため、さすがに面倒、冗長だと感じたのだろうか。</p>
@@ -348,9 +353,9 @@ ring とは CP(Command Processor) が各ユニットへコマンドを発行す�
 <h2 id="vcn3">VCN 3.0</h2>
 
 <p>動画のデコード/エンコードを担当するマルチメディア部の VCN も更新されている。<br />
-<em>Sienna Cichlid</em> は 2つの VCN3インスタンスを持つが、それらは非対称であり、片方がデコードのみ、もう片方がエンコードのみを担当する。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">7</a></sup></p>
+<em>Sienna Cichlid</em> は 2つの VCN3インスタンスを持つが、それらは非対称であり、片方がデコードのみ、もう片方がエンコードのみを担当する。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">10</a></sup></p>
 
-<p>Unified Video Decoder という名前ながらエンコードも担当していた UVD と VCE(Video Compression Engine) が VCN(Video Core Next) に統合され、<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">8</a></sup><br />
+<p>Unified Video Decoder という名前ながらエンコードも担当していた UVD と VCE(Video Compression Engine) が VCN(Video Core Next) に統合され、<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">11</a></sup><br />
 VCN3 ではデコード担当とエンコード担当がはっきり分かれる訳だ。</p>
 
 <h2 id="dcn3">DCN3</h2>
@@ -358,7 +363,7 @@ VCN3 ではデコード担当とエンコード担当がはっきり分かれる
 <p>DCN も更新され、DCN3 となった。<br />
 どういった新機能があるかはまだ不明。(読み取れていない)</p>
 
-<p>一応、リソースから最大6画面出力ということは読み取れる。<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">9</a></sup>一般向けでミドル帯以上のGPUとして普通の規模だろう。</p>
+<p>一応、リソースから最大6画面出力ということは読み取れる。<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">12</a></sup>一般向けでミドル帯以上のGPUとして普通の規模だろう。</p>
 
 <h2 id="aside">余談</h2>
 
@@ -375,7 +380,7 @@ AMD が EPYC CPU のコードネームにイタリアの都市を用いていた
 <ol>
 <li id="fn:3"><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-June/035497.html" rel="noreferrer" target="_blank">[PATCH 316/459] drm/amd/display: Add DCN2 and NV ASIC ID</a>
  <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:11"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050059.html" rel="noreferrer" target="_blank">[PATCH 095/207] drm/amdgpu: add vram_info v2_5 in atomfirmware header</a>
+<li id="fn:11"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/include/atomfirmware.h?h=amd-staging-drm-next-sienna_cichlid&amp;id=4c35e77865a9037c32b0354663d23c33b08ae188" rel="noreferrer" target="_blank">https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/include/atomfirmware.h?h=amd-staging-drm-next-sienna_cichlid&amp;id=4c35e77865a9037c32b0354663d23c33b08ae188</a>
  <a class="footnote-return" href="#fnref:11"><sup>[return]</sup></a></li>
 <li id="fn:8"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050077.html" rel="noreferrer" target="_blank">[PATCH 113/207] drm/amdgpu: enable 3D pipe 1 on Sienna_Cichlid</a>
  <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
@@ -385,6 +390,12 @@ AMD が EPYC CPU のコードネームにイタリアの都市を用いていた
  <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
 <li id="fn:7"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050080.html" rel="noreferrer" target="_blank">[PATCH 116/207] drm/amdkfd: Support Sienna_Cichlid KFD v4</a>
  <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+<li id="fn:6"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050119.html" rel="noreferrer" target="_blank">[PATCH 155/207] drm/amd/powerplay: and smc dpm info struct for sienna_cichlid</a>
+ <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+<li id="fn:12"><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=43349491dae7284a195abfa8ff9044f7a20222a2#n128" rel="noreferrer" target="_blank">https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=43349491dae7284a195abfa8ff9044f7a20222a2#n128</a>
+ <a class="footnote-return" href="#fnref:12"><sup>[return]</sup></a></li>
+<li id="fn:13"><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/sienna_cichlid_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=f6f084fdbb462e29dbf7258a99730cdd5fc51093" rel="noreferrer" target="_blank">https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/sienna_cichlid_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=f6f084fdbb462e29dbf7258a99730cdd5fc51093</a>
+ <a class="footnote-return" href="#fnref:13"><sup>[return]</sup></a></li>
 <li id="fn:1"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050116.html" rel="noreferrer" target="_blank">[PATCH 152/207] drm/amdgpu/vcn3.0: schedule instance 0 for decode and 1 for encode</a>
  <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
 <li id="fn:2"><a href="https://www.x.org/wiki/RadeonFeature/#radeonuvdunifiedvideodecoderhardware" rel="noreferrer" target="_blank">https://www.x.org/wiki/RadeonFeature/#radeonuvdunifiedvideodecoderhardware</a>
@@ -411,7 +422,7 @@ AMD が EPYC CPU のコードネームにイタリアの都市を用いていた
          <a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-category-lower">GPU</a>
          <a href="https://blog.coelacanth-dream.com/categories/amd" class="side-category-lower">AMD</a>
    </nav><time datetime="2020-06-02 15:39:35" class="side-time">Post : 2020-06-02 </time>
-     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-04 05:42:47 </div>
+     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-04 10:40:04 </div>
    <div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
      <a href="https://blog.coelacanth-dream.com/about/">About</a>
    <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
@@ -443,7 +454,7 @@ AMD が EPYC CPU のコードネームにイタリアの都市を用いていた
       <a href="#" class="pagetop">Page Top</a>
    </nav><div class="foot-time">
       <time datetime="2020-06-02 15:39:35">Post : 2020-06-02</time>
-      <div>/ Update : 2020-06-04 05:42:47 </div>
+      <div>/ Update : 2020-06-04 10:40:04 </div>
    </div><div class="foot-author">Author : Umio Yasuno</div><small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
 </main>
