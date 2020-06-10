@@ -18,11 +18,11 @@
    <meta name="description" content="AMDGPU向けのオープンソースなドライバー、RadeonSI(OpenGL)、RADV(Vulkan) が Sienna Cichlid サポートに向けて動き始めた。 radv: add Sienna">
    <meta property="og:description" content="AMDGPU向けのオープンソースなドライバー、RadeonSI(OpenGL)、RADV(Vulkan) が Sienna Cichlid サポートに向けて動き始めた。 radv: add Sienna">
    <meta name="twitter:description" content="AMDGPU向けのオープンソースなドライバー、RadeonSI(OpenGL)、RADV(Vulkan) が Sienna Cichlid サポートに向けて動き始めた。 radv: add Sienna">
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/09/amd-sienna-cichlid-oss-umd/">
    <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
    <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
    <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/09/amd-sienna-cichlid-oss-umd/">
    <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/09/amd-sienna-cichlid-oss-umd/">
-   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/09/amd-sienna-cichlid-oss-umd/">
    <meta name="author" content="Umio Yasuno">
    <meta name="keywords" content="Sienna_Cichlid, Navi21, RDNA_2, GFX10, Hardware, AMD, GPU, ">
 
@@ -286,7 +286,7 @@ h1 {
 <p>今回読み取れるのは、<em>Sienna Cichlid</em> が</p>
 
 <ul>
-<li><a href="#wavefront-16">SIMDユニットあたりで保持する実行中の Wave数が Navi1x の 20-wave から 16-wave に減らされている</a><sup class="footnote-ref" id="fnref:2"><a href="#fn:2">1</a></sup></li>
+<li><a href="#wavefront-16">SIMDユニットあたりで保持する実行中の Wave数が Navi1x の 20エントリ から 16エントリ に減らされている</a><sup class="footnote-ref" id="fnref:2"><a href="#fn:2">1</a></sup></li>
 <li><a href="#gfx1030">GPU ID は gfx1030</a><sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup></li>
 <li><a href="#dfsm">DFSM(Deterministic Finite State Machine) のサポートが外された</a><sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup></li>
 <li><a href="#pc-lines"><code>pc_lines</code> は 1024</a><sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup></li>
@@ -295,6 +295,12 @@ h1 {
 </ul>
 
 <p>ということだ。</p>
+
+<p>RADV のバックエンドに使われる LLVM は ver11 で <em>Sienna Cichlid</em> をサポートする予定でいるらしく<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">7</a></sup>、<br />
+LLVM のリリース間隔を見ると、ver11 は 2020/09 に来る可能性が高い。<br />
+<span class="reflink"><a href="https://releases.llvm.org/" rel="noreferrer" target="_blank">Download LLVM releases</a></span><br>
+
+インターネット上の噂でもそのくらいに新GPUが出るのではと囁かれている。</p>
 
 <h2 id="wavefront-16">SIMDユニットあたりで保持する Wave数が減る、スレッド性能の向上が目的か</h2>
 
@@ -328,7 +334,7 @@ GFX9 で追加された、レンダリング領域を細かいタイルに分割
 
 <h2 id="pc-lines">pc_lines は 1024</h2>
 
-<p><code>pc_lines</code> は Parameter Cache Lines の略とされている<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">7</a></sup>、のだが正直、自分自身詳しいことはわかっていない。<br />
+<p><code>pc_lines</code> は Parameter Cache Lines の略とされている<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">8</a></sup>、のだが正直、自分自身詳しいことはわかっていない。<br />
 上記 DFSM機能にその一部が使われるというくらいで。</p>
 
 <p><em>Sienna Cichlid</em> の <code>pc_lines</code> の値は 1024 で、<em>Navi10 /Navi12</em> と同一である、ということを言及するに留めておく。</p>
@@ -374,6 +380,8 @@ GFX9 で追加された、レンダリング領域を細かいタイルに分割
  <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
 <li id="fn:6"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=859d7a5fe951ce45b4693f0a3bb55fbbe0c5b2d5" rel="noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=859d7a5fe951ce45b4693f0a3bb55fbbe0c5b2d5</a>
  <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+<li id="fn:8"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=7366021e3854532837dc5c569bc8a24bb023c11b" rel="noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=7366021e3854532837dc5c569bc8a24bb023c11b</a>
+ <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
 <li id="fn:7"><a href="https://github.com/GPUOpen-Drivers/pal/blob/82390674c40402c81dbf311a5ee488fb972894f5/src/core/hw/gfxip/gfx9/gfx9Device.cpp#L4198" rel="noreferrer" target="_blank">https://github.com/GPUOpen-Drivers/pal/blob/82390674c40402c81dbf311a5ee488fb972894f5/src/core/hw/gfxip/gfx9/gfx9Device.cpp#L4198</a>
  <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
 </ol>
@@ -397,7 +405,7 @@ GFX9 で追加された、レンダリング領域を細かいタイルに分割
          <a href="https://blog.coelacanth-dream.com/categories/amd" class="side-category-lower">AMD</a>
          <a href="https://blog.coelacanth-dream.com/categories/gpu" class="side-category-lower">GPU</a>
    </nav><time datetime="2020-06-09 04:29:37" class="side-time">Post : 2020-06-09 </time>
-     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-09 08:30:54 </div><div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
+     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-10 10:41:47 </div><div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
      <a href="https://blog.coelacanth-dream.com/about/">About</a>
    <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
    </nav>
@@ -429,7 +437,7 @@ GFX9 で追加された、レンダリング領域を細かいタイルに分割
       <a href="#" class="pagetop">Page Top</a>
    </nav><div class="foot-time">
       <time datetime="2020-06-09 04:29:37">Post : 2020-06-09</time>
-      <div>/ Update : 2020-06-09 08:30:54 </div>
+      <div>/ Update : 2020-06-10 10:41:47 </div>
    </div><div class="foot-author">Author : Umio Yasuno</div><small class="copyright">&copy 2019 Umio Yasuno</small>
 </footer>
 </main>
