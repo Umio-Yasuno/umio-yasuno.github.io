@@ -24,7 +24,7 @@
    <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/10/amd-ppr-fam17h-model20h/">
    <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/10/amd-ppr-fam17h-model20h/">
    <meta name="author" content="Umio Yasuno">
-   <meta name="keywords" content="Raven2, Dali, Pollock, Hardware, AMD, APU, ">
+   <meta name="keywords" content="Raven2, Dali, Pollock, Zen, Hardware, AMD, APU, ">
 
       <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
       <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
@@ -292,7 +292,8 @@ h1 {
 
 <p>FT5ソケット/パッケージの一部概要も記されており、2-in-1 の小型のフォームファクター向けで、エネルギー効率を重視したクラスのパッケージとしている。</p>
 
-<p>内部GPUの Device ID に、<code>0x15D8</code> 、<code>0x15DD</code>、そしてまだ使用が確認されていない <code>0x15D9</code> を使うとしており、今後さらなる低電力低コストな Zen APU の登場に期待が持てる。</p>
+<p>内部GPUの Device ID に、<code>0x15D8</code> 、<code>0x15DD</code>、そしてまだ実物が確認されていない <code>0x15D9</code> を使うとしており、今後さらなる低電力低コストな Zen APU の登場に期待が持てる。<br />
+予約されている <code>0x15D9</code> の Revision ID にはコンシューマ向けに使われることの多い <code>0xCX</code> が 3つあることもそれを手伝う。 (0xC1, 0xC2, 0xC3)<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">1</a></sup></p>
 
 <h2 id="zen-apu-再整理">Zen APU 再整理</h2>
 
@@ -310,28 +311,30 @@ h1 {
 <em>Raven2</em> をベースとする、</p>
 
 <ul>
-<li>Athlon 300U<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></li>
-<li>Ryzen 3 3200U<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></li>
-<li>Athlon PRO 300GE<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">3</a></sup></li>
+<li>Athlon 300U<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup></li>
+<li>Ryzen 3 3200U<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">3</a></sup></li>
+<li>Athlon PRO 300GE<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup></li>
 </ul>
 
 <p>らが x86_Model <code>18h</code> 、つまり <em>Picasso</em> と認識されている点は変わりないが、</p>
 
 <ul>
-<li>Athlon Gold 3150U<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup></li>
-<li>Athlon Silver 3050U<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">5</a></sup></li>
-<li>Ryzen 3 3250U<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">6</a></sup></li>
+<li>Athlon Gold 3150U<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup></li>
+<li>Athlon Silver 3050U<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">6</a></sup></li>
+<li>Ryzen 3 3250U<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">7</a></sup></li>
 </ul>
 
 <p>もまた、<code>18h</code> となっている。</p>
 
 <p>これは少し不思議な話で、というのもそれらは <em>Dali</em> とされていたからだ。<br />
-CES 2020 で正式発表されたとき、脚注にある性能比較の詳細に割り振られた文字列が DAL-1、DAL-3 となっていた。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">7</a></sup><br />
+CES 2020 で正式発表されたとき、脚注にある性能比較の詳細に割り振られた文字列が DAL-1、DAL-3 となっていた。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">8</a></sup><br />
 DAL は <em>Dali</em> の略称。</p>
 
-<p>これに関し、Chromium OSへのパッチの中で、一部の Chromebook向けでない <em>Dali APU</em> は <em>Picasso</em> と同じ CPUIDを使うとコメントされている。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">8</a></sup></p>
+<p>これに関し、Chromium OSへのパッチの中で、一部の Chromebook向けでない <em>Dali APU</em> は <em>Picasso</em> と同じ CPUIDを使うとコメントされている。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">9</a></sup></p>
 
 <p>何があった？ GPUの Device ID だけでなく、CPU の判定までもややこしいなんて。<br />
+<em>Raven2</em> なのに素直に <em>Raven2</em> と言えず。<br />
+プロセッサのコードネームが、コードネームとしてうまく機能していないというのも中々に問題な気がする。<br />
 気にする人しか気にしないかもしれないが、ほんと何があったのか。</p>
 
 <table>
@@ -398,6 +401,8 @@ DAL は <em>Dali</em> の略称。</p>
 <hr />
 
 <ol>
+<li id="fn:9"><a href="https://github.com/GPUOpen-Tools/common_src_device_info/commit/f5e7f3c8177e98d8333eed0e0f0cbc8114b8a621#diff-fdd3c86dd88500382e70fe0ef61d0a50" rel="noreferrer" target="_blank">https://github.com/GPUOpen-Tools/common_src_device_info/commit/f5e7f3c8177e98d8333eed0e0f0cbc8114b8a621#diff-fdd3c86dd88500382e70fe0ef61d0a50</a>
+ <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
 <li id="fn:1"><a href="https://browser.geekbench.com/v5/cpu/2441148" rel="noreferrer" target="_blank">Acer Aspire A315-42 &ndash; Geekbench Browser</a>
  <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
 <li id="fn:2"><a href="https://browser.geekbench.com/v5/cpu/2468225" rel="noreferrer" target="_blank">LENOVO 81SS &ndash; Geekbench Browser</a>
@@ -428,13 +433,14 @@ DAL は <em>Dali</em> の略称。</p>
          <a href="https://blog.coelacanth-dream.com/tags/dali" class="side-tag-lower">Dali</a>
          <a href="https://blog.coelacanth-dream.com/tags/pollock" class="side-tag-lower">Pollock</a>
          <a href="https://blog.coelacanth-dream.com/tags/raven2" class="side-tag-lower">Raven2</a>
+         <a href="https://blog.coelacanth-dream.com/tags/zen" class="side-tag-lower">Zen</a>
    </nav><nav class="side-categories">
       <a href="https://blog.coelacanth-dream.com/categories" class="category-title">Category</a>
          <a href="https://blog.coelacanth-dream.com/categories/hardware" class="side-category-lower">Hardware</a>
          <a href="https://blog.coelacanth-dream.com/categories/amd" class="side-category-lower">AMD</a>
          <a href="https://blog.coelacanth-dream.com/categories/apu" class="side-category-lower">APU</a>
    </nav><time datetime="2020-06-10 14:57:15" class="side-time">Post : 2020-06-10 </time>
-     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-10 21:02:41 </div><div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
+     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-10 23:32:36 </div><div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
      <a href="https://blog.coelacanth-dream.com/about/">About</a>
    <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
    </nav>
@@ -448,6 +454,7 @@ DAL は <em>Dali</em> の略称。</p>
          <a href="https://blog.coelacanth-dream.com/tags/raven2">Raven2</a>
          <a href="https://blog.coelacanth-dream.com/tags/dali">Dali</a>
          <a href="https://blog.coelacanth-dream.com/tags/pollock">Pollock</a>
+         <a href="https://blog.coelacanth-dream.com/tags/zen">Zen</a>
       </nav>
    </div><div class="foot-categorie-block">
       <a href="https://blog.coelacanth-dream.com/categories" class="foot-category-title">Category :</a>
@@ -465,7 +472,7 @@ DAL は <em>Dali</em> の略称。</p>
       <a href="#" class="pagetop">Page Top</a>
    </nav><div class="foot-time">
       <time datetime="2020-06-10 14:57:15">Post : 2020-06-10</time>
-      <div>/ Update : 2020-06-10 21:02:41 </div>
+      <div>/ Update : 2020-06-10 23:32:36 </div>
    </div><div class="foot-author">Author : Umio Yasuno</div><small class="copyright">&copy 2019 Umio Yasuno</small>
 </footer>
 </main>
