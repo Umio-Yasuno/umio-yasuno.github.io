@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+      
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/06/14/amd-pollock-apu-database/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary"><title>AMD Pollock APU Database | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD Pollock APU Database | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD Pollock APU Database | Coelacanth&#39;s Dream">
+   <meta property="og:type" content="article">
+
+   <meta name="description" content="あるハードウェアに関する情報を集め続ける内に、情報それぞれが孤立気味になってきたため、随時更新を行なう情報が集約されたページを作ることとした。 そ">
+   <meta property="og:description" content="あるハードウェアに関する情報を集め続ける内に、情報それぞれが孤立気味になってきたため、随時更新を行なう情報が集約されたページを作ることとした。 そ">
+   <meta name="twitter:description" content="あるハードウェアに関する情報を集め続ける内に、情報それぞれが孤立気味になってきたため、随時更新を行なう情報が集約されたページを作ることとした。 そ">
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/14/amd-pollock-apu-database/">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/14/amd-pollock-apu-database/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/14/amd-pollock-apu-database/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="Database, Raven2, Pollock, gfx909, Hardware, APU, AMD, ">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .95em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 1.2em;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.title {
+   font: normal 2em monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+   max-width: 72vw;
+}
+.title a {
+   color: #819BA1;
+   text-shadow: 0 2px .8em #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+.title a:hover {
+   color: #90B4BD;
+   text-shadow: 0 2px 1em #7EA0A9;
+   text-decoration: none;
+}
+.ptitle {
+   grid-row: 3 / 4;
+   grid-column: 2 / -2;
+   font: normal 1.3rem monospace;
+   color: #90B4BD;
+}
+.page-title, .page-title a {
+   color: #FFA332;
+   font-size: 1.15rem;
+   line-height: 1.2em;
+   margin: 0;
+   padding: 0;
+}
+.page-title a:hover, .sect-page a:hover {
+   text-decoration: underline #B77512;
+}
+.tag-title, .category-title {
+   color: #7FFFD4;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .28em 0 .28em;
+   margin: 0;
+   word-break: break-all;
+
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   line-height: 1.5em;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+}
+article >  p {
+   letter-spacing: .01em;
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .6em;
+}
+hr {
+   background-color: #20B2AA;
+   margin: .5em auto .5em auto;
+   border-width: 0;
+   width: 98%;
+   height: 1px;
+}
+.copyright {
+   font-size: .9em;
+   color: limegreen;
+   padding-top: 1em;
+}
+footer, .side {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 2 / -1;
+}
+@media (min-width: 840px) {
+   main {
+     display: grid;
+     grid-template-rows: 1vh 2vh repeat(3, auto) 6vh;
+     grid-template-columns: 2vw 232px 1vw auto;
+   }
+   .text {
+     grid-row: 2 / 6;
+     grid-column: 3 / -1;
+   }
+   header > .title {
+     display: none;
+   }
+   .title {
+      font-size: 1.8em;
+   }
+   .side {
+     display: flex;
+     flex-direction: column;
+     row-gap: 20px;
+     height: 90vh;
+     width: 200px;
+     position: fixed;
+       top: 2vh;
+     padding: 3em 12px 0 24px;
+     border-right: 1px solid #246F45;
+     font-size: 1em;
+     color: #00E500;
+     overflow: scroll;
+     scrollbar-width: thin;
+     scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+   }
+   .ptitle {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+   }
+   .side-links {
+      display: flex;
+      flex-direction: column;
+      max-width: 64%;
+      row-gap: .5em;
+   }
+   .side-pagination {
+      font-family: monospace;
+      font-size: 1.1em;
+      display: grid;
+      grid-template-rows: repeat(3, 1.5em);
+   }
+   .side-prev, .side-next {
+     color: #9EDEFF;
+
+   }
+   .side-prev {
+      margin-right: auto;
+      grid-row: 1 / 2;
+   }
+     .side-prev::before {
+       content: '\2190';
+     }
+   .side-next {
+     margin-left: auto;
+     grid-row: 3 / 4;
+   }
+     .side-next::after {
+       content: '\2192';
+     }
+   .side-page-number {
+     margin: 0 auto 0 auto;
+     grid-row: 2 / 3;
+   }
+   .side-author, .side-lastmod, .side-about a, .side-time {
+     font-size: .98em;
+     border-bottom: 1px solid #2D5A4B;
+     max-width: max-content;
+     line-height: 1.3em;
+   }
+   .side-tag-lower::before, .side-category-lower:before {
+      content: '\2514';
+      vertical-align: text-top;
+      padding: 0 .4em 0 0;
+      color: #4C997F;
+      font-weight: bold;
+   }
+   .side-tag-lower:hover::before, .side-category:hover::before {
+      color: #65CCA9;
+   }
+   .side-tags a:hover, .side-categories a:hover, .side-links a:hover, .side-about a:hover {
+     text-decoration: none;
+     border-bottom: 1px solid #5AB798;
+   }
+   .tag-title, .category-title, .side-links a, .side-tag-lower, .side-category-lower {
+     border-bottom: 1px solid #326654;
+   }
+   .side-tag-lower, .side-category-lower {
+      max-width: max-content;
+      padding: 0;
+      margin-left: .8em;
+   }
+   .side-tags a, .side-categories a {
+      text-decoration: none;
+   }
+   .side-tags, .side-categories {
+      display: flex;
+      flex-direction: column;
+      row-gap: .6em;
+      line-height: 1em;
+   }
+   .tag-title, .category-title {
+      max-width: max-content;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1% 2% auto 1%;
+   row-gap: .7em;
+}
+article > p ~ * {
+   display: none;
+}
+article > * {
+   grid-column: 3 / -2;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4em sans-serif;
+   grid-column: 2 / -1;
+}
+.breakcrumb {
+   grid-column: 1 / -1;
+   display: flex;
+   column-gap: .2em;
+   font-style: italic;
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+
+   <h1>AMD Pollock APU Database</h1>
+
+<p>あるハードウェアに関する情報を集め続ける内に、情報それぞれが孤立気味になってきたため、随時更新を行なう情報が集約されたページを作ることとした。<br />
+そのため、作成時に限って目新しい情報はないことを留意していただきたい。</p>
+
+<p>今後他のハードウェアに関するページも作っていくつもり。</p>
+
+<h2 id="インデックス">インデックス</h2>
+
+<ul>
+<li><a href="#plk-summary">Pollock 概要</a></li>
+<li><a href="#plk-spec">Pollock 仕様(推測)</a></li>
+<li><a href="#ft5-pack">FT5 パッケージ</a></li>
+<li><a href="#board">ボード</a></li>
+</ul>
+
+<h2 id="plk-summary">Pollock 概要</h2>
+
+<p>コードネーム <em>Pollock</em> は<a href="https://blog.coelacanth-dream.com/tags/raven2">Raven2</a>をベースとする省電力APU。<br />
+アーキテクチャと規模が、CPU は Zenアーキテクチャ、2-Core/4-Thread、CPU L3cache 4MB、<br />
+GPU は Vega/GCN5アーキテクチャ (gfx909)、総CU数 3基、総RB(RenderBackend)数 1基(4-ROP相当)、GPU L2cache 512KB。<br />
+製造プロセスは Global Foundries 14nm FinFet (14LP)。<br />
+パッケージにはBGAタイプの <em>FT5 パッケージ</em> が使われる。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">1</a></sup><br />
+TDP は <em>FT5 パッケージ</em> で 4.8W。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup><br />
+ブースト時の電力リミットの仕様は、デフォルトで 4.8W、ピーク時で 9W、ピークからデフォルト移行時で 6W。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">2</a></sup></p>
+
+<p>コードネーム <em>Pollock</em> の略称は <em>PLK</em> 。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">3</a></sup><sup class="footnote-ref" id="fnref:6"><a href="#fn:6">4</a></sup></p>
+
+<p>双子の兄的な存在に、コードネーム <a href="https://blog.coelacanth-dream.com/tags/dali">Dali</a> がいるが、それぞれの i2cコントローラ数が異なり、<br />
+<em>Dali</em> は 3基、<em>Pollock</em> は 5基持つとされている。<sup class="footnote-ref" id="fnref:12"><a href="#fn:12">5</a></sup><br />
+他に違いとしては、ターゲットとするTDP帯が考えられ、<em>Dali</em> が 6〜15(25)W、<em>Pollock</em> が (4.5〜) 4.8W となる。</p>
+
+<h2 id="plk-spec">Pollock 仕様(推測)</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">AMD Pollock</th>
+<th align="center"></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">CPU</td>
+<td align="center"><em>Zen</em></td>
+</tr>
+
+<tr>
+<td align="left">&emsp;Max CPU Core/Thread</td>
+<td align="center">2/4</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;CPU L3cache</td>
+<td align="center">4 MB</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;CPU Base Clock</td>
+<td align="center">(1.0 ~ 1.2 GHz)</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;CPU Boost Clock</td>
+<td align="center">(2.35 ~ 2.4 GHz)</td>
+</tr>
+
+<tr>
+<td align="left">GPU</td>
+<td align="center"><em>Vega (gfx909)</em></td>
+</tr>
+
+<tr>
+<td align="left">&emsp;Max GPU CU</td>
+<td align="center">3</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;Max GPU SP</td>
+<td align="center">192</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;Max ROP</td>
+<td align="center">4(== 1-RB)</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;GPU L2cache</td>
+<td align="center">512 KB</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;GPU Clock</td>
+<td align="center">800 MHz <sup class="footnote-ref" id="fnref:6"><a href="#fn:6">4</a></sup></td>
+</tr>
+
+<tr>
+<td align="left">Process</td>
+<td align="center">GF 14nm</td>
+</tr>
+
+<tr>
+<td align="left">TDP</td>
+<td align="center">4.8 W</td>
+</tr>
+</tbody>
+</table>
+
+<p>CPUのクロック仕様は主に Geekbenchの結果を元にしている。<br />
+末尾に <code>.gb5</code> を付けることで詳細を見ることができ、そこで大体の最大クロックがわかる。<br />
+<span class="reflink"><a href="https://browser.geekbench.com/v5/cpu/2301114" rel="noreferrer" target="_blank">Google zork &ndash; Geekbench Browser</a></span><br>
+
+<span class="reflink"><a href="https://browser.geekbench.com/v5/cpu/2301114.gb5" rel="noreferrer" target="_blank">https://browser.geekbench.com/v5/cpu/2301114.gb5</a></span><br>
+</p>
+
+<h2 id="ft5-pack">FT5 パッケージ</h2>
+
+<p><em>FT5 パッケージ</em> は 2-in-1の小型フォームファクター向けで、電力効率を重視したクラスのパッケージとなる。<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">6</a></sup><br />
+特徴的な仕様として、<em>Pollock</em> のベースとなる <em>Raven2</em> は DDR4 デュアルチャネル分のインターフェイスを備えているが、<em>FT5 パッケージ</em> はそれを制限し、DDR4 シングルチャネルまでの対応となる点があげられる。<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">7</a></sup><br />
+初期のパッチセットでは SATAインターフェイスも無いという記述があったが<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">8</a></sup>、後のパッチセットでその部分は削除されている。<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">7</a></sup></p>
+
+<p><strong>Dalboz</strong> の仕様から、NVMe SSD の PCIe Gen3 x2 接続には対応しているものと思われる。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">9</a></sup></p>
+
+<h2 id="board">ボード</h2>
+
+<p>AMD が提供する <em>Pollock</em> 搭載のリファレンスボードのコードネームは <strong>Cereme</strong> 。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">10</a></sup><br />
+<em>Pollock</em> を搭載する Chromebook ボードは 2020/06/14 現在、<strong>Dalboz</strong> <sup class="footnote-ref" id="fnref:3"><a href="#fn:3">11</a></sup> とそれをベースとする <strong>Vilboz</strong> <sup class="footnote-ref" id="fnref:4"><a href="#fn:4">12</a></sup> の 2種類が確認されている。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:7"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051509" rel="noreferrer" target="_blank">soc/amd/picasso: Add Kconfig option for chip footprint (Ia4663d38) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+<li id="fn:1"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2135098" rel="noreferrer" target="_blank">mb/google/zork: update power parameters to 4.8w for dalboz (I711d1109) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://openbenchmarking.org/result/2006047-AR-JUN47027921" rel="noreferrer" target="_blank">Jun4 Benchmarks [2006047-AR-JUN47027921] &ndash; OpenBenchmarking.org</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:6"><a href="https://ranker.sisoftware.co.uk/show_system.php?q=cea598ab93a493a79eb8dfe2c4b68badc4f9dfb78aacd4e9cfaacff2c2e497aa92&amp;l=en" rel="noreferrer" target="_blank">Details for Computer/Device AMD Cereme-PLK Pollock : SiSoftware Official Live Ranker</a>
+ <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+<li id="fn:12"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2057468" rel="noreferrer" target="_blank">soc/amd/common: Determine # of i2c controllers at runtime (I397b074e) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:12"><sup>[return]</sup></a></li>
+<li id="fn:11"><a href="https://www.amd.com/en/support/tech-docs" rel="noreferrer" target="_blank">Tech Docs | AMD</a>
+ <a class="footnote-return" href="#fnref:11"><sup>[return]</sup></a></li>
+<li id="fn:9"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051509" rel="noreferrer" target="_blank">soc/amd/picasso: Add Kconfig option for chip footprint (Ia4663d38) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
+<li id="fn:10"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051509/1" rel="noreferrer" target="_blank">https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051509/1</a>
+ <a class="footnote-return" href="#fnref:10"><sup>[return]</sup></a></li>
+<li id="fn:8"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2066389" rel="noreferrer" target="_blank">Dalboz: tuning PCIe topology make DUT can boot up from SSD (I9113b54d) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2024459" rel="noreferrer" target="_blank">mainboard/amd/cereme : Create Initial Cereme Platform (I593d661f) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2055651" rel="noreferrer" target="_blank">mb/google/zork: add dalboz baseboard option (I646d9ad1) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:4"><a href="https://chromium-review.googlesource.com/c/chromiumos/platform/ec/+/2224680" rel="noreferrer" target="_blank">vilboz: Initial EC image (I511548fb) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+
+         <div class="side"><div class="title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<nav class="side-links">
+     <a href="https://blog.coelacanth-dream.com/posts">Archive</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+   </nav><nav class="side-tags">
+      <a href="https://blog.coelacanth-dream.com/tags" class="tag-title">Tag</a>
+         <a href="https://blog.coelacanth-dream.com/tags/database" class="side-tag-lower">Database</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gfx909" class="side-tag-lower">gfx909</a>
+         <a href="https://blog.coelacanth-dream.com/tags/pollock" class="side-tag-lower">Pollock</a>
+         <a href="https://blog.coelacanth-dream.com/tags/raven2" class="side-tag-lower">Raven2</a>
+   </nav><nav class="side-categories">
+      <a href="https://blog.coelacanth-dream.com/categories" class="category-title">Category</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="side-category-lower">Hardware</a>
+         <a href="https://blog.coelacanth-dream.com/categories/apu" class="side-category-lower">APU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/amd" class="side-category-lower">AMD</a>
+   </nav><time datetime="2020-06-14 00:07:27" class="side-time">Post : 2020-06-14 </time>
+     <div class="side-lastmod">Update :<br>&nbsp;&nbsp;2020-06-14 02:56:33 </div><div class="side-author">Author : Umio Yasuno</div><nav class="side-about">
+     <a href="https://blog.coelacanth-dream.com/about/">About</a>
+   <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+   </nav>
+     <small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         <footer>
+   <hr><div class="foot-tag-block">
+      <a href="https://blog.coelacanth-dream.com/tags" class="foot-tag-title">Tag :</a>
+      <nav class="foot-tags">
+         <a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+         <a href="https://blog.coelacanth-dream.com/tags/raven2">Raven2</a>
+         <a href="https://blog.coelacanth-dream.com/tags/pollock">Pollock</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gfx909">gfx909</a>
+      </nav>
+   </div><div class="foot-categorie-block">
+      <a href="https://blog.coelacanth-dream.com/categories" class="foot-category-title">Category :</a>
+      <nav class="foot-categories">
+         <a href="https://blog.coelacanth-dream.com/categories/hardware">Hardware</a>
+         <a href="https://blog.coelacanth-dream.com/categories/apu">APU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/amd">AMD</a>
+      </nav>
+   </div><nav class="foot-links">
+      <a href="https://blog.coelacanth-dream.com/posts">Archive</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+   </nav>
+   <nav class="foot-about">
+      <a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot-time">
+      <time datetime="2020-06-14 00:07:27">Post : 2020-06-14</time>
+      <div>/ Update : 2020-06-14 02:56:33 </div>
+   </div><div class="foot-author">Author : Umio Yasuno</div><small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
