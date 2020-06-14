@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/06/14/radv-aco-default-and-radeonsi-aco-plan/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary"><title>RADV/ACO をデフォルトで有効にする動き、RadeonSIに ACO を バックエンドに用いる計画も | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="RADV/ACO をデフォルトで有効にする動き、RadeonSIに ACO を バックエンドに用いる計画も | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="RADV/ACO をデフォルトで有効にする動き、RadeonSIに ACO を バックエンドに用いる計画も | Coelacanth&#39;s Dream">
+   <meta property="og:type" content="article">
+
+   <meta name="description" content="AMD GPU向けのオープンソースVulkanドライバー RADV の新たなシェーダーコンパイラバックエンド、ACO が既存の LLVM に代わ">
+   <meta property="og:description" content="AMD GPU向けのオープンソースVulkanドライバー RADV の新たなシェーダーコンパイラバックエンド、ACO が既存の LLVM に代わ">
+   <meta name="twitter:description" content="AMD GPU向けのオープンソースVulkanドライバー RADV の新たなシェーダーコンパイラバックエンド、ACO が既存の LLVM に代わ">
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/14/radv-aco-default-and-radeonsi-aco-plan/">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/14/radv-aco-default-and-radeonsi-aco-plan/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/14/radv-aco-default-and-radeonsi-aco-plan/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="ACO, RadeonSI, RADV, Software, AMD, GPU, ">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .95em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 1.2em;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 2em monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+   max-width: 72vw;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: 0 2px .8em #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: 0 2px 1em #7EA0A9;
+   text-decoration: none;
+}
+.page_title {
+   grid-row: 3 / 4;
+   grid-column: 2 / -2;
+   font: normal 1.3rem monospace;
+   color: #90B4BD;
+}
+.entry_title, .entry_title a {
+   color: #FFA332;
+   font-size: 1.15rem;
+   line-height: 1.2em;
+   margin: 0;
+   padding: 0;
+}
+.entry_title a:hover, .sect_page a:hover {
+   text-decoration: underline #B77512;
+}
+.tag_title, .category_title {
+   color: #7FFFD4;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .28em 0 .28em;
+   margin: 0;
+   word-break: break-all;
+
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   line-height: 1.5em;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+}
+article >  p {
+   letter-spacing: .01em;
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .6em;
+}
+hr {
+   background-color: #20B2AA;
+   margin: .5em auto .5em auto;
+   border-width: 0;
+   width: 98%;
+   height: 1px;
+}
+.copyright {
+   font-size: .9em;
+   color: #20B2AA;
+
+}
+footer, .side {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 1vh 2vh repeat(3, auto) 6vh;
+      grid-template-columns: 2vw 232px 1vw auto;
+   }
+   .text {
+      grid-row: 2 / 6;
+      grid-column: 3 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8em;
+   }
+   .side {
+      display: flex;
+      flex-direction: column;
+      row-gap: 20px;
+      height: 90vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 3em 12px 0 24px;
+      border-right: 1px solid #246F45;
+      font-size: 1em;
+      color: #00E500;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+   }
+   .side_links {
+      display: flex;
+      flex-direction: column;
+      max-width: 64%;
+      row-gap: .5em;
+   }
+   .side_pagination {
+      font-family: monospace;
+      font-size: 1.1em;
+      display: grid;
+      grid-template-rows: repeat(3, 1.5em);
+   }
+   .side_prev, .side_next {
+      color: #9EDEFF;
+
+   }
+   .side_prev {
+      margin-right: auto;
+      grid-row: 1 / 2;
+   }
+   .side_prev::before {
+      content: '\2190';
+   }
+   .side_next {
+      margin-left: auto;
+      grid-row: 3 / 4;
+   }
+   .side_next::after {
+      content: '\2192';
+   }
+   .side_page_number {
+      margin: 0 auto 0 auto;
+      grid-row: 2 / 3;
+   }
+   .side_author, .side_lastmod, .side_about a, .side_time {
+      font-size: .98em;
+      border-bottom: 1px solid #2D5A4B;
+      max-width: max-content;
+      line-height: 1.3em;
+   }
+   .side_tag_lower::before, .side_category_lower:before {
+      content: '\2514';
+      vertical-align: text-top;
+      padding: 0 .4em 0 0;
+      color: #4C997F;
+      font-weight: bold;
+   }
+   .side_tag_lower:hover::before, .side_category_lower:hover::before {
+      color: #65CCA9;
+   }
+   .side_tags a:hover, .side_categories a:hover, .side_links a:hover, .side_about a:hover {
+      text-decoration: none;
+      border-bottom: 1px solid #5AB798;
+   }
+   .tag_title, .category_title, .side_links a, .side_tag_lower, .side_category_lower {
+      border-bottom: 1px solid #326654;
+   }
+   .side_tag_lower, .side_category_lower {
+      max-width: max-content;
+      padding: 0;
+      margin-left: .8em;
+   }
+   .side_tags a, .side_categories a {
+      text-decoration: none;
+   }
+   .side_tags, .side_categories {
+      display: flex;
+      flex-direction: column;
+      row-gap: .6em;
+      line-height: 1em;
+   }
+   .tag_title, .category_title {
+      max-width: max-content;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1% 2% auto 1%;
+   row-gap: .7em;
+}
+article > p ~ * {
+   display: none;
+}
+article > * {
+   grid-column: 3 / -2;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4em sans-serif;
+   grid-column: 2 / -1;
+}
+.breakcrumb {
+   grid-column: 1 / -1;
+   display: flex;
+   column-gap: .2em;
+   font-style: italic;
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+
+   <h1>RADV/ACO をデフォルトで有効にする動き、RadeonSIに ACO を バックエンドに用いる計画も</h1><p>AMD GPU向けのオープンソースVulkanドライバー RADV の新たなシェーダーコンパイラバックエンド、<em>ACO</em> が既存の LLVM に代わり、デフォルトで有効化される動きを見せている。<br />
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5445" rel="noreferrer" target="_blank">radv: enable ACO by default (!5445) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
+</p>
+
+<p><em>ACO</em> については、以前書いた検証記事を参照。<br />
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/#aco">RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth&rsquo;s Dream</a></span><br>
+</p>
+
+<p>GFX9世代(Vegaアーキテクチャ)から対応している FP16/int16 の Packed実行と、その Vulkan拡張機能のソフトウェア対応、<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup><br />
+一部最適化と安定性の向上により、<em>ACO</em> は LLVM同等の機能を備えることになるため、<em>ACO</em> をデフォルトで有効にする目処が付いたということだろう。<br />
+その場合、LLVMをバックエンドに使用することはオプション扱いとなり、環境変数を指定する必要がある。<br />
+現在の <em>ACO</em> 有効方法がそうであるため、入れ替わる形だ。</p>
+
+<p><em>ACO</em> により、グラフィクス処理において平均で約1.2倍の性能向上を、<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">2</a></sup><br />
+そして自分が検証した限りでは、コンピュート処理においては約3倍の性能向上を受けられる。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">3</a></sup><br />
+<em>ACO</em> が性能に加えて機能と安定性を備え、デフォルトで有効化されるというのは素直に喜ばしいことだ。</p>
+
+<p>また、RADV の開発者の1人、<a href="https://gitlab.freedesktop.org/hakzsam" rel="noreferrer" target="_blank">Samuel Pitoiset</a>氏は、<em>ACO</em> を AMD GPU向けOpenGLドライバー、RadeonSI に移す計画はあるかという質問に対し、Yes と答えている。<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">4</a></sup></p>
+
+<p>RadeonSI にも <em>ACO</em> がバックエンドに採用されれば、より多くのアプリケーションにおける処理性能が向上する。<br />
+Linux + AMD GPUユーザーにとってかなりの朗報だ。</p>
+
+<div class="reference">
+<hr>
+<h3 class="ref-title" id="ref-title">参考リンク</h3>
+<ul>
+<li><a href="https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf" rel="noreferrer" target="_blank">https://xdc2019.x.org/event/5/contributions/334/attachments/431/683/ACO_XDC2019.pdf</a></li>
+<li><a href="https://archive.fosdem.org/2018/schedule/event/radeonsi/attachments/slides/2253/export/events/attachments/radeonsi/slides/2253/fosdem2018_shaders.pdf" rel="noreferrer" target="_blank">https://archive.fosdem.org/2018/schedule/event/radeonsi/attachments/slides/2253/export/events/attachments/radeonsi/slides/2253/fosdem2018_shaders.pdf</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5347/diffs" rel="noreferrer" target="_blank">WIP: radv/aco: enable FP16 features/extensions on GFX9+ (!5347) · Merge Requests · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:4"><a href="https://www.phoronix.com/scan.php?page=article&amp;item=radeon-software-20&amp;num=6" rel="noreferrer" target="_blank">Radeon Software 20.10 vs. Upstream Linux AMD Radeon OpenGL / Vulkan Performance &ndash; Phoronix</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://blog.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:6"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5445#note_532279" rel="noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5445#note_532279</a>
+ <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+
+         <div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<nav class="side_links">
+     <a href="https://blog.coelacanth-dream.com/posts">Archive</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+   </nav><nav class="side_tags">
+      <a href="https://blog.coelacanth-dream.com/tags" class="tag_title">Tag</a>
+         <a href="https://blog.coelacanth-dream.com/tags/aco" class="side_tag_lower">ACO</a>
+         <a href="https://blog.coelacanth-dream.com/tags/radeonsi" class="side_tag_lower">RadeonSI</a>
+         <a href="https://blog.coelacanth-dream.com/tags/radv" class="side_tag_lower">RADV</a>
+   </nav><nav class="side_categories">
+      <a href="https://blog.coelacanth-dream.com/categories" class="category_title">Category</a>
+         <a href="https://blog.coelacanth-dream.com/categories/amd" class="side_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu" class="side_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/software" class="side_category_lower">Software</a>
+   </nav><time datetime="2020-06-14" class="side_time">Post : 2020/06/14 </time>
+         <div class="side_lastmod">Update :<br>&emsp;2020/06/15 00:16</div><div class="side_author">Author : Umio Yasuno</div><nav class="side_about">
+     <a href="https://blog.coelacanth-dream.com/about/">About</a>
+   <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+   </nav>
+     <small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         <footer>
+   <hr><div class="foot_tag_block">
+      <a href="https://blog.coelacanth-dream.com/tags" class="foot_tag_title">Tag :</a>
+      <nav class="foot_tags">
+         <a href="https://blog.coelacanth-dream.com/tags/aco">ACO</a>
+         <a href="https://blog.coelacanth-dream.com/tags/radeonsi">RadeonSI</a>
+         <a href="https://blog.coelacanth-dream.com/tags/radv">RADV</a>
+      </nav>
+   </div><div class="foot_categorie_block">
+      <a href="https://blog.coelacanth-dream.com/categories" class="foot_category_title">Category :</a>
+      <nav class="foot_categories">
+         <a href="https://blog.coelacanth-dream.com/categories/amd">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/software">Software</a>
+      </nav>
+   </div><nav class="foot_links">
+      <a href="https://blog.coelacanth-dream.com/posts">Archive</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+   </nav>
+   <nav class="foot_about">
+      <a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+      <time datetime="2020-06-14">Post : 2020/06/14</time>
+         <span class="foot_time_update">Update : 2020/06/15 00:16</span>
+   </div><div class="foot_author">Author : Umio Yasuno</div><small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
