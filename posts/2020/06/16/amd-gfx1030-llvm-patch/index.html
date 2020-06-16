@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/06/16/amd-gfx1030-llvm-patch/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary"><title>LLVM に Navi21/GFX1030 へ向けたパッチが投稿される | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="LLVM に Navi21/GFX1030 へ向けたパッチが投稿される | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="LLVM に Navi21/GFX1030 へ向けたパッチが投稿される | Coelacanth&#39;s Dream">
+   <meta property="og:type" content="article">
+
+   <meta name="description" content="AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、Navi21/gfx1030 のサポートに向けたパッチが投稿された。 [">
+   <meta property="og:description" content="AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、Navi21/gfx1030 のサポートに向けたパッチが投稿された。 [">
+   <meta name="twitter:description" content="AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、Navi21/gfx1030 のサポートに向けたパッチが投稿された。 [">
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/16/amd-gfx1030-llvm-patch/">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/16/amd-gfx1030-llvm-patch/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/16/amd-gfx1030-llvm-patch/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="Navi21, Sienna_Cichlid, RDNA_2, GFX10, gfx1030, Hardware, AMD, GPU, ">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .95em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 1.2em;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 1.7em monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+   max-width: 64%;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: 0 2px 1em #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: 0 2px 1em #7EA0A9;
+   text-decoration: none;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .28em 0 .28em;
+   margin: 0;
+   word-break: break-all;
+
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   line-height: 1.5em;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+}
+article >  p {
+   letter-spacing: .01em;
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .6em;
+}
+.copyright {
+   font-size: .9em;
+   color: #20B2AA;
+
+}
+footer, .side {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1% 2% auto 1%;
+   row-gap: .7em;
+}
+article > p ~ * {
+   display: none;
+}
+article > * {
+   grid-column: 3 / -2;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4em sans-serif;
+   grid-column: 2 / -1;
+}
+ 
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 1vh 2vh repeat(3, auto) 6vh;
+      grid-template-columns: 2vw 232px 1vw auto;
+   }
+   .text {
+      grid-row: 2 / 6;
+      grid-column: 3 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8em;
+      max-width: unset;
+   }
+   .side {
+      display: flex;
+      flex-direction: column;
+      row-gap: 28px;
+      height: 90vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 3em 12px 0 24px;
+
+      border-right: 1px solid #2E8B57;
+      font-size: 1em;
+      color: #00FF7F;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+   }
+   .side_links {
+      display: flex;
+      flex-direction: column;
+      max-width: 64%;
+      row-gap: .5em;
+   }
+   .side_pagination {
+      font-family: monospace;
+      font-size: 1.1em;
+      display: grid;
+      grid-template-rows: repeat(3, 1.5em);
+   }
+   .side_prev, .side_next {
+      color: #9EDEFF;
+
+   }
+   .side_prev {
+      margin-right: auto;
+      grid-row: 1 / 2;
+   }
+   .side_prev::before {
+      content: '\2190';
+   }
+   .side_next {
+      margin-left: auto;
+      grid-row: 3 / 4;
+   }
+   .side_next::after {
+      content: '\2192';
+   }
+   .side_page_number {
+      margin: 0 auto 0 auto;
+      grid-row: 2 / 3;
+   }
+   .side_author, .side_lastmod, .side_about a, .side_time {
+      font-size: .98rem;
+
+      max-width: max-content;
+      line-height: 1.3em;
+   }
+   .side_lastmod {
+      border-top: 1px solid #2D5A4B;
+   }
+   .side_tag_lower::before, .side_category_lower:before {
+      content: '\2514';
+      vertical-align: text-top;
+      padding: 0 .4em 0 0;
+      color: #4C997F;
+      font-weight: bold;
+   }
+   .side_tag_lower:hover::before, .side_category_lower:hover::before {
+      color: #65CCA9;
+   }
+   .side_tag_block a:hover, .side_category_block a:hover, .side_links a:hover, .side_about a:hover {
+      text-decoration: none;
+      border-bottom: 1px solid #5AB798;
+   }
+   .side_tag_block a, .side_category_block a, .side_links a {
+      border-bottom: 1px solid #326654;
+   }
+   .side_tag_lower, .side_category_lower {
+      max-width: max-content;
+      padding: 0;
+      margin-left: .8em;
+   }
+   .side_tag a, .side_category a {
+      text-decoration: none;
+   }
+   .side_tag, .side_category, .side_tag_block, .side_category_block {
+      display: flex;
+      flex-direction: column;
+      row-gap: .6em;
+      line-height: 1em;
+   }
+   .side_tag_title, .side_category_title {
+      max-width: max-content;
+      color: #7FFFD4;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+
+   <h1>LLVM に Navi21/GFX1030 へ向けたパッチが投稿される</h1><p>AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、<em>Navi21/gfx1030</em> のサポートに向けたパッチが投稿された。<br />
+<span class="reflink"><a href="https://github.com/llvm/llvm-project/commit/9ee272f13d88f090817235ef4f91e56bb2a153d6" rel="noreferrer" target="_blank">[AMDGPU] Add gfx1030 target · llvm/llvm-project@9ee272f</a></span><br>
+</p>
+
+<p>今回追加されたコードは LLVM 11 に取り込まれるとされ<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>、その LLVM 11 はリリースサイクルから 2020/09 頃に来るはずだ。</p>
+
+<p><em>Navi21/gfx1030</em> が対応する機能には、<em>Navi12/gfx1011</em> 、<em>Navi14/gfx1012</em> の範囲に加えて、<code>FeatureGFX10_3Insts</code>、<code>FeatureGFX10_BEncoding</code> が追加される。<br />
+後者は新たな命令エンコードのフォーマットとされるが、前者の概要はまだ明らかになっていない。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup><br />
+また、<em>Navi1x</em> であったバグ等が修正されている。<br />
+<em>Arcturus</em> で追加された一部ドット積の混合演算には対応しなかった。 (<code>FeatureDot3Insts</code>、<code>FeatureDot4Insts</code>)<br />
+そして、<code>HalfRate64Ops</code>、<code>FeatureSRAMECC</code> にも対応していないことから、大方察しが付いているように <em>Navi21</em> は <em>Navi1x</em> 同様にゲーミング向けのGPUだろう。<span class="complement">今後それらに対応した RDNAアーキテクチャ GPUが出てくることはあるのだろうか？ 完全に GCNアーキテクチャが担当することに？</span>
+</p>
+
+<p>他には、<code>image_msaa_load</code> 命令が追加されている。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><br />
+グラフィクス系の命令と考えられ、うまく読め解けないため推測となるが、MSAA処理を施したデータをどのレベルでコヒーレントを取るか指定できるようになっている？ (SLC = System Level Coherent, GLC = Globally Coherent)</p>
+
+<div class="reference">
+<hr>
+<h3 class="ref-title" id="ref-title">参考リンク</h3>
+<ul>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA_Shader_ISA.pdf" rel="noreferrer" target="_blank">https://developer.amd.com/wp-content/resources/RDNA_Shader_ISA.pdf</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=7366021e3854532837dc5c569bc8a24bb023c11b" rel="noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=7366021e3854532837dc5c569bc8a24bb023c11b</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td" rel="noreferrer" target="_blank">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/test/CodeGen/AMDGPU/llvm.amdgcn.image.msaa.load.ll" rel="noreferrer" target="_blank">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/test/CodeGen/AMDGPU/llvm.amdgcn.image.msaa.load.ll</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+
+         <div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/gfx10" class="side_tag_lower">GFX10</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gfx1030" class="side_tag_lower">gfx1030</a>
+         <a href="https://blog.coelacanth-dream.com/tags/navi21" class="side_tag_lower">Navi21</a>
+         <a href="https://blog.coelacanth-dream.com/tags/rdna_2" class="side_tag_lower">RDNA_2</a>
+         <a href="https://blog.coelacanth-dream.com/tags/sienna_cichlid" class="side_tag_lower">Sienna_Cichlid</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd" class="side_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu" class="side_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<time datetime="2020-06-16 22:55" class="side_time">Post :<br>&emsp;2020/06/16 22:55<div class="side_time_update">Update :<br>&emsp;2020/06/17 04:24</div>
+</time>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/16/amd-gfx1030-llvm-patch.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+   </nav>
+      <small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         <footer>
+   <hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/gfx10" class="foot_tag_lower">GFX10</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gfx1030" class="foot_tag_lower">gfx1030</a>
+         <a href="https://blog.coelacanth-dream.com/tags/navi21" class="foot_tag_lower">Navi21</a>
+         <a href="https://blog.coelacanth-dream.com/tags/rdna_2" class="foot_tag_lower">RDNA_2</a>
+         <a href="https://blog.coelacanth-dream.com/tags/sienna_cichlid" class="foot_tag_lower">Sienna_Cichlid</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd" class="foot_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu" class="foot_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/16/amd-gfx1030-llvm-patch.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><time datetime="2020-06-16 22:55" class="foot_time">Post :<br>&emsp;2020/06/16 22:55<div class="foot_time_update">Update :<br>&emsp;2020/06/17 04:24</div>
+</time>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
