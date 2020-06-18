@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/06/19/renoir-dieshot-guess/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary"><title>AMD Renoir のダイ観察 &amp; 推測 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD Renoir のダイ観察 &amp; 推測 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD Renoir のダイ観察 &amp; 推測 | Coelacanth&#39;s Dream">
+   <meta property="og:type" content="article">
+
+   <meta name="description" content="これまでにも数多くのチップを撮影、その内部構造を詳細に公開してきた Fritzchens Fritz | Flickr が、 先日、Zen 2 ">
+   <meta property="og:description" content="これまでにも数多くのチップを撮影、その内部構造を詳細に公開してきた Fritzchens Fritz | Flickr が、 先日、Zen 2 ">
+   <meta name="twitter:description" content="これまでにも数多くのチップを撮影、その内部構造を詳細に公開してきた Fritzchens Fritz | Flickr が、 先日、Zen 2 ">
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/19/renoir-dieshot-guess/">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/19/renoir-dieshot-guess/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/19/renoir-dieshot-guess/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="Renoir, gfx909, DieShot, GCN, GFX9, Hardware, AMD, APU, ">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .95em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 1.2em;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 1.7em monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+   max-width: 64%;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: 0 2px 1em #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: 0 2px 1em #7EA0A9;
+   text-decoration: none;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .28em 0 .28em;
+   margin: 0;
+   word-break: break-all;
+
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   line-height: 1.5em;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+}
+article >  p {
+   letter-spacing: .01ch;
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .6em;
+}
+.copyright {
+   font-size: .9em;
+   color: #20B2AA;
+
+}
+footer, .side {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1% 2% auto 1%;
+   row-gap: .7em;
+}
+article > p ~ * {
+   display: none;
+}
+article > * {
+   grid-column: 3 / -2;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4rem sans-serif;
+   grid-column: 2 / -1;
+}
+ 
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 1vh 2vh repeat(3, auto) 6vh;
+      grid-template-columns: 2vw 232px 1vw auto;
+   }
+   .text {
+      grid-row: 2 / 6;
+      grid-column: 3 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8em;
+      max-width: unset;
+   }
+   .side {
+      display: flex;
+      flex-direction: column;
+      row-gap: 28px;
+      height: 90vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 3em 12px 0 24px;
+
+      border-right: 1px solid #468E76;
+      font-size: 1em;
+
+      color: #20B2AA;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+   }
+   .side_links {
+      display: flex;
+      flex-direction: column;
+      max-width: 64%;
+      row-gap: .5em;
+   }
+   .side_pagination {
+      font-family: monospace;
+      font-size: 1.1em;
+      display: grid;
+      grid-template-rows: repeat(3, 1.5em);
+   }
+   .side_prev, .side_next {
+      color: #9EDEFF;
+
+   }
+   .side_prev {
+      margin-right: auto;
+      grid-row: 1 / 2;
+   }
+   .side_prev::before {
+      content: '\2190';
+   }
+   .side_next {
+      margin-left: auto;
+      grid-row: 3 / 4;
+   }
+   .side_next::after {
+      content: '\2192';
+   }
+   .side_page_number {
+      margin: 0 auto 0 auto;
+      grid-row: 2 / 3;
+   }
+   .side_author, .side_lastmod, .side_about a, .side_time {
+      font-size: .98rem;
+
+      max-width: max-content;
+      line-height: 1.3em;
+   }
+   .side_lastmod {
+      border-top: 1px solid #2D5A4B;
+   }
+   .side_tag_lower::before, .side_category_lower:before {
+      content: '\2514';
+      vertical-align: text-top;
+      padding: 0 .4em 0 0;
+      color: #4C997F;
+      font-weight: bold;
+   }
+   .side_tag_lower:hover::before, .side_category_lower:hover::before {
+      color: #65CCA9;
+   }
+   .side_tag_block a:hover, .side_category_block a:hover, .side_links a:hover, .side_about a:hover {
+      text-decoration: none;
+      border-bottom: 1px solid #5AB798;
+   }
+   .side_tag_block a, .side_category_block a, .side_links a {
+      border-bottom: 1px solid #326654;
+   }
+   .side_tag_lower, .side_category_lower {
+      max-width: max-content;
+      padding: 0;
+      margin-left: .8em;
+   }
+   .side_tag a, .side_category a {
+      text-decoration: none;
+   }
+   .side_tag, .side_category, .side_tag_block, .side_category_block {
+      display: flex;
+      flex-direction: column;
+      row-gap: .6em;
+      line-height: 1em;
+   }
+   .side_tag_title, .side_category_title {
+      max-width: max-content;
+      color: #72E5BE;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+
+   <h1>AMD Renoir のダイ観察 &amp; 推測</h1>
+
+<p>これまでにも数多くのチップを撮影、その内部構造を詳細に公開してきた <a href="https://www.flickr.com/photos/130561288@N04/" rel="noreferrer" target="_blank">Fritzchens Fritz | Flickr</a> が、<br />
+先日、<em>Zen 2</em> CPU と <em>Vega</em> GPU を持ったAMD の 7nm APU、<a href="https://blog.coelacanth-dream.com/tags/renoir">Renoir</a>のダイショットをパブリック・ドメインで公開した。<br />
+<span class="reflink"><a href="https://www.flickr.com/photos/130561288@N04/50017165886/in/photostream/" rel="noreferrer" target="_blank">AMD@7nm@Zen2@Renoir@Ryzen_3_4300U@100-000000085_9JB4977P00… | Flickr</a></span><br>
+
+氏の測定によると、<em>Renoir</em> のダイサイズは 155.01mm<sup>2</sup>。</p>
+
+<p>そして、氏のダイショットを元に内部構造を推測、各ユニットを区分けしてみた。<br />
+<strong>？</strong> とその数は自身の無さを表す。</p>
+
+<h2 id="page_index">インデックス</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#renoir-guess">Renoir 推測</a>
+
+<ul>
+<li><a href="#renoir-gpu-spec">Renoir GPUスペック</a></li>
+</ul></li>
+<li><a href="#explain">解説的な</a>
+
+<ul>
+<li><a href="#shared-cu-cache">3つの 共有CUキャッシュ</a></li>
+<li><a href="#five-display-phy">5つの Display PHY</a></li>
+<li><a href="#pcie-lane">PCIeレーン</a></li>
+</ul></li>
+<li><a href="#zen-2">Zen 2</a></li>
+</ul>
+
+</div>
+
+
+<h2 id="renoir-guess">Renoir 推測</h2>
+
+<figure>
+    <img src="https://blog.coelacanth-dream.com/image/2020/06/19/renoir-dieshot-guess.webp"
+         alt="DieSize: 155.001mm2
+画像元:AMD@7nm@Zen2@Renoir@Ryzen_3_4300U@100-000000085_9JB4977P00… | Flickr"/> <figcaption>
+            <h4>AMD Renoir</h4><p>DieSize: 155.001mm<sup>2</sup><br>画像元:<cite><a href="https://www.flickr.com/photos/130561288@N04/50016639913/" rel="noreferrer" target="_blank">AMD@7nm@Zen2@Renoir@Ryzen_3_4300U@100-000000085_9JB4977P00… | Flickr</a></p>
+        </figcaption>
+</figure>
+
+
+<h3 id="renoir-gpu-spec">Renoir GPUスペック</h3>
+
+<p>大体の <em>Renoir</em> GPUスペックは以下となっている。</p>
+
+<ul>
+<li>1-SE(ShaderEngine) <sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>
+
+<ul>
+<li>SE あたりの RB(RenderBackend)数 2基 <sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></li>
+<li>SE あたりの CU数 8基 <sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></li>
+</ul></li>
+<li>総 L2cache サイズ 1MB (4x 256KB) <sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></li>
+<li>ディスプレイコントローラ数 4基 <sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></li>
+<li>2つの USB-C からそれぞれ画面出力が可能 <sup class="footnote-ref" id="fnref:4"><a href="#fn:4">3</a></sup><sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup></li>
+</ul>
+
+<p>前世代の APU <em>Raven</em> と同じ <em>GFX9 /Vega</em> GPU ではあるが、<em>Raven</em> の <em>gfx902</em> に存在したバグを修正し、ハードウェアでのシェーダーの電力プロファイル機能に対応した<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">5</a></sup> <em>gfx909</em> となった。</p>
+
+<h3 id="explain">解説的な</h3>
+
+<h4 id="shared-cu-cache">3つの 共有CUキャッシュ</h4>
+
+<p><em>Renoir</em> もやはりというか、複数の CUで共有する L1cache (Scalar 16KB, Instruction 32KB) が8CU に対して 3基あり、2基または 3基の CUで共有する構成だった。<br />
+これはどうも <em>GFX9 /Vega</em> アーキテクチャで共通する特徴らしく、<em>Vega10 /Vega20</em> は 16CU に対して L1cache 6基、<em>Raven</em> は 11CUに対して L1cache 4基となっている。</p>
+
+<p>GCNアーキテクチャでは L1cache を最大 4CUで共有することが可能であり、<em>GFX9 /Vega</em> の前世代、<em>GFX8</em> 世代の <em>Polaris11</em> は 8CU に対して L1cache 2基であり<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">6</a></sup>、<em>Renoir</em> もそうした構成が取れたはずだ。<br />
+AMD の資料では、<em>Vega10</em> も変わらず 4CUで共有することになっているため<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">7</a></sup>、歩留まり向上策なのかもしれない。</p>
+
+<h4 id="five-display-phy">5つの Display PHY</h4>
+
+<p>ディスプレイコントローラ 4基に対して、物理層(PHY)が 5基となるが、<br />
+Linux Kernel の AMD GPU でディスプレイに関する部分を見ても<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">4</a></sup> PLL(Phase Looked Loop) と DDC(D/Dコンバーター)が 5基あるとされ、3x HDMI/DisplayPort + 2x USB-C の中で選択して 4画面を出力できるということだと思われる。</p>
+
+<h4 id="pcie-lane">PCIeレーン</h4>
+
+<p><em>Renoir</em> の持つ PCIeレーン数は、5x 4-Lane + 2x 2-Lane で計 24-Laneある <strong>ように</strong> 見えた。<br />
+AM4ソケットの仕様で考えると、16-Lane をディスクリートGPUに、4-Lane を NVMe SSDに、4-Lane をチップセットとの接続に充てられそうだが、<br />
+2x 2-Lane は USB にも使わられるはずで、そして AM4ソケットは CPU から 4つの USB 3.2 Gen1/2 を出す。<br />
+そのため、デスクトップ向け <em>Renoir</em> が使えるのは 20-Laneで、<br />
+ディスクリートGPUは前世代から変わらず 8-Lane、NVMe SSD に 4-Lane、チップセットに 4-Lane、その他 PCIeスロットや NVMe SSD に 4-Lane、という感じになるのではないかと思う。</p>
+
+<h2 id="zen-2">Zen 2</h2>
+
+<figure>
+    <img src="https://blog.coelacanth-dream.com/image/2020/06/19/zen2-core-renoir.webp"
+         alt="画像元:AMD@7nm@Zen2@Renoir@Ryzen_3_4300U@100-000000085_9JB4977P00… | Flickr
+参考:Zen 2: The AMD 7nm Energy-Efficient High-Performance x86-64 Microproc…"/> <figcaption>
+            <h4>Zen 2 CPU Core</h4><p>画像元:<cite><a href="https://www.flickr.com/photos/130561288@N04/50016639913/" rel="noreferrer" target="_blank">AMD@7nm@Zen2@Renoir@Ryzen_3_4300U@100-000000085_9JB4977P00… | Flickr</a></cite><br>参考:<cite><a href="https://www.slideshare.net/AMD/zen-2-the-amd-7nm-energyefficient-highperformance-x8664-microprocessor-core" rel="noreferrer" target="_blank">Zen 2: The AMD 7nm Energy-Efficient High-Performance x86-64 Microproc…</a></cite></p>
+        </figcaption>
+</figure>
+
+
+<p>ついでに <em>Zen 2</em> CPUコアの内部も区分けしてみたが、内容としては ISSCC 2020 で AMD が発表した資料を丸写ししただけ。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">8</a></sup><br />
+言い換えれば <em>Renoir</em> で CPU部は L3cacheの規模以外に大きく弄っていないということになる。<br />
+しかし小さい改良点はあり、Spectre v2対策に <code>IBRS_FW</code> が追加されている。<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">9</a></sup><sup class="footnote-ref" id="fnref:10"><a href="#fn:10">10</a></sup></p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://github.com/GPUOpen-Drivers/pal/blob/e1b2dde021a2efd34da6593994f87317a803b065/src/core/os/nullDevice/ndDevice.cpp#L926" rel="noreferrer" target="_blank">https://github.com/GPUOpen-Drivers/pal/blob/e1b2dde021a2efd34da6593994f87317a803b065/src/core/os/nullDevice/ndDevice.cpp#L926</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://www.x.org/wiki/RadeonFeature/#radeondisplayhardware" rel="noreferrer" target="_blank">https://www.x.org/wiki/RadeonFeature/#radeondisplayhardware</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:4"><a href="https://news.mynavi.jp/article/20200316-997459/" rel="noreferrer" target="_blank">AMD Ryzen Mobile 4000シリーズの詳細を明らかに (1) Ryzen Mobile 4000シリーズのアーキテクチャ詳細 | マイナビニュース</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c?h=amd-staging-drm-next&amp;id=fb5b6e40b4938444bb489ba892598f01b52c4f26#n804" rel="noreferrer" target="_blank">https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/dc/dcn21/dcn21_resource.c?h=amd-staging-drm-next&amp;id=fb5b6e40b4938444bb489ba892598f01b52c4f26#n804</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://github.com/GPUOpen-Drivers/pal/blob/82390674c40402c81dbf311a5ee488fb972894f5/src/core/hw/gfxip/gfx9/gfx9Device.cpp#L4224" rel="noreferrer" target="_blank">https://github.com/GPUOpen-Drivers/pal/blob/82390674c40402c81dbf311a5ee488fb972894f5/src/core/hw/gfxip/gfx9/gfx9Device.cpp#L4224</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:7"><a href="https://blog.coelacanth-dream.com/posts/2020/03/30/polaris10-polaris11-dieshot-guess/#polaris11">Polaris10/Polaris11のダイ観察 &amp; 推測 | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+<li id="fn:6"><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf#page=27" rel="noreferrer" target="_blank">https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf#page=27</a>
+ <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+<li id="fn:8"><a href="https://www.slideshare.net/AMD/zen-2-the-amd-7nm-energyefficient-highperformance-x8664-microprocessor-core" rel="noreferrer" target="_blank">Zen 2: The AMD 7nm Energy-Efficient High-Performance x86-64 Microproc…</a>
+ <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
+<li id="fn:9"><a href="https://openbenchmarking.org/result/2005141-PTS-WINLINUX22" rel="noreferrer" target="_blank">Ryzen 7 4700U Windows 10 Vs. Ubuntu Linux Benchmarks &ndash; OpenBenchmarking.org</a>
+ <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
+<li id="fn:10"><a href="https://openbenchmarking.org/result/1907073-HV-RYZEN939067" rel="noreferrer" target="_blank">AMD Ryzen 9 3900X Linux Benchmarks Performance &ndash; OpenBenchmarking.org</a>
+ <a class="footnote-return" href="#fnref:10"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+
+         <div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/dieshot" class="side_tag_lower">DieShot</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gcn" class="side_tag_lower">GCN</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gfx9" class="side_tag_lower">GFX9</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gfx909" class="side_tag_lower">gfx909</a>
+         <a href="https://blog.coelacanth-dream.com/tags/renoir" class="side_tag_lower">Renoir</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd" class="side_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/apu" class="side_category_lower">APU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-06-19 01:41">Post :<br>&emsp;2020/06/19 01:41</time>
+   <div class="side_time_update">Update :<br>&emsp;2020/06/19 07:12</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/19/renoir-dieshot-guess.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+   </nav>
+      <small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         <footer>
+   <hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/dieshot" class="foot_tag_lower">DieShot</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gcn" class="foot_tag_lower">GCN</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gfx9" class="foot_tag_lower">GFX9</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gfx909" class="foot_tag_lower">gfx909</a>
+         <a href="https://blog.coelacanth-dream.com/tags/renoir" class="foot_tag_lower">Renoir</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd" class="foot_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/apu" class="foot_category_lower">APU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/19/renoir-dieshot-guess.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-06-19 01:41">Post :<br>&emsp;2020/06/19 01:41</time>
+   <div class="foot_time_update">Update :<br>&emsp;2020/06/19 07:12</div>
+</div>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
