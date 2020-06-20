@@ -5,25 +5,25 @@
    <meta name="viewport" content="width=device-width">
    <meta name="referrer" content="no-referrer">
    <meta name="format-detection" content="telephone=no, address=no, email=no">
-   <base href="https://blog.coelacanth-dream.com/posts/2020/01/31/drm-amdgpu-ids-update-20-01-31/">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/06/20/amd-rocm-v3_5_1/">
 
    <meta property="og:site_name" content="Coelacanth&#39;s Dream">
-   <meta name="twitter:card" content="summary"><title>drm amdgpu.idsアップデート (2020-01-31) | Coelacanth&#39;s Dream</title>
-   <meta property="og:title" content="drm amdgpu.idsアップデート (2020-01-31) | Coelacanth&#39;s Dream">
-   <meta name="twitter:title" content="drm amdgpu.idsアップデート (2020-01-31) | Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary"><title>AMD、ROCm v3.5.1 をリリース &amp; 問題への対処法 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD、ROCm v3.5.1 をリリース &amp; 問題への対処法 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD、ROCm v3.5.1 をリリース &amp; 問題への対処法 | Coelacanth&#39;s Dream">
    <meta property="og:type" content="article">
 
-   <meta name="description" content="例の通り、まだマージリクエストの段階だがまとめ。 amdgpu: add new marketing names from 19.50 &amp;nda">
-   <meta property="og:description" content="例の通り、まだマージリクエストの段階だがまとめ。 amdgpu: add new marketing names from 19.50 &amp;nda">
-   <meta name="twitter:description" content="例の通り、まだマージリクエストの段階だがまとめ。 amdgpu: add new marketing names from 19.50 &amp;nda">
-   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/01/31/drm-amdgpu-ids-update-20-01-31/">
+   <meta name="description" content="AMD は一部問題の修正と機能追加を施した ROCm v3.5.1 をリリースした。 RadeonOpenCompute/ROCm at roc">
+   <meta property="og:description" content="AMD は一部問題の修正と機能追加を施した ROCm v3.5.1 をリリースした。 RadeonOpenCompute/ROCm at roc">
+   <meta name="twitter:description" content="AMD は一部問題の修正と機能追加を施した ROCm v3.5.1 をリリースした。 RadeonOpenCompute/ROCm at roc">
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/20/amd-rocm-v3_5_1/">
    <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
    <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
-   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/01/31/drm-amdgpu-ids-update-20-01-31/">
-   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/01/31/drm-amdgpu-ids-update-20-01-31/">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/20/amd-rocm-v3_5_1/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/20/amd-rocm-v3_5_1/">
    <meta property="og:locale" content="ja_JP">
    <meta name="author" content="Umio Yasuno">
-   <meta name="keywords" content="Radeon">
+   <meta name="keywords" content="Radeon, ROCm, Software, ">
 
       <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
       <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
@@ -252,50 +252,61 @@ h1 {
 </header><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
 <article class="text">
 
-   <h1>drm amdgpu.idsアップデート (2020-01-31)</h1><p>例の通り、まだマージリクエストの段階だがまとめ。<br />
-<a href="https://gitlab.freedesktop.org/mesa/drm/merge_requests/44/diffs" rel="noreferrer" target="_blank">amdgpu: add new marketing names from 19.50 &ndash; Mesa / drm GitLab</a></p>
+   <h1>AMD、ROCm v3.5.1 をリリース &amp; 問題への対処法</h1>
 
-<p>追加されたGPUは以下、</p>
+<p>AMD は一部問題の修正と機能追加を施した <strong>ROCm v3.5.1</strong> をリリースした。<br />
+<span class="reflink"><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-3.5.1" rel="noreferrer" target="_blank">RadeonOpenCompute/ROCm at roc-3.5.1</a></span><br>
+</p>
+
+<p>自環境でも早速アップデートしてみたが、OpenCLの実行で新たに問題が発生した。<br />
+その対処法は後述。</p>
+
+<h2 id="rocm-3-5-1-の変更点">ROCm 3.5.1 の変更点</h2>
 
 <ul>
-<li>AMD Radeon Pro W5700</li>
-<li>AMD Radeon RX 5600M</li>
-<li>AMD Radeon RX 5700M</li>
-<li>AMD Radeon RX 5600 XT</li>
-<li>AMD Radeon RX 5600 OEM</li>
-<li>AMD Radeon RX 5500 XT</li>
-<li>AMD Radeon Pro W5500</li>
-<li>AMD Radeon Pro W5500M</li>
+<li>HIP-ROCclr(Radeon Open Compute Common Language Runtime) にストリームの優先度を問い合わせるAPI、<code>hipStreamGetPriority</code> の公開<br /></li>
+<li>マルチGPU環境において長期稼働させた場合に発生するメモリアクセスエラーの修正<br /></li>
+<li>NCCL(NVIDIA Collective Communication Library) 2.7 のサポート</li>
+<li>RCCL(ROCm Collective Communication Library) のアップデート
+
+<ul>
+<li>Gater, Scatter, All-To-All の一括操作をサポート</li>
+<li>ネットワークプロキシのプロファイリングをサポート</li>
+</ul></li>
 </ul>
 
-<p>最近発表されたNavi系が主だが、未発表の<strong>AMD Radeon Pro W5500/M</strong>が入っている。<br />
-それらの <em>[DeviceID : RevisionID]</em> は7341:00、7347:00であり、前々から確認されていたNavi14 Pro-XL、Navi14 Pro-XTMのものと一致する。<br />
-以前からあるプロプライエタリ・ドライバー内のファイルには記述されていたが、今回でオープンソース・ドライバー関連のファイルにも追加された。正式発表が近いのかもしれない。</p>
+<h2 id="問題の対処法">問題の対処法</h2>
 
-<p><a href="https://blog.coelacanth-dream.com/posts/2019/12/04/amdgpu-ids-updated/">前回</a>は追加されなかった AMD Radeon Pro W5700 があるが、USB-Cコントローラーのファームウェアは未だなく、AMD公式のドライバーページにもまだWindows用しかない。<br />
-<a href="https://www.amd.com/en/support/professional-graphics/radeon-pro/radeon-pro-w5000-series/radeon-pro-w5700" rel="noreferrer" target="_blank">Radeon™ Pro W5700 Drivers &amp; Support | AMD</a></p>
+<p>ROCm v3.5.1 というマイナーアップデートだからなのか、ライブラリやバイナリを置くディレクトリを <code>/opt/rocm-3.5.1</code> にまとめるのではなく、更新があったのだろう一部を <code>/opt/rocm-3.5.1</code> に、<br />
+そうでないものは <code>/opt/rocm-3.5.0</code> に残されている。<br />
+それにより、AMD GPUが対応する中間命令を収めたビットコードが <code>/opt/rocm-3.5.1/lib</code> に移ったため、追加で環境変数を指定する必要があった。<br />
+自環境では以下のようなコマンドを <code>.bashrc</code> に記述している。</p>
+<pre><code>export ROCM_PATH=&#34;/opt/rocm-3.5.0&#34;
+export ROCM_PATH_3_5_1=&#34;/opt/rocm-3.5.1
 
-<p><strong>Radeon RX 5600M</strong> / <strong>Radeon RX 5700M</strong>のDeviceIDは共通で734F、RevisionIDはC2/C3となっているが、これらは以前Linux Kernelへのパッチで確認されており、<br />
-見つけた時はどういった意味かわからなかったが、今は<a href="https://www.amd.com/en/technologies/smartshift" rel="noreferrer" target="_blank">Smart Shift</a>のためだと考えられ、<br />
-<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=a9e45a6f90b42703ae24adac662e9dd4c2c0d68f" rel="noreferrer" target="_blank">drm/amdgpu: enable gfxoff feature for navi10 asic &ndash; Linux Kernel</a><br />
-gfxoffというのはAMDのScott Stankard氏の発言とも一致する。</p>
+export PATH=$HCC_HOME/bin:$HIP_PATH/bin:$PATH
+export OPENCL_LIBS=&#34;${ROCM_PATH}/opencl/lib&#34;
+export LIBOPENCL=&#34;${ROCM_PATH}/opencl/lib&#34;
 
-<blockquote>
-<p>――グラフィックス処理の負荷に応じて，CPUとGPUの間で電力を動的に振り分ける「AMD SmartShift」において，iGPUと単体GPUを同時に稼動させることはできるのか。</p>
+export LD_LIBRARY_PATH=&#34;${ROCM_PATH}/opencl/lib&#34;:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=${ROCM_PATH_3_5_1}/lib:$LD_LIBRARY_PATH
 
-<p>Stankard氏：
-　iGPUと単体GPUを同時に動かすことはできない。iGPUと単体GPUのどちらか一方が動いているとき，稼動していないGPUはほぼ完全に動作を停止する。</p>
+export OPENCL_HEADERS=&#34;${ROCM_PATH}/opencl/include&#34;
+export OPENCL_INCLUDES=&#34;${ROCM_PATH}/opencl/include&#34;
+export PATH=${ROCM_PATH}/bin:$PATH
+export PATH=${ROCM_PATH}/opencl/bin:$PATH</code></pre>
+<p>ROCm v3.3.0 から最新版へのシンボリックリンクを作成するようになったのに、複数ディレクトリに分けるというのはどうなのだろう。<br />
+自分の環境、やり方が悪かっただけ？</p>
 
-<p>(引用元: <a href="https://www.4gamer.net/games/446/G044684/20200115091/" rel="noreferrer" target="_blank">西川善司の3DGE:Ryzen 4000とRadeon RX 5600 XTの気になるところをAMDにアレコレ聞いてみた &ndash; 4Gamer.net</a>)</p>
-</blockquote>
+<div class="reference">
+<hr>
+<h3 class="ref-title" id="ref-title">参考リンク</h3>
+<ul>
+<li><a href="https://news.mynavi.jp/article/architecture-313/" rel="noreferrer" target="_blank">コンピュータアーキテクチャの話(313) 1つの命令で複数の演算器を動かす「SIMD」 | マイナビニュース</a></li>
+</ul>
 
-<p>ついでとなるが、Navi10でGDDR6 12Gbpsを採用したSKUにて不具合があったらしく、Linux Kernleへそれを修正するパッチが投稿された。<br />
-<a href="https://lists.freedesktop.org/archives/amd-gfx/2020-January/045418.html" rel="noreferrer" target="_blank">[PATCH] drm/amd/powerplay: fix navi10 system intermittent reboot issue &ndash; amd-gfx</a><br />
-その中でだいぶ直接的に 5600M /5700M /5600 XT /5600 OEM が指定されており、<span class="complement">テスト用かネットに公開されるベンチマーク対策かはわからないが</span>
-もう1つのIDも記述されている。<br />
-AMDにそれらを隠す気はなくなったのだろうか？</p>
+</div>
 
-<p>最後にどうでもいいことだが、OEM向けの<strong>Radeon RX 5500</strong>に対して、同じくOEM向けの<strong>Radeon RX 5600</strong>には OEM が末尾に付いているのはどういった理由からなのだろう。</p>
 </article>
 
          <div class="side"><div class="site_title">
@@ -309,21 +320,20 @@ AMDにそれらを隠す気はなくなったのだろうか？</p>
    <a href="https://blog.coelacanth-dream.com/tags" class="side_tag_title">Tag :</a>
    <nav class="side_tag">
          <a href="https://blog.coelacanth-dream.com/tags/radeon" class="side_tag_lower">Radeon</a>
+         <a href="https://blog.coelacanth-dream.com/tags/rocm" class="side_tag_lower">ROCm</a>
    </nav>
 </div>
 <div class="side_category_block">
    <a href="https://blog.coelacanth-dream.com/categories" class="side_category_title">Category :</a>
    <nav class="side_category">
-         <a href="https://blog.coelacanth-dream.com/categories/amd" class="side_category_lower">AMD</a>
-         <a href="https://blog.coelacanth-dream.com/categories/gpu" class="side_category_lower">GPU</a>
-         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="side_category_lower">Hardware</a>
+         <a href="https://blog.coelacanth-dream.com/categories/software" class="side_category_lower">Software</a>
    </nav>
 </div>
 <div class="side_time">
-   <time datetime="2020-01-31 12:44">Post :<br>&emsp;2020/01/31 12:44</time>
-   <div class="side_time_update">Update :<br>&emsp;2020/06/04 05:42</div>
+   <time datetime="2020-06-20 18:27">Post :<br>&emsp;2020/06/20 18:27</time>
+   <div class="side_time_update">Update :<br>&emsp;2020/06/20 19:30</div>
 </div>
-<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/01/31/drm-amdgpu-ids-update-20-01-31.md" target="_blank" rel="noreferrer noopener">History</a>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/20/amd-rocm-v3_5_1.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://blog.coelacanth-dream.com/about/">About</a>
       <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
    </nav>
@@ -335,26 +345,25 @@ AMDにそれらを隠す気はなくなったのだろうか？</p>
    <a href="https://blog.coelacanth-dream.com/tags" class="foot_tag_title">Tag :</a>
    <nav class="foot_tag">
          <a href="https://blog.coelacanth-dream.com/tags/radeon" class="foot_tag_lower">Radeon</a>
+         <a href="https://blog.coelacanth-dream.com/tags/rocm" class="foot_tag_lower">ROCm</a>
    </nav>
 </div>
 <div class="foot_category_block">
    <a href="https://blog.coelacanth-dream.com/categories" class="foot_category_title">Category :</a>
    <nav class="foot_category">
-         <a href="https://blog.coelacanth-dream.com/categories/amd" class="foot_category_lower">AMD</a>
-         <a href="https://blog.coelacanth-dream.com/categories/gpu" class="foot_category_lower">GPU</a>
-         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="foot_category_lower">Hardware</a>
+         <a href="https://blog.coelacanth-dream.com/categories/software" class="foot_category_lower">Software</a>
    </nav>
 </div>
 <nav class="foot_links">
    <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
    <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
 </nav>
-<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/01/31/drm-amdgpu-ids-update-20-01-31.md" target="_blank" rel="noreferrer noopener">History</a>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/20/amd-rocm-v3_5_1.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://blog.coelacanth-dream.com/about/">About</a>
       <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
 <a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
-   <time datetime="2020-01-31 12:44">Post :<br>&emsp;2020/01/31 12:44</time>
-   <div class="foot_time_update">Update :<br>&emsp;2020/06/04 05:42</div>
+   <time datetime="2020-06-20 18:27">Post :<br>&emsp;2020/06/20 18:27</time>
+   <div class="foot_time_update">Update :<br>&emsp;2020/06/20 19:30</div>
 </div>
 <small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
