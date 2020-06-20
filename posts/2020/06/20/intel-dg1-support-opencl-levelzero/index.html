@@ -264,23 +264,25 @@ h1 {
 
 <p><em>DG1</em> は <em>Tiger Lake GT2</em> と同様に、<br />
 EU数 96基、L3cacheバンク 8基、最大Pixel Fill Rate 16/clock (16ROP相当)、<br />
-EUをまとめる Sub-Slice内の共有キャッシュ(SLM)のサイズ 64KB、EUあたりが保持するスレッド数 7スレッド、という構成になるが、<br />
-L3cacheバンクあたりの容量は大幅に増量され、<em>Tiger Lake GT2</em> がバンクあたり 480KB、計 38040KB であるのに対し、<br />
+EUをまとめる Sub-Slice内の共有キャッシュ(SLM)のサイズ 64KB、EUあたりが保持するスレッド数 7スレッド、という構成になる。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">1</a></sup><sup class="footnote-ref" id="fnref:3"><a href="#fn:3">2</a></sup></p>
+
+<p>しかし、<em>DG1</em> の L3cacheバンクあたりの容量は大幅に増量され、<em>Tiger Lake GT2</em> がバンクあたり 480KB、計 38040KB であるのに対し、<br />
 <em>DG1</em> はバンクあたり 2048KB(2MB)、計 16384KB(16MB) となっている。<br />
 <span class="reflink"><a href="https://github.com/intel/compute-runtime/blob/3029db07c3135ec5fde55de369ead2c14f9b3f9c/opencl/source/gen12lp/hw_info_dg1.inl" rel="noreferrer" target="_blank">compute-runtime/hw_info_dg1.inl at 3029db07c3135ec5fde55de369ead2c14f9b3f9c · intel/compute-runtime</a></span><br>
 
 <span class="reflink"><a href="https://github.com/intel/compute-runtime/blob/3029db07c3135ec5fde55de369ead2c14f9b3f9c/opencl/source/gen12lp/hw_info_tgllp.inl" rel="noreferrer" target="_blank">compute-runtime/hw_info_tgllp.inl at 3029db07c3135ec5fde55de369ead2c14f9b3f9c · intel/compute-runtime</a></span><br>
 
-また、各シェーダーステージでの生成可能なスレッド数も増やされており、<em>DG1</em> は <em>Tiger Lake GT2</em> の倍となる。</p>
+また、各シェーダーステージでの生成可能なスレッド数も増やされており、その数 <em>DG1</em> は <em>Tiger Lake GT2</em> の倍となる。</p>
 
 <p>96EU(768SP)、16ROP相当というのは、AMD GPU では <em>Polaris11 (1024SP, 4RB/16ROP)</em> 、<em>Polaris12 (640SP, 4RB/16ROP)</em> なんかが近い規模となる。<br />
-Intel GPUアーキテクチャでは L3cacheバンク内で、バッファとして機能する URB、DC(Data Cluster)、Color/Zキャッシュ等それぞれに容量を割り振るため、容量すべてをデータキャッシュとは見れないし、キャッシュ階層等が単純な性能比較は難しいが、<br />
-キャッシュサイズ自体がかなり大きいことは確かだ。</p>
+Intel GPUアーキテクチャでは L3cacheバンク内で、バッファとして機能する URB、DC(Data Cluster)、Color/Zキャッシュ等それぞれに容量を割り振るため、データキャッシュのサイズはその設定次第となる。<br />
+また、キャッシュ階層等が異なるため単純な性能比較は難しいが、それでもキャッシュサイズ自体がかなり大きいことは確かだ。<br />
+設定次第というのも、言い換えれば巨大なキャッシュをグラフィック処理向けにも、GPGPU向けにも設定できる。</p>
 
 <p>この点で <em>DG1</em> は尖っていると言え、またソフトウェア開発向けの立ち位置にいるのも頷けるかもしれない。<br />
-そして巨大なキャッシュから、ゲーム等のグラフィク処理以外にも、<strong>X<sup>e</sup><sub>HPC</sub></strong>
+そして巨大なキャッシュから、ゲーム等のグラフィック処理以外にも、<strong>X<sup>e</sup><sub>HPC</sub></strong>
  に向けたGPGPU処理の最適化も <em>DG1</em> で進めたい思惑があるのかもしれない。<br />
-これまでに <em>Tiger Lake</em> のパッケージ、ダイは公開しているのに<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>、<em>DG1</em> はカードの外観のみだったのはダイサイズから巨大なキャッシュに気づかれることを避けたかったのではないか、とも考えられる。</p>
+これまでに <em>Tiger Lake</em> のパッケージ、ダイは公開しているのに<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">3</a></sup>、<em>DG1</em> はカードの外観のみだったのはダイサイズから巨大なキャッシュに気づかれることを避けたかったのではないか、とも考えられる。</p>
 
 <table>
 <thead>
@@ -335,6 +337,10 @@ Intel GPUアーキテクチャでは L3cacheバンク内で、バッファとし
 <hr />
 
 <ol>
+<li id="fn:2"><a href="https://github.com/intel/compute-runtime/blob/3029db07c3135ec5fde55de369ead2c14f9b3f9c/shared/source/gen12lp/hw_cmds_dg1.h" rel="noreferrer" target="_blank">compute-runtime/hw_cmds_dg1.h at 3029db07c3135ec5fde55de369ead2c14f9b3f9c · intel/compute-runtime</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://github.com/intel/compute-runtime/blob/3029db07c3135ec5fde55de369ead2c14f9b3f9c/shared/source/gen12lp/hw_cmds_tgllp.h" rel="noreferrer" target="_blank">compute-runtime/hw_cmds_tgllp.h at 3029db07c3135ec5fde55de369ead2c14f9b3f9c · intel/compute-runtime</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
 <li id="fn:1"><a href="https://newsroom.intel.com/news-releases/intel-ces-2020/" rel="noreferrer" target="_blank">2020 CES: Intel Brings Innovation to Life with Intelligent Tech Spanning the Cloud, Network, Edge and PC | Intel Newsroom</a>
  <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
 </ol>
@@ -365,7 +371,7 @@ Intel GPUアーキテクチャでは L3cacheバンク内で、バッファとし
 </div>
 <div class="side_time">
    <time datetime="2020-06-20 06:56">Post :<br>&emsp;2020/06/20 06:56</time>
-   <div class="side_time_update">Update :<br>&emsp;2020/06/20 08:18</div>
+   <div class="side_time_update">Update :<br>&emsp;2020/06/20 10:45</div>
 </div>
 <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/20/intel-dg1-support-opencl-levelzero.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://blog.coelacanth-dream.com/about/">About</a>
@@ -399,7 +405,7 @@ Intel GPUアーキテクチャでは L3cacheバンク内で、バッファとし
       <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
 <a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
    <time datetime="2020-06-20 06:56">Post :<br>&emsp;2020/06/20 06:56</time>
-   <div class="foot_time_update">Update :<br>&emsp;2020/06/20 08:18</div>
+   <div class="foot_time_update">Update :<br>&emsp;2020/06/20 10:45</div>
 </div>
 <small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
