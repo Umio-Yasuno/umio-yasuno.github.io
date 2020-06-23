@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary"><title>AMD GPU の GPU ID は何を意味するか | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD GPU の GPU ID は何を意味するか | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD GPU の GPU ID は何を意味するか | Coelacanth&#39;s Dream">
+   <meta property="og:type" content="article">
+
+   <meta name="description" content="AMD GPU を話題にすると時々出てくる gfx908 だとか gfx1012 といった文字列。 これが何を意味するかと言うと、AMD GPU">
+   <meta property="og:description" content="AMD GPU を話題にすると時々出てくる gfx908 だとか gfx1012 といった文字列。 これが何を意味するかと言うと、AMD GPU">
+   <meta name="twitter:description" content="AMD GPU を話題にすると時々出てくる gfx908 だとか gfx1012 といった文字列。 これが何を意味するかと言うと、AMD GPU">
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="Radeon, Database, Hardware, GPU, AMD, ">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .95em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 24px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 1.7rem monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+   max-width: 64%;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: 0 2px 1em #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: 0 2px 1em #7EA0A9;
+   text-decoration: none;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .28em 0 .28em;
+   margin: 0;
+   word-break: break-all;
+
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   font-size: 1rem;
+   line-height: 1.5em;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+}
+article >  p {
+   letter-spacing: .01ch;
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .6em;
+}
+.copyright {
+   font-size: .9em;
+   color: #20B2AA;
+
+}
+footer, .side {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1% 2% auto 1%;
+   row-gap: .7em;
+}
+article > p ~ * {
+   display: none;
+}
+article > * {
+   grid-column: 3 / -2;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4rem/1.25em sans-serif;
+   grid-column: 2 / -1;
+}
+ 
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 0 1vh repeat(3, auto) 6vh;
+      grid-template-columns: 2vw 232px 1vw auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / 6;
+      grid-column: 3 / -1;
+      padding-top: 12px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8rem;
+      max-width: unset;
+   }
+   .tags {
+      grid-template-rows: repeat(6, auto);
+      grid-template-columns: repeat(4, auto);
+   }
+   .categories {
+      grid-template-rows: repeat(3, auto);
+      grid-template-columns: repeat(4, auto);
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+   }
+   .side {
+      display: flex;
+      flex-direction: column;
+      row-gap: 28px;
+      height: 90vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 36px 12px 0 24px;
+
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      color: #20B2AA;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+   }
+   .side_links {
+      display: flex;
+      flex-direction: column;
+      max-width: 64%;
+      row-gap: .5em;
+   }
+   .side_pagination {
+      font-family: monospace;
+      font-size: 1.1rem;
+      display: grid;
+      grid-template-rows: repeat(3, 1.8rem);
+   }
+   .side_prev, .side_next {
+      color: #9EDEFF;
+
+   }
+   .side_prev {
+      margin-right: auto;
+      grid-row: 1 / 2;
+   }
+   .side_prev::before {
+      content: '\2190';
+   }
+   .side_next {
+      margin-left: auto;
+      grid-row: 3 / 4;
+   }
+   .side_next::after {
+      content: '\2192';
+   }
+   .side_page_number {
+      margin: 0 auto 0 auto;
+      grid-row: 2 / 3;
+   }
+   .side_author, .side_lastmod, .side_about a, .side_time {
+      font-size: .98rem;
+
+      max-width: max-content;
+      line-height: 1.3em;
+   }
+   .side_lastmod {
+      border-top: 1px solid #2D5A4B;
+   }
+   .side_tag_lower::before, .side_category_lower:before {
+      content: '\2514';
+      vertical-align: text-top;
+      padding: 0 .4em 0 0;
+      color: #4C997F;
+      font-weight: bold;
+   }
+   .side_tag_lower:hover::before, .side_category_lower:hover::before {
+      color: #65CCA9;
+   }
+   .side_tag_block a:hover, .side_category_block a:hover, .side_links a:hover, .side_about a:hover {
+      text-decoration: none;
+      border-bottom: 1px solid #5AB798;
+   }
+   .side_tag_block a, .side_category_block a, .side_links a {
+      border-bottom: 1px solid #326654;
+   }
+   .side_tag_lower, .side_category_lower {
+      max-width: max-content;
+      padding: 0;
+      margin-left: .8em;
+   }
+   .side_tag a, .side_category a {
+      text-decoration: none;
+   }
+   .side_tag, .side_category, .side_tag_block, .side_category_block {
+      display: flex;
+      flex-direction: column;
+      row-gap: .6em;
+      line-height: 1em;
+   }
+   .side_tag_title, .side_category_title {
+      max-width: max-content;
+      color: #72E5BE;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+
+   <h1>AMD GPU の GPU ID は何を意味するか</h1>
+
+<p>AMD GPU を話題にすると時々出てくる <em>gfx908</em> だとか <em>gfx1012</em> といった文字列。<br />
+これが何を意味するかと言うと、AMD GPUのマシンタイプ、アーキテクチャであり、そのアーキテクチャが対応する命令や機能、存在するバグを示すために使われる。</p>
+
+<p>ちなみに <em>gfx908</em> は <a href="https://blog.coelacanth-dream.com/tags/arcturus">Arcturus</a>、<em>gfx1012</em> は <a href="https://blog.coelacanth-dream.com/tags/navi14">Navi14</a>のアーキテクチャを示す。</p>
+
+<h2 id="page_index">インデックス</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#gpuid">Machine Type / GPU ID / GFX ID</a></li>
+<li><a href="#read-from-gpuid">GPU ID から読み取れること</a>
+
+<ul>
+<li><a href="#cant-read-scale">規模は読み取れない</a></li>
+<li><a href="#hbcc-xnack">HBCC / XNACK について</a></li>
+</ul></li>
+</ul>
+
+</div>
+
+
+<h2 id="gpuid">Machine Type / GPU ID / GFX ID</h2>
+
+<p>そして gfx から始まる文字列は <strong>Machine Type / GPU ID / GFX ID</strong> といった名で使われる。<br />
+どれも同じ意味であるため、名前で特に使い分けはされておらず、コードを書く人次第なのではないかと思う。<br />
+この記事では <strong>GPU ID</strong> とする。</p>
+
+<p>そして gfx より後ろの数字にはそれぞれ意味があり、<br />
+最初がその GPU の主要なバージョン、世代を、(<code>pGfxIpMajorVer</code>)<br />
+その次が補助的なバージョンを、(<code>pGfxIpMinorVer</code>)<br />
+最後がステッピングとなる。(<code>pGfxIpStepping</code>)<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup></p>
+
+<p>Navi からは世代が <em>GFX10</em> と二桁になったが、LLVM 等では <code>_</code> で区切りを付けて記述されているため、問題はない。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup><br />
+GFX1世代とされる AMD GPU はないため、間違うこともそう無いと思うが。</p>
+
+<p>また、GFX10 までは補助的なバージョンを示す数字が使われることはあまり無く、<em>gfx810</em> である <em>Stoney</em> APU くらいで、ほとんど <code>0</code> となっていた。<br />
+GFX10 からは <em>RDNA /Navi1x</em> であることを示すためには <code>1</code> (gfx101x) 、<em>RDNA 2/Navi2x</em> には <code>3</code> (gfx103x) が充てられている。<br />
+<code>2</code> が飛ばされているが、存在はしており、<em>Navi21_Lite/nv21_lite</em> が <em>gfx1020</em> とされている。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><em>gfx1000</em> の <em>Navi10_Lite/nv10_lite</em> もあり、そちらは <em>Ariel</em> というコードネームが付けられている。<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup><br />
+自分が知っているのはそれだけで、詳しくは知らない。<span class="hide">知りたいなら探偵様にでも聞いてくれ。</span></p>
+
+<h2 id="read-from-gpuid">GPU ID から読み取れること</h2>
+
+<p>その <strong>GPU ID</strong> を <a href="https://github.com/llvm/llvm-project/blob/master/llvm/lib/Target/AMDGPU/AMDGPU.td" rel="noreferrer" target="_blank">llvm-project/AMDGPU.td</a> と照らし合わせることで、その AMD GPUアーキテクチャが対応している命令、機能、存在するバグについて知ることができる。</p>
+
+<p>これまでに登場してきた AMD GPU の <strong>GPU ID</strong> は<a href="#amdgpu-codename-gpuid">記事下部の表</a>にて。</p>
+
+<p>読み方としては例えば、<em>gfx1011 (Navi12)</em> 、<em>gfx1012 (Navi14)</em> には <code>FeatureDot1Insts</code> 、<code>FeatureDot2Insts</code>、<code>FeatureDot5Insts</code>、<code>FeatureDot6Insts</code> があるけど<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup>、<em>gfx1010 (Navi10)</em> には無い<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">6</a></sup>、<br />
+<em>gfx1012 (Navi14)</em> にはバグに <code>FeatureLdsMisalignedBug</code> があるけど<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">7</a></sup>、<em>gfx1011 (Navi12)</em> には無い (修正されている?)<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">7</a></sup>、という風に比較することが基本となる。</p>
+
+<h3 id="cant-read-scale">規模は読み取れない</h3>
+
+<p>下の表を見るとわかるが、GPU ID は普通に被る。<br />
+規模の異なる <em>Fiji /Polaris10 /Polaris11 /Polaris12</em> が一緒の <em>gfx803</em> になってたり、<br />
+最近の AMD GPU でも、<em>Raven2 /Renoir</em> が一緒の <em>gfx909</em> だった。<br />
+だから、GPU ID と <a href="https://github.com/llvm/llvm-project/blob/master/llvm/lib/Target/AMDGPU/AMDGPU.td" rel="noreferrer" target="_blank">llvm-project/AMDGPU.td</a> と組み合わせである AMD GPU の規模を知ることは不可能と言っていい。</p>
+
+<p>倍精度(FP64)演算を、単精度(FP32)演算の半分のレートで実行できることを示す <code>HalfRate64Ops</code> があれば、その AMD GPUアーキテクチャはサーバやデータセンター向けで、それを採用する GPUもそういった製品に使われる、といったことは推測できるが、あくまで規模が読み取れる訳ではない。</p>
+
+<p>対応している命令、機能、存在するバグといった情報は、GPUの中で低い階層に位置するため、それだけで全体を見渡すことはできない。</p>
+
+<p>また GPU ID がアーキテクチャを示すと言っても、<a href="https://github.com/llvm/llvm-project/blob/master/llvm/lib/Target/AMDGPU/AMDGPU.td" rel="noreferrer" target="_blank">llvm-project/AMDGPU.td</a> を見るに、<br />
+GFX10世代が対応する命令、機能をまとめた <code>FeatureGFX10</code> に、Wave内のスレッド数が 32スレッドである <code>FeatureWavefrontSize32</code> が無く、<em>gfx1010 /gfx1011 /gfx1012 /gfx1030</em> それぞれに記述されていることから、<br />
+gfx10xx としても、厳密に言えば RDNA系列でない可能性がある、というのが自分の考えだ。<br />
+gfx10xx すべてが RDNA系列となるなら <code>FeatureGFX10</code> に記述すれば楽に済む。</p>
+
+<p>メジャーバージョンで Wavefrontのサイズを判定するコードもどっかにあるだろうから、わざわざややこしく、わかりにくいことをするとも考えにくいが、可能性としてはわずかに存在する。</p>
+
+<h3 id="hbcc-xnack">HBCC / XNACK について</h3>
+
+<p>HBCC は CPU側の一部 DRAM も追加で VRAM として扱う <em>Vega</em> の目玉機能だが、これを有効にすると GPU ID が変更されていた。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">8</a></sup><br />
+<em>Vega10 (HBCC無効)</em> が <em>gfx900</em> 、<em>Vega10 (HBCC有効)</em> が <em>gfx901</em> となる。</p>
+
+<p>何で変更する必要があるのかは、<br />
+まず HBCC機能の中身としては、メモリのデマンドページングやページ移行に使用される <code>XNACK</code> という機能を有効にしている。<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">9</a></sup><sup class="footnote-ref" id="fnref:10"><a href="#fn:10">10</a></sup> LLVM から <em>gfx901</em> 等は消されているが、消された時の内容から <em>gfx901</em> に <code>FeatureXNACK</code> がある。<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">11</a></sup></p>
+
+<p>これを有効にした場合にコンパイルしたバイナリを、無効にされている GPU で実行すると、正しく実行されない、またはパフォーマンスが低下するといったことが発生するため、GPU ID で判別する必要があるのだと思われる。</p>
+
+<p>しかし HBCC/XNACK はもう dGPU で有効にすることは想定されておらず、dGPU には <code>FeatureDoesNotSupportXNACK</code> が記述され、また <em>Vega20 (gfx906)</em> 以降は判別するための GPU ID も確保されていない。<br />
+元々 <code>XNACK</code> はメモリを CPU と GPU で共有する APU 向けの機能だったらしく、元の位置に収まったとも言える。</p>
+
+<h2 id="amdgpu-codename-gpuid">AMD GPU Code Name / GPU ID</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">Code Name</th>
+<th align="center">Tahiti</th>
+<th align="center">Pitcairn / Capeverde / Oland / Hainan</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">GPU ID</td>
+<td align="center">gfx600</td>
+<td align="center">gfx601</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th align="left">Code Name</th>
+<th align="center">Spectre / Spooky</th>
+<th align="center">HawaiiPro</th>
+<th align="center">Hawaii</th>
+<th align="center">Kalindi / Godavari</th>
+<th align="center">Banaire</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">GPU ID</td>
+<td align="center">gfx700</td>
+<td align="center">gfx701</td>
+<td align="center">gfx702</td>
+<td align="center">gfx703</td>
+<td align="center">gfx704</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th align="left">Code Name</th>
+<th align="center">Carrizo / Bristol</th>
+<th align="center">Iceland / Tonga</th>
+<th align="center">Fiji / Polaris10 / Polaris11 / Polaris12</th>
+<th align="center">Stoney</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">GPU ID</td>
+<td align="center">gfx801</td>
+<td align="center">gfx802</td>
+<td align="center">gfx803</td>
+<td align="center">gfx810</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th align="left">Code Name</th>
+<th align="center">Vega10</th>
+<th align="center">Raven / Picasso</th>
+<th align="center">Vega12</th>
+<th align="center">Vega20</th>
+<th align="center">Arcturus</th>
+<th align="center">Raven2 / Renoir</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">GPU ID</td>
+<td align="center">gfx900</td>
+<td align="center">gfx902</td>
+<td align="center">gfx904</td>
+<td align="center">gfx906</td>
+<td align="center">gfx908</td>
+<td align="center">gfx909</td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th align="left">Code Name</th>
+<th align="center">Navi10</th>
+<th align="center">Navi12</th>
+<th align="center">Navi14</th>
+<th align="center">Navi21</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">GPU ID</td>
+<td align="center">gfx1010</td>
+<td align="center">gfx1011</td>
+<td align="center">gfx1012</td>
+<td align="center">gfx1030</td>
+</tr>
+</tbody>
+</table>
+
+<p>(参考: <cite><a href="https://github.com/GPUOpen-Drivers/pal/blob/e1b2dde021a2efd34da6593994f87317a803b065/src/core/os/nullDevice/ndDevice.cpp#L106" rel="noreferrer" target="_blank">https://github.com/GPUOpen-Drivers/pal/blob/e1b2dde021a2efd34da6593994f87317a803b065/src/core/os/nullDevice/ndDevice.cpp#L106</a></cite>)</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://github.com/GPUOpen-Drivers/pal/blob/e1b2dde021a2efd34da6593994f87317a803b065/inc/core/palPipelineAbiProcessorImpl.h#L640" rel="noreferrer" target="_blank">pal/palPipelineAbiProcessorImpl.h at e1b2dde021a2efd34da6593994f87317a803b065 · GPUOpen-Drivers/pal</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://github.com/llvm/llvm-project/blob/master/llvm/lib/Target/AMDGPU/AMDGPU.td" rel="noreferrer" target="_blank">llvm-project/AMDGPU.td at master · llvm/llvm-project</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://github.com/ROCm-Developer-Tools/ROCclr/commit/3d2665034250cf93bc88b409e67c86453f568bd4" rel="noreferrer" target="_blank">P4 to Git Change 1917655 by vsytchen@vsytchen-remote-ocl-win10 on 201… · ROCm-Developer-Tools/ROCclr@3d26650</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:4"><a href="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/c0567561d1c2a07c9aa63edf940f8589d2ee1dc6/runtime/device/rocm/rocdefs.hpp#L75" rel="noreferrer" target="_blank">https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/c0567561d1c2a07c9aa63edf940f8589d2ee1dc6/runtime/device/rocm/rocdefs.hpp#L75</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+<li id="fn:5"><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td#L900" rel="noreferrer" target="_blank">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td#L900</a>
+ <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:6"><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td#L881" rel="noreferrer" target="_blank">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td#L881</a>
+ <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
+<li id="fn:7"><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td#L934" rel="noreferrer" target="_blank">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td#L934</a>
+ <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
+<li id="fn:8"><a href="https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/c0567561d1c2a07c9aa63edf940f8589d2ee1dc6/runtime/device/rocm/rocdefs.hpp#L71" rel="noreferrer" target="_blank">ROCm-OpenCL-Runtime/rocdefs.hpp at c0567561d1c2a07c9aa63edf940f8589d2ee1dc6 · RadeonOpenCompute/ROCm-OpenCL-Runtime</a>
+ <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
+<li id="fn:9"><a href="https://prereleases.llvm.org/8.0.0/rc5/docs/AMDGPUUsage.html#target-features" rel="noreferrer" target="_blank">User Guide for AMDGPU Backend — LLVM 8 documentation</a>
+ <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
+<li id="fn:10"><a href="https://github.com/GPUOpen-Drivers/pal/blob/82390674c40402c81dbf311a5ee488fb972894f5/inc/core/palDevice.h#L1020" rel="noreferrer" target="_blank">pal/palDevice.h at 82390674c40402c81dbf311a5ee488fb972894f5 · GPUOpen-Drivers/pal</a>
+ <a class="footnote-return" href="#fnref:10"><sup>[return]</sup></a></li>
+<li id="fn:11"><a href="https://github.com/llvm/llvm-project/commit/c40d9f2e5df4482eb036a6130e8f3ae30294f3b4#diff-9b0b58a9b5e6244681ae14d7079f3704" rel="noreferrer" target="_blank">AMDGPU/GCN: Bring processors in sync with AMDGPUUsage · llvm/llvm-project@c40d9f2</a>
+ <a class="footnote-return" href="#fnref:11"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</article>
+
+         <div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/database" class="side_tag_lower">Database</a>
+         <a href="https://blog.coelacanth-dream.com/tags/radeon" class="side_tag_lower">Radeon</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd" class="side_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu" class="side_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-06-22 23:12">Post :<br>&emsp;2020/06/22 23:12</time>
+   <div class="side_time_update">Update :<br>&emsp;2020/06/23 13:36</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/22/amdgpu-gpuid-mean.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+   </nav>
+      <small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         <footer>
+   <hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/database" class="foot_tag_lower">Database</a>
+         <a href="https://blog.coelacanth-dream.com/tags/radeon" class="foot_tag_lower">Radeon</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd" class="foot_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu" class="foot_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/22/amdgpu-gpuid-mean.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-06-22 23:12">Post :<br>&emsp;2020/06/22 23:12</time>
+   <div class="foot_time_update">Update :<br>&emsp;2020/06/23 13:36</div>
+</div>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
