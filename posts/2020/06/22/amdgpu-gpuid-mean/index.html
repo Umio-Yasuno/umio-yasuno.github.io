@@ -301,7 +301,7 @@ GFX1世代とされる AMD GPU はないため、間違うこともそう無い�
 
 <p>また、GFX10 までは補助的なバージョンを示す数字が使われることはあまり無く、<em>gfx810</em> である <em>Stoney</em> APU くらいで、ほとんど <code>0</code> となっていた。<br />
 GFX10 からは <em>RDNA /Navi1x</em> であることを示すためには <code>1</code> (gfx101x) 、<em>RDNA 2/Navi2x</em> には <code>3</code> (gfx103x) が充てられている。<br />
-<code>2</code> が飛ばされているが、存在はしており、<em>Navi21_Lite/nv21_lite</em> が <em>gfx1020</em> とされている。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><em>gfx1000</em> の <em>Navi10_Lite/nv10_lite</em> もあり、そちらは <em>Ariel</em> というコードネームが付けられている。<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup><br />
+<code>2</code> (gfx102x) が飛ばされているが、存在はしており、<em>Navi21_Lite/nv21_lite</em> が <em>gfx1020</em> とされている。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><em>gfx1000</em> の <em>Navi10_Lite/nv10_lite</em> もあり、そちらは <em>Ariel</em> というコードネームが付けられている。<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup><br />
 自分が知っているのはそれだけで、詳しくは知らない。<span class="hide">知りたいなら探偵様にでも聞いてくれ。</span></p>
 
 <h2 id="read-from-gpuid">GPU ID から読み取れること</h2>
@@ -318,7 +318,8 @@ GFX10 からは <em>RDNA /Navi1x</em> であることを示すためには <code
 <p>下の表を見るとわかるが、GPU ID は普通に被る。<br />
 規模の異なる <em>Fiji /Polaris10 /Polaris11 /Polaris12</em> が一緒の <em>gfx803</em> になってたり、<br />
 最近の AMD GPU でも、<em>Raven2 /Renoir</em> が一緒の <em>gfx909</em> だった。<br />
-だから、GPU ID と <a href="https://github.com/llvm/llvm-project/blob/master/llvm/lib/Target/AMDGPU/AMDGPU.td" rel="noreferrer" target="_blank">llvm-project/AMDGPU.td</a> と組み合わせである AMD GPU の規模を知ることは不可能と言っていい。</p>
+だから、GPU ID と <a href="https://github.com/llvm/llvm-project/blob/master/llvm/lib/Target/AMDGPU/AMDGPU.td" rel="noreferrer" target="_blank">llvm-project/AMDGPU.td</a> と組み合わせで、ある AMD GPU の規模を知ることは不可能と言っていい。<br />
+GPU ID だけとなるともっと無理。</p>
 
 <p>倍精度(FP64)演算を、単精度(FP32)演算の半分のレートで実行できることを示す <code>HalfRate64Ops</code> があれば、その AMD GPUアーキテクチャはサーバやデータセンター向けで、それを採用する GPUもそういった製品に使われる、といったことは推測できるが、あくまで規模が読み取れる訳ではない。</p>
 
@@ -329,7 +330,7 @@ GFX10世代が対応する命令、機能をまとめた <code>FeatureGFX10</cod
 gfx10xx としても、厳密に言えば RDNA系列でない可能性がある、というのが自分の考えだ。<br />
 gfx10xx すべてが RDNA系列となるなら <code>FeatureGFX10</code> に記述すれば楽に済む。</p>
 
-<p>メジャーバージョンで Wavefrontのサイズを判定するコードもどっかにあるだろうから、わざわざややこしく、わかりにくいことをするとも考えにくいが、可能性としてはわずかに存在する。</p>
+<p>メジャーバージョン、世代で Wavefront のサイズを判定するコードもどっかにあるだろうから、わざわざややこしく、わかりにくいことをするとも考えにくいが、可能性としてはわずかに存在する。</p>
 
 <h3 id="hbcc-xnack">HBCC / XNACK について</h3>
 
@@ -339,7 +340,7 @@ gfx10xx すべてが RDNA系列となるなら <code>FeatureGFX10</code> に記�
 <p>何で変更する必要があるのかは、<br />
 まず HBCC機能の中身としては、メモリのデマンドページングやページ移行に使用される <code>XNACK</code> という機能を有効にしている。<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">9</a></sup><sup class="footnote-ref" id="fnref:10"><a href="#fn:10">10</a></sup> LLVM から <em>gfx901</em> 等は消されているが、消された時の内容から <em>gfx901</em> に <code>FeatureXNACK</code> がある。<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">11</a></sup></p>
 
-<p>これを有効にした場合にコンパイルしたバイナリを、無効にされている GPU で実行すると、正しく実行されない、またはパフォーマンスが低下するといったことが発生するため、GPU ID で判別する必要があるのだと思われる。</p>
+<p><code>XNACK</code> を有効にした場合に生成したコードを、無効にされている GPU で実行すると、正しく実行されない、またはパフォーマンスが低下するといったことが発生するため、GPU ID で判別する必要があるのだと思われる。</p>
 
 <p>しかし HBCC/XNACK はもう dGPU で有効にすることは想定されておらず、dGPU には <code>FeatureDoesNotSupportXNACK</code> が記述され、また <em>Vega20 (gfx906)</em> 以降は判別するための GPU ID も確保されていない。<br />
 元々 <code>XNACK</code> はメモリを CPU と GPU で共有する APU 向けの機能だったらしく、元の位置に収まったとも言える。</p>
@@ -415,6 +416,7 @@ gfx10xx すべてが RDNA系列となるなら <code>FeatureGFX10</code> に記�
 <tr>
 <th align="left">Code Name</th>
 <th align="center">Vega10</th>
+<th align="center">Vega10 (HBCC)</th>
 <th align="center">Raven / Picasso</th>
 <th align="center">Vega12</th>
 <th align="center">Vega20</th>
@@ -427,6 +429,7 @@ gfx10xx すべてが RDNA系列となるなら <code>FeatureGFX10</code> に記�
 <tr>
 <td align="left">GPU ID</td>
 <td align="center">gfx900</td>
+<td align="center">gfx901</td>
 <td align="center">gfx902</td>
 <td align="center">gfx904</td>
 <td align="center">gfx906</td>
@@ -514,7 +517,7 @@ gfx10xx すべてが RDNA系列となるなら <code>FeatureGFX10</code> に記�
 </div>
 <div class="side_time">
    <time datetime="2020-06-22 23:12">Post :<br>&emsp;2020/06/22 23:12</time>
-   <div class="side_time_update">Update :<br>&emsp;2020/06/23 13:36</div>
+   <div class="side_time_update">Update :<br>&emsp;2020/06/23 16:07</div>
 </div>
 <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/22/amdgpu-gpuid-mean.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://blog.coelacanth-dream.com/about/">About</a>
@@ -548,7 +551,7 @@ gfx10xx すべてが RDNA系列となるなら <code>FeatureGFX10</code> に記�
       <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
 <a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
    <time datetime="2020-06-22 23:12">Post :<br>&emsp;2020/06/22 23:12</time>
-   <div class="foot_time_update">Update :<br>&emsp;2020/06/23 13:36</div>
+   <div class="foot_time_update">Update :<br>&emsp;2020/06/23 16:07</div>
 </div>
 <small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
