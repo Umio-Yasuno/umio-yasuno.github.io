@@ -33,7 +33,7 @@ html {
    background-attachment: fixed;
    background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
    background-repeat: no-repeat;
-   font-size: .95rem;
+   font-size: .96rem;
 }
 main {
    display: grid;
@@ -87,7 +87,7 @@ a:hover {
    scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
 }
 article >  p {
-   letter-spacing: .01rem;
+   letter-spacing: .02rem;
    margin: 0;
 }
 article > p::first-letter {
@@ -109,7 +109,7 @@ article {
    display: grid;
    grid-template-rows: auto;
    grid-template-columns: 1% 2% auto 1%;
-   row-gap: .7em;
+   row-gap: 16px;
 }
 article > p ~ * {
    display: none;
@@ -163,11 +163,10 @@ h1 {
       position: fixed;
          top: 2vh;
       padding: 36px 12px 0 24px;
-
+ 
+      color: #20B2AA;
       border-right: 1px solid #468E76;
       font-size: 1rem;
-
-      color: #20B2AA;
 
       overflow: scroll;
       scrollbar-width: thin;
@@ -212,6 +211,9 @@ h1 {
 
       max-width: max-content;
       line-height: 1.3rem;
+   }
+   .side_time {
+      font-family: monospace;
    }
    .side_lastmod {
       border-top: 1px solid #2D5A4B;
@@ -269,7 +271,7 @@ h1 {
 
 <p>部分的なサポートということもあり、<em>DG1</em> サポートを有効にするビルドオプションはまだ無く、<em>DG1</em> がどの程度動画のデコード/エンコード/ポストプロセッシングをサポートするかは明らかにされていない。</p>
 
-<p>しかし、追加されたファイルの中に、<a href="https://blog.coelacanth-dream.com/posts/2020/06/20/intel-dg1-support-opencl-levelzero/">前回</a>判明した <em>DG1</em> が持つ大きなキャッシュが内部でどのように割り振られてるかがわかった。</p>
+<p>しかし、追加されたファイル/コードにより、<a href="https://blog.coelacanth-dream.com/posts/2020/06/20/intel-dg1-support-opencl-levelzero/">前回</a>判明した <em>DG1</em> が持つ大きなキャッシュが内部でどのように割り振られてるかがわかった。</p>
 
 <blockquote>
 <pre><code>  #define DG1_L3_CONFIG_NUM                      3
@@ -289,7 +291,7 @@ h1 {
 <p><code>Rest /DC /RO /Z /Color /UTC /CB</code> がそれぞれ何を意味するかは、Intel が公開しているドキュメントを確認するに、<br />
 <code>DC (Data Cluster)</code> はデータキャッシュとしてレジスタ割り付けやグローバルメモリアクセスに使われ、<br />
 <code>RO (Read-Only)</code> は命令、状態(State)、定数、テキスチャを格納するキャッシュであり、<code>Rest</code> はそれら 2つを組み合わせたもの、<br />
-<code>Z /Color</code> はレンダリングに使われる深度 /色情報を格納するキャッシュであり、<code>UTC (Unified Tile Cache)</code> はそれらを組み合わせたもの、<br />
+<code>Z /Color</code> はグラフィクス処理に使われる深度 /色情報を格納するキャッシュであり、<code>UTC (Unified Tile Cache)</code> はそれらを組み合わせたもの、<br />
 <code>CB</code> は <code>Command Buffer</code> の略であり、名の通りの働きをすると思われる。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><br />
 <!--  未確認、NVIDIA GPU の L1cacheみたく、`Rest` と `UTC` は組み合わせたキャッシュそれぞれの容量が可変であったりするのだろうか。   --></p>
 
@@ -300,7 +302,8 @@ L3cacheバンクの設定に、シェーダーの入出力等に使われる <co
 そうなると <em>DG1</em> は、各Sub-Slice内のローカルメモリと、L3cache 16MB以上にオンチップメモリを持つことになる。</p>
 
 <p>Intel <em>DG1</em> からはキャッシュ容量の大きさだけでなく、その設定からも GPGPU向けであるように感じられる。<br />
-正確な要素は含んでいないが、GPUコアは <em>Tiger Lake GT2</em> と同規模であっても、キャッシュメモリと VRAM(GDDR5かGDDR6) PHYを考えると、<br />
+正確な要素は含んでいないが、GPUコアは <em>Tiger Lake GT2</em> と同規模であっても、大きいキャッシュメモリと VRAM(GDDR5かGDDR6) のPHY<span class="complement">メモリバス幅は 96-bit だと言われている</span>
+を備えることを考えると、<br />
 <em>DG1</em> のダイサイズは <em>Tiger Lake</em> とあまり変わらないのではないかと思う。最初から dGPUとしては実験的な感じで設計したのだろうか？</p>
 
 <p>キャッシュ設定やコストから、PCIeカードをソフトウェア開発者向けに絞って出荷するというのは納得できるが、<br />
@@ -357,8 +360,8 @@ L3cacheバンクの設定に、シェーダーの入出力等に使われる <co
    </nav>
 </div>
 <div class="side_time">
-   <time datetime="2020-06-25 10:11">Post :<br>&emsp;2020/06/25 10:11</time>
-   <div class="side_time_update">Update :<br>&emsp;2020/06/25 18:37</div>
+   <time datetime="2020-06-25 10:11">Post:<br>&emsp;2020/06/25 10:11</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/06/25 22:18</div>
 </div>
 <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/25/intel-media-driver-dg1.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://blog.coelacanth-dream.com/about/">About</a>
@@ -391,8 +394,8 @@ L3cacheバンクの設定に、シェーダーの入出力等に使われる <co
 <a href="https://blog.coelacanth-dream.com/about/">About</a>
       <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
 <a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
-   <time datetime="2020-06-25 10:11">Post :<br>&emsp;2020/06/25 10:11</time>
-   <div class="foot_time_update">Update :<br>&emsp;2020/06/25 18:37</div>
+   <time datetime="2020-06-25 10:11">Post:<br>&emsp;2020/06/25 10:11</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/06/25 22:18</div>
 </div>
 <small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
