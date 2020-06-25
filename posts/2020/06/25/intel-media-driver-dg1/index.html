@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/06/25/intel-media-driver-dg1/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary"><title>Intel、media-driver に DG1 へ向けたパッチを投稿 ――DG1 のキャッシュ設定 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="Intel、media-driver に DG1 へ向けたパッチを投稿 ――DG1 のキャッシュ設定 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="Intel、media-driver に DG1 へ向けたパッチを投稿 ――DG1 のキャッシュ設定 | Coelacanth&#39;s Dream">
+   <meta property="og:type" content="article">
+
+   <meta name="description" content="Intel は、動画のデコード/エンコード/ポストプロセッシングを Intel GPU で実行するための media-driver に DG1 ">
+   <meta property="og:description" content="Intel は、動画のデコード/エンコード/ポストプロセッシングを Intel GPU で実行するための media-driver に DG1 ">
+   <meta name="twitter:description" content="Intel は、動画のデコード/エンコード/ポストプロセッシングを Intel GPU で実行するための media-driver に DG1 ">
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/25/intel-media-driver-dg1/">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/25/intel-media-driver-dg1/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/25/intel-media-driver-dg1/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="DG1, Gen12, Hardware, Intel, GPU, ">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .95rem;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 24px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 1.7rem monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+   max-width: 64%;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: 0 2px 1em #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: 0 2px 1em #7EA0A9;
+   text-decoration: none;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .28em 0 .28em;
+   margin: 0;
+   word-break: break-all;
+
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   font-size: 1rem;
+   line-height: 1.5rem;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+}
+article >  p {
+   letter-spacing: .01rem;
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .6rem;
+}
+.copyright {
+   font-size: .9rem;
+   color: #20B2AA;
+
+}
+footer, .side {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1% 2% auto 1%;
+   row-gap: .7em;
+}
+article > p ~ * {
+   display: none;
+}
+article > * {
+   grid-column: 3 / -2;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4rem/1.25em sans-serif;
+   grid-column: 2 / -1;
+}
+ 
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 0 1vh repeat(3, auto) 6vh;
+      grid-template-columns: 2vw 232px 1vw auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / 6;
+      grid-column: 3 / -1;
+      padding-top: 12px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8rem;
+      max-width: unset;
+   }
+   .tags {
+      grid-template-rows: repeat(8, auto);
+      grid-template-columns: repeat(3, auto);
+   }
+   .categories {
+      grid-template-rows: repeat(4, auto);
+      grid-template-columns: repeat(3, auto);
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+   }
+   .side {
+      display: flex;
+      flex-direction: column;
+      row-gap: 28px;
+      height: 90vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 36px 12px 0 24px;
+
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      color: #20B2AA;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+   }
+   .side_links {
+      display: flex;
+      flex-direction: column;
+      max-width: 64%;
+      row-gap: .5em;
+   }
+   .side_pagination {
+      font-family: monospace;
+      font-size: 1.05rem;
+      display: grid;
+      grid-template-rows: repeat(3, 1.8rem);
+   }
+   .side_prev, .side_next {
+      color: #9EDEFF;
+
+   }
+   .side_prev {
+      margin-right: auto;
+      grid-row: 1 / 2;
+   }
+   .side_prev::before {
+      content: '\2190';
+   }
+   .side_next {
+      margin-left: auto;
+      grid-row: 3 / 4;
+   }
+   .side_next::after {
+      content: '\2192';
+   }
+   .side_page_number {
+      margin: 0 auto 0 auto;
+      grid-row: 2 / 3;
+   }
+   .side_author, .side_lastmod, .side_about a, .side_time {
+      font-size: .96rem;
+
+      max-width: max-content;
+      line-height: 1.3rem;
+   }
+   .side_lastmod {
+      border-top: 1px solid #2D5A4B;
+   }
+   .side_tag_lower::before, .side_category_lower:before {
+      content: '\2514';
+      vertical-align: text-top;
+      padding: 0 .4em 0 0;
+      color: #4C997F;
+      font-weight: bold;
+   }
+   .side_tag_lower:hover::before, .side_category_lower:hover::before {
+      color: #65CCA9;
+   }
+   .side_tag_block a:hover, .side_category_block a:hover, .side_links a:hover, .side_about a:hover {
+      text-decoration: none;
+      border-bottom: 1px solid #5AB798;
+   }
+   .side_tag_block a, .side_category_block a, .side_links a {
+      border-bottom: 1px solid #326654;
+   }
+   .side_tag_lower, .side_category_lower {
+      max-width: max-content;
+      padding: 0;
+      margin-left: .8em;
+   }
+   .side_tag a, .side_category a {
+      text-decoration: none;
+   }
+   .side_tag, .side_category, .side_tag_block, .side_category_block {
+      display: flex;
+      flex-direction: column;
+      row-gap: .6em;
+      line-height: 1rem;
+   }
+   .side_tag_title, .side_category_title {
+      max-width: max-content;
+      color: #72E5BE;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+
+   <h1>Intel、media-driver に DG1 へ向けたパッチを投稿 ――DG1 のキャッシュ設定</h1><p>Intel は、動画のデコード/エンコード/ポストプロセッシングを Intel GPU で実行するための <a href="https://github.com/intel/media-driver" rel="noreferrer" target="_blank">media-driver</a> に <em>DG1</em> を部分的にサポートするパッチを投稿した。<br />
+<span class="reflink"><a href="https://github.com/intel/media-driver/commit/de482769db4f94a99d672c82dd250c9ea484b52a" rel="noreferrer" target="_blank">[Upstream] DG1 open source stage 1 · intel/media-driver@de48276</a></span><br>
+</p>
+
+<p>部分的なサポートということもあり、<em>DG1</em> サポートを有効にするビルドオプションはまだ無く、<em>DG1</em> がどの程度動画のデコード/エンコード/ポストプロセッシングをサポートするかは明らかにされていない。</p>
+
+<p>しかし、追加されたファイルの中に、<a href="https://blog.coelacanth-dream.com/posts/2020/06/20/intel-dg1-support-opencl-levelzero/">前回</a>判明した <em>DG1</em> が持つ大きなキャッシュが内部でどのように割り振られてるかがわかった。</p>
+
+<blockquote>
+<pre><code>  #define DG1_L3_CONFIG_NUM                      3
+  static const L3ConfigRegisterValues DG1_L3_PLANE[] = {
+     //L3Alloc     TCCNTL                 //  Rest   DC  RO   Z    Color  UTC    CB    Sum (in KB)
+     { 0x00000200, 0x0,          0, 0 },  //  2048   0   0    0    0       0      0    2048
+     { 0x40000000, 0x3E000010,   0, 0 },  //  1024   0   0    0    0       992   32    2048
+     { 0x0080F800, 0x00000010,   0, 0 },  //  0    1024  992  0    0       0     32    2048
+  };</code></pre>
+<p>引用元: <cite><a href="https://github.com/intel/media-driver/blob/de482769db4f94a99d672c82dd250c9ea484b52a/media_driver/agnostic/gen12_dg1/media_interfaces/media_interfaces_g12_dg1.h" rel="noreferrer" target="_blank">media-driver/media_interfaces_g12_dg1.h at de482769db4f94a99d672c82dd250c9ea484b52a · intel/media-driver</a></cite></p>
+</blockquote>
+
+<p>L3cacheバンクあたりの容量が確かに 2048KB と、前回判明した内容が自分の見間違い等ではなかったようで安心した。</p>
+
+<p>キャッシュ設定は 3種類と、統合GPUである <em>Ice Lake LP</em> の 9種類<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>、<em>Tiger Lake</em> の 7種類<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup>に比べると少ない。</p>
+
+<p><code>Rest /DC /RO /Z /Color /UTC /CB</code> がそれぞれ何を意味するかは、Intel が公開しているドキュメントを確認するに、<br />
+<code>DC (Data Cluster)</code> はデータキャッシュとしてレジスタ割り付けやグローバルメモリアクセスに使われ、<br />
+<code>RO (Read-Only)</code> は命令、状態(State)、定数、テキスチャを格納するキャッシュであり、<code>Rest</code> はそれら 2つを組み合わせたもの、<br />
+<code>Z /Color</code> はレンダリングに使われる深度 /色情報を格納するキャッシュであり、<code>UTC (Unified Tile Cache)</code> はそれらを組み合わせたもの、<br />
+<code>CB</code> は <code>Command Buffer</code> の略であり、名の通りの働きをすると思われる。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><br />
+<!--  未確認、NVIDIA GPU の L1cacheみたく、`Rest` と `UTC` は組み合わせたキャッシュそれぞれの容量が可変であったりするのだろうか。   --></p>
+
+<p>その上で <em>DG1</em> のキャッシュ設定を見ると、<br />
+1つ目と 3つ目は、データ/リードオンリーキャッシュに極端に割り振り、グラフィクス系キャッシュは省いた GPGPU向けの設定、<br />
+2つ目は <code>Rest</code> と <code>UTC (Unified Tile Cache)</code> に大体半分ずつ(1024KB) 割り振ったグラフィクス向けの設定と推察される。<br />
+L3cacheバンクの設定に、シェーダーの入出力等に使われる <code>URB (Unified Return Buffer)</code> が無いが、L3cacheの外に備えられているのかもしれない。<br />
+そうなると <em>DG1</em> は、各Sub-Slice内のローカルメモリと、L3cache 16MB以上にオフチップメモリを持つことになる。</p>
+
+<p>Intel <em>DG1</em> からはキャッシュ容量の大きさだけでなく、その設定からも GPGPU向けであるように感じられる。<br />
+正確な要素は含んでいないが、GPUコアは <em>Tiger Lake GT2</em> と同規模であっても、キャッシュメモリと VRAM(GDDR5かGDDR6) PHYを考えると、<br />
+<em>DG1</em> のダイサイズは <em>Tiger Lake</em> とあまり変わらないのではないかと思う。最初から dGPUとして実験的な感じで設計したのだろうか？</p>
+
+<p>キャッシュ設定やコストから、PCIeカードをソフトウェア開発者向けに絞って出荷するというのは納得できるが、<br />
+オンボードで <em>Tiger Lake</em> と組み合わせたノートPCの構成を提供するというのは、意図が読みづらい。<br />
+それもまたプレミアム向け製品のみとなるのか、それとも性能向上の秘策があるのか、あるいはただシェアを伸ばしたいのか。<br />
+一応、<em>DG1</em> の Device(PCI) ID は 3種確認できるため<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>、製品も複数展開される可能性は存在する。</p>
+
+<div class="reference">
+<hr>
+<h3 class="ref-title" id="ref-title">参考リンク</h3>
+<ul>
+<li><a href="https://news.mynavi.jp/article/20080728-s_gpu02/3" rel="noreferrer" target="_blank">GeForce vs ATI Radeon &ndash; アーキテクチャ解説で紐解くGPU戦争&rdquo;夏の陣&rdquo; (後編) (3) ROPユニットはどう進化したか | マイナビニュース</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://github.com/intel/media-driver/blob/a634e836f31469db58f4d082d8c0c9f89116acbb/cmrtlib/agnostic/share/cm_rt_g11.h" rel="noreferrer" target="_blank">media-driver/cm_rt_g11.h at a634e836f31469db58f4d082d8c0c9f89116acbb · intel/media-driver</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://github.com/intel/media-driver/blob/a634e836f31469db58f4d082d8c0c9f89116acbb/cmrtlib/agnostic/share/cm_rt_g12_tgl.h" rel="noreferrer" target="_blank">media-driver/cm_rt_g12_tgl.h at a634e836f31469db58f4d082d8c0c9f89116acbb · intel/media-driver</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+<li id="fn:3"><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol07-memory_cache_0.pdf" rel="noreferrer" target="_blank">Volume 7: Memory Cache &ndash; intel-gfx-prm-osrc-icllp-vol07-memory_cache_0.pdf</a>
+ <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
+<li id="fn:4"><a href="https://github.com/intel/media-driver/blob/de482769db4f94a99d672c82dd250c9ea484b52a/media_driver/linux/gen12/ddi/media_sysinfo_g12.cpp#L251" rel="noreferrer" target="_blank">media-driver/media_sysinfo_g12.cpp at de482769db4f94a99d672c82dd250c9ea484b52a · intel/media-driver</a>
+ <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</article>
+         <div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/dg1" class="side_tag_lower">DG1</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gen12" class="side_tag_lower">Gen12</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/gpu" class="side_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="side_category_lower">Hardware</a>
+         <a href="https://blog.coelacanth-dream.com/categories/intel" class="side_category_lower">Intel</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-06-25 10:11">Post :<br>&emsp;2020/06/25 10:11</time>
+   <div class="side_time_update">Update :<br>&emsp;2020/06/25 15:26</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/25/intel-media-driver-dg1.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+   </nav>
+      <small class="copyright">&copy; 2019 Umio Yasuno</small>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         <footer>
+   <hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/dg1" class="foot_tag_lower">DG1</a>
+         <a href="https://blog.coelacanth-dream.com/tags/gen12" class="foot_tag_lower">Gen12</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/gpu" class="foot_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="foot_category_lower">Hardware</a>
+         <a href="https://blog.coelacanth-dream.com/categories/intel" class="foot_category_lower">Intel</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/25/intel-media-driver-dg1.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-06-25 10:11">Post :<br>&emsp;2020/06/25 10:11</time>
+   <div class="foot_time_update">Update :<br>&emsp;2020/06/25 15:26</div>
+</div>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
