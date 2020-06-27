@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/06/27/amd-dali-apu-based-picasso-or-raven2/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary"><title>AMD Picassoベースの Dali APU が存在するらしい？ | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD Picassoベースの Dali APU が存在するらしい？ | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD Picassoベースの Dali APU が存在するらしい？ | Coelacanth&#39;s Dream">
+   <meta property="og:type" content="article">
+
+   <meta name="description" content="Zen APUにまつわるややこしい仕様、特に Picasso と Raven2 にはこれまでに何回か触れてきたけど、自分がそれを把握しているとい">
+   <meta property="og:description" content="Zen APUにまつわるややこしい仕様、特に Picasso と Raven2 にはこれまでに何回か触れてきたけど、自分がそれを把握しているとい">
+   <meta name="twitter:description" content="Zen APUにまつわるややこしい仕様、特に Picasso と Raven2 にはこれまでに何回か触れてきたけど、自分がそれを把握しているとい">
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/27/amd-dali-apu-based-picasso-or-raven2/">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/27/amd-dali-apu-based-picasso-or-raven2/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/27/amd-dali-apu-based-picasso-or-raven2/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="Dali, Picasso, Raven2, Hardware, AMD, APU, ">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/ds.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .96em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 24px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 1.7rem monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+   max-width: 64%;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: 0 2px 1em #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: 0 2px 1em #7EA0A9;
+   text-decoration: none;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .28em 0 .28em;
+   margin: 0;
+   word-break: break-all;
+
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.5rem;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   opacity: 0;
+}
+article >  p {
+
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .7rem;
+}
+footer, .side, .home, .posts, .tags, .categories {
+   display: none;
+
+}
+footer {
+
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+.tags, .categories {
+   grid-column: 2 / -1;
+}
+
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1vw 1vw auto 1vw;
+   row-gap: 12px;
+}
+article > p ~ * {
+   display: none;
+
+}
+article > * {
+   grid-column: 3 / -2;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4rem/1.25em sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 1rem 0;
+}
+ 
+
+
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+ 
+      grid-template-columns: 224px 12px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      padding-top: 16px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8rem;
+      max-width: 100%;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+
+      grid-column: 3 / -1;
+      padding-left: 4px;
+   }
+   .side {
+      display: unset;
+      opacity: unset;
+      height: 92vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+
+      padding: 28px 12px 0 16px;
+      color: #20B2AA;
+ 
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(255,0,0, 0);
+   }
+   .side_block {
+      display: none;
+      opacity: 0;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css"><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/ds.min.css">
+         
+<article class="text">
+
+   <h1>AMD Picassoベースの Dali APU が存在するらしい？</h1>
+
+<p>Zen APUにまつわるややこしい仕様、特に <em>Picasso</em> と <em>Raven2</em> にはこれまでに何回か触れてきたけど、自分がそれを把握しているという自信が揺らいできたし、そもそも正しく把握できている人がいるのか不安になってきた。<br />
+それでも、<em>Dali</em> については一応以下を参照してほしい。<br />
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/06/24/amd-dali-apu-database/">AMD Dali APU Database | Coelacanth&rsquo;s Dream</a></span><br>
+</p>
+
+<p>きっかけは Coreboot へのあるパッチとそれに付随するメッセージだ。<br />
+<span class="reflink"><a href="https://review.coreboot.org/c/coreboot/+/42833" rel="noreferrer" target="_blank">soc/amd/picasso/soc_util: rework reduced I/O chip detection (I9eb57595) · Gerrit Code Review</a></span><br>
+
+<span class="reflink"><a href="https://review.coreboot.org/c/coreboot/+/42838" rel="noreferrer" target="_blank">soc/amd/picasso/soc_util: add comment on the silicon and soc types (I71704ab2) · Gerrit Code Review</a></span><br>
+</p>
+
+<h2 id="page_index">インデックス</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#dali-based-pco">Picasso シリコンをベースにした Dali ?</a></li>
+<li><a href="#question">疑問と考察</a>
+
+<ul>
+<li><a href="#rv2-pco-ne-pco-pco">Dali (RV2/PCO) ≠ Dali (PCO/PCO) </a></li>
+<li><a href="#opn-diff">OPN で異なる？</a></li>
+<li><a href="#problem">問題</a></li>
+</ul></li>
+</ul>
+
+</div>
+
+
+<h2 id="dali-based-pco">Picasso シリコンをベースにした Dali ?</h2>
+
+<p>パッチの中身としては、上が、<em>RV2 (Raven2)</em> シリコンをベースとする <em>Dali</em> と <em>Pollock</em> は <em>Raven /Picasso</em> から外部 I/O の規模が減らされているため、それを検出するコードとなり、<br />
+下がそのパッチの補足メッセージをさらに補足して、ソースコード内にコメントとして記述するというもの。</p>
+
+<!--
+
+ > Both Dali and Pollock chips have less PCIe, USB3 and Displayport
+ > connectivity. While Dali can either be fused-down PCO or RV2 silicon,
+ > Pollock is always RV2 silicon.
+ >
+ > 引用元: [soc/amd/picasso/soc_util: rework reduced I/O chip detection (I9eb57595) · Gerrit Code Review](https://review.coreboot.org/c/coreboot/+/42833)
+
+-->
+
+<p>で、問題がメッセージの内容で、<br />
+まず <em>RV2 (Raven2)</em> シリコンは <em>RV (Raven) / PCO (Picasso)</em> から PCIE、USB3、Displayport が減らされている、と述べており、これは過去これまでの情報と一致する。</p>
+
+<blockquote>
+<pre><code>  /*
+  * The Zen/Zen+ based APUs can be RV (sometimes called RV1), PCO or RV2 silicon. RV2 has less
+  * PCIe, USB3 and Displayport connectivity than RV(1) or PCO. A Picasso SoC is always PCO
+  * silicon, a Dali SoC can either be RV2 or fused-down PCO silicon that has the same
+  * connectivity as the RV2 one and Pollock is always RV2 silicon. Picasso and Dali are in a FP5
+  * package while Pollock is in the smaller FT5 package.
+  */</code></pre>
+<p>引用元: <a href="https://review.coreboot.org/c/coreboot/+/42838" rel="noreferrer" target="_blank">soc/amd/picasso/soc_util: add comment on the silicon and soc types (I71704ab2) · Gerrit Code Review</a></p>
+</blockquote>
+
+<p>そして <em>Picasso</em> は常に <em>PCO</em> シリコンをベースとする。ここに疑問は特に無い。<br />
+だがその後が一番問題で、<em>Dali</em> は <em>RV2</em> シリコンか、外部 I/O の規模を <em>RV2</em> 同等までに減らした <em>PCO</em> シリコンになるとしている。</p>
+
+<p>問題と考えるのは、自分はこれまで、<em>Dali</em> はすべて <em>RV2</em> シリコンをベースとするものの、一部は CPUID を <em>Picasso</em> と共用し、<code>x86_Model</code> も <em>Picasso</em> と同じ <code>18h</code> になるため、ソフトウェアからは <em>Picasso</em> と認識される、と考えていたが、<br />
+それだけでなく、ベースとするシリコン自体が <em>PCO</em> シリコンであるものもある、と述べられているからだ。<br />
+この場合 <em>Dali</em> には最大 3種類あることとなり、<code>シリコン/CPUID</code> の形で記述すると、<code>RV2/RV2</code> 、<code>RV2/PCO</code> 、<code>PCO/PCO</code> になる。</p>
+
+<p><em>Pollock</em> は <code>RV2</code> シリコンのみをベースとし、パッケージには FT5パッケージを使うこと、<br />
+<em>Picasso</em> と <em>Dali</em> は FP5パッケージを使う、ということに問題、疑問は特に浮かばない。</p>
+
+<h2 id="question">疑問と考察</h2>
+
+<p>まず、<em>Picasso</em> と <em>Raven2</em> の違いには、CPU、GPU、I/O(PCIe/USB/Display) の規模があり。<em>Raven2</em> の方が小さい。<br />
+次に製造プロセスの違いがあり、<em>Picasso</em> は 12nmプロセス、<em>Raven2</em> は 14nmプロセスとなる。<br />
+そして、GPUのアーキテクチャが微妙に異なり、<em>Raven2</em> GPU の <em>gfx909</em> は、<em>Raven /Picasso</em> GPU の <em>gfx902</em> に存在したバグを修正したものとなる。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">Picasso</th>
+<th align="center">Raven2</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><strong>CPU</strong></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">&emsp;Max CPU Core/Thread</td>
+<td align="center">4/8</td>
+<td align="center">2/4</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;Max CPU L3cache</td>
+<td align="center">4MB</td>
+<td align="center">4MB</td>
+</tr>
+
+<tr>
+<td align="left"><strong>GPU</strong></td>
+<td align="center"><em>gfx902</em></td>
+<td align="center"><em>gfx909</em></td>
+</tr>
+
+<tr>
+<td align="left">&emsp;Max GPU CU</td>
+<td align="center">11CU</td>
+<td align="center">3CU</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;Max GPU RB</td>
+<td align="center">2<br>(8ROP)</td>
+<td align="center">1<br>(4ROP)</td>
+</tr>
+
+<tr>
+<td align="left">&emsp;Max GPU L2cache</td>
+<td align="center">1024KB</td>
+<td align="center">512KB</td>
+</tr>
+
+<tr>
+<td align="left">Process</td>
+<td align="center">12nm</td>
+<td align="center">14nm</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="rv2-pco-ne-pco-pco">Dali (RV2/PCO) ≠ Dali (PCO/PCO) ？</h3>
+
+<p>表面上 <em>Dali</em> とされるが、内部で CPUID と x86_Model は <em>Picasso</em> となるプロセッサには、<strong>Athlon Silver 3050U</strong> 、<strong>Athlon Gold 3150U</strong> 、<strong>Ryzen 3 3250U</strong> が確認されているが、<br />
+それらは AMD公式の仕様ページに <code>CMOS: 14nm</code> とあるため<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>、<em>RV2</em> シリコンであると思われる。</p>
+
+<p>そのため、CPUID、x86_Model が <em>Picasso</em> だからといって、シリコンも <em>PCO</em> になるとは限らないと言える。</p>
+
+<h3 id="opn-diff">OPN で異なる？</h3>
+
+<p>考えられるのは OPN(Ordering Part Number) でベースとなるシリコンが異なる可能性だ。</p>
+
+<p>最近そのコスパから話題となった <strong>Ryzen 5 1600 (AF)</strong> は、Ryzen 1000シリーズ(Summit Ridge) でありながら、シリコンは Ryzen 2000シリーズ(Pinnacle Ridge) と同一のものだった。<br />
+それと同様に、今後 <em>Dali</em> APU製品を一時的に <em>PCO</em> シリコンをベースとして提供する予定がある、もしくは既に一部で行なっているのかもしれない。</p>
+
+<h3 id="problem">問題</h3>
+
+<p>そうした場合に考えられる問題がいくつかある。</p>
+
+<p><strong>Ryzen 5 1600 (AF)</strong> は、<em>Pinnacle Ridge</em> の CPU、I/O 規模が <em>Summit Ridge</em> と同じであったから特に問題は発生しなかった。<br />
+対応するマイクロコードは異なるが、<em>Pinnacle Ridge</em> のみをピンポイントでサポートしていない UEFI(BIOS) というのは考えにくいし、実際あったという話も聞かない。<br />
+しかし、<em>PCO</em> シリコンと <em>RV2</em> シリコンでは CPU、GPU、I/O の規模が違う。<br />
+結果、判定部分のコードがさらに複雑となっている。<br />
+コードを読むと、<code>is_mystery_silicon</code> 関数を呼び、その先でシリコンのタイプを取得して判定を行なっている。<br />
+関数名からどこか投げやりなものを感じるのは自分だけだろうか。</p>
+
+<p>GPUアーキテクチャの違いに関しては、バグ修正くらいであるため、問題ないと考えているのかもしれない。<br />
+<em>gfx909</em> も LLVM のバージョンが古い場合は、 <em>gfx902</em> として判定されるようになっていた。</p>
+
+<p><em>PCO</em> シリコンは <em>RV2</em> シリコンよりシリコンダイのサイズが大きいため、同様のコア、クロック設定で動作させた場合、<em>PCO</em> シリコンの方が冷却が容易となる、<br />
+といった利点のようなものが存在しなくもない。</p>
+
+<p>ただ、最も懸念されるのは、OPNで違うとして、その情報が早くに公開されるかどうかだ。<br />
+わずかでも、実質的に同じでも、違いはやはり違いであり、区別できた方が良い。</p>
+
+<p>コードネームの元ネタである サルバドール・ダリ は数々のエピソード(奇行)を残しているが、もしかしたらそれが由来になったんじゃないか、なんて考えに及んでいたりする。<br />
+さすがにこれ以上複雑にならないことを願う。<br />
+<em>Dali</em> というコードネームから簡潔に説明できないのでは、コードネームの意義が揺らいでしまう。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150u" rel="noreferrer" target="_blank">AMD Athlon™ Gold 3150U | AMD</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</article>
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/side.min.css">
+         <div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<div class="side_block"><nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/dali" class="side_tag_lower">Dali</a>
+         <a href="https://blog.coelacanth-dream.com/tags/picasso" class="side_tag_lower">Picasso</a>
+         <a href="https://blog.coelacanth-dream.com/tags/raven2" class="side_tag_lower">Raven2</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd" class="side_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/apu" class="side_category_lower">APU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-06-27 10:41">Post:<br>&emsp;2020/06/27 10:41</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/06/27 16:21</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/27/amd-dali-apu-based-picasso-or-raven2.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+   </nav>
+      <small class="copyright">&copy; 2019 Umio Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         <footer>
+   <hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/dali" class="foot_tag_lower">Dali</a>
+         <a href="https://blog.coelacanth-dream.com/tags/picasso" class="foot_tag_lower">Picasso</a>
+         <a href="https://blog.coelacanth-dream.com/tags/raven2" class="foot_tag_lower">Raven2</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd" class="foot_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/apu" class="foot_category_lower">APU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/27/amd-dali-apu-based-picasso-or-raven2.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-06-27 10:41">Post:<br>&emsp;2020/06/27 10:41</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/06/27 16:21</div>
+</div>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
