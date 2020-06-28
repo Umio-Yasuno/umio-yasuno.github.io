@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/06/28/intel-rocketlake-cache-guess/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary"><title>Intel Rocket Lake のキャッシュ構成は Ice Lake と同様か &amp; 推測 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="Intel Rocket Lake のキャッシュ構成は Ice Lake と同様か &amp; 推測 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="Intel Rocket Lake のキャッシュ構成は Ice Lake と同様か &amp; 推測 | Coelacanth&#39;s Dream">
+   <meta property="og:type" content="article">
+
+   <meta name="description" content="先日、Rocket Lake の Geekbench 実行結果が登場、それを APISAKさん (@TUM_APISAK) / Twitter ">
+   <meta property="og:description" content="先日、Rocket Lake の Geekbench 実行結果が登場、それを APISAKさん (@TUM_APISAK) / Twitter ">
+   <meta name="twitter:description" content="先日、Rocket Lake の Geekbench 実行結果が登場、それを APISAKさん (@TUM_APISAK) / Twitter ">
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/06/28/intel-rocketlake-cache-guess/">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/06/28/intel-rocketlake-cache-guess/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/06/28/intel-rocketlake-cache-guess/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="Rocket_Lake, Guess, Gen12, Intel, Hardware, CPU, ">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/ds.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .96em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 24px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 1.7rem monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+   max-width: 64%;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: 0 2px 1em #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: 0 2px 1em #7EA0A9;
+   text-decoration: none;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .28em 0 .28em;
+   margin: 0;
+   word-break: break-all;
+
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.6rem;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(255,0,0, 0);
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   opacity: 0;
+}
+article >  p {
+   letter-spacing: .015rem;
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .7rem;
+}
+footer, .side, .home, .posts, .tags, .categories {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+.tags, .categories {
+   grid-column: 2 / -1;
+}
+
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1vw 1vw auto 1vw;
+   row-gap: 12px;
+}
+article > p ~ * {
+   display: none;
+   opacity: 0;
+}
+article > * {
+   grid-column: 3 / -2;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4rem/1.25em sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 1rem 0;
+}
+ 
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 12px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      padding-top: 16px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8rem;
+      max-width: 100%;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+      padding-left: 4px;
+   }
+   .side {
+      display: unset;
+      opacity: unset;
+      height: 92vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 28px 12px 0 16px;
+      color: #20B2AA;
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+      opacity: 0;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css"><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/ds.min.css">
+         
+<article class="text">
+
+   <h1>Intel Rocket Lake のキャッシュ構成は Ice Lake と同様か &amp; 推測</h1>
+
+<p>先日、<em>Rocket Lake</em> の Geekbench 実行結果が登場、それを <a href="https://twitter.com/TUM_APISAK" rel="noreferrer" target="_blank">APISAKさん (@TUM_APISAK) / Twitter</a> を発見した。<br />
+<span class="reflink"><a href="https://twitter.com/TUM_APISAK/status/1276482336683511810" rel="noreferrer" target="_blank">https://twitter.com/TUM_APISAK/status/1276482336683511810</a></span><br>
+
+<span class="reflink"><a href="https://browser.geekbench.com/v5/compute/1124595" rel="noreferrer" target="_blank">Intel Corporation Rocket Lake Client Platform &ndash; Geekbench Browser</a></span><br>
+</p>
+
+<p>この実行結果の見るべき点は、<em>Rocket Lake</em> の CPUコア数/スレッド数、そしてキャッシュ構成にあるだろう。<br />
+<em>Rocket Lake S</em> には 8-Core/16-Thread の構成があり、<br />
+キャッシュ構成は <em>Ice Lake (Client)</em> 同様に L1命令キャッシュ 32KB、L1データキャッシュ 64KB、L2キャッシュ 512KB、L3キャッシュはコアあたり 2048KB(2MB) となっている。</p>
+
+<p>GPU に関しては既出であるため、今回は特に触れない。<br />
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/05/08/intel-add-dg1-rkl-oss-driver/">Intel、オープンソースドライバーに DG1 と Rocket Lake の関するコードを追加 ――DG1 は 96EU、RKL は 16EU または 32EU | Coelacanth&rsquo;s Dream</a></span><br>
+</p>
+
+<h2 id="guess">推測</h2>
+
+<p>あくまでこうなる可能性があるという <strong>推測</strong> であり、<em>Rocket Lake</em> に関しては示した以上の情報は持ち合わせていない。</p>
+
+<h3 id="rkl-l3cache">コアあたりの容量が増やされていない L3キャッシュ</h3>
+
+<p><em>Rocket Lake S</em> は L3キャッシュが全体で 16MB、コアあたり 2MBと、<em>Skylake (Client)</em> 、<em>Ice Lake (Client)</em> から増量された様子はない。<br />
+<em>Rocket Lake</em> は MCM構成になるという噂があるが、このことから <em>Rocket Lake</em> は単一のチップ構成、もしくはメモリコントローラとメモリの物理層は別チップではなく、CPUコアと同一のチップに搭載されている、と考えられるのではないだろうか。</p>
+
+<p>AMD は、<em>Zen 2アーキテクチャ</em> を採用したプロセッサにおいて、サーバ/ワークステーション/デスクトップ向けには、CPUコア+L3キャッシュと、メモリを含む主要 I/O部を別チップに分ける MCM構成を取った。<br />
+その中で、L3キャッシュを前世代 <em>Zen アーキテクチャ</em> から倍の容量に増やしている。<br />
+AMD自身は増やした目的を明らかにしていないが、Hot Chips 31 にて、メモリアクセスレイテンシを減らすのに効果的と発表している。<sup class="footnote-ref" id="fnref:hc31-amd-zen2"><a href="#fn:hc31-amd-zen2">1</a></sup><br />
+目的を推測するならば、別チップに分けたことで増えたメモリのアクセスレイテンシを出来る限り減らすためと考えられる。</p>
+
+<p>しかし、<em>Rocket Lake</em> はそういったキャッシュ構成の変更が見られない。<br />
+実行結果の詳細でL4キャッシュが検出されていないため、キャッシュ階層が増やされたというのも無いだろう。</p>
+
+<h3 id="rkl-avx">Rocket Lake は AVX512 に対応するか？</h3>
+
+<p>キャッシュ構成が <em>Ice Lake (Client)</em> と同じだとして、アーキテクチャ、実行ポートの構成もまた同じかは気になるところだ。</p>
+
+<p><em>Ice Lake (Client)</em> は AVX512命令が Port0 で実行可能となっており、<sup class="footnote-ref" id="fnref:icl-arch"><a href="#fn:icl-arch">2</a></sup><br />
+L1データキャッシュの帯域が、ロード 2x 64Byte、ストア 1x 64Byte(or 2x 32Byte) となっている。<sup class="footnote-ref" id="fnref:icl-arch"><a href="#fn:icl-arch">2</a></sup></p>
+
+<p>L1データキャッシュ帯域は、AVX512 実行においてデータ供給をスムーズに行なうためと考えられ、<em>Skylake (Client)</em> では、ロード 2x32Byte、ストア 1x32Byte だったのが、AVX512命令に対応した <em>Skylake (Server)</em> ではそこから倍の帯域、<em>Ice Lake (Client)</em> と同様のものとなっている。</p>
+
+<p>しかし、キャッシュ帯域の増加は性能向上に繋がるが、消費電力の増加にも繋がり、<br />
+<a href="http://yusuke-ohara.com/" rel="noreferrer" target="_blank">テクニカルライターの大原雄介</a> 氏は、<em>Skylake (Server)</em> アーキテクチャを採用する <em>Skylake-SP</em> に対し、以下のように述べている。</p>
+
+<blockquote>
+<p>こうした帯域の増加は、性能の向上にも貢献する一方で確実に消費電力も底上げしてしまう。このあたりが、Skylake-SPにおける消費電力の多さに繋がっているのではないかという気がする。</p>
+
+<p>引用元: <a href="https://news.mynavi.jp/article/20170725-xeon/" rel="noreferrer" target="_blank">新Xeonで何が変わったか &ndash; 内部構造を解説 (1) 既存のSkylakeコアからの変更点 | マイナビニュース</a></p>
+</blockquote>
+
+<p>実際、L1データキャッシュ帯域の増加のみが原因とは言い切れないが、<em>Skylake-SP</em> 同様に <em>Skylake (Server)</em> アーキテクチャである <em>Skylake-X</em> では消費電力、消費電力比性能の悪化が確認されていた。<sup class="footnote-ref" id="fnref:sky-x-1"><a href="#fn:sky-x-1">3</a></sup><sup class="footnote-ref" id="fnref:sky-x-2"><a href="#fn:sky-x-2">4</a></sup></p>
+
+<p><em>Ice Lake (Client)</em> アーキテクチャの CPUを 14nmプロセスで製造するとしたら、同様の問題が発生すると考えられ、<em>Rocket Lake</em> はデスクトップ向けとしては高いTDP枠を取るか、動作クロックを抑える必要が出てくるだろう。<br />
+AVX512 に対応しないのであれば、L1データキャッシュ帯域を <em>Ice Lake (Client)</em> や <em>Skylake (Server)</em> と同じものにする必要性は薄まり、そして <em>Skylake (Client)</em> と同じ帯域にすれば問題は回避できる。<br />
+欠点として、当然 AVX512 に対応しないのだから、<em>Ice Lake</em> 等に用いたアピールを使えなくなる。<br />
+ただそれに関しては前例があり、<em>Sunny Cove</em> コアを搭載する <em>Lakefield</em> は対応しているはずの AVX/2/512 命令への対応が無効化されていた。<br />
+そして、<em>Ice Lake</em> の特徴の1つである、<code>AVX512-VNNI</code> 命令による高速な推論 <strong>Intel DL Boost</strong> の代わりか、GPU による推論の実行性能がアピールされていた。<br />
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/06/13/intel-lakefiled-without-avx/">Intel、Lakefiled を正式発表 &amp; AVX命令には非対応？ | Coelacanth&rsquo;s Dream</a></span><br>
+
+<em>Rocket Lake</em> は GPU部が <a href="https://blog.coelacanth-dream.com/tags/gen12">Gen12</a>アーキテクチャとなり、前世代から強化されるため、同様のアピールは可能だろう。<br />
+デスクトップ向けプロセッサとして、どこまで AVX512 への対応が求めてられているか、という疑問もある。</p>
+
+<p>よって、<em>Rocket Lake</em> が AVX512 に対応せず、実行ポート、キャッシュ帯域がそれに合わせて調節される可能性もあると考えられる。あくまで推測。</p>
+
+<p><em>Rocket Lake</em> にはまだまだ謎があり、気になる点も多い。今後出てくる情報が楽しみだ。<br />
+個人的には、<em>Rocket Lake</em> への最適化のためのコードがコンパイラ、バックエンドに追加されれば対応する命令範囲も判明するため、それを待ち遠しく思っている。</p>
+
+<div class="reference">
+<hr>
+<h3 class="ref-title" id="ref-title">参考リンク</h3>
+<ul>
+<li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="noreferrer" target="_blank">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></li>
+<li><a href="https://twitter.com/TUM_APISAK/status/1276482336683511810" rel="noreferrer" target="_blank">https://twitter.com/TUM_APISAK/status/1276482336683511810</a></li>
+<li><a href="https://www.hotchips.org/hc31/HC31_1.1_AMD_ZEN2.pdf" rel="noreferrer" target="_blank">https://www.hotchips.org/hc31/HC31_1.1_AMD_ZEN2.pdf</a></li>
+<li><a href="https://news.mynavi.jp/article/20170725-xeon/" rel="noreferrer" target="_blank">新Xeonで何が変わったか &ndash; 内部構造を解説 (1) 既存のSkylakeコアからの変更点 | マイナビニュース</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:hc31-amd-zen2"><a href="https://www.hotchips.org/hc31/HC31_1.1_AMD_ZEN2.pdf#page=17" rel="noreferrer" target="_blank">https://www.hotchips.org/hc31/HC31_1.1_AMD_ZEN2.pdf#page=17</a>
+ <a class="footnote-return" href="#fnref:hc31-amd-zen2"><sup>[return]</sup></a></li>
+<li id="fn:icl-arch"><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="noreferrer" target="_blank">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a>
+ <a class="footnote-return" href="#fnref:icl-arch"><sup>[return]</sup></a></li>
+<li id="fn:sky-x-1"><a href="https://news.mynavi.jp/article/20170710-corex/18" rel="noreferrer" target="_blank">Core i9-7900XとCore i7-7820Xを試す &ndash; いち早く登場する10コアと8コアCPUのパフォーマンスを徹底検証 (18) ベンチマークテスト「消費電力測定」 | マイナビニュース</a>
+ <a class="footnote-return" href="#fnref:sky-x-1"><sup>[return]</sup></a></li>
+<li id="fn:sky-x-2"><a href="https://ascii.jp/elem/000/001/514/1514627/3/" rel="noreferrer" target="_blank">ASCII.jp：Core i9-7900X＆Core i7-7800Xレビュー、全コア4.5GHz OCで見えた新世界 (3/3)</a>
+ <a class="footnote-return" href="#fnref:sky-x-2"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</article>
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/side.min.css">
+         <div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<div class="side_block"><nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/gen12" class="side_tag_lower">Gen12</a>
+         <a href="https://blog.coelacanth-dream.com/tags/guess" class="side_tag_lower">Guess</a>
+         <a href="https://blog.coelacanth-dream.com/tags/rocket_lake" class="side_tag_lower">Rocket Lake</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/cpu" class="side_category_lower">CPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="side_category_lower">Hardware</a>
+         <a href="https://blog.coelacanth-dream.com/categories/intel" class="side_category_lower">Intel</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-06-28 18:42">Post:<br>&emsp;2020/06/28 18:42</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/06/29 01:55</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/28/intel-rocketlake-cache-guess.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+   </nav>
+      <small class="copyright">&copy; 2019 Umio Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         <footer>
+   <hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/gen12" class="foot_tag_lower">Gen12</a>
+         <a href="https://blog.coelacanth-dream.com/tags/guess" class="foot_tag_lower">Guess</a>
+         <a href="https://blog.coelacanth-dream.com/tags/rocket_lake" class="foot_tag_lower">Rocket Lake</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/cpu" class="foot_category_lower">CPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware" class="foot_category_lower">Hardware</a>
+         <a href="https://blog.coelacanth-dream.com/categories/intel" class="foot_category_lower">Intel</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/06/28/intel-rocketlake-cache-guess.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-06-28 18:42">Post:<br>&emsp;2020/06/28 18:42</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/06/29 01:55</div>
+</div>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
