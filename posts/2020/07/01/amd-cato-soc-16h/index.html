@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head><meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/07/01/amd-cato-soc-16h/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary"><title>AMD A9-9820 CPU は Jaguarアーキテクチャ | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD A9-9820 CPU は Jaguarアーキテクチャ | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD A9-9820 CPU は Jaguarアーキテクチャ | Coelacanth&#39;s Dream">
+   <meta property="og:type" content="article">
+
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/07/01/amd-cato-soc-16h/">
+   <meta name="description" content="知っている人には今更な内容かも。 以前 CHUWI が発表した Mini PC AeroBox に搭載される未だ謎の多いプロセッサ、A9-9820 だが、 Geekbench の実行結果が 2020/06/24 にアップロードされていた。 Default string Cato &ndash;">
+   <meta property="og:description" content="知っている人には今更な内容かも。 以前 CHUWI が発表した Mini PC AeroBox に搭載される未だ謎の多いプロセッサ、A9-9820 だが、 Geekbench の実行結果が 2020/06/24 にアップロードされていた。 Default string Cato &ndash;">
+   <meta name="twitter:description" content="知っている人には今更な内容かも。 以前 CHUWI が発表した Mini PC AeroBox に搭載される未だ謎の多いプロセッサ、A9-9820 だが、 Geekbench の実行結果が 2020/06/24 にアップロードされていた。 Default string Cato &ndash;">
+
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/07/01/amd-cato-soc-16h/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/07/01/amd-cato-soc-16h/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="Cato, Hardware, AMD, APU">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/ds.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .96em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 24px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 1.7rem monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: 0 2px 1.8rem #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .2rem 0 .2rem;
+   margin: 0;
+   word-break: break-all;
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.6rem;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(0,0,0,0);
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   opacity: 0;
+}
+article > p {
+   letter-spacing: .015rem;
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .7rem;
+}
+footer, .side, .home, .posts, .tags, .categories {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+.tags, .categories {
+   grid-column: 2 / -1;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1vw 1vw auto 1vw;
+   row-gap: 12px;
+}
+article > p ~ * {
+   display: none;
+
+}
+article > * {
+   grid-column: 3 / -2;
+   padding-bottom: 100vh;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4rem/1.9rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 1rem 0;
+}
+ 
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 12px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      padding-top: 16px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8rem;
+      max-width: 100%;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+      padding-left: 4px;
+   }
+   .side {
+      display: unset;
+      height: 92vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 28px 12px 0 16px;
+      color: #20B2AA;
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+      opacity: 0;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header>
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/ds.min.css">
+         
+<article class="text">
+
+   <h1>AMD A9-9820 CPU は Jaguarアーキテクチャ</h1>
+
+<p>知っている人には今更な内容かも。</p>
+
+<p>以前 CHUWI が発表した Mini PC <a href="https://www.chuwi.com/product/items/Chuwi-AeroBox.html" rel="noreferrer" target="_blank">AeroBox</a> に搭載される未だ謎の多いプロセッサ、<strong>A9-9820</strong> だが、<br />
+Geekbench の実行結果が 2020/06/24 にアップロードされていた。<br />
+<span class="reflink"><a href="https://browser.geekbench.com/v4/cpu/15585159" rel="noreferrer" target="_blank">Default string Cato &ndash; Geekbench Browser</a>, <a href="https://browser.geekbench.com/v4/cpu/15585185" rel="noreferrer" target="_blank">Default string Cato &ndash; Geekbench Browser</a></span><br>
+</p>
+
+<p>発表されたその時は、<strong>A9-9820</strong> を Bulldozer系アーキテクチャ(Family 15h) ではないかと考えたが、Geekbench の実行結果を見ると <code>Family 22(16h) Model 38(22h)</code> となっており、Jaguar系アーキテクチャ(Family 16h) であるようだ。<span class="complement">(やっぱ自分の推測ってロクに当たらない)</span>
+<br />
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/03/14/chuwi-amd-a9-9820/">CHUWIよりAMD A9-9820搭載MiniPC発売予定 &amp; 推測 | Coelacanth&rsquo;s Dream</a></span><br>
+</p>
+
+<h2 id="まだまだ謎ばかり">まだまだ謎ばかり</h2>
+
+<p>前回違うと考えた、ゲーム機向けチップの転用が逆に正しかったのかははっきりとせず、曖昧なままだ。</p>
+
+<p>メモリ情報が正しく取得されておらず、帯域も異様に低くなっている。CPUの実行結果であっても、GPU情報が取得されている場合があるのだが、それもさっぱり。</p>
+
+<p><em>Xbox One SoC</em> だとしたら L3/L4キャッシュに ESRAM 32MB が認識されているのでは、と最初考えたが、HotChips 25 での発表によると、ESRAM 32MB はグラフィクス専用であり、CPUからは直接アクセス出来ないようになっているため、恐らく <em>Xbox One SoC</em> で実行しても ESRAM 32MB は認識されないだろう。<sup class="footnote-ref" id="fnref:hc25-xbox-one"><a href="#fn:hc25-xbox-one">1</a></sup><br />
+<em>Xbox One SoC</em> はメインメモリに DDR3 4ch を持つが、前述したようにメモリ情報が正しく取得されていないため、はっきりしない。</p>
+
+<p><code>Northbridge: AMD ID1546 00</code> を手掛かりに、<a href="http://pci-ids.ucw.cz/" rel="noreferrer" target="_blank">The PCI ID Repository</a>を確認しに行ったが、<code>Kryptos/Cato/Garfield/Garfield+/Arlene/Pooky Root Complex</code> とあり、これまたはっきりしない。<sup class="footnote-ref" id="fnref:pciid-1022-1546"><a href="#fn:pciid-1022-1546">2</a></sup><br />
+その一連のコードネームも謎で、<em>Kryptos</em> が <em>Xbox One SoC</em> <sup class="footnote-ref" id="fnref:xbox-one-kryptos"><a href="#fn:xbox-one-kryptos">3</a></sup>を、<em>Cato</em> が <strong>A9-9820</strong> 等のベースとなるチップを指すらしいが、他は不明。<br />
+ただ Root Complex の PCI ID はそれぞれ別のチップで共用することがあり、<em>Raven</em> と <em>Raven2</em> がそうなっている。<sup class="footnote-ref" id="fnref:pciid-1022-15d0"><a href="#fn:pciid-1022-15d0">4</a></sup><br />
+そのため、<em>Kryptos /Xbox One SoC</em> == <em>Cato</em> ではない(!=) と考えている。<span class="complement">これも外れるかも</span>
+</p>
+
+<p><strong>A9-9820</strong> 実物を搭載した製品が出てきてくれれば手っ取り早いのだが、CHUWI AeroBox は 2020/03/12 に近日発売とアナウンスしたきり、続報が無い。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:hc25-xbox-one"><a href="https://www.hotchips.org/wp-content/uploads/hc_archives/hc25/HC25.10-SoC1-epub/HC25.26.121-fixed-%20XB1%2020130826gnn.pdf" rel="noreferrer" target="_blank">https://www.hotchips.org/wp-content/uploads/hc_archives/hc25/HC25.10-SoC1-epub/HC25.26.121-fixed-%20XB1%2020130826gnn.pdf</a>
+ <a class="footnote-return" href="#fnref:hc25-xbox-one"><sup>[return]</sup></a></li>
+<li id="fn:pciid-1022-1546"><a href="http://pci-ids.ucw.cz/read/PC/1022/1546" rel="noreferrer" target="_blank">http://pci-ids.ucw.cz/read/PC/1022/1546</a>
+ <a class="footnote-return" href="#fnref:pciid-1022-1546"><sup>[return]</sup></a></li>
+<li id="fn:xbox-one-kryptos"><a href="http://www.cpu-world.com/CPUs/Jaguar/AMD-XBox%20One%20APU.html" rel="noreferrer" target="_blank">AMD XBox One APU</a>
+ <a class="footnote-return" href="#fnref:xbox-one-kryptos"><sup>[return]</sup></a></li>
+<li id="fn:pciid-1022-15d0"><a href="http://pci-ids.ucw.cz/read/PC/1022/15d0" rel="noreferrer" target="_blank">http://pci-ids.ucw.cz/read/PC/1022/15d0</a>
+ <a class="footnote-return" href="#fnref:pciid-1022-15d0"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</article>
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/side.min.css">
+         <div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<div class="side_block"><nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/cato/" class="side_tag_lower">Cato</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/apu/" class="side_category_lower">APU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-07-01 04:27">Post:<br>&emsp;2020/07/01 04:27</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/01 05:21</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/01/amd-cato-soc-16h.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+   </nav>
+      <small class="copyright">&copy; 2019 Umio Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         <footer><hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/cato/" class="foot_tag_lower">Cato</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/apu/" class="foot_category_lower">APU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/01/amd-cato-soc-16h.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-07-01 04:27">Post:<br>&emsp;2020/07/01 04:27</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/01 05:21</div>
+</div>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
