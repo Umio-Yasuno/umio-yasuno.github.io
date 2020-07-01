@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/07/01/gpuopen-zen_2-rdna-optimizing-document/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>AMD GPUOpen、Zen 2 CPU、RDNA GPU へのソフトウェア最適化資料を公開 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD GPUOpen、Zen 2 CPU、RDNA GPU へのソフトウェア最適化資料を公開 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD GPUOpen、Zen 2 CPU、RDNA GPU へのソフトウェア最適化資料を公開 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/07/01/gpuopen-zen_2-rdna-optimizing-document/">
+   <meta name="description" content="AMD GPUOpen は Zen 2 アーキテクチャ 、 RDNA アーキテクチャ へ向けたソフトウェア最適化のための資料を公開した。 Let&rsquo;s build&hellip; 2020 &ndash; GPUOpen 内容としては、以前より Let&rsquo;s Build…2020 と称し、You">
+   <meta property="og:description" content="AMD GPUOpen は Zen 2 アーキテクチャ 、 RDNA アーキテクチャ へ向けたソフトウェア最適化のための資料を公開した。 Let&rsquo;s build&hellip; 2020 &ndash; GPUOpen 内容としては、以前より Let&rsquo;s Build…2020 と称し、You">
+   <meta name="twitter:description" content="AMD GPUOpen は Zen 2 アーキテクチャ 、 RDNA アーキテクチャ へ向けたソフトウェア最適化のための資料を公開した。 Let&rsquo;s build&hellip; 2020 &ndash; GPUOpen 内容としては、以前より Let&rsquo;s Build…2020 と称し、You">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/07/01/gpuopen-zen_2-rdna-optimizing-document/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/07/01/gpuopen-zen_2-rdna-optimizing-document/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="Zen2, RDNA, Hardware, CPU, GPU">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/ds.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .96em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 24px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 1.7rem monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: 0 2px 1.8rem #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .2rem 0 .2rem;
+   margin: 0;
+   word-break: break-all;
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.6rem;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(0,0,0,0);
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   opacity: 0;
+}
+article > p {
+   letter-spacing: .015rem;
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .7rem;
+}
+footer, .side, .home, .posts, .tags, .categories {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+.tags, .categories {
+   grid-column: 2 / -1;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1vw 1vw auto 1vw;
+   row-gap: 12px;
+}
+article > p ~ * {
+   display: none;
+
+}
+article > * {
+   grid-column: 3 / -2;
+   padding-bottom: 100vh;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4rem/1.9rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 1rem 0;
+}
+ 
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 12px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      padding-top: 12px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8rem;
+      max-width: 100%;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+      padding-left: 4px;
+   }
+   .side {
+      display: unset;
+      height: 92vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 28px 12px 0 16px;
+      color: #20B2AA;
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+      opacity: 0;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header>
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/ds.min.css">
+         
+<article class="text">
+
+   <h1>AMD GPUOpen、Zen 2 CPU、RDNA GPU へのソフトウェア最適化資料を公開</h1>
+
+<p>AMD GPUOpen は <em>Zen 2 アーキテクチャ</em> 、 <em>RDNA アーキテクチャ</em> へ向けたソフトウェア最適化のための資料を公開した。<br />
+<span class="reflink"><a href="https://gpuopen.com/lets-build/" rel="noreferrer" target="_blank">Let&rsquo;s build&hellip; 2020 &ndash; GPUOpen</a></span><br>
+
+内容としては、以前より Let&rsquo;s Build…2020 と称し、Youtube で公開されたプレゼンテーション動画と同じであるが、PDF/PPTX ファイルも公開されたことでより資料として確認しやすく、そして使いやすくなった。<br />
+<span class="reflink"><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_AMD%20Ryzen%E2%84%A2%20Processor%20Software%20Optimization.pdf" rel="noreferrer" target="_blank">AMD Ryzen™ Processor Software Optimization &ndash; GPUOpen_Let’sBuild2020_AMD Ryzen™ Processor Software Optimization.pdf</a></span><br>
+
+<span class="reflink"><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" rel="noreferrer" target="_blank">Optimizing for the Radeon RDNA architecture &ndash; GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></span><br>
+</p>
+
+<p>それ以外にもソフトウェア開発者向けのプレゼンテーション資料を公開している。</p>
+
+<ul>
+<li><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_A%20Trip%20Down%20the%20GPU%20Compiler%20Pipeline.pdf" rel="noreferrer" target="_blank">GPUOpen_Let’sBuild2020_A Trip Down the GPU Compiler Pipeline.pdf</a></li>
+<li><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_A%20Review%20of%20GPUOpen%20Effects.pdf" rel="noreferrer" target="_blank">GPUOpen_Let’sBuild2020_A Review of GPUOpen Effects.pdf</a></li>
+<li><a href="http://www.gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Curing%20Amnesia%20and%20Other%20GPU%20Maladies%20with%20AMD%E2%80%99s%20Developer%20Tools.pptx" rel="noreferrer" target="_blank">http://www.gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Curing%20Amnesia%20and%20Other%20GPU%20Maladies%20with%20AMD%E2%80%99s%20Developer%20Tools.pptx</a></li>
+<li><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Radeon%20ProRender%20Full%20Spectrum%20Rendering%202.0.pdf" rel="noreferrer" target="_blank">2020GDCRpr &ndash; GPUOpen_Let’sBuild2020_Radeon ProRender Full Spectrum Rendering 2.0.pdf</a></li>
+</ul>
+
+<h2 id="個人的トピック">個人的トピック</h2>
+
+<p>資料内の個人的なトピックとしては、チップレットアーキテクチャにおいて、同チップレット(CCD) にある 2CCX間の通信でも、I/Oダイ(IOD) 内のデータファブリックを経由する点が明言されたこと、(これより前に為されていたかもしれない)<br />
+そして、<em>Renoir</em> の <code>Data Fabric</code> と <code>IO Hub Controller</code> が 64B/cycle で接続されていることがあげられる。</p>
+
+<p>後者に関しては、<em>Matisse</em> や <em>Castle Peak</em> と同じ帯域であり、前世代の <em>Summit Ridge</em> 、<em>Pinnacle Ridge</em> は 32B/cycle であったことから PCIeGen4 の為に 64B/cycle に増やしたと考えられる。<sup class="footnote-ref" id="fnref:gdc2019-ryzen-optim"><a href="#fn:gdc2019-ryzen-optim">1</a></sup><br />
+しかし <em>Renoir</em> は PCIeGen3 までの対応であるはずで、64B/cycle で接続する必要性は薄い。資料作成者のミスかそれとも制限しているだけか、または PCIe 以外でその帯域で接続する必要があったか。<br />
+AM4 マザーボードでも <em>Renoir</em> は PCIeGen3 までであるから制限している可能性は微妙に思う。</p>
+
+<p>それと、<em>Renoir</em> では GPUコア部、<code>Data Fabric</code> 間の帯域が <em>Raven /Picasso</em> から倍に増やされたはずだが、資料中の図からそこまでは読み取れない。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:gdc2019-ryzen-optim"><a href="https://gpuopen.com/gdc-presentations/2019/gdc-2019-s2-amd-ryzen-processor-software-optimization.pdf" rel="noreferrer" target="_blank">https://gpuopen.com/gdc-presentations/2019/gdc-2019-s2-amd-ryzen-processor-software-optimization.pdf</a>
+ <a class="footnote-return" href="#fnref:gdc2019-ryzen-optim"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</article>
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/side.min.css">
+         <div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<div class="side_block"><nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/rdna/" class="side_tag_lower">RDNA</a>
+         <a href="https://blog.coelacanth-dream.com/tags/zen2/" class="side_tag_lower">Zen2</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/cpu/" class="side_category_lower">CPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-07-01 17:40">Post:<br>&emsp;2020/07/01 17:40</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/01 18:20</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/01/gpuopen-zen_2-rdna-optimizing-document.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+         <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+         <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+      </nav>
+   <small class="copyright">&copy; 2019 Umio Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         
+<footer><hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/rdna/" class="foot_tag_lower">RDNA</a>
+         <a href="https://blog.coelacanth-dream.com/tags/zen2/" class="foot_tag_lower">Zen2</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/cpu/" class="foot_category_lower">CPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/01/gpuopen-zen_2-rdna-optimizing-document.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-07-01 17:40">Post:<br>&emsp;2020/07/01 17:40</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/01 18:20</div>
+</div>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
