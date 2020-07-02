@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/">
+   <meta name="description" content="オープンソースで開発される AMD GPU向け OpenGLドライバー RadeonSI への最新コミットの中で、ネイティブで Wave32モードに対応する RDNA /Navi1x GPU も Wave64モードで各シェ">
+   <meta property="og:description" content="オープンソースで開発される AMD GPU向け OpenGLドライバー RadeonSI への最新コミットの中で、ネイティブで Wave32モードに対応する RDNA /Navi1x GPU も Wave64モードで各シェ">
+   <meta name="twitter:description" content="オープンソースで開発される AMD GPU向け OpenGLドライバー RadeonSI への最新コミットの中で、ネイティブで Wave32モードに対応する RDNA /Navi1x GPU も Wave64モードで各シェ">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="RadeonSI, RDNA, GFX10, Software, AMD, GPU">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/ds.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 84%, #172727 95%, #040707 100%);
+   background-repeat: no-repeat;
+   font-size: .96em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3em;
+   grid-template-columns: 2vw 1vw auto 4vw;
+   row-gap: 24px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 1.7rem monospace;
+   text-decoration: none;
+   text-align: end;
+   margin-left: auto;
+
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: 0 2px 1.8rem #577C87;
+   word-break: keep-all;
+   padding: 0;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .2rem 0 .2rem;
+   margin: 0;
+   word-break: break-all;
+}
+a:hover {
+   text-decoration: underline;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.7rem;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(0,0,0,0);
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   opacity: 0;
+}
+article > p {
+   letter-spacing: .02rem;
+   margin: 0;
+}
+article > p::first-letter {
+   padding-left: .7rem;
+}
+footer, .side, .home, .posts, .tags, .categories {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+.tags, .categories {
+   grid-column: 2 / -1;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1vw 1vw auto 1vw;
+   row-gap: 12px;
+}
+article > p ~ * {
+   display: none;
+
+}
+article > * {
+   grid-column: 3 / -2;
+   padding-bottom: 100vh;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4rem/1.9rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 1rem 0;
+}
+ 
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 12px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      padding-top: 12px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8rem;
+      max-width: 100%;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+      padding-left: 4px;
+   }
+   .side {
+      display: unset;
+      height: 92vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 28px 12px 0 16px;
+      color: #20B2AA;
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+      opacity: 0;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+   <main>
+      <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header>
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/ds.min.css">
+         
+<article class="text">
+
+   <h1>RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように</h1>
+
+<p>オープンソースで開発される AMD GPU向け OpenGLドライバー <strong>RadeonSI</strong> への最新コミットの中で、ネイティブで Wave32モードに対応する <em>RDNA /Navi1x GPU</em> も Wave64モードで各シェーダーを実行するように変更が行なわれた。<br />
+<span class="reflink"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/90cf741d316d231bdc8a67dce8ef1c84a80eeec8" rel="noreferrer" target="_blank">radeonsi: always use Wave64 for HS/GS/VS shader stages (except GS fast launch) (90cf741d) · Commits · Mesa / mesa · GitLab</a></span><br>
+
+Wave は コンピュートユニット(CU) 内の SIMDユニットが実行するスレッドの塊を意味し、後の数字はスレッドの数を意味する。Wavefront とも呼ぶ。</p>
+
+<h2 id="page_index">インデックス</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#gcn-rdna-wave-diff">GCN と RDNA の両アーキテクチャにおける Wave の違い</a></li>
+<li><a href="#why-wave64">Wave64 で実行する理由</a>
+
+<ul>
+<li><a href="#consider">考察的な</a></li>
+</ul></li>
+</ul>
+
+</div>
+
+
+<h2 id="gcn-rdna-wave-diff">GCN と RDNA の両アーキテクチャにおける Wave の違い</h2>
+
+<p><em>GCN アーキテクチャ</em> では CU あたりに SIMD16ユニットを 4基持ち、各SIMD16ユニットが 64スレッド(Wave64) を 4サイクル掛けて命令を発行、処理する方式を取る。<br />
+対して、<em>RDNA アーキテクチャ</em> では CU あたりに SIMD32ユニットを 2基持ち、各SIMD32ユニットが 32スレッド(Wave32) を 1サイクルで命令を発行、処理する方式となる。<br />
+<em>RDNA アーキテクチャ</em> は Wave64 での実行モードにも対応し、その場合 <em>GCN アーキテクチャ</em> の方式とは異なり、2つの Wave32 として実行する。</p>
+
+<p><em>GCN アーキテクチャ</em> では命令の発行に 4サイクル掛かるが、<em>RDNA アーキテクチャ</em> は 1サイクルと短いレイテンシで処理できるため、グラフィクス処理やゲーミング向けとして有利である……とされていたが、今回の <strong>RadeonSI</strong> に行なわれた変更は、<em>RDNA /Navi1x GPU</em> でもネイティブの Wave32 ではなく Wave64 でシェーダー実行するというものだ。</p>
+
+<h2 id="why-wave64">Wave64 で実行する理由</h2>
+
+<p>以前より、通常 Pixel Shader は Wave64、Vertex/Tess/Geometry Shader は Wave32 で実行するようにしていたのを、後者も Wave64 で実行するようにしたのが今回の変更点となる。</p>
+
+<p>Vertex/Tess/Geometry Shader も Wave64 で実行する方が良いと考える理由に、GPUドライバーの開発者である <a href="https://gitlab.freedesktop.org/mareko" rel="noreferrer" target="_blank">Marek Olšák</a> 氏は以下の項目をあげている。</p>
+
+<blockquote>
+<ul>
+<li>greater chance of L0 cache hits, because more threads are assigned to the same CU<br /></li>
+<li>scalar instructions are only executed once for 64 threads instead of twice<br /></li>
+<li>VGPR allocation granularity is half of Wave32, so 1 Wave64 can sometimes use fewer VGPRs than 2 Wave32<br /></li>
+<li>TessMark X64 with NGG culling is faster with Wave64<br /></li>
+</ul>
+
+<p>引用元: <a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5524" rel="noreferrer" target="_blank">ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge Requests · Mesa / mesa · GitLab</a></p>
+</blockquote>
+
+<p>ざっくりとした意訳</p>
+
+<ul>
+<li>多くのスレッドが同じ CU で実行されるため、L0キャッシュにヒットする確率が高まる</li>
+<li>スカラ命令は 64スレッドあたり 2回ではなく、1回だけしか実行できない</li>
+<li>Wave64 の場合に割り当てられるベクタレジスタ(VGPR) の粒度は Wave32 の半分であるため、1 Wave64 が使用するベクタレジスタの量は 2 Wave32 よりも少なくなることがある</li>
+<li>NGGカリングを有効にして TessMark X64 を実行した時、Wave64 の方が速い</li>
+</ul>
+
+<h3 id="consider">考察的な</h3>
+
+<p>一部詳細を補完しつつ、Wave64 の方が性能が良い理由を考えていきたい。</p>
+
+<p>まず L0キャッシュとは <em>RDNA アーキテクチャ</em> の CU がそれぞれ持つもので、容量は 16KB となっている。</p>
+
+<figure>
+    <img src="https://blog.coelacanth-dream.com/image/2020/07/02/rdna-wgp.webp"
+         alt="画像出典: Optimizing for the Radeon RDNA architecture &amp;ndash; GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf"/> <figcaption>
+            <h4>RDNA WGP (Work Group Processor)</h4><p>画像出典: <cite><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" rel="noreferrer" target="_blank">Optimizing for the Radeon RDNA architecture &ndash; GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></cite></p>
+        </figcaption>
+</figure>
+
+
+<p>WGP は 2CU をまとめた形となり、L0キャッシュを 2基持つが、同WGP であってもキャッシュコヒーレントは取られない。<br />
+そのため、多くのスレッドを同じ CU で実行すれば、L0キャッシュにヒットする確率は高くなるというのは合っているが、2つの Wave32 を実行するのと、Wave64 を 2つの Wave32 として実行するのとでスレッド数が変わらないように思う。</p>
+
+<p>しかし Wave64モードにキャッシュを効果的に使える要素はあり、それは 3つ目とも関係する。<br />
+<em>RDNA</em> は Wave64 を 2つの Wave32 として処理する時、ベクタレジスタは 2つの Wave32 で共有する。そのために割り当てられるベクタレジスタの粒度は Wave32 時の半分となる。<br />
+そして <em>RDNA</em> では、2つの Wave32 を順番に実行するのではなく、命令をある程度まとめ、それぞれの命令を low と high に半分ずつ分け、最初に low 群を処理し、その後 high 群を処理する <em>Sub-Vector Mode</em> がソフトウェア制御で実装されている。</p>
+
+<figure>
+    <img src="https://blog.coelacanth-dream.com/image/2020/07/02/rdna-sub-vector-mode.webp"
+         alt="画像出典: https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf"/> <figcaption>
+            <h4>RDNA Sub-Vector Mode</h4><p>画像出典: <cite><a href="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf" rel="noreferrer" target="_blank">https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf</a></cite></p>
+        </figcaption>
+</figure>
+
+
+<p>SIMDユニットの使用率は変わらないが、low の命令群を処理し終わった時点でベクタレジスタの半分を解放することができ、キャッシュをより効果的に使用できるとしている。</p>
+
+<p>4つ目は結果的なものだとして、3つ目は正直に言うとよくわからない。<br />
+上記画像を見てわかるように、<em>RDNA</em> は CU内にスカラユニット(SALU) を SIMDユニットと同数備えるため、Wave64 を 2つの Wave32 として実行するなら、スカラ命令も 2回発行できていいように思うが、実際は Wave64(64スレッド) に対して 1回だけとなる。</p>
+
+<p>スカラユニットは条件分岐や割り込み、アドレス計算等の制御処理を担当し、その点では前世代の <em>GCN</em> と変わらない。<br />
+ベクタでは 2つの Wave32 に分けて実行するが、制御は Wave あたりで行なわれるため、スカラ命令は 1回だけ、ということなのかもしれないが、それがどのように効果的までかは自分の頭が及ばない。上記のスレッド数の件と合わせて、詳しい方、ご教授お願いします。</p>
+
+<div class="reference">
+<hr>
+<h3 class="ref-title" id="ref-title">参考リンク</h3>
+<ul>
+<li><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" rel="noreferrer" target="_blank">Optimizing for the Radeon RDNA architecture &ndash; GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></li>
+<li><a href="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf" rel="noreferrer" target="_blank">7nm “Navi” GPU</a></li>
+<li><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" rel="noreferrer" target="_blank">RDNA_Architecture_public.pdf</a></li>
+<li><a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="noreferrer" target="_blank">Introduction &ndash; rdna-whitepaper.pdf</a></li>
+<li><a href="https://news.mynavi.jp/article/20191023-912850/" rel="noreferrer" target="_blank">AMDのRDNAアーキテクチャの「Navi GPU」を読み解く &ndash; Hot Chips 31 | マイナビニュース</a></li>
+<li><a href="https://news.mynavi.jp/article/architecture-366/" rel="noreferrer" target="_blank">コンピュータアーキテクチャの話(366) GCNのスカラユニットとベクトル演算 | マイナビニュース</a></li>
+</ul>
+
+</div>
+
+
+</article>
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/side.min.css">
+         <div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<div class="side_block"><nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/gfx10/" class="side_tag_lower">GFX10</a>
+         <a href="https://blog.coelacanth-dream.com/tags/radeonsi/" class="side_tag_lower">RadeonSI</a>
+         <a href="https://blog.coelacanth-dream.com/tags/rdna/" class="side_tag_lower">RDNA</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/software/" class="side_category_lower">Software</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-07-02 00:40">Post:<br>&emsp;2020/07/02 00:40</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/02 18:46</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/02/radeonsi-shader-wave64-with-rdna.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+         <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+         <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+      </nav>
+   <small class="copyright">&copy; 2019 Umio Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+         
+<footer><hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/gfx10/" class="foot_tag_lower">GFX10</a>
+         <a href="https://blog.coelacanth-dream.com/tags/radeonsi/" class="foot_tag_lower">RadeonSI</a>
+         <a href="https://blog.coelacanth-dream.com/tags/rdna/" class="foot_tag_lower">RDNA</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/software/" class="foot_category_lower">Software</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/02/radeonsi-shader-wave64-with-rdna.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-07-02 00:40">Post:<br>&emsp;2020/07/02 00:40</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/02 18:46</div>
+</div>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
