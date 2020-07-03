@@ -211,7 +211,8 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
 
 <h2 id="why-wave64">Wave64 で実行する理由</h2>
 
-<p>以前より、通常 Pixel Shader は Wave64、Vertex/Tess/Geometry Shader は Wave32 で実行するようにしていたのを、後者も Wave64 で実行するようにしたのが今回の変更点となる。</p>
+<p>以前より、通常 Pixel Shader は Wave64、Vertex/Tess/Geometry Shader は Wave32 で実行するようにしていたのを、後者も Wave64 で実行するようにしたのが今回の変更点となる。<br />
+また、<a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" rel="noreferrer" target="_blank">RDNA_Architecture_public.pdf</a> には Compute Shader は Wave32 とあるが、何か問題が発生するらしく、<strong>RadeonSI</strong> では Wave64 となっている。</p>
 
 <p>Vertex/Tess/Geometry Shader も Wave64 で実行する方が良いと考える理由に、GPUドライバーの開発者である <a href="https://gitlab.freedesktop.org/mareko" rel="noreferrer" target="_blank">Marek Olšák</a> 氏は以下の項目をあげている。</p>
 
@@ -275,6 +276,12 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
 ベクタでは 2つの Wave32 に分けて実行するが、制御は Wave あたりで行なわれるため、スカラ命令は 1回だけ、ということなのかもしれないが、それ自体がどのように効果的までかは自分の頭が及ばない。上記のスレッド数の件と合わせて、詳しい方、ご教授お願いします。<br />
 シェーダーの実行に細かい制御はそこまで必要でないとか？</p>
 
+<p>終わりに、<em>RDNA アーキテクチャ</em> は Wave32 と Wave64 のどちらにも対応し、それぞれに利点がある。処理によってどちらが優れているかは検証を重ねる必要がある。よって、今回のようなチューニングがこれからも続けられると思われる。<br />
+これは、<em>RDNA アーキテクチャ</em> には柔軟性があり、それだけ性能を引き出す余地があると言える。<br />
+今後のさらなる <em>RDNA GPU</em> に向けた最適化に期待したい。</p>
+
+<p>そして、その様子をオープンソースであることにより追えるのは、自分のようなオタクにとってありがたい話だ。</p>
+
 <div class="reference">
 <hr>
 <h3 class="ref-title" id="ref-title">参考リンク</h3>
@@ -317,7 +324,7 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
 </div>
 <div class="side_time">
    <time datetime="2020-07-02 00:40">Post:<br>&emsp;2020/07/02 00:40</time>
-   <div class="side_time_update">Update:<br>&emsp;2020/07/03 01:39</div>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/03 20:58</div>
 </div>
 <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/02/radeonsi-shader-wave64-with-rdna.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://blog.coelacanth-dream.com/about/">About</a>
@@ -355,7 +362,7 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
       <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
 <a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
    <time datetime="2020-07-02 00:40">Post:<br>&emsp;2020/07/02 00:40</time>
-   <div class="foot_time_update">Update:<br>&emsp;2020/07/03 01:39</div>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/03 20:58</div>
 </div>
 <small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
