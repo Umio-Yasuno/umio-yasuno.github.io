@@ -27,8 +27,8 @@
    <meta name="keywords" content="RadeonSI, RDNA, GFX10, Software, AMD, GPU">
 
       <link rel="preload" href="https://blog.coelacanth-dream.com/css/ds.min.css" as="style">
-      <link rel="preload" href="https://blog.coelacanth-dream.com/css/side.min.css" as="style">
-      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/side.min.css" as="style" media="(min-width=840px)">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style" media="(max-width=839px)">
       <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
 <style>
 html {
@@ -68,9 +68,6 @@ a {
    margin: 0;
    word-break: break-all;
 }
-a:hover {
-   text-decoration: underline;
-}
 .text {
    color: snow;
    box-sizing: border-box;
@@ -85,7 +82,7 @@ a:hover {
    opacity: 0;
 }
 article > p {
-   letter-spacing: .02rem;
+   letter-spacing: .015rem;
    margin: 0;
 }
 article > p::first-letter {
@@ -171,14 +168,13 @@ h1 {
 <link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
    </head>
    <body>
-   <main>
-      <header><div class="site_title">
+      <main>
+         <header><div class="site_title">
    <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
 </div>
 </header>
          <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
          <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/ds.min.css">
-         
 <article class="text">
 
    <h1>RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように</h1>
@@ -208,7 +204,7 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
 対して、<em>RDNA アーキテクチャ</em> では CU あたりに SIMD32ユニットを 2基持ち、各SIMD32ユニットが 32スレッド(Wave32) を 1サイクルで命令を発行、処理する方式となる。<br />
 <em>RDNA アーキテクチャ</em> は Wave64 での実行モードにも対応し、その場合 <em>GCN アーキテクチャ</em> の方式とは異なり、2つの Wave32 として実行する。</p>
 
-<p><em>GCN アーキテクチャ</em> では命令の発行に 4サイクル掛かるが、<em>RDNA アーキテクチャ</em> は 1サイクルと短いレイテンシで処理できるため、グラフィクス処理やゲーミング向けとして有利である……とされていたが、今回の <strong>RadeonSI</strong> に行なわれた変更は、<em>RDNA /Navi1x GPU</em> でもネイティブの Wave32 ではなく Wave64 でシェーダー実行するというものだ。</p>
+<p><em>GCN アーキテクチャ</em> では命令の発行に 4サイクル掛かるが、<em>RDNA アーキテクチャ</em> は 1サイクルと短いレイテンシで処理できるため、グラフィクス処理やゲーミング向けとして有利である……とされていたが、今回の <strong>RadeonSI</strong> に加えられた変更は、<em>RDNA /Navi1x GPU</em> でもネイティブの Wave32 ではなく Wave64 でシェーダー実行するというものだ。</p>
 
 <h2 id="why-wave64">Wave64 で実行する理由</h2>
 
@@ -252,12 +248,12 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
 </figure>
 
 
-<p>WGP は 2CU をまとめた形となり、L0キャッシュを 2基持つが、同WGP であってもキャッシュコヒーレントは取られない。<br />
+<p>WGP は 2CU をまとめた形となり、L0キャッシュを 2基持つが、同WGPであってもキャッシュコヒーレントは取られない。<br />
 そのため、多くのスレッドを同じ CU で実行すれば、L0キャッシュにヒットする確率は高くなるというのは合っているが、2つの Wave32 を実行するのと、Wave64 を 2つの Wave32 として実行するのとでスレッド数が変わらないように思う。</p>
 
 <p>しかし Wave64モードにキャッシュを効果的に使える要素はあり、それは 3つ目とも関係する。<br />
 <em>RDNA</em> は Wave64 を 2つの Wave32 として処理する時、ベクタレジスタは 2つの Wave32 で共有する。そのために割り当てられるベクタレジスタの粒度は Wave32 時の半分となる。<br />
-そして <em>RDNA</em> では、2つの Wave32 を順番に実行するのではなく、命令をある程度まとめ、それぞれの命令を low と high に半分ずつ分け、最初に low 群を処理し、その後 high 群を処理する <em>Sub-Vector Mode</em> がソフトウェア制御で実装されている。</p>
+そして <em>RDNA</em> では、2つの Wave32 を順番に実行するのではなく、命令をある程度まとめ、それぞれの命令を low と high に半分ずつに分解、最初に low 群を処理し、その後 high 群を処理する <em>Sub-Vector Mode</em> がソフトウェア制御で実装されている。</p>
 
 <figure>
    <a href="https://blog.coelacanth-dream.com/image/2020/07/02/rdna-sub-vector-mode.webp" target="_blank">
@@ -268,12 +264,13 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
 </figure>
 
 
-<p>SIMDユニットの使用率は変わらないが、low の命令群を処理し終わった時点でベクタレジスタの半分を解放することができ、キャッシュをより効果的に使用できるとしている。</p>
+<p>SIMDユニットの使用率は変わらないが、low の命令群を処理し終わった時点でベクタレジスタの半分を解放することができ、キャッシュをより効果的に使用できるとしている。<br />
+<em>Sub-Vector Mode</em> でのメモリ効率の良さが、Wave64 時の性能向上に繋がっているのだろう。<br />
+4つ目は結果的なものであるが、同様にメモリ効率の良さから来るものではないかと思う。</p>
 
-<p>4つ目は結果的なものだとして、3つ目は正直に言うとよくわからない。<br />
-上記画像を見てわかるように、<em>RDNA</em> は CU内にスカラユニット(SALU) を SIMDユニットと同数備えるため、Wave64 を 2つの Wave32 として実行するなら、スカラ命令も 2回発行できていいように思うが、実際は Wave64(64スレッド) に対して 1回だけとなる。</p>
-
-<p>スカラユニットは条件分岐や割り込み、アドレス計算等の制御処理を担当し、その点では前世代の <em>GCN</em> と変わらない。<br />
+<p>ただ、3つ目は正直に言うとよくわからない。<br />
+上記画像を見てわかるように、<em>RDNA</em> は CU内にスカラユニット(SALU) を SIMDユニットと同数備えるため、Wave64 を 2つの Wave32 として実行するなら、スカラ命令も 2回発行できていいように思うが、実際は Wave64(64スレッド) に対して 1回だけとなる。<br />
+スカラユニットは条件分岐や割り込み、アドレス計算等の制御処理を担当し、その点では前世代の <em>GCN</em> と変わらない。<br />
 ベクタでは 2つの Wave32 に分けて実行するが、制御は Wave あたりで行なわれるため、スカラ命令は 1回だけ、ということなのかもしれないが、それ自体がどのように効果的までかは自分の頭が及ばない。上記のスレッド数の件と合わせて、詳しい方、ご教授お願いします。<br />
 シェーダーの実行に細かい制御はそこまで必要でないとか？</p>
 
@@ -298,9 +295,7 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
 </div>
 
 
-</article>
-         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/side.min.css">
-         <div class="side"><div class="site_title">
+</article><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
 </div>
 <div class="side_block"><nav class="side_links">
@@ -325,7 +320,7 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
 </div>
 <div class="side_time">
    <time datetime="2020-07-02 00:40">Post:<br>&emsp;2020/07/02 00:40</time>
-   <div class="side_time_update">Update:<br>&emsp;2020/07/03 20:58</div>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/06 06:48</div>
 </div>
 <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/02/radeonsi-shader-wave64-with-rdna.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://blog.coelacanth-dream.com/about/">About</a>
@@ -336,7 +331,6 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
    </div>
 </div>
 <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
-         
 <footer><hr><div class="foot_tag_block">
    <a href="https://blog.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
    <nav class="foot_tag">
@@ -363,7 +357,7 @@ Wave は コンピュートユニット(CU) 内の SIMDユニットが実行す�
       <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
 <a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
    <time datetime="2020-07-02 00:40">Post:<br>&emsp;2020/07/02 00:40</time>
-   <div class="foot_time_update">Update:<br>&emsp;2020/07/03 20:58</div>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/06 06:48</div>
 </div>
 <small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
