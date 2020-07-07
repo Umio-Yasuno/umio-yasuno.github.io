@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/07/07/amd-3015e-apu/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>AMD、TDP 4.8-6W の AMD 3015e APU の仕様をひっそりと公開 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD、TDP 4.8-6W の AMD 3015e APU の仕様をひっそりと公開 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD、TDP 4.8-6W の AMD 3015e APU の仕様をひっそりと公開 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/07/07/amd-3015e-apu/">
+   <meta name="description" content="AMDの新たな省電力モバイル向けAPU、AMD 3015e の仕様が公式サイトより公開されていた。 TDP は 4.8-6W の範囲にあり、Zen系APUとしては最も低いTDPとなっている。 AMD 3015e">
+   <meta property="og:description" content="AMDの新たな省電力モバイル向けAPU、AMD 3015e の仕様が公式サイトより公開されていた。 TDP は 4.8-6W の範囲にあり、Zen系APUとしては最も低いTDPとなっている。 AMD 3015e">
+   <meta name="twitter:description" content="AMDの新たな省電力モバイル向けAPU、AMD 3015e の仕様が公式サイトより公開されていた。 TDP は 4.8-6W の範囲にあり、Zen系APUとしては最も低いTDPとなっている。 AMD 3015e">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/07/07/amd-3015e-apu/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/07/07/amd-3015e-apu/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="Raven2, Dali, Pollock, Hardware, AMD, APU">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/ds.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 86%, #172727 96%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: .96em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3rem;
+   grid-template-columns: 1vw 2vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   word-break: keep-all;
+   padding: 0;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .2rem 0 .2rem;
+   margin: 0;
+   word-break: break-all;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.7rem;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(0,0,0,0);
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   opacity: 0;
+}
+article > p {
+   letter-spacing: .015rem;
+   margin: 0;
+}
+article > p::before {
+   padding-right: .7rem;
+   content: ' ';
+}
+footer, .side, .home, .posts, .tags, .categories {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+.tags, .categories {
+   grid-column: 2 / -1;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1vw 1vw auto 1vw;
+   row-gap: 16px;
+}
+article > p ~ * {
+   display: none;
+
+}
+article > * {
+   grid-column: 3 / -2;
+   padding-bottom: 100vh;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.4rem/1.9rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 1rem 0;
+}
+ 
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 12px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      padding-top: 12px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8rem;
+      line-height: 2.4rem;
+      max-width: 100%;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+      padding-left: 4px;
+   }
+   .side {
+      display: unset;
+      height: 92vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 28px 12px 0 16px;
+      color: #20B2AA;
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+      opacity: 0;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header>
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/ds.min.css">
+<article class="text">
+
+   <h1>AMD、TDP 4.8-6W の AMD 3015e APU の仕様をひっそりと公開</h1>
+
+<p>AMDの新たな省電力モバイル向けAPU、<strong>AMD 3015e</strong> の仕様が公式サイトより公開されていた。<br />
+TDP は 4.8-6W の範囲にあり、Zen系APUとしては最も低いTDPとなっている。<br />
+<span class="reflink"><a href="https://www.amd.com/en/product/10161" rel="noreferrer" target="_blank">AMD 3015e | AMD</a></span><br>
+
+<span class="reflink"><a href="https://www.amd.com/en/products/specifications/processors/" rel="noreferrer" target="_blank">Processor Specifications | AMD</a></span><br>
+</p>
+
+<h2 id="amd-3015e-仕様">AMD 3015e 仕様</h2>
+
+<p>CPU は 2-Core/4-Thread、Base 1.0GHz、Boost 2.3GHz、GPU は 3CU、1.1GHz(1100MHz)、<br />
+メモリは DDR4 2667MHz、デュアルチャネルに対応している。<br />
+似た製品名である <strong>AMD 3020e</strong> と比較すると、製品のセグメントナンバーこそ小さいが、SMTが有効、GPUクロックも 0.1GHz(100MHz) と勝り、ただCPUクロックのみが <strong>AMD 3020e</strong> より抑えられている。<br />
+恐らく TDP 6W時の仕様が表記していると思われ、CPUクロックが抑えられている分GPUクロックを上げる余地があり、それが <strong>AMD 3020e</strong> より 0.1GHz 高いGPUクロックに繋がっているのだろう。</p>
+
+<p>また、今回初めて気付いたが、製品ラインに <strong>AMD 3000 Series Mobile Processors with Radeon™ Graphics</strong> が追加されており、<br />
+<strong>AMD 3020e</strong> 、<strong>AMD 3015e</strong> はそこに含まれるらしい。</p>
+
+<p><strong>AMD 3000 Series Mobile Processors with Radeon™ Graphics</strong> の SKU が大々的に発表されないのは、Intel の 10nm Tremontコア採用のモバイル向けプロセッサ <em>Jasper Lake</em> への対抗とするため、まだ今は隠し玉、カウンターとして持っているのではないかという気がする。<br />
+<em>Jasper Lake</em> も TDP(PL1) が同じ 6W に対応することがわかっており、搭載製品はぶつかり合う<sup class="footnote-ref" id="fnref:jsl-pl1"><a href="#fn:jsl-pl1">1</a></sup>。<br />
+<em>Jasper Lake</em> はある程度のプロセッサの情報は出ており、登場が待ち遠しいが、実際の製品情報に関しては中々に焦らされている。</p>
+
+<h2 id="dali-or-pollock">Dali か Pollock か</h2>
+
+<p>んで、気になるのは <strong>AMD 3015e</strong> が <em>Dali</em> と <em>Pollock</em> のどちらに当たるかだが、<br />
+メモリがデュアルチャネルであることから、パッケージは <em>FP5 BGA</em> 、よって <em>Dali</em> ではないかと思う。<br />
+<em>Pollock</em> とそれに使われる <em>FT5 BGAパッケージ</em> はシングルチャネル仕様であることが判明している。<sup class="footnote-ref" id="fnref:ft5-sc"><a href="#fn:ft5-sc">2</a></sup></p>
+
+<p>このあたりはなおも複雑であり、個人的に TDP 4.8W の領域は <em>Pollock</em> が担当するものと思っていたため<sup class="footnote-ref" id="fnref:plk-4-8W"><a href="#fn:plk-4-8W">3</a></sup>、<strong>AMD 3015e</strong> の登場には驚かされた。<br />
+<em>FT5 BGAパッケージ</em> は省電力というよりは低コストに傾けられているのだろうか？</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Product (Fam17h Model20h)</th>
+<th align="center">Core/Thread</th>
+<th align="center">CPU Base/Boost</th>
+<th align="center">GPU CU</th>
+<th align="center">GPU Clock</th>
+<th align="center">TDP</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Athlon Silver 3050U <sup class="footnote-ref" id="fnref:t3050u"><a href="#fn:t3050u">4</a></sup></td>
+<td align="center">2/2</td>
+<td align="center">2.3GHz/3.2GHz</td>
+<td align="center">2</td>
+<td align="center">1.1GHz</td>
+<td align="center">15(12-25)W</td>
+</tr>
+
+<tr>
+<td align="left">Athlon Gold 3150U <sup class="footnote-ref" id="fnref:t3150u"><a href="#fn:t3150u">5</a></sup></td>
+<td align="center">2/4</td>
+<td align="center">2.4GHz/3.3GHz</td>
+<td align="center">3</td>
+<td align="center">1.0GHz</td>
+<td align="center">15(12-25)W</td>
+</tr>
+
+<tr>
+<td align="left">Ryzen 3 3250U <sup class="footnote-ref" id="fnref:t3250u"><a href="#fn:t3250u">6</a></sup></td>
+<td align="center">2/4</td>
+<td align="center">2.6GHz/3.5GHz</td>
+<td align="center">3</td>
+<td align="center">1.2GHz</td>
+<td align="center">15(12-25)W</td>
+</tr>
+
+<tr>
+<td align="left">AMD 3020e <sup class="footnote-ref" id="fnref:t3020e"><a href="#fn:t3020e">7</a></sup></td>
+<td align="center">2/2</td>
+<td align="center">1.2GHz/2.6GHz</td>
+<td align="center">3</td>
+<td align="center">1.0GHz</td>
+<td align="center">6W</td>
+</tr>
+
+<tr>
+<td align="left"><em>AMD 3015e</em></td>
+<td align="center"><em>2/4</em></td>
+<td align="center"><em>1.0GHz/2.3GHz</em></td>
+<td align="center"><em>3</em></td>
+<td align="center"><em>1.1GHz</em></td>
+<td align="center"><em>4.8-6W</em></td>
+</tr>
+
+<tr>
+<td align="left">Athlon Silver 3050e <sup class="footnote-ref" id="fnref:t3050e"><a href="#fn:t3050e">8</a></sup></td>
+<td align="center">2/4</td>
+<td align="center">(1.4GHz?)/2.8GHz</td>
+<td align="center">3</td>
+<td align="center">1.0GHz</td>
+<td align="center">6W</td>
+</tr>
+
+<tr>
+<td align="left">Athlon Silver 3050C</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">Athlon Gold 3150C</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">Ryzen 3 3250C</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">Ryzen Embedded R1102G <sup class="footnote-ref" id="fnref:t1102g"><a href="#fn:t1102g">9</a></sup></td>
+<td align="center">2/2</td>
+<td align="center">1.2GHz/2.6GHz</td>
+<td align="center">3</td>
+<td align="center">1.0GHz</td>
+<td align="center">6W</td>
+</tr>
+
+<tr>
+<td align="left">Ryzen Embedded R1305G <sup class="footnote-ref" id="fnref:t1305g"><a href="#fn:t1305g">10</a></sup></td>
+<td align="center">2/4</td>
+<td align="center">1.5GHz/2.8GHz</td>
+<td align="center">3</td>
+<td align="center">1.0GHz</td>
+<td align="center">8-10W</td>
+</tr>
+</tbody>
+</table>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:jsl-pl1"><a href="https://review.coreboot.org/c/coreboot/+/41668" rel="noreferrer" target="_blank">jasperlake: enable DPTF functionality for dedede (I17b6e4e9) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:jsl-pl1"><sup>[return]</sup></a></li>
+<li id="fn:ft5-sc"><a href="https://review.coreboot.org/c/coreboot/+/39867/4" rel="noreferrer" target="_blank">soc/amd/picasso: Add Kconfig option for chip footprint (Ia4663d38) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:ft5-sc"><sup>[return]</sup></a></li>
+<li id="fn:plk-4-8W"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2135098" rel="noreferrer" target="_blank">mb/google/zork: update power parameters to 4.8w for dalboz (I711d1109) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:plk-4-8W"><sup>[return]</sup></a></li>
+<li id="fn:t3050u"><a href="https://www.amd.com/en/products/apu/amd-athlon-silver-3050u#product-specs" rel="noreferrer" target="_blank">AMD Athlon™ Silver 3050U | AMD</a>
+ <a class="footnote-return" href="#fnref:t3050u"><sup>[return]</sup></a></li>
+<li id="fn:t3150u"><a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150u#product-specs" rel="noreferrer" target="_blank">AMD Athlon™ Gold 3150U | AMD</a>
+ <a class="footnote-return" href="#fnref:t3150u"><sup>[return]</sup></a></li>
+<li id="fn:t3250u"><a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150u#product-specs" rel="noreferrer" target="_blank">AMD Ryzen™ 3 3250U | AMD</a>
+ <a class="footnote-return" href="#fnref:t3250u"><sup>[return]</sup></a></li>
+<li id="fn:t3020e"><a href="https://www.amd.com/en/products/apu/amd-3020e#product-specs" rel="noreferrer" target="_blank">AMD 3020e | AMD</a>
+ <a class="footnote-return" href="#fnref:t3020e"><sup>[return]</sup></a></li>
+<li id="fn:t3050e"><a href="https://www.amd.com/en/product/9896" rel="noreferrer" target="_blank">AMD Athlon™ Silver 3050e | AMD</a>
+ <a class="footnote-return" href="#fnref:t3050e"><sup>[return]</sup></a></li>
+<li id="fn:t1102g"><a href="https://www.amd.com/en/product/9226" rel="noreferrer" target="_blank">AMD Ryzen™ Embedded R1102G with Radeon™ Vega 3 Graphics | AMD</a>
+ <a class="footnote-return" href="#fnref:t1102g"><sup>[return]</sup></a></li>
+<li id="fn:t1305g"><a href="https://www.amd.com/en/product/9221" rel="noreferrer" target="_blank">AMD Ryzen™ Embedded R1305G with Radeon™ Vega 3 Graphics | AMD</a>
+ <a class="footnote-return" href="#fnref:t1305g"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</article><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<div class="side_block"><nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/dali/" class="side_tag_lower">Dali</a>
+         <a href="https://blog.coelacanth-dream.com/tags/pollock/" class="side_tag_lower">Pollock</a>
+         <a href="https://blog.coelacanth-dream.com/tags/raven2/" class="side_tag_lower">Raven2</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/apu/" class="side_category_lower">APU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-07-07 20:34">Post:<br>&emsp;2020/07/07 20:34</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/07 21:21</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/07/amd-3015e-apu.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+         <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+         <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+      </nav>
+   <small class="copyright">&copy; 2019 Umio Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/dali/" class="foot_tag_lower">Dali</a>
+         <a href="https://blog.coelacanth-dream.com/tags/pollock/" class="foot_tag_lower">Pollock</a>
+         <a href="https://blog.coelacanth-dream.com/tags/raven2/" class="foot_tag_lower">Raven2</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/apu/" class="foot_category_lower">APU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/07/amd-3015e-apu.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-07-07 20:34">Post:<br>&emsp;2020/07/07 20:34</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/07 21:21</div>
+</div>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
