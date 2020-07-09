@@ -15,16 +15,16 @@
    <meta name="twitter:title" content="Intel Gen12 GPU は AV1コーディックのHWデコードをサポート | Coelacanth&#39;s Dream">
 
    <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/07/09/intel-gen12-av1-decode/">
-   <meta name="description" content="既に Youtube 等では採用されているオープンであり、ロイヤリティーフリーでもある動画コーディック、 AV1 (AOMedia Video 1) のハードウェアデコードをサポートすることが、intel/medi">
-   <meta property="og:description" content="既に Youtube 等では採用されているオープンであり、ロイヤリティーフリーでもある動画コーディック、 AV1 (AOMedia Video 1) のハードウェアデコードをサポートすることが、intel/medi">
-   <meta name="twitter:description" content="既に Youtube 等では採用されているオープンであり、ロイヤリティーフリーでもある動画コーディック、 AV1 (AOMedia Video 1) のハードウェアデコードをサポートすることが、intel/medi">
+   <meta name="description" content="既に Youtube 等では採用されているオープンであり、ロイヤリティーフリーでもある動画コーディック、AV1 (AOMedia Video 1) のハードウェアデコードを Intel Gen12アーキテクチャ GPU はサポー">
+   <meta property="og:description" content="既に Youtube 等では採用されているオープンであり、ロイヤリティーフリーでもある動画コーディック、AV1 (AOMedia Video 1) のハードウェアデコードを Intel Gen12アーキテクチャ GPU はサポー">
+   <meta name="twitter:description" content="既に Youtube 等では採用されているオープンであり、ロイヤリティーフリーでもある動画コーディック、AV1 (AOMedia Video 1) のハードウェアデコードを Intel Gen12アーキテクチャ GPU はサポー">
    <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
    <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
    <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/07/09/intel-gen12-av1-decode/">
    <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/07/09/intel-gen12-av1-decode/">
    <meta property="og:locale" content="ja_JP">
    <meta name="author" content="Umio Yasuno">
-   <meta name="keywords" content="Gen12, Rocket_Lake, DG1, Tiger_Lake, Hardware, Intel, GPU">
+   <meta name="keywords" content="Gen12, Tiger_Lake, Rocket_Lake, DG1, Hardware, Intel, GPU">
 
       <link rel="preload" href="https://blog.coelacanth-dream.com/css/side.min.css" as="style">
       <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
@@ -177,18 +177,25 @@ h1 {
          <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
 <article class="text">
 
-   <h1>Intel Gen12 GPU は AV1コーディックのHWデコードをサポート</h1><p>既に Youtube 等では採用されているオープンであり、ロイヤリティーフリーでもある動画コーディック、<br />
-<strong>AV1 (AOMedia Video 1)</strong> のハードウェアデコードをサポートすることが、<a href="https://github.com/intel/media-driver" rel="noreferrer" target="_blank">intel/media-driver</a>に追加されたパッチからわかった。<br />
+   <h1>Intel Gen12 GPU は AV1コーディックのHWデコードをサポート</h1><p>既に Youtube 等では採用されているオープンであり、ロイヤリティーフリーでもある動画コーディック、<strong>AV1 (AOMedia Video 1)</strong> のハードウェアデコードを <a href="https://blog.coelacanth-dream.com/tags/gen12">Intel Gen12アーキテクチャ GPU</a> はサポートする。<br />
+そのことが、<a href="https://github.com/intel/media-driver" rel="noreferrer" target="_blank">intel/media-driver</a>に追加されたパッチからわかった。<br />
 <span class="reflink"><a href="https://github.com/intel/media-driver/commit/9491998f40d496fc458d282f213c0e9e945b8062" rel="noreferrer" target="_blank">[Decode] This enables HW AV1 decode acceleration on Gen12 · intel/media-driver@9491998</a></span><br>
 </p>
 
-<p>コードを見るに、AV1 8-bit 4:2:0、AV1 10-bit 4:2:0 に対応するものと思われる。<sup class="footnote-ref" id="fnref:gen12-av1-1"><a href="#fn:gen12-av1-1">1</a></sup><br />
-解像度に関しては、他の HEVC、VP9コーディック同様に 16K に対応するようにも読めるが、実際の仕様に反映されるかは不明。<sup class="footnote-ref" id="fnref:gen12-av1-2"><a href="#fn:gen12-av1-2">2</a></sup></p>
+<p>コードを見るに、AV1 8-bit 4:2:0、AV1 10-bit 4:2:0 に対応するものと思われる。<sup class="footnote-ref" id="fnref:gen12-av1-1"><a href="#fn:gen12-av1-1">1</a></sup></p>
+
+<blockquote>
+<pre><code>     MEDIA_WR_SKU(skuTable, FtrIntelAV1VLDDecoding8bit420, codecInfo-&gt;adv0Decoding);
+     MEDIA_WR_SKU(skuTable, FtrIntelAV1VLDDecoding10bit420, codecInfo-&gt;adv1Decoding);</code></pre>
+<p>引用元: <cite><a href="https://github.com/intel/media-driver/blob/9491998f40d496fc458d282f213c0e9e945b8062/media_driver/linux/gen12/ddi/media_sku_wa_g12.cpp#L99" rel="noreferrer" target="_blank">media-driver/media_sku_wa_g12.cpp at 9491998f40d496fc458d282f213c0e9e945b8062 · intel/media-driver</a></cite></p>
+</blockquote>
+
+<p>解像度に関しては、他の HEVC、VP9コーディック同様に 16K に対応するようにも読めるが、実際の仕様に反映されるかは不明。<sup class="footnote-ref" id="fnref:gen12-av1-2"><a href="#fn:gen12-av1-2">2</a></sup></p>
 
 <!-- (Y'CbCr) -->
 
 <p>AV1コーディックのHWデコードに対応するプロセッサは、現時点では <em>Mediatek Dimensity 1000 5G SoC</em>  <sup class="footnote-ref" id="fnref:mediatek-av1"><a href="#fn:mediatek-av1">3</a></sup> が発表されているのみで、一部では既に採用こそされているがデコードは負荷の掛かるソフトウェアデコードで行なわれているため、本格的な普及にはまだ時間が掛かると見られていた。<br />
-しかし、Intel の次世代プロセッサ <em>Tiger Lake</em> 、<em>Rocket Lake</em> が、負荷が軽く、省電力、高速で行なえるHWデコードに対応することで、AV1コーディックの普及を後押しするものと思われる。<br />
+しかし、<a href="https://blog.coelacanth-dream.com/tags/gen12">Intel Gen12アーキテクチャ GPU</a> を搭載する次世代プロセッサ <em>Tiger Lake</em> 、<em>Rocket Lake</em> が、負荷が軽く、省電力、高速で行なえるHWデコードに対応することで、AV1コーディックの普及を後押しするものと思われる。<br />
 GPUベンダーである、NVIDIA、AMD がどの世代で対応するかはまだ不明であり、メディア機能においては Intel GPU がリードを取ったと見れる。</p>
 <div class="footnotes">
 
@@ -230,7 +237,7 @@ GPUベンダーである、NVIDIA、AMD がどの世代で対応するかはま�
 </div>
 <div class="side_time">
    <time datetime="2020-07-09 16:49">Post:<br>&emsp;2020/07/09 16:49</time>
-   <div class="side_time_update">Update:<br>&emsp;2020/07/09 17:35</div>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/09 17:57</div>
 </div>
 <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/09/intel-gen12-av1-decode.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://blog.coelacanth-dream.com/about/">About</a>
@@ -270,7 +277,7 @@ GPUベンダーである、NVIDIA、AMD がどの世代で対応するかはま�
       <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
 <a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
    <time datetime="2020-07-09 16:49">Post:<br>&emsp;2020/07/09 16:49</time>
-   <div class="foot_time_update">Update:<br>&emsp;2020/07/09 17:35</div>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/09 17:57</div>
 </div>
 <small class="copyright">&copy; 2019 Umio Yasuno</small>
 </footer>
