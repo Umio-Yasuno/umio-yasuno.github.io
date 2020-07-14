@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="referrer" content="no-referrer">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://blog.coelacanth-dream.com/posts/2020/07/15/amd-next-gen-gpu-navy_flounder/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>AMDの次世代 RDNA 2 GPU、&#34;Navy Flounder&#34; のLinux Kernelパッチが投稿される | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMDの次世代 RDNA 2 GPU、&#34;Navy Flounder&#34; のLinux Kernelパッチが投稿される | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMDの次世代 RDNA 2 GPU、&#34;Navy Flounder&#34; のLinux Kernelパッチが投稿される | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://blog.coelacanth-dream.com/posts/2020/07/15/amd-next-gen-gpu-navy_flounder/">
+   <meta name="description" content="AMDの次世代 RDNA 2 GPU、Navy Flounder をサポートする最初のLinux Kernelパッチ一連が投稿された。 [PATCH 00/42] Navy Flounder support Navy Flounder は Sienna Cichlidと同じ世代">
+   <meta property="og:description" content="AMDの次世代 RDNA 2 GPU、Navy Flounder をサポートする最初のLinux Kernelパッチ一連が投稿された。 [PATCH 00/42] Navy Flounder support Navy Flounder は Sienna Cichlidと同じ世代">
+   <meta name="twitter:description" content="AMDの次世代 RDNA 2 GPU、Navy Flounder をサポートする最初のLinux Kernelパッチ一連が投稿された。 [PATCH 00/42] Navy Flounder support Navy Flounder は Sienna Cichlidと同じ世代">
+   <meta property="og:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="twitter:image" content="https://blog.coelacanth-dream.com/image/site-image.png">
+   <meta name="url" content="https://blog.coelacanth-dream.com/posts/2020/07/15/amd-next-gen-gpu-navy_flounder/">
+   <meta property="og:url" content="https://blog.coelacanth-dream.com/posts/2020/07/15/amd-next-gen-gpu-navy_flounder/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="keywords" content="RDNA_2, Navi22, Navy_Flounder, Hardware, AMD, GPU">
+
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://blog.coelacanth-dream.com/css/footer.min.css" as="style">
+            <link rel="prefetch" href="https://blog.coelacanth-dream.com/css/ds.min.css" as="style">
+            <link rel="preload" href="https://blog.coelacanth-dream.com/css/page.min.css" as="style">
+   <style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 86%, #172727 96%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: .98em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3rem;
+   grid-template-columns: 1vw 2vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   word-break: keep-all;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .2rem 0 .2rem;
+   margin: 0;
+   word-break: break-all;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.7rem;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(0,0,0,0);
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   opacity: 0;
+}
+article > p {
+   letter-spacing: .020rem;
+   margin: 0;
+}
+article > p::before {
+   padding-right: .7rem;
+   content: ' ';
+}
+footer, .side, .home, .posts, .tags, .categories {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: 1vw 1vw auto 1vw;
+   row-gap: 16px;
+}
+article > p ~ * {
+   display: none;
+
+}
+article > * {
+   grid-column: 3 / -2;
+   padding-bottom: 100vh;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.35rem/1.9rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 1rem 0;
+}
+ 
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 12px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      padding-top: 12px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8rem;
+      line-height: 2.4rem;
+      max-width: 100%;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+      padding-left: 4px;
+   }
+   .side {
+      display: unset;
+      height: 92vh;
+      width: 200px;
+      position: fixed;
+         top: 2vh;
+      padding: 28px 12px 0 16px;
+      color: #20B2AA;
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+      opacity: 0;
+   }
+}
+</style>
+<link rel="icon" href="https://blog.coelacanth-dream.com/favicon.ico"><script data-ad-client="ca-pub-8523229124275958" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+</header>
+         <link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+
+   <h1>AMDの次世代 RDNA 2 GPU、&#34;Navy Flounder&#34; のLinux Kernelパッチが投稿される</h1>
+
+<p>AMDの次世代 RDNA 2 GPU、<em>Navy Flounder</em> をサポートする最初のLinux Kernelパッチ一連が投稿された。<br />
+<span class="reflink"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-July/051526.html" rel="noreferrer" target="_blank">[PATCH 00/42] Navy Flounder support</a></span><br>
+</p>
+
+<p><em>Navy Flounder</em> は <a href="https://blog.coelacanth-dream.com/tags/sienna_cichlid">Sienna Cichlid</a>と同じ世代(GFX10)、同じメジャーバージョンである GFX10.3 となっている。<br />
+マルチメディア部(VCN3)、ディスプレイコントローラ(DCN3)、SDMAコントローラのIPバージョンもまた <em>Sienna Cichlid</em> と共通するが、VCN3 と SDMAコントローラの規模の点で異なり、<em>Navy Flounder</em> の方が小さい。</p>
+
+<p><em>Sienna Cichlid</em> はディスプレイコントローラの eChipRev から <em>Navi21</em> と考えられたが、<br />
+<span class="reflink"><a href="https://blog.coelacanth-dream.com/posts/2020/06/02/amd-sienna_cichlid/">AMD の次世代GPU、Sienna Cichlid の Linux Kernelパッチが投稿される | Coelacanth&rsquo;s Dream</a></span><br>
+
+<em>Navy Flounder</em> は external_rev_id が <code>+ 0x32</code> となっており<sup class="footnote-ref" id="fnref:navy-flounder-e-rev-id"><a href="#fn:navy-flounder-e-rev-id">1</a></sup>、過去に誤って投稿されたであろう <em>Navi22</em> の範囲と一致することから<sup class="footnote-ref" id="fnref:navi22-e-rev-id"><a href="#fn:navi22-e-rev-id">2</a></sup>、<code>Navy Flounder == Navi22</code> と考えられる。</p>
+
+<h2 id="sienna-cichlid-と規模が異なる-navy-flounder">Sienna Cichlid と規模が異なる Navy Flounder</h2>
+
+<h3 id="1インスタンスの-vcn3">1インスタンスの VCN3?</h3>
+
+<p>まず、<em>Sienna Cichlid</em> は非対称の VCN3 を 2インスタンス持ち、片方がデコードを、片方がエンコードのみを担当する形となっていた。<sup class="footnote-ref" id="fnref:sienna-cichlid-vcn"><a href="#fn:sienna-cichlid-vcn">3</a></sup><br />
+しかし今回のパッチでは、<em>Navy Flounder</em> は 1インスタンスだけ持つとされている。<sup class="footnote-ref" id="fnref:navy-flounder-vcn-1"><a href="#fn:navy-flounder-vcn-1">4</a></sup><br />
+ただ、同時にパッチ内のコメントで PG(Power Gating, 使用していない、アイドル状態のユニットの電源を遮断し、リーク電流を削減する省電力技術) を設定する上では 2インスタンス(VCN0/VCN1)に分かれていた方が都合が良く、電力効率に優れるとあるため、<br />
+VCN3 が内部的に 2インスタンスとなっているのか、それともやはり <em>Sienna Cichlid</em> は 2インスタンス持ち、<em>Navy Flounder</em> は 1インスタンス持つ構成になっているのか、イマイチはっきりしない。<br />
+各IPが <em>Sienna Cichlid</em> と共通するためか、<em>Navy Flounder</em> の一連のパッチは <em>Sienna Cichlid</em> ほど巨大ではなく、VCN3 のインスタンスがどうなっているかを示すコードは今回追加されていなかった。</p>
+
+<h3 id="sienna-cichlid-の半分となる-標準的な-sdmaコントローラ数">Sienna Cichlid の半分となる、標準的な SDMAコントローラ数</h3>
+
+<p><em>Sienna Cichlid</em> は具体的な理由は明かされず、コンシューマ向けAMDGPUとしては多い 4基の SDMAコントローラを持つが、<em>Navy Flounder</em> は一転、標準的な 2基のSDMAコントローラを持つ。<sup class="footnote-ref" id="fnref:navy-flounder-sdma"><a href="#fn:navy-flounder-sdma">5</a></sup><br />
+このことで SDMAコントローラを 4基持つのは <em>GFX10.3/ RDNA 2</em> で共通した構成ではなく、<em>Sienna Cichlid</em> 特有という意味が強まった。<br />
+<em>Sienna Cichlid</em> がそれ程に持つ理由があるはずだが、まだ想像するしかない段階にある。<br />
+<em>Arcturus</em> のように マルチGPU(XGMI) に最適化されてもいないため、単純にマルチGPUのためとは言えないように思う。</p>
+
+<h2 id="色-魚-な-rdna-2-のコードネーム">色+魚 な RDNA 2 のコードネーム</h2>
+
+<p><em>Sienna Cichlid</em> というコードネームを分解すると、黄褐色または赤褐色を意味する <em>Sienna (シエナ)</em> とカワスズメ科の硬骨魚 <em>Cichlid (シクリッド)</em> に分かれるが、<br />
+<em>Navy Flounder</em> は、濃紺色を意味する <em>Navy (ネイビー)</em> 、砂底に生息する硬骨魚 <em>Flounder (フラウンダー) [カレイ]</em> に分かれる。<br />
+ローマの都市、画家と続いて、次は色と硬骨魚がコードネームに使われるようだ。</p>
+
+<p>ちなみに <em>Cichlid (シクリッド)</em> も <em>Flounder (フラウンダー) [カレイ]</em> も食用。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:navy-flounder-e-rev-id"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-July/051535.html" rel="noreferrer" target="_blank">[PATCH 09/42] drm/amdgpu/soc15: add support for navy_flounder</a>
+ <a class="footnote-return" href="#fnref:navy-flounder-e-rev-id"><sup>[return]</sup></a></li>
+<li id="fn:navi22-e-rev-id"><a href="https://github.com/GPUOpen-Drivers/pal/blob/39abe2297ca58a2b84dcd9bc5e238fbc399bd6e0/src/core/imported/addrlib/src/amdgpu_asic_addr.h#L111" rel="noreferrer" target="_blank">pal/amdgpu_asic_addr.h at 39abe2297ca58a2b84dcd9bc5e238fbc399bd6e0 · GPUOpen-Drivers/pal</a>
+ <a class="footnote-return" href="#fnref:navi22-e-rev-id"><sup>[return]</sup></a></li>
+<li id="fn:sienna-cichlid-vcn"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050116.html" rel="noreferrer" target="_blank">[PATCH 152/207] drm/amdgpu/vcn3.0: schedule instance 0 for decode and 1 for encode</a>
+ <a class="footnote-return" href="#fnref:sienna-cichlid-vcn"><sup>[return]</sup></a></li>
+<li id="fn:navy-flounder-vcn-1"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-July/051564.html" rel="noreferrer" target="_blank">[PATCH 38/42] drm/amd/powerplay: set VCN1 pg only for sienna_cichlid</a>
+ <a class="footnote-return" href="#fnref:navy-flounder-vcn-1"><sup>[return]</sup></a></li>
+<li id="fn:navy-flounder-sdma"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-July/051542.html" rel="noreferrer" target="_blank">[PATCH 16/42] drm/amdgpu: add sdma ip block for navy_flounder</a>
+ <a class="footnote-return" href="#fnref:navy-flounder-sdma"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</article><link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://blog.coelacanth-dream.com/">Coelacanth's Dream</a><br>
+</div>
+<div class="side_block"><nav class="side_links">
+   <a href="https://blog.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/navi22/" class="side_tag_lower">Navi22</a>
+         <a href="https://blog.coelacanth-dream.com/tags/navy_flounder/" class="side_tag_lower">Navy Flounder</a>
+         <a href="https://blog.coelacanth-dream.com/tags/rdna_2/" class="side_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-07-15 03:53">Post:<br>&emsp;2020/07/15 03:53</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/15 05:40</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/15/amd-next-gen-gpu-navy_flounder.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+         <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+         <a href="https://blog.coelacanth-dream.com/about/#support">Support</a>
+         <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+      </nav>
+   <small class="copyright">&copy; 2019 Umio Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://blog.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://blog.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://blog.coelacanth-dream.com/tags/navi22/" class="foot_tag_lower">Navi22</a>
+         <a href="https://blog.coelacanth-dream.com/tags/navy_flounder/" class="foot_tag_lower">Navy Flounder</a>
+         <a href="https://blog.coelacanth-dream.com/tags/rdna_2/" class="foot_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://blog.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://blog.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://blog.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://blog.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://blog.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://blog.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://blog.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/15/amd-next-gen-gpu-navy_flounder.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://blog.coelacanth-dream.com/about/">About</a>
+      <a href="https://blog.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://blog.coelacanth-dream.com/about/#support">Support</a>
+      <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-07-15 03:53">Post:<br>&emsp;2020/07/15 03:53</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/15 05:40</div>
+</div>
+<small class="copyright">&copy; 2019 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
