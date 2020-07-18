@@ -225,7 +225,7 @@ h1 {
 
 <p>従来の AMD GPU と比べて多い <em>Sienna Cichlid</em> の SDMAコントローラについて、疑うようなことばかり書いてきたが、<em>Sienna Cichlid</em> が <strong>XGMI</strong> をサポートすることが明らかになった以上、つまるところ SDMAコントローラは <strong>XGMI</strong> のために増やされたのだろう。</p>
 
-<p><a href="https://lists.freedesktop.org/archives/amd-gfx/" target="_blank">The amd-gfx Archives</a> でのレビューを通らずに(見つけられなかった) 組み込まれたパッチを見るに、<em>Sienna Cichlid</em> は最大 4基の GPUとの接続を可能とするようだ。<br />
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/" target="_blank">The amd-gfx Archives</a> でのレビューを通らずに(見つけられなかった) 組み込まれたパッチを見るに、<em>Sienna Cichlid</em> は最大 4GPU との接続を可能とするようだ。<br />
 <span class="reflink"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfxhub_v2_1.c?h=amd-staging-drm-next&amp;id=57bde5ec6ffbeb984981ab1a38d85b07df651bd2" target="_blank">drm/amdgpu: add XGMI support for sienna cichlid</a></span><br>
 </p>
 
@@ -238,18 +238,33 @@ h1 {
 <p>引用元: <cite><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfxhub_v2_1.c?h=amd-staging-drm-next&amp;id=57bde5ec6ffbeb984981ab1a38d85b07df651bd2" target="_blank">drm/amdgpu: add XGMI support for sienna cichlid</a></cite></p>
 </blockquote>
 
-<p>この最大 4基というのは <em>Vega20</em> と同数であり<sup class="footnote-ref" id="fnref:vega20-max-nodes"><a href="#fn:vega20-max-nodes">2</a></sup>、<em>Vega20</em> の場合は 3GPU以上での接続はリングバスの構成を取ることになり、それによって GPU間のデータ転送に幾許かの遅延が発生しうるものとなっていた。</p>
+<p>この最大 4GPUというのは <em>Vega20</em> と同数であり<sup class="footnote-ref" id="fnref:vega20-max-nodes"><a href="#fn:vega20-max-nodes">2</a></sup>、<em>Vega20</em> の場合は 3GPU以上での接続はリングバスの構成を取ることになり、それによって GPU間のデータ転送に幾許かの遅延が発生しうるものとなっていた。</p>
 
 <p>だが <em>Sienna Cichlid</em> は、SDMAコントローラ 2基である <em>Vega20</em> に対し<sup class="footnote-ref" id="fnref:vega20-sdma-controllers"><a href="#fn:vega20-sdma-controllers">3</a></sup>、倍の 4基持つ<sup class="footnote-ref" id="fnref:sienna-cichlid-sdma-controllers"><a href="#fn:sienna-cichlid-sdma-controllers">4</a></sup>。</p>
 
 <p>もしかしたらリングバス構成を取らずに 4GPU との接続が可能 <em>かもしれない</em> 。未来のことだから、本当に断言できることなんてない。</p>
 
+<p>ちなみに <em>Arcturus</em> は最大 8GPUとの接続を可能とし、SDMAコントローラは <strong>XGMI</strong> に最適化されたものを 6基、そうでない、他の AMDGPU 同様の SDMAコントローラを 2基持つ<sup class="footnote-ref" id="fnref:arcturus-sdma-controllers"><a href="#fn:arcturus-sdma-controllers">5</a></sup>。</p>
+
+<blockquote>
+<pre><code>  +  switch (adev-&gt;asic_type) {
+  +  case CHIP_VEGA20:
+  +      max_num_physical_nodes   = 4;
+  +      max_physical_node_id     = 3;
+  +      break;
+  +  case CHIP_ARCTURUS:
+  +      max_num_physical_nodes   = 8;
+  +      max_physical_node_id     = 7;
+  +      break;</code></pre>
+<p>引用元: <cite><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_1.c?h=amd-staging-drm-next&amp;id=f0312f45a0540a1551ca4644ff2461250520111a" target="_blank">drm/amdgpu: Added ASIC specific checks in gfxhub V1.1 get XGMI info</a></cite></p>
+</blockquote>
+
 <h2 id="detail-unknown">詳細はまだまだ不明</h2>
 
-<p>高速なGPU間通信 <strong>XGMI</strong> をサポートするといっても、帯域はどうなるかや、<em>Arcturus</em> のように、増やした 2基の SDMAコントローラを <strong>XGMI</strong> に最適化されたものにしなかったのは何故か等、不明な点はある。<br />
+<p>高速なGPU間通信 <strong>XGMI</strong> をサポートするといっても、ネットワーク構成と帯域はどうなるかや、<em>Arcturus</em> のように、増やした 2基の SDMAコントローラを <strong>XGMI</strong> に最適化されたものにしなかったのは何故か等、不明な点はある。<br />
 想像するならば、<strong>XGMI</strong> に最適化しなかったのは <em>Arcturus</em> 程、マルチGPUを前提にした構成ではなく、1GPUでの構成を普通に取るためだろうか。<em>Navi21 /Sienna Cichlid</em> は <em>Arcturus</em> のように GPGPU へ振り切ったものではなく、コンシューマ向けとして出ることが考えられる。</p>
 
-<p>マルチGPU構成を取るとして、Apple Mac Pro向けの <strong>Radeon Pro Vega II Duo</strong> のように、1カード上で 2GPUを <em>Infinity Fabric Link</em> で接続する形を取るのか<sup class="footnote-ref" id="fnref:radeon-pro-vega-ii-duo"><a href="#fn:radeon-pro-vega-ii-duo">5</a></sup>、 <strong>Radeon Pro VII</strong> のように 2カードを専用ブリッジで接続する形を取るのかもまだわからない<sup class="footnote-ref" id="fnref:radeon-pro-vii"><a href="#fn:radeon-pro-vii">6</a></sup>。<br />
+<p>マルチGPU構成を取るとして、Apple Mac Pro向けの <strong>Radeon Pro Vega II Duo</strong> のように、1カード上で 2GPUを <em>Infinity Fabric Link</em> で接続する形を取るのか<sup class="footnote-ref" id="fnref:radeon-pro-vega-ii-duo"><a href="#fn:radeon-pro-vega-ii-duo">6</a></sup>、 <strong>Radeon Pro VII</strong> のように 2カードを専用ブリッジで接続する形を取るのかもまだわからない<sup class="footnote-ref" id="fnref:radeon-pro-vii"><a href="#fn:radeon-pro-vii">7</a></sup>。<br />
 ただこれは、どちらも <em>Vega20</em> ベースであるように、<em>Navi21 /Sienna Cichlid</em> もまた両方の形が可能と考えられる。</p>
 
 <p><em>Navi21 /Sienna Cichlid</em> は、まだしばらくは何かしら夢を持ちながら付き合う存在だ。</p>
@@ -278,6 +293,8 @@ h1 {
  <a class="footnote-return" href="#fnref:vega20-sdma-controllers"><sup>[return]</sup></a></li>
 <li id="fn:sienna-cichlid-sdma-controllers"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049985.html" target="_blank">[PATCH 021/207] drm/amdgpu: add sdma ip block for sienna_cichlid (v5)</a>
  <a class="footnote-return" href="#fnref:sienna-cichlid-sdma-controllers"><sup>[return]</sup></a></li>
+<li id="fn:arcturus-sdma-controllers"><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdkfd/kfd_device.c?h=amd-staging-drm-next&amp;id=3ace943f8f8158ee2b0fed8482edb37245b28f45#n374" target="_blank">kfd_device.c\amdkfd\amd\drm\gpu\drivers &ndash; ~agd5f/linux &ndash; Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a>
+ <a class="footnote-return" href="#fnref:arcturus-sdma-controllers"><sup>[return]</sup></a></li>
 <li id="fn:radeon-pro-vega-ii-duo"><a href="https://www.amd.com/en/graphics/workstations-radeon-pro-vega-ii" target="_blank">Radeon™ Pro Vega II Graphics | AMD</a>
  <a class="footnote-return" href="#fnref:radeon-pro-vega-ii-duo"><sup>[return]</sup></a></li>
 <li id="fn:radeon-pro-vii"><a href="https://www.amd.com/en/products/professional-graphics/radeon-pro-vii" target="_blank">AMD Radeon™ Pro VII Graphics | AMD</a>
@@ -310,7 +327,7 @@ h1 {
 </div>
 <div class="side_time">
    <time datetime="2020-07-17 12:46">Post:<br>&emsp;2020/07/17 12:46</time>
-   <div class="side_time_update">Update:<br>&emsp;2020/07/17 16:19</div>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/18 17:49</div>
 </div>
 <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/17/navi21-sienna_cichlid-support-xgmi.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://blog.coelacanth-dream.com/about/">About</a>
@@ -351,7 +368,7 @@ h1 {
       <a href="https://blog.coelacanth-dream.com/index.xml">RSS</a>
 <a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
    <time datetime="2020-07-17 12:46">Post:<br>&emsp;2020/07/17 12:46</time>
-   <div class="foot_time_update">Update:<br>&emsp;2020/07/17 16:19</div>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/18 17:49</div>
 </div>
 <small class="copyright">&copy; 2019-2020 Umio Yasuno</small>
 </footer>
