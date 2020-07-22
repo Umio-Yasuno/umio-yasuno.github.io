@@ -255,7 +255,8 @@ h1 {
 
 VBIOS から情報を読み取る部分のコード<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/include/atomfirmware.h&amp;h=amd-staging-drm-next" rel="noreferrer" target="_blank">atomfirmware.h</a> に、<em>Sienna Cichlid</em> をサポートするため追加されたコードには GDDR6メモリ関連のパラメータが記述されている。</p>
 
-<p>先日、<em>Sienna Cichlid</em> は <strong>XGMI</strong> をサポートするという記事を書いたが、コストは掛かるが実装面積は小さく収められる HBM2 ではなく、GDDR6メモリを使うのであれば、1カード上に 2GPUを搭載、マルチGPUとして接続する形よりも、専用ブリッジを用いて 2カードを接続する形のが現実的かもしれない。<br />
+<p>先日、<em>Sienna Cichlid</em> は <strong>XGMI</strong> をサポートするという記事を書いたが、コストは掛かるが実装面積は小さく収められる HBM2 ではなく、<span class="complement">バス幅は不明なものの</span>
+GDDR6メモリを使うのであれば、1カード上に 2GPUを搭載、マルチGPUとして接続する形よりも、専用ブリッジを用いて 2カードを接続する形のが現実的かもしれない。<br />
 <span class="reflink"><a href="https://www.coelacanth-dream.com/posts/2020/07/17/navi21-sienna_cichlid-support-xgmi/">Navi21 /Sienna Cichlid は高速なGPU間通信 XGMI をサポート | Coelacanth&rsquo;s Dream</a></span><br>
 </p>
 
@@ -263,14 +264,14 @@ VBIOS から情報を読み取る部分のコード<a href="https://cgit.freedes
 
 <h3 id="avfs-module-2x-navi10">Navi10 から倍近い数の AVFSモジュール</h3>
 
-<p><strong>AVFS</strong> とは、dGPU では <em>Polaris</em> 世代から導入された技術であり、シリコン製造における微妙にばらつきが存在する GPUの動作を測定し、それぞれにより優れた電圧と周波数を選択する。<br />
+<p><strong>AVFS</strong> とは、dGPU では <em>Polaris</em> 世代から導入された技術であり、GPUの動作を測定し、シリコン製造における微妙にばらつきが存在する、それぞれの GPU により優れた電圧と周波数を選択する。<br />
 これにより GPUのある周波数における電圧をより低いものに設定し、消費電力を削減することができる。</p>
 
 <p>その AVFSモジュールが <em>Navi10</em> で 36モジュール<sup class="footnote-ref" id="fnref:navi10-avfs"><a href="#fn:navi10-avfs">1</a></sup>、<em>Navi14</em> で 28モジュール<sup class="footnote-ref" id="fnref:navi14-avfs"><a href="#fn:navi14-avfs">2</a></sup> だったのが、<em>Sienna Cichlid</em> では 67モジュールとなる<sup class="footnote-ref" id="fnref:sienna-avfs"><a href="#fn:sienna-avfs">3</a></sup>。</p>
 
-<p>一応、<em>Arcturus</em> は 75モジュールと読める。<sup class="footnote-ref" id="fnref:arcturus-avfs"><a href="#fn:arcturus-avfs">4</a></sup></p>
-
-<p>モジュール数が GPUの規模を表しているように見えてしまうが、<em>Navi10</em> と <em>Navi14</em> の数があまり変わらないことから、ある世代の GPU でどれだけ省電力機能に力を入れているか次第なようにも思う。</p>
+<p><em>Arcturus</em> は 75モジュールと読める。<sup class="footnote-ref" id="fnref:arcturus-avfs"><a href="#fn:arcturus-avfs">4</a></sup><br />
+モジュール数が GPUの規模を表しているように見えてしまうが、<em>Navi10</em> と <em>Navi14</em> の数があまり変わらないことから、ある世代の GPU でどれだけ省電力機能に力を入れているか次第なようにも思う。<br />
+<a href="https://www.coelacanth-dream.com/tags/navy_flounder">Navy Flounder</a>用の値が設定されていないため、規模に関しては何とも言えない。</p>
 
 <h3 id="gpo">GPO</h3>
 
@@ -286,14 +287,18 @@ VBIOS から情報を読み取る部分のコード<a href="https://cgit.freedes
 
 <p>RAS機能の中で EEPROM は VRAM の ECCエラー(2-bitエラー?) が発生した不良ページを記録するのに使われる。<br />
 記録された不良ページは R/P/F 3つのフラグで分けられ、F のフラグが立ったものは予約しないように設定される。<sup class="footnote-ref" id="fnref:amdgpu-ras"><a href="#fn:amdgpu-ras">8</a></sup><br />
-NVIDIA の <a href="https://docs.nvidia.com/deploy/dynamic-page-retirement/index.html" rel="noreferrer" target="_blank">Dynamic Page Retirement</a> 機能と似たものなのだろうか？</p>
+これにより、将来的なさらなるメモリエラーを減らすことができる。<br />
+不揮発性メモリである EEPROM を使うため、再起動しても記録された値は残り続ける。</p>
 
-<p>それとして、RAS機能と EEPROM を使った不良ページの記録は GPU で数値計算等を行なうサーバ向けの機能であり、それを <em>Sienna Cichlid</em> がサポートするというのは、<em>Sienna Cichlid</em> をベースとしたサーバ向け製品の登場予測に繋がる。<br />
-<em>Sienna Cichlid</em> は MxGPU といった VF(Virtual Function) 機能もサポートしており、記述からそれ用の Device ID も用意されているものと思われる。<sup class="footnote-ref" id="fnref:sienna-vf"><a href="#fn:sienna-vf">9</a></sup></p>
+<p>同じような機能に、NVIDIA の <a href="https://docs.nvidia.com/deploy/dynamic-page-retirement/index.html" rel="noreferrer" target="_blank">Dynamic Page Retirement</a>がある。</p>
+
+<p>それとして、RAS機能と EEPROM を使った不良ページの記録は信頼性を確保したい、GPU を使うサーバ向けの機能であり、それを <em>Sienna Cichlid</em> がサポートするというのは、<em>Sienna Cichlid</em> をベースとしたサーバ向け製品の登場予測に繋がる。<br />
+<em>Sienna Cichlid</em> は MxGPU といった VF(Virtual Function) 機能もサポートしており、記述からそのための Device ID も用意されているものと思われる。<sup class="footnote-ref" id="fnref:sienna-vf"><a href="#fn:sienna-vf">9</a></sup></p>
 
 <p><em>Sienna Cichlid</em> は <a href="https://www.coelacanth-dream.com/tags/rdna_2">RDNA 2</a> GPU としてグラフィクス向け機能が強化されるだけでなく、XGMI によるマルチGPUサポート、サーバ向け機能もサポートと、厚い構成のコアを持って広くに活躍する GPU となる <em>かもしれない</em> 。あくまで個人的な推測。</p>
 
-<p>しかし、RDNA系 GPU がサーバ向けもカバーするのであれば、今後 CDNA系 GPU は HPC向けといった感じになるのだろうか。</p>
+<p>しかし、RDNA系 GPU がサーバ向けもカバーするのであれば、今後 CDNA系 GPU は数値計算等の HPC向けといった感じになるのだろうか。<br />
+自分の推測であるし、クラウドゲーミングやサーバ向けとして出るんじゃないかと推測した <em>Navi12</em> も現状 Apple向けの <strong>Radeon Pro 5600M</strong> しか出ていないため、普通に外している可能性もある。</p>
 
 <hr>
 <div class="reference">
@@ -356,7 +361,7 @@ NVIDIA の <a href="https://docs.nvidia.com/deploy/dynamic-page-retirement/index
 </div>
 <div class="side_time">
    <time datetime="2020-07-21 21:14">Post:<br>&emsp;2020/07/21 21:14</time>
-   <div class="side_time_update">Update:<br>&emsp;2020/07/22 08:46</div>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/22 10:41</div>
 </div>
 <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/21/amd-sienna_cichlid-recent-info-2020-07-21.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://www.coelacanth-dream.com/about/">About</a>
@@ -396,7 +401,7 @@ NVIDIA の <a href="https://docs.nvidia.com/deploy/dynamic-page-retirement/index
       <a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
 <a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
    <time datetime="2020-07-21 21:14">Post:<br>&emsp;2020/07/21 21:14</time>
-   <div class="foot_time_update">Update:<br>&emsp;2020/07/22 08:46</div>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/22 10:41</div>
 </div>
 <small class="copyright">&copy; 2019-2020 Umio Yasuno</small>
 </footer>
