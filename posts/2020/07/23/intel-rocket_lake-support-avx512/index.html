@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <base href="https://www.coelacanth-dream.com/posts/2020/07/23/intel-rocket_lake-support-avx512/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>Intel Rocket Lake は AVX-512 をサポート &amp; 推測 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="Intel Rocket Lake は AVX-512 をサポート &amp; 推測 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="Intel Rocket Lake は AVX-512 をサポート &amp; 推測 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/07/23/intel-rocket_lake-support-avx512/">
+   <meta name="description" content="以前の Geekbench実行結果から、キャッシュ構成は Ice Lake (Client) 同様と判明していた Rocket Lake だが、エンジニアサンプリングであろうプロセッサ">
+   <meta property="og:description" content="以前の Geekbench実行結果から、キャッシュ構成は Ice Lake (Client) 同様と判明していた Rocket Lake だが、エンジニアサンプリングであろうプロセッサ">
+   <meta name="twitter:description" content="以前の Geekbench実行結果から、キャッシュ構成は Ice Lake (Client) 同様と判明していた Rocket Lake だが、エンジニアサンプリングであろうプロセッサ">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/07/23/intel-rocket_lake-support-avx512/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/07/23/intel-rocket_lake-support-avx512/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019-2020 Umio Yasuno">
+   <meta name="keywords" content="Rocket Lake">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+            <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+            <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+   <style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 86%, #172727 96%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: .98em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   word-break: keep-all;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal 1.6rem/1.2rem monospace;
+   padding: 0 .3rem .24rem .3rem;
+   vertical-align: middle;
+   margin: 0 -2px 0 0;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .3rem;
+   margin: 0;
+   word-break: break-all;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: .98rem;
+   line-height: 1.7rem;
+   overflow-x: scroll;
+   scrollbar-width: thin;
+   scrollbar-color: rgba(0,128,128, .5) rgba(0,0,0,0);
+   grid-row: 3 / 5;
+   grid-column: 1 / -1;
+   opacity: 0;
+}
+article > p {
+   letter-spacing: .015rem;
+   margin: 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .side, .home, .posts, .tags, .categories {
+   display: none;
+}
+footer {
+   grid-row: 5 / -2;
+   grid-column: 1 / -1;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 1%;
+   row-gap: 16px;
+}
+article > p ~ * {
+   display: none;
+
+}
+article > * {
+   grid-column: 3 / -1;
+   padding-bottom: 100vh;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 .5rem 0;
+   overflow-wrap: anywhere;
+}
+.breakcrumb {
+   grid-column: 3 / -2;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .2em;
+   font: italic .95rem/1.5rem monospace;
+   color: #D5FDD5;
+
+   border: 1px solid #326654;
+   max-width: max-content;
+   padding: 2px .8rem 2px .2rem;
+   word-break: keep-all;
+   overflow-wrap: anywhere;
+}
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 12px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      padding-top: 12px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 1.8rem;
+      line-height: 2.4rem;
+      max-width: 100%;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+      padding-left: 4px;
+   }
+   .side {
+      display: unset;
+      height: 92vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+      padding: 28px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+      opacity: 0;
+   }
+}
+</style>
+<link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text"><div class="breakcrumb">
+  
+   
+      
+   
+      
+   
+      
+   
+      
+   <a href="https://www.coelacanth-dream.com/">Coelacanth&#39;s Dream</a> >
+
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a> >
+
+   <a href="https://www.coelacanth-dream.com/posts/2020/">2020</a> >
+
+   <a href="https://www.coelacanth-dream.com/posts/2020/07/">2020/07</a> >
+
+   
+
+</div>
+
+
+
+   <h1>Intel Rocket Lake は AVX-512 をサポート &amp; 推測</h1>
+
+<p><a href="https://www.coelacanth-dream.com/posts/2020/06/28/intel-rocketlake-cache-guess/">以前</a>の Geekbench実行結果から、キャッシュ構成は <em>Ice Lake (Client)</em> 同様と判明していた <em>Rocket Lake</em> だが、エンジニアサンプリングであろうプロセッサの Linux Kernel が表示するメッセージ <code>dmesg</code> から、AVX-512 命令に対応することが判明した。</p>
+
+<blockquote>
+<pre><code>  [    0.000000] x86/fpu: Supporting XSAVE feature 0x020: &#39;AVX-512 opmask&#39;
+  [    0.000000] x86/fpu: Supporting XSAVE feature 0x040: &#39;AVX-512 Hi256&#39;
+  [    0.000000] x86/fpu: Supporting XSAVE feature 0x080: &#39;AVX-512 ZMM_Hi256&#39;
+  ~~~
+  [    0.000000] DMI: Intel Corporation Rocket Lake Client Platform/RocketLake S UDIMM 6L RVP, BIOS RKLSFWI1.R00.1205.A00.2005152058 05/15/2020
+  ~~~
+  [    0.080759] smpboot: CPU0: Genuine Intel(R) 0000 @ 3.20GHz (family: 0x6, model: 0xa7, stepping: 0x0)
+  ~~~
+  [    0.097075] smpboot: Total of 16 processors activated (102144.00 BogoMIPS)</code></pre>
+<p>引用元: <cite><a href="https://github.com/thesofproject/sof/issues/3173" rel="noreferrer" target="_blank">[Bug][RKL]FW load failed · Issue #3173 · thesofproject/sofL</a></cite><br />
+&emsp;&emsp;&emsp;&emsp;&gt; <a href="https://github.com/thesofproject/sof/files/4917659/dmesg.txt" rel="noreferrer" target="_blank">https://github.com/thesofproject/sof/files/4917659/dmesg.txt</a></p>
+</blockquote>
+
+<p>情報元は <a href="https://github.com/thesofproject/sof" rel="noreferrer" target="_blank">thesofproject/sof: Sound Open Firmware</a> であり、<em>Sound Open Firmware</em> は Intelプロセッサやそれとペアになる PCH に内蔵される音声処理用のDSPのサポートを提供するため、Intel がオープンソースでファームウェアとドライバーを開発するプロジェクトである。<sup class="footnote-ref" id="fnref:intel-sof"><a href="#fn:intel-sof">1</a></sup><br />
+上記 <code>dmesg</code> のログもバグ報告のためアップロードされたもの。</p>
+
+<p>今回の <em>Rocket Lake</em> プロセッサの仕様は、16-Thread、Base Clock 3.2GHz、ステッピングは <code>0x0</code> と、前回上げた Geekbench実行結果のものと一致する。<br />
+<span class="reflink"><a href="https://browser.geekbench.com/v5/compute/1124595" rel="noreferrer" target="_blank">Intel Corporation Rocket Lake Client Platform &ndash; Geekbench Browser</a></span><br>
+
+しかし、<code>dmesg</code> ではベンチマーク実行結果よりも詳細な情報が表示されるため、前回ではわからなかった AVX-512 命令のサポートが判明した。</p>
+
+<h2 id="implement">実装はどうなるか</h2>
+
+<p>前回行なった推測では、端的に言って、<em>Skylake-SP</em> の例から消費電力比性能が悪化してしまうため、<em>Rocket Lake</em> では AVX-512 をサポートしないのではないか、としたが、<br />
+今回明らかになった情報でそれは破れた。<br />
+しかし、実装が <em>Ice Lake (Client)</em> とまったく同じかはまだわからず、異なる可能性がある。</p>
+
+<p>異なる実装方式で考えられるのは、SIMD演算器自体は 256-bit であり、AVX-512 を 2回に分けて実行するというものだ。<br />
+これはそれなりに見かける実装方法であり、例えば、AMD <em>Zen アーキテクチャ</em> は AVX2(256-bit) をサポートしていたが、SIMD演算器は 128-bit までであったし、Centaur <em>CNS アーキテクチャ</em> (CHA SoC) も AVX-512 をサポートするが SIMD演算器は 256-bit だった。<br />
+前2つの例とは少し異なるが、Intel <em>Skylake-SP</em> も <code>Port 5</code> では AVX-512 を 1回で処理することができ、<code>Port 0</code> と <code>Port 1</code> はそれぞれ 256-bit だが束ねることで全体のスループット的には 2個の AVX-512 実行が可能なものとなっていた。</p>
+
+<p>同様に、<em>Rocket Lake</em> も AVX-512 をサポートするが、演算器は 256-bit の実装に留め、2回に分けて実行、もしくはそれぞれ 256-bit の演算器を持つ 2つの実行ポートを束ねて実行する方式が考えられる。</p>
+
+<p>この実装方式の利点としては、AVX-512 をサポートでき、それに必要とされる変更は主にベクトルレジスタの増量とアクセスポート部であるため、演算器も対応させる方式と比べて、割かなければならないリソース、ダイエリアはずっと小さくて済む。<br />
+欠点としては、若干でも必要とするリソースは増えるのに、ピーク性能は変わらないことがあげられるが、これに関してはサポートすることの意味が Intel にとっては大きいだろうから、あまり気にならないように思う。</p>
+
+<p><em>Ice Lake (Client)</em> のマイクロアーキテクチャは以下の画像の様になっており、AVX-512 を処理できるのは <code>Port 1</code> のみである。</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/07/23/ice_lake-client-arch.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/07/23/ice_lake-client-arch.webp"
+         alt="画像出典: Intel® 64 and IA-32 Architectures Optimization Reference Manual"/> </a><figcaption>
+         <h4>Ice Lake (Client) Microarchitecture</h4><p>画像出典: <cite><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="noreferrer" target="_blank">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></cite></p>
+   </figcaption>
+</figure>
+
+
+<p><em>Rocket Lake</em> ではこの <code>Port 0</code> と <code>Port 1</code> を束ねて AVX-512 を実行する方式を取る <em>かもしれない</em> 。</p>
+
+<p>そして気になるのは、2回に分ける、もしくは 2ポートを束ねる方式の場合、L1 Data Cache の帯域がどうなるかだが、<em>Skylake (Server)</em> アーキテクチャから、消費電力を抑えるため 96Byte/Cycle とすることが考えられる。<br />
+ただ、まあこれは推測よりも、自分の願望と言った方が近い気がする。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Data Cache</th>
+<th align="center">Skylake (Client)</th>
+<th align="center">Skylake (Server)</th>
+<th align="center">Ice Lake (Client)</th>
+<th align="center">Rocket Lake</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">L1D$ Size</td>
+<td align="center">32KB</td>
+<td align="center">32KB</td>
+<td align="center">48KB</td>
+<td align="center">48KB</td>
+</tr>
+
+<tr>
+<td align="left">L1D$ Bandwidth<br>(byte/cycle)</td>
+<td align="center">96B<br>(Load:2x32B)<br>(Store:1x32B)</td>
+<td align="center">192B<br>(Load:2x64B?)<br>(Store:1x64B?)</td>
+<td align="center">192B<br>(Load:2x64B)<br>(Store:1x64B or 2x32B)</td>
+<td align="center">96B??(guess)<br>(Load:2x32B??)<br>(Store:1x32B??)</td>
+</tr>
+
+<tr>
+<td align="left">L2$ Size</td>
+<td align="center">256KB</td>
+<td align="center">1024KB</td>
+<td align="center">512KB</td>
+<td align="center">512KB</td>
+</tr>
+
+<tr>
+<td align="left">L2$ Peak Bandwidth (byte/cycle)</td>
+<td align="center">64B</td>
+<td align="center">64B</td>
+<td align="center">64B</td>
+<td align="center">64B?</td>
+</tr>
+
+<tr>
+<td align="left">L3$ Size (per Core)</td>
+<td align="center">2MB</td>
+<td align="center">1.375MB</td>
+<td align="center">2MB</td>
+<td align="center">2MB</td>
+</tr>
+</tbody>
+</table>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:intel-sof"><a href="https://software.intel.com/content/www/us/en/develop/articles/designing-firmware-for-an-open-world.html" rel="noreferrer" target="_blank">Designing Firmware for an Open World</a>
+ <a class="footnote-return" href="#fnref:intel-sof"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rocket_lake/" class="side_tag_lower">Rocket Lake</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="side_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/intel/" class="side_category_lower">Intel</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-07-23 09:06">Post:<br>&emsp;2020/07/23 09:06</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/07/23 11:18</div>
+</div>
+<nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/23/intel-rocket_lake-support-avx512.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+         <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+         <a href="https://www.coelacanth-dream.com/about/#support">Support</a>
+         <a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+      </nav><nav class="side_share">
+   Share:
+   <a href="https://twitter.com/intent/tweet?text=Intel%20Rocket%20Lake%20%e3%81%af%20AVX-512%20%e3%82%92%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%20&amp;%20%e6%8e%a8%e6%b8%ac%20%7c%20Coelacanth%27s%20Dream&hashtags=Rocket_Lake%0a&url=https://www.coelacanth-dream.com/posts/2020/07/23/intel-rocket_lake-support-avx512/" target="_blank noreferrer">Twitter</a>
+</nav>
+
+   <small class="copyright">&copy; 2019-2020 Umio Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rocket_lake/" class="foot_tag_lower">Rocket Lake</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="foot_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/intel/" class="foot_category_lower">Intel</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/07/23/intel-rocket_lake-support-avx512.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+      <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://www.coelacanth-dream.com/about/#support">Support</a>
+      <a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav><div class="foot_time">
+   <time datetime="2020-07-23 09:06">Post:<br>&emsp;2020/07/23 09:06</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/07/23 11:18</div>
+</div>
+<nav class="foot_share">
+   Share:
+   <a href="https://twitter.com/intent/tweet?text=Intel%20Rocket%20Lake%20%e3%81%af%20AVX-512%20%e3%82%92%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%20&amp;%20%e6%8e%a8%e6%b8%ac%20%7c%20Coelacanth%27s%20Dream&hashtags=Rocket_Lake%0a&url=https://www.coelacanth-dream.com/posts/2020/07/23/intel-rocket_lake-support-avx512/" target="_blank noreferrer">Twitter</a>
+</nav>
+
+   <small class="copyright">&copy; 2019-2020 Umio Yasuno</small>
+</footer>
+</main>
+   </body>
+</html>
