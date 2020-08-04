@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <link rel="preload" href="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" as="script">
+<script data-ad-client="ca-pub-8523229124275958" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/08/04/adl-coreboot/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>Coreboot に Alder Lake のデバイスIDが追加　―― ADL-S の GPU は最大で GT1、ADL-P は GT2 か | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="Coreboot に Alder Lake のデバイスIDが追加　―― ADL-S の GPU は最大で GT1、ADL-P は GT2 か | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="Coreboot に Alder Lake のデバイスIDが追加　―― ADL-S の GPU は最大で GT1、ADL-P は GT2 か | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/08/04/adl-coreboot/">
+   <meta name="description" content="オープンソースなBIOS、ファームウェアを開発するプロジェクト Coreboot に Alder Lake-S/P の DeviceID を追加するパッチが投稿された。 soc/intel/common: Include Alderlake device IDs (I17ce56a2) · Gerrit Code Review インデックス Alder Lake iGPU (">
+   <meta property="og:description" content="オープンソースなBIOS、ファームウェアを開発するプロジェクト Coreboot に Alder Lake-S/P の DeviceID を追加するパッチが投稿された。 soc/intel/common: Include Alderlake device IDs (I17ce56a2) · Gerrit Code Review インデックス Alder Lake iGPU (">
+   <meta name="twitter:description" content="オープンソースなBIOS、ファームウェアを開発するプロジェクト Coreboot に Alder Lake-S/P の DeviceID を追加するパッチが投稿された。 soc/intel/common: Include Alderlake device IDs (I17ce56a2) · Gerrit Code Review インデックス Alder Lake iGPU (">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/08/04/adl-coreboot/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/08/04/adl-coreboot/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio Yasuno">
+   <meta name="keywords" content="Alder Lake">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 86%, #172727 96%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: .98em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   word-break: keep-all;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .84em/.8em monospace;
+   padding: 0 .22em .2em .22em;
+   margin: 0 -2px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .3rem;
+   margin: 0;
+   word-break: break-all;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: .98rem;
+   line-height: 1.7rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+   opacity: 0;
+}
+article > p {
+   letter-spacing: .015rem;
+   margin: 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .side, .home, .posts, .tags, .categories {
+   display: none;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+}
+.entry_google_ad {
+   grid-row: 6 /-3;
+   grid-column: 3 /-2;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 5 /-3;
+   grid-column: 3 /-2;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 1%;
+   row-gap: 16px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 .5rem 0;
+   overflow-wrap: anywhere;
+}
+.breakcrumb {
+   grid-column: 3 / -2;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .2em;
+   font: italic .95rem/1.5rem monospace;
+   color: #D5FDD5;
+
+   border: 1px solid #326654;
+   max-width: max-content;
+   padding: 2px .8rem 2px .2rem;
+   word-break: keep-all;
+   overflow-wrap: anywhere;
+}
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 12px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      padding-top: 12px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 3px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+      padding-left: 4px;
+   }
+   .side {
+      display: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #468E76;
+      font-size: 1rem;
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+      opacity: 0;
+   }
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text"><div class="breakcrumb">
+      <a href="https://www.coelacanth-dream.com/">Coelacanth&#39;s Dream</a> >
+      <a href="https://www.coelacanth-dream.com/posts/">Archive</a> >
+      <a href="https://www.coelacanth-dream.com/posts/2020/">2020</a> >
+      <a href="https://www.coelacanth-dream.com/posts/2020/08/">2020/08</a> >
+</div>
+
+   <h1>Coreboot に Alder Lake のデバイスIDが追加　―― ADL-S の GPU は最大で GT1、ADL-P は GT2 か</h1>
+
+<p>オープンソースなBIOS、ファームウェアを開発するプロジェクト <a href="https://www.coreboot.org/" rel="noreferrer" target="_blank">Coreboot</a> に <em>Alder Lake-S/P</em> の DeviceID を追加するパッチが投稿された。<br />
+<span class="reflink"><a href="https://review.coreboot.org/c/coreboot/+/44108" rel="noreferrer" target="_blank">soc/intel/common: Include Alderlake device IDs (I17ce56a2) · Gerrit Code Review</a></span><br>
+</p>
+
+<h2 id="page_index">インデックス</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#adl-igpu">Alder Lake iGPU ( GT0/GT1/GT2 )</a></li>
+<li><a href="#adl-pcie">Alder Lake PCH PCIe</a></li>
+<li><a href="#adl-guess">Alder Lake 推測</a></li>
+</ul>
+
+</div>
+
+
+<h2 id="adl-igpu">Alder Lake iGPU ( GT0/GT1/GT2 )</h2>
+
+<p><em>Alder Lake</em> の GPU部に付けられたマクロ名から、<em>Alder Lake</em> GPU には <strong>GT0、GT1、GT2</strong> の 3種類が存在し、<em>Alder Lake-S</em> は最大で <strong>GT1</strong> 、<em>Alder Lake-P</em> は最大で <strong>GT2</strong> の規模を持つことがわかる。<sup class="footnote-ref" id="fnref:adl-gpu-deviceid"><a href="#fn:adl-gpu-deviceid">1</a></sup></p>
+
+<p>Intel 次世代のデスクトップ向けプロセッサと見込まれている <a href="https://www.coelacanth-dream.com/tags/rocket_lake">Rocket Lake</a> もまた GPU部の規模は最大で <strong>GT1</strong> までとなっている。<br />
+そしてベンチマーク結果から、<em>Alder Lake-S</em> の GPU構成は <em>Gen12 GT1</em> の規模と一致することがわかっている。<sup class="footnote-ref" id="fnref:adl-s-sisoftware"><a href="#fn:adl-s-sisoftware">2</a></sup><br />
+<span class="reflink"><a href="https://www.coelacanth-dream.com/posts/2020/05/08/intel-add-dg1-rkl-oss-driver/">Intel、オープンソースドライバーに DG1 と Rocket Lake の関するコードを追加 ――DG1 は 96EU、RKL は 16EU または 32EU | Coelacanth&rsquo;s Dream</a></span><br>
+</p>
+
+<p><strong>GT0</strong> については Coreboot 内のファイルには記載がないが、<a href="https://github.com/intel/gmmlib" rel="noreferrer" target="_blank">Intel&reg; Graphics Memory Management Library</a> 内の <em>TGL LP GT0</em> に対する記載から<sup class="footnote-ref" id="fnref:tgl-lp-gt0"><a href="#fn:tgl-lp-gt0">3</a></sup>、GFX(Slice/Sub-Slice/EU?) 機能は持たない、もしくは無効化されており、ディスプレイ出力のみに対応したバリアントと考えられる。</p>
+
+<h2 id="adl-pcie">Alder Lake PCH PCIe</h2>
+
+<p><em>Alder Lake-S</em> と <em>Alder Lake-P</em> で PCH(Platform Controller Hub) が持つ PCIe RP(Root Port) の DeviceID 数が異なり、<br />
+<em>ADP_S (Alder Lake PCH S)</em> は 28-RP、<em>ADP_P (Alder Lake PCH P)</em> は 12-RP となっている。</p>
+
+<p><em>Comet Lake</em> 世代のものと比較すると、デスクトップ向けである <em>Comet Lake-S</em> の PCH、 <em>CMP_H</em> は 24-RP、モバイル向けの <em>CMP_LP</em> は 16-RP であり、<br />
+<em>Alder Lake-S</em> は末尾、GPU部規模からも推測されるようにデスクトップ向けのプロセッサと考えられ、<em>Alder Lake-P</em> はモバイル向け、または組み込み向けといった小規模なシステム向けのプロセッサと考えられる。</p>
+
+<p>次世代 Atom系プロセッサにおいて、モバイル向けとなる <em>JSP (Jasper Lake PCH)</em> は 8-RP、組み込み向けの <em>MCC (Mule Creek Canyon, Elkhart Lake PCH)</em> は 7-RP であり、<em>ADP_P</em> は Core系 と Atom系の中間の PCIe RP(Root Port) を持つと言える。<br />
+しかし、Linux Kernel へのあるパッチで、<em>Alder Lake(-S)</em> のモデルナンバー(<code>x86_Model</code>) が明らかになると共に、<a href="https://www.coelacanth-dream.com/tags/lakefiled">Lakefield</a>同様に Core系と Atom系の両方のコアを持つハイブリッド構成を取ることが確かとなったが、<br />
+<em>Alder Lake-P</em> もまたハイブリッド構成を取るかどうかは朧気である。<br />
+<span class="reflink"><a href="https://www.coelacanth-dream.com/posts/2020/07/21/intel-adl-hybrid-core/">Intel Alder Lake が ハイブリッドコア構成を取ることが確かに | Coelacanth&rsquo;s Dream</a></span><br>
+</p>
+
+<h2 id="adl-guess">Alder Lake 推測</h2>
+
+<p>まず <em>Alder Lake-S</em> はデスクトップ向けと考えて問題ないのではないかと思う。<br />
+<em>Alder Lake-P</em> はモバイル向けか組み込み向けかはっきりしないが、<strong>GT2</strong> の DeviceID を持つことから、モバイル向けにおいて GPU性能を重視している Intel の最近の傾向からモバイル向けである色が濃いように思う。<br />
+<em>Alder Lake-S</em> は最大 <strong>GT1</strong> 、<em>Alder Lake-P</em> は <strong>GT2</strong> というのは、10th Gen プロセッサに存在する、CPU性能は <em>Comet Lake</em> 、GPU性能は <em>Ice Lake</em> という棲み分けを引き継いだ結果であるようにも思える。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Intel</th>
+<th align="center">CPU</th>
+<th align="center">GPU</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">10th Gen</td>
+<td align="center">Comet Lake</td>
+<td align="center">Ice Lake</td>
+</tr>
+
+<tr>
+<td align="left">11th Gen</td>
+<td align="center">Rocket Lake?</td>
+<td align="center">Tiger Lake?</td>
+</tr>
+
+<tr>
+<td align="left">12th Gen?</td>
+<td align="center">Alder Lake-S??</td>
+<td align="center">Alder Lake-P??</td>
+</tr>
+</tbody>
+</table>
+
+<p>ただ、<em>Alder Lake-S/P</em> の GPU が <em>Tiger Lake /Rocket Lake</em> より進んだアーキテクチャではなく、同じ <a href="https://www.coelacanth-dream.com/tags/gen12">Gen12アーキテクチャ</a> を取るのであれば、規模もまた変わらない可能性がある。<br />
+オープンソース・ドライバーの記述から、<em>Gen12アーキテクチャ</em> はプロセッサごとではなく、<strong>GT</strong> の後に続く数字からその規模を判定しているからだ。<sup class="footnote-ref" id="fnref:gen12-dev-info"><a href="#fn:gen12-dev-info">4</a></sup><br />
+もしそれが合っているとして、<em>Alder Lake-P GT2</em> が <em>Tiger Lake LP GT2</em> より上の GPU性能を出すにはクロックを引き上げるかメモリ帯域を増やす必要があると思われる。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Intel Gen12</th>
+<th align="center">GT0.5</th>
+<th align="center">GT1</th>
+<th align="center">GT2</th>
+<th align="center">GT2 (DG1)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Dual-Sub Slices</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">6</td>
+<td align="center">6</td>
+</tr>
+
+<tr>
+<td align="left">&ensp;EUs</td>
+<td align="center">16</td>
+<td align="center">32</td>
+<td align="center">96</td>
+<td align="center">96</td>
+</tr>
+
+<tr>
+<td align="left">&ensp;&ensp;SPs</td>
+<td align="center">128</td>
+<td align="center">256</td>
+<td align="center">768</td>
+<td align="center">768</td>
+</tr>
+
+<tr>
+<td align="left">GPU L3$</td>
+<td align="center">1536KB?</td>
+<td align="center">1536KB?</td>
+<td align="center">3072KB</td>
+<td align="center">16384KB<sup class="footnote-ref" id="fnref:dg1-l3"><a href="#fn:dg1-l3">5</a></sup></td>
+</tr>
+
+<tr>
+<td align="left"></td>
+<td align="center">RKL</td>
+<td align="center">TGL /RKL<br>/ADL(-S/P)?</td>
+<td align="center">TGL /ADL-P?</td>
+<td align="center">DG1</td>
+</tr>
+</tbody>
+</table>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:adl-gpu-deviceid"><a href="https://review.coreboot.org/c/coreboot/+/44108/1/src/include/device/pci_ids.h#3607" rel="noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/44108/1/src/include/device/pci_ids.h#3607</a>
+ <a class="footnote-return" href="#fnref:adl-gpu-deviceid"><sup>[return]</sup></a></li>
+<li id="fn:adl-s-sisoftware"><a href="https://ranker.sisoftware.co.uk/show_system.php?q=cea598ab93aa98a193b5d2efc9bb86a0c9f4d2ba87a1d9e4c2a7c2ffcfe99aa79f&amp;l=en" rel="noreferrer" target="_blank">Details for Computer/Device Intel Alder Lake Client Platform Alder Lake Client System (Intel AlderLake-S ADP-S DRR4 CRB) : SiSoftware Official Live Ranker</a>
+ <a class="footnote-return" href="#fnref:adl-s-sisoftware"><sup>[return]</sup></a></li>
+<li id="fn:tgl-lp-gt0"><a href="https://github.com/intel/gmmlib/blob/master/Source/inc/common/igfxfmid.h" rel="noreferrer" target="_blank">gmmlib/igfxfmid.h at master · intel/gmmlib</a>
+ <a class="footnote-return" href="#fnref:tgl-lp-gt0"><sup>[return]</sup></a></li>
+<li id="fn:gen12-dev-info"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/559b26b7ee093c2cbe446bf8023876642deadcee/src/intel/dev/gen_device_info.c" rel="noreferrer" target="_blank">src/intel/dev/gen_device_info.c · 559b26b7ee093c2cbe446bf8023876642deadcee · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:gen12-dev-info"><sup>[return]</sup></a></li>
+<li id="fn:dg1-l3"><a href="https://www.coelacanth-dream.com/posts/2020/06/20/intel-dg1-support-opencl-levelzero/">Intel、DG1 において OpenCL と oneAPI Level Zero をサポート　―― 巨大なキャッシュを持つ DG1 | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:dg1-l3"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="side_tag_lower">Alder Lake</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="side_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/intel/" class="side_category_lower">Intel</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-08-04 11:19+09:00">Post:<br>&emsp;2020/08/04 11:19&emsp;JST</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/08/04 12:43&emsp;JST</div>
+</div>
+
+<nav class="side_share">
+   Share:
+   <a href="https://twitter.com/intent/tweet?text=Coreboot%20%e3%81%ab%20Alder%20Lake%20%e3%81%ae%e3%83%87%e3%83%90%e3%82%a4%e3%82%b9ID%e3%81%8c%e8%bf%bd%e5%8a%a0%e3%80%80%e2%80%95%e2%80%95%20ADL-S%20%e3%81%ae%20GPU%20%e3%81%af%e6%9c%80%e5%a4%a7%e3%81%a7%20GT1%e3%80%81ADL-P%20%e3%81%af%20GT2%20%e3%81%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/08/04/adl-coreboot/&hashtags=AlderLake" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/08/04/adl-coreboot.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+         <a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+         <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+         <a href="https://www.coelacanth-dream.com/about/#support">Donate</a>
+         <a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="foot_tag_lower">Alder Lake</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="foot_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/intel/" class="foot_category_lower">Intel</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/08/04/adl-coreboot.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+      <a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+      <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+      <a href="https://www.coelacanth-dream.com/about/#support">Donate</a>
+      <a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+<nav class="foot_share">
+   Share:
+   <a href="https://twitter.com/intent/tweet?text=Coreboot%20%e3%81%ab%20Alder%20Lake%20%e3%81%ae%e3%83%87%e3%83%90%e3%82%a4%e3%82%b9ID%e3%81%8c%e8%bf%bd%e5%8a%a0%e3%80%80%e2%80%95%e2%80%95%20ADL-S%20%e3%81%ae%20GPU%20%e3%81%af%e6%9c%80%e5%a4%a7%e3%81%a7%20GT1%e3%80%81ADL-P%20%e3%81%af%20GT2%20%e3%81%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/08/04/adl-coreboot/&hashtags=AlderLake" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+<div class="foot_time">
+   <time datetime="2020-08-04 11:19+09:00">Post:<br>&emsp;2020/08/04 11:19&emsp;JST</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/08/04 12:43&emsp;JST</div>
+</div>
+
+      <small class="copyright">&copy; 2019 - 2020 Umio Yasuno</small>
+</footer>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+      </main>
+   </body>
+</html>
