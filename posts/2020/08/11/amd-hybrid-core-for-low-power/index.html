@@ -244,6 +244,22 @@ h1 {
 <p>堅い特許文書を自分なりに噛み砕いているため、誤解釈等が含まれている可能性があります。<br />
 もし誤解釈があれば、気楽に連絡下さると嬉しいです。</p>
 
+<h2 id="page_index">インデックス</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#summary">概要</a>
+
+<ul>
+<li><a href="#high-low-processor">High-Feature, Low-Feature</a></li>
+<li><a href="#switch-exec-core">実行コアの切り替え方法</a></li>
+<li><a href="#merit-demerit">利点と欠点</a></li>
+</ul></li>
+<li><a href="#aside">余談</a></li>
+</ul>
+
+</div>
+
+
 <h2 id="summary">概要</h2>
 
 <p>まず、特許の内容としては、規模(性能、電力効率)、対応命令範囲の異なる 2種類の CPUコアに対し、
@@ -269,16 +285,30 @@ h1 {
 <code>High</code>コアは共有キャッシュメモリにあるスレッドの状態を読み取り、復元、スレッドの実行を開始する。</p>
 
 <p>コアを切り替え、共有キャッシュメモリにスレッドの状態をセーブする際、他のデータやレジスタの内容を転送することができ、切り替え前のコアが持つキャッシュメモリの内容を一部、または全て転送することも可能となっている。<br />
-最初 <code>Low</code>コアで実行する時、サポートしていない機能/命令が検出される前に、スレッドの状態をセーブし、対応した <code>High</code>コアにデータを転送することもできる。</p>
+これにより、<code>High</code>コアでの実行を開始するまでの時間を短くすることができる。<br />
+最初 <code>Low</code>コアで実行する時、サポートしていない機能/命令が検出される前に、スレッドの状態を <code>Low</code>コア、<code>High</code>コア両方のプライベートキャッシュ(L1cache) にセーブし、対応した <code>High</code>コアにデータを転送することもできる。</p>
 
 <p>これらの流れ、操作は異なる順序、並行に実行することも許容されている。</p>
 
-<p>また、<code>low power mode</code> というモードが存在し、これは C-State のような ACPI(Advanced Configuration and Power Interface) 機能に含むことも可能である。<br />
+<p>また、<code>low power mode</code> が存在し、これは C-State のような ACPI(Advanced Configuration and Power Interface) 機能に含むことも可能である。<br />
 恐らく、電力管理機能と合わせて、性能が必要な際に <code>Low</code>コアから<code>High</code>コアに切り替えたり、逆にそこまで性能を必要としない際、<code>High</code>コアから<code>Low</code>コアに切り替えるのだろう。<br />
 <code>low power mode</code> 時ではまず <code>Low</code>コアで実行されるが、最初から <code>High</code>コアで実行するモードも存在すると思われる。</p>
 
-<p>実行スレッドを切り替える以上、Intel <a href="https://www.coelacanth-dream.com/tags/lakefield">Lakefield</a>のように <em>Tremont</em> コアでバックグラウンドタスクを実行する、といったことは不可能であるように思う。<br />
-また、SMT機能に関しては、スレッドの状態をセーブするのに必要なキャッシュメモリ量が増えるが、可能である <em>かもしれない</em> 。</p>
+<p>SMT機能に関しては、スレッドの状態をセーブするのに必要なキャッシュメモリ量が増えるが、可能である <em>かもしれない</em> 。</p>
+
+<h3 id="merit-demerit">利点と欠点</h3>
+
+<p>この構成の利点と欠点だが、Intel <a href="https://www.coelacanth-dream.com/tags/lakefield">Lakefield</a>と比較して見ていく。</p>
+
+<p>利点としては、まず<a href="https://www.coelacanth-dream.com/tags/lakefield">Lakefield</a> のように、AVX命令のような片方のコア(<em>Core /SunnyCove</em>) が対応していて、もう片方(<em>Atom /Tremont</em>) は対応していないような命令を、プロセッサ全体では非対応とする必要がないことがあげられる。<br />
+<code>High</code>コアのみが対応し、<code>Low</code>コアが対応していない機能/命令も実行コアの切り替えによって実行が可能となっている。<br />
+スレッドを実行するコアの切り替えも、<a href="https://www.coelacanth-dream.com/tags/lakefield">Lakefield</a> は L3cache を介して行なわれるが、AMD の構成ではそれよりも低階層な L2cache を介すため、低レイテンシ、省電力で行なえるはずだ。</p>
+
+<p>欠点としては、実行スレッドを切り替える以上、<a href="https://www.coelacanth-dream.com/tags/lakefield">Lakefield</a>のように <em>Atom /Tremont</em> コアでバックグラウンドタスクを実行する、といったことは不可能であるように思う。<br />
+その場合、8* <code>High</code>コア + 8* <code>Low</code>コアという構成であるとき、見かけ上のコア数は 8-Core となる。<br />
+ここはハイブリッドコア技術における、Intel と AMD のわかりやすい違いと言えるのではないだろうか。<br />
+また、<code>Low</code>コアが対応していない機能/命令も <code>High</code>コアに切り替えて実行可能だが、その分対応命令は対称的な <a href="https://www.coelacanth-dream.com/tags/lakefield">Lakefield</a>よりも切り替え数は増えることが考えられる。<br />
+L2cache を介すことでどれだけそれを補えるか次第な気がする。</p>
 
 <h2 id="aside">余談</h2>
 
@@ -289,7 +319,7 @@ h1 {
 <p>2種類のコアによって、広い範囲の消費電力比性能をカバーするという点では同じようには思うが。</p>
 
 <p>個人的な推測を書けば、<code>Low</code>コアは <code>High</code>コアの存在を前提にガッツリ機能を削っているようにも見える。<br />
-アーキテクチャ名やブランドも <code>Low</code>コアと <code>High</code>コアそれぞれに付けるのではなく、まとめたものとして付けられるかもしれない。</p>
+これを実装したプロセッサが実際に世に出るとして、アーキテクチャ名やブランドも <code>Low</code>コアと <code>High</code>コアそれぞれに付けるのではなく、まとめたものとして付けられるかもしれない。</p>
 
 </article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
@@ -309,7 +339,7 @@ h1 {
 </div>
 <div class="side_time">
    <time datetime="2020-08-11 02:35+09:00">Post:<br>&emsp;2020/08/11 02:35&emsp;JST</time>
-   <div class="side_time_update">Update:<br>&emsp;2020/08/11 06:21&emsp;JST</div>
+   <div class="side_time_update">Update:<br>&emsp;2020/08/11 08:28&emsp;JST</div>
 </div>
 
 <nav class="side_share">
@@ -361,7 +391,7 @@ h1 {
 <a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
 <div class="foot_time">
    <time datetime="2020-08-11 02:35+09:00">Post:<br>&emsp;2020/08/11 02:35&emsp;JST</time>
-   <div class="foot_time_update">Update:<br>&emsp;2020/08/11 06:21&emsp;JST</div>
+   <div class="foot_time_update">Update:<br>&emsp;2020/08/11 08:28&emsp;JST</div>
 </div>
 
       <small class="copyright">&copy; 2019 - 2020 Umio Yasuno</small>
