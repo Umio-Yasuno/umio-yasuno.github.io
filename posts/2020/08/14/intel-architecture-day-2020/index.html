@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   <link rel="preload" href="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" as="script">
+<script data-ad-client="ca-pub-8523229124275958" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/">
+   <meta name="description" content="Intel は 2020/08/13 にバーチャルイベント「Architecture Day 2020」開催、次世代 CPU/GPU のアーキテクチャ詳細、次々世代 CPU/GPU の概要を発表した。 記事タイトルにあ">
+   <meta property="og:description" content="Intel は 2020/08/13 にバーチャルイベント「Architecture Day 2020」開催、次世代 CPU/GPU のアーキテクチャ詳細、次々世代 CPU/GPU の概要を発表した。 記事タイトルにあ">
+   <meta name="twitter:description" content="Intel は 2020/08/13 にバーチャルイベント「Architecture Day 2020」開催、次世代 CPU/GPU のアーキテクチャ詳細、次々世代 CPU/GPU の概要を発表した。 記事タイトルにあ">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio Yasuno">
+   <meta name="keywords" content="DG1, Alder Lake, Tiger Lake, Gen12">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 86%, #172727 96%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: .98em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   word-break: keep-all;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal 1.6rem/1.2rem monospace;
+   padding: 0 .32rem .26rem .32rem;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .3rem;
+   margin: 0;
+   word-break: break-all;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: .98rem;
+   line-height: 1.7rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+   opacity: 0;
+}
+article > p {
+   letter-spacing: .015rem;
+   margin: .5rem 0 .5rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .side, .home, .posts, .tags, .categories {
+   display: none;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+}
+.entry_google_ad {
+   grid-row: 6 /-3;
+   grid-column: 3 /-2;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 5 /-3;
+   grid-column: 3 /-2;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 1%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 .5rem 0;
+   overflow-wrap: anywhere;
+}
+.breakcrumb {
+   grid-column: 3 / -2;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .2em;
+   font: italic .95rem/1.5rem monospace;
+   color: #D5FDD5;
+
+   border: 1px solid #326654;
+   max-width: max-content;
+   padding: 2px .8rem 2px .2rem;
+   word-break: keep-all;
+   overflow-wrap: anywhere;
+}
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 16px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      padding-top: 12px;
+      border-bottom: 1px solid #468E76;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 3px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+      opacity: 0;
+   }
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text"><div class="breakcrumb">
+      <a href="https://www.coelacanth-dream.com/">Coelacanth&#39;s Dream</a> >
+      <a href="https://www.coelacanth-dream.com/posts/">Archive</a> >
+      <a href="https://www.coelacanth-dream.com/posts/2020/">2020</a> >
+      <a href="https://www.coelacanth-dream.com/posts/2020/08/">2020/08</a> >
+</div>
+
+   <h1>Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細</h1>
+
+<p>Intel は 2020/08/13 にバーチャルイベント「Architecture Day 2020」開催、次世代 CPU/GPU のアーキテクチャ詳細、次々世代 CPU/GPU の概要を発表した。</p>
+
+<p>記事タイトルにある通り個人的なまとめであり、あえて取り上げていない内容もある。これまでの情報と結びつけるメモ書きに近い。<br />
+内容の網羅、特に <em>Tiger Lake</em> の詳細情報を望む方は以下を確認していただきたく思う。</p>
+
+<ul>
+<li><a href="https://newsroom.intel.com/editorials/advances-across-6-pillars-technology/" rel="noreferrer" target="_blank">Intel Delivers Advances Across 6 Pillars of Technology, Powering Our Leadership Product Roadmap | Intel Newsroom</a></li>
+<li><a href="https://newsroom.intel.com/wp-content/uploads/sites/11/2020/08/intel-2020-architecture-day-fact-sheet.pdf" rel="noreferrer" target="_blank">Fact Sheet: &ndash; intel-2020-architecture-day-fact-sheet.pdf</a></li>
+<li><a href="https://vimeo.com/intelpr/review/447304765/179933d14f" rel="noreferrer" target="_blank">VimeoArchitecture Day 2020 (Event Replay)</a></li>
+</ul>
+
+<h2 id="page_index">インデックス</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#cpu">CPU</a>
+
+<ul>
+<li><a href="#adl">Alder Lake は Golden Cove と Gracemont のハイブリッド構成</a></li>
+</ul></li>
+<li><a href="#gpu">GPU</a>
+
+<ul>
+<li><a href="#xe-hp-1t-512eu"><strong>X<sup>e</sup><sub>HP</sub></strong>
+は 1-Tile 512EU</a></li>
+<li><a href="#xe-lp-detail"><strong>X<sup>e</sup><sub>LP</sub></strong>
+アーキテクチャ詳細</a></li>
+<li><a href="#sg1"><strong>X<sup>e</sup><sub>LP</sub></strong>
+ベースのサーバー向けGPU SG1</a></li>
+</ul></li>
+</ul>
+
+</div>
+
+
+<h2 id="cpu">CPU</h2>
+
+<h3 id="adl">Alder Lake は Golden Cove と Gracemont のハイブリッド構成</h3>
+
+<p>ハイブリッドコア構成を採用する <a href="https://www.coelacanth-dream.com/tags/alder_lake">Alder Lake</a> が、次々世代<code>Core</code>アーキテクチャ <em>Golden Cove</em> 、次世代<code>Atom</code>アーキテクチャ <em>Gracemont</em> を組み合わせたものであることが明かされた。<br />
+性能ではクライアント向けをカバーしつつ、優れた電力比性能を発揮するとしている。</p>
+
+<h2 id="gpu">GPU</h2>
+
+<h3 id="xe-hp-1t-512eu"><strong>X<sup>e</sup><sub>HP</sub></strong>
+ は 1-Tile 512EU</h3>
+
+<p><strong>X<sup>e</sup><sub>HP</sub></strong>
+ GPU はコアとなる Tile から構成され、Tile数は 1-Tile から 2-Tile、または 4-Tile となる。複数のタイルはマルチコアGPU であるように動作し、高いスケーリング性能を持つ。<br />
+複数の Tile は 1つのパッケージに収められ、Tile 間は EMIB 技術で接続される。<br />
+また、製造プロセスは <em>Intel 10nm Enhanced SuperFin</em> とされており、<em>Tiger Lake</em> や <em>DG1</em> の製造プロセスから次世代のものとされる。</p>
+
+<p>そして、下記画像は、動画内で <strong>X<sup>e</sup><sub>HP</sub></strong>
+ のスケーリング性能を示すデモを行なった時のスクリーンショットだが、ログの部分に <code>Compute units: 512</code> と表示されている。</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/08/14/xe-hp-scaling.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/08/14/xe-hp-scaling.webp"
+         alt="画像出典: VimeoArchitecture Day 2020 (Event Replay)"/> </a><figcaption>
+         <p>画像出典: <a href="https://vimeo.com/intelpr/review/447304765/179933d14f" rel="noreferrer" target="_blank">VimeoArchitecture Day 2020 (Event Replay)</a></p>
+   </figcaption>
+</figure>
+
+
+<p>ログの内容から、実行しているソフトウェアは <a href="https://github.com/krrishnarraj/clpeak" rel="noreferrer" target="_blank">clpeak</a> は思われる。<br />
+<a href="https://www.coelacanth-dream.com/posts/2020/08/06/polaris11-cu-scaling-test/">先日、自分が <strong>RX 560</strong> で CU数のスケーリング性能を調査した時</a>にも使ったもので、ログのフォーマットが一致する。</p>
+
+<blockquote>
+<pre><code>  Platform: AMD Accelerated Parallel Processing
+    Device: gfx803
+      Driver version  : 3137.0 (HSA1.1,LC) (Linux x64)
+      Compute units   : 16
+      Clock frequency : 1196 MHz
+
+      Single-precision compute (GFLOPS)
+        float   : 2356.53
+        float2  : 2314.70
+        float4  : 2265.87
+        float8  : 2248.82
+        float16 : 2207.62</code></pre></blockquote>
+
+<p>この時 <code>Compute units</code> の行に表示されるのは、シェーダープロセッサ数ではなくそれを多数内包する <em>CU (AMDGPU)、EU (Intel GPU)</em> の数である。<br />
+このことから、<strong>X<sup>e</sup><sub>HP</sub></strong>
+ は 1-Tile 512EU と思われる。</p>
+
+<p>ただ、<strong>RX 560</strong> を使った調査の時にも書いたが、<code>clpeak</code> はメモリ性能が影響しないベンチマークソフトウェアであり、それもあって性能が単純にスケーリングしやすくなっている。<br />
+マルチGPU構成であっても性能がスケーリングすることを示す目的があるのかもしれないが、もっと大規模な、メモリが重要となるソフトウェアの場合、どこまでスケーリングするかはデモから測ることができない。</p>
+
+<h3 id="xe-lp-detail"><strong>X<sup>e</sup><sub>LP</sub></strong>
+ アーキテクチャ詳細</h3>
+
+<p>これまでにもちょくちょく OSS から判明した <a href="https://www.coelacanth-dream.com/tags/gen12"><strong>X<sup>e</sup><sub>LP</sub></strong>
+ /Gen12アーキテクチャ</a> の構成を記事にしてきたが、今回公式により詳細が語られた。</p>
+
+<p>EU部は前世代の <em>Gen11アーキテクチャ</em> が以下のように、Thread Control を EUごとに持ち、演算部が <em>4-wide FP/INT ALU</em> と <em>4-wide FP/Extend Math ALU</em> となり、浮動小数点演算では SIMD8 を構成していたのに対し、</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/08/14/gen11-eu.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/08/14/gen11-eu.webp"
+         alt="画像出典: VimeoArchitecture Day 2020 (Event Replay)"/> </a><figcaption>
+         <p>画像出典: <a href="https://vimeo.com/intelpr/review/447304765/179933d14f" rel="noreferrer" target="_blank">VimeoArchitecture Day 2020 (Event Replay)</a></p>
+   </figcaption>
+</figure>
+
+
+<p><em>Gen12アーキテクチャ</em> では、Thread Control が 2つ EU をペアとし、またがるものとなった。<br />
+演算部は、<em>8-wide FP/INT ALU</em> で SIMD8 を構成するものとなり、データ精度 INT16 を INT32時の 2倍、INT8 は 4倍で処理可能となった。複雑な計算を処理する <em>Extend Math ALU</em> は EU ごとに 2-wide となり、そこは <em>Gen11アーキテクチャ</em> より減っている。</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/08/14/gen12-eu.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/08/14/gen12-eu.webp"
+         alt="画像出典: VimeoArchitecture Day 2020 (Event Replay)"/> </a><figcaption>
+         <p>画像出典: <a href="https://vimeo.com/intelpr/review/447304765/179933d14f" rel="noreferrer" target="_blank">VimeoArchitecture Day 2020 (Event Replay)</a></p>
+   </figcaption>
+</figure>
+
+
+<p>キャッシュ構成としては、Sub-Slice 内に L1 Data Cache(L1/Tex$) が新設され、L3 Cache は最大 16MBを取ることが可能となっている。<a href="https://www.coelacanth-dream.com/tags/dg1">DG1</a>は以前より L3 Cache 16MB であることが判明していたが、それが <strong>X<sup>e</sup><sub>LP</sub></strong>
+アーキテクチャとして最大の容量であるようだ。<sup class="footnote-ref" id="fnref:dg1-cd"><a href="#fn:dg1-cd">1</a></sup></p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/08/14/xe-lp-cache.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/08/14/xe-lp-cache.webp"
+         alt="画像出典: VimeoArchitecture Day 2020 (Event Replay)"/> </a><figcaption>
+         <p>画像出典: <a href="https://vimeo.com/intelpr/review/447304765/179933d14f" rel="noreferrer" target="_blank">VimeoArchitecture Day 2020 (Event Replay)</a></p>
+   </figcaption>
+</figure>
+
+
+<p>この L1 Data Cache だが、ブロック内には L1/Tex$ とあり、これまで Sampler部に含まれていた Tex$(Texture Cache) を汎用的に使えるよう移動させたと考えていいのだろうか。</p>
+
+<p><em>EU、Texture Sampler、Pixel Backend</em> 等のコア/エンジン部は前世代から 1.5倍の規模となった。<br />
+ただ <em>Pixel Backend</em> に関しては、<em>DG1</em> と <em>TGL GT2</em> は <a href="https://github.com/intel/compute-runtime" rel="noreferrer" target="_blank">intel/compute-runtime</a> から前世代と変わらない <code>16 pixels/clock</code> であるように読めるが<sup class="footnote-ref" id="fnref:dg1-tgl-fill-rate"><a href="#fn:dg1-tgl-fill-rate">2</a></sup>、果たして単なる自分の読み違いか、それとも <code>24 pixels/clock</code> の <strong>X<sup>e</sup><sub>LP</sub></strong>
+アーキテクチャベースの GPU が別に存在するのか。</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/08/14/xe-lp-engine.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/08/14/xe-lp-engine.webp"
+         alt="画像出典: VimeoArchitecture Day 2020 (Event Replay)"/> </a><figcaption>
+         <p>画像出典: <a href="https://vimeo.com/intelpr/review/447304765/179933d14f" rel="noreferrer" target="_blank">VimeoArchitecture Day 2020 (Event Replay)</a></p>
+   </figcaption>
+</figure>
+
+
+<p>また、OSS 等では <em><strong>X<sup>e</sup><sub>LP</sub></strong>
+ /Gen12アーキテクチャ</em> より、Sub-Slice ではなく Dual Sub-Slice と記述されるようになったが、その真意は明らかにはならなかった。<br />
+Texture Sampler は 12 Sub-Slices (6 Dual Sub-Slices) 相当であるため、グラフィック部を減らし、Sub-Slice 内の EU を増やすことでコンピュート性能重視とする策とも違うだろう。<br />
+新設された L1 Data Cache を共有する単位としての Dual Sub-Slice なのだろうか？</p>
+
+<h3 id="sg1"><strong>X<sup>e</sup><sub>LP</sub></strong>
+ベースのサーバー向けGPU SG1</h3>
+
+<p><em>Tiger Lake GPU</em> 、<em>DG1</em> 同様に <em><strong>X<sup>e</sup><sub>LP</sub></strong>
+アーキテクチャ</em> をベースとする、サーバー向けのディスクリートGPU <strong>SG1 (Server GPU)</strong> の存在が明らかにされた。<br />
+小型フォームファクタで構築するデータセンターや低レイテンシで高密度な Android 向けクラウドゲーミング、映像ストリーミングサービスをターゲットとしている。</p>
+
+<p>今年後半に出荷される予定であり、まもなく生産を開始するとしている。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:dg1-cd"><a href="https://www.coelacanth-dream.com/posts/2020/06/20/intel-dg1-support-opencl-levelzero/">Intel、DG1 において OpenCL と oneAPI Level Zero をサポート　―― 巨大なキャッシュを持つ DG1 | Coelacanth&rsquo;s Dream</a><br><a href="https://www.coelacanth-dream.com/posts/2020/06/25/intel-media-driver-dg1/">Intel、media-driver に DG1 へ向けたパッチを投稿　―― GPGPUに傾いた DG1 のキャッシュ設定 | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:dg1-cd"><sup>[return]</sup></a></li>
+<li id="fn:dg1-tgl-fill-rate"><a href="https://github.com/intel/compute-runtime/blob/68294a0d68adfdf11236c18050c926e488d1a057/opencl/source/gen12lp/hw_info_dg1.inl#L138" rel="noreferrer" target="_blank">https://github.com/intel/compute-runtime/blob/68294a0d68adfdf11236c18050c926e488d1a057/opencl/source/gen12lp/hw_info_dg1.inl#L138</a> <br><a href="https://github.com/intel/compute-runtime/blob/68294a0d68adfdf11236c18050c926e488d1a057/opencl/source/gen12lp/hw_info_tgllp.inl#L136" rel="noreferrer" target="_blank">https://github.com/intel/compute-runtime/blob/68294a0d68adfdf11236c18050c926e488d1a057/opencl/source/gen12lp/hw_info_tgllp.inl#L136</a>
+ <a class="footnote-return" href="#fnref:dg1-tgl-fill-rate"><sup>[return]</sup></a></li>
+</ol>
+</div>
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="side_tag_lower">Alder Lake</a>
+         <a href="https://www.coelacanth-dream.com/tags/dg1/" class="side_tag_lower">DG1</a>
+         <a href="https://www.coelacanth-dream.com/tags/gen12/" class="side_tag_lower">Gen12</a>
+         <a href="https://www.coelacanth-dream.com/tags/tiger_lake/" class="side_tag_lower">Tiger Lake</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="side_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/intel/" class="side_category_lower">Intel</a>
+   </nav>
+</div>
+<div class="side_time">
+   <time datetime="2020-08-14 04:24+09:00">Post:<br>&emsp;2020/08/14 04:24&emsp;JST</time>
+   <div class="side_time_update">Update:<br>&emsp;2020/08/14 08:00&emsp;JST</div>
+</div>
+
+<nav class="side_share">
+   Share:
+   <a href="https://twitter.com/intent/tweet?text=Intel%20Architecture%20Day%202020%20%e5%80%8b%e4%ba%ba%e7%9a%84%e3%81%be%e3%81%a8%e3%82%81%e3%80%80%e2%80%95%e2%80%95%20XeHP%20%e3%81%af%201-Tile%20512EU%e3%80%81XeLP%e3%82%a2%e3%83%bc%e3%82%ad%e3%83%86%e3%82%af%e3%83%81%e3%83%a3%e8%a9%b3%e7%b4%b0%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/&hashtags=DG1%2cAlderLake%2cTigerLake%2cGen12" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/08/14/intel-architecture-day-2020.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://liberapay.com/Umio-Yasuno/donate" rel="noopenner noreferrer" target="_blank">Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="foot_tag_lower">Alder Lake</a>
+         <a href="https://www.coelacanth-dream.com/tags/dg1/" class="foot_tag_lower">DG1</a>
+         <a href="https://www.coelacanth-dream.com/tags/gen12/" class="foot_tag_lower">Gen12</a>
+         <a href="https://www.coelacanth-dream.com/tags/tiger_lake/" class="foot_tag_lower">Tiger Lake</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="foot_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/intel/" class="foot_category_lower">Intel</a>
+   </nav>
+</div>
+<nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/08/14/intel-architecture-day-2020.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://liberapay.com/Umio-Yasuno/donate" rel="noopenner noreferrer" target="_blank">Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+<nav class="foot_share">
+   Share:
+   <a href="https://twitter.com/intent/tweet?text=Intel%20Architecture%20Day%202020%20%e5%80%8b%e4%ba%ba%e7%9a%84%e3%81%be%e3%81%a8%e3%82%81%e3%80%80%e2%80%95%e2%80%95%20XeHP%20%e3%81%af%201-Tile%20512EU%e3%80%81XeLP%e3%82%a2%e3%83%bc%e3%82%ad%e3%83%86%e3%82%af%e3%83%81%e3%83%a3%e8%a9%b3%e7%b4%b0%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/&hashtags=DG1%2cAlderLake%2cTigerLake%2cGen12" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+<div class="foot_time">
+   <time datetime="2020-08-14 04:24+09:00">Post:<br>&emsp;2020/08/14 04:24&emsp;JST</time>
+   <div class="foot_time_update">Update:<br>&emsp;2020/08/14 08:00&emsp;JST</div>
+</div>
+
+      <small class="copyright">&copy; 2019 - 2020 Umio Yasuno</small>
+</footer>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+      </main>
+   </body>
+</html>
