@@ -261,6 +261,8 @@ h1 {
 <ul>
 <li><a href="#xe-hp-1t-512eu"><strong>X<sup>e</sup><sub>HP</sub></strong>
 は 1-Tile 512EU</a></li>
+<li><a href="#xe-hpg">ゲーミング向け Intel GPU <strong>X<sup>e</sup><sub>HPG</sub></strong>
+</a></li>
 <li><a href="#xe-lp-detail"><strong>X<sup>e</sup><sub>LP</sub></strong>
 アーキテクチャ詳細</a></li>
 <li><a href="#sg1"><strong>X<sup>e</sup><sub>LP</sub></strong>
@@ -300,8 +302,7 @@ h1 {
 </figure>
 
 
-<p>ログの内容から、実行しているソフトウェアは <a href="https://github.com/krrishnarraj/clpeak" rel="noreferrer" target="_blank">clpeak</a> は思われる。<br />
-<a href="https://www.coelacanth-dream.com/posts/2020/08/06/polaris11-cu-scaling-test/">先日、自分が <strong>RX 560</strong> で CU数のスケーリング性能を調査した時</a>にも使ったもので、ログのフォーマットが一致する。</p>
+<p>ログの内容から、実行しているソフトウェアは <a href="https://github.com/krrishnarraj/clpeak" rel="noreferrer" target="_blank">clpeak</a> は思われる。<a href="https://www.coelacanth-dream.com/posts/2020/08/06/polaris11-cu-scaling-test/">先日、自分が <strong>RX 560</strong> で CU数のスケーリング性能を調査した時</a>にも使ったもので、ログのフォーマットが一致する。</p>
 
 <blockquote>
 <pre><code>  Platform: AMD Accelerated Parallel Processing
@@ -317,12 +318,27 @@ h1 {
         float8  : 2248.82
         float16 : 2207.62</code></pre></blockquote>
 
-<p>この時 <code>Compute units</code> の行に表示されるのは、シェーダープロセッサ数ではなくそれを多数内包する <em>CU (AMDGPU)、EU (Intel GPU)</em> の数である。<br />
-このことから、<strong>X<sup>e</sup><sub>HP</sub></strong>
- は 1-Tile 512EU と思われる。</p>
+<p>この時 <code>Compute units</code> の行に表示されるのは、シェーダープロセッサ数ではなくそれを多数内包する <em>CU (AMDGPU)、EU (Intel GPU)</em> の数だ。<br />
+よって、<strong>X<sup>e</sup><sub>HP</sub></strong>
+ は 1-Tile 512EU と考えられる。</p>
 
 <p>ただ、<strong>RX 560</strong> を使った調査の時にも書いたが、<code>clpeak</code> はメモリ性能が影響しないベンチマークソフトウェアであり、それもあって性能が単純にスケーリングしやすくなっている。<br />
 マルチGPU構成であっても性能がスケーリングすることを示す目的があるのかもしれないが、もっと大規模な、メモリが重要となるソフトウェアの場合、どこまでスケーリングするかはデモから測ることができない。</p>
+
+<h3 id="xe-hpg">ゲーミング向け Intel GPU <strong>X<sup>e</sup><sub>HPG</sub></strong>
+</h3>
+
+<p>ゲーミング向けに最適化された <strong>X<sup>e</sup></strong>
+系アーキテクチャ、<strong>X<sup>e</sup><sub>HPG</sub></strong>
+ の存在が明らかにされた。<br />
+<strong>X<sup>e</sup><sub>LP</sub></strong>
+の優れた電力比グラフィック性能、<strong>X<sup>e</sup><sub>HP</sub></strong>
+のスケーリング性能、<strong>X<sup>e</sup><sub>HPC</sub></strong>
+の最適化された周波数を組み合わせたアーキテクチャとしている。<br />
+メモリには帯域と帯域あたりの消費電力に優れる HBM系ではなく、コスト比に優れる GDDR6 を採用するとしている。<br />
+ハードウェアレイトレーシングもサポートし、その他グラフィック向けの機能も多くサポートする。</p>
+
+<p>外部ファウンダリによって製造され、2021年に出荷予定。</p>
 
 <h3 id="xe-lp-detail"><strong>X<sup>e</sup><sub>LP</sub></strong>
  アーキテクチャ詳細</h3>
@@ -342,7 +358,7 @@ h1 {
 
 
 <p><em>Gen12アーキテクチャ</em> では、Thread Control が 2つ EU をペアとし、またがるものとなった。<br />
-演算部は、<em>8-wide FP/INT ALU</em> で SIMD8 を構成するものとなり、データ精度 INT16 を INT32時の 2倍、INT8 は 4倍で処理可能となった。複雑な計算を処理する <em>Extend Math ALU</em> は EU ごとに 2-wide となり、そこは <em>Gen11アーキテクチャ</em> より減っている。</p>
+演算部は、<em>8-wide FP/INT ALU</em> で SIMD8 を構成するものとなり、データ精度 INT16 を INT32時の 2倍、INT8 は 4倍のスループットで処理可能となった。複雑な計算を処理する <em>Extend Math ALU</em> は EU ごとに 2-wide となり、そこは <em>Gen11アーキテクチャ</em> より減っている。</p>
 
 <figure>
    <a href="https://www.coelacanth-dream.com/image/2020/08/14/gen12-eu.webp" target="_blank">
@@ -433,7 +449,7 @@ Texture Sampler は 12 Sub-Slices (6 Dual Sub-Slices) 相当であるため、�
 </div>
 <div class="side_time">
    <time datetime="2020-08-14 04:24+09:00">Post:<br>&emsp;2020/08/14 04:24&emsp;JST</time>
-   <div class="side_time_update">Update:<br>&emsp;2020/08/14 08:00&emsp;JST</div>
+   <div class="side_time_update">Update:<br>&emsp;2020/08/14 09:05&emsp;JST</div>
 </div>
 
 <nav class="side_share">
@@ -495,7 +511,7 @@ Texture Sampler は 12 Sub-Slices (6 Dual Sub-Slices) 相当であるため、�
 <a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
 <div class="foot_time">
    <time datetime="2020-08-14 04:24+09:00">Post:<br>&emsp;2020/08/14 04:24&emsp;JST</time>
-   <div class="foot_time_update">Update:<br>&emsp;2020/08/14 08:00&emsp;JST</div>
+   <div class="foot_time_update">Update:<br>&emsp;2020/08/14 09:05&emsp;JST</div>
 </div>
 
       <small class="copyright">&copy; 2019 - 2020 Umio Yasuno</small>
