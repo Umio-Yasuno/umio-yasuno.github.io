@@ -49,8 +49,9 @@ main {
 header {
    grid-row: 2 / 3;
    grid-column: 3 / -2;
-   word-spacing: 100vw;
-   word-break: keep-all;
+
+
+   overflow-wrap: normal;
 }
 .site_title {
    font: normal 1.9rem/2.3rem monospace;
@@ -88,14 +89,14 @@ a {
    text-decoration: none;
    padding: 0 .3rem 0 .28rem;
    margin: 0;
-   word-break: break-all;
+
 }
 .text {
    color: snow;
    box-sizing: border-box;
    overflow-wrap: break-word;
    font-size: .98rem;
-   line-height: 1.7rem;
+   line-height: 1.64rem;
    overflow-x: auto;
    grid-row: 3 / -3;
    grid-column: 1 / -1;
@@ -152,7 +153,6 @@ article {
 }
 article > * {
    grid-column: 3 / -1;
-   padding-bottom: 100vh;
 }
 article > h1 ~ * {
 
@@ -179,6 +179,7 @@ h1 {
 }
 article a {
    padding: 0 .2rem;
+   overflow-wrap: anywhere;
 }
    .slide_menu {
       display: none;
@@ -289,13 +290,13 @@ article a {
 <li><a href="#gpu">GPU</a>
 
 <ul>
-<li><a href="#xe-hp-1t-512eu"><strong>X<sup>e</sup><sub>HP</sub></strong>
+<li><a href="#xe-hp-1t-512eu"><span class="xe_gpu_arch">X<sup>e</sup><sub>HP</sub></span>
 は 1-Tile 512EU</a></li>
-<li><a href="#xe-hpg">ゲーミング向け Intel GPU <strong>X<sup>e</sup><sub>HPG</sub></strong>
+<li><a href="#xe-hpg">ゲーミング向け Intel GPU <span class="xe_gpu_arch">X<sup>e</sup><sub>HPG</sub></span>
 </a></li>
-<li><a href="#xe-lp-detail"><strong>X<sup>e</sup><sub>LP</sub></strong>
+<li><a href="#xe-lp-detail"><span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
 アーキテクチャ詳細</a></li>
-<li><a href="#sg1"><strong>X<sup>e</sup><sub>LP</sub></strong>
+<li><a href="#sg1"><span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
 ベースのサーバー向けGPU SG1</a></li>
 </ul></li>
 </ul>
@@ -312,15 +313,15 @@ article a {
 
 <h2 id="gpu">GPU</h2>
 
-<h3 id="xe-hp-1t-512eu"><strong>X<sup>e</sup><sub>HP</sub></strong>
+<h3 id="xe-hp-1t-512eu"><span class="xe_gpu_arch">X<sup>e</sup><sub>HP</sub></span>
  は 1-Tile 512EU</h3>
 
-<p><strong>X<sup>e</sup><sub>HP</sub></strong>
+<p><span class="xe_gpu_arch">X<sup>e</sup><sub>HP</sub></span>
  GPU はコアとなる Tile から構成され、Tile数は 1-Tile から 2-Tile、または 4-Tile となる。複数のタイルはマルチコアGPU であるように動作し、高いスケーリング性能を持つ。<br />
 複数の Tile は 1つのパッケージに収められ、Tile 間は EMIB 技術で接続される。<br />
 また、製造プロセスは <em>Intel 10nm Enhanced SuperFin</em> とされており、<em>Tiger Lake</em> や <em>DG1</em> の製造プロセスから次世代のものとされる。</p>
 
-<p>そして、下記画像は、動画内で <strong>X<sup>e</sup><sub>HP</sub></strong>
+<p>そして、下記画像は、動画内で <span class="xe_gpu_arch">X<sup>e</sup><sub>HP</sub></span>
  のスケーリング性能を示すデモを行なった時のスクリーンショットだが、ログの部分に <code>Compute units: 512</code> と表示されている。</p>
 
 <figure>
@@ -349,31 +350,31 @@ article a {
         float16 : 2207.62</code></pre></blockquote>
 
 <p>この時 <code>Compute units</code> の行に表示されるのは、シェーダープロセッサ数ではなくそれを多数内包する <em>CU (AMDGPU)、EU (Intel GPU)</em> の数だ。<br />
-よって、<strong>X<sup>e</sup><sub>HP</sub></strong>
+よって、<span class="xe_gpu_arch">X<sup>e</sup><sub>HP</sub></span>
  は 1-Tile 512EU と考えられる。</p>
 
 <p>ただ、<strong>RX 560</strong> を使った調査の時にも書いたが、<code>clpeak</code> はメモリ性能が影響しないベンチマークソフトウェアであり、それもあって性能が単純にスケーリングしやすくなっている。<br />
 マルチGPU構成であっても性能がスケーリングすることを示す目的があるのかもしれないが、もっと大規模な、メモリが重要となるソフトウェアの場合、どこまでスケーリングするかはデモから測ることができない。</p>
 
-<h3 id="xe-hpg">ゲーミング向け Intel GPU <strong>X<sup>e</sup><sub>HPG</sub></strong>
+<h3 id="xe-hpg">ゲーミング向け Intel GPU <span class="xe_gpu_arch">X<sup>e</sup><sub>HPG</sub></span>
 </h3>
 
-<p>ゲーミング向けに最適化された <strong>X<sup>e</sup></strong>
-系アーキテクチャ、<strong>X<sup>e</sup><sub>HPG</sub></strong>
+<p>ゲーミング向けに最適化された <span class="xe_gpu_arch">X<sup>e</sup></span>
+系アーキテクチャ、<span class="xe_gpu_arch">X<sup>e</sup><sub>HPG</sub></span>
  の存在が明らかにされた。<br />
-<strong>X<sup>e</sup><sub>LP</sub></strong>
-の優れた電力比グラフィック性能、<strong>X<sup>e</sup><sub>HP</sub></strong>
-のスケーリング性能、<strong>X<sup>e</sup><sub>HPC</sub></strong>
+<span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
+の優れた電力比グラフィック性能、<span class="xe_gpu_arch">X<sup>e</sup><sub>HP</sub></span>
+のスケーリング性能、<span class="xe_gpu_arch">X<sup>e</sup><sub>HPC</sub></span>
 の最適化された周波数を組み合わせたアーキテクチャとしている。<br />
 メモリには帯域と帯域あたりの消費電力に優れる HBM系ではなく、コスト比に優れる GDDR6 を採用するとしている。<br />
 ハードウェアレイトレーシングもサポートし、その他グラフィック向けの機能も多くサポートする。</p>
 
 <p>外部ファウンダリによって製造され、2021年に出荷予定。</p>
 
-<h3 id="xe-lp-detail"><strong>X<sup>e</sup><sub>LP</sub></strong>
+<h3 id="xe-lp-detail"><span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
  アーキテクチャ詳細</h3>
 
-<p>これまでにもちょくちょく OSS から判明した <a href="https://www.coelacanth-dream.com/tags/gen12"><strong>X<sup>e</sup><sub>LP</sub></strong>
+<p>これまでにもちょくちょく OSS から判明した <a href="https://www.coelacanth-dream.com/tags/gen12"><span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
  /Gen12アーキテクチャ</a> の構成を記事にしてきたが、今回公式により詳細が語られた。</p>
 
 <p>EU部は前世代の <em>Gen11アーキテクチャ</em> が以下のように、Thread Control を EUごとに持ち、演算部が <em>4-wide FP/INT ALU</em> と <em>4-wide FP/Extend Math ALU</em> となり、浮動小数点演算では SIMD8 を構成していたのに対し、</p>
@@ -399,7 +400,7 @@ article a {
 </figure>
 
 
-<p>キャッシュ構成としては、Sub-Slice 内に L1 Data Cache(L1/Tex$) が新設され、L3 Cache は最大 16MBを取ることが可能となっている。<a href="https://www.coelacanth-dream.com/tags/dg1">DG1</a>は以前より L3 Cache 16MB であることが判明していたが、それが <strong>X<sup>e</sup><sub>LP</sub></strong>
+<p>キャッシュ構成としては、Sub-Slice 内に L1 Data Cache(L1/Tex$) が新設され、L3 Cache は最大 16MBを取ることが可能となっている。<a href="https://www.coelacanth-dream.com/tags/dg1">DG1</a>は以前より L3 Cache 16MB であることが判明していたが、それが <span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
 アーキテクチャとして最大の容量であるようだ。<sup class="footnote-ref" id="fnref:dg1-cd"><a href="#fn:dg1-cd">1</a></sup></p>
 
 <figure>
@@ -414,7 +415,7 @@ article a {
 <p>この L1 Data Cache だが、ブロック内には L1/Tex$ とあり、これまで Sampler部に含まれていた Tex$(Texture Cache) を汎用的に使えるよう移動させたと考えていいのだろうか。</p>
 
 <p><em>EU、Texture Sampler、Pixel Backend</em> 等のコア/エンジン部は前世代から 1.5倍の規模となった。<br />
-ただ <em>Pixel Backend</em> に関しては、<em>DG1</em> と <em>TGL GT2</em> は <a href="https://github.com/intel/compute-runtime" rel="noreferrer" target="_blank">intel/compute-runtime</a> から前世代と変わらない <code>16 pixels/clock</code> であるように読めるが<sup class="footnote-ref" id="fnref:dg1-tgl-fill-rate"><a href="#fn:dg1-tgl-fill-rate">2</a></sup>、果たして単なる自分の読み違いか、それとも <code>24 pixels/clock</code> の <strong>X<sup>e</sup><sub>LP</sub></strong>
+ただ <em>Pixel Backend</em> に関しては、<em>DG1</em> と <em>TGL GT2</em> は <a href="https://github.com/intel/compute-runtime" rel="noreferrer" target="_blank">intel/compute-runtime</a> から前世代と変わらない <code>16 pixels/clock</code> であるように読めるが<sup class="footnote-ref" id="fnref:dg1-tgl-fill-rate"><a href="#fn:dg1-tgl-fill-rate">2</a></sup>、果たして単なる自分の読み違いか、それとも <code>24 pixels/clock</code> の <span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
 アーキテクチャベースの GPU が別に存在するのか。</p>
 
 <figure>
@@ -426,15 +427,15 @@ article a {
 </figure>
 
 
-<p>また、OSS 等では <em><strong>X<sup>e</sup><sub>LP</sub></strong>
+<p>また、OSS 等では <em><span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
  /Gen12アーキテクチャ</em> より、Sub-Slice ではなく Dual Sub-Slice と記述されるようになったが、その真意は明らかにはならなかった。<br />
 Texture Sampler は 12 Sub-Slices (6 Dual Sub-Slices) 相当であるため、グラフィック部を減らし、Sub-Slice 内の EU を増やすことでコンピュート性能重視とする策とも違うだろう。<br />
 新設された L1 Data Cache を共有する単位としての Dual Sub-Slice なのだろうか？</p>
 
-<h3 id="sg1"><strong>X<sup>e</sup><sub>LP</sub></strong>
+<h3 id="sg1"><span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
 ベースのサーバー向けGPU SG1</h3>
 
-<p><em>Tiger Lake GPU</em> 、<em>DG1</em> 同様に <em><strong>X<sup>e</sup><sub>LP</sub></strong>
+<p><em>Tiger Lake GPU</em> 、<em>DG1</em> 同様に <em><span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
 アーキテクチャ</em> をベースとする、サーバー向けのディスクリートGPU <strong>SG1 (Server GPU)</strong> の存在が明らかにされた。<br />
 小型フォームファクタで構築するデータセンターや低レイテンシで高密度な Android 向けクラウドゲーミング、映像ストリーミングサービスをターゲットとしている。</p>
 
@@ -447,7 +448,7 @@ Texture Sampler は 12 Sub-Slices (6 Dual Sub-Slices) 相当であるため、�
    <p><a href="https://www.anandtech.com" rel="noreferrer" target="_blank">AnandTech</a> によると、<strong>SG1</strong> は <strong>DG1</strong> と同じシリコンダイ 4個を 1つのボードに搭載する形で製品化されるとのこと。<br />
 <span class="thread_link"><a href="https://www.anandtech.com/show/16017/intels-sg1-discrete-xe-lp-graphics-for-server-video-acceleration-and-streaming" rel="noreferrer" target="_blank">Intel’s SG1 is 4x DG1: Xe-LP Graphics for Server Video Acceleration and Streaming</a></span><br></p>
 
-<p><span class="hide">てっきりメディア部を異常に強化させた<strong>X<sup>e</sup><sub>LP</sub></strong>
+<p><span class="hide">てっきりメディア部を異常に強化させた<span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
 ベース GPU かと思っていた。</span></p>
 
    </div>

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/09/01/rdna_2-note-2020-09-01/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>AMD RDNA 2 情報近況　―― BIG_PAGE、VCN3、VF 【2020-09-01】 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD RDNA 2 情報近況　―― BIG_PAGE、VCN3、VF 【2020-09-01】 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD RDNA 2 情報近況　―― BIG_PAGE、VCN3、VF 【2020-09-01】 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/09/01/rdna_2-note-2020-09-01/">
+   <meta name="description" content="以前にも書いたが、AMDGPU のコンパイラバックエンドとして用いられる LLVM は、RDNA 2 /GFX10.3 世代を LLVM 11 からサポートする予定にあり1、そして LLVM のリリー">
+   <meta property="og:description" content="以前にも書いたが、AMDGPU のコンパイラバックエンドとして用いられる LLVM は、RDNA 2 /GFX10.3 世代を LLVM 11 からサポートする予定にあり1、そして LLVM のリリー">
+   <meta name="twitter:description" content="以前にも書いたが、AMDGPU のコンパイラバックエンドとして用いられる LLVM は、RDNA 2 /GFX10.3 世代を LLVM 11 からサポートする予定にあり1、そして LLVM のリリー">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/09/01/rdna_2-note-2020-09-01/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/09/01/rdna_2-note-2020-09-01/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="RDNA 2, Sienna Cichlid, Navy Flounder">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 94%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: .98em;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+
+
+   overflow-wrap: normal;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+   transform: translateZ(0);
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal 1.6rem/1.2rem monospace;
+   padding: 0 .32rem .26rem .32rem;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: .98rem;
+   line-height: 1.64rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .01rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+
+
+
+   opacity: 0;
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+
+   opacity: 0;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 .5rem 0;
+   overflow-wrap: anywhere;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   padding: 0 .2rem;
+   overflow-wrap: anywhere;
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 16px 12px auto;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 3px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 0%, #878787 10%,#00080B 60%, #787878 100%);
+   background-size: 100% 9px;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .02;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+         <div class="crt"></div>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/</div><h1 itemprop="headline name">AMD RDNA 2 情報近況　―― BIG_PAGE、VCN3、VF 【2020-09-01】</h1>
+
+<p>以前にも書いたが、AMDGPU のコンパイラバックエンドとして用いられる LLVM は、<em>RDNA 2 /GFX10.3</em> 世代を LLVM 11 からサポートする予定にあり<sup class="footnote-ref" id="fnref:gfx103-llvm11"><a href="#fn:gfx103-llvm11">1</a></sup>、そして LLVM のリリースサイクルから、LLVM 11 は 2020/09、今月にリリースされると思われる<sup class="footnote-ref" id="fnref:llvm-release-cycle"><a href="#fn:llvm-release-cycle">2</a></sup>。<br />
+NVIDIA がコンシューマ向けに Ampere世代の GPU を発表した今、AMD側にも何かしら動きがあることを期待しているが、さて。</p>
+
+<h2 id="page_index">Index</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#gfx103-big_page">帯域を節約する BIG_PAGE 機能</a></li>
+<li><a href="#vcn3-2instance">VCN3 を 2基持つのは Sienna Cichlid のみ</a></li>
+<li><a href="#rdna_2-vf">Virtual Function をサポート</a></li>
+</ul>
+
+</div>
+
+
+<!--
+
+[drm/amdgpu: invoke req full access early enough](https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&id=4907c53764d18585debbcd1ddb5aaa744c1b4bdf)
+
+[drm/amdgpu: force pa_sc_tile_steering_override to 0 for navy_flounder](https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&id=bc9c0e723a184f190bcbe9519032b5fb69642f5b)
+
+-->
+
+<h2 id="gfx103-big_page">帯域を節約する BIG_PAGE 機能</h2>
+
+<p>バッファがある特定のアラインメントに一致する場合に、<em>CB (Command Buffer?) /DB (Data Buffer?) /TCP</em> 間のデータトラフィックを減らす機能と説明されている。<br />
+<span class="thread_link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/f4d861696dfb11dc2b6242a683a13238981f705f?merge_request_iid=6482" rel="noreferrer" target="_blank">radv: set BIG_PAGE to improve performance on GFX10.3 (f4d86169) · Commits · Mesa / mesa · GitLab</a></span><br>
+
+<em>TCP</em> は何の略か不明だが、CU内の L1キャッシュ (RDNAアーキテクチャにおける L0キャッシュ) を指すようだ。<sup class="footnote-ref" id="fnref:tcp-l1cache"><a href="#fn:tcp-l1cache">3</a></sup></p>
+
+<p>また、<em>RDNA 2 /GFX10.3</em> 世代はカラー圧縮、DCC(Delta Color Compression) を行なうブロックのサイズを拡張する等、RenderBackend部やフレームバッファに関わる部分でメモリ帯域を節約する工夫を実装している。<sup class="footnote-ref" id="fnref:gfx103-dcc"><a href="#fn:gfx103-dcc">4</a></sup><br />
+こうした機能は広帯域の専用メモリを持つ dGPU にも効くが、CPU と共有する関係上、帯域が縛られる APU だと特に活きてくるのではないかと思う。</p>
+
+<h2 id="vcn3-2instance">VCN3 を 2基持つのは Sienna Cichlid のみ</h2>
+
+<p><em>Navy Flounder</em> をサポートする最初の Linux Kernel パッチが投稿された際にも少し触れたが<sup class="footnote-ref" id="fnref:navy-vcn3-1"><a href="#fn:navy-vcn3-1">5</a></sup>、主に動画のデコード/エンコードを担当するユニット VCN3 (Video Core Next) を 2基持つのは <em>Sienna Cichlid</em> のみであるようだ。<br />
+<span class="thread_link"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=86f2ed2b14b35b32fb956e58b3e0723b3f687c6c" rel="noreferrer" target="_blank">drm/amdgpu/vcn3.0: only SIENNA_CICHLID need specify instance for dec/enc</a></span><br>
+</p>
+
+<p>そして片方がデコードのみを、もう片方がエンコードのみを担当する。<br />
+分けるにあたって必要の無い部分の回路を削っている可能性があるが、余計な手間がかかるため、機能としては非対称にしているが、実際はどちらも同じ回路で実装されているのではないかと思う。<br />
+しかし役割をはっきりと分けることで、そのユニットへの電源の供給を止めるパワーゲーティングによる消費電力削減を行ないやすくなる。<br />
+VCN3 1基を持つ <em>Navy Flounder</em> より、割くダイサイズ、トランジスタ数は増えるが電力効率においては <em>Sienna Cichlid</em> のが優れるだろう。</p>
+
+<p>個人的な用途で語れば、ワークロードとしては動画の視聴によるデコード処理が圧倒的に多いため、分けるのは確かに効率的だ。<br />
+また、<a href="https://www.coelacanth-dream.com/tags/sg1">Intel SG1</a> のようにマルチメディアサーバー向けのGPUとして意識された部分であるようにも思える。</p>
+
+<h2 id="rdna_2-vf">Virtual Function をサポート</h2>
+
+<p><em>RDNA /Navi1x /GFX10.1</em> 世代では <a href="https://www.coelacanth-dream.com/tags/navi12">Navi12</a> しかサポートしていなかった VF (Virtual Function) だが、<em>RDNA 2 /GFX10.3</em> 世代では、今の所 <em>Sienna Cichlid</em> 、<em>Navy Flounder</em> の両方がサポートしているようだ。<br />
+<span class="thread_link"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=9110b6c1cbcd98a39134273f321691d7729dd72a" rel="noreferrer" target="_blank">drm/amdkfd: sienna_cichlid virtual function support</a></span><br>
+
+<span class="thread_link"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=09bce5fe2cf94765ffdf607411950335f0bc9ba9" rel="noreferrer" target="_blank">drm/amdkfd: Support navy_flounder KFD</a></span><br>
+</p>
+
+<p><em>Navi12</em> をベースとした製品が現状 Apple 向けの <strong>Radeon Pro 5600M</strong> しかないため、何か推測を打ち立てることは出来ないが、サーバー向け等、幅広い製品展開と活躍を願っている。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:gfx103-llvm11"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/7366021e3854532837dc5c569bc8a24bb023c11b?merge_request_iid=5389" rel="noreferrer" target="_blank">radv: require LLVM 11 for GFX 10.3 (7366021e) · Commits · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:gfx103-llvm11"><sup>[return]</sup></a></li>
+<li id="fn:llvm-release-cycle"><a href="https://releases.llvm.org/" rel="noreferrer" target="_blank">Download LLVM releases</a>
+ <a class="footnote-return" href="#fnref:llvm-release-cycle"><sup>[return]</sup></a></li>
+<li id="fn:tcp-l1cache"><a href="https://github.com/GPUOpen-Drivers/pal/blob/609b2b8ad982f4f2028cf4411cc2e55fc5e6fcf3/inc/core/palDevice.h#L1228" rel="noreferrer" target="_blank">https://github.com/GPUOpen-Drivers/pal/blob/609b2b8ad982f4f2028cf4411cc2e55fc5e6fcf3/inc/core/palDevice.h#L1228</a>
+ <a class="footnote-return" href="#fnref:tcp-l1cache"><sup>[return]</sup></a></li>
+<li id="fn:gfx103-dcc"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/87ecfdfbf0a8448d1475e6da15175e68bdeb933b/src/amd/common/ac_surface.c#L1991" rel="noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/87ecfdfbf0a8448d1475e6da15175e68bdeb933b/src/amd/common/ac_surface.c#L1991</a>
+ <a class="footnote-return" href="#fnref:gfx103-dcc"><sup>[return]</sup></a></li>
+<li id="fn:navy-vcn3-1"><a href="https://www.coelacanth-dream.com/posts/2020/07/15/amd-next-gen-gpu-navy_flounder/#1インスタンスの-vcn3">AMDの次世代 RDNA 2 GPU、&rdquo;Navy Flounder&rdquo; のLinux Kernelパッチが投稿される | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:navy-vcn3-1"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+   <time datetime="2020-09-01 23:52+09:00" itemprop="datePublished">Post:<br>&emsp;2020/09/01 23:52&emsp;JST</time>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/09/02 23:53&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/navy_flounder/" class="side_tag_lower">Navy Flounder</a>
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="side_tag_lower">RDNA 2</a>
+         <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid/" class="side_tag_lower">Sienna Cichlid</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+
+<nav class="side_share">
+   Share:
+   <a href="https://twitter.com/intent/tweet?text=AMD%20RDNA%202%20%e6%83%85%e5%a0%b1%e8%bf%91%e6%b3%81%e3%80%80%e2%80%95%e2%80%95%20BIG_PAGE%e3%80%81VCN3%e3%80%81VF%20%e3%80%902020-09-01%e3%80%91%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/01/rdna_2-note-2020-09-01/&hashtags=RDNA2%2cSiennaCichlid%2cNavyFlounder" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/01/rdna_2-note-2020-09-01.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Support</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/navy_flounder/" class="foot_tag_lower">Navy Flounder</a>
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="foot_tag_lower">RDNA 2</a>
+         <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid/" class="foot_tag_lower">Sienna Cichlid</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/01/rdna_2-note-2020-09-01.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Support</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search">
+<nav class="foot_share">
+   Share:
+   <a href="https://twitter.com/intent/tweet?text=AMD%20RDNA%202%20%e6%83%85%e5%a0%b1%e8%bf%91%e6%b3%81%e3%80%80%e2%80%95%e2%80%95%20BIG_PAGE%e3%80%81VCN3%e3%80%81VF%20%e3%80%902020-09-01%e3%80%91%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/01/rdna_2-note-2020-09-01/&hashtags=RDNA2%2cSiennaCichlid%2cNavyFlounder" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/tags/database/">Database</a>
+</nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/navy_flounder/" class="slide_menu_tag_lower">Navy Flounder</a>
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="slide_menu_tag_lower">RDNA 2</a>
+         <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid/" class="slide_menu_tag_lower">Sienna Cichlid</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="slide_menu_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="slide_menu_category_lower">Hardware</a>
+   </nav>
+</div>
+
+<nav class="slide_menu_share">
+   Share:
+   <a href="https://twitter.com/intent/tweet?text=AMD%20RDNA%202%20%e6%83%85%e5%a0%b1%e8%bf%91%e6%b3%81%e3%80%80%e2%80%95%e2%80%95%20BIG_PAGE%e3%80%81VCN3%e3%80%81VF%20%e3%80%902020-09-01%e3%80%91%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/01/rdna_2-note-2020-09-01/&hashtags=RDNA2%2cSiennaCichlid%2cNavyFlounder" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/01/rdna_2-note-2020-09-01.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Support</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+
+   </body>
+</html>
