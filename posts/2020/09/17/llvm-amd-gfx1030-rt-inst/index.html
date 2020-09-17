@@ -283,10 +283,15 @@ article a {
 
 手法としては BVH(Bounding Volume Hierarchy, バウンディングボリューム階層構造) であり、命令はレイの交差判定を高速化させるためのものと思われる。</p>
 
-<p>テクスチャといった画像処理に用いられる <code>A16</code> アドレスから、HWレイトレーシングをサポートする <em>RDNA 2 /GFX10.3</em> GPU は Hot Chips 32 で内部構造が明になった <strong>Xbox Series X</strong> 同様に、テクスチャユニットとレイトレーシングユニットを共有する構成になっているのではないかと考えられる。</p>
+<p><code>llvm.amdgcn.image.bvh.intersect.ray</code> は MIMG(Memory Image Instructions) であり、アドレスフィールドには <code>A16</code> 要素が用いられ、これはテクスチャサンプラーを使わない画像処理では <code>uint16</code> 、サンプラーを使うものでは <code>f16</code> となる。<br />
+このことから、HWレイトレーシングをサポートする <em>RDNA 2 /GFX10.3</em> GPU は Hot Chips 32 で内部構造が明になった <strong>Xbox Series X</strong> 同様に、テクスチャユニットとレイトレーシングユニットを共有する構成になっているのではないかと考えられる。</p>
 
-<p>今回の命令の追加により、LLVM をシェーダーコンパイラのバックエンドに一部採用しているオープンソース・ドライバー、<a href="https://www.coelacanth-dream.com/tags/radv">RADV (LLVM)</a> での Vulkan API における HWレイトレーシングのサポートの道が見えてきた。<br />
+<p>今回の命令の追加により、LLVM をシェーダーコンパイラのバックエンドに一部採用しているオープンソース・ドライバー <a href="https://www.coelacanth-dream.com/tags/radv">RADV (LLVM)</a>、<em>AMDVLK</em> での Vulkan API における HWレイトレーシングのサポートの道が見えてきた。<br />
 独自のメモリ効率と性能に優れる <a href="https://www.coelacanth-dream.com/tags/aco">ACOバックエンド</a> に今回の LLVM の変更を反映させれば、<em>ACOバックエンド</em> でのサポートも可能となる。</p>
+
+<p>AMD は <em>RDNA 2</em> に関する発表を 2020/10/28 に行なうと発表しており <del>(発表の発表)</del>、それに向けてか<a href="https://www.coelacanth-dream.com/posts/2020/09/11/amd-sienna_cichlid-usb_c/">Sienna CIchlid が USB-Cコントローラーを内蔵</a> や <a href="https://www.coelacanth-dream.com/posts/2020/09/16/amd-vcn_3-av1-dec/">VCN 3 の AV1 HWデコードサポート</a>等、オープンソース・ソフトウェアに <em>RDNA 2 /GFX10.3</em> のより詳細なパッチを投稿している。<br />
+発表日が近づくにつれ、この動きは加速すると見られる。<br />
+パッチから部分的な姿を想像しつつ、盛大な正式発表を心待ちにしている。</p>
 
 <hr>
 <div class="reference">
@@ -294,13 +299,14 @@ article a {
 <ul>
 <li><a href="https://www.4gamer.net/games/033/G003329/20180320141/" rel="noreferrer" target="_blank">［GDC 2018］ついにDirectXがレイトレーシングパイプラインを統合。「DirectX Raytracing」が立ち上がる</a></li>
 <li><a href="https://www.4gamer.net/games/121/G012181/20180816069/" rel="noreferrer" target="_blank">西川善司の3DGE：新世代GPU「Turing」のリアルタイムレイトレーシングは「本物」なのか？ その正体に迫る</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA_Shader_ISA.pdf" rel="noreferrer" target="_blank">RDNA_Shader_ISA.pdf</a></li>
 </ul>
 
 </div>
 
 <div class="article_time">
    <time datetime="2020-09-17 08:19+09:00" itemprop="datePublished">Post:<br>&emsp;2020/09/17 08:19&emsp;JST</time>
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/09/17 08:50&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/09/17 10:51&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
