@@ -6,27 +6,27 @@
    <meta name="format-detection" content="telephone=no, address=no, email=no">
    
 
-   <base href="https://www.coelacanth-dream.com/posts/2020/09/17/llvm-amd-gfx1030-rt-inst/">
+   <base href="https://www.coelacanth-dream.com/posts/2020/09/16/amd-gcn-rdna-fma-mad/">
 
    <meta property="og:site_name" content="Coelacanth&#39;s Dream">
    <meta name="twitter:card" content="summary">
    <meta property="og:type" content="article">
-   <title>LLVM に RDNA 2 でレイトレーシングを実行する命令が追加される | Coelacanth&#39;s Dream</title>
-   <meta property="og:title" content="LLVM に RDNA 2 でレイトレーシングを実行する命令が追加される | Coelacanth&#39;s Dream">
-   <meta name="twitter:title" content="LLVM に RDNA 2 でレイトレーシングを実行する命令が追加される | Coelacanth&#39;s Dream">
+   <title>AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い | Coelacanth&#39;s Dream">
 
-   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/09/17/llvm-amd-gfx1030-rt-inst/">
-   <meta name="description" content="AMDGPU においてコンパイラバックエンド等へ採用されている LLVM に、RDNA 2 /GFX10.3 でレイトレーシングを行なうための命令、llvm.amdgcn.image.b">
-   <meta property="og:description" content="AMDGPU においてコンパイラバックエンド等へ採用されている LLVM に、RDNA 2 /GFX10.3 でレイトレーシングを行なうための命令、llvm.amdgcn.image.b">
-   <meta name="twitter:description" content="AMDGPU においてコンパイラバックエンド等へ採用されている LLVM に、RDNA 2 /GFX10.3 でレイトレーシングを行なうための命令、llvm.amdgcn.image.b">
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/09/16/amd-gcn-rdna-fma-mad/">
+   <meta name="description" content="最近 Mesa3D に組み込まれた変更の中に以下のようなコメントがあった。 /* gfx6-8: use MAD (FMA is 4x slower) * gfx9-10: either is OK (MAD and FMA have the same performance) * gfx10.3: use FMA (MAD doesn&#39;t exist, separate MUL&#43;ADD are 2x slower) * * FMA has no advantage on gfx9-10 and MAD">
+   <meta property="og:description" content="最近 Mesa3D に組み込まれた変更の中に以下のようなコメントがあった。 /* gfx6-8: use MAD (FMA is 4x slower) * gfx9-10: either is OK (MAD and FMA have the same performance) * gfx10.3: use FMA (MAD doesn&#39;t exist, separate MUL&#43;ADD are 2x slower) * * FMA has no advantage on gfx9-10 and MAD">
+   <meta name="twitter:description" content="最近 Mesa3D に組み込まれた変更の中に以下のようなコメントがあった。 /* gfx6-8: use MAD (FMA is 4x slower) * gfx9-10: either is OK (MAD and FMA have the same performance) * gfx10.3: use FMA (MAD doesn&#39;t exist, separate MUL&#43;ADD are 2x slower) * * FMA has no advantage on gfx9-10 and MAD">
    <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
    <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
-   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/09/17/llvm-amd-gfx1030-rt-inst/">
-   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/09/17/llvm-amd-gfx1030-rt-inst/">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/09/16/amd-gcn-rdna-fma-mad/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/09/16/amd-gcn-rdna-fma-mad/">
    <meta property="og:locale" content="ja_JP">
    <meta name="author" content="Umio Yasuno">
    <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
-   <meta name="keywords" content="RDNA 2, Sienna Cichlid, Navy Flounder">
+   <meta name="keywords" content="RadeonSI, RADV">
 
       <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
       <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
@@ -278,41 +278,79 @@ article a {
 </header>
          <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 <article class="text" itemscope itemtype="http://schema.org/Article">
-<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a>/</div><h1 itemprop="headline name">LLVM に RDNA 2 でレイトレーシングを実行する命令が追加される</h1><p>AMDGPU においてコンパイラバックエンド等へ採用されている LLVM に、<em>RDNA 2 /GFX10.3</em> でレイトレーシングを行なうための命令、<code>llvm.amdgcn.image.bvh.intersect.ray</code> が追加された。<br />
-<span class="thread_link"><a href="https://github.com/llvm/llvm-project/commit/91f503c3af190e19974f8832871e363d232cd64c" rel="noreferrer" target="_blank">[AMDGPU] gfx1030 RT support · llvm/llvm-project@91f503c</a></span><br>
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a>/</div><h1 itemprop="headline name">AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い</h1>
 
-手法としては BVH(Bounding Volume Hierarchy, バウンディングボリューム階層構造) であり、命令はレイの交差判定を高速化させるためのものと思われる。</p>
+<p>最近 Mesa3D に組み込まれた変更の中に以下のようなコメントがあった。</p>
 
-<p><code>llvm.amdgcn.image.bvh.intersect.ray</code> は MIMG(Memory Image Instructions) であり、アドレスフィールドには <code>A16</code> 要素が用いられ、これはテクスチャサンプラーを使わない画像処理では <code>uint16</code> 、サンプラーを使うものでは <code>f16</code> となる。<br />
-このことから、HWレイトレーシングをサポートする <em>RDNA 2 /GFX10.3</em> GPU は Hot Chips 32 で内部構造が明になった <strong>Xbox Series X</strong> 同様に、テクスチャユニットとレイトレーシングユニットを共有する構成になっているのではないかと考えられる。</p>
+<blockquote>
+<pre><code> /* gfx6-8: use MAD (FMA is 4x slower)
+  * gfx9-10: either is OK (MAD and FMA have the same performance)
+  * gfx10.3: use FMA (MAD doesn&#39;t exist, separate MUL+ADD are 2x slower)
+  *
+  * FMA has no advantage on gfx9-10 and MAD allows more algebraic optimizations.
+  * Keep FMA enabled on gfx10 to test it, which helps us validate correctness
+  * for gfx10.3 on gfx10.
+  */</code></pre>
+<div class="quote_source">引用元:<cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6596/diffs?commit_id=758ab39d25e10d585929b87a8a2891c5a68b7c55" rel="noreferrer" target="_blank">nir,radeonsi: move ffma fusing to late optimizations for better codegen (!6596) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+</div>
 
-<p>今回の命令の追加により、LLVM をシェーダーコンパイラのバックエンドに一部採用しているオープンソース・ドライバー <a href="https://www.coelacanth-dream.com/tags/radv">RADV (LLVM)</a>、<em>AMDVLK</em> での Vulkan API における HWレイトレーシングのサポートの道が開けてきた。<br />
-独自のメモリ効率と性能に優れる <a href="https://www.coelacanth-dream.com/tags/aco">ACOバックエンド</a> に今回の LLVM の変更を反映させれば、<em>ACOバックエンド</em> でのサポートも可能となる。</p>
+</blockquote>
 
-<p>余談だが、LLVM 無しに <em>RADVドライバー</em> をビルド可能にするマージリクエストが Mesa に投稿されたことがあった。<br />
-<em>ACOバックエンド</em> は LLVMバックエンド同等の機能を備え、かつ性能に優れるからというのが理由だったが、ある理由により、マージリクエストは組み込まれずに閉じられた。<br />
-理由の1つはデバッグのためであり、安定バージョンを用いてるユーザーに起こった問題が LLVM と <em>ACO</em> のどちらに起因するものか検証が面倒になるというもの。<br />
-もう1つは、AMD が将来的な GPU ISA を <em>ACO</em> の開発チームと共有するかが不透明であり、最新の ISA に対応するため、LLVM は残す必要があるというものだった。<br />
-AMD が公式にリリースする <em>AMDVLK</em> は LLVMバックエンドを用いている。<em>ACOバックエンド</em> は性能に優れ、ユーザーからも好意的に受け入れられているが、AMD がどのように捉えているかは不明であり、将来的にどうなるか、取り入れるつもりがあるのかははっきりしない。</p>
+<p>AMD GPU の各世代における、FMA と MAD の処理性能の違いらしいが、初期の GCN から <em>Polaris1x /VegaM</em> までを含む <em>GFX6-8</em> では FMA が MAD の 4倍遅いため MAD を使い、
+<em>Vega</em> や <em>Navi</em> の世代である <em>GFX9-10</em> では FMA も MAD も同じであるため、どちらでも良く、<br />
+そして AMD の次世代 GPU <em>RDNA 2 /GFX10.3</em> では MAD が存在せず(実装されていない？)、2つに分けて処理するため、FMA を使うとしている。</p>
 
-<p>AMD は <em>RDNA 2</em> に関する発表を 2020/10/28 に行なうと発表しており <del>(発表の発表)</del>、それに向けてか<a href="https://www.coelacanth-dream.com/posts/2020/09/11/amd-sienna_cichlid-usb_c/">Sienna CIchlid が USB-Cコントローラーを内蔵</a> や <a href="https://www.coelacanth-dream.com/posts/2020/09/16/amd-vcn_3-av1-dec/">VCN 3 の AV1 HWデコードサポート</a>等、オープンソース・ソフトウェアに <em>RDNA 2 /GFX10.3</em> のより詳細なパッチを投稿している。<br />
-発表日が近づくにつれ、この動きは加速すると見られる。<br />
-パッチから部分的な姿を想像しつつ、盛大な正式発表を心待ちにしている。</p>
+<p>こうした話は初耳であり、特に <em>GFX6-8</em> の FMA の処理が MAD の 4倍遅いというのは衝撃的だ。<br />
+そこで自分なりに調べ、上記コメントを読み解いてみた。</p>
+
+<h2 id="fma-mad-diff">FMA と MAD の違い</h2>
+
+<p>FMA(Fused Multiply Add) も MAD(Multiply Add) はどちらも 3つのオペランドを必要とする積和演算だが、MAD は乗算の結果を、掛けた値と同じビット数に丸めてから加算の処理を行なうが、<br />
+FMA は乗算の結果を掛けた値の倍のビット長で保持してから加算を行なうため、FMA の方が計算精度が高くなる、という違いがある<br />
+<span class="thread_link">参考: <link><a href="https://news.mynavi.jp/article/20091007-nvidia_fermi/2" rel="noreferrer" target="_blank">科学技術計算向け演算能力が引き上げられたGPUアーキテクチャ「Fermi」 (2) 科学技術計算向けのさまざまな工夫 | マイナビニュース</a></link></span><br>
+</p>
+
+<h2 id="微妙な仕様-と世代ごとの違い">微妙な仕様？と世代ごとの違い</h2>
+
+<p>まず、冒頭で引用したコメント部分が追加され、影響を受けるのは、シェーダーを GPU が実行する中間コードに変換するシェーダーコンパイラの部分である。</p>
+
+<p>そして、<em>GFX6-8</em> では FMA が MAD の 4倍遅くなることについて過去のパッチにヒントがあった。<br />
+どうも、Vulkan SPIR-V において FMA は MAD に相当するが、FMA の Opcode(Operation Code, 命令の動作を指定する部分) は AMD GPU <em>(GFX6-8)</em> のハードウェア内部? では 2つの Opcode のように発行されるため処理が遅くなるらしい。<sup class="footnote-ref" id="fnref:fma-double-opcode"><a href="#fn:fma-double-opcode">1</a></sup><br />
+これが関係して、FMA の実行が MAD の 4倍遅くなるということと思われるが、これ以上の詳細は不明である。AMD が公開している Shader ISA の資料を漁ってみたが、このことについて言及している部分は見当たらなかった。<br />
+それとして、<em>GFX6-8</em> ではこれを回避するため、ドライバー部で FMA を MAD として実行するよう中間コードを生成している。<sup class="footnote-ref" id="fnref:fma-to-mad"><a href="#fn:fma-to-mad">2</a></sup><br />
+性能低下に対し、シェーダーコンパイラ側でこういった対策を取ったのは少し不思議に思えるが、これは命令の発行を行なうユニットが CU内にあり、ブート時に読み込まれるファームウェアやマイクロコードでは対処できなかったのかもしれない。</p>
+
+<p>これが修正されたのか、<em>GFX9-10</em> では FMA も MAD も同じ性能で処理が可能となっており、FMA としても MAD として実行しても変わらないものとなった。</p>
+
+<p><em>RDNA 2 /GFX10.3</em> では、恐らく MAD 演算器が省かれ <span class="complement">あくまでコードのコメントから読み取ったものであり、確かではない</span>
+、MAD は MUL(乗算) と ADD(加算) の 2つに分けて演算を行なうようになったため遅くなり、FMA の方が明確に速くなった。<br />
+コード中では、まだ <em>RDNA 2 /GFX10.3</em> で十分に検証が行なえないため、<em>RDNA /GFX10.1</em> から MAD ではなく FMA で処理するようになっている。<br />
+オープンソースで開発されているドライバーは、企業内部でテストに使われているハードウェアよりも多くのユーザーが手にしているハードウェアを対象とした方が開発がスムーズに進むのだろう。<br />
+<em>RDNA 2 /GFX10.3</em> で MAD 演算器が省かれた(であろう) 理由については、WGP(2CU) の実装密度を引き上げるためと考えられるが、正しさを保証することはできない。AMD から詳細を解説してくれれば嬉しいが。</p>
 
 <hr>
 <div class="reference">
 <h3 class="reference_title" id="reference_title">参考リンク</h3>
 <ul>
-<li><a href="https://www.4gamer.net/games/033/G003329/20180320141/" rel="noreferrer" target="_blank">［GDC 2018］ついにDirectXがレイトレーシングパイプラインを統合。「DirectX Raytracing」が立ち上がる</a></li>
-<li><a href="https://www.4gamer.net/games/121/G012181/20180816069/" rel="noreferrer" target="_blank">西川善司の3DGE：新世代GPU「Turing」のリアルタイムレイトレーシングは「本物」なのか？ その正体に迫る</a></li>
-<li><a href="https://developer.amd.com/wp-content/resources/RDNA_Shader_ISA.pdf" rel="noreferrer" target="_blank">RDNA_Shader_ISA.pdf</a></li>
+<li><a href="https://news.mynavi.jp/article/20091007-nvidia_fermi/2" rel="noreferrer" target="_blank">科学技術計算向け演算能力が引き上げられたGPUアーキテクチャ「Fermi」 (2) 科学技術計算向けのさまざまな工夫 | マイナビニュース</a></li>
 </ul>
 
 </div>
 
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:fma-double-opcode"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/2c61594d84911f486aa2edb4b8e561e780139d20" rel="noreferrer" target="_blank">radv: lower ffma in nir. (2c61594d) · Commits · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:fma-double-opcode"><sup>[return]</sup></a></li>
+<li id="fn:fma-to-mad"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/80bbdb148335c55303960bab841d98f4fbd1feea" rel="noreferrer" target="_blank">radeonsi: lower ffma in nir to mad. (80bbdb14) · Commits · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:fma-to-mad"><sup>[return]</sup></a></li>
+</ol>
+</div>
 <div class="article_time">
-   <time datetime="2020-09-17 08:19+09:00" itemprop="datePublished">Post:<br>&emsp;2020/09/17 08:19&emsp;JST</time>
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/09/17 11:46&emsp;JST</div>
+   <time datetime="2020-09-18 09:45+09:00" itemprop="datePublished">Post:<br>&emsp;2020/09/18 09:45&emsp;JST</time>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/09/18 10:13&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
@@ -325,9 +363,8 @@ AMD が公式にリリースする <em>AMDVLK</em> は LLVMバックエンドを
 <div class="side_tag_block">
    <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
    <nav class="side_tag">
-         <a href="https://www.coelacanth-dream.com/tags/navy_flounder/" class="side_tag_lower">Navy Flounder</a>
-         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="side_tag_lower">RDNA 2</a>
-         <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid/" class="side_tag_lower">Sienna Cichlid</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="side_tag_lower">RadeonSI</a>
+         <a href="https://www.coelacanth-dream.com/tags/radv/" class="side_tag_lower">RADV</a>
    </nav>
 </div>
 <div class="side_category_block">
@@ -339,10 +376,10 @@ AMD が公式にリリースする <em>AMDVLK</em> は LLVMバックエンドを
    </nav>
 </div>
 <nav class="side_share">
-   Share:<a href="https://twitter.com/intent/tweet?text=LLVM%20%e3%81%ab%20RDNA%202%20%e3%81%a7%e3%83%ac%e3%82%a4%e3%83%88%e3%83%ac%e3%83%bc%e3%82%b7%e3%83%b3%e3%82%b0%e3%82%92%e5%ae%9f%e8%a1%8c%e3%81%99%e3%82%8b%e5%91%bd%e4%bb%a4%e3%81%8c%e8%bf%bd%e5%8a%a0%e3%81%95%e3%82%8c%e3%82%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/17/llvm-amd-gfx1030-rt-inst/&hashtags=RDNA2%2cSiennaCichlid%2cNavyFlounder" rel="noreferrer noopenner" target="_blank">Tweet</a>
+   Share:<a href="https://twitter.com/intent/tweet?text=AMD%20GPU%20%e3%81%ae%e4%b8%96%e4%bb%a3%e3%81%ab%e3%81%8a%e3%81%91%e3%82%8b%20FMA%e3%80%81MAD%20%e5%91%bd%e4%bb%a4%e3%81%ae%e5%be%ae%e5%a6%99%e3%81%aa%e4%bb%95%e6%a7%98%e3%81%a8%e9%81%95%e3%81%84%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/16/amd-gcn-rdna-fma-mad/&hashtags=RadeonSI%2cRADV" rel="noreferrer noopenner" target="_blank">Tweet</a>
 </nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
 
-      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/17/llvm-amd-gfx1030-rt-inst.md" target="_blank" rel="noreferrer noopener">History</a>
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/16/amd-gcn-rdna-fma-mad.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://www.coelacanth-dream.com/about/">About</a>
 <a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
 
@@ -360,9 +397,8 @@ AMD が公式にリリースする <em>AMDVLK</em> は LLVMバックエンドを
 <footer><hr><div class="foot_tag_block">
    <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
    <nav class="foot_tag">
-         <a href="https://www.coelacanth-dream.com/tags/navy_flounder/" class="foot_tag_lower">Navy Flounder</a>
-         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="foot_tag_lower">RDNA 2</a>
-         <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid/" class="foot_tag_lower">Sienna Cichlid</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="foot_tag_lower">RadeonSI</a>
+         <a href="https://www.coelacanth-dream.com/tags/radv/" class="foot_tag_lower">RADV</a>
    </nav>
 </div>
 <div class="foot_category_block">
@@ -377,7 +413,7 @@ AMD が公式にリリースする <em>AMDVLK</em> は LLVMバックエンドを
    <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
    <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
 </nav>
-<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/17/llvm-amd-gfx1030-rt-inst.md" target="_blank" rel="noreferrer noopener">History</a>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/16/amd-gcn-rdna-fma-mad.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://www.coelacanth-dream.com/about/">About</a>
 <a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
 
@@ -389,7 +425,7 @@ AMD が公式にリリースする <em>AMDVLK</em> は LLVMバックエンドを
 
 <a href="#" class="pagetop">Page Top</a></nav>
    <nav class="foot_share_search"><nav class="foot_share">
-   Share:<a href="https://twitter.com/intent/tweet?text=LLVM%20%e3%81%ab%20RDNA%202%20%e3%81%a7%e3%83%ac%e3%82%a4%e3%83%88%e3%83%ac%e3%83%bc%e3%82%b7%e3%83%b3%e3%82%b0%e3%82%92%e5%ae%9f%e8%a1%8c%e3%81%99%e3%82%8b%e5%91%bd%e4%bb%a4%e3%81%8c%e8%bf%bd%e5%8a%a0%e3%81%95%e3%82%8c%e3%82%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/17/llvm-amd-gfx1030-rt-inst/&hashtags=RDNA2%2cSiennaCichlid%2cNavyFlounder" rel="noreferrer noopenner" target="_blank">Tweet</a>
+   Share:<a href="https://twitter.com/intent/tweet?text=AMD%20GPU%20%e3%81%ae%e4%b8%96%e4%bb%a3%e3%81%ab%e3%81%8a%e3%81%91%e3%82%8b%20FMA%e3%80%81MAD%20%e5%91%bd%e4%bb%a4%e3%81%ae%e5%be%ae%e5%a6%99%e3%81%aa%e4%bb%95%e6%a7%98%e3%81%a8%e9%81%95%e3%81%84%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/16/amd-gcn-rdna-fma-mad/&hashtags=RadeonSI%2cRADV" rel="noreferrer noopenner" target="_blank">Tweet</a>
 </nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
 </nav>
 <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
@@ -404,9 +440,8 @@ AMD が公式にリリースする <em>AMDVLK</em> は LLVMバックエンドを
 <div class="slide_menu_tag_block">
    <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
    <nav class="slide_menu_tag">
-         <a href="https://www.coelacanth-dream.com/tags/navy_flounder/" class="slide_menu_tag_lower">Navy Flounder</a>
-         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="slide_menu_tag_lower">RDNA 2</a>
-         <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid/" class="slide_menu_tag_lower">Sienna Cichlid</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="slide_menu_tag_lower">RadeonSI</a>
+         <a href="https://www.coelacanth-dream.com/tags/radv/" class="slide_menu_tag_lower">RADV</a>
    </nav>
 </div>
 <div class="slide_menu_category_block">
@@ -418,9 +453,9 @@ AMD が公式にリリースする <em>AMDVLK</em> は LLVMバックエンドを
    </nav>
 </div>
 <nav class="slide_menu_share">
-   Share:<a href="https://twitter.com/intent/tweet?text=LLVM%20%e3%81%ab%20RDNA%202%20%e3%81%a7%e3%83%ac%e3%82%a4%e3%83%88%e3%83%ac%e3%83%bc%e3%82%b7%e3%83%b3%e3%82%b0%e3%82%92%e5%ae%9f%e8%a1%8c%e3%81%99%e3%82%8b%e5%91%bd%e4%bb%a4%e3%81%8c%e8%bf%bd%e5%8a%a0%e3%81%95%e3%82%8c%e3%82%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/17/llvm-amd-gfx1030-rt-inst/&hashtags=RDNA2%2cSiennaCichlid%2cNavyFlounder" rel="noreferrer noopenner" target="_blank">Tweet</a>
+   Share:<a href="https://twitter.com/intent/tweet?text=AMD%20GPU%20%e3%81%ae%e4%b8%96%e4%bb%a3%e3%81%ab%e3%81%8a%e3%81%91%e3%82%8b%20FMA%e3%80%81MAD%20%e5%91%bd%e4%bb%a4%e3%81%ae%e5%be%ae%e5%a6%99%e3%81%aa%e4%bb%95%e6%a7%98%e3%81%a8%e9%81%95%e3%81%84%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/16/amd-gcn-rdna-fma-mad/&hashtags=RadeonSI%2cRADV" rel="noreferrer noopenner" target="_blank">Tweet</a>
 </nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
-<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/17/llvm-amd-gfx1030-rt-inst.md" target="_blank" rel="noreferrer noopener">History</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/16/amd-gcn-rdna-fma-mad.md" target="_blank" rel="noreferrer noopener">History</a>
 <a href="https://www.coelacanth-dream.com/about/">About</a>
 <a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
 
