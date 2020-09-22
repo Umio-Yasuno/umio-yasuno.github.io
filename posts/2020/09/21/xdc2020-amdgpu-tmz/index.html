@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/09/21/xdc2020-amdgpu-tmz/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>【XDC2020】AMD GPU のメモリ暗号化機能 TMZ　―― DRMへの活用も | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="【XDC2020】AMD GPU のメモリ暗号化機能 TMZ　―― DRMへの活用も | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="【XDC2020】AMD GPU のメモリ暗号化機能 TMZ　―― DRMへの活用も | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/09/21/xdc2020-amdgpu-tmz/">
+   <meta name="description" content="XDC2020 にて、AMD GPU のドライバーに実装されている TMZ(Trust Memory Zone) 機能について、AMD の Ray Huang 氏が講演を行なった。 XDC 2020 &ndash; Day 1 &ndash; September 16, 2020 &ndash; YouTube X.Org Developers Conference 2020 (16-18 September 2020): Secure Buffer Object Support with Trusted">
+   <meta property="og:description" content="XDC2020 にて、AMD GPU のドライバーに実装されている TMZ(Trust Memory Zone) 機能について、AMD の Ray Huang 氏が講演を行なった。 XDC 2020 &ndash; Day 1 &ndash; September 16, 2020 &ndash; YouTube X.Org Developers Conference 2020 (16-18 September 2020): Secure Buffer Object Support with Trusted">
+   <meta name="twitter:description" content="XDC2020 にて、AMD GPU のドライバーに実装されている TMZ(Trust Memory Zone) 機能について、AMD の Ray Huang 氏が講演を行なった。 XDC 2020 &ndash; Day 1 &ndash; September 16, 2020 &ndash; YouTube X.Org Developers Conference 2020 (16-18 September 2020): Secure Buffer Object Support with Trusted">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/09/21/xdc2020-amdgpu-tmz/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/09/21/xdc2020-amdgpu-tmz/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="Linux Kernel, RadeonSI">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 94%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: 12pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   word-break: keep-all;
+
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+   transform: translateZ(0);
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+
+   word-break: break-word;
+   font-size: 1rem;
+   line-height: 1.72rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .01rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+
+
+
+   opacity: 0;
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+
+   opacity: 0;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 .5rem 0;
+   overflow-wrap: anywhere;
+   word-break: break-word;
+}
+pre {
+   overflow: scroll;
+   width: 0;
+   scrollbar-width: thin;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   padding: 0 .25rem;
+   word-break: break-all;
+
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 16px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 0%, #878787 10%,#00080B 60%, #787878 100%);
+   background-size: 100% 9px;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .016;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a>/</div><h1 itemprop="headline name">【XDC2020】AMD GPU のメモリ暗号化機能 TMZ　―― DRMへの活用も</h1>
+<p><strong>XDC2020</strong> にて、AMD GPU のドライバーに実装されている TMZ(Trust Memory Zone) 機能について、AMD の Ray Huang 氏が講演を行なった。</p>
+
+<ul>
+<li><a href="https://www.youtube.com/watch?v=b2mnbyRgXkY&amp;t=14910s" rel="noreferrer" target="_blank">XDC 2020 &ndash; Day 1 &ndash; September 16, 2020 &ndash; YouTube</a></li>
+<li><a href="https://xdc2020.x.org/event/9/contributions/630/" rel="noreferrer" target="_blank">X.Org Developers Conference 2020 (16-18 September 2020): Secure Buffer Object Support with Trusted Memory Zone · Indico</a></li>
+</ul>
+
+<p>メモリの暗号化は不正なアプリケーションがあるコンテンツにアクセスできないよう保護する重要な機能である。<br />
+AMD GPU で開発されている TMZ はメモリに書き込まれる内容、メモリから読み出される内容を AES暗号化によって保護する。<br />
+Linux Kernel(amd-gfx) へのパッチは 2020/09 に投稿され、ユーザーモードのドライバーでもサポートされている。</p>
+
+<p>ページテーブルへの TMZ bit のセット、信頼できるトランザクション処理という複数の保護が提供され、TMZ bit が誤っていたとしても生の内容が漏れることはない。<br />
+TMZ は専用VRAMを持つ dGPU、CPUとGPUでメモリを共有する APU、どちらのプラットフォームでもサポートされており、システムメモリに対しても暗号化を行なえる。</p>
+
+<p>CPUは信頼できないドメインとされ、TMZ によって暗号化された内容を復号化することができない。<br />
+復号化が可能なのは、GPU内の信頼できるハードウェアブロック <em>GFX, SDMA, Media Engine(VCN), Display Engine</em> 部のみとなる。<br />
+CPUからの復号化を出来なくすることによって保護を強化するとともに、VRAMからGPUアクセラレーションを有効にしたブラウザの表示内容を読み取るといった、GPUの脆弱性への対策となるのではないかと思われる。</p>
+
+<p>スライド内では触れられていないがコードを読むに、全ての AMD GPU で TMZ 機能を使用可能という訳ではなく、<em>Vega /GFX9</em> 世代の APU (<em>Raven/Picasso/Raven2/Renoir</em>)、<em>RDNA /GFX10</em> 世代の GPU (<em>Navi10/Navi12/Navi14</em>) のみでサポートされているようだ。<sup class="footnote-ref" id="fnref:asic-tmz"><a href="#fn:asic-tmz">1</a></sup></p>
+
+<p>TMZ は Widevine DRM に必要とされる重要な機能であり、TMZ と HDCP(High Bandwidth Digital Content Protection) の組み合わせは、AMDプラットフォームにおいて Widevine がセーフチャネルを構築するのに活用することができる。<br />
+そして、AMD のソフトウェア開発者達は TMZ によるエンドツーエンドでの DRMソリューションに取り組んでいるとし、講演を結んでいる。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:asic-tmz"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=b71a564e2509e1000044a9873cbee6d6a6a5ab90" rel="noreferrer" target="_blank">drm/amdgpu: Fine-grained TMZ support</a>
+ <a class="footnote-return" href="#fnref:asic-tmz"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+   <time datetime="2020-09-21 23:03+09:00" itemprop="datePublished">Post:<br>&emsp;2020/09/21 23:03&emsp;JST</time>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/09/22 01:41&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="side_tag_lower">Linux Kernel</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="side_tag_lower">RadeonSI</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/software/" class="side_category_lower">Software</a>
+   </nav>
+</div>
+<nav class="side_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=%e3%80%90XDC2020%e3%80%91AMD%20GPU%20%e3%81%ae%e3%83%a1%e3%83%a2%e3%83%aa%e6%9a%97%e5%8f%b7%e5%8c%96%e6%a9%9f%e8%83%bd%20TMZ%e3%80%80%e2%80%95%e2%80%95%20DRM%e3%81%b8%e3%81%ae%e6%b4%bb%e7%94%a8%e3%82%82%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/21/xdc2020-amdgpu-tmz/&hashtags=LinuxKernel%2cRadeonSI" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/21/xdc2020-amdgpu-tmz.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Survive</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="foot_tag_lower">Linux Kernel</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="foot_tag_lower">RadeonSI</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/software/" class="foot_category_lower">Software</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/21/xdc2020-amdgpu-tmz.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Survive</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search"><nav class="foot_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=%e3%80%90XDC2020%e3%80%91AMD%20GPU%20%e3%81%ae%e3%83%a1%e3%83%a2%e3%83%aa%e6%9a%97%e5%8f%b7%e5%8c%96%e6%a9%9f%e8%83%bd%20TMZ%e3%80%80%e2%80%95%e2%80%95%20DRM%e3%81%b8%e3%81%ae%e6%b4%bb%e7%94%a8%e3%82%82%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/21/xdc2020-amdgpu-tmz/&hashtags=LinuxKernel%2cRadeonSI" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+</nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="slide_menu_tag_lower">Linux Kernel</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="slide_menu_tag_lower">RadeonSI</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="slide_menu_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/software/" class="slide_menu_category_lower">Software</a>
+   </nav>
+</div>
+<nav class="slide_menu_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=%e3%80%90XDC2020%e3%80%91AMD%20GPU%20%e3%81%ae%e3%83%a1%e3%83%a2%e3%83%aa%e6%9a%97%e5%8f%b7%e5%8c%96%e6%a9%9f%e8%83%bd%20TMZ%e3%80%80%e2%80%95%e2%80%95%20DRM%e3%81%b8%e3%81%ae%e6%b4%bb%e7%94%a8%e3%82%82%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/21/xdc2020-amdgpu-tmz/&hashtags=LinuxKernel%2cRadeonSI" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/21/xdc2020-amdgpu-tmz.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Survive</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+         <div class="crt"></div>
+
+   </body>
+</html>
