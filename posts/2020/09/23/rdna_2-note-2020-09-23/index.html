@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/09/23/rdna_2-note-2020-09-23/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>AMD RDNA 2 ノート　―― 非対称な ShaderArray、gpu_info、XSS 【2020/09/23】 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD RDNA 2 ノート　―― 非対称な ShaderArray、gpu_info、XSS 【2020/09/23】 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD RDNA 2 ノート　―― 非対称な ShaderArray、gpu_info、XSS 【2020/09/23】 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/09/23/rdna_2-note-2020-09-23/">
+   <meta name="description" content="Index 非対称な Shader Array 構成の効率を向上させる gpu_info ファームウェアは必要無し Xbox Series S 非対称な Shader Array 構成の効率を向上させる radeonsi: miscellaneous changes for gfx10 (!6822) · Merge Requests · Mesa / mesa · GitLab まず AMD GPU のア">
+   <meta property="og:description" content="Index 非対称な Shader Array 構成の効率を向上させる gpu_info ファームウェアは必要無し Xbox Series S 非対称な Shader Array 構成の効率を向上させる radeonsi: miscellaneous changes for gfx10 (!6822) · Merge Requests · Mesa / mesa · GitLab まず AMD GPU のア">
+   <meta name="twitter:description" content="Index 非対称な Shader Array 構成の効率を向上させる gpu_info ファームウェアは必要無し Xbox Series S 非対称な Shader Array 構成の効率を向上させる radeonsi: miscellaneous changes for gfx10 (!6822) · Merge Requests · Mesa / mesa · GitLab まず AMD GPU のア">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/09/23/rdna_2-note-2020-09-23/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/09/23/rdna_2-note-2020-09-23/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="RDNA 2">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 94%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: 12pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   word-break: keep-all;
+
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+   transform: translateZ(0);
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+
+   word-break: break-word;
+   font-size: 1rem;
+   line-height: 1.72rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .01rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+
+
+
+   opacity: 0;
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+
+   opacity: 0;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 .5rem 0;
+   overflow-wrap: anywhere;
+   word-break: break-word;
+}
+pre {
+   overflow: scroll;
+   width: 0;
+   scrollbar-width: thin;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   padding: 0 .25rem;
+   word-break: break-all;
+
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 16px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 0%, #878787 10%,#00080B 60%, #787878 100%);
+   background-size: 100% 9px;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .016;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a>/</div><h1 itemprop="headline name">AMD RDNA 2 ノート　―― 非対称な ShaderArray、gpu_info、XSS 【2020/09/23】</h1>
+
+
+<h2 id="page_index">Index</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#shader-array">非対称な Shader Array 構成の効率を向上させる</a></li>
+<li><a href="#not-need-gpu_info-fw">gpu_info ファームウェアは必要無し</a></li>
+<li><a href="#xss">Xbox Series S</a></li>
+</ul>
+
+</div>
+
+
+<h2 id="shader-array">非対称な Shader Array 構成の効率を向上させる</h2>
+
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6822/diffs?commit_id=c4281375e63ce4e1cecab4382b5124e3a6ee941c" rel="noreferrer" target="_blank">radeonsi: miscellaneous changes for gfx10 (!6822) · Merge Requests · Mesa / mesa · GitLab</a></li>
+</ul>
+
+<p>まず AMD GPU のアーキテクチャでは、GPU のコア部と言える、シェーダーを処理する CU、Rastrizerユニット、Primitiveユニット、RenderBackendユニット等を、Shader Engine としてまとめて管理している。<br />
+そして、<em>RDNAアーキテクチャ</em> では Shader Engine 内部が、それぞれ L1メモリキャッシュ (128KB) を持つ Shader Array 2基にコア部を分け、構成されている。<br />
+また、CU は 2基をまとめた Dual Compute Unit / WGP(Work Group Processor) 単位となる。</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/09/23/navi10-diagram.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/09/23/navi10-diagram.webp"
+         alt="画像出典: https://www.amd.com/system/files/documents/rdna-whitepaper.pdf"/> </a><figcaption>
+         <h4>Navi10 Diagram</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="noreferrer" target="_blank">https://www.amd.com/system/files/documents/rdna-whitepaper.pdf</a></p>
+   </figcaption>
+</figure>
+
+
+<p>AMD GPU は Shader Engine ごとに Workload Manager を持ち、各 Shader Engine の規模は対称となるように設定されるが、Shader Engine 内部の Shader Array については規模が異なる場合がある。<br />
+例えば、<em>RDNAアーキテクチャ</em> である <strong>RX 5700</strong> は Compute Unit を 36基持つ。<br />
+<strong>RX 5700</strong> のベースとなる GPU ASIC <em>Navi10</em> は Shader Engine 2基、その内部の Shader Array 2基で構成されており、Shader Array は 5WGP(10CU) の規模となる。<br />
+Shader Engine 2基は規模が対称となるため、それぞれ CU を 9基持つことになるが、その場合内部の Shader Array の構成は 4基と 5基のものに分かれ、非対称となる。</p>
+
+<p>上記パッチはこの Shader Array が非対称の場合に向けたもので、Pixel Shader を処理する際の無駄を減らす目的がある。<br />
+ハードウェアは Pixel Shader を処理する Wave(スレッドの塊) を各 Shader Array に同じ数発行するが、Shader Array あたりの CU数が非対称だと、規模が小さい方に処理速度が引っ張られて効率が悪化する。<br />
+そこで、小さい方の CU数に合わせて Wave を発行することで効率の悪化を防ぐ。<br />
+大きい方の Shader Array では余分な CU が出てくるが、その分消費電力を減らすことができ、稼働させる CU のクロックをその分引き上げることができる。<br />
+効率がそこまで向上しない場合もあるのか、将来的には特定のアプリケーション向けに有効無効を設定するかもしれない、とされている。</p>
+
+<p>例に上げたように、<strong>RX 5700</strong> 等 <em>RDNA /GFX10</em> 世代でも Shader Array が非対称となる GPU があるが、機能は現状 <em>RDNA 2 /GFX10.3</em> 世代にのみ有効可能となっている。<br />
+<em>RDNA 2 /GFX10.3</em> で、電力管理またはハードウェアスケジューラの改良が行なわれたのかもしれない。</p>
+
+<h2 id="not-need-gpu_info-fw">gpu_info ファームウェアは必要無し</h2>
+
+<p><em>Vega /GFX9</em> 世代から導入された<sup class="footnote-ref" id="fnref:gfx9-gpu-info-fw"><a href="#fn:gfx9-gpu-info-fw">1</a></sup>、GPU ASIC の情報を保存する gpu_info ファームウェアだが、<em>RDNA 2/GFX10.3</em> 世代の GPU <em>Sienna Cichlid</em> 、<em>Navy Flounder</em> では必要無いという。<br />
+<span class="thread_link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-September/054110.html" rel="noreferrer" target="_blank">[PATCH] drm/amdgpu: remove gpu_info fw support for sienna_cichlid etc.</a></span><br>
+
+discovery binary からの情報で十分というのが理由らしいが、discovery binary が何を指すのかは不明。VBIOS あたりだとは思うが。</p>
+
+<p><em>Sienna Cichlid</em> 、<em>Navy Flounder</em> の gpu_info ファームウェアは既に ROCm のパッケージや Linux向けProドライバー等に含まれていたが、これらはどれだけ実物の GPU ASIC を反映していたのだろうか。</p>
+
+<h2 id="xss">Xbox Series S</h2>
+
+<p>Microsoft より <strong>Xbox Series X</strong> と同世代かつ小型な <strong>Xbox Series S</strong> が発表された。</p>
+
+<ul>
+<li><a href="https://www.xbox.com/en-US/consoles/xbox-series-s#target-specs" rel="noreferrer" target="_blank">The all-new Xbox Series S | Xbox</a></li>
+<li><a href="https://www.xbox.com/en-US/consoles/xbox-series-x#specs" rel="noreferrer" target="_blank">The all-new Xbox Series X | Xbox</a><br /></li>
+</ul>
+
+<p>CPU は <strong>XSX</strong> と同じ <em>Zen 2コア</em> を 8基搭載しているが、クロックが 0.2GHz程低くなっている。<br />
+GPU は大きく規模を削られ、<strong>XSX</strong> の 52CU@1.825GH に対し <strong>XSS</strong> は 20CU@1.565GHz となり、ピーク演算性能では 4TFLOPS と 1/3 である。メモリも GDDR6 16GB 320-bit に対し GDDR6 10GB 128-bit。<br />
+メモリバス幅が 128-bit、メモリ容量は 10GB というのは、単純に 16Gb(2GB) * 4 で考えても一致しないが、1* 32-bit を 2* 16-bit に分け、そこに 16Gb(2Gb) * 2 を接続しているのかもしれない。</p>
+
+<p>SoC のダイサイズは、<strong>XSX</strong> が 360.45mm<sup>2</sup>、<strong>XSS</strong> は 197.05mm<sup>2</sup>と、半分より少し大きいサイズとなっている。</p>
+
+<p><span class="complement">今は削除されてしまっているが</span>
+あるニュース系サイトで <strong>XSS Soc</strong> のチップ写真が掲載されたスライドが公開されており、見た限り、<strong>XSS SoC</strong> は 24CU 持つが、<strong>XSX</strong> 同様に 4CU を冗長ユニットとし、20CU を製品仕様にしているようだ。<br />
+また、<strong>XSX</strong> は 2-ShaderEngine の構成だったが、<strong>XSS</strong> では 1-ShaderEngine であるように見えた。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">Xbox Series X</th>
+<th align="center">Xbox Series S</th>
+<th align="center">Navi10</th>
+<th align="center">Navi14</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">SE<br>(Shader Engine)</td>
+<td align="center">2</td>
+<td align="center">1?</td>
+<td align="center">2</td>
+<td align="center">1</td>
+</tr>
+
+<tr>
+<td align="left">SH per SE</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">2</td>
+</tr>
+
+<tr>
+<td align="left">WGP(CU) per SH</td>
+<td align="center">7(14)</td>
+<td align="center">6?(12?)</td>
+<td align="center">5(10)</td>
+<td align="center">6(12)</td>
+</tr>
+
+<tr>
+<td align="left">Total WGP(CU)</td>
+<td align="center">28(56)</td>
+<td align="center">12?(24?)</td>
+<td align="center">20(40)</td>
+<td align="center">12(24)</td>
+</tr>
+</tbody>
+</table>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:gfx9-gpu-info-fw"><a href="https://lists.freedesktop.org/archives/amd-gfx/2017-May/008929.html" rel="noreferrer" target="_blank">[PATCH 014/117] drm/amdgpu: add gpu_info firmware (v3)</a>
+ <a class="footnote-return" href="#fnref:gfx9-gpu-info-fw"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+   <time datetime="2020-09-23 13:52+09:00" itemprop="datePublished">Post:<br>&emsp;2020/09/23 13:52&emsp;JST</time>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/09/23 21:44&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+</nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="side_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="side_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=AMD%20RDNA%202%20%e3%83%8e%e3%83%bc%e3%83%88%e3%80%80%e2%80%95%e2%80%95%20%e9%9d%9e%e5%af%be%e7%a7%b0%e3%81%aa%20ShaderArray%e3%80%81gpu_info%e3%80%81XSS%20%e3%80%902020%2f09%2f23%e3%80%91%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/23/rdna_2-note-2020-09-23/&hashtags=RDNA2" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/23/rdna_2-note-2020-09-23.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Survive</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="foot_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+</nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/23/rdna_2-note-2020-09-23.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Survive</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search"><nav class="foot_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=AMD%20RDNA%202%20%e3%83%8e%e3%83%bc%e3%83%88%e3%80%80%e2%80%95%e2%80%95%20%e9%9d%9e%e5%af%be%e7%a7%b0%e3%81%aa%20ShaderArray%e3%80%81gpu_info%e3%80%81XSS%20%e3%80%902020%2f09%2f23%e3%80%91%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/23/rdna_2-note-2020-09-23/&hashtags=RDNA2" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+</nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="slide_menu_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="slide_menu_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="slide_menu_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="slide_menu_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=AMD%20RDNA%202%20%e3%83%8e%e3%83%bc%e3%83%88%e3%80%80%e2%80%95%e2%80%95%20%e9%9d%9e%e5%af%be%e7%a7%b0%e3%81%aa%20ShaderArray%e3%80%81gpu_info%e3%80%81XSS%20%e3%80%902020%2f09%2f23%e3%80%91%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/09/23/rdna_2-note-2020-09-23/&hashtags=RDNA2" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/23/rdna_2-note-2020-09-23.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Survive</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+         <div class="crt"></div>
+
+   </body>
+</html>
