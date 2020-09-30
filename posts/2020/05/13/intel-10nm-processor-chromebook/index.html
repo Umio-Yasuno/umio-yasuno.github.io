@@ -50,8 +50,7 @@ header {
    grid-row: 2 / 3;
    grid-column: 3 / -2;
    word-spacing: 100vw;
-   word-break: keep-all;
-
+   overflow-wrap: normal;
 }
 .site_title {
    font: normal 1.9rem/2.3rem monospace;
@@ -89,13 +88,11 @@ a {
    text-decoration: none;
    padding: 0 .3rem 0 .28rem;
    margin: 0;
-
 }
 .text {
    color: snow;
    box-sizing: border-box;
-
-   word-break: break-word;
+   overflow-wrap: break-word;
    font-size: 1rem;
    line-height: 1.72rem;
    overflow-x: auto;
@@ -166,8 +163,7 @@ h1 {
    font: normal 1.2rem/1.7rem sans-serif;
    grid-column: 2 / -1;
    margin: 1rem 0 .5rem 0;
-   overflow-wrap: anywhere;
-   word-break: break-word;
+   overflow-wrap: break-word;
 }
 pre {
    overflow: scroll;
@@ -189,7 +185,6 @@ pre {
 article a {
    padding: 0 .25rem;
    word-break: break-all;
-
 }
    .slide_menu {
       display: none;
@@ -406,14 +401,26 @@ Intel も<a href="https://github.com/intel/intel-graphics-compiler" rel="norefer
 <p>4-Slice という構成から、フロントエンド部が大きく、複雑なものとなってしまったのかもしれない。<br />
 Gen11アーキテクチャから 1-Slice とし、内部の SubSlice を増やす方向性にシフトした。</p>
 
-<p>搭載する <em>Cannon Lake</em> のCPUコア数は最大 4-Coreという仕様であったらしい。<br />
+<p>搭載する <em>Cannon Lake</em> のCPUコア数は最大 4CPUという仕様であったらしい。<br />
 <span class="thread_link"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/838502" rel="noreferrer" target="_blank">mainboard/google/zoombini/variants/meowth: enable all cpu cores (I9bbfe496) · Gerrit Code Review</a></span><br>
 
+<del>
 書き方から物理 4コアと読めるが、<em>Cannon Lake</em> で唯一出荷された <strong>Core i3-8121U</strong> は 2-Core/4-Thread となっている。<sup class="footnote-ref" id="fnref:16"><a href="#fn:16">18</a></sup><br />
-一方で、Intel が開発するリファレンスボード、cannonlake_rvp は最大 8-Threadとしている。<sup class="footnote-ref" id="fnref:17"><a href="#fn:17">19</a></sup></p>
+一方で、Intel が開発するリファレンスボード、cannonlake_rvp は最大 8-Threadとしている。<sup class="footnote-ref" id="fnref:17"><a href="#fn:17">19</a></sup></del></p>
 
-<p>個人的には、10nmプロセスの歩留まりが非常に悪く、<em>Ice Lake</em> 同様にダイの半分近くを占めていたであろうGPUを無効化にしても数が確保できず、<br />
-仕方なく 4-Core中 2-Coreのみを有効にすることを仕様として何とか <strong>Core i3-8121U</strong> を出荷したのではないかと考えている。</p>
+<p><del>個人的には、10nmプロセスの歩留まりが非常に悪く、<em>Ice Lake</em> 同様にダイの半分近くを占めていたであろうGPUを無効化にしても数が確保できず、<br />
+仕方なく 4-Core中 2-Coreのみを有効にすることを仕様として何とか <strong>Core i3-8121U</strong> を出荷したのではないかと考えている。</del></p>
+
+
+<ins >
+	<span class="insbegin">（追記）</span>
+   <div class="ins-content">
+   Kconfig における MAX_CPUS は SMT、HTT 等による仮想コア、スレッドを含めた値であるため、4コアではなく、2コア 4スレッドを想定していた可能性のが高いと思われます。
+   </div>
+	<span class="insend">（追記終了）</span>
+</ins>
+<br>
+
 
 <p>結局、搭載するプロセッサがキャンセルされてしまってはどうしようもないため、<strong>Zoombini</strong> 、<strong>Meowth</strong> は開発、サポートから外された。<br />
 <span class="thread_link"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/1389176" rel="noreferrer" target="_blank">UPSTREAM: zoombini: remove support for deprecated zoombini board (I015306f1) · Gerrit Code Review</a></span><br>
@@ -465,7 +472,7 @@ Gen11アーキテクチャから 1-Slice とし、内部の SubSlice を増や�
 </div>
 <div class="article_time">
    <time datetime="2020-05-13 09:44+09:00" itemprop="datePublished">Post:<br>&emsp;2020/05/13 09:44&emsp;JST</time>
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/09/11 13:01&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/09/29 21:10&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
