@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>ACOバックエンドでも NGG をサポートする動き | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="ACOバックエンドでも NGG をサポートする動き | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="ACOバックエンドでも NGG をサポートする動き | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/">
+   <meta name="description" content="Mesa3Dに、RADV(Vulkan) ドライバーの ACOバックエンド においても NGG(Next Generation Geometory) をサポート、そしてデフォルトで有効にするマージリクエストが">
+   <meta property="og:description" content="Mesa3Dに、RADV(Vulkan) ドライバーの ACOバックエンド においても NGG(Next Generation Geometory) をサポート、そしてデフォルトで有効にするマージリクエストが">
+   <meta name="twitter:description" content="Mesa3Dに、RADV(Vulkan) ドライバーの ACOバックエンド においても NGG(Next Generation Geometory) をサポート、そしてデフォルトで有効にするマージリクエストが">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="ACO, RADV">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 94%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: 12pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   overflow-wrap: normal;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+   transform: translateZ(0);
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.72rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .01rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+
+
+
+   opacity: 0;
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+
+   opacity: 0;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 .5rem 0;
+   overflow-wrap: break-word;
+}
+pre, table {
+   display: block;
+   overflow: scroll;
+   scrollbar-width: thin;
+   width: 1vw;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   padding: 0 .25rem;
+   word-break: break-all;
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 16px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 0%, #878787 10%,#00080B 60%, #787878 100%);
+   background-size: 100% 9px;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .016;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a></div><h1 itemprop="headline name">ACOバックエンドでも NGG をサポートする動き</h1>
+
+<p>Mesa3Dに、RADV(Vulkan) ドライバーの <a href="https://www.coelacanth-dream.com/tags/aco">ACOバックエンド</a> においても NGG(Next Generation Geometory) をサポート、そしてデフォルトで有効にするマージリクエストが投稿された。<br />
+<span class="thread_link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6964" rel="noreferrer" target="_blank">aco: Implement NGG GS (!6964) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
+</p>
+
+<p>ここで一度、NGG について整理も兼ねて解説を試みてみる。</p>
+
+<h2 id="page_index">Index</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#ngg">NGG (Next Generation Geometory)</a>
+
+<ul>
+<li><a href="#complex-shader-stage">ややこしくて複雑なシェーダーステージ</a></li>
+<li><a href="#ngg-gs">手間を解消する NGG</a></li>
+<li><a href="#ngg-support-gpu">NGG をサポートする GPU</a></li>
+</ul></li>
+<li><a href="#rdna-arch-lds">おまけ　RDNAアーキテクチャおける LDS のモード</a></li>
+</ul>
+
+</div>
+
+
+<h2 id="ngg">NGG (Next Generation Geometory)</h2>
+
+<p>とは言っても、NGG と各シェーダーステージの関係は、<em>ACOバックエンド</em> のドキュメントに非常に分かりやすくまとめられている。<br />
+<span class="thread_link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/amd/compiler/README.md#supported-shader-stages" rel="noreferrer" target="_blank">src/amd/compiler/README.md · master · Mesa / mesa · GitLab</a></span><br>
+
+ただ、ドキュメントとこの記事で解説される内容が NGG の全てではないことを留意して頂きたい。</p>
+
+<h3 id="complex-shader-stage">ややこしくて複雑なシェーダーステージ</h3>
+
+<p>まず、ソフトウェア側で定義されているシェーダーステージの中で、オブジェクトの頂点処理を行なうバーテックスシェーダー(Vertex Shader, VS)、頂点の増減を行なうジオメトリシェーダー(Geometory Shader, GS)、そしてピクセル処理を行なうピクセルシェーダー(Pixel Shader, PS) を GPU で実行する時、VS &rarr; GS &rarr; PS という順番で実行される。<br />
+PS を実行する時、ハードウェア側では VSステージでのみ書き込めるバッファを PSステージで受け取るのだが、GS が間に入るとこれがスムーズにいかなくなる。<br />
+GS の処理結果は一度 VRAM に出力され、PS が受け取るバッファには書き込まれない。<br />
+そのため、ハードウェア側の VSステージで GS の処理結果を VRAM から読み込み、それを PS へのバッファに書き込む手間が必要となる。<br />
+RadeonSI(OpenGL)/RADV(Vulkan) ドライバーではこれを <em>GS copy シェーダー</em> と呼んでいる。<br />
+ハードウェアから見れば、この <em>GS copy</em> は VSステージで実行されるが、ソフトウェアから見れば従来のグラフィクスパイプラインから外れたものであり、ドキュメントではうまいこと処理するため糊付けされたコード部としている。</p>
+
+<p>ややこしいのは、ソフトウェア側とハードウェア側とで定義されているシェーダーステージが異なり、どちらにも Vertex Shaderステージがあるが、ハードウェア側の VSステージで常にソフトウェアの VS が処理される訳ではないことだ。</p>
+
+<h3 id="ngg-gs">手間を解消する NGG</h3>
+
+<p>そして、NGG というのはハードウェア側に新設されたシェーダーステージであり、従来のの GS と VS を融合させたものである。<br />
+これによって <em>GS copy</em> の手間が必要なくなり、直接 PSステージへのバッファに処理結果を書き込めるようになる。<br />
+NGG の利点の 1つとして、VRAM へのトラフィック減少、それによる処理の効率化が期待できる。<br />
+また、NGGステージでは テッセレーション評価シェーダー(Direct3Dにおけるドメインシェーダー) も実行される。</p>
+
+<p>NVIDIA が Turing 世代で新設したプログラムシェーダー、Mesh Shader も近い仕組みとなっており、<em>ACOバックエンド</em> を開発する Valve の Timur Kristóf 氏は <strong>XDC2020</strong> での発表の中で、NGGステージで Mesh Shader も実行可能ではないかと述べている。<sup class="footnote-ref" id="fnref:xdc2020-aco"><a href="#fn:xdc2020-aco">1</a></sup></p>
+
+<h3 id="ngg-support-gpu">NGG をサポートする GPU</h3>
+
+<p>NGG は <em>RDNA /GFX10</em> 世代の AMD GPU からサポートされているが、全てではない。</p>
+
+<p><strong>RX 5500 XT</strong> 等のベースとなる GPU ASIC、<a href="https://www.coelacanth-dream.com/tags/navi14">Navi14</a> はハードウェア側にバグがあるらしく<sup class="footnote-ref" id="fnref:navi14-ngg-bug"><a href="#fn:navi14-ngg-bug">2</a></sup>、NGG を有効にすることはできず、<em>GS copy</em> を使用するグラフィクスパイプラインでシェーダーを実行する。<br />
+<a href="https://www.coelacanth-dream.com/tags/navi12">Navi12</a> も NGG をサポートしているはずだが、<em>Navi12</em> をベースとした製品は MacBookPro向けの <strong>Radeon Pro 5600M</strong> しか出ていないため、現状で一般的に NGG を使えるのは <em>Navi10</em> をベースとする <em>RX 5700 /XT</em> 等だけとなる。</p>
+
+<p><em>RDNA 2 /GFX10.3</em> 世代の GPU を持つ <a href="https://www.coelacanth-dream.com/tags/vangogh">VanGogh APU</a> も、NGG が使用可能かの判定部に、専用VRAMを持っている GPU のみ、というコードが追加されているため、現状では NGG を使用不可とされている。<br />
+NGG によって VRAM のトラフィックを従来より減らせるはずであり、メモリの帯域不足に悩ませられる APU でもサポートして欲しいところだ。</p>
+
+<h2 id="rdna-arch-lds">おまけ　RDNAアーキテクチャおける LDS のモード</h2>
+
+<span class="complement">書いたはいいけど置き場所に困ったため、とりあえずおまけとしておく。</span>
+
+
+<p>AMD GPU における CU(Compute Unit) はメモリキャッシュとは別に、明示的に指定して使用するローカルメモリ、LDS(Local Data Share) を持つ。<br />
+LDS には広帯域低レイテンシでアクセスすることができ、これを活用することが GPU の性能を引き出す上で重要となる。</p>
+
+<p>LDS は <em>GCNアーキテクチャ</em> では CU あたり 64KB(32バンク) となっており、<em>RDNAアーキテクチャ</em> でもそれは変わらないが、CU 2基をまとめた WGP(Work Group Processor)/Dual CU がプロセッサの最小単位となり、WGP全体では 128KB(64バンク) の LDS を持つ。</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/07/02/rdna-wgp.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/07/02/rdna-wgp.webp"
+         alt="画像出典: Optimizing for the Radeon RDNA architecture &amp;ndash; GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf"/> </a><figcaption>
+         <h4>RDNA WGP (Work Group Processor)</h4><p>画像出典: <cite><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" rel="noreferrer" target="_blank">Optimizing for the Radeon RDNA architecture &ndash; GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></cite></p>
+   </figcaption>
+</figure>
+
+
+<p>しかし、LDS 128KB(64バンク) 全てをフラットに使える訳ではなく、実際には下記の図のように、<em>RDNAアーキテクチャ</em> でも <em>GCNアーキテクチャ</em> 同様、CU 2基それぞれが LDS 64KB(32バンク) を持ち、それらがクロスバー接続されるという形になっている。</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/10/04/rdna-lds.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/10/04/rdna-lds.webp"
+         alt="画像出典: https://www.amd.com/system/files/documents/rdna-whitepaper.pdf (Page14)"/> </a><figcaption>
+         <h4>Dual Compute Units memories</h4><p>画像出典: <cite><a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="noreferrer" target="_blank">https://www.amd.com/system/files/documents/rdna-whitepaper.pdf</a></cite> (Page14)</p>
+   </figcaption>
+</figure>
+
+
+<p><em>RDNAアーキテクチャ</em> には LDS の割り当てにおいて 2つのモードがあり、AMD は <strong>CU Mode</strong> 、<strong>WGP Mode</strong> としている。<br />
+<strong>CU Mode</strong> では、L0キャッシュ、テクスチャユニットを共有する 2基の SIMD32ユニット、ざっくりと言えば WGP の片方の CU 側の LDS 64KB(32バンク) のみが割り当てられる。<br />
+<strong>WGP Mode</strong> では、WGP 1基(CU 2基、SIMD32 4基) に LDS 128KB(64バンク) が割り当てられ、<strong>CU Mode</strong> より広いローカルメモリを扱うことができる。<br />
+しかし、上述したように、LDS 64KB(32バンク) 2基がクロスバー接続されているという形であるため、ある SIMD32ユニットから見た時、近い LDS と遠い LDS が存在することになる。<br />
+これにより、<strong>WGP Mode</strong> では LDS 全体の帯域が下がり、性能が低下する場合がある。<br />
+<strong>CU Mode</strong> では近い LDS のみを割り当てるため、扱えるローカルメモリの範囲は狭まるが、常に <strong>WGP Mode</strong> よりも高い帯域でアクセスできる。</p>
+
+<p>性能の最適化において、2つのモードのどちらを選択するかが関わってくると思われるが、RadeonSI/RADV ドライバー ではどうしているのかは不明。</p>
+
+<p><em>RDNAアーキテクチャ</em> はスレッドをまとめた Wave という単位において、ネイティブでは 32スレッド(Wave32) とし、<em>GCNアーキテクチャ</em> と同じスレッド数である 64スレッド(Wave64) にも対応する。<br />
+混同してしまいがちだが、これら Wave は、LDS の割り当てにおける 2つのモードとはまた別であるようだ。</p>
+
+<hr>
+<div class="reference">
+<h3 class="reference_title" id="reference_title">参考リンク</h3>
+<ul>
+<li><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" rel="noreferrer" target="_blank">Optimizing for the Radeon RDNA architecture &ndash; GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></li>
+<li><a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="noreferrer" target="_blank">https://www.amd.com/system/files/documents/rdna-whitepaper.pdf</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA_Shader_ISA.pdf" rel="noreferrer" target="_blank">RDNA_Shader_ISA.pdf</a></li>
+<li><a href="https://www.4gamer.net/games/337/G033714/20170804085/" rel="noreferrer" target="_blank">西川善司の3DGE：新設の「プリミティブシェーダ」を搭載し，Radeon RX Vegaはどこへ行く？</a></li>
+<li><a href="https://www.4gamer.net/games/421/G042134/20180913178/" rel="noreferrer" target="_blank">西川善司の3DGE：GeForce RTX 20完全理解。レイトレ以外の部分も強化が入ったTuringアーキテクチャにとことん迫る</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:xdc2020-aco"><a href="https://www.coelacanth-dream.com/posts/2020/09/19/xdc2020-aco/#ms-on-ngg">【XDC2020】 ACOバックエンドの今後の計画 ―― RDNA 2, RT, Mesh Shader | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:xdc2020-aco"><sup>[return]</sup></a></li>
+<li id="fn:navi14-ngg-bug"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/a4e6e59db82e61b47ef905f28dde80ae36a67d35" rel="noreferrer" target="_blank">radv/gfx10: do not use NGG with NAVI14 (a4e6e59d) · Commits · Mesa / mesa · GitLab</a> <br> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/53b50be35cd11dfa1209de63e997256404e51468" rel="noreferrer" target="_blank">radv/gfx10: enable all CUs if NGG is never used (53b50be3) · Commits · Mesa / mesa · GitLab</a> <br> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/6f3352b6a7648e50f19edffe056d25211375b247/src/amd/vulkan/radv_device.c#L395" rel="noreferrer" target="_blank">src/amd/vulkan/radv_device.c · 6f3352b6a7648e50f19edffe056d25211375b247 · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:navi14-ngg-bug"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+   <time datetime="2020-10-04 16:39+09:00" itemprop="datePublished">Post:<br>&emsp;2020/10/04 16:39&emsp;JST</time>
+
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/05 01:44&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/aco/" class="side_tag_lower">ACO</a>
+         <a href="https://www.coelacanth-dream.com/tags/radv/" class="side_tag_lower">RADV</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/software/" class="side_category_lower">Software</a>
+   </nav>
+</div>
+<nav class="side_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=ACO%e3%83%90%e3%83%83%e3%82%af%e3%82%a8%e3%83%b3%e3%83%89%e3%81%a7%e3%82%82%20NGG%20%e3%82%92%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%e3%81%99%e3%82%8b%e5%8b%95%e3%81%8d%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/&hashtags=ACO%2cRADV" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/04/aco-ngg-gfx10.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Survive</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/aco/" class="foot_tag_lower">ACO</a>
+         <a href="https://www.coelacanth-dream.com/tags/radv/" class="foot_tag_lower">RADV</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/software/" class="foot_category_lower">Software</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/04/aco-ngg-gfx10.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Survive</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search"><nav class="foot_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=ACO%e3%83%90%e3%83%83%e3%82%af%e3%82%a8%e3%83%b3%e3%83%89%e3%81%a7%e3%82%82%20NGG%20%e3%82%92%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%e3%81%99%e3%82%8b%e5%8b%95%e3%81%8d%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/&hashtags=ACO%2cRADV" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/aco/" class="slide_menu_tag_lower">ACO</a>
+         <a href="https://www.coelacanth-dream.com/tags/radv/" class="slide_menu_tag_lower">RADV</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="slide_menu_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/software/" class="slide_menu_category_lower">Software</a>
+   </nav>
+</div>
+<nav class="slide_menu_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=ACO%e3%83%90%e3%83%83%e3%82%af%e3%82%a8%e3%83%b3%e3%83%89%e3%81%a7%e3%82%82%20NGG%20%e3%82%92%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%e3%81%99%e3%82%8b%e5%8b%95%e3%81%8d%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/&hashtags=ACO%2cRADV" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/04/aco-ngg-gfx10.md" target="_blank" rel="noreferrer noopener">History</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#support">Survive</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+         <div class="crt"></div>
+
+   </body>
+</html>
