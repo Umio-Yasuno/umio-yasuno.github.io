@@ -302,13 +302,14 @@ article a {
 
 <p>とは言っても、NGG と各シェーダーステージの関係は、<em>ACOバックエンド</em> のドキュメントに非常に分かりやすくまとめられている。<br />
 <span class="thread_link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/amd/compiler/README.md#supported-shader-stages" rel="noreferrer" target="_blank">src/amd/compiler/README.md · master · Mesa / mesa · GitLab</a></span><br>
+</p>
 
-ただ、ドキュメントとこの記事で解説される内容が NGG の全てではないことを留意して頂きたい。</p>
+<p>ただ、ドキュメントとこの記事で解説される内容が NGG の全てではないことを留意して頂きたい。</p>
 
 <h3 id="complex-shader-stage">ややこしくて複雑なシェーダーステージ</h3>
 
 <p>まず、ソフトウェア側で定義されているシェーダーステージの中で、オブジェクトの頂点処理を行なうバーテックスシェーダー(Vertex Shader, VS)、頂点の増減を行なうジオメトリシェーダー(Geometory Shader, GS)、そしてピクセル処理を行なうピクセルシェーダー(Pixel Shader, PS) を GPU で実行する時、VS &rarr; GS &rarr; PS という順番で実行される。<br />
-PS を実行する時、ハードウェア側では VSステージでのみ書き込めるバッファを PSステージで受け取るのだが、GS が間に入るとこれがスムーズにいかなくなる。<br />
+そして PS を実行する時、ハードウェア側では VSステージでのみ書き込めるバッファを PSステージで受け取るのだが、GS が間に入るとこれがスムーズにいかなくなる。<br />
 GS の処理結果は一度 VRAM に出力され、PS が受け取るバッファには書き込まれない。<br />
 そのため、ハードウェア側の VSステージで GS の処理結果を VRAM から読み込み、それを PS へのバッファに書き込む手間が必要となる。<br />
 RadeonSI(OpenGL)/RADV(Vulkan) ドライバーではこれを <em>GS copy シェーダー</em> と呼んでいる。<br />
@@ -318,10 +319,13 @@ RadeonSI(OpenGL)/RADV(Vulkan) ドライバーではこれを <em>GS copy シェ�
 
 <h3 id="ngg-gs">手間を解消する NGG</h3>
 
-<p>そして、NGG というのはハードウェア側に新設されたシェーダーステージであり、従来のの GS と VS を融合させたものである。<br />
+<p>そして、NGG というのはハードウェア側に新設されたシェーダーステージであり、従来のの GS と VS を統合させたものである。<br />
 これによって <em>GS copy</em> の手間が必要なくなり、直接 PSステージへのバッファに処理結果を書き込めるようになる。<br />
-NGG の利点の 1つとして、VRAM へのトラフィック減少、それによる処理の効率化が期待できる。<br />
-また、NGGステージでは テッセレーション評価シェーダー(Direct3Dにおけるドメインシェーダー) も実行される。</p>
+<em>Vega /GFX9</em> 世代と NGG を使わない場合の <em>RDNA /GFX10</em> 世代でのグラフィクスパイプラインにおいても、一部ハードウェア側のシェーダーステージの統合が行なわれているが、VRAM に処理結果を書き込むステージがあり、まだ <em>GS copy</em> が必要とされている。</p>
+
+<p>NGG の利点の 1つとして、<em>GS copy</em> が必要なくなったことによる VRAM へのトラフィック減少、それとジオメトリシェーダーが間に入ってもバッファに書き込めることによる処理の高速化が期待できる。</p>
+
+<p>また、NGGステージでは テッセレーション評価シェーダー(Direct3Dにおけるドメインシェーダー) も実行される。</p>
 
 <p>NVIDIA が Turing 世代で新設したプログラムシェーダー、Mesh Shader も近い仕組みとなっており、<em>ACOバックエンド</em> を開発する Valve の Timur Kristóf 氏は <strong>XDC2020</strong> での発表の中で、NGGステージで Mesh Shader も実行可能ではないかと述べている。<sup class="footnote-ref" id="fnref:xdc2020-aco"><a href="#fn:xdc2020-aco">1</a></sup></p>
 
@@ -365,17 +369,23 @@ LDS には広帯域低レイテンシでアクセスすることができ、こ�
 </figure>
 
 
-<p><em>RDNAアーキテクチャ</em> には LDS の割り当てにおいて 2つのモードがあり、AMD は <strong>CU Mode</strong> 、<strong>WGP Mode</strong> としている。<br />
-<strong>CU Mode</strong> では、L0キャッシュ、テクスチャユニットを共有する 2基の SIMD32ユニット、ざっくりと言えば WGP の片方の CU 側の LDS 64KB(32バンク) のみが割り当てられる。<br />
+<p><em>RDNAアーキテクチャ</em> には LDS の割り当てにおいて 2つのモードがあり、AMD は <strong>CU Mode</strong> 、<strong>WGP Mode</strong> としている。<sup class="footnote-ref" id="fnref:rdna-shader-isa"><a href="#fn:rdna-shader-isa">3</a></sup></p>
+
+<p><strong>CU Mode</strong> では、L0キャッシュ、テクスチャユニットを共有する 2基の SIMD32ユニット、ざっくりと言えば WGP の片方の CU 側の LDS 64KB(32バンク) のみが割り当てられる。<br />
 <strong>WGP Mode</strong> では、WGP 1基(CU 2基、SIMD32 4基) に LDS 128KB(64バンク) が割り当てられ、<strong>CU Mode</strong> より広いローカルメモリを扱うことができる。<br />
-しかし、上述したように、LDS 64KB(32バンク) 2基がクロスバー接続されているという形であるため、ある SIMD32ユニットから見た時、近い LDS と遠い LDS が存在することになる。<br />
+しかし、上述したように、LDS 64KB(32バンク) 2基がクロスバー接続されているという形であるため、ある SIMD32ユニットから見た時、近い LDS と遠い LDS が存在することになる。そして、遠い LDS の帯域は近い LDS より劣る。<br />
 これにより、<strong>WGP Mode</strong> では LDS 全体の帯域が下がり、性能が低下する場合がある。<br />
-<strong>CU Mode</strong> では近い LDS のみを割り当てるため、扱えるローカルメモリの範囲は狭まるが、常に <strong>WGP Mode</strong> よりも高い帯域でアクセスできる。</p>
+<strong>CU Mode</strong> では近い LDS のみを割り当てるため、扱えるローカルメモリの範囲は狭まるが、常に <strong>WGP Mode</strong> よりも高い帯域でアクセスできる。<br />
+だが <strong>WGP Mode</strong> にも、LDS を共有する単位<span class="complement">少なくとも 4-Wave と記されている</span>
+において、多くの SIMD32ユニットを扱え、テクスチャメモリへの帯域幅を増やせるという利点がある。</p>
 
 <p>性能の最適化において、2つのモードのどちらを選択するかが関わってくると思われるが、RadeonSI/RADV ドライバー ではどうしているのかは不明。</p>
 
 <p><em>RDNAアーキテクチャ</em> はスレッドをまとめた Wave という単位において、ネイティブでは 32スレッド(Wave32) とし、<em>GCNアーキテクチャ</em> と同じスレッド数である 64スレッド(Wave64) にも対応する。<br />
-混同してしまいがちだが、これら Wave は、LDS の割り当てにおける 2つのモードとはまた別であるようだ。</p>
+<strong>CU Mode</strong> 、<strong>WGP Mode</strong> ということから混同してしまいがちだが、これら Wave は、LDS の割り当てにおける 2つのモードとはまた別であるようだ。<br />
+また、同じスレッド数とは言うものの、<em>RDNAアーキテクチャ</em> では Wave64 を 2つの Wave32 に分解して発行されるため、<em>GCNアーキテクチャ</em> 同様に実行される訳ではないとされている。<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/">RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&rsquo;s Dream</a></span><br>
+</p>
 
 <hr>
 <div class="reference">
@@ -399,12 +409,14 @@ LDS には広帯域低レイテンシでアクセスすることができ、こ�
  <a class="footnote-return" href="#fnref:xdc2020-aco"><sup>[return]</sup></a></li>
 <li id="fn:navi14-ngg-bug"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/a4e6e59db82e61b47ef905f28dde80ae36a67d35" rel="noreferrer" target="_blank">radv/gfx10: do not use NGG with NAVI14 (a4e6e59d) · Commits · Mesa / mesa · GitLab</a> <br> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/53b50be35cd11dfa1209de63e997256404e51468" rel="noreferrer" target="_blank">radv/gfx10: enable all CUs if NGG is never used (53b50be3) · Commits · Mesa / mesa · GitLab</a> <br> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/6f3352b6a7648e50f19edffe056d25211375b247/src/amd/vulkan/radv_device.c#L395" rel="noreferrer" target="_blank">src/amd/vulkan/radv_device.c · 6f3352b6a7648e50f19edffe056d25211375b247 · Mesa / mesa · GitLab</a>
  <a class="footnote-return" href="#fnref:navi14-ngg-bug"><sup>[return]</sup></a></li>
+<li id="fn:rdna-shader-isa"><a href="https://developer.amd.com/wp-content/resources/RDNA_Shader_ISA.pdf" rel="noreferrer" target="_blank">RDNA_Shader_ISA.pdf</a> (Page18, 91)
+ <a class="footnote-return" href="#fnref:rdna-shader-isa"><sup>[return]</sup></a></li>
 </ol>
 </div>
 <div class="article_time">
    <time datetime="2020-10-04 16:39+09:00" itemprop="datePublished">Post:<br>&emsp;2020/10/04 16:39&emsp;JST</time>
 
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/05 01:44&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/05 19:50&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
