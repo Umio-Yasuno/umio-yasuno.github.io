@@ -284,6 +284,7 @@ article a {
    <ul>
 <li><a href="#adl-s-spec-guess">Alder Lake-S の構成推測</a></li>
 <li><a href="#enable-htt">有効にされている HTT</a></li>
+<li><a href="#adl-memory-gpu">Alder Lake のメモリと GPU</a></li>
 </ul>
 
 </div>
@@ -344,8 +345,29 @@ Intel が以前公開した CPU Core Roadmap でも、<em>Willow Cove</em> に�
 
 <h2 id="enable-htt">有効にされている HTT</h2>
 
-<p>そして、キャッシュ構成以外に注目されるのがスレッド数であり、<em>Lakefield</em> では無効化されていた HTT(Hyper Threading Technology) が <em>Alder Lake-S</em> では有効化されている。<br />
+<p>そして、キャッシュ構成以外に注目されるのがスレッド数であり、<em>Lakefield</em> では両アーキテクチャコアで無効化されていた HTT(Hyper Threading Technology) が <em>Alder Lake-S</em> では有効化されている。<br />
 <em>Alder Lake</em> ではハイブリッドの構成に関して、<em>Lakefield</em> よりも拡張されたハードウェアベースのスケジューラーを実装していることが Intel Architecture Day 2020 にて Raja Koduri 氏より語られており、その効果が HTT有効化に繋がっているのかもしれない。</p>
+
+<h2 id="adl-memory-gpu">Alder Lake のメモリと GPU</h2>
+
+<p>今回の情報ではメモリが DDR4 とされているが、<em>Alder Lake</em> は DDR4/LPDDR4/LPDDR5/DDR5 に対応するため、特におかしいところはない。<sup class="footnote-ref" id="fnref:adl-mc"><a href="#fn:adl-mc">4</a></sup><br />
+それに現時点で DDR5メモリを検証に使うにしても、それもまたサンプル品となってしまうのではないかと思う。</p>
+
+<blockquote>
+<pre><code>  +-------------+--------+---------+
+  | Memory Type | Max Ch | Max DPC |
+  +-------------+--------+---------+
+  | DDR4        |      1 |       2 |
+  | LPDDR4(X)   |      4 |       1 |
+  | LPDDR5      |      4 |       1 |
+  | DDR5        |      2 |       1 |
+  +-------------+--------+---------+</code></pre>
+<p>These numbers are for a single memory controller. Since ADL has two memory controllers, there&rsquo;s twice as many channels in total. DPC stays the same.</p>
+
+<div class="quote_source">引用元:<cite><a href="https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109" rel="noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109</a></cite>
+</div>
+
+</blockquote>
 
 <p>それと実行結果で GPU が <em>AlderLake-S Mobile Graphics</em> となっているのは、<em>Tiger Lake-U</em> と同じ <em>Gen12LPアーキテクチャ</em> だからではないかと思われる。</p>
 <div class="footnotes">
@@ -359,12 +381,14 @@ Intel が以前公開した CPU Core Roadmap でも、<em>Willow Cove</em> に�
  <a class="footnote-return" href="#fnref:adl-core-atom-config"><sup>[return]</sup></a></li>
 <li id="fn:intel-cpu-core-roadmap"><a href="https://pc.watch.impress.co.jp/docs/news/1158093.html" rel="noreferrer" target="_blank">Intel、次世代CPUアーキテクチャ「Sunny Cove」の概要を明らかに ～Willow Cove、Golden Coveと進化予定、Atomのロードマップも更新 &ndash; PC Watch</a>
  <a class="footnote-return" href="#fnref:intel-cpu-core-roadmap"><sup>[return]</sup></a></li>
+<li id="fn:adl-mc"><a href="https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109" rel="noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109</a>
+ <a class="footnote-return" href="#fnref:adl-mc"><sup>[return]</sup></a></li>
 </ol>
 </div>
 <div class="article_time">
    <time datetime="2020-10-06 19:36+09:00" itemprop="datePublished">Post:<br>&emsp;2020/10/06 19:36&emsp;JST</time>
 
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/06 21:53&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/07 00:04&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
