@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/10/10/amd-zen_3/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>AMD Zen 3 アーキテクチャで分かってること、いないこと | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD Zen 3 アーキテクチャで分かってること、いないこと | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD Zen 3 アーキテクチャで分かってること、いないこと | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/10/10/amd-zen_3/">
+   <meta name="description" content="現地時間 2020/10/08 に AMD より、Zen 3 アーキテクチャ を採用する Ryzen 5000シリーズの製品ラインナップが発表された。 AMD Launches AMD Ryzen 5000 Series Desktop Processors: The Fastest Gaming CPUs in the World :: Advanced Micro Devices, Inc. (AMD)">
+   <meta property="og:description" content="現地時間 2020/10/08 に AMD より、Zen 3 アーキテクチャ を採用する Ryzen 5000シリーズの製品ラインナップが発表された。 AMD Launches AMD Ryzen 5000 Series Desktop Processors: The Fastest Gaming CPUs in the World :: Advanced Micro Devices, Inc. (AMD)">
+   <meta name="twitter:description" content="現地時間 2020/10/08 に AMD より、Zen 3 アーキテクチャ を採用する Ryzen 5000シリーズの製品ラインナップが発表された。 AMD Launches AMD Ryzen 5000 Series Desktop Processors: The Fastest Gaming CPUs in the World :: Advanced Micro Devices, Inc. (AMD)">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/10/10/amd-zen_3/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/10/10/amd-zen_3/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="Zen 3">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 94%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: 12pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   overflow-wrap: normal;
+   transform: translateZ(0);
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.72rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .01rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   opacity: 0;
+ 
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+   display: none;
+   
+   will-change: display;
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 .5rem 0;
+   overflow-wrap: break-word;
+   padding-bottom: 100vh;
+}
+ 
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   padding: 0 .25rem;
+   word-break: break-all;
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 16px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 40%, #787878 100%);
+   background-size: 100% 9px;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .01;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head_category_lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a></div><h1 itemprop="headline name">AMD Zen 3 アーキテクチャで分かってること、いないこと</h1>
+
+<p>現地時間 2020/10/08 に AMD より、<em>Zen 3 アーキテクチャ</em> を採用する Ryzen 5000シリーズの製品ラインナップが発表された。</p>
+
+<ul>
+<li><a href="https://ir.amd.com/news-events/press-releases/detail/972/amd-launches-amd-ryzen-5000-series-desktop-processors-the" rel="noreferrer" target="_blank">AMD Launches AMD Ryzen 5000 Series Desktop Processors: The Fastest Gaming CPUs in the World :: Advanced Micro Devices, Inc. (AMD)</a></li>
+<li><a href="https://news.mynavi.jp/article/20201009-1387569/" rel="noreferrer" target="_blank">Zen 3 Update &ndash; Ryzen 5000シリーズの詳報とRadeon RX 6000の性能 | マイナビニュース</a></li>
+</ul>
+
+<p>Ryzen 5000シリーズは 2020/11/05 より発売開始される。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Model</th>
+<th align="center">Core/Thread</th>
+<th align="center">Base/Boost Clock</th>
+<th align="center">TDP</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Ryzen 9 5950X</td>
+<td align="center">16/32</td>
+<td align="center">3.4GHz/4.9GHz</td>
+<td align="center">105W</td>
+</tr>
+
+<tr>
+<td align="left">Ryzen 9 5900X</td>
+<td align="center">12/24</td>
+<td align="center">3.7GHz/4.8GHz</td>
+<td align="center">105W</td>
+</tr>
+
+<tr>
+<td align="left">Ryzen 7 5800X</td>
+<td align="center">8/16</td>
+<td align="center">3.8GHz/4.7GHz</td>
+<td align="center">105W</td>
+</tr>
+
+<tr>
+<td align="left">Ryzen 5 5600X</td>
+<td align="center">6/12</td>
+<td align="center">3.7GHz/4.6GHz</td>
+<td align="center">65W</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="zen-3-アーキテクチャで分かっていること">Zen 3 アーキテクチャで分かっていること</h3>
+
+<p><em>Zen 2 アーキテクチャ</em> では <em>Zen/+ アーキテクチャ</em> と比較して IPC は 15% 向上したが、<em>Zen 3 アーキテクチャ</em> ではそこからさらに 19% 向上したとしている。<br />
+ブーストクロックにおいても Ryzen 3000シリーズ (<em>Matisse</em>) よりも高いクロックを発揮する。<br />
+また、CCX のレイアウトが変更され、それによりレイテンシを大きく削減している。</p>
+
+<p><em>Zen 2 アーキテクチャ</em> とチップレット構成を採用する <em>Matisse /Rome</em> では、同 CCD にある CCX間のアクセスも、I/Oダイ側に存在する SDF(Scalable Data Fabric) を経由して行なうため、大きなレイテンシが発生する。<br />
+アクセス帯域も、CCD と I/Oダイとの接続幅 (Write: 16Byte/Cycle, Read: 32Byte/Cycle) の制約を受けていた。</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/10/10/matisse-other-ccx.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/10/10/matisse-other-ccx.webp"
+         alt="画像出典: AMD Ryzen™ Processor Software Optimization &amp;ndash; GPUOpen_Let’sBuild2020_AMD Ryzen™ Processor Software Optimization.pdf"/> </a><figcaption>
+         <p>画像出典: <a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_AMD%20Ryzen%E2%84%A2%20Processor%20Software%20Optimization.pdf" rel="noreferrer" target="_blank">AMD Ryzen™ Processor Software Optimization &ndash; GPUOpen_Let’sBuild2020_AMD Ryzen™ Processor Software Optimization.pdf</a></p>
+   </figcaption>
+</figure>
+
+
+<p>それが <em>Zen 3アーキテクチャ</em> では CCXあたり 8-Core、L3キャッシュ 32MB となったため、同 CCD 内で言えばレイテンシは解消され、アクセス帯域は大幅に向上したことになる。</p>
+
+<h3 id="zen-3-アーキテクチャで分かっていないこと">Zen 3 アーキテクチャで分かっていないこと</h3>
+
+<p>プロセスは <em>Matisse</em> の時と変わらない TSMC 7nm FinFet としているが、<em>RDNA /GFX10</em> GPU 等にも用いられた TSMC N7 でも、EUV露光技術を用いる TSMC N7+ でもトランジスタ構造は FinFet であり、どちらも TSMC 7nm FinFet とすることは可能なはずである。<br />
+他にも TSMC N7 を改良した TSMC N7P プロセスがあるため、Ryzen 5000シリーズの製造プロセスはやはりはっきりしない。<br />
+TSMC N7P では EUV露光技術は使われず、TSMC N7 と同じ DUV となる。</p>
+
+<p>AMD は IPC 19% 向上の内訳こそ明かしているが、その詳細、マイクロアーキテクチャの変更点はまだ明かしていない。<br />
+コンパイラにもまだ <code>znver3</code> をサポートするパッチは投稿されておらず、パッチか AMD の発表を待つ他ない。<br />
+Ryzen 5000シリーズの発売までの間か、<em>Milan</em> の発表時あたりに公開されるとは思うが。</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/10/10/zen_2-arch.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/10/10/zen_2-arch.webp"
+         alt="画像出典: AMD Ryzen™ Processor Software Optimization &amp;ndash; GPUOpen_Let’sBuild2020_AMD Ryzen™ Processor Software Optimization.pdf"/> </a><figcaption>
+         <h4>Zen 2 マイクロアーキテクチャ</h4><p>画像出典: <a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_AMD%20Ryzen%E2%84%A2%20Processor%20Software%20Optimization.pdf" rel="noreferrer" target="_blank">AMD Ryzen™ Processor Software Optimization &ndash; GPUOpen_Let’sBuild2020_AMD Ryzen™ Processor Software Optimization.pdf</a></p>
+   </figcaption>
+</figure>
+
+
+<p>ゆるく推測するならば、内訳に Front End があるため、デコード幅または Opキャッシュからキューに送り込む命令数を増やした可能性が考えられる。<br />
+Execute Engine に関しては、実行ユニットやリオーダーバッファを増やしたと考えられるが、それらをどれだけ増やしたかはやはり AMD による発表を待つしかない。</p>
+<div class="article_time">
+   <time datetime="2020-10-10 05:01+09:00" itemprop="datePublished">Post:<br>&emsp;2020/10/10 05:01&emsp;JST</time>
+
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/10 05:06&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/zen_3/" class="side_tag_lower">Zen 3</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="side_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="side_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=AMD%20Zen%203%20%e3%82%a2%e3%83%bc%e3%82%ad%e3%83%86%e3%82%af%e3%83%81%e3%83%a3%e3%81%a7%e5%88%86%e3%81%8b%e3%81%a3%e3%81%a6%e3%82%8b%e3%81%93%e3%81%a8%e3%80%81%e3%81%84%e3%81%aa%e3%81%84%e3%81%93%e3%81%a8%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/10/amd-zen_3/&hashtags=Zen3" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/10/amd-zen_3.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/zen_3/" class="foot_tag_lower">Zen 3</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="foot_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/10/amd-zen_3.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search"><nav class="foot_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=AMD%20Zen%203%20%e3%82%a2%e3%83%bc%e3%82%ad%e3%83%86%e3%82%af%e3%83%81%e3%83%a3%e3%81%a7%e5%88%86%e3%81%8b%e3%81%a3%e3%81%a6%e3%82%8b%e3%81%93%e3%81%a8%e3%80%81%e3%81%84%e3%81%aa%e3%81%84%e3%81%93%e3%81%a8%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/10/amd-zen_3/&hashtags=Zen3" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/zen_3/" class="slide_menu_tag_lower">Zen 3</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="slide_menu_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="slide_menu_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="slide_menu_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=AMD%20Zen%203%20%e3%82%a2%e3%83%bc%e3%82%ad%e3%83%86%e3%82%af%e3%83%81%e3%83%a3%e3%81%a7%e5%88%86%e3%81%8b%e3%81%a3%e3%81%a6%e3%82%8b%e3%81%93%e3%81%a8%e3%80%81%e3%81%84%e3%81%aa%e3%81%84%e3%81%93%e3%81%a8%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/10/amd-zen_3/&hashtags=Zen3" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/10/amd-zen_3.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+         <div class="crt"></div>
+
+   </body>
+</html>
