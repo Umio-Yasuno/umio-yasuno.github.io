@@ -16,9 +16,9 @@
    <meta name="twitter:title" content="Intel Gen12 GPU で増設された L1データキャッシュの効果 | Coelacanth&#39;s Dream">
 
    <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/10/13/tgl-gen12-l1cache/">
-   <meta name="description" content="Intel GPU のオープンソースドライバーに、Tiger Lake GPU における L1キャッシュに対応するマージリクエストが投稿されている。 WIP: intel: Enable L1/HDC caches on Tigerlake (!7104) · Merge Requests · Mesa / mesa">
-   <meta property="og:description" content="Intel GPU のオープンソースドライバーに、Tiger Lake GPU における L1キャッシュに対応するマージリクエストが投稿されている。 WIP: intel: Enable L1/HDC caches on Tigerlake (!7104) · Merge Requests · Mesa / mesa">
-   <meta name="twitter:description" content="Intel GPU のオープンソースドライバーに、Tiger Lake GPU における L1キャッシュに対応するマージリクエストが投稿されている。 WIP: intel: Enable L1/HDC caches on Tigerlake (!7104) · Merge Requests · Mesa / mesa">
+   <meta name="description" content="Intel GPU のオープンソースドライバーに、Tiger Lake GPU における L1キャッシュに対応するマージリクエストが投稿されている。 その中で、L1キャッシュ対応に">
+   <meta property="og:description" content="Intel GPU のオープンソースドライバーに、Tiger Lake GPU における L1キャッシュに対応するマージリクエストが投稿されている。 その中で、L1キャッシュ対応に">
+   <meta name="twitter:description" content="Intel GPU のオープンソースドライバーに、Tiger Lake GPU における L1キャッシュに対応するマージリクエストが投稿されている。 その中で、L1キャッシュ対応に">
    <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
    <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
    <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/10/13/tgl-gen12-l1cache/">
@@ -270,7 +270,8 @@ article a {
 <article class="text" itemscope itemtype="http://schema.org/Article">
 <div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head_category_lower">Intel</a></div><h1 itemprop="headline name">Intel Gen12 GPU で増設された L1データキャッシュの効果</h1>
 
-<p>Intel GPU のオープンソースドライバーに、<em>Tiger Lake</em> GPU における L1キャッシュに対応するマージリクエストが投稿されている。</p>
+<p>Intel GPU のオープンソースドライバーに、<em>Tiger Lake</em> GPU における L1キャッシュに対応するマージリクエストが投稿されている。<br />
+その中で、L1キャッシュ対応による性能への効果について触れられていた。</p>
 
 <ul>
 <li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7104" rel="noreferrer" target="_blank">WIP: intel: Enable L1/HDC caches on Tigerlake (!7104) · Merge Requests · Mesa / mesa · GitLab</a>
@@ -314,7 +315,8 @@ MOCS は Memory Object Control State の略。GPU部の L3キャッシュや LLC
 
 <p>今回のマージリクエストでは、テクスチャやイメージの格納、データの移動に用いることを想定した L1 + L3 と、<br />
 フレームバッファや定数を想定した L1 + L3 + LLC の MOCS が追加されている。<br />
-ここに L2 が無いのは、Intel GPU では L3キャッシュバンクそれぞれの内部を用途別に割り当てる形式を採っており、その中でテクスチャサンプラー等がアクセスするリードオンリーキャッシュ部を L2キャッシュとしているためである。</p>
+ここに L2 が無いのは、Intel GPU では L3キャッシュバンクそれぞれの内部を用途別に割り当てる形式を採っており、その中でテクスチャサンプラー等がアクセスするリードオンリーキャッシュ部を L2キャッシュとしているためである。<br />
+L3キャッシュの一部が実質 L2キャッシュと扱われ、メモリ階層としてそれ以上は CPU と共有する LLC、次に eDRAM や DRAM となる。</p>
 
 <p>コメントによると、Windows の Vulkan/OpenGL ドライバーでも近い対応 (全く同じではない) を行なっているようだ。</p>
 
@@ -325,6 +327,7 @@ GFXBench5 では Vulkan、OpenGL 関係無く小さい性能向上に留まり�
 
 <p><br>
 L1データキャッシュへの対応で最大で 12% 近く性能が向上するというのは、アーキテクチャの改良においてかなり効果的であるように思える。<br />
+ますますキャッシュサイズ、帯域が気になる所だ。<br />
 中には逆に性能低下しているゲームタイトルもあるが、L1データキャッシュは <em><span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
 /Gen12.1 アーキテクチャ</em> で増設されたメモリ階層であり、今後の最適化での解消が期待される。</p>
 
@@ -356,7 +359,7 @@ L1データキャッシュへの対応で最大で 12% 近く性能が向上す�
 <div class="article_time">
    <time datetime="2020-10-13 20:28+09:00" itemprop="datePublished">Post:<br>&emsp;2020/10/13 20:28&emsp;JST</time>
 
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/13 23:08&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/14 02:04&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
