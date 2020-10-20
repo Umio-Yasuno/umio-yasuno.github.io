@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/10/21/rdna_2-note-2020-10-21/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>RDNA 2 ノート　―― 機械学習、深層学習の活用 【2020/10/21】 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="RDNA 2 ノート　―― 機械学習、深層学習の活用 【2020/10/21】 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="RDNA 2 ノート　―― 機械学習、深層学習の活用 【2020/10/21】 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/10/21/rdna_2-note-2020-10-21/">
+   <meta name="description" content="Index 機械学習、深層学習の活用 Waveサイズの選択 NGGカリングに発見的手法を 機械学習、深層学習の活用 AMD がオープンソースで提供する AMDVLK において、Vul">
+   <meta property="og:description" content="Index 機械学習、深層学習の活用 Waveサイズの選択 NGGカリングに発見的手法を 機械学習、深層学習の活用 AMD がオープンソースで提供する AMDVLK において、Vul">
+   <meta name="twitter:description" content="Index 機械学習、深層学習の活用 Waveサイズの選択 NGGカリングに発見的手法を 機械学習、深層学習の活用 AMD がオープンソースで提供する AMDVLK において、Vul">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/10/21/rdna_2-note-2020-10-21/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/10/21/rdna_2-note-2020-10-21/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="RDNA 2">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #172727 94%, #040707 99%);
+   background-repeat: no-repeat;
+   font-size: 12pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   overflow-wrap: normal;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.75rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .012rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   opacity: 0;
+ 
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+   display: none;
+
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0 .5rem 0;
+   overflow-wrap: break-word;
+   padding-bottom: 100vh;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   padding: 0 .25rem;
+   word-break: break-all;
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 14px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   article {
+      grid-template-columns: .5% 1% auto 2%;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 3 / -1;
+   }
+   h1 {
+      grid-column: 1 /-1;
+   }
+   .head_category_block {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 30%, #787878 100%);
+   background-size: 100% 6pt;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .013;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a></div><h1 itemprop="headline name">RDNA 2 ノート　―― 機械学習、深層学習の活用 【2020/10/21】</h1>
+
+<h2 id="page_index">Index</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#machine-learning">機械学習、深層学習の活用</a>
+
+<ul>
+<li><a href="#ai-wave-size-select">Waveサイズの選択</a></li>
+<li><a href="#ngg-culling-heuristic">NGGカリングに発見的手法を</a></li>
+</ul></li>
+</ul>
+
+</div>
+
+
+<h2 id="machine-learning">機械学習、深層学習の活用</h2>
+
+<p>AMD がオープンソースで提供する <a href="https://github.com/GPUOpen-Drivers/AMDVLK" rel="noreferrer" target="_blank">AMDVLK</a> において、Vulkan API のコマンドを PAL (Platform Abstraction Library) のコマンドに変換するレイヤー部 <a href="https://github.com/GPUOpen-Drivers/xgl" rel="noreferrer" target="_blank">XGL</a> に将来的に実装されるであろう機能の説明が記述されていた。<br />
+あくまで説明のみであり、それに自分の推測を足したものであることを留意して頂きたい。</p>
+
+<h3 id="ai-wave-size-select">Waveサイズの選択</h3>
+
+<p>AMDGPU ではスレッドの塊となる Wave 単位で命令を発行するが、その Wave のサイズに <em>RDNAアーキテクチャ</em> では Wave64 (64スレッド) と Wave32 (32スレッド) の両方に対応している。<br />
+どちらの Waveサイズにも利点があり、Wave64 はベクタレジスタの粒度が Wave32時の半分になるため、メモリのフットプリントが小さくなり、また多くのスレッドが同じ CUで実行されるため、L0キャッシュにヒットしやすくなるというのがある。<sup class="footnote-ref" id="fnref:radeonsi-wave64"><a href="#fn:radeonsi-wave64">1</a></sup><br />
+Wave32 では分岐等の制御を Wave ごとに処理でき (Wave64 でもそうだが、スレッド数に対しての制御処理は Wave32 の半分の回数となる)、<br />
+ベクタレジスタの粒度は Wave64時より大きくなるが、Waveサイズが小さいことで処理の完了が速く、データにアクセスするのに必要なリソースは少なくなり、レジスタの解放を速く行なえるという利点がある。<sup class="footnote-ref" id="fnref:rdna-whitepaper"><a href="#fn:rdna-whitepaper">2</a></sup></p>
+
+<p>ある処理に対して、どちらの Waveサイズが適しているかはそれぞれ異なるが、<strong>RadeonSI (OpenGL)</strong> ドライバーでは現在どのシェーダーステージも Wave64 で実行するようになっている。<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/">RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&rsquo;s Dream</a></span><br>
+
+<em>RDNAアーキテクチャ</em> の資料では、元は Pixel Shader は Wave64、Vertex/Tess/Geomtory Shader は Wave32 としていた。<br />
+検証の結果 Wave64 の方が良い、となったと思われるが、今後も最適化として Waveサイズの変更が行なわれることが考えられる。</p>
+
+<p>そうした中で XGL から見つかった機能は、ドライバーのコード中に記述されたデフォルトの Waveサイズを選ぶのではなく、機械学習モデルを用いてシェーダーステージごとに最適な Waveサイズを決定するというものである。</p>
+
+<blockquote>
+<pre><code>           {
+             &#34;Name&#34;: &#34;MlModelForWaveSizeOff&#34;,
+             &#34;Value&#34;: 0,
+             &#34;Description&#34;: &#34;Wave size selection is determined by WaveSize enum.&#34;
+           },
+           {
+             &#34;Name&#34;: &#34;MlModelForWaveSizePhase1&#34;,
+             &#34;Value&#34;: 1,
+             &#34;Description&#34;: &#34;Enabled wave size selection is post-compile using Machine Learning.&#34;
+           },
+           {
+             &#34;Name&#34;: &#34;MlModelForWaveSizePhase2&#34;,
+             &#34;Value&#34;: 2,
+             &#34;Description&#34;: &#34;Enabled wave size selection is pre-compile using Deep Learning.&#34;
+           }
+         ],
+         &#34;Name&#34;: &#34;WaveSizeDecision&#34;
+       },
+       &#34;Description&#34;: &#34;Enable a machine learning model to optimally choose Wave64 or Wave32 instead of relying on per shader stage defaults.&#34;,</code></pre>
+<div class="quote_source">引用元:<cite><a href="https://github.com/GPUOpen-Drivers/xgl/blob/07bb2eb097cd90983902118388cabd49f3530e8b/icd/settings/settings_xgl.json#L4002" rel="noreferrer" target="_blank">xgl/settings_xgl.json at 07bb2eb097cd90983902118388cabd49f3530e8b · GPUOpen-Drivers/xgl</a></cite>
+</div>
+
+</blockquote>
+
+<p>これが実際に実装されれば、検証してからコード内の値を変更するという手間を減らせ、2つの Waveサイズに対応する <em>RDNAアーキテクチャ</em> の特徴をより性能向上へと活かせるようになるだろう。<br />
+上で将来的な機能と書いたように、現在では未実装。</p>
+
+<h3 id="ngg-culling-heuristic">NGGカリングに発見的手法を</h3>
+
+<p><a href="https://www.coelacanth-dream.com/posts/2020/10/17/gfx103-default-ngg-culling/">先日</a>、<strong>RadeonSI (OpenGL)</strong> ドライバーと <em>RDNA /GFX10</em> 世代の <strong>Radeon Pro</strong> カード、または <em>RDNA 2 /GFX10.3</em> 世代の dGPU との組み合わせでは、デフォルトで有効とするようになった NGGカリングだが、<br />
+それに機械学習モデルによる発見的手法を適用するという機能の説明が見つかった。</p>
+
+<blockquote>
+<pre><code>     {
+       &#34;Description&#34;: &#34;Enable the use of SC heuristic machine learning culling for NGG culling, culling is enabled for Gfx10.3 by default.&#34;,
+       &#34;Tags&#34;: [
+         &#34;Optimization&#34;
+       ],
+       &#34;Defaults&#34;: {
+         &#34;Default&#34;: false
+       },
+       &#34;Scope&#34;: &#34;Driver&#34;,
+       &#34;Type&#34;: &#34;bool&#34;,
+       &#34;VariableName&#34;: &#34;enableMlHeuristicCulling&#34;,
+       &#34;Name&#34;: &#34;EnableMlHeuristicCulling&#34;
+     },</code></pre>
+<div class="quote_source">引用元:<cite><a href="https://github.com/GPUOpen-Drivers/xgl/blob/07bb2eb097cd90983902118388cabd49f3530e8b/icd/settings/settings_xgl.json#L4148" rel="noreferrer" target="_blank">xgl/settings_xgl.json at 07bb2eb097cd90983902118388cabd49f3530e8b · GPUOpen-Drivers/xgl</a></cite>
+</div>
+
+</blockquote>
+
+<p>発見的手法 (heuristic, ヒューリスティック) には、アルゴリズムによる手法よりも速く答えを導き出せるという利点があるが、精度が低いという欠点がある。<br />
+だがその精度の低さも、グラフィクス処理では画面に映し出される絵がほんの少し変わる程度となり、あまり重要視しなくて済むと思われる。</p>
+
+<p>また、この説明が追加されたのは 2020/09/27 のコミットだが<sup class="footnote-ref" id="fnref:commit"><a href="#fn:commit">3</a></sup>、その時から NGGカリングを <em>RDNA 2 /GFX10.3</em> 世代でデフォルトに有効にすることは決まっていたようだ。<br />
+そのことが説明にあることから、<em>RDNA 2 /GFX10.3</em> 世代での実装が期待されるが、あくまでも個人の推測である。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:radeonsi-wave64"><a href="https://www.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/">RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:radeonsi-wave64"><sup>[return]</sup></a></li>
+<li id="fn:rdna-whitepaper"><a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="noreferrer" target="_blank">Introduction &ndash; rdna-whitepaper.pdf</a> (Page4)
+ <a class="footnote-return" href="#fnref:rdna-whitepaper"><sup>[return]</sup></a></li>
+<li id="fn:commit"><a href="https://github.com/GPUOpen-Drivers/xgl/commit/07bb2eb097cd90983902118388cabd49f3530e8b#diff-ddc11018ab28855131f2e8ad2be406cdabaa9979f1c13276ae0a613c389c87f9" rel="noreferrer" target="_blank">Update xgl from commit: 01cba68 · GPUOpen-Drivers/xgl@07bb2eb</a>
+ <a class="footnote-return" href="#fnref:commit"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+   <time datetime="2020-10-21 01:48+09:00" itemprop="datePublished">Post:<br>&emsp;2020/10/21 01:48&emsp;JST</time>
+
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/21 04:12&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="side_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="side_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=RDNA%202%20%e3%83%8e%e3%83%bc%e3%83%88%e3%80%80%e2%80%95%e2%80%95%20%e6%a9%9f%e6%a2%b0%e5%ad%a6%e7%bf%92%e3%80%81%e6%b7%b1%e5%b1%a4%e5%ad%a6%e7%bf%92%e3%81%ae%e6%b4%bb%e7%94%a8%20%e3%80%902020%2f10%2f21%e3%80%91%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/21/rdna_2-note-2020-10-21/&hashtags=RDNA2" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/21/rdna_2-note-2020-10-21.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="foot_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/21/rdna_2-note-2020-10-21.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search"><nav class="foot_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=RDNA%202%20%e3%83%8e%e3%83%bc%e3%83%88%e3%80%80%e2%80%95%e2%80%95%20%e6%a9%9f%e6%a2%b0%e5%ad%a6%e7%bf%92%e3%80%81%e6%b7%b1%e5%b1%a4%e5%ad%a6%e7%bf%92%e3%81%ae%e6%b4%bb%e7%94%a8%20%e3%80%902020%2f10%2f21%e3%80%91%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/21/rdna_2-note-2020-10-21/&hashtags=RDNA2" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Lastmod</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="slide_menu_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="slide_menu_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="slide_menu_category_lower">Hardware</a>
+   </nav>
+</div>
+<nav class="slide_menu_share">
+   Share:<a href="https://twitter.com/intent/tweet?text=RDNA%202%20%e3%83%8e%e3%83%bc%e3%83%88%e3%80%80%e2%80%95%e2%80%95%20%e6%a9%9f%e6%a2%b0%e5%ad%a6%e7%bf%92%e3%80%81%e6%b7%b1%e5%b1%a4%e5%ad%a6%e7%bf%92%e3%81%ae%e6%b4%bb%e7%94%a8%20%e3%80%902020%2f10%2f21%e3%80%91%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/21/rdna_2-note-2020-10-21/&hashtags=RDNA2" rel="noreferrer noopenner" target="_blank">Tweet</a>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/21/rdna_2-note-2020-10-21.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+         <div class="crt"></div>
+
+   </body>
+</html>
