@@ -283,6 +283,7 @@ article a {
 <ul>
 <li><a href="https://ir.amd.com/news-events/press-releases/detail/978/amd-unveils-next-generation-pc-gaming-with-amd-radeon-rx" rel="noreferrer" target="_blank">AMD Unveils Next-Generation PC Gaming with AMD Radeon™ RX 6000 Series – Bringing Leadership 4K Resolution Performance to AAA Gaming :: Advanced Micro Devices, Inc. (AMD)</a></li>
 <li><a href="https://www.youtube.com/watch?v=oHpgu-cTjyM" rel="noreferrer" target="_blank">Where Gaming Begins: Ep. 2 | AMD Radeon™ RX 6000 Series Graphics Cards &ndash; YouTube</a></li>
+<li><a href="https://www.amd.com/en/technologies/rdna-2" rel="noreferrer" target="_blank">RDNA 2 Architecture | One Gaming DNA | AMD</a></li>
 </ul>
 
 <p><em>RDNA 2 アーキテクチャ</em> は <em>RDNA アーキテクチャ</em> と比較して、電力比性能が 54% 向上しているとし、これは高い動作クロックに向けた設計、全体的な設計の最適化、新設された Infinity Cache による IPC 向上によって実現されている。<br />
@@ -311,15 +312,23 @@ article a {
  を公開しており、<br />
 <span class="thread_link"><a href="https://www.globenewswire.com/NewsRoom/AttachmentNg/56b9f51f-b313-41a3-9fc1-0f1bf766c3d4/en" rel="noreferrer" target="_blank">AMD Radeon™ RX 6000 Series die shot</a></span><br>
 
-それを <em>Navi10</em> のダイショットと見比べるに<sup class="footnote-ref" id="fnref:navi10-dieshot"><a href="#fn:navi10-dieshot">1</a></sup>、Shader Array あたりの WGP(CU) 数は変えずに、Shader Engine の数を 4基に増やしたものと考えられる。</p>
+それを <em>Navi10</em> のダイショットと見比べるに<sup class="footnote-ref" id="fnref:navi10-dieshot"><a href="#fn:navi10-dieshot">1</a></sup>、Shader Array あたりの WGP(CU) 数は変えずに、Shader Engine の数を 4基に増やしたものと考えられる。<br />
+Shader Engine、Shader Array は GPU の各ユニットをある程度まとめたクラスタであり、<em>AMD GPU アーキテクチャ</em> における単位。<em>RDNA アーキテクチャ</em> では 1 Shader Engine あたり 2 Shader Array で構成されている。</p>
 
-<p><strong>RX 6800</strong> は他 2製品よりも ROP 数が 32基少ないものとなるが、ROP/RB 周りの仕様が <em>RDNA アーキテクチャ</em> と同じであるならば無効化する必要は無いはずで、<br />
-製品の差別化のため意図的に無効化しているか、4 Shader Engine の内 1 Shader Engine を無効化して製品化しているのではないかと思われる。<br />
+<p><strong>RX 6800</strong> は他 2製品よりも ROP 数が 32基少ないものとなるが、ROP/RB 周りの仕様が <em>RDNA アーキテクチャ</em> と同じであるならば無効化する必要は無いはずで、製品の差別化のため意図的に無効化しているか、<br />
+全体のおおまかな構成が他 2製品と異なり、4 Shader Engine の内 1 Shader Engine を無効化して製品化しているのではないかと思われる。<br />
 4 Shader Engine のまま 30WGP を実現するには Shader Engine を非対称としなければならず、これは従来の AMD GPU の構成から外れたものになり、スケジューリングに問題が出ると思われる。そのため、1 Shader Engine を無効化している可能性が高い。<br />
 ただ、それならば 32WGP(64CU)、Shader Engine あたり 8WGP(16CU) とした方が製品化において余裕があり、歩留まり的には有利なように思う。<br />
-30WGP(60CU) という構成では、3 Shader Engine 内の WGP(CU) がすべて有効な必要がある。</p>
+30WGP(60CU) という構成では、3 Shader Engine 内の WGP(CU) がすべて有効な必要がある。<br />
+<strong>RX 6800</strong> と <strong>RX 6800 XT</strong> の中間に位置する製品を計画しているのだろうか？</p>
 
-<p><em>Ray Accelarator</em> は CU数と同数であり、レイトレーシングユニットに関しては <strong>Xbox Series X</strong> と同様の構成を取っているものと思われる。</p>
+<p><em>RA (Ray Accelarator)</em> は CU数と同数であり、レイトレーシングユニットに関しては <strong>Xbox Series X</strong> と同様の構成を取っているものと思われる。</p>
+
+<p>また、<span class="complement">少し前から判明してはいたが</span>
+いつかの予想に反してカードには USB-C のディスプレイ出力が実装されている。USB Power Delivery にも対応。<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/09/11/amd-sienna_cichlid-usb_c/">AMD Sienna Cichlid は USB-Cコントローラーを内蔵、PD機能もサポート | Coelacanth&rsquo;s Dream</a></span><br>
+
+HDMI 2.1 VRR、AV1 HWデコードにも対応する。</p>
 
 <p>以下は、今回発表された <strong>Radeon RX 6000 Series</strong>  3製品を比較した表。</p>
 
@@ -457,14 +466,17 @@ article a {
 
 <h2 id="if-cache">Infinity Cache</h2>
 
-<p><em>Infinity Cache</em> は今回発表された 3製品には 128MB 搭載されている。<br />
+<p>今回発表された 3製品に <em>Infinity Cache</em> は 128MB 搭載されている。<br />
 <em>Infinity Cache</em> には 64Byte単位でアクセスでき、アクセスチャネルは 16chとなる。<br />
-16ch というのは GDDR6 256-bit のチャネル数と一致し (GDDR6 はチップあたり 16-bit のメモリチャネルを持つ)、ニュースリリースの <em>last-level data cache</em> の文言から、メモリキャッシュとして動作するものと思われる。<br />
+ニュースリリースの <em>last-level data cache</em> の文言から、メモリキャッシュとして動作するものと思われる。<br />
 AMD GPU におけるデータキャッシュ階層は、<em>RDNA アーキテクチャ</em> では CU内のプライベートキャッシュとなる L0キャッシュ 16KB、その下が Shader Array ごとに持つ L1キャッシュ 128KB、全体でアクセス可能な L2キャッシュ (メモリチャネルあたり 256KB、<em>Navi10</em> では計 4MB、<em>Navi14</em> では計 2MB) で構成されていたが、<br />
-<em>RDNA 2 アーキテクチャ</em> ではそこに <em>Infinity Cache / L3キャッシュ</em> 、メモリチャネルあたり 8MB が新設された、ということだろう。</p>
+<em>RDNA 2 アーキテクチャ</em> ではそこに <em>Infinity Cache / L3キャッシュ</em> 、メモリチャネルあたり 8MB が新設されたことになる。</p>
+
+<p>また、16ch というのは GDDR6 256-bit のチャネル数と一致し (GDDR6 はチップあたり 16-bit のメモリチャネルを持つ)、他の <em>RDNA 2</em> GPU ではメモリバス幅に合わせて、<em>Infinity Cache</em> の容量も変更されると思われる。<br />
+GPU部が <em>RDNA 2</em> となる <a href="https://www.coelacanth-dream.com/tags/vangogh">VanGogh APU</a> にも搭載されるかは不明だが、APU の性質上、コストを減らすため搭載しないことも考えられる。</p>
 
 <p>上述した <strong>Radeon RX 6000 Series</strong> のダイショットでは、動画内で示されていた <em>Infinity Cache</em> とされる部分はそれ程大きく占めてはいないように見える。<br />
-AMD によると、<em>Zen 3 アーキテクチャ</em> の L3キャッシュデザインをベースにしているとのこと。</p>
+これは AMD によると、<em>Zen 3 アーキテクチャ</em> の L3キャッシュデザインをベースにしているとのこと。</p>
 
 <p><em>Infinity Cache</em> により、GDDR6メモリのみで構成された <em>RDNA アーキテクチャ</em> ベースの GPU と比較して、電力あたりのメモリ帯域は最大 2.4倍になるとしている。<br />
 ただこの数値は、AMD が <em>Infinity Cache</em> 128MB、GDDR6 256-bit の GPUで 4Kゲーミング実行時に、キャッシュヒートレートを 59% とした場合の値である。<br />
@@ -473,7 +485,7 @@ AMD によると、<em>Zen 3 アーキテクチャ</em> の L3キャッシュデ
 <h2 id="process">プロセス</h2>
 
 <p><strong>Radeon RX 6000 Series</strong> のベースとなる GPUチップは、<strong>RX 5000 Series</strong> と同じ 7nmプロセスで製造されるとしている。<br />
-それを鵜呑みにするならば、<em>Navi10</em> の 10.3B の 2倍どころか <em>Vega20</em> の 2倍以上のトランジスタ数をつぎ込み、CU数、動作クロックも向上した GPU をフルスペック、同程度の電力枠で製品とすることに成功していることとなり、かなり高度に設計されていることが窺える<br />
+それを鵜呑みにするならば、<em>Navi10</em> の 10.3B の 2倍どころか <em>Vega20</em> の 2倍以上のトランジスタ数をつぎ込み、CU数、動作クロックも向上した GPU をフルスペック、同程度の電力枠での製品化に成功していることとなり、かなり高度に設計されていることが窺える<br />
 言い換えれば、3世代同じプロセスを使って GPU を設計したことにより、今世代の <strong>Radeon RX 6000 Series</strong> の高性能、優れた電力比性能を実現できたのかもしれない。</p>
 
 <table>
@@ -528,7 +540,7 @@ AMD によると、<em>Zen 3 アーキテクチャ</em> の L3キャッシュデ
 <div class="article_time">
    <time datetime="2020-10-29 01:14+09:00" itemprop="datePublished">Post:<br>&emsp;2020/10/29 01:14&emsp;JST</time>
 
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/29 03:50&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/29 05:32&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
