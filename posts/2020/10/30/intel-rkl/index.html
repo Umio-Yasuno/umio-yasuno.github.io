@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/10/30/intel-rkl/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>Intel Rocket Lake-S の概要を発表　―― Cypress Cove の詳細はまだ、AV1 HWエンコードに非対応？ | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="Intel Rocket Lake-S の概要を発表　―― Cypress Cove の詳細はまだ、AV1 HWエンコードに非対応？ | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="Intel Rocket Lake-S の概要を発表　―― Cypress Cove の詳細はまだ、AV1 HWエンコードに非対応？ | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/10/30/intel-rkl/">
+   <meta name="description" content="Intel は現地時間 2020/10/29 付で、次世代デスクトップ向けプロセッサ Rocket Lake-S の概要を発表した。 Intel’s 11th Gen Processor (Rocket Lake-S) Architecture Detailed | Intel Newsroom Intel-Rocket-Lake-S-Architecture.pdf CPUアーキテクチャは Cypress Cove と称され">
+   <meta property="og:description" content="Intel は現地時間 2020/10/29 付で、次世代デスクトップ向けプロセッサ Rocket Lake-S の概要を発表した。 Intel’s 11th Gen Processor (Rocket Lake-S) Architecture Detailed | Intel Newsroom Intel-Rocket-Lake-S-Architecture.pdf CPUアーキテクチャは Cypress Cove と称され">
+   <meta name="twitter:description" content="Intel は現地時間 2020/10/29 付で、次世代デスクトップ向けプロセッサ Rocket Lake-S の概要を発表した。 Intel’s 11th Gen Processor (Rocket Lake-S) Architecture Detailed | Intel Newsroom Intel-Rocket-Lake-S-Architecture.pdf CPUアーキテクチャは Cypress Cove と称され">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/10/30/intel-rkl/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/10/30/intel-rkl/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="Rocket Lake, Gen12">
+<link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #213838 94%, #152323 100%);
+   background-repeat: no-repeat;
+   font-size: 11.5pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   overflow-wrap: normal;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.75rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .012rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   opacity: 0;
+ 
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+   display: none;
+
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0;
+   overflow-wrap: break-word;
+   padding-bottom: 100vh;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   padding: 0 .25rem;
+   word-break: break-all;
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 14px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   article {
+      grid-template-columns: .5% 1% auto 2%;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 3 / -1;
+   }
+   h1 {
+      grid-column: 1 /-1;
+   }
+   .head_category_block {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 54%, #787878 100%);
+   background-size: 100% 1vh;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .016;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/cpu/" class="head_category_lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head_category_lower">Intel</a></div><h1 itemprop="headline name">Intel Rocket Lake-S の概要を発表　―― Cypress Cove の詳細はまだ、AV1 HWエンコードに非対応？</h1>
+
+<p>Intel は現地時間 2020/10/29 付で、次世代デスクトップ向けプロセッサ <em>Rocket Lake-S</em> の概要を発表した。</p>
+
+<ul>
+<li><a href="https://newsroom.intel.com/news/intels-11th-gen-processor-rocket-lake-s-architecture-detailed/" rel="noreferrer" target="_blank">Intel’s 11th Gen Processor (Rocket Lake-S) Architecture Detailed | Intel Newsroom</a></li>
+<li><a href="https://newsroom.intel.com/wp-content/uploads/sites/11/2020/10/Intel-Rocket-Lake-S-Architecture.pdf" rel="noreferrer" target="_blank">Intel-Rocket-Lake-S-Architecture.pdf</a></li>
+</ul>
+
+<p>CPUアーキテクチャは <em>Cypress Cove</em> と称された <em>Ice Lake (Client)</em> の機能を備えたものになり、二桁台 (10%〜) の IPC 向上を果たしている。<br />
+AVX-512 命令を用いた <strong>Intel Deep Leaning Boost / VNNI</strong> に対応し、HEDT向けの <em>Skylake-SP</em> を除けば、デスクトップ向けでは初の AVX-512 に対応したプロセッサとなる。<br />
+GPUアーキテクチャは <em>Tiger Lake</em> と同じ <em>Gen12アーキテクチャ</em> となり、<em>Gen9アーキテクチャ</em> と比較して 50% 高速だとしている。</p>
+
+<p>I/O周りも強化され、PCIe Gen4に対応し、レーン数は GPU (x16) + SSD (x4) 直結の構成が可能となる 20レーンを備える。<br />
+メモリは DDR4-3200 に対応する。</p>
+
+<p>対応チップセットには 500シリーズが新たに投入される。</p>
+
+<p>テストに使われた <em>Rocket Lake-S</em> は 8-Core/16-Thread、動作クロックは不明で、PL (Power Limit) の仕様は <strong>i9-10900K (Comet Lake-S)</strong> に合わされており、PL1: 125W、PL2: 250W、Tau 56s というもの。</p>
+
+<h2 id="詳細ではなく概要">詳細ではなく概要</h2>
+
+<p>今回 <em>Rocket Lake-S</em> の明かされなかった点は、まず製造プロセスが何nmであるか (14nmか 10nmか)、<em>Ice Lake (Client)</em> と同機能としておきながら <em>Sunny Cove</em> ではなく新たに <em>Cypress Cove</em> と称すのは何故か。</p>
+
+<p>これまでの情報で、<em>Rocket Lake-S</em> のキャッシュ構成が <em>Ice Lake (Client)</em> と同じことが判明しているため<sup class="footnote-ref" id="fnref:rkl-cache"><a href="#fn:rkl-cache">1</a></sup>、実行ユニット周りに <em>Sunny Cove</em> から変更が施されているのではないかと思われるが、これにはややこしい話がある。</p>
+
+<p><em>Sunny Cove</em> は <em>Ice Lake (Client), Ice Lake (Server)</em> に採用されているが、両者のコアアーキテクチャは全く同じではなく、AVX-512 命令を処理するユニットに細かな違いが存在する。<br />
+<em>Ice Lake (Client)</em> は AVX-512 を、対応した実行ポート 1本で処理するが、<em>Ice Lake (Server)</em> はそれに加え、他 2本の実行ポートを束ねて実行することが可能となっている。<sup class="footnote-ref" id="fnref:sunnycove-avx512"><a href="#fn:sunnycove-avx512">2</a></sup><br />
+<em>Lakefield</em> にも <em>Sunny Cove</em> コアは搭載されているが、スケジューリングの問題か、AVX 系命令の対応は無効化されている。<br />
+また、<em>Ice Lake (Server)</em> では <em>Ice Lake (Client)</em> よりも Re-order Buffer が若干増量されているという話もある。</p>
+
+<p>そのため、どこまでが <em>Sunny Cove</em> で、どこから <em>Crypress Cove</em> であるか、というのは曖昧な話である。<br />
+単に Intel 10nmプロセスで製造されれば <em>Sunny Cove</em> で、14nmプロセスならば <em>Crypress Cove</em> 、といったマーケティング的な意味合いも考えられる。<br />
+<em>Ice Lake (Client/Server), Lakefield</em> は全て Intel 10(+)nm プロセスで製造されている。<br />
+そうなると <em>Rocket Lake-S</em> は 14nmで製造されているとなるが、Intel 的にはまだ新しい部分だけを推していきたいのかもしれない。</p>
+
+<h2 id="av1-hwエンコードは非対応">AV1 HWエンコードは非対応？</h2>
+
+<p>AV1 HWエンコードに関しては、各メディアが資料中から抜粋した画像には 4K60 10b 4:2:0 AV1 でのエンコードに対応するように記述されており<sup class="footnote-ref" id="fnref:rkl-av1-enc"><a href="#fn:rkl-av1-enc">3</a></sup>、自分も最初資料を見た時はそのようになっていたと記憶している。<br />
+だが後になってから再度資料をダウンロードすると、メディア部の記述が変更されており、デコーダー/エンコーダーに分けられ、エンコーダーに AV1 は無い。</p>
+
+<p>AV1 HWエンコードは <a href="https://github.com/intel/media-driver" rel="noreferrer" target="_blank">intel/media-driver</a> のコードを見ても対応してないように思われ<sup class="footnote-ref" id="fnref:av1-media-driver"><a href="#fn:av1-media-driver">4</a></sup>、GPU部が同じ <em>Tiger Lake</em> 発表時にも AV1 HWエンコード対応は謳われなかった。<br />
+Hot Chips 32 にて行なわれた <strong><span class="xe_gpu_arch">X<sup>e</sup><sub>LP</sub></span>
+アーキテクチャ</strong> の発表でも、AV1 HWデコードだけがスライドに記載されている。<sup class="footnote-ref" id="fnref:hc32-xe"><a href="#fn:hc32-xe">5</a></sup></p>
+
+<p>そのため、実は <em>Rocket Lake-S</em> GPU部は AV1 HWエンコードに対応していない、ということに思われるが、Intel は各メディアに通知していないのだろうか？</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:rkl-cache"><a href="https://www.coelacanth-dream.com/posts/2020/06/28/intel-rocketlake-cache-guess/">Intel Rocket Lake のキャッシュ構成は Ice Lake と同様か &amp; 推測 | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:rkl-cache"><sup>[return]</sup></a></li>
+<li id="fn:sunnycove-avx512"><a href="https://www.coelacanth-dream.com/posts/2020/07/23/intel-rocket_lake-support-avx512/">Intel Rocket Lake は AVX-512 をサポート &amp; 推測 | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:sunnycove-avx512"><sup>[return]</sup></a></li>
+<li id="fn:rkl-av1-enc"><a href="https://pc.watch.impress.co.jp/docs/news/1286191.html" rel="noreferrer" target="_blank">Intel、デスクトップ向け第11世代Core「Rocket Lake-S」の詳細を発表 ～CPUはIPCを大幅向上させたCypress Cove、GPUにXe Graphicsを採用 &ndash; PC Watch</a><br><a href="https://ascii.jp/elem/000/004/032/4032293/" rel="noreferrer" target="_blank">ASCII.jp：Rocket Lake-S概要発表！Xe LP＆PCIe 4.0×20、IPCは10％以上GPU性能は50％向上</a>
+ <a class="footnote-return" href="#fnref:rkl-av1-enc"><sup>[return]</sup></a></li>
+<li id="fn:av1-media-driver"><a href="https://github.com/intel/media-driver/blob/d934d6c48644227ab066d013a105335ad25ce2bc/media_driver/linux/gen12/ddi/media_libva_caps_g12.cpp" rel="noreferrer" target="_blank">media-driver/media_libva_caps_g12.cpp at d934d6c48644227ab066d013a105335ad25ce2bc · intel/media-driver</a>
+ <a class="footnote-return" href="#fnref:av1-media-driver"><sup>[return]</sup></a></li>
+<li id="fn:hc32-xe"><a href="https://www.anandtech.com/show/15993/hot-chips-2020-live-blog-intels-xe-gpu-architecture-530pm-pt" rel="noreferrer" target="_blank">Hot Chips 2020 Live Blog: Intel&rsquo;s Xe GPU Architecture (5:30pm PT)</a>
+ <a class="footnote-return" href="#fnref:hc32-xe"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+   <time datetime="2020-10-30 10:53+09:00" itemprop="datePublished">Post:<br>&emsp;2020/10/30 10:53&emsp;JST</time>
+
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/30 12:03&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/gen12/" class="side_tag_lower">Gen12</a>
+         <a href="https://www.coelacanth-dream.com/tags/rocket_lake/" class="side_tag_lower">Rocket Lake</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="side_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/intel/" class="side_category_lower">Intel</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/30/intel-rkl.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/gen12/" class="foot_tag_lower">Gen12</a>
+         <a href="https://www.coelacanth-dream.com/tags/rocket_lake/" class="foot_tag_lower">Rocket Lake</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="foot_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/intel/" class="foot_category_lower">Intel</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/30/intel-rkl.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/gen12/" class="slide_menu_tag_lower">Gen12</a>
+         <a href="https://www.coelacanth-dream.com/tags/rocket_lake/" class="slide_menu_tag_lower">Rocket Lake</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="slide_menu_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="slide_menu_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/intel/" class="slide_menu_category_lower">Intel</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/30/intel-rkl.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+         <div class="crt"></div>
+         <div class="lace"></div>
+   </body>
+</html>
