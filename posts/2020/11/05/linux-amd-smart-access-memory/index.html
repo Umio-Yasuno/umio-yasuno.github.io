@@ -295,13 +295,9 @@ article a {
 <li><a href="#effect">効果の程は</a>
 
 <ul>
-<li><a href="#waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan</a>
-
-<ul>
 <li><a href="#env">環境</a></li>
 <li><a href="#how">計測方法</a></li>
 <li><a href="#result">結果</a></li>
-</ul></li>
 </ul></li>
 </ul>
 
@@ -349,9 +345,8 @@ article a {
 <p>そして、AMD はボトルネックを削減できるとしているが、どういった処理がボトルネックになっていて、何のソフトウェアであればそれを検証できるか、という問題もある。<br />
 自分は Linux でも動作する Vulkan ゲームなんて所有しておらず、現実的な使用状況を高度に再現できる Vulkan ベンチマークソフトというのもない。</p>
 
-<h3 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan</h3>
-
-<p>一応、VRAM をそれなりに使うソフトとしては <a href="https://github.com/nihui/waifu2x-ncnn-vulkan" rel="noreferrer" target="_blank">waifu2x-ncnn-vulkan</a> が思い浮かんだため、試してはみた。waifu2x-ncnn-vulkan は <strong>RX 560</strong> の VRAM 4GB をちゃんと使い切ってくれる。</p>
+<p>それでも一応、VRAM をそれなりに使うソフトとしては <a href="https://github.com/nihui/waifu2x-ncnn-vulkan" rel="noreferrer" target="_blank">waifu2x-ncnn-vulkan</a> が思い浮かんだため、試してはみた。waifu2x-ncnn-vulkan は <strong>RX 560</strong> の VRAM 4GB をちゃんと使い切ってくれる。<br />
+それと、グラフィクス系として vkmark (1920x1080) を実行したが、vkmark はあまり VRAM を使わないため、CPU からアクセスすることもあまり無いのではないかと思われる。</p>
 
 <h4 id="env">環境</h4>
 
@@ -394,7 +389,11 @@ article a {
 <h4 id="how">計測方法</h4>
 
 <p>実行コマンド:</p>
-<pre><code>  $ time -p &lt;waifu2x-ncnn-vulkan binary&gt; -i &#34;&lt;input dir&gt;&#34; -o &#34;&lt;output dir&gt;&#34; -n 1 -s 2 -m &#34;&lt;waifu2x-ncnn-vulkan model&gt;&#34;</code></pre>
+<pre><code>  waifu2x-ncnn-vulkan:
+     $ time -p &lt;waifu2x-ncnn-vulkan binary&gt; -i &#34;&lt;input dir&gt;&#34; -o &#34;&lt;output dir&gt;&#34; -n 1 -s 2 -m &#34;&lt;waifu2x-ncnn-vulkan model&gt;&#34;
+
+  vkmark (1920x1080):
+     $ ./vkmark -s 1920x1080</code></pre>
 <p>いつかに RADV/ACO の検証した時とハードウェア構成は変わらず、Linux Kenrel や Mesa のバージョンだけが上がっている。<sup class="footnote-ref" id="fnref:radv-aco-test"><a href="#fn:radv-aco-test">2</a></sup><br />
 実行コマンドも変わらず、/tmp 下に置いた入力用の画像 5枚を収めたディレクトリを指定し、出力画像も /tmp 下に作成したディレクトリを指定している。</p>
 
@@ -427,14 +426,32 @@ article a {
 </tbody>
 </table>
 
-<p>cunet モデルでの結果は <em>AMD Smart Access Memory</em> 有効で 12% の性能向上が確認できたが、正直有意な性能向上が確認できたのはこれくらいで、他の vkmark 等は誤差程度かかえって性能が低下した場合もあった。<br />
-しかし、上述したように、システム構成がアレであるため、その構成でまともに検証できるかは怪しく、これ以上に労力を掛ける気が起きない。
-AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、こうしたことがあるからなのかもしれない。</p>
+<table>
+<thead>
+<tr>
+<th align="left">vkmark<br>1920x1080</th>
+<th align="center">SAM Off</th>
+<th align="center">SAM On</th>
+</tr>
+</thead>
 
-<p>もっとまともなシステムを持ち、経験豊富な方が検証を行なってくれることを願う。</p>
+<tbody>
+<tr>
+<td align="left">Score</td>
+<td align="center">4729</td>
+<td align="center">4748<br>(+0.4%)</td>
+</tr>
+</tbody>
+</table>
 
-<p>現実的なゲームに近いベンチマークとなると、モデルやテクスチャの格納で必要なファイルサイズもいやに大きくなり、テストに使う時間もかなり掛かる。<br />
-自分でハードウェア/ソフトウェアの検証というものをやってみると、いかにテクニカルライターの方々は忍耐強いかが身に沁みてくる。</p>
+<p>cunet モデルでの結果は <em>AMD Smart Access Memory</em> 有効で 12% の性能向上が確認できたが、正直有意な性能向上が確認できたのはこれくらいで、他の upconv_7_anime_style_art_rgb モデルでの結果と vkmark の結果は誤差だろう。<br />
+AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、安定して性能向上の効果を得られないからなのかもしれない。<br />
+あるいはアクセス可能なサイズを大きくする以外に、別の工夫を施しているか。</p>
+
+<p>ただ、上述したように、システム構成がアレであるため、自分の構成でまともに検証できるかは怪しく、また、これ以上に労力を掛ける気が起きない。<br />
+現実的なゲームに近いベンチマークとなると、モデルやテクスチャの格納で必要なファイルサイズもいやに大きくなり、テストに使う時間もかなり掛かる。<br />
+自分でハードウェア/ソフトウェアの検証というものをやってみると、いかにテクニカルライターの方々は忍耐強いかが身に沁みてくる。<br />
+もっとまともなシステムを持ち、経験豊富な方が検証を行なってくれることを願う。</p>
 
 <p>また、<code>Above 4G Decoding</code> を有効にすると、Linux Kenrel をブートし、ログイン時間に辿り着くまでの時間が若干増えた。精々 1秒前後だが。<br />
 そういうことで、自分の用途では <code>Above 4G Decoding</code> を有効にする意味はほとんど無いのだが、<br />
@@ -453,7 +470,7 @@ AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、�
 <div class="article_time">
    <time datetime="2020-11-05 05:14+09:00" itemprop="datePublished">Post:<br>&emsp;2020/11/05 05:14&emsp;JST</time>
 
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/11/05 11:02&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/11/05 11:26&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
