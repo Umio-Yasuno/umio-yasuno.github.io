@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/11/05/linux-amd-smart-access-memory/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>Linux環境と Ryzen 5 2600、RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="Linux環境と Ryzen 5 2600、RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="Linux環境と Ryzen 5 2600、RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/11/05/linux-amd-smart-access-memory/">
+   <meta name="description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表されていた。 AMD Smart Access Memory | AMD AMD Smart Access Memory は、">
+   <meta property="og:description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表されていた。 AMD Smart Access Memory | AMD AMD Smart Access Memory は、">
+   <meta name="twitter:description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表されていた。 AMD Smart Access Memory | AMD AMD Smart Access Memory は、">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/11/05/linux-amd-smart-access-memory/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/11/05/linux-amd-smart-access-memory/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="Linux Kernel, RADV, RadeonSI">
+<link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #213838 94%, #152323 100%);
+   background-repeat: no-repeat;
+   font-size: 11.5pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   overflow-wrap: normal;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.75rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .012rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   opacity: 0;
+ 
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+   display: none;
+
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0;
+   overflow-wrap: break-word;
+   padding-bottom: 100vh;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   padding: 0 .25rem;
+   word-break: break-word;
+   overflow-wrap: break-word;
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 14px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   article {
+      grid-template-columns: .5% 1% auto 2%;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 3 / -1;
+   }
+   h1 {
+      grid-column: 1 /-1;
+   }
+   .head_category_block {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 54%, #787878 100%);
+   background-size: 100% 1.5vh;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .012;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a></div><h1 itemprop="headline name">Linux環境と Ryzen 5 2600、RX 560 で &#34;Smart Access Memory&#34; 機能を試す</h1>
+
+<p><em>RDNA 2 / GFX10.3</em> 世代の GPU、<strong>Radeon RX 6000シリーズ</strong> が発表された際、一緒にソフトウェアの新機能 <em>AMD Smart Access Memory</em> が発表されていた。<br />
+<span class="thread_link"><a href="https://www.amd.com/en/technologies/smart-access-memory" rel="noreferrer" target="_blank">AMD Smart Access Memory | AMD</a></span><br>
+
+<em>AMD Smart Access Memory</em> は、従来の Windows OS をベースとするシステムでは、CPU から GPU VRAM へは一度に 256MB までしかアクセス出来なかったが、その制限を取り払うことでボトルネックを減らし、ゲームにおける性能を高めるというもの。AMD が示している結果では、API に Vulkan または DX12 を用いるゲームで 5〜11% の性能向上となっている。</p>
+
+<p>その時はついに公開された <em>RDNA 2 / GFX10.3</em> の方に興味が集中していたため、ほとんどスルーしていたが、後に面白いことが判明した。</p>
+
+<h2 id="page_index">Index</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#already">Linux では既にサポート済み</a>
+
+<ul>
+<li><a href="#enable">いざ有効化</a></li>
+</ul></li>
+<li><a href="#effect">効果の程は</a>
+
+<ul>
+<li><a href="#waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan</a>
+
+<ul>
+<li><a href="#env">環境</a></li>
+<li><a href="#how">計測方法</a></li>
+<li><a href="#result">結果</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+</div>
+
+
+<h2 id="already">Linux では既にサポート済み</h2>
+
+<p>以下は Linux Kenrel の AMD GPU ドライバーの開発者である <a href="https://gitlab.freedesktop.org/agd5f" rel="noreferrer" target="_blank">Alex Deucher</a> 氏が <a href="https://www.phoronix.com/scan.php?page=home" rel="noreferrer" target="_blank">Phoronix</a> の記事に投稿したコメント。</p>
+
+<blockquote>
+<p>Smart Access Technology works just fine on Linux. It is resizeable BAR support which Linux has supported for years (AMD actually added support for this), but which is relatively new on windows. You just need a platform with enough MMIO space. On older systems this is enabled via sbios options with names like &ldquo;&gt;4GB MMIO&rdquo;.</p>
+
+<div class="quote_source">引用元:<cite><a href="https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1215570-linux-support-expectations-for-the-amd-radeon-rx-6000-series/page4#post1215694" rel="noreferrer" target="_blank">Linux Support Expectations For The AMD Radeon RX 6000 Series &ndash; Phoronix Forums</a></cite>
+</div>
+
+</blockquote>
+
+<p><em>AMD Smart Access Memory</em> はリサイズ可能な BAR (Base Address Register) であり、この機能は既に何年も前から Linux 上ではサポートされているが、Windows では比較的新しい機能であるとのこと。<br />
+また、古いシステムでは BIOS の <code>&gt;4GB MMIO</code> といった名前のオプションによって有効化されていると氏は述べている。</p>
+
+<h3 id="enable">いざ有効化</h3>
+
+<p>まず、CPU から GPU VRAM へ一度にアクセスできるサイズは、ユーザーモードドライバーである <strong>RadeonSI (OpenGL) / RADV (Vulkan)</strong> のデバッグ機能で確認できる。</p>
+
+<p><strong>RadeonSI</strong> の場合は <code>AMD_DEBUG=info</code> を環境変数にセットした状態で (実行コマンドの前の記述するだけでいい)、OpenGL API を用いるソフトウェアを実行、<br />
+<strong>RADV</strong> の場合は <code>RADV_DEBUG=info</code> をセットして、Vulkan API を用いるソフトウェアを実行すれば、現在搭載されている AMD GPU についての詳細情報がずらっと出力される。<br />
+そして、その中の <code>vram_vis_size</code> が CPU が一度にアクセス可能なサイズを示している。<sup class="footnote-ref" id="fnref:vram-vis-size"><a href="#fn:vram-vis-size">1</a></sup><br />
+以下は具体的な実行コマンドの一例。<code>AMD_DEBUG=info</code> を設定し、GLX の実装情報を示す <code>glxinfo</code> を実行、結果を <code>grep</code> に受け渡して抽出している。</p>
+<pre><code>  $ AMD_DEBUG=&#34;info&#34; glxinfo -B | grep vram_vis_size</code></pre>
+<p>自分が最初確認した時は、BIOS のあるオプションを有効化していなかったため、256MB と表示されていた。AMD が解説している通りのサイズだ。</p>
+
+<p>次に BIOS側の設定となるが、<code>&gt;4GB MMIO</code> といったオプションは <code>Above 4G Decoding</code> という名前で存在している。自分が持っている <strong>MSI B450 GAMING PLUS</strong>、<strong>GIGABYTE GA-A320-HD2 (rev. 1.0)</strong> (現在のメイン機) ではそのようになっており、他社製のマザーボードでもそのようになっているのではないかと思われる。<br />
+それを Enable に設定して起動、上述したようなコマンドで確かめた結果、<code>vram_vis_size</code> の値は、搭載している <strong>RX 560 (Polaris11)</strong> が持つ VRAM と同じサイズである 4096MB となっていた。</p>
+
+<p><a href="https://gitlab.freedesktop.org/agd5f" rel="noreferrer" target="_blank">Alex Deucher</a> 氏のコメント通り、Linux環境では既にサポートされており、<strong>Ryzen 5 2600 (Zen+)</strong> と <strong>RX 560</strong> という構成でも有効化が可能だった。</p>
+
+<h2 id="effect">効果の程は</h2>
+
+<p>有効化できたとして、その効果が気になる所だが、まず検証環境に問題がある。</p>
+
+<p>AMD が示している <strong>AMD Smart Access Memory</strong> 機能による性能向上は、<strong>Ryzen 9 5900X</strong> と <strong>RX 6800 XT</strong> というハードウェア構成で、現実的な使用状況、Vulkan/DX12 のゲームを 4K Ultra 設定で実行している。<br />
+対し自分の環境は <strong>Ryzen 5 2600</strong> と <strong>RX 560</strong> という構成で、絶対的な性能に圧倒的な性能差があり、CPU-GPU のインターフェイスも <strong>RX 560</strong> が Gen3 x8、<strong>RX 6800 XT</strong> は Gen4 x16 だろうから、帯域では <strong>RX 6800 XT</strong> が 4倍広い。</p>
+
+<p>そして、AMD はボトルネックを削減できるとしているが、どういった処理がボトルネックになっていて、何のソフトウェアであればそれを検証できるか、という問題もある。<br />
+自分は Linux でも動作する Vulkan ゲームなんて所有しておらず、現実的な使用状況を高度に再現できる Vulkan ベンチマークソフトというのもない。</p>
+
+<h3 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan</h3>
+
+<p>一応、VRAM をそれなりに使うソフトとしては <a href="https://github.com/nihui/waifu2x-ncnn-vulkan" rel="noreferrer" target="_blank">waifu2x-ncnn-vulkan</a> が思い浮かんだため、試してはみた。waifu2x-ncnn-vulkan は <strong>RX 560</strong> の VRAM 4GB をちゃんと使い切ってくれる。</p>
+
+<h4 id="env">環境</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">Hardware/Software</th>
+<th align="center">Desc</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">CPU</td>
+<td align="center">AMD Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
+</tr>
+
+<tr>
+<td align="left">Memory</td>
+<td align="center">DDR4-2933 16GB</td>
+</tr>
+
+<tr>
+<td align="left">GPU</td>
+<td align="center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 7Gbps<br>PCIe Gen3 x8)</td>
+</tr>
+
+<tr>
+<td align="left">Linux Kernel</td>
+<td align="center">5.9.1</td>
+</tr>
+
+<tr>
+<td align="left">User Mode Driver</td>
+<td align="center">Mesa 20.3.0-devel (git-5957b0c162)</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="how">計測方法</h4>
+
+<p>実行コマンド:</p>
+<pre><code>  $ time -p &lt;waifu2x-ncnn-vulkan binary&gt; -i &#34;&lt;input dir&gt;&#34; -o &#34;&lt;output dir&gt;&#34; -n 1 -s 2 -m &#34;&lt;waifu2x-ncnn-vulkan model&gt;&#34;</code></pre>
+<p>いつかに RADV/ACO の検証した時とハードウェア構成は変わらず、Linux Kenrel や Mesa のバージョンだけが上がっている。<sup class="footnote-ref" id="fnref:radv-aco-test"><a href="#fn:radv-aco-test">2</a></sup><br />
+実行コマンドも変わらず、/tmp 下に置いた入力用の画像 5枚を収めたディレクトリを指定し、出力画像も /tmp 下に作成したディレクトリを指定している。</p>
+
+<p>waifu2x-ncnn-vulkan の設定はデノイズレベルは 1、拡大率は 2x、tile-size はデフォルトの 400、load:proc:save もデフォルトの 1:2:2。
+使用画像の解像度は全て 1136x640。</p>
+
+<h4 id="result">結果</h4>
+
+<table>
+<thead>
+<tr>
+<th align="left">waifu2x-ncnn-vulkan<br>(real time)</th>
+<th align="center">SAM Off</th>
+<th align="center">SAM On</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">cunet</td>
+<td align="center">14.27s</td>
+<td align="center">12.71s<br>(+12%)</td>
+</tr>
+
+<tr>
+<td align="left">upconv_7_anime_style_art_rgb</td>
+<td align="center">5.93s</td>
+<td align="center">5.90s<br>(+0.5%)</td>
+</tr>
+</tbody>
+</table>
+
+<p>cunet モデルでの結果は <em>AMD Smart Access Memory</em> 有効で 12% の性能向上が確認できたが、正直有意な性能向上が確認できたのはこれくらいで、他の vkmark 等は誤差程度かかえって性能が低下した場合もあった。<br />
+しかし、上述したように、システム構成がアレであるため、その構成でまともに検証できるかは怪しく、これ以上に労力を掛ける気が起きない。vkmark はあまりメモリを使用しないベンチマークだ。<br />
+現実的なゲームに近いベンチマークとなると、モデルやテクスチャの格納で必要なファイルサイズもいやに大きくなり、テストに使う時間もかなり掛かる。<br />
+自分で検証というものをやってみると、いかにテクニカルライターの方々は忍耐強いかが分かってくる。</p>
+
+<p>もっとまともなシステムを持ち、経験豊富な方が <strong>Zen 3 + RDNA 2</strong> 以外の構成での検証を行なってくれることを願う。</p>
+
+<p>また、<code>Above 4G Decoding</code> を有効にすると、Linux Kenrel をブートし、ログイン時間に辿り着くまでの時間が若干増えた。精々 1秒前後だが。</p>
+
+<p>そういうことで、自分の用途では <code>Above 4G Decoding</code> を有効にする意味はほとんど無いのだが、<br />
+最新世代の組み合わせで利用できる新機能として謳われるものを、1、2世代前の構成で有効にしているというのは中々に面白い状況に思えるため、このまま有効にしておくつもりでいる。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:vram-vis-size"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/d8ea50996580a34b17059ec5456c75bb0d1f8750/src/gallium/winsys/radeon/drm/radeon_drm_winsys.c#L364" rel="noreferrer" target="_blank">src/gallium/winsys/radeon/drm/radeon_drm_winsys.c · d8ea50996580a34b17059ec5456c75bb0d1f8750 · Mesa / mesa · GitLab</a> <br> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/3c2489d2e45b3013361c7284ed9de14fe40554cc/src/amd/common/ac_gpu_info.c#L345" rel="noreferrer" target="_blank">src/amd/common/ac_gpu_info.c · 3c2489d2e45b3013361c7284ed9de14fe40554cc · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:vram-vis-size"><sup>[return]</sup></a></li>
+<li id="fn:radv-aco-test"><a href="https://www.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">RADV/ACO 検証: waifu2x-ncnn-vulkan の実行が最大3倍近く高速に | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:radv-aco-test"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+   <time datetime="2020-11-05 05:14+09:00" itemprop="datePublished">Post:<br>&emsp;2020/11/05 05:14&emsp;JST</time>
+
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/11/05 10:37&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="side_tag_lower">Linux Kernel</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="side_tag_lower">RadeonSI</a>
+         <a href="https://www.coelacanth-dream.com/tags/radv/" class="side_tag_lower">RADV</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/software/" class="side_category_lower">Software</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/05/linux-amd-smart-access-memory.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="foot_tag_lower">Linux Kernel</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="foot_tag_lower">RadeonSI</a>
+         <a href="https://www.coelacanth-dream.com/tags/radv/" class="foot_tag_lower">RADV</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/software/" class="foot_category_lower">Software</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/05/linux-amd-smart-access-memory.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="slide_menu_tag_lower">Linux Kernel</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="slide_menu_tag_lower">RadeonSI</a>
+         <a href="https://www.coelacanth-dream.com/tags/radv/" class="slide_menu_tag_lower">RADV</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="slide_menu_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/software/" class="slide_menu_category_lower">Software</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/05/linux-amd-smart-access-memory.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+         <div class="crt"></div>
+         <div class="lace"></div>
+   </body>
+</html>
