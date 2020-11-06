@@ -12,9 +12,9 @@
    <meta property="og:site_name" content="Coelacanth&#39;s Dream">
    <meta name="twitter:card" content="summary">
    <meta property="og:type" content="article">
-   <title>Linux環境と Ryzen 5 2600、RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream</title>
-   <meta property="og:title" content="Linux環境と Ryzen 5 2600、RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream">
-   <meta name="twitter:title" content="Linux環境と Ryzen 5 2600、RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream">
+   <title>Linux環境と Ryzen 5 2600、Radeon RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="Linux環境と Ryzen 5 2600、Radeon RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="Linux環境と Ryzen 5 2600、Radeon RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream">
 
    <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/11/05/linux-amd-smart-access-memory/">
    <meta name="description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表されていた。 AMD Smart Access Memory | AMD AMD Smart Access Memory は、">
@@ -275,7 +275,7 @@ article a {
 </header>
          <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 <article class="text" itemscope itemtype="http://schema.org/Article">
-<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a></div><h1 itemprop="headline name">Linux環境と Ryzen 5 2600、RX 560 で &#34;Smart Access Memory&#34; 機能を試す</h1>
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a></div><h1 itemprop="headline name">Linux環境と Ryzen 5 2600、Radeon RX 560 で &#34;Smart Access Memory&#34; 機能を試す</h1>
 
 <p><em>RDNA 2 / GFX10.3</em> 世代の GPU、<strong>Radeon RX 6000シリーズ</strong> が発表された際、一緒にソフトウェアの新機能 <em>AMD Smart Access Memory</em> が発表されていた。<br />
 <span class="thread_link"><a href="https://www.amd.com/en/technologies/smart-access-memory" rel="noreferrer" target="_blank">AMD Smart Access Memory | AMD</a></span><br>
@@ -329,10 +329,10 @@ article a {
 以下は具体的な実行コマンドの一例。<code>AMD_DEBUG=info</code> を設定し、GLX の実装情報を示す <code>glxinfo</code> を実行、結果を <code>grep</code> に受け渡して抽出している。</p>
 <pre><code>  $ AMD_DEBUG=&#34;info&#34; glxinfo -B | grep vram_vis_size</code></pre>
 <p>自分が最初確認した時は、BIOS のあるオプションを有効化していなかったため、256MB と表示されていた。AMD が解説している通りのサイズだ。</p>
-
-<p>次に BIOS側の設定となるが、<code>&gt;4GB MMIO</code> といったオプションは <code>Above 4G Decoding</code> という名前で存在している。自分が持っている <strong>MSI B450 GAMING PLUS</strong>、<strong>GIGABYTE GA-A320-HD2 (rev. 1.0)</strong> (現在のメイン機) ではそのようになっており、他社製のマザーボードでもそのようになっているのではないかと思われる。<br />
+<pre><code>  vram_vis_size = 256 MB</code></pre>
+<p>次に BIOS側の設定となるが、<code>&gt;4GB MMIO</code> といったオプションは <code>Above 4G Decoding</code> という名前で存在している。自分が持っている <strong>GIGABYTE GA-A320-HD2 (rev. 1.0)</strong> (現在のメイン機) ではそのようになっており、他社製のマザーボードでもそのようになっているのではないかと思われる。<br />
 それを Enabled に設定して起動、上述したようなコマンドで確かめた結果、<code>vram_vis_size</code> の値は、搭載している <strong>RX 560 (Polaris11)</strong> が持つ VRAM と同じサイズである 4096MB となっていた。</p>
-
+<pre><code>  vram_vis_size = 4096 MB</code></pre>
 <p><a href="https://gitlab.freedesktop.org/agd5f" rel="noreferrer" target="_blank">Alex Deucher</a> 氏のコメント通り、Linux環境では既にサポートされており、<strong>Ryzen 5 2600 (Zen+)</strong> と <strong>RX 560</strong> という構成でも有効化が可能だった。</p>
 
 <h2 id="effect">効果の程は</h2>
@@ -362,6 +362,11 @@ article a {
 <tr>
 <td align="left">CPU</td>
 <td align="center">AMD Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
+</tr>
+
+<tr>
+<td align="left">M/B</td>
+<td align="center">GIGABYTE GA-A320-HD2 (rev 1.0)</td>
 </tr>
 
 <tr>
@@ -470,7 +475,7 @@ AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、�
 <div class="article_time">
    <time datetime="2020-11-05 05:14+09:00" itemprop="datePublished">Post:<br>&emsp;2020/11/05 05:14&emsp;JST</time>
 
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/11/05 14:29&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/11/06 22:51&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
    <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
