@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/11/13/amd-rx-6800/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>AMD GPU としては珍しい構成の Radeon RX 6800 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD GPU としては珍しい構成の Radeon RX 6800 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD GPU としては珍しい構成の Radeon RX 6800 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/11/13/amd-rx-6800/">
+   <meta name="description" content="先日、AMD の Marek Olšák 氏により Mesa3D に投稿されたマージリクエストの中に、以下のようなものがあった。 uint32_t max_se; /* number of shader engines incl. disabled ones */ uint32_t num_se; /* number of enabled shader engines */ 引用元">
+   <meta property="og:description" content="先日、AMD の Marek Olšák 氏により Mesa3D に投稿されたマージリクエストの中に、以下のようなものがあった。 uint32_t max_se; /* number of shader engines incl. disabled ones */ uint32_t num_se; /* number of enabled shader engines */ 引用元">
+   <meta name="twitter:description" content="先日、AMD の Marek Olšák 氏により Mesa3D に投稿されたマージリクエストの中に、以下のようなものがあった。 uint32_t max_se; /* number of shader engines incl. disabled ones */ uint32_t num_se; /* number of enabled shader engines */ 引用元">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/11/13/amd-rx-6800/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/11/13/amd-rx-6800/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="RDNA 2, Sienna Cichlid">
+<link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #213838 94%, #152323 100%);
+   background-repeat: no-repeat;
+   font-size: 11.5pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   overflow-wrap: normal;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.75rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .012rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   opacity: 0;
+ 
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+   display: none;
+
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0;
+   overflow-wrap: break-word;
+   word-break: break-word;
+   padding-bottom: 100vh;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   font-size: .95rem;
+   padding: 0 .25rem;
+   word-break: break-word;
+   overflow-wrap: break-word;
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 14px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   article {
+      grid-template-columns: .5% 1% auto 2%;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 3 / -1;
+   }
+   h1 {
+      grid-column: 1 /-1;
+   }
+   .head_category_block {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 48%, #787878 100%);
+   background-size: 100% 1.2vh;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .013;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a></div><h1 itemprop="headline name">AMD GPU としては珍しい構成の Radeon RX 6800</h1>
+
+<p>先日、AMD の <a href="https://gitlab.freedesktop.org/mareko" rel="noreferrer" target="_blank">Marek Olšák</a> 氏により <a href="https://gitlab.freedesktop.org/mesa/mesa" rel="noreferrer" target="_blank">Mesa3D</a> に投稿されたマージリクエストの中に、以下のようなものがあった。</p>
+
+<blockquote>
+<pre><code>  uint32_t max_se;             /* number of shader engines incl. disabled ones */
+  uint32_t num_se;             /* number of enabled shader engines */</code></pre>
+<div class="quote_source">引用元:&nbsp;<cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7542/diffs?commit_id=1aef37c44a47720f74cf36af5543f884d096606a" rel="noreferrer" target="_blank">ac,radeonsi: many NGG improvements and fixes, etc. (!7542) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+<pre><code>    /* Guess the number of enabled SEs because the kernel doesn&#39;t tell us. */
+    if (info-&gt;chip_class &gt;= GFX10_3 &amp;&amp; info-&gt;max_se &gt; 1) {
+       unsigned num_rbs_per_se = info-&gt;num_render_backends / info-&gt;max_se;
+       info-&gt;num_se = util_bitcount(amdinfo-&gt;enabled_rb_pipes_mask) / num_rbs_per_se;
+    } else {
+       info-&gt;num_se = info-&gt;max_se;
+    }</code></pre>
+<div class="quote_source">引用元:&nbsp;<cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7542/diffs?commit_id=1aef37c44a47720f74cf36af5543f884d096606a" rel="noreferrer" target="_blank">ac,radeonsi: many NGG improvements and fixes, etc. (!7542) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+
+<p>ドライバーが検出し、表示する GPU の情報一覧に、有効にされている ShaderEngine数が追加された。これまで ShaderEngine数については、その GPU が持つ最大数、<code>max_se</code> のみを検出していた。<br />
+そして引用したコード部は、<em>RDNA 2 / GFX10.3</em> 世代の GPU で、最大 ShaderEngine 数が 1基より多い場合、ShaderEngineあたりの RB (Render Backend) と有効にされている RB数から、有効な ShaderEngine数を求める処理を行なっている。<br />
+<span class="complement">それとこれはついでだが、ShaderArray の略称がこれまで SH か SA かで分かれていて、ソースファイル上にどちらも存在することもあったが、ようやく SA で統一されそうな向きを見せている。</span>
+</p>
+
+<p>これまでは <code>max_se</code> だけで十分だったのに、何故今になって有効 ShaderEngine数を検出し、その処理を <em>RDNA 2 / GFX10.3</em> 世代の GPU を対象に絞っているのか。<br />
+それは恐らく <span class="complement">だがほぼ確実に</span>
+ <strong>Radeon RX 6800</strong> が AMD GPU としては珍しい、いや唯一と言えるかもしれない構成を取っているからだ。</p>
+
+<h2 id="dis-1se">ShaderEngine を 1基無効化</h2>
+
+<p><em>Radeon RX 6000シリーズ</em> が正式発表された際にも書いたが、<strong>RX 6800</strong> は 30WGP (60CU) という仕様から、ShaderEngine 4基中 1基を無効化しているものと思われる。<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/10/29/amd-rdna_2/#spec">AMD RDNA 2 GPU 正式発表　―― 各スペック、Infinity Cache、プロセス | Coelacanth&rsquo;s Dream</a></span><br>
+
+AMD GPU はスケジューリング等の観点から、複数の ShaderEngine が対称となるように設定される。<br />
+同じ GPUダイを採用する他の <strong>Radeon RX 6000シリーズ</strong> 、<strong>RX 6900 XT</strong> は ShaderEngine すべてをフルスペックで有効にすることで総 40WGP を、<strong>RX 6800 XT</strong> は各 ShaderEngine 内の WGP を 1基無効化することで総 36WGP というスペックを実現している。<br />
+だが、<strong>RX 6800</strong> の総 30WGP というのは、ShaderEngine 4基の対称性を維持したままでは実現できないため、ShaderEngine を 1基無効化、他 ShaderEngine 3基はフルスペック (各 10WGP) で有効にしていると考えられる。</p>
+
+<p>この ShaderEngine 1基を無効化というのが、<strong>RX 6800</strong> を唯一たらしめている。</p>
+
+<p>これまでの AMD GPU は製品化において、WGP/CU といったユニットを一部無効化することで性能を下げ、代わりにその上位モデルより安い価格で提供する下位モデルを用意してきた。WGP/CU の一部無効化は、欠陥のあるダイの救済、歩留まり向上という意味もある。<br />
+<em>RDNA / GFX10</em> からは、RB がメモリコントローラーに接続される L2キャッシュではなく、L1キャッシュに接続されるようになったため、そうグラフィクス性能を下げることなく、メモリバス幅を狭めた製品構成も可能になった。<br />
+<strong>RX 5500 XT</strong> 等のベースとなる <a href="https://www.coelacanth-dream.com/tags/navi14">Navi14</a> は ShaderEngine 1基の構成であり、ShaderEngine 内の ShaderArray 2基については非対称構成が許容されているため、11WGP (22CU) といった仕様が可能となっている。</p>
+
+<p>ShaderEngine を丸々 1基無効化することはなく、対称性を維持するため、各 ShaderEngine 内の WGP/CU を 1、2基程度無効化するというのが通常だった。<br />
+だからこれまでは <code>max_se</code> の値その情報で事足りていた。</p>
+
+<p><strong>RX 6800</strong> はそこから外れ、ShaderEngine 1基を無効化する。<br />
+従来の方法 <span class="complement">例えば、ShaderEngine 4基の WGP を 2基ずつ、RB+ を 1基ずつ無効化することで 32WGP (64CU)、12RB+ (96ROP) とするような構成</span>
+ を取らなかった理由としては、<br />
+ShaderEngine には、ジオメトリプロセッサ、ラスタライザ/プリミティブユニット、RDNA L1キャッシュ 128KB が含まれるため (ジオメトリプロセッサ以外は ShaderArray ごとに存在する)、これらも無効化する方がグラフィクス性能で上位モデルと差別化するのに都合が良かったのではないか、等が考えられる。</p>
+
+<p>性能という点では他の <strong>Radeon RX 6000シリーズ</strong> より抑えられているが、<strong>RX 6800</strong> は、AMD GPU として初の内部構成/設定というオリジナリティを持つ。</p>
+
+<p>また、GPU消費電力 <span class="complement">GPUチップ単体かボード全体かは明言されていないが、USB-C PD の分を引くため、GPUチップ単体の消費電力を記載しているのかもしれない</span>
+ は他モデルより 50W 低い 250W であり、カード厚も 2スロットであるから扱いやすいモデルとも言えるだろう。</p>
+<div class="article_time">
+   <time datetime="2020-11-13 22:33+09:00" itemprop="datePublished">Post:<br>&emsp;2020/11/13 22:33&emsp;JST</time>
+
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/11/14 14:11&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="side_tag_lower">RDNA 2</a>
+         <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid/" class="side_tag_lower">Sienna Cichlid</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/13/amd-rx-6800.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="foot_tag_lower">RDNA 2</a>
+         <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid/" class="foot_tag_lower">Sienna Cichlid</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/13/amd-rx-6800.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="slide_menu_tag_lower">RDNA 2</a>
+         <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid/" class="slide_menu_tag_lower">Sienna Cichlid</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="slide_menu_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="slide_menu_category_lower">Hardware</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/13/amd-rx-6800.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+         <div class="crt"></div>
+         <div class="lace"></div>
+   </body>
+</html>
