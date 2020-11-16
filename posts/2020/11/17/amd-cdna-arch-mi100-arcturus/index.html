@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/11/17/amd-cdna-arch-mi100-arcturus/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>AMD、初の CDNAアーキテクチャ GPU 「MI100」 を発表 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD、初の CDNAアーキテクチャ GPU 「MI100」 を発表 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD、初の CDNAアーキテクチャ GPU 「MI100」 を発表 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/11/17/amd-cdna-arch-mi100-arcturus/">
+   <meta name="description" content="SC20 の開催に合わせ、初の CDNAアーキテクチャ 採用製品となる AMD Instinct™ MI100 、開発コードネーム Arcturus を発表した。 AMD EPYC™ Processors and New AMD Instin">
+   <meta property="og:description" content="SC20 の開催に合わせ、初の CDNAアーキテクチャ 採用製品となる AMD Instinct™ MI100 、開発コードネーム Arcturus を発表した。 AMD EPYC™ Processors and New AMD Instin">
+   <meta name="twitter:description" content="SC20 の開催に合わせ、初の CDNAアーキテクチャ 採用製品となる AMD Instinct™ MI100 、開発コードネーム Arcturus を発表した。 AMD EPYC™ Processors and New AMD Instin">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/11/17/amd-cdna-arch-mi100-arcturus/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/11/17/amd-cdna-arch-mi100-arcturus/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="CDNA, Arcturus">
+<link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #213838 94%, #152323 100%);
+   background-repeat: no-repeat;
+   font-size: 11.5pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   overflow-wrap: normal;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.75rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .012rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   opacity: 0;
+ 
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+   display: none;
+
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0;
+   overflow-wrap: break-word;
+   word-break: break-word;
+   padding-bottom: 100vh;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   font-size: .95rem;
+   padding: 0 .25rem;
+   word-break: break-word;
+   overflow-wrap: break-word;
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 14px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   article {
+      grid-template-columns: .5% 1% auto 2%;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 3 / -1;
+   }
+   h1 {
+      grid-column: 1 /-1;
+   }
+   .head_category_block {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 48%, #787878 100%);
+   background-size: 100% 1.2vh;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .013;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a></div><h1 itemprop="headline name">AMD、初の CDNAアーキテクチャ GPU 「MI100」 を発表</h1>
+
+<p>SC20 の開催に合わせ、初の <em>CDNAアーキテクチャ</em> 採用製品となる <strong>AMD Instinct™ MI100</strong> 、開発コードネーム <em>Arcturus</em> を発表した。</p>
+
+<ul>
+<li><a href="https://ir.amd.com/news-events/press-releases/detail/980/amd-epyc-processors-and-new-amd-instinct-mi100" rel="noreferrer" target="_blank">AMD EPYC™ Processors and New AMD Instinct™ MI100 Accelerator Redefine Performance for HPC and Scientific Research :: Advanced Micro Devices, Inc. (AMD)</a></li>
+<li><a href="https://www.amd.com/en/technologies/cdna" rel="noreferrer" target="_blank">AMD CDNA Architecture | AMD</a>
+
+<ul>
+<li><a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf" rel="noreferrer" target="_blank">amd-cdna-whitepaper.pdf</a></li>
+</ul></li>
+<li><a href="https://www.amd.com/en/products/server-accelerators/instinct-mi100" rel="noreferrer" target="_blank">AMD Instinct™ MI100 Accelerator | AMD</a></li>
+</ul>
+
+<p>Linux Kernel (amd-gfx) には丁度 <em>Arcturus</em> の実験的サポートのフラグを外すパッチが投稿されている。<sup class="footnote-ref" id="fnref:arcturus-stable"><a href="#fn:arcturus-stable">1</a></sup></p>
+
+<h2 id="page_index">Index</h2>
+<div class="page_index">
+   <ul>
+<li><a href="#mi100-spec">MI100 スペック</a></li>
+<li><a href="#cdna">CDNAアーキテクチャ</a>
+
+<ul>
+<li><a href="#cu">各アーキテクチャの CU 比較</a>
+
+<ul>
+<li><a href="#simd">RDNAアーキテクチャとの SIMDユニット比較</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+</div>
+
+
+<h2 id="mi100-spec">MI100 スペック</h2>
+
+<p><em>Arcturus</em> は ShaderEngine 8基、最大総 CU 数 128基という構成だが、<strong>MI100</strong> では各 ShaderEngine 内の CU を 1基無効化し、総 CU 数 120基という仕様になっている。</p>
+
+<p>動作クロックは最大 1502MHz。ピークFP64演算性能は 11.5TFLOPs に達し、10TFLOPs の壁を突破した初の GPU を謳う。</p>
+
+<p><em>Vega20/MI50</em> では、3基以上を <em>Infinity Fabric/XGMI</em> を用いて接続する場合、リングバス構成となり、GPU 間でのデータ転送に幾許かの遅延が発生していた。<sup class="footnote-ref" id="fnref:if-xgmi"><a href="#fn:if-xgmi">2</a></sup><br />
+だが <em>Arcturus/MI100</em> では最大 4基での相互接続に対応し、より高性能な GPU トポロジを構成可能となる。<br />
+<em>Arcturus</em> は <span class="complement">ネットワーク構造こそ変わるが</span>
+最大 8基のトポロジ構成に対応しているはずだが、<strong>MI100</strong> では <em>Infinity Fabric Link</em> が 3本となっている。<sup class="footnote-ref" id="fnref:exa"><a href="#fn:exa">3</a></sup></p>
+
+<p>メモリバス幅は HBM2 4スタック (4096-bit)、容量は最大 32GB、ECCサポート、という点は <em>Vega20/MI50</em> と変わらないが、メモリクロックは 0.2GHz 向上した 1.2GHz となり、ピークメモリ帯域は 1228.8GB/s となる。<br />
+また、HBM2メモリのメモリ階層 1つ上、L2キャッシュは <em>Vega20/MI50</em> から倍の数に増やされ 32スライスとなり、L2キャッシュ容量は計 8MB。</p>
+
+<p>製造プロセスは <em>Vega20/MI50</em> と同じ TSMC 7nm FinFet とされ、大きく性能を向上させながらも TBP 300W を維持している。</p>
+
+<h2 id="cdna">CDNAアーキテクチャ</h2>
+
+<p><em>Arcturus/MI100</em> はグラフィクス処理を行なうための固定機能ユニット <span class="complement">ジオメトリプロセッサ、ラスタライザ、RB (Render Backend)、ディスプレイエンジンさえも</span>
+ を持たず、空いた分を利用して、CU の改良、強化、実装密度を引き上げを実現している。<br />
+ただ、<span class="complement">GPU とそのアーキテクチャを活用したアクセラレータの境目は曖昧で、うまい言い方が思いつかないが</span>
+ 一般的な GPU への転用はできないものとなっている。<br />
+AMD も <em>Arcturus/MI100</em> を GPU と呼びつつも、アクセラレータとしての見方が強いのか、ブランドを <strong>Radeon Instinct</strong> ではなく <strong>AMD Instinct</strong> としており、<strong>Radeon</strong> の名は使っていない。ニュースリリース内を <em>Radeon</em> で検索しても見つからなかった。</p>
+
+<p>グラフィクス用の固定機能ユニットは持たないが、マルチメディアエンジンは搭載しており、用途としては機械学習のオブジェクト検出の際などを想定している。<br />
+また、Linux Kernel (amd-gfx) に記述されているコードによると、VCN (Video Core Next) のバージョンは 2.5 となり、それを 2基搭載している。<sup class="footnote-ref" id="fnref:arcturus-vcn2-5"><a href="#fn:arcturus-vcn2-5">4</a></sup></p>
+
+<h3 id="cu">各アーキテクチャの CU 比較</h3>
+
+<!--
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/11/17/amd-gcn-rdna-cu.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/11/17/amd-gcn-rdna-cu.webp"
+         alt="画像出典: []"/> </a><figcaption>
+         <h4>GCN/RDNA CU</h4><p>画像出典: []</p>
+   </figcaption>
+</figure>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/11/17/amd-rdna-wgp-cu.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/11/17/amd-rdna-wgp-cu.webp"
+         alt="画像出典: Introduction &amp;ndash; rdna-whitepaper.pdf (Page 5)"/> </a><figcaption>
+         <h4>RDNA WGP/2CU</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="noreferrer" target="_blank">Introduction &ndash; rdna-whitepaper.pdf</a> (Page 5)</p>
+   </figcaption>
+</figure>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-cu.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-cu.webp"
+         alt="画像出典: amd-cdna-whitepaper.pdf (Page 6)"/> </a><figcaption>
+         <h4>CDNA CU</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf" rel="noreferrer" target="_blank">amd-cdna-whitepaper.pdf</a> (Page 6)</p>
+   </figcaption>
+</figure>
+
+-->
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-gcn-cu.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-gcn-cu.webp"
+         alt="画像出典: amd-cdna-whitepaper.pdf (Page 6), &amp;emsp; Introduction &amp;ndash; rdna-whitepaper.pdf (Page 5), &amp;emsp; M&amp;amp;E GBGH &amp;ndash; HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf (Page 21)"/> </a><figcaption>
+         <h4>CDNA/RDNA/GCN CU</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf" rel="noreferrer" target="_blank">amd-cdna-whitepaper.pdf</a> (Page 6), <br>&emsp; <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="noreferrer" target="_blank">Introduction &ndash; rdna-whitepaper.pdf</a> (Page 5), <br>&emsp; <a href="https://www.hotchips.org/wp-content/uploads/hc_archives/hc29/HC29.21-Monday-Pub/HC29.21.10-GPU-Gaming-Pub/HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf" rel="noreferrer" target="_blank">M&amp;E GBGH &ndash; HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf</a> (Page 21)</p>
+   </figcaption>
+</figure>
+
+
+<p>丁度良い画像が見つからなかったため、少し不格好となってしまったが、上が <em>CDNA/RDNA/GCN CU</em> の各構造をまとめたものである。<br />
+<em>CDNAアーキテクチャ</em> の CU 全体は <em>GCNアーキテクチャ</em> のそれに似通っているが、SIMDユニットあたりのベクタレジスタ (VGPR) は、CU あたり 256KB (GCN) から 512KB (CDNA) と、倍の容量に増量されている。<br />
+その反面、スカラレジスタ (SGPR) は CU あたり 32KB (GCN) から 12.8KB (CDNA) と、半分の容量に減らされている。<br />
+<em>RDNAアーキテクチャ</em> はと言うと、CU あたりの総ベクタレジスタは <em>GCNアーキテクチャ</em> と変わらないが、スカラレジスタは 20KB となっている。</p>
+
+<p>また、<em>CDNAアーキテクチャ</em> ではテクスチャフィルタユニットが省かれていることが分かる。 グラフィクス用の固定機能ユニットを省いたというのは CU 内部にも渡っている。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Register Size <br> per CU</th>
+<th align="center">Vector</th>
+<th align="center">Scalar</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">GCN</td>
+<td align="center">256KB</td>
+<td align="center">32KB</td>
+</tr>
+
+<tr>
+<td align="left">RDNA</td>
+<td align="center">256KB</td>
+<td align="center">20KB</td>
+</tr>
+
+<tr>
+<td align="left">CDNA</td>
+<td align="center">512KB</td>
+<td align="center">12.8KB</td>
+</tr>
+</tbody>
+</table>
+
+<h4 id="simd">RDNAアーキテクチャとの SIMDユニット比較</h4>
+
+<p>SIMDユニットは 512-bit幅であり、ベクタパイプラインとしては 16-wide (SIMD16)。<br />
+Wave64 (64スレッド) を SIMD16ユニットで 4サイクル掛けて処理というのも <em>GCNアーキテクチャ</em> から変わらないものと思われる。</p>
+
+<figure>
+   <a href="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-simd.webp" target="_blank">
+   <img src="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-simd.webp"
+         alt="画像出典: amd-cdna-whitepaper.pdf (Page 6), &amp;emsp; Introduction &amp;ndash; rdna-whitepaper.pdf (Page 9)"/> </a><figcaption>
+         <h4>CDNA/RDNA SIMD</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf" rel="noreferrer" target="_blank">amd-cdna-whitepaper.pdf</a> (Page 6), <br>&emsp; <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="noreferrer" target="_blank">Introduction &ndash; rdna-whitepaper.pdf</a> (Page 9)</p>
+   </figcaption>
+</figure>
+
+
+<p>SFU (Special Function Unit) は、<em>CDNAアーキテクチャ</em> では 4基と、ここも <em>GCNアーキテクチャ</em> と変わらない。<em>RDNAアーキテクチャ</em> では 8基となっているが、SIMD32ユニットあたりであるため、SIMD幅に対するバランスは同じである。<br />
+また、Wave Controller が保持する Wave数も同様。</p>
+
+<p><em>CDNAアーキテクチャ</em> では SPユニット (single-precision, FP32, 単精度) 16基に対し、DPユニット (double-precision, FP64, 倍精度) 8基を持つため、FP32演算の半分のレートでFP64演算を行なえる。<em>RDNAアーキテクチャ</em> では DPユニットが 2基であるため、1/16のレートとなる。<br />
+また、HPユニット (half-precision, FP16, 半精度) を別に 32基持ち、恐らくは SPユニットでの Packed実行と合わせて、184.6TFLOPS というピークFP16演算性能が可能になっていると思われるが、どのような処理フローになっているかは不明。</p>
+
+<p>新たに行列演算を高速に処理するための MFMA (Matrix Fused Multiply-Add) 命令に対応し、それを実行する Matrixユニットが増設された。データ精度は FP3、FP16、BF16 に対応する。<br />
+ベクタパイプラインを用いて処理するよりも高速に、優れた電力効率で行列演算の処理が可能となっている。</p>
+
+<p><br>
+<em>Arcturus</em> の情報はこのサイトを開設した以前から Linux Kernel 等へのサポートが追加されており、個人としても少しずつ情報を追ってきた。<br />
+<em>Arcturus/MI100</em> が正式発表されたことをオタクとして本当に嬉しく思う。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:arcturus-stable"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-November/056158.html" rel="noreferrer" target="_blank">[PATCH] drm/amdgpu: remove experimental flag from arcturus</a>
+ <a class="footnote-return" href="#fnref:arcturus-stable"><sup>[return]</sup></a></li>
+<li id="fn:if-xgmi"><a href="https://www.coelacanth-dream.com/posts/2020/07/17/navi21-sienna_cichlid-support-xgmi/">Navi21 /Sienna Cichlid は高速なGPU間通信 XGMI をサポート | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:if-xgmi"><sup>[return]</sup></a></li>
+<li id="fn:exa"><a href="https://www.coelacanth-dream.com/posts/2020/03/06/amd-financial-analyst-day-2020/#3rd-gen-infinity-architecturue">AMD Financial Analyst Day 2020 個人的まとめ | Coelacanth&rsquo;s Dream</a>
+ <a class="footnote-return" href="#fnref:exa"><sup>[return]</sup></a></li>
+<li id="fn:arcturus-vcn2-5"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=ab5999dea06945f1f7b00bc20c23ab045afa74af" rel="noreferrer" target="_blank">drm/amdgpu: enable VCN0 and VCN1 sriov instances support for Arcturus</a>
+ <a class="footnote-return" href="#fnref:arcturus-vcn2-5"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+   <time datetime="2020-11-17 00:20+09:00" itemprop="datePublished">Post:<br>&emsp;2020/11/17 00:20&emsp;JST</time>
+
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/11/17 04:00&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/arcturus/" class="side_tag_lower">Arcturus</a>
+         <a href="https://www.coelacanth-dream.com/tags/cdna/" class="side_tag_lower">CDNA</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/17/amd-cdna-arch-mi100-arcturus.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/arcturus/" class="foot_tag_lower">Arcturus</a>
+         <a href="https://www.coelacanth-dream.com/tags/cdna/" class="foot_tag_lower">CDNA</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/17/amd-cdna-arch-mi100-arcturus.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/arcturus/" class="slide_menu_tag_lower">Arcturus</a>
+         <a href="https://www.coelacanth-dream.com/tags/cdna/" class="slide_menu_tag_lower">CDNA</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="slide_menu_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="slide_menu_category_lower">Hardware</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/17/amd-cdna-arch-mi100-arcturus.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+         <div class="crt"></div>
+         <div class="lace"></div>
+   </body>
+</html>
