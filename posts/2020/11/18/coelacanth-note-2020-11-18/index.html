@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/11/18/coelacanth-note-2020-11-18/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>【シーラカンスノート】 RadeonSI が VRS に対応、他 RDNA 2 dGPU の DeviceID 【2020/11/18】 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="【シーラカンスノート】 RadeonSI が VRS に対応、他 RDNA 2 dGPU の DeviceID 【2020/11/18】 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="【シーラカンスノート】 RadeonSI が VRS に対応、他 RDNA 2 dGPU の DeviceID 【2020/11/18】 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/11/18/coelacanth-note-2020-11-18/">
+   <meta name="description" content="ソフトウェア側も AV1 HWデコードに対応 RDNA 2 / GFX10.3 世代の GPU/APU、厳密に言えばそれらがマルチメディアエンジンとして搭載している VCN 3.0 が対応する AV1 H">
+   <meta property="og:description" content="ソフトウェア側も AV1 HWデコードに対応 RDNA 2 / GFX10.3 世代の GPU/APU、厳密に言えばそれらがマルチメディアエンジンとして搭載している VCN 3.0 が対応する AV1 H">
+   <meta name="twitter:description" content="ソフトウェア側も AV1 HWデコードに対応 RDNA 2 / GFX10.3 世代の GPU/APU、厳密に言えばそれらがマルチメディアエンジンとして搭載している VCN 3.0 が対応する AV1 H">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/11/18/coelacanth-note-2020-11-18/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/11/18/coelacanth-note-2020-11-18/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="RadeonSI, RDNA 2, Navy Flounder, Dimgrey Cavefish">
+<link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+         <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+         <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #2A4747 88%, #213838 94%, #152323 100%);
+   background-repeat: no-repeat;
+   font-size: 11.5pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   overflow-wrap: normal;
+}
+.site_title {
+   font: normal 1.9rem/2.3rem monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #75D1FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.75rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   letter-spacing: .012rem;
+   margin: .3rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   opacity: 0;
+ 
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      right: 2px;
+      bottom: 1.3rem;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+.entry_google_ad {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+.page_google_ad, .ad_debug {
+   grid-row: 7 /-2;
+   grid-column: 3 / 5;
+   z-index: -1;
+}
+@media (min-width: 840px) {
+   .entry_google_ad {
+      grid-row: 5 / -2;
+      grid-column: 4 / -2;
+   }
+   .page_google_ad, .ad_debug {
+      grid-row: 6 / -1;
+      grid-column: 4 / -2;
+   }
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 8px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+   display: none;
+
+}
+h1 {
+   color: #FFA319;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 1rem 0;
+   overflow-wrap: break-word;
+   word-break: break-word;
+   padding-bottom: 100vh;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+}
+article a {
+   font-size: .95rem;
+   padding: 0 .25rem;
+   word-break: break-word;
+   overflow-wrap: break-word;
+}
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 14px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   article {
+      grid-template-columns: .5% 1% auto 2%;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 3 / -1;
+   }
+   h1 {
+      grid-column: 1 /-1;
+   }
+   .head_category_block {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 28px;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal 24px/1.2rem monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+      display: unset;
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         right: unset;
+         bottom: unset;
+         left: 8px;
+      padding: 20px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+      background-color: rgba(0,0,0, .01);
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0,128,128, .2) rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00080B 48%, #787878 100%);
+   background-size: 100% 1.2vh;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .013;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/note/" class="head_category_lower">Note</a></div><h1 itemprop="headline name">【シーラカンスノート】 RadeonSI が VRS に対応、他 RDNA 2 dGPU の DeviceID 【2020/11/18】</h1>
+
+<h2 id="av1">ソフトウェア側も AV1 HWデコードに対応</h2>
+
+<p><em>RDNA 2 / GFX10.3</em> 世代の GPU/APU、厳密に言えばそれらがマルチメディアエンジンとして搭載している VCN 3.0 が対応する AV1 HWデコードをサポートするパッチが Mesa3D に投稿、メインラインに取り込まれている。<br />
+<span class="thread_link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7596" rel="noreferrer" target="_blank">Radeon: AV1 HW video acceleration with OMX (!7596) · Merge Requests · Mesa / mesa · GitLab</a></span><br>
+</p>
+
+<p>これで <em>RDNA 2 / GFX10.3</em> 世代の GPU/APU を持つユーザーが AV1 HWデコードを活用できるようになる。<br />
+AV1コーディックは主に Youtube で使われている。HWデコードにはブラウザ側も対応する必要があるが、Firefox、Chromium系は (確か) VA-API を使っているはずなので、そこで引っ掛かることはないと思われる (たぶん)。</p>
+
+<h2 id="vrs">RadeonSI が VRS に対応</h2>
+
+<p><em>RDNA 2 / GFX10.3</em> 世代の GPU から対応している VRS (Variable Rate Shader) 機能を有効にするパッチが Mesa3D に投稿され、こちらも既にメインラインに組み込まれている。<br />
+<span class="thread_link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/c3432ad852449ec31580a0b77af785e37eaa48f9" rel="noreferrer" target="_blank">radeonsi: add an option to enable 2x2 coarse shading for non-GUI elements (c3432ad8) · Commits · Mesa / mesa · GitLab</a></span><br>
+</p>
+
+<p>現時点ではまだ実験的なサポートであり、driconf かアプリケーション起動時に設定できるオプションで有効する形となっている。<br />
+driconf はユーザー側から選択できる最適化オプションの 1つと言えるのだが、気が向いたら記事の形にまとめるかもしれない。</p>
+
+<p><strong>RadeonSI (OpenGL)</strong> ドライバー側が対応したため、既存の OpenGL を用いるアプリケーション、ベンチマークでも VRS の有効無効で性能に影響が出そうだが、その場合はどういった風に GPU の性能を評価することになるのか。<br />
+VRS には Intel <em>Gen11アーキテクチャ</em> からハードウェア側は対応しているはずなのだが、Mesa3D にそれを有効にするコード、オプションは追加されていない。</p>
+
+<h2 id="did">Navy Flounder、Dimgrey Cavefish の DeviceID 追加</h2>
+
+<p><em>Sienna Cichlid</em> 以外の <em>RDNA 2 / GFX10.3</em> dGPU、<em>Navy Flounder</em> 、<em>Dimgrey Cavefish</em> の DeviceID を追加するパッチが Linux Kernel (amd-gfx) に投稿されている。</p>
+
+<blockquote>
+<pre><code>  +  /* Navy_Flounder */
+  +  {0x1002, 0x73C0, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_NAVY_FLOUNDER},
+  +  {0x1002, 0x73C1, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_NAVY_FLOUNDER},
+  +  {0x1002, 0x73C3, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_NAVY_FLOUNDER},
+  +  {0x1002, 0x73DF, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_NAVY_FLOUNDER},
+  +</code></pre>
+<div class="quote_source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-November/056293.html" rel="noreferrer" target="_blank">[PATCH &frac12;] drm/amdgpu: add device ID for navy_flounder (v2)</a></cite>
+</div>
+
+<pre><code>  +  /* DIMGREY_CAVEFISH */
+  +  {0x1002, 0x73E0, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_DIMGREY_CAVEFISH},
+  +  {0x1002, 0x73E1, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_DIMGREY_CAVEFISH},
+  +  {0x1002, 0x73E2, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_DIMGREY_CAVEFISH},
+  +  {0x1002, 0x73FF, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_DIMGREY_CAVEFISH},
+  +</code></pre>
+<div class="quote_source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-November/056294.html" rel="noreferrer" target="_blank">[PATCH 2/2] drm/amdgpu: add DID for dimgrey_cavefish</a></cite>
+</div>
+
+</blockquote>
+
+<p>とは言っても DeviceID だけで、RevisionID とか SKU名は全くの不明。<br />
+AMD が以下のコード等に追加してくれる日を待つしかない。</p>
+
+<ul>
+<li><a href="https://github.com/GPUOpen-Tools/common_src_device_info/blob/master/DeviceInfoUtils.cpp" rel="noreferrer" target="_blank">common_src_device_info/DeviceInfoUtils.cpp at master · GPUOpen-Tools/common_src_device_info</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/drm/blob/master/data/amdgpu.ids" rel="noreferrer" target="_blank">data/amdgpu.ids · master · Mesa / drm · GitLab</a></li>
+</ul>
+<div class="article_time">
+   <time datetime="2020-11-18 15:47+09:00" itemprop="datePublished">Post:<br>&emsp;2020/11/18 15:47&emsp;JST</time>
+
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/11/18 16:39&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Author: Umio Yasuno</div></article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/dimgrey_cavefish/" class="side_tag_lower">Dimgrey Cavefish</a>
+         <a href="https://www.coelacanth-dream.com/tags/navy_flounder/" class="side_tag_lower">Navy Flounder</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="side_tag_lower">RadeonSI</a>
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="side_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/note/" class="side_category_lower">Note</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/18/coelacanth-note-2020-11-18.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+      </nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css">
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/dimgrey_cavefish/" class="foot_tag_lower">Dimgrey Cavefish</a>
+         <a href="https://www.coelacanth-dream.com/tags/navy_flounder/" class="foot_tag_lower">Navy Flounder</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="foot_tag_lower">RadeonSI</a>
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="foot_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/note/" class="foot_category_lower">Note</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/18/coelacanth-note-2020-11-18.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav>
+<small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/dimgrey_cavefish/" class="slide_menu_tag_lower">Dimgrey Cavefish</a>
+         <a href="https://www.coelacanth-dream.com/tags/navy_flounder/" class="slide_menu_tag_lower">Navy Flounder</a>
+         <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="slide_menu_tag_lower">RadeonSI</a>
+         <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="slide_menu_tag_lower">RDNA 2</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/gpu/" class="slide_menu_category_lower">GPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="slide_menu_category_lower">Hardware</a>
+         <a href="https://www.coelacanth-dream.com/categories/note/" class="slide_menu_category_lower">Note</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopenner noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/18/coelacanth-note-2020-11-18.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/privacy/">Privacy</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.iucnredlist.org/support/donate" target="_blank" rel="noreferrer noopener">Red List Donate</a>
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+         
+         <ins class="adsbygoogle page_google_ad" style="display:block" data-ad-client="ca-pub-8523229124275958" data-ad-slot="7249929390" data-ad-format="auto" data-full-width-responsive="true"></ins>
+         <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+         </script>
+
+      </main>
+         <div class="crt"></div>
+         <div class="lace"></div>
+   </body>
+</html>
