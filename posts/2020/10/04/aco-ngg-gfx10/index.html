@@ -17,9 +17,9 @@
    <meta name="twitter:title" content="ACOバックエンドでも NGG をサポートする動き | Coelacanth&#39;s Dream">
 
    <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/">
-   <meta name="description" content="Mesa3Dに、RADV(Vulkan) ドライバーの ACOバックエンド においても NGG(Next Generation Geometory) をサポート、そしてデフォルトで有効にするマージリクエストが">
-   <meta property="og:description" content="Mesa3Dに、RADV(Vulkan) ドライバーの ACOバックエンド においても NGG(Next Generation Geometory) をサポート、そしてデフォルトで有効にするマージリクエストが">
-   <meta name="twitter:description" content="Mesa3Dに、RADV(Vulkan) ドライバーの ACOバックエンド においても NGG(Next Generation Geometory) をサポート、そしてデフォルトで有効にするマージリクエストが">
+   <meta name="description" content="Mesa3Dに、RADV(Vulkan) ドライバーの ACOバックエンド においても NGG(Next Generation Geometry) をサポート、そしてデフォルトで有効にするマージリクエストが">
+   <meta property="og:description" content="Mesa3Dに、RADV(Vulkan) ドライバーの ACOバックエンド においても NGG(Next Generation Geometry) をサポート、そしてデフォルトで有効にするマージリクエストが">
+   <meta name="twitter:description" content="Mesa3Dに、RADV(Vulkan) ドライバーの ACOバックエンド においても NGG(Next Generation Geometry) をサポート、そしてデフォルトで有効にするマージリクエストが">
    <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
    <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
    <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/">
@@ -260,7 +260,7 @@ article a {
 <article class="text" itemscope itemtype="http://schema.org/Article">
 <div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a></div><h1 itemprop="headline name">ACOバックエンドでも NGG をサポートする動き</h1>
 
-<p>Mesa3Dに、RADV(Vulkan) ドライバーの <a href="https://www.coelacanth-dream.com/tags/aco">ACOバックエンド</a> においても NGG(Next Generation Geometory) をサポート、そしてデフォルトで有効にするマージリクエストが投稿された。<br />
+<p>Mesa3Dに、RADV(Vulkan) ドライバーの <a href="https://www.coelacanth-dream.com/tags/aco">ACOバックエンド</a> においても NGG(Next Generation Geometry) をサポート、そしてデフォルトで有効にするマージリクエストが投稿された。<br />
 <span class="thread_link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6964" rel="noreferrer" target="_blank">aco: Implement NGG GS (!6964) · Merge Requests · Mesa / mesa · GitLab</a></span>
 </p>
 
@@ -269,7 +269,7 @@ article a {
 <h2 id="page_index">Index</h2>
 <div class="page_index">
    <ul>
-<li><a href="#ngg">NGG (Next Generation Geometory)</a>
+<li><a href="#ngg">NGG (Next Generation Geometry)</a>
 
 <ul>
 <li><a href="#complex-shader-stage">ややこしくて複雑なシェーダーステージ</a></li>
@@ -282,7 +282,7 @@ article a {
 </div>
 
 
-<h2 id="ngg">NGG (Next Generation Geometory)</h2>
+<h2 id="ngg">NGG (Next Generation Geometry)</h2>
 
 <p>とは言っても、NGG と各シェーダーステージの関係は、<em>ACOバックエンド</em> のドキュメントに非常に分かりやすくまとめられている。<br />
 <span class="thread_link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/amd/compiler/README.md#supported-shader-stages" rel="noreferrer" target="_blank">src/amd/compiler/README.md · master · Mesa / mesa · GitLab</a></span>
@@ -292,7 +292,7 @@ article a {
 
 <h3 id="complex-shader-stage">ややこしくて複雑なシェーダーステージ</h3>
 
-<p>まず、ソフトウェア側で定義されているシェーダーステージの中で、オブジェクトの頂点処理を行なうバーテックスシェーダー(Vertex Shader, VS)、頂点の増減を行なうジオメトリシェーダー(Geometory Shader, GS)、そしてピクセル処理を行なうピクセルシェーダー(Pixel Shader, PS) を GPU で実行する時、VS &rarr; GS &rarr; PS という順番で実行される。<br />
+<p>まず、ソフトウェア側で定義されているシェーダーステージの中で、オブジェクトの頂点処理を行なうバーテックスシェーダー(Vertex Shader, VS)、頂点の増減を行なうジオメトリシェーダー(Geometry Shader, GS)、そしてピクセル処理を行なうピクセルシェーダー(Pixel Shader, PS) を GPU で実行する時、VS &rarr; GS &rarr; PS という順番で実行される。<br />
 そして PS を実行する時、ハードウェア側では VSステージでのみ書き込めるバッファを PSステージで受け取るのだが、GS が間に入るとこれがスムーズにいかなくなる。<br />
 GS の処理結果は一度 VRAM に出力され、PS が受け取るバッファには書き込まれない。<br />
 そのため、ハードウェア側の VSステージで GS の処理結果を VRAM から読み込み、それを PS へのバッファに書き込む手間が必要となる。<br />
@@ -412,7 +412,7 @@ LDS には広帯域低レイテンシでアクセスすることができ、こ�
 <div class="article_time">
    <time datetime="2020-10-04 16:39+09:00" itemprop="datePublished">Post:<br>&emsp;2020/10/04 16:39&emsp;JST</time>
 
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/10/24 18:03&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/11/26 15:25&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Author: Umio Yasuno</div><div class="amzn"><h5>Amazonアソシエイト</h5>
    <div class="amzn_links">
