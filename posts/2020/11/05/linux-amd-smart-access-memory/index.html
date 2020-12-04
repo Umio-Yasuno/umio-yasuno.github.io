@@ -17,9 +17,9 @@
    <meta name="twitter:title" content="Linux環境と Ryzen 5 2600、Radeon RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream">
 
    <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/11/05/linux-amd-smart-access-memory/">
-   <meta name="description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表されていた。 AMD Smart Access Mem">
-   <meta property="og:description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表されていた。 AMD Smart Access Mem">
-   <meta name="twitter:description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表されていた。 AMD Smart Access Mem">
+   <meta name="description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表された。 AMD Smart Access Memor">
+   <meta property="og:description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表された。 AMD Smart Access Memor">
+   <meta name="twitter:description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表された。 AMD Smart Access Memor">
    <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
    <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
    <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/11/05/linux-amd-smart-access-memory/">
@@ -99,7 +99,7 @@ a {
 }
 article > p {
    letter-spacing: .016rem;
-   margin: .3rem 0;
+   margin: 0;
 }
 article > p::before {
    padding-right: .55rem;
@@ -125,7 +125,7 @@ article {
    display: grid;
    grid-template-rows: auto;
    grid-template-columns: .5% 1% auto 2%;
-   row-gap: 1.5rem;
+   row-gap: 1.48rem;
 }
 article > * {
    grid-column: 3 / -1;
@@ -139,7 +139,7 @@ h1 {
    color: #FFA020;
    font: normal 1.2rem/1.7rem sans-serif;
    grid-column: 2 / -1;
-   margin: 1rem 0;
+   margin: 0;
    overflow-wrap: break-word;
    word-break: break-word;
    padding-bottom: 100vh;
@@ -260,7 +260,7 @@ article a {
 <article class="text" itemscope itemtype="http://schema.org/Article">
 <div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a></div><h1 itemprop="headline name">Linux環境と Ryzen 5 2600、Radeon RX 560 で &#34;Smart Access Memory&#34; 機能を試す</h1>
 
-<p><em>RDNA 2 / GFX10.3</em> 世代の GPU、<strong>Radeon RX 6000シリーズ</strong> が発表された際、一緒にソフトウェアの新機能 <em>AMD Smart Access Memory</em> が発表されていた。<br />
+<p><em>RDNA 2 / GFX10.3</em> 世代の GPU、<strong>Radeon RX 6000シリーズ</strong> が発表された際、一緒にソフトウェアの新機能 <em>AMD Smart Access Memory</em> が発表された。<br />
 <span class="thread_link"><a href="https://www.amd.com/en/technologies/smart-access-memory" rel="noreferrer" target="_blank">AMD Smart Access Memory | AMD</a></span>
 
 <em>AMD Smart Access Memory</em> は、従来の Windows OS をベースとするシステムでは、CPU から GPU VRAM へは一度に 256MB までしかアクセス出来なかったが、その制限を取り払うことでボトルネックを減らし、ゲームにおける性能を高めるというもの。AMD が示している結果では、API に Vulkan または DX12 を用いるゲームで 5〜11% の性能向上となっている。</p>
@@ -316,13 +316,6 @@ article a {
 <blockquote>
 <pre><code>  vram_vis_size = 256 MB</code></pre></blockquote>
 
-<p>また、スーパーユーザー権限が必要となるが <code>dmesg</code> コマンドでも確認することができる。</p>
-<pre><code>   % dmesg | grep &#34;Detected VRAM&#34;</code></pre>
-<p>BAR の値が CPU から VRAM へアクセス可能なサイズとなる。</p>
-
-<blockquote>
-<pre><code>  [    2.565379] [drm] Detected VRAM RAM=4096M, BAR=256M</code></pre></blockquote>
-
 <p>次に BIOS側の設定となるが、<code>&gt;4GB MMIO</code> といったオプションは <code>Above 4G Decoding</code> という名前で存在している。自分が持っている <strong>GIGABYTE GA-A320-HD2 (rev. 1.0)</strong> (現在のメイン機) ではそのようになっており、他社製のマザーボードでもそのようになっているのではないかと思われる。<br />
 <code>Above 4G Decoding</code> は複数の GPUカード、またはコプロセッサーである <strong>Xeon Phi</strong> や、GPUアクセラレーターである <strong>NVIDIA Tesla</strong> を搭載したシステムを扱う際にも有効にする必要があったらしい。<sup class="footnote-ref" id="fnref:asus-above-4g-decoding"><a href="#fn:asus-above-4g-decoding">2</a></sup><br />
 一部の Intelプラットフォームでもサポートされていると思われるが、確証はない、というより試せない。</p>
@@ -331,6 +324,13 @@ article a {
 
 <blockquote>
 <pre><code>  vram_vis_size = 4096 MB</code></pre></blockquote>
+
+<p>また、スーパーユーザー権限が必要となるが <code>dmesg</code> コマンドでも確認することができる。</p>
+<pre><code>   % dmesg | grep &#34;Detected VRAM&#34;</code></pre>
+<p>BAR の値が CPU から VRAM へアクセス可能なサイズとなる。以下は <code>Above 4G Decoding</code> 無効時の実行結果。有効時は <code>BAR=4096M</code> となっていた。</p>
+
+<blockquote>
+<pre><code>  [    2.565379] [drm] Detected VRAM RAM=4096M, BAR=256M</code></pre></blockquote>
 
 <p><a href="https://gitlab.freedesktop.org/agd5f" rel="noreferrer" target="_blank">Alex Deucher</a> 氏のコメント通り、Linux環境では既にサポートされており、<strong>Ryzen 5 2600 (Zen+)</strong> と <strong>RX 560</strong> という構成でも有効化が可能だった。</p>
 
@@ -476,7 +476,7 @@ AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、�
 <div class="article_time">
    <time datetime="2020-11-05 05:14+09:00" itemprop="datePublished">Post:<br>&emsp;2020/11/05 05:14&emsp;JST</time>
 
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/11/15 23:29&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/12/04 20:57&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Umio Yasuno</div><div class="amzn"><h5>Amazonアソシエイト</h5>
    <div class="amzn_links"><div class="amzn_link_block">
