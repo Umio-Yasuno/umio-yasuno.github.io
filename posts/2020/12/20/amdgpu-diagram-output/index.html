@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/12/20/amdgpu-diagram-output/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>AMD GPU のダイアグラムを出力するスクリプトを作った話 | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="AMD GPU のダイアグラムを出力するスクリプトを作った話 | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="AMD GPU のダイアグラムを出力するスクリプトを作った話 | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/12/20/amdgpu-diagram-output/">
+   <meta name="description" content="気が付けばもう 2020年がほとんど残っていなかったので雑記、くだらないことを書きたくなった。 タイトルの通り、AMD GPU のダイアグラムを出力するシェルスクリ">
+   <meta property="og:description" content="気が付けばもう 2020年がほとんど残っていなかったので雑記、くだらないことを書きたくなった。 タイトルの通り、AMD GPU のダイアグラムを出力するシェルスクリ">
+   <meta name="twitter:description" content="気が付けばもう 2020年がほとんど残っていなかったので雑記、くだらないことを書きたくなった。 タイトルの通り、AMD GPU のダイアグラムを出力するシェルスクリ">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/12/20/amdgpu-diagram-output/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/12/20/amdgpu-diagram-output/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="Coelacanth&#39;s Dream, Hardware, CPU, GPU">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+      <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #004343 88%, #002E2E 94%, #001111 100%);
+   background-repeat: no-repeat;
+   font-size: 11.5pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+   word-spacing: 100vw;
+   word-break: keep-all;
+   overflow-wrap: normal;
+}
+.site_title {
+   font: normal 21pt/25pt monospace;
+   text-decoration: none;
+   margin-left: auto;
+   text-align: end;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .2em .15em .2em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #9CDEFF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.64rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   margin: 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   opacity: 0;
+ 
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      top: 0;
+      left: 0;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 1.48rem;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+   display: none;
+
+}
+h1 {
+
+   color: #FFA020;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 0;
+   overflow-wrap: break-word;
+   word-break: break-word;
+   padding-bottom: 100vh;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+   font-size: 1rem;
+}
+ 
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 14px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   article {
+      grid-template-columns: .5% 1% auto 2%;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 3 / -1;
+   }
+   h1 {
+      grid-column: 1 /-1;
+   }
+   .head_category_block {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 19pt;
+      line-height: 23pt;
+      max-width: 100%;
+   }
+   .site_title .lain_e {
+      font: normal .82em/.82em monospace;
+      padding: 0 5px 4px 5px;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         left: 8px;
+      padding: 16px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: #008F8F20 rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00000000 24%, whitesmoke 50%, #00000000 100%);
+   background-size: 100% 1.2vh;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .012;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+      
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/diary/" class="head_category_lower">Diary</a></div><h1 itemprop="headline name">AMD GPU のダイアグラムを出力するスクリプトを作った話</h1><p>気が付けばもう 2020年がほとんど残っていなかったので雑記、くだらないことを書きたくなった。</p>
+
+<p>タイトルの通り、AMD GPU のダイアグラムを出力するシェルスクリプトを作った。</p>
+
+<ul>
+<li><a href="https://github.com/Umio-Yasuno/amdgpu-diagram-output" rel="noreferrer" target="_blank">Umio-Yasuno/amdgpu-diagram-output</a></li>
+</ul>
+
+<p>実行例は以下みたいな感じ。</p>
+
+<div class="ascii_diagram"><pre><code>## RX 560
+
+ +- ShaderEngine(00) -----------------+  +- ShaderEngine(01) -----------------+ 
+ | +- ShaderArray(00) --------------+ |  | +- ShaderArray(00) --------------+ | 
+ | | ====  ====  CU (00) ====  ==== | |  | | ====  ====  CU (00) ====  ==== | | 
+ | | ====  ====  CU (01) ====  ==== | |  | | ====  ====  CU (01) ====  ==== | | 
+ | | ====  ====  CU (02) ====  ==== | |  | | ====  ====  CU (02) ====  ==== | | 
+ | | ====  ====  CU (03) ====  ==== | |  | | ====  ====  CU (03) ====  ==== | | 
+ | | ====  ====  CU (04) ====  ==== | |  | | ====  ====  CU (04) ====  ==== | | 
+ | | ====  ====  CU (05) ====  ==== | |  | | ====  ====  CU (05) ====  ==== | | 
+ | | ====  ====  CU (06) ====  ==== | |  | | ====  ====  CU (06) ====  ==== | | 
+ | | ====  ====  CU (07) ====  ==== | |  | | ====  ====  CU (07) ====  ==== | | 
+ | |  [ RB ] [ RB ]                 | |  | |  [ RB ] [ RB ]                 | | 
+ | |  [ Rasterizer/Primitive Unit ] | |  | |  [ Rasterizer/Primitive Unit ] | | 
+ | +--------------------------------+ |  | +--------------------------------+ | 
+ |      [- Geometry Processor -]      |  |      [- Geometry Processor -]      | 
+ +------------------------------------+  +------------------------------------+ 
+    [L2$ 256K]      [L2$ 256K]      [L2$ 256K]      [L2$ 256K]      </code></pre></div>
+
+
+<p>機能はシンプルで、<strong>RadeonSI (OpenGL)</strong> ドライバーのデバッグ機能から得られる情報を元にそれっぽいダイアグラムを出力する。</p>
+
+<p>作った動機は、<strong>RX 560</strong> で CU数を変えて性能への影響を確かめる検証を行なった時、ShaderEngine、ShaderArray、CU がそれぞれどのような位置にあるかを画像で示したが、これが単純に面倒くさかった。ささっと軽く作ったが、センスの無さもあってチープなのも気に入らない。<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/08/06/polaris11-cu-scaling-test/#disable_cu">RX 560 で CU数が GPU性能にどれだけ影響を与えるかを調査 【性能編】 | Coelacanth's Dream</a></span>
+
+そうしたことがあって、<strong>RX 6800</strong> について書いた時は画像を作らなかったが、やはり図があった方が説明も理解もしやすい。<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/11/13/amd-rx-6800/">AMD GPU としては珍しい構成の Radeon RX 6800 | Coelacanth's Dream</a></span>
+</p>
+
+<p>実際には持ってない AMD GPU の解説にも使えるよう、一部情報を上書きするオプションも付けてある。<br />
+テキストダイアグラムを使うことで、作成に掛ける時間を大幅に短縮しつつデータの転送量を抑えることができる。<br />
+問題点はフォントに左右されることで、ダイアグラムの描画には基本的な記号を用いているから一般的な等幅フォントであれば問題ないはずだが、ブラウザ環境は種々雑多であるからそう言い切れない。<br />
+それを回避しようと Imagemagick で画像を出力する機能も持たせようとしたが、上の実行例ぐらい小さいダイアグラムでは問題なく綺麗に出力されるが、大きくなると失敗する不具合があったため、今の所はコメントアウトしてある。成功した時の画像サイズから、設定されている最大サイズは超えないはずなのだが、エラーメッセージは超えていると言ってくる。</p>
+
+<p>自分以外に需要があるかは怪しいけど、一応下記のように各情報とピーク性能を出力する機能も持たせてる。</p>
+
+<blockquote>
+<pre><code>   Driver Version:       Mesa 21.0.0-devel (git-b9fccafed6)
+
+   GPU ASIC:     POLARIS11
+   Chip class:       GFX8
+   Marketing Name:       Radeon RX 560 Series
+   GPU Type:     Discrete GPU
+
+   Compute Units:          16 CU
+   GFX Clock Range:   214 MHz - 1080 MHz
+   Peak GFX Clock:       1196 MHz
+
+   Peak FP16:         2.44 TFlops
+   Peak FP32:         2.44 TFlops
+
+   RBs (Render Backends):          4 RB (16 ROP)
+   Peak Pixel Fill-Rate:      19.13 GP/s
+   TMUs (Texture Mapping Units):  64 TMU
+   Peak Texture Fill-Rate:        76.54 GT/s
+
+   VRAM Type:            GDDR5
+   VRAM Size:          4096 MB
+   VRAM Bit Width:          128-bit
+   Memory Clock Range:      300 MHz - 1750 MHz
+   Peak Memory Clock:      1750 MHz
+   Peak VRAM Bandwidth:     112.00 GB/s
+
+   L2 Cache Blocks:    4 Block
+   L2 Cache Size:          1 MB (1024 KB)
+
+   Power cap:         48 W
+
+   Card Interface:       PCIe Gen3 x8 
+
+   AMD Smart Access Memory</code></pre></blockquote>
+
+<p>今まさに画面を描画している AMD GPU のスペックと、ダイアグラムによって大体の構造を知り、興味を持つきっかけとなってくれたら幸いだ。</p>
+<div class="article_time">
+   <time datetime="2020-12-20 16:50+09:00" itemprop="datePublished">Post:<br>&emsp;2020/12/20 16:50&emsp;JST</time>
+
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/12/21 04:05&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Umio Yasuno</div><div class="amzn"><h5>Amazonアソシエイト</h5>
+   <div class="amzn_links">
+<div class="amzn_link_block">
+   <a href="https://amzn.to/2J2UnRG" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazon.co.jp: アカウントにチャージ</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術をそれぞれ丁寧に解説されている。</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/3mv8yhD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">シリアルエクスペリメンツ・レイン コンプリートシリーズ 北米版 / Serial Experiments Lain: Complete Series Classic [Blu-ray+DVD][Import]</a>
+      <div class="amzn_link_desc">北米版だけど日本語音声もちゃんとある。DVDの方もリマスター仕様になっていて映像が綺麗。</div>
+</div></div>
+</div>
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/tags/">Tag</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/diary/" class="side_category_lower">Diary</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/20/amdgpu-diagram-output.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+
+<footer><hr><div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/diary/" class="foot_category_lower">Diary</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/tags/">Tag</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/20/amdgpu-diagram-output.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/tags/">Tag</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/diary/" class="slide_menu_category_lower">Diary</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/20/amdgpu-diagram-output.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+   </nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+      </main>
+   </body>
+      <div class="crt"></div>
+      <div class="lace"></div>
+</html>
