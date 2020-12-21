@@ -271,7 +271,7 @@ h1 {
 <div class="head_time">
    <time datetime="2020-12-21 04:09+09:00" itemprop="datePublished">Post:<br>&emsp;2020/12/21 04:09&emsp;JST</time>
 
-   <div class="head_time_update" itemprop="dateModified">Update:<br>&emsp;2020/12/21 06:29&emsp;JST</div>
+   <div class="head_time_update" itemprop="dateModified">Update:<br>&emsp;2020/12/21 19:40&emsp;JST</div>
 </div>
 <div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head_category_lower">Intel</a></div><h1 itemprop="headline name">Intel Xe GPU 近況　――  Xe-HPのメモリリージョン, PXP, Iris Xe MAX のサポート状況</h1>
 
@@ -294,14 +294,24 @@ h1 {
 そのため、マルチコアGPUとしてもメモリに異なる層、リージョンが存在する。<br />
 パッチではそれを区別するため、LMEM とは別に SHMEM のバッファーオブジェクト (BO, GPU メモリ管理の単位) のサポート準備が含まれている。</p>
 
-<p>他社の GPU間接続には、NVIDIA は NVLink、AMD は Infinity Fabric (xGMI) といった名前が付いているが、Intel のそれにはまだマーケティング的な名前は見受けられない。</p>
+<p>他社の GPU間接続には、NVIDIA は NVLink、AMD は Infinity Fabric (xGMI) といった名前があり、そして Intel には <em><span class="xe_gpu_arch">X<sup>e</sup>-HPC</span>
+</em> に採用される、CXL をベースとした Xe Link がある。その Xe Link が <em><span class="xe_gpu_arch">X<sup>e</sup>-HP</span>
+</em> に置いても使われるかは不明。</p>
+
+<p>メモリ帯域と GPU間接続の関係について <strong>AMD Instinct MI100</strong> を例に挙げると、<br />
+<strong>MI100</strong> はメモリに HBM2 32GB を採用しており、メモリバス幅は 4096-bit、ピークメモリ帯域は 1228.8 GB/s にもなる。<br />
+対し Infinity Fabric はリンクあたり 92 GB/s、<strong>MI100</strong> は 3リンク持っているため、それらを合わせても 276 GB/s と、メモリ帯域の 2割程しかない。<br />
+<strong>MI100</strong> は実際には GPUカード間の接続となるが、<em><span class="xe_gpu_arch">X<sup>e</sup>-HP</span>
+</em> はパッケージ内での接続となるため、もっと高速に接続できると思われる。<br />
+Intel Architecture Day 2020 での発表においても、スケーリング性能に自信がある様子だった。<sup class="footnote-ref" id="fnref:intel-arch-day2020"><a href="#fn:intel-arch-day2020">3</a></sup><br />
+それでも、消費電力や発熱等の制約や、異なる GPU に接続されたメモリへのアクセスに発生するレイテンシにより、結局はローカルな HBMメモリを活用することが重要となる。</p>
 
 <h2 id="gen12-gpu-は-pxp-をサポート">Gen12 GPU は PXP をサポート</h2>
 
-<p>2020/11/14 に、PXP (Protected Xe Path) をサポートするパッチが投稿された。<sup class="footnote-ref" id="fnref:pxp"><a href="#fn:pxp">3</a></sup><br />
+<p>2020/11/14 に、PXP (Protected Xe Path) をサポートするパッチが投稿された。<sup class="footnote-ref" id="fnref:pxp"><a href="#fn:pxp">4</a></sup><br />
 PXP はユーザースペースで実行可能な ring3 レベルに、ハードウェアで保護されたセッションを確立させ、各セッションの状態とライフサイクルを管理するのに役立つ機能とされている。</p>
 
-<p>ユーザースペース側では、<strong>Iris (OpenGL)</strong> 、<strong>ANV (Vulkan)</strong> ドライバーに PXP をサポートするパッチが投稿されている。現在はマージリクエストの段階。<sup class="footnote-ref" id="fnref:pxp-umd"><a href="#fn:pxp-umd">4</a></sup></p>
+<p>ユーザースペース側では、<strong>Iris (OpenGL)</strong> 、<strong>ANV (Vulkan)</strong> ドライバーに PXP をサポートするパッチが投稿されている。現在はマージリクエストの段階。<sup class="footnote-ref" id="fnref:pxp-umd"><a href="#fn:pxp-umd">5</a></sup></p>
 
 <p>似た機能として AMD TMZ (Trust Memory Zone) があり、TMZ ではメモリを暗号化し、GPU内の信頼できるハードウェアブロック部のみで復号化を可能にすることでコンテンツを保護する。 TMZ は <em>Vega/GFX9</em> 世代からサポートされており、EPYC の SME (Secure Memory Encryption(、SEV (Secure Encrypted Virtualization) といい、メモリの暗号化機能に関しては AMD のが早くから意識していたような印象を受ける。<br />
 <span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/09/21/xdc2020-amdgpu-tmz/">【XDC2020】AMD GPU のメモリ暗号化機能 TMZ　―― DRMへの活用も | Coelacanth's Dream</a></span>
@@ -328,7 +338,7 @@ PXP はユーザースペースで実行可能な ring3 レベルに、ハード
 </em> GPU が登場するため、PCIパススルー機能が既に Intel dGPU でサポートされているのは歓迎されることではある。また、近頃 Intel にとってサーバー市場はますます重要なものとなっており、そのために仮想化機能のサポートに力を入れている可能性もある。</p>
 
 <p>ただ 2021年前半には OEM向けにデスクトップ向け <em>DG1</em> がリリースされ、同年中にはHWレイトレーシングもサポートしたゲーミング向け dGPU <em><span class="xe_gpu_arch">X<sup>e</sup>-HPG</span>
-</em> がリリース予定にある中で、<sup class="footnote-ref" id="fnref:intel-dgpu-2021"><a href="#fn:intel-dgpu-2021">5</a></sup><br />
+</em> がリリース予定にある中で、<sup class="footnote-ref" id="fnref:intel-dgpu-2021"><a href="#fn:intel-dgpu-2021">6</a></sup><br />
 それらの先立ちである <strong>Iris Xe MAX</strong> の、Linux環境におけるサポートがまだ十分な状態にないことに不安を覚えるのは確かだ。</p>
 
 <hr>
@@ -348,6 +358,8 @@ PXP はユーザースペースで実行可能な ring3 レベルに、ハード
  <a class="footnote-return" href="#fnref:dg1-lmem"><sup>[return]</sup></a></li>
 <li id="fn:sg1-xg310"><a href="https://www.coelacanth-dream.com/posts/2020/11/12/intel-sg1/">Intel、サーバー向け GPU 「SG1」 と搭載カードを正式発表 | Coelacanth's Dream</a>
  <a class="footnote-return" href="#fnref:sg1-xg310"><sup>[return]</sup></a></li>
+<li id="fn:intel-arch-day2020"><a href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth's Dream</a>
+ <a class="footnote-return" href="#fnref:intel-arch-day2020"><sup>[return]</sup></a></li>
 <li id="fn:pxp"><a href="https://lists.freedesktop.org/archives/intel-gfx/2020-November/252790.html" rel="noreferrer" target="_blank">[Intel-gfx] [PXP CLEAN PATCH v06 01/27] drm/i915/pxp: Introduce Intel PXP component</a>
  <a class="footnote-return" href="#fnref:pxp"><sup>[return]</sup></a></li>
 <li id="fn:pxp-umd"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8064/commits" rel="noreferrer" target="_blank">WIP: iris: protected content support (!8092) · Merge Requests · Mesa / mesa · GitLab</a> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8064/commits" rel="noreferrer" target="_blank">anv: protected memory support (!8064) · Merge Requests · Mesa / mesa · GitLab</a>
@@ -359,7 +371,7 @@ PXP はユーザースペースで実行可能な ring3 レベルに、ハード
 <div class="article_time">
    <time datetime="2020-12-21 04:09+09:00" itemprop="datePublished">Post:<br>&emsp;2020/12/21 04:09&emsp;JST</time>
 
-   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/12/21 06:29&emsp;JST</div>
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/12/21 19:40&emsp;JST</div>
 </div>
 <div class="article_author" itemprop="author">Umio Yasuno</div><div class="amzn"><h5>Amazonアソシエイト</h5>
    <div class="amzn_links">
