@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ja">
+   <head>
+
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/12/21/amd-cpuid-microcode/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>CPUID とマイクロコードバージョンから AMD CPU の Family と Model を知りたい | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="CPUID とマイクロコードバージョンから AMD CPU の Family と Model を知りたい | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="CPUID とマイクロコードバージョンから AMD CPU の Family と Model を知りたい | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/12/21/amd-cpuid-microcode/">
+   <meta name="description" content="以前 Intel CPU の CPUID から Family, Model, Stepping を読み取る方法に触れたが、AMD CPU はまだ自分自身理解していない部分があったため、整理も兼ねて書く。 Alder Lake-P を搭載する">
+   <meta property="og:description" content="以前 Intel CPU の CPUID から Family, Model, Stepping を読み取る方法に触れたが、AMD CPU はまだ自分自身理解していない部分があったため、整理も兼ねて書く。 Alder Lake-P を搭載する">
+   <meta name="twitter:description" content="以前 Intel CPU の CPUID から Family, Model, Stepping を読み取る方法に触れたが、AMD CPU はまだ自分自身理解していない部分があったため、整理も兼ねて書く。 Alder Lake-P を搭載する">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/12/21/amd-cpuid-microcode/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/12/21/amd-cpuid-microcode/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="Cezanne">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+      <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+      <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #004343 88%, #002E2E 94%, #001111 100%);
+   background-repeat: no-repeat;
+   font-size: 11.5pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 23pt/25pt monospace;
+   text-decoration: none;
+   word-spacing: 100vw;
+   margin-left: auto;
+   text-align: end;
+   word-break: keep-all;
+   overflow-wrap: normal;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .21em .18em .21em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #9CDEFF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.64rem;
+   overflow-x: auto;
+   grid-row: 3 / -3;
+   grid-column: 1 / -1;
+}
+article > p {
+   margin: 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   opacity: 0;
+ 
+}
+.side {
+   transform: translateX(100vw);
+   position: fixed;
+      top: 0;
+      left: 0;
+}
+footer {
+   grid-row: 6 / -2;
+   grid-column: 1 / -1;
+   position: fixed;
+   right: 100vw;
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 1.48rem;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+   display: none;
+
+}
+h1 {
+
+   color: #FFA020;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 0;
+   overflow-wrap: break-word;
+   word-break: break-word;
+   padding-bottom: 100vh;
+}
+ 
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+   font-size: 1rem;
+}
+.head_time {
+   font: italic .9rem/1rem monospace;
+   margin: 0 0 0 auto;
+   grid-column: 2 / -2;
+   color: #00baba;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: 2rem;
+   row-gap: 8px;
+   justify-content: flex-end;
+}
+
+ 
+   .slide_menu {
+      display: none;
+   }
+@media (min-width: 840px) {
+   main {
+      display: grid;
+      grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+      grid-template-columns: 224px 14px 12px auto .8rem;
+      row-gap: 36px;
+   }
+   article {
+      grid-template-columns: .5% 1% auto 2%;
+   }
+   .text {
+      grid-row: 1 / -2;
+      grid-column: 3 / -1;
+      border-bottom: 1px solid #468E76;
+      padding-top: 12px;
+   }
+   article > * {
+      grid-column: 3 / -1;
+   }
+   h1 {
+      grid-column: 1 /-1;
+   }
+   .head_category_block {
+      grid-column: 2 / -1;
+   }
+   header > .site_title {
+      display: none;
+   }
+   .site_title {
+      font-size: 21pt;
+      line-height: 23pt;
+      width: 208px;
+   }
+   .site_title .lain_e {
+      font: normal .82em/.82em monospace;
+      padding: 0 .21em .18em .21em;
+      vertical-align: middle;
+   }
+   .page_title {
+      grid-row: 2 / 3;
+      grid-column: 3 / -1;
+
+ 
+   }
+   .side {
+
+      transform: unset;
+      height: 94vh;
+      width: 208px;
+      position: fixed;
+         top: 2vh;
+         left: 8px;
+      padding: 16px 12px 0 8px;
+      color: #20B2AA;
+      border-right: 1px solid #2D5A4B;
+      font-size: 1rem;
+
+
+      overflow: scroll;
+      scrollbar-width: thin;
+      scrollbar-color: #008F8F20 rgba(0,0,0,0);
+   }
+   .side_block {
+      display: none;
+   }
+}
+.crt {
+   background-image: linear-gradient(to bottom, #00000000 24%, whitesmoke 50%, #00000000 100%);
+   background-size: 100% 1.2vh;
+   background-repeat: repeat-y;
+   width: 100%;
+   height: 100%;
+   opacity: .012;
+   position: fixed;
+   top: 0;
+   left: 0;
+   pointer-events: none;
+}
+</style>
+
+      <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+      <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+   </head>
+   <body>
+      <main>
+         <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+      
+         <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_time">
+   <time datetime="2020-12-21 13:49+09:00" itemprop="datePublished">Post:<br>&emsp;2020/12/21 13:49&emsp;JST</time>
+
+   <div class="head_time_update" itemprop="dateModified">Update:<br>&emsp;2020/12/21 16:36&emsp;JST</div>
+</div>
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head_category_lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a></div><h1 itemprop="headline name">CPUID とマイクロコードバージョンから AMD CPU の Family と Model を知りたい</h1>
+
+<p>以前 Intel CPU の CPUID から <code>Family, Model, Stepping</code> を読み取る方法に触れたが、AMD CPU はまだ自分自身理解していない部分があったため、整理も兼ねて書く。<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/12/02/adl-p-chromebook-board-adl-m/">Alder Lake-P を搭載する Chromebookボード 「Brya」、そして Alder Lake-M | Coelacanth's Dream</a></span>
+
+そして、過去の主張を訂正するための記事。</p>
+
+<h2 id="cpuid">CPUID</h2>
+
+<p>CPUID とひと括りにしているが、CPUID にも色々ある。そもそも CPUID は CPU の各種情報を出力する命令である。<br />
+CPUID命令は EAXレジスタに特定の値をセットしてから実行することで、ある情報が取得、出力される。<br />
+そうして得られる情報の中で、<code>Family, Model, Stepping</code> の識別情報が、ベンチマーク結果から得られる CPU情報と照らし合わせたりと活用しやすいから注目されやすい、収集されやすいという話。</p>
+
+<p>CPUID から <code>Family, Model, Stepping</code> を読み取る方法に関しては当然 AMD からドキュメントが出されているし<sup class="footnote-ref" id="fnref:amd-cpuid-doc"><a href="#fn:amd-cpuid-doc">1</a></sup>、Coreboot のコードにも分かりやすく記述されている。<sup class="footnote-ref" id="fnref:coreboot-cpuid"><a href="#fn:coreboot-cpuid">2</a></sup><br />
+そのため CPUID から読み取ることは難しくない。<br />
+例えば <em>Zen+ CPU / Pinacle Ridge</em> の CPUID は <code>0x00800f82</code> だが、その文字列を <code>Family, Model, Stepping</code> に対応させると以下の表のようになる。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">CPUID</th>
+<th align="center">(Reserved)</th>
+<th align="center">Ext.Family</th>
+<th align="center">Ext.Model</th>
+<th align="center">(Reserved)</th>
+<th align="center">Base.Family</th>
+<th align="center">Base.Model</th>
+<th align="center">Stepping</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Pinaccle Ridge</td>
+<td align="center">0x0</td>
+<td align="center">0x08</td>
+<td align="center">0x0</td>
+<td align="center">0x0</td>
+<td align="center">0xF</td>
+<td align="center">0x8</td>
+<td align="center">0x2</td>
+</tr>
+</tbody>
+</table>
+
+<p>それをさらによく見る形式に変換すると、<code>Family: 0x17 (23), Model: 0x8 (8), Stepping: 0x2</code> のようになる。</p>
+
+<h2 id="microcode">Microcode</h2>
+
+<p>CPUID については、あまり見掛ける機会は無いが、マイクロコードはそれなりにある。<br />
+というのもベンチマーキングプラットフォームである <a href="https://www.phoronix-test-suite.com/" rel="noreferrer" target="_blank">Phoronix Test Suite</a> は、マイクロコードのバージョンを取得し、CPU情報の 1つとして記録するからだ。<br />
+今回調べるきっかけとなったのも、<a href="https://www.coelacanth-dream.com/tags/cezanne">Cezanne APU</a> の Model について、Coreboot には <code>Model: 0x51 (81)</code> であるように記述されているが、Geekbench の結果等では <code>Model: 0x50 (80)</code> となっていたことだ。この 1 違いにもっとまともな答えを見出したかった。<sup class="footnote-ref" id="fnref:czn-model"><a href="#fn:czn-model">3</a></sup></p>
+
+<p>以下はとりあえず <a href="https://openbenchmarking.org/" rel="noreferrer" target="_blank">OpenBenchmarking.org</a> から集めた Zen系 CPU のマイクロコードバージョンだが、<code>Family: 0x17(23)</code> である <em>Zen+/2</em> CPU は先頭が同じ <code>0x8</code> になっていることから、マイクロコードバージョンは <code>Family, Model, Stepping</code> に対応していると推測できる。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Microcode Patch Level</th>
+<th align="center"></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Zen+ Ryzen</td>
+<td align="center">0x800820d</td>
+</tr>
+
+<tr>
+<td align="left">Zen+ APU<sup class="footnote-ref" id="fnref:3400g"><a href="#fn:3400g">4</a></sup></td>
+<td align="center">0x8108109</td>
+</tr>
+
+<tr>
+<td align="left">Zen2 EPYC<sup class="footnote-ref" id="fnref:77f2"><a href="#fn:77f2">5</a></sup></td>
+<td align="center">0x830101c</td>
+</tr>
+
+<tr>
+<td align="left">Zen2 Ryzen<sup class="footnote-ref" id="fnref:3800xt"><a href="#fn:3800xt">6</a></sup></td>
+<td align="center">0x8701021</td>
+</tr>
+
+<tr>
+<td align="left">Zen3 APU<sup class="footnote-ref" id="fnref:czn-sample"><a href="#fn:czn-sample">7</a></sup></td>
+<td align="center">0xa500009</td>
+</tr>
+</tbody>
+</table>
+
+<p>そして、それぞれを比較、CPUID の各値と照らし合わせた結果、以下のように対応していると考えられる。<br />
+Base と Ext を合わせることで、Family と Model が求められる。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Microcode</th>
+<th align="center">Ext.Family</th>
+<th align="center">Ext.Model</th>
+<th align="center">(Reserved?)</th>
+<th align="center">Base.Model</th>
+<th align="center">Stepping</th>
+<th align="center">Version?</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Zen+ Ryzen</td>
+<td align="center">0x8</td>
+<td align="center">0x0</td>
+<td align="center">0x0</td>
+<td align="center">0x8</td>
+<td align="center">0x2</td>
+<td align="center">0x0d</td>
+</tr>
+
+<tr>
+<td align="left">Zen+ APU</td>
+<td align="center">0x8</td>
+<td align="center">0x1</td>
+<td align="center">0x0</td>
+<td align="center">0x8</td>
+<td align="center">0x1</td>
+<td align="center">0x09</td>
+</tr>
+
+<tr>
+<td align="left">Zen2 EPYC</td>
+<td align="center">0x8</td>
+<td align="center">0x3</td>
+<td align="center">0x0</td>
+<td align="center">0x1</td>
+<td align="center">0x1</td>
+<td align="center">0x1c</td>
+</tr>
+
+<tr>
+<td align="left">Zen2 Ryzen</td>
+<td align="center">0x8</td>
+<td align="center">0x7</td>
+<td align="center">0x0</td>
+<td align="center">0x1</td>
+<td align="center">0x0</td>
+<td align="center">0x21</td>
+</tr>
+
+<tr>
+<td align="left">Zen3 APU</td>
+<td align="center">0xA</td>
+<td align="center">0x5</td>
+<td align="center">0x0</td>
+<td align="center">0x0</td>
+<td align="center">0x0</td>
+<td align="center">0x09</td>
+</tr>
+</tbody>
+</table>
+
+<p>ここでも <em>Cezanne</em> は <code>Model: 0x50 (80)</code> となった。<br />
+訂正といのはこのことで、<em>Cezanne</em> は <code>Model: 0x51 (81)</code> ではなく、<code>Model: 0x50 (80)</code> 可能性のが高く、Coreboot のは誤字かもしれない。<span class="complement">あるいは <em>Cezanne</em> とは別の APU に向けたものである可能性もあるが、それは GPU部に <em>Cezanne</em> と同じ DeviceIDを用い 、Model は 1 違いというややこしいものになる。</span>
+ <sup class="footnote-ref" id="fnref:czn-vbios"><a href="#fn:czn-vbios">8</a></sup></p>
+
+<p><code>Stepping 0</code> であるから <code>Model: 0x51 (81)</code> となっていないのではないか、とも書いたが、<em>Zen 2 EPYC (Rome)</em> も <em>Zen 2 Ryzen (Matisse)</em> も <code>Stepping 0</code> であるため根拠にはなり得ず、思い切り外した推測であった。<br />
+マイクロコードバージョンの読み方を知っていたら、少しはまともな見方が出来ただろう、という後悔。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:amd-cpuid-doc"><a href="https://developer.amd.com/resources/25481-2/" rel="noreferrer" target="_blank">CPUID Specification - AMD</a>
+ <a class="footnote-return" href="#fnref:amd-cpuid-doc"><sup>[return]</sup></a></li>
+<li id="fn:coreboot-cpuid"><a href="https://github.com/coreboot/coreboot/blob/master/src/vendorcode/intel/edk2/edk2-stable202005/MdePkg/Include/Register/Amd/Cpuid.h" rel="noreferrer" target="_blank">coreboot/Cpuid.h at master · coreboot/coreboot</a>
+ <a class="footnote-return" href="#fnref:coreboot-cpuid"><sup>[return]</sup></a></li>
+<li id="fn:czn-model"><a href="https://www.coelacanth-dream.com/posts/2020/11/19/rn-lcn-czn-coreboot-did/">Coreboot に Renoir と Lucienne/Cezanne らしき DeviceID が追加される | Coelacanth's Dream</a> <a href="https://www.coelacanth-dream.com/posts/2020/11/26/r7-5800u-czn/">Cezanne APU、Ryzen 7 5800U が Geekbench に現る | Coelacanth's Dream</a>
+ <a class="footnote-return" href="#fnref:czn-model"><sup>[return]</sup></a></li>
+<li id="fn:3400g"><a href="https://openbenchmarking.org/result/2012204-HA-OPUS3400G69" rel="noreferrer" target="_blank">Opus 3400g Benchmarks - OpenBenchmarking.org</a>
+ <a class="footnote-return" href="#fnref:3400g"><sup>[return]</sup></a></li>
+<li id="fn:77f2"><a href="https://openbenchmarking.org/result/2008249-NE-EXTRATEST01" rel="noreferrer" target="_blank">Extra Tests Performance - OpenBenchmarking.org</a>
+ <a class="footnote-return" href="#fnref:77f2"><sup>[return]</sup></a></li>
+<li id="fn:3800xt"><a href="https://openbenchmarking.org/result/2012146-HA-3800XTMON29" rel="noreferrer" target="_blank">3800xt Monday Benchmarks - OpenBenchmarking.org</a>
+ <a class="footnote-return" href="#fnref:3800xt"><sup>[return]</sup></a></li>
+<li id="fn:czn-sample"><a href="https://www.coelacanth-dream.com/posts/2020/08/31/amd-cezanne-benchmark/">AMD Cezanne APU ベンチマーク結果　―― 8-Core/16-Thread, 3.6GHz、構成は Zen 3 + Vega か | Coelacanth's Dream</a>
+ <a class="footnote-return" href="#fnref:czn-sample"><sup>[return]</sup></a></li>
+<li id="fn:czn-vbios"><a href="https://www.coelacanth-dream.com/posts/2020/12/16/czn-coreboot-mi200-mero-rmb/">Cezanne の Coreboot 対応が進行中　―― MI200, Mero, Rembrandt のネームプレート | Coelacanth's Dream</a>
+ <a class="footnote-return" href="#fnref:czn-vbios"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+   <time datetime="2020-12-21 13:49+09:00" itemprop="datePublished">Post:<br>&emsp;2020/12/21 13:49&emsp;JST</time>
+
+   <div class="article_time_update" itemprop="dateModified">Update:<br>&emsp;2020/12/21 16:36&emsp;JST</div>
+</div>
+<div class="article_author" itemprop="author">Umio Yasuno</div><div class="amzn"><h5>Amazonアソシエイト</h5>
+   <div class="amzn_links">
+<div class="amzn_link_block">
+   <a href="https://amzn.to/2J2UnRG" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazon.co.jp: アカウントにチャージ</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/3lNHZTw" class="amzn_link_main" target="_blank" rel="noopener noreferrer">AMD Ryzen 5 3600 with Wraith Stealth cooler 3.6GHz 6コア / 12スレッド 35MB 65W【国内正規代理店品】</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/3mNjUgN" class="amzn_link_main" target="_blank" rel="noopener noreferrer">AMD Ryzen 5 3600XT with Wraith Spire cooler 3.8GHz 6コア / 12スレッド 35MB 95W【国内正規代理店品】</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/392KGOn" class="amzn_link_main" target="_blank" rel="noopener noreferrer">AMD Ryzen 5 5600X with Wraith Stealth cooler 3.7GHz 6コア / 12スレッド 35MB 65W</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術をそれぞれ丁寧に解説されている。</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/3mv8yhD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">シリアルエクスペリメンツ・レイン コンプリートシリーズ 北米版 / Serial Experiments Lain: Complete Series Classic [Blu-ray+DVD][Import]</a>
+      <div class="amzn_link_desc">北米版だけど日本語音声もちゃんとある。DVDの方もリマスター仕様になっていて映像が綺麗。</div>
+</div></div>
+</div>
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+   <nav class="side_tag">
+         <a href="https://www.coelacanth-dream.com/tags/cezanne/" class="side_tag_lower">Cezanne</a>
+   </nav>
+</div>
+<div class="side_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+   <nav class="side_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="side_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/21/amd-cpuid-microcode.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+
+<footer><hr><div class="foot_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+   <nav class="foot_tag">
+         <a href="https://www.coelacanth-dream.com/tags/cezanne/" class="foot_tag_lower">Cezanne</a>
+   </nav>
+</div>
+<div class="foot_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+   <nav class="foot_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="foot_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+   </nav>
+</div>
+<hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/21/amd-cpuid-microcode.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+   <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+   <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+   <nav class="slide_menu_tag">
+         <a href="https://www.coelacanth-dream.com/tags/cezanne/" class="slide_menu_tag_lower">Cezanne</a>
+   </nav>
+</div>
+<div class="slide_menu_category_block">
+   <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+   <nav class="slide_menu_category">
+         <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+         <a href="https://www.coelacanth-dream.com/categories/cpu/" class="slide_menu_category_lower">CPU</a>
+         <a href="https://www.coelacanth-dream.com/categories/hardware/" class="slide_menu_category_lower">Hardware</a>
+   </nav>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/21/amd-cpuid-microcode.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+   </nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+      </main>
+   </body>
+      <div class="crt"></div>
+      <div class="lace"></div>
+</html>
