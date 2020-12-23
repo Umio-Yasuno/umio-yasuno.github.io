@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width">
+   <meta name="format-detection" content="telephone=no, address=no, email=no">
+   
+
+   <base href="https://www.coelacanth-dream.com/posts/2020/12/23/tgl-h-log-lscpu-lspci/">
+
+   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+   <meta name="twitter:card" content="summary">
+   <meta property="og:type" content="article">
+   <title>Tiger Lake-H の起動ログ、lscpu、lspci …… | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="Tiger Lake-H の起動ログ、lscpu、lspci …… | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="Tiger Lake-H の起動ログ、lscpu、lspci …… | Coelacanth&#39;s Dream">
+
+   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/12/23/tgl-h-log-lscpu-lspci/">
+   <meta name="description" content="Intel は既にモバイル向けの Tiger Lake_L (Model: 0x8c) をリリースし、各社から採用製品が出されている。 その上位プロセッサ、(バリアント的には) デスクトップ向けにあり、ハイエンドモ">
+   <meta property="og:description" content="Intel は既にモバイル向けの Tiger Lake_L (Model: 0x8c) をリリースし、各社から採用製品が出されている。 その上位プロセッサ、(バリアント的には) デスクトップ向けにあり、ハイエンドモ">
+   <meta name="twitter:description" content="Intel は既にモバイル向けの Tiger Lake_L (Model: 0x8c) をリリースし、各社から採用製品が出されている。 その上位プロセッサ、(バリアント的には) デスクトップ向けにあり、ハイエンドモ">
+   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/12/23/tgl-h-log-lscpu-lspci/">
+   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/12/23/tgl-h-log-lscpu-lspci/">
+   <meta property="og:locale" content="ja_JP">
+   <meta name="author" content="Umio Yasuno">
+   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+   <meta name="keywords" content="Tiger Lake, Gen12">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #004646 88%, #002E2E 94%, #001111 100%);
+   background-repeat: no-repeat;
+   font-size: 11.5pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 23pt/25pt monospace;
+   text-decoration: none;
+   word-spacing: 100vw;
+   margin-left: auto;
+   text-align: end;
+   word-break: keep-all;
+   overflow-wrap: normal;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .21em .18em .21em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #A0E0FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.64rem;
+   overflow-x: auto;
+   grid-row: 3 / 4;
+   grid-column: 1 / -1;
+}
+article > p {
+   margin: 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   display: none;
+ 
+}
+.side {
+  transform: translateX(100vw);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+footer {
+   grid-row: 5 / 6;
+   grid-column: 1 / -1;
+
+
+}
+.foot_tag_category {
+  grid-row:
+}
+
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 1.48rem;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+
+  display: none;
+
+}
+h1 {
+
+   color: #FFA020;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 0;
+   overflow-wrap: break-word;
+   word-break: break-word;
+
+}
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+   font-size: 1rem;
+}
+.head_time {
+   font: italic .9rem/1rem monospace;
+   margin: 0 0 0 auto;
+   grid-column: 2 / -2;
+   color: #00baba;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: 2rem;
+   row-gap: 8px;
+   justify-content: flex-end;
+}
+
+ 
+   .slide_menu {
+      display: none;
+   }
+
+@media (min-width: 840px) {
+  main {
+    display: grid;
+    grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+    grid-template-columns: 224px 14px 12px auto .8rem;
+    row-gap: 36px;
+  }
+  article {
+    grid-template-columns: .5% 1% auto 2%;
+  }
+  .text {
+    
+      grid-row: 1 / 4;
+      grid-column: 3 / -1;
+
+    
+      padding-top: 12px;
+  }
+
+  article > * {
+    grid-column: 3 / -1;
+  }
+  h1 {
+    grid-column: 1 /-1;
+  }
+  .head_category_block {
+    grid-column: 2 / -1;
+  }
+
+  header > .site_title {
+    display: none;
+  }
+  .site_title {
+    font-size: 21pt;
+    line-height: 23pt;
+    width: 208px;
+  }
+  .site_title .lain_e {
+    font: normal .82em/.82em monospace;
+    padding: 0 .21em .18em .21em;
+    vertical-align: middle;
+  }
+  .page_title {
+    grid-row: 2 / 3;
+    grid-column: 3 / -1;
+
+ 
+  }
+  .side {
+
+    transform: unset;
+    height: 94vh;
+    width: 208px;
+    position: fixed;
+      top: 2vh;
+      left: 8px;
+    padding: 16px 12px 0 8px;
+    color: #20B2AA;
+    border-right: 1px solid #2D5A4B;
+    font-size: 1rem;
+
+
+    overflow: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #008F8F20 rgba(0,0,0,0);
+  }
+  .side_block, .foot_pagination, .foot_tag_category {
+    display: none;
+  }
+}
+.crt {
+  background-image: linear-gradient(transparent 0%, transparent 72%, black 72%, black 100%);
+  background-size: 100% 1vh;
+  background-repeat: repeat-y;
+  width: 100%;
+  height: 100%;
+  opacity: .036;
+  position: fixed;
+    top: 0;
+    left: 0;
+  pointer-events: none;
+}
+</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+  </head>
+  <body>
+    <main>
+      <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/cpu/" class="head_category_lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head_category_lower">Intel</a></div><h1 itemprop="headline name">Tiger Lake-H の起動ログ、lscpu、lspci ……</h1><div class="head_time">
+  <time datetime="2020-12-23 18:11+09:00" itemprop="datePublished">Post: 2020/12/23 18:11 JST</time>
+  <div class="head_time_update" itemprop="dateModified">Update: 2020/12/23 18:56 JST</div>
+</div>
+<p>Intel は既にモバイル向けの <em>Tiger Lake_L (Model: 0x8c)</em> をリリースし、各社から採用製品が出されている。<br />
+その上位プロセッサ、(バリアント的には) デスクトップ向けにあり、ハイエンドモバイル (H Series) にも採用される <em>Tiger Lake (Model: 0x8d)</em> を搭載した Dell PC の Linux Kernel の起動ログ、lscpu、lspci の実行結果がアップロードされている。</p>
+
+<ul>
+<li><a href="https://github.com/thesofproject/sof/issues/3711" rel="noreferrer" target="_blank">[BUG] Dell TGL-H Machine failed to load sof-tgl.ri · Issue #3711 · thesofproject/sof</a></li>
+</ul>
+
+<p><em>Tiger Lake-H</em> の各ログ、実行結果がアップロードされたのは <a href="https://github.com/thesofproject/sof" rel="noreferrer" target="_blank">thesofproject/sof: Sound Open Firmware</a> レポジトリで、Sound Open Firmware は Intelプロセッサやそれとペアになる PCH に内蔵される音声処理用のDSPのサポートを提供するため、Intel がオープンソースで開発しているプロジェクト。バグ報告のため各ファイルがアップロードされた。<br />
+以前には <em>Rocket Lake</em> の起動ログが投稿され、そこから AVX-512 のサポートが判明したこともある。<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/07/23/intel-rocket_lake-support-avx512/">Intel Rocket Lake は AVX-512 をサポート &amp; 推測 | Coelacanth's Dream</a></span>
+</p>
+
+<blockquote>
+<pre><code>   Architecture:                    x86_64
+   CPU op-mode(s):                  32-bit, 64-bit
+   Byte Order:                      Little Endian
+   Address sizes:                   39 bits physical, 48 bits virtual
+   CPU(s):                          16
+   On-line CPU(s) list:             0-15
+   Thread(s) per core:              2
+   Core(s) per socket:              8
+   Socket(s):                       1
+   NUMA node(s):                    1
+   Vendor ID:                       GenuineIntel
+   CPU family:                      6
+   Model:                           141
+   Model name:                      Genuine Intel(R) CPU 0000 @ 2.60GHz
+   Stepping:                        0
+   CPU MHz:                         1602.049
+   CPU max MHz:                     4800.0000
+   CPU min MHz:                     800.0000
+   BogoMIPS:                        6220.80
+   Virtualization:                  VT-x
+   L1d cache:                       384 KiB
+   L1i cache:                       256 KiB
+   L2 cache:                        10 MiB
+   L3 cache:                        24 MiB
+   NUMA node0 CPU(s):               0-15
+   Vulnerability Itlb multihit:     Not affected
+   Vulnerability L1tf:              Not affected
+   Vulnerability Mds:               Not affected
+   Vulnerability Meltdown:          Not affected
+   Vulnerability Spec store bypass: Mitigation; Speculative Store Bypass disabled via prctl and seccomp
+   Vulnerability Spectre v1:        Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+   Vulnerability Spectre v2:        Mitigation; Enhanced IBRS, IBPB conditional, RSB filling
+   Vulnerability Srbds:             Not affected
+   Vulnerability Tsx async abort:   Not affected
+   Flags:                           fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc art arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc cpuid aperfmperf tsc_known_freq pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch cpuid_fault epb cat_l2 invpcid_single cdp_l2 ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow vnmi flexpriority ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb intel_pt avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves split_lock_detect dtherm ida arat pln pts hwp hwp_notify hwp_act_window hwp_epp hwp_pkg_req avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg tme avx512_vpopcntdq rdpid movdiri movdir64b fsrm avx512_vp2intersect md_clear flush_l1d arch_capabilities</code></pre>
+<div class="quote_source">引用元:&nbsp;<cite><a href="https://github.com/thesofproject/sof/issues/3711" rel="noreferrer" target="_blank">[BUG] Dell TGL-H Machine failed to load sof-tgl.ri · Issue #3711 · thesofproject/sof</a></cite>
+</div>
+
+</blockquote>
+
+<p>lscpu の実行結果を見ると、まず <code>Family: 0x6(6), Model: 0x8d(141)</code> と、既にリリースされているモバイル向けの <em>Tiger Lake_L</em> ではなく、<em>Tiger Lake (Model: 0x8d)</em> であることは確かだ。<sup class="footnote-ref" id="fnref:intel-fam"><a href="#fn:intel-fam">1</a></sup><br />
+モデル名からも察せされるように、サンプル段階のシリコンであり、Stepping 0 となっている。</p>
+
+<p>規模は 8-Core/16-Thread、総 L1dキャッシュ 384KiB、L1iキャッシュ 256KiB、L2キャッシュ 10MiB、L3キャッシュ 24MiB。<br />
+コア/スレッド数、キャッシュ容量共に、4-Core/8-Thread の <em>Tiger Lake_L</em> をそのまま倍にしたものとなっている。</p>
+
+<p>ただ、サポートする命令に違いがあり、<a href="https://openbenchmarking.org/" rel="noreferrer" target="_blank">OpenBenchmarking.org</a> にある適当な <em>Tiger Lake_L</em> 、<strong>i7-1165G7</strong> の lscpu 実行結果<sup class="footnote-ref" id="fnref:ob-i7-1165g7"><a href="#fn:ob-i7-1165g7">2</a></sup>と比較すると、<br />
+<em>Tiger Lake-H</em> は <code>SMX</code> と <code>TME</code> をサポートしていることがわかる。<br />
+<code>SMX</code> は Safer Mode Extension、<code>TME</code> は Total Memory Encryption の略で、どちらもセキュリティ機能に関連した命令。<br />
+これらは <em>Tiger Lake_L</em> にも実装されており、組み込み向け (E Series) では有効化されている。<br />
+<em>Tiger Lake_L</em> のエンジニアサンプリングの結果をまたも <a href="https://openbenchmarking.org/" rel="noreferrer" target="_blank">OpenBenchmarking.org</a> から引っ張ってくると、製品版の <strong>i7-1165G7</strong> では無効化されていた <code>SMX</code> と <code>TME</code> が有効化されているため<sup class="footnote-ref" id="fnref:ob-tgl-sample"><a href="#fn:ob-tgl-sample">3</a></sup>、サンプル特有の違いなのかもしれない。</p>
+
+<p>iGPU については、lspci の実行結果に <code>DeviceID: 0x96a0</code> の記述があった。<br />
+これは <em>TGL GT1</em> に割り当てられた DeviceID の 1つであり<sup class="footnote-ref" id="fnref:tgl-did"><a href="#fn:tgl-did">4</a></sup>、今回の <em>Tiger Lake-H</em> は iGPU にそれを搭載し、DeviceID も共有していることとなる。</p>
+
+<blockquote>
+<pre><code>   00:02.0 VGA compatible controller [0300]: Intel Corporation Device [8086:9a60] (prog-if 00 [VGA controller])
+     DeviceName: Onboard - Video
+     Subsystem: Dell Device [1028:2112]</code></pre>
+<div class="quote_source">引用元:&nbsp;<cite><a href="https://github.com/thesofproject/sof/issues/3711" rel="noreferrer" target="_blank">[BUG] Dell TGL-H Machine failed to load sof-tgl.ri · Issue #3711 · thesofproject/sof</a></cite>
+</div>
+
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th align="left">Intel <span class="xe_gpu_arch">X<sup>e</sup>-LP</span>
+/Gen12</th>
+<th align="center">GT0.5</th>
+<th align="center">GT1</th>
+<th align="center">GT2</th>
+<th align="center">GT2 (DG1)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Dual-Sub Slices</td>
+<td align="center">1</td>
+<td align="center">2</td>
+<td align="center">6</td>
+<td align="center">6</td>
+</tr>
+
+<tr>
+<td align="left">&ensp;EUs</td>
+<td align="center">16</td>
+<td align="center">32</td>
+<td align="center">96</td>
+<td align="center">96</td>
+</tr>
+
+<tr>
+<td align="left">&ensp;&ensp;SPs</td>
+<td align="center">128</td>
+<td align="center">256</td>
+<td align="center">768</td>
+<td align="center">768</td>
+</tr>
+
+<tr>
+<td align="left">GPU L3$ Banks</td>
+<td align="center">4</td>
+<td align="center">4</td>
+<td align="center">8</td>
+<td align="center">8</td>
+</tr>
+
+<tr>
+<td align="left">GPU L3$ Size</td>
+<td align="center">1920KB?</td>
+<td align="center">1920KB</td>
+<td align="center">3072KB</td>
+<td align="center">16384KB<sup class="footnote-ref" id="fnref:dg1-l3"><a href="#fn:dg1-l3">5</a></sup></td>
+</tr>
+
+<tr>
+<td align="left"></td>
+<td align="center">RKL / ADL-S</td>
+<td align="center">TGL /RKL<br>/ADL-S</td>
+<td align="center">TGL /ADL-P</td>
+<td align="center">DG1/SG1</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+<div class="reference">
+   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://software.intel.com/content/www/us/en/develop/blogs/intel-releases-new-technology-specification-for-memory-encryption.html" rel="noreferrer" target="_blank">Intel Releases New Technology Specification for Memory Encryption</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:intel-fam"><a href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h" rel="noreferrer" target="_blank">linux/intel-family.h at master · torvalds/linux</a>
+ <a class="footnote-return" href="#fnref:intel-fam"><sup>[return]</sup></a></li>
+<li id="fn:ob-i7-1165g7"><a href="https://openbenchmarking.org/system/2011033-FI-TIGERLAKE04/tigerlake/lscpu" rel="noreferrer" target="_blank">tigerlake - lscpu - OpenBenchmarking.org</a>
+ <a class="footnote-return" href="#fnref:ob-i7-1165g7"><sup>[return]</sup></a></li>
+<li id="fn:ob-tgl-sample"><a href="https://openbenchmarking.org/system/2006079-HV-1LOG7048351/Intel%200000/lscpu" rel="noreferrer" target="_blank">Intel 0000 - lscpu - OpenBenchmarking.org</a>
+ <a class="footnote-return" href="#fnref:ob-tgl-sample"><sup>[return]</sup></a></li>
+<li id="fn:tgl-did"><a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/include/pci_ids/iris_pci_ids.h" rel="noreferrer" target="_blank">include/pci_ids/iris_pci_ids.h · master · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:tgl-did"><sup>[return]</sup></a></li>
+<li id="fn:dg1-l3"><a href="https://www.coelacanth-dream.com/posts/2020/06/20/intel-dg1-support-opencl-levelzero/">Intel、DG1 において OpenCL と oneAPI Level Zero をサポート　―― 巨大なキャッシュを持つ DG1 | Coelacanth's Dream</a>
+ <a class="footnote-return" href="#fnref:dg1-l3"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+  <time datetime="2020-12-23 18:11+09:00" itemprop="datePublished">Post: 2020/12/23 18:11 JST</time>
+  <div class="article_time_update" itemprop="dateModified">Update: 2020/12/23 18:56 JST</div>
+</div>
+<div class="article_author" itemprop="author">Umio Yasuno</div>
+  <hr>
+    <div class="related_article">
+      <div class="related_article_title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/" target="_blank" class="related_article_link">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/07/09/intel-gen12-av1-decode/" target="_blank" class="related_article_link">Intel Gen12 GPU は AV1コーディックのHWデコードをサポート</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/12/21/intel-xe-dgpu-recent-info/" target="_blank" class="related_article_link">Intel Xe GPU 近況　――  Xe-HPのメモリリージョン, PXP, Iris Xe MAX のサポート状況</a>
+    </div>
+  
+  <hr><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+<div class="amzn_link_block">
+   <a href="https://amzn.to/2J2UnRG" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazon.co.jp: アカウントにチャージ</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術をそれぞれ丁寧に解説されている。</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/3mv8yhD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">シリアルエクスペリメンツ・レイン コンプリートシリーズ 北米版 / Serial Experiments Lain: Complete Series Classic [Blu-ray+DVD][Import]</a>
+      <div class="amzn_link_desc">北米版だけど日本語音声もちゃんとある。DVDの方もリマスター仕様になっていて映像が綺麗。</div>
+</div></div>
+</div>
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/gen12/" class="side_tag_lower">Gen12</a>
+      <a href="https://www.coelacanth-dream.com/tags/tiger_lake/" class="side_tag_lower">Tiger Lake</a>
+</div>
+<div class="side_category_block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="side_category_lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="side_category_lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="side_category_lower">Intel</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/23/tgl-h-log-lscpu-lspci.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<footer><hr>
+  <div class="foot_tag_category"><div class="foot_tag_block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/gen12/" class="foot_tag_lower">Gen12</a>
+      <a href="https://www.coelacanth-dream.com/tags/tiger_lake/" class="foot_tag_lower">Tiger Lake</a>
+</div>
+<div class="foot_category_block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="foot_category_lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="foot_category_lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="foot_category_lower">Intel</a>
+</div>
+</div><hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/23/tgl-h-log-lscpu-lspci.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/gen12/" class="slide_menu_tag_lower">Gen12</a>
+      <a href="https://www.coelacanth-dream.com/tags/tiger_lake/" class="slide_menu_tag_lower">Tiger Lake</a>
+</div>
+<div class="slide_menu_category_block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="slide_menu_category_lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="slide_menu_category_lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="slide_menu_category_lower">Intel</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/23/tgl-h-log-lscpu-lspci.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+   </nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+    </main>
+  </body>
+    <div class="crt"></div>
+
+</html>
