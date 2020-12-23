@@ -12,9 +12,9 @@
    <meta property="og:site_name" content="Coelacanth&#39;s Dream">
    <meta name="twitter:card" content="summary">
    <meta property="og:type" content="article">
-   <title>Hot Chips 32 のスライドがパブリックに | Coelacanth&#39;s Dream</title>
-   <meta property="og:title" content="Hot Chips 32 のスライドがパブリックに | Coelacanth&#39;s Dream">
-   <meta name="twitter:title" content="Hot Chips 32 のスライドがパブリックに | Coelacanth&#39;s Dream">
+   <title>Hot Chips 32 のスライド資料がパブリックに | Coelacanth&#39;s Dream</title>
+   <meta property="og:title" content="Hot Chips 32 のスライド資料がパブリックに | Coelacanth&#39;s Dream">
+   <meta name="twitter:title" content="Hot Chips 32 のスライド資料がパブリックに | Coelacanth&#39;s Dream">
 
    <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/12/23/hc32-public/">
    <meta name="description" content="2020/08 に開催された Hot Chips 32 にて発表された各資料、各スライドが一般にも公開された。 https://www.hotchips.org/ https://www.hotchips.org/program/confe">
@@ -277,9 +277,9 @@ h1 {
     
       <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 <article class="text" itemscope itemtype="http://schema.org/Article">
-<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head_category_lower">Intel</a></div><h1 itemprop="headline name">Hot Chips 32 のスライドがパブリックに</h1><div class="head_time">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_category_lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head_category_lower">Intel</a></div><h1 itemprop="headline name">Hot Chips 32 のスライド資料がパブリックに</h1><div class="head_time">
   <time datetime="2020-12-23 13:53+09:00" itemprop="datePublished">Post: 2020/12/23 13:53 JST</time>
-  <div class="head_time_update" itemprop="dateModified">Update: 2020/12/23 15:04 JST</div>
+  <div class="head_time_update" itemprop="dateModified">Update: 2020/12/23 15:13 JST</div>
 </div>
 
 
@@ -311,13 +311,15 @@ NVIDIA からは 7nmプロセスで製造される <strong>A100 GPU</strong> の
 <p><em>Xe/Gen12アーキテクチャ</em> はハイレベルで見ると、シェーダー等を処理する 3D/Compute Slice、メディアエンコード/デコードを処理する固定機能部 Media Slice、Intel GPU で言う L3キャッシュやその他 I/O がある Memory Fabric/Cache に分かれている。<br />
 3D/Compute Slice にはグラフィクス処理のための固定機能部 (Geometry, Raster, Pixel Backend/ROP) と Sub-Slice が収められている。<br />
 Sub-Slice の数は可変で、<em><span class="xe_gpu_arch">X<sup>e</sup>-LP</span>
-アーキテクチャ</em> は Sub-Slices数は最大 16基の構成となっている。Slice数は 1基。<br />
-Sub-Slice には、実行に直接関わる EU (Execution Unit)、スレッドディスパッチャー、各キャッシュメモリ (命令キャッシュ、L1データキャッシュ、テクスチャキャッシュ)、SLM (Shared Local Memory)、ロード/ストアユニット、テクスチャサンプラー、メディアサンプラーが収められている。<br />
+アーキテクチャ</em> は Sub-Slices数は最大 16基の構成となっている。Slice数は 1基。</p>
+
+<p>Sub-Slice には、実行に直接関わる EU (Execution Unit)、スレッドディスパッチャー、各キャッシュメモリ (命令キャッシュ、L1データキャッシュ、テクスチャキャッシュ)、SLM (Shared Local Memory)、ロード/ストアユニット、テクスチャサンプラー、メディアサンプラーが収められている。<br />
 <em>Xe/Gen12アーキテクチャ</em> では、Sub-Slice あたりの EU数は 16基。<br />
 また、<em><span class="xe_gpu_arch">X<sup>e</sup>-HPG</span>
 </em> が対応する HWレイトレーシングを処理するユニットはここに配置され、Sub-Slice ごとの数となる。<br />
 何故 EU 16基あたり 1 RTユニットというバランスを取ったのか、という質問に対して、発表者の David Blythe 氏は、それがスケーラビリティにおいて適切と思ったから、と回答している。また、RTユニットごとのスループットも変更可能としている。<br />
-RTユニットが BVHデータを読み込む上で、キャッシュ、ローカルメモリをどのように扱うかも重要になると思われる。</p>
+RTユニットが BVHデータを読み込む上で、キャッシュ、ローカルメモリをどのように扱うかも重要になると思われる。<br />
+SLM は <em>Gen9アーキテクチャ</em> では GPU L3キャッシュの一部を割り当てて利用する形だったが、<em>Gen11アーキテクチャ</em> から分離され、Sub-Slice部に配置するようになった。これにより、EU から直接 SLM にアクセス可能となり、レイテンシ削減とスループット向上という効果を得ている。</p>
 
 <p>EU にはスレッドスケジューラー、レジスタファイル、Branch/Sendユニット、演算器とそのベクタパイプで構成される。<br />
 ベクタパイプには 倍精度演算 (FP64) や行列演算用の XMX が追加可能で、これらは <em><span class="xe_gpu_arch">X<sup>e</sup>-HP</span>
@@ -338,7 +340,7 @@ RTユニットが BVHデータを読み込む上で、キャッシュ、ロー�
 </em> は機械学習とメディア処理に最適化されたものとなり、メモリに HBM2e を採用する。メディア処理に最適化とのことから、Media Slice部を改良、あるいは同時に複数搭載すると思われる。</p>
 <div class="article_time">
   <time datetime="2020-12-23 13:53+09:00" itemprop="datePublished">Post: 2020/12/23 13:53 JST</time>
-  <div class="article_time_update" itemprop="dateModified">Update: 2020/12/23 15:04 JST</div>
+  <div class="article_time_update" itemprop="dateModified">Update: 2020/12/23 15:13 JST</div>
 </div>
 <div class="article_author" itemprop="author">Umio Yasuno</div><hr>
   <div class="related_article">
