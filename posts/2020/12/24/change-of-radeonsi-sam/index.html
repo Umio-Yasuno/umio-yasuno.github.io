@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2020/12/24/change-of-radeonsi-sam/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>RadeonSI では Smart Access Memory をオプションで切り替える方式に、 Zen 3 &#43; RDNA 2 ではデフォルトで有効 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="RadeonSI では Smart Access Memory をオプションで切り替える方式に、 Zen 3 &#43; RDNA 2 ではデフォルトで有効 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="RadeonSI では Smart Access Memory をオプションで切り替える方式に、 Zen 3 &#43; RDNA 2 ではデフォルトで有効 | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/12/24/change-of-radeonsi-sam/">
+  <meta name="description" content="オープンソースで開発される AMD GPU の OpenGLドライバー RadeonSI に、Smart Access Memory に関する新たなパッチが投稿された。 util,ac,radeonsi: add Zen3 detection, disable SAM w/out Zen3 &amp; gfx10.3, add color interpolation fixes (!8225) · Merge Requests · Mesa / mesa">
+  <meta property="og:description" content="オープンソースで開発される AMD GPU の OpenGLドライバー RadeonSI に、Smart Access Memory に関する新たなパッチが投稿された。 util,ac,radeonsi: add Zen3 detection, disable SAM w/out Zen3 &amp; gfx10.3, add color interpolation fixes (!8225) · Merge Requests · Mesa / mesa">
+  <meta name="twitter:description" content="オープンソースで開発される AMD GPU の OpenGLドライバー RadeonSI に、Smart Access Memory に関する新たなパッチが投稿された。 util,ac,radeonsi: add Zen3 detection, disable SAM w/out Zen3 &amp; gfx10.3, add color interpolation fixes (!8225) · Merge Requests · Mesa / mesa">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/12/24/change-of-radeonsi-sam/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/12/24/change-of-radeonsi-sam/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+  <meta name="keywords" content="RadeonSI, Smart Access Memory">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+<style>
+html {
+   background-size: cover;
+   background-attachment: fixed;
+   background-image: radial-gradient(farthest-corner, #004444 88%, #002E2E 94%, #001111 100%);
+   background-repeat: no-repeat;
+   font-size: 11.5pt;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(5, auto) 3rem;
+   grid-template-columns: 1vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 2 / 3;
+   grid-column: 3 / -2;
+}
+.site_title {
+   font: normal 23pt/25pt monospace;
+   text-decoration: none;
+   word-spacing: 100vw;
+   margin-left: auto;
+   text-align: end;
+   word-break: keep-all;
+   overflow-wrap: normal;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .21em .18em .21em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #A0E0FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.64rem;
+   overflow-x: auto;
+   grid-row: 3 / 4;
+   grid-column: 1 / -1;
+}
+article > p {
+   margin: 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer, .home, .posts, .tags, .categories {
+   display: none;
+ 
+}
+.side {
+  transform: translateX(100vw);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+footer {
+   grid-row: 5 / 6;
+   grid-column: 1 / -1;
+
+
+}
+.foot_tag_category {
+  grid-row:
+}
+
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 1.48rem;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+
+  display: none;
+
+}
+h1 {
+
+   color: #FFA020;
+   font: normal 1.2rem/1.7rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 0;
+   overflow-wrap: break-word;
+   word-break: break-word;
+   padding-bottom: 100vh;
+}
+.head_category_block {
+   grid-column: 3 / -1;
+   display: flex;
+   flex-flow: row wrap;
+   column-gap: .1rem;
+   font: normal 1rem/1.5rem sans-serif;
+   color: #D5FDD5;
+}
+.head_category_lower {
+   color: #87CEEB;
+   font-size: 1rem;
+}
+ 
+   .slide_menu {
+      display: none;
+   }
+
+@media (min-width: 840px) {
+  main {
+    display: grid;
+    grid-template-rows: 8px 8px repeat(3, auto) 6vh;
+    grid-template-columns: 224px 14px 12px auto .8rem;
+    row-gap: 36px;
+  }
+  article {
+    grid-template-columns: .5% 1% auto 2%;
+  }
+  .text {
+    
+      grid-row: 1 / 4;
+      grid-column: 3 / -1;
+
+    
+      padding-top: 12px;
+  }
+
+  article > * {
+    grid-column: 3 / -1;
+  }
+  h1 {
+    grid-column: 1 /-1;
+  }
+  .head_category_block {
+    grid-column: 2 / -1;
+  }
+
+  header > .site_title {
+    display: none;
+  }
+  .site_title {
+    font-size: 21pt;
+    line-height: 23pt;
+    width: 208px;
+  }
+  .site_title .lain_e {
+    font: normal .82em/.82em monospace;
+    padding: 0 .21em .18em .21em;
+    vertical-align: middle;
+  }
+  .page_title {
+    grid-row: 2 / 3;
+    grid-column: 3 / -1;
+
+ 
+  }
+  .side {
+
+    transform: unset;
+    height: 94vh;
+    width: 208px;
+    position: fixed;
+      top: 2vh;
+      left: 8px;
+    padding: 16px 12px 0 8px;
+    color: #20B2AA;
+    border-right: 1px solid #2D5A4B;
+    font-size: 1rem;
+
+
+    overflow: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #008F8F20 rgba(0,0,0,0);
+  }
+  .side_block, .foot_pagination, .foot_tag_category {
+    display: none;
+  }
+}
+.crt {
+  background-image: linear-gradient(transparent 0%, transparent 72%, black 72%, black 100%);
+  background-size: 100% 1vh;
+  background-repeat: repeat-y;
+  width: 100%;
+  height: 100%;
+  opacity: .036;
+  position: fixed;
+    top: 0;
+    left: 0;
+  pointer-events: none;
+}
+</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+  </head>
+  <body>
+    <main>
+      <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text" itemscope itemtype="http://schema.org/Article">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a></div><h1 itemprop="headline name">RadeonSI では Smart Access Memory をオプションで切り替える方式に、 Zen 3 &#43; RDNA 2 ではデフォルトで有効</h1><div class="head_time">
+  <time datetime="2020-12-24 22:53+09:00" itemprop="datePublished">Post: 2020/12/24 22:53 JST</time>
+  <div class="head_time_update" itemprop="dateModified">Update: 2020/12/25 00:34 JST</div>
+</div>
+<p>オープンソースで開発される AMD GPU の OpenGLドライバー <strong>RadeonSI</strong> に、<em>Smart Access Memory</em> に関する新たなパッチが投稿された。</p>
+
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8225" rel="noreferrer" target="_blank">util,ac,radeonsi: add Zen3 detection, disable SAM w/out Zen3 &amp; gfx10.3, add color interpolation fixes (!8225) · Merge Requests · Mesa / mesa · GitLab</a></li>
+</ul>
+
+<p>内容は、ドライバー内の GPU情報に <em>Smart Access Memory</em> の値を追加。有効とする判定に <em>Above 4G Decoding</em> が有効かつ、<em>Zen 3 + RDNA 2</em> であること、というものを用いている。<br />
+パッチを投稿した AMD の <a href="https://gitlab.freedesktop.org/mareko" rel="noreferrer" target="_blank">Marek Olšák</a> 氏は、(<em>Zen 3 + RDNA 2</em> 以外の) システムでは、多くの人が性能の低下を体験している、とコメント。<sup class="footnote-ref" id="fnref:sam-perf"><a href="#fn:sam-perf">1</a></sup><br />
+それをデフォルトで回避すると同時に、ユーザーが選択できるよう driconf に <em>Smart Access Memory</em> のオプションを追加している。<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/11/28/driconf/">Mesa3Dドライバーの DriConf について | Coelacanth's Dream</a></span>
+</p>
+
+<p>しかし、<em>Smart Access Memory</em> を無効と言っても、パッチを読む限り、重要な要素である CPU が GPU の VRAM 全範囲に一度にアクセス可能という点では変わりはなく、以前行なわれた <em>Smart Access Memory</em> に向けた最適化を無視する (以前と同様の状態にする) というように見られる。<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/">RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth's Dream</a></span>
+
+<em>Zen 3 + RDNA 2</em> 以外のシステムでは最適化が逆に働いてしまったのかもしれない。</p>
+
+<p><em>Smart Access Memory</em> の中身である <em>Resizeable PCI BAR</em> は、2017年には Linux Kernel に実装されていたが、<br />
+<span class="thread_link"><a href="https://www.coelacanth-dream.com/posts/2020/12/05/amd-sam-fact/">AMD Smart Access Memory 再調査　―― Bulldozer世代の CPU/APU でも有効可能 | Coelacanth's Dream</a></span>
+
+性能への最適化やサポートの強化は、Windows OS でのサポートに合わせてか、最近になって集中的に行なわれており、BAR のサイズを適切取得できない一部 GPU VBIOS に対処するパッチなどが投稿されている。<sup class="footnote-ref" id="fnref:resizeable-bar"><a href="#fn:resizeable-bar">2</a></sup></p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:sam-perf"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8225/diffs?commit_id=bd0d5bad5f842debd2e868f35a735f6416d8b044" rel="noreferrer" target="_blank">util,ac,radeonsi: add Zen3 detection, disable SAM w/out Zen3 &amp; gfx10.3, add color interpolation fixes (!8225) · Merge Requests · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:sam-perf"><sup>[return]</sup></a></li>
+<li id="fn:resizeable-bar"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-December/057339.html" rel="noreferrer" target="_blank">[PATCH 0/7] amdgpu, pci: improved BAR resizing support</a>
+ <a class="footnote-return" href="#fnref:resizeable-bar"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+  <time datetime="2020-12-24 22:53+09:00" itemprop="datePublished">Post: 2020/12/24 22:53 JST</time>
+  <div class="article_time_update" itemprop="dateModified">Update: 2020/12/25 00:34 JST</div>
+</div>
+<div class="article_author" itemprop="author">Umio Yasuno</div>
+  <hr>
+    <div class="related_article">
+      <div class="related_article_title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/" target="_blank" class="related_article_link">RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/11/05/linux-amd-smart-access-memory/" target="_blank" class="related_article_link">Linux環境と Ryzen 5 2600、Radeon RX 560 で &#34;Smart Access Memory&#34; 機能を試す</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/12/06/diary-2020-12-06/" target="_blank" class="related_article_link">【雑記】 Smart Access Memory を巡って錯綜する情報</a>
+    </div>
+  
+  <hr><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+<div class="amzn_link_block">
+   <a href="https://amzn.to/2J2UnRG" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazon.co.jp: アカウントにチャージ</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/3mfAiWd" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Sapphire NITRO+ Radeon RX 6800 OC</a>
+      <div class="amzn_link_desc">待望の RDNA 2 GPU</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/3pSoUCL" class="amzn_link_main" target="_blank" rel="noopener noreferrer">SAPPHIRE PULSE RADEON RX 5500 XT 4G</a>
+      <div class="amzn_link_desc">とにかく RDNA GPU を試したいなら。一般用途としては十分過ぎる性能も持っている。</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/368E4fB" class="amzn_link_main" target="_blank" rel="noopener noreferrer"> SAPPHIRE PULSE RADEON RX 5600 XT 6G</a>
+      <div class="amzn_link_desc">Linux環境で NGG/プリミティブシェーダーを試したいなら。</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術をそれぞれ丁寧に解説されている。</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+</div>
+<div class="amzn_link_block">
+   <a href="https://amzn.to/3mv8yhD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">シリアルエクスペリメンツ・レイン コンプリートシリーズ 北米版 / Serial Experiments Lain: Complete Series Classic [Blu-ray+DVD][Import]</a>
+      <div class="amzn_link_desc">北米版だけど日本語音声もちゃんとある。DVDの方もリマスター仕様になっていて映像が綺麗。</div>
+</div></div>
+</div>
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side"><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+<div class="side_block" id="side_menu"><nav class="side_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="side_tag_block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="side_tag_title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="side_tag_lower">RadeonSI</a>
+      <a href="https://www.coelacanth-dream.com/tags/smart_access_memory/" class="side_tag_lower">Smart Access Memory</a>
+</div>
+<div class="side_category_block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="side_category_title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="side_category_lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="side_category_lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="side_category_lower">Software</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="side_site_search">Site Search by Google</a>
+
+      <nav class="side_about"><a class="side_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/24/change-of-radeonsi-sam.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav>
+      <small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small>
+   </div>
+</div>
+<footer><hr>
+  <div class="foot_tag_category"><div class="foot_tag_block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="foot_tag_title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="foot_tag_lower">RadeonSI</a>
+      <a href="https://www.coelacanth-dream.com/tags/smart_access_memory/" class="foot_tag_lower">Smart Access Memory</a>
+</div>
+<div class="foot_category_block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="foot_category_title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="foot_category_lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="foot_category_lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="foot_category_lower">Software</a>
+</div>
+</div><hr><nav class="foot_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/24/change-of-radeonsi-sam.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></footer><div class="slide_menu">
+   <input type="radio" name="slide_menu_open_close" id="open_slide_menu" value="open" class="slide_menu_open_input">
+   <label class="slide_menu_open_label" for="open_slide_menu"></label>
+   <input type="radio" name="slide_menu_open_close" id="close_slide_menu" value="close" class="slide_menu_close_input" checked="">
+   <label class="slide_menu_close_label" for="close_slide_menu"></label>
+   <div class="slide_menu_block"><nav class="slide_menu_links">
+   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+   <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="slide_menu_tag_block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="slide_menu_tag_title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="slide_menu_tag_lower">RadeonSI</a>
+      <a href="https://www.coelacanth-dream.com/tags/smart_access_memory/" class="slide_menu_tag_lower">Smart Access Memory</a>
+</div>
+<div class="slide_menu_category_block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="slide_menu_category_title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="slide_menu_category_lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="slide_menu_category_lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="slide_menu_category_lower">Software</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="slide_menu_site_search">Site Search by Google</a>
+<nav class="slide_menu_about"><a class="slide_menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/24/change-of-radeonsi-sam.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+   </nav><small class="copyright">&copy; 2019 - 2020 Umio-Yasuno</small></div>
+</div>
+
+    </main>
+  </body>
+    <div class="crt"></div>
+
+</html>
