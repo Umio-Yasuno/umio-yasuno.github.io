@@ -2,32 +2,30 @@
 <html lang="ja">
   <head>
 
-   <meta charset="utf-8">
-   <meta name="viewport" content="width=device-width">
-   <meta name="format-detection" content="telephone=no, address=no, email=no">
-   
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
 
-   <base href="https://www.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】 | Coelacanth&#39;s Dream">
 
-   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
-   <meta name="twitter:card" content="summary">
-   <meta property="og:type" content="article">
-   <title>waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】 | Coelacanth&#39;s Dream</title>
-   <meta property="og:title" content="waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】 | Coelacanth&#39;s Dream">
-   <meta name="twitter:title" content="waifu2x-ncnn-vulkan ビルド方法(Linux向け) 【2020/04/29 追記修正】 | Coelacanth&#39;s Dream">
-
-   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
-   <meta name="description" content="（追記 2020/05/27） ビルドプロセスが改良されて別に ncnn をビルドして、パスを指定する必要がなくなった。 https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-sou">
-   <meta property="og:description" content="（追記 2020/05/27） ビルドプロセスが改良されて別に ncnn をビルドして、パスを指定する必要がなくなった。 https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-sou">
-   <meta name="twitter:description" content="（追記 2020/05/27） ビルドプロセスが改良されて別に ncnn をビルドして、パスを指定する必要がなくなった。 https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-sou">
-   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
-   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
-   <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
-   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
-   <meta property="og:locale" content="ja_JP">
-   <meta name="author" content="Umio Yasuno">
-   <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
-   <meta name="keywords" content="waifu2x-ncnn-vulkan">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
+  <meta name="description" content="（追記 2020/05/27） ビルドプロセスが改良されて別に ncnn をビルドして、パスを指定する必要がなくなった。 https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source （追記終了） Vulkan Computeで演算するため、">
+  <meta property="og:description" content="（追記 2020/05/27） ビルドプロセスが改良されて別に ncnn をビルドして、パスを指定する必要がなくなった。 https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source （追記終了） Vulkan Computeで演算するため、">
+  <meta name="twitter:description" content="（追記 2020/05/27） ビルドプロセスが改良されて別に ncnn をビルドして、パスを指定する必要がなくなった。 https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source （追記終了） Vulkan Computeで演算するため、">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2020 Umio-Yasuno">
+  <meta name="keywords" content="waifu2x-ncnn-vulkan">
 
     <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
     <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
@@ -37,7 +35,7 @@
 html {
    background-size: cover;
    background-attachment: fixed;
-   background-image: radial-gradient(farthest-corner, #004646 88%, #002E2E 94%, #001111 100%);
+   background-image: radial-gradient(farthest-corner, #004444 88%, #002E2E 94%, #001111 100%);
    background-repeat: no-repeat;
    font-size: 11.5pt;
 }
