@@ -264,7 +264,7 @@ h1 {
   },
     "dateCreated"   : "2020-12-28",
     "datePublished" : "2020-12-28",
-    "dateModufied"  : "2020-12-28",
+    "dateModufied"  : "2021-01-01",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 
@@ -288,7 +288,7 @@ h1 {
   </div>
 </nav><div class="head_time">
   <time datetime="2020-12-28 04:03+09:00">Post: 2020/12/28 04:03 JST</time>
-  <div class="head_time_update">Update: 2020/12/28 04:33 JST</div>
+  <div class="head_time_update">Update: 2021/01/01 21:35 JST</div>
 </div>
 
 
@@ -369,6 +369,28 @@ au BufNewFile,BufRead *.md syntax region markdownCode start=/&gt;\ / end=/$/</co
 
 <p>この記事も元となるMarkdownファイルを Vim で書いているのだが、書きながら新たなキーマップを追加、テストするもんだから、記事が遅々として進まなかった。</p>
 
+<h2 id="更新作業">更新作業</h2>
+
+<p>Github Page サービスを利用して公開しているため、更新作業もターミナル上でコマンドを入力して行なわれる。<br />
+更新までは、Vim で記事を Markdown形式で書き、Hugo でビルドし、Githubレポジトリをクローンしたディレクトリに移動し、<code>git add --all</code>、<code>git commit</code>、コミットメッセージを入力、そして <code>git push</code> で Github側にアップロードする、という流れだが、当然ここも手間は少ない方が良い。<br />
+自分は簡単なシェルスクリプトで更新するようにしている。自作の Hugoテーマと記事部も git で管理しているため、単純といっても更新に掛かる作業量は多く、スクリプトが無ければ気力を大きく削ぐ障害となる。<br />
+また、一連の作業をスクリプトにしてしまえば、作業時間の短縮だけでなくミスも減らせる。</p>
+
+<p>引数によって、単純な更新作業以外も行なえるようスクリプトを書くと、さらに使い勝手が良くなる。</p>
+
+<p><code>.bashrc</code> に以下のような行を記述し、スクリプトをコマンドのように実行できるようエイリアスを作成すれば、より短い手間で更新できる。</p>
+<pre><code>alias _page_update=&#34;sh &lt;スクリプトのパス&gt;/update.sh&#34;</code></pre>
+<p>記事を書き始める時だが、自分の管理方法だと元ファイルへのパスが <code>&lt;Hugoディレクトリ&gt;/content/posts/&lt;年&gt;/&lt;月&gt;/&lt;日&gt;/&lt;ファイル名&gt;</code> とかなり長くなる。<br />
+Hugo でファイルを生成した後、また長いパスを打って Vim で編集を開始するのは面倒なため、以下のような関数を <code>.bashrc</code> に記述している。</p>
+<pre><code>_new_article () {
+   export NEW=&#34;${PWD}/${1}&#34;
+   hugo new ${1#content/}
+   if [ &#34;${2}&#34; = &#34;--vim&#34; ] || [ &#34;${2}&#34; = &#34;-V&#34; ]; then
+      vim ${NEW}
+   fi
+}</code></pre>
+<p>これにより、ファイルへのパスはシェル変数 <code>${NEW}</code> にあるため、長いパスを打たずに <code>vim ${NEW}</code> だけで済む。引数 <code>--vim</code> か <code>-V</code> を追加すればそのまま開始することもできる。</p>
+
 <h2 id="2021年の執筆環境">2021年の執筆環境</h2>
 
 <p>今後どう環境を改良していくかだが、まあモニタをもう 1枚買ってマルチモニタ環境にするのが一番効果的な気がする。ソフトウェア環境に不満がないとなると、後はハードウェア側を強化する他ない。<br />
@@ -377,7 +399,7 @@ au BufNewFile,BufRead *.md syntax region markdownCode start=/&gt;\ / end=/$/</co
 ノートPCの具体的な検討すらしてないため、杞憂なのだが。</p>
 <div class="article_time">
   <time datetime="2020-12-28 04:03+09:00">Post: 2020/12/28 04:03 JST</time>
-  <div class="article_time_update">Update: 2020/12/28 04:33 JST</div>
+  <div class="article_time_update">Update: 2021/01/01 21:35 JST</div>
 </div>
 <div class="article_author">Umio Yasuno</div>
   <hr><div class="amzn">
