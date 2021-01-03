@@ -10,9 +10,9 @@
   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
   <meta name="twitter:card" content="summary">
   <meta property="og:type" content="article">
-  <title>Radeon向けMesaビルド方法 | Coelacanth&#39;s Dream</title>
-  <meta property="og:title" content="Radeon向けMesaビルド方法 | Coelacanth&#39;s Dream">
-  <meta name="twitter:title" content="Radeon向けMesaビルド方法 | Coelacanth&#39;s Dream">
+  <title>Radeon向けMesaビルド方法　―― RadeonSI, RADV | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Radeon向けMesaビルド方法　―― RadeonSI, RADV | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Radeon向けMesaビルド方法　―― RadeonSI, RADV | Coelacanth&#39;s Dream">
 
   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/">
   <meta name="description" content="https://dri.freedesktop.org/wiki/Building/ を元に、なんやかんやである程度確立させたMesaのビルド方法をまとめてみた。 私の環境がDebianなため、基本Debian/Ubuntu向けと">
@@ -25,7 +25,7 @@
   <meta property="og:locale" content="ja_JP">
   <meta name="author" content="Umio Yasuno">
   <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
-  <meta name="keywords" content="Mesa, RadeonSI, OpenGL">
+  <meta name="keywords" content="Radeon, RadeonSI, Mesa">
 
     <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
     <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
@@ -256,15 +256,15 @@ h1 {
     <script type="application/ld+json">{
   "@context" : "https://schema.org/",
   "@type" : "Article",
-  "name"     : "Radeon向けMesaビルド方法",
-  "headline" : "Radeon向けMesaビルド方法",
+  "name"     : "Radeon向けMesaビルド方法　―― RadeonSI, RADV",
+  "headline" : "Radeon向けMesaビルド方法　―― RadeonSI, RADV",
   "author" : {
     "@type" : "Person",
     "name"  : "Umio Yasuno"
   },
     "dateCreated"   : "2019-12-04",
     "datePublished" : "2019-12-04",
-    "dateModufied"  : "2020-07-20",
+    "dateModufied"  : "2021-01-03",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 
@@ -280,15 +280,15 @@ h1 {
     
       <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 <article class="text">
-<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a></div><h1>Radeon向けMesaビルド方法</h1><nav class="article_share">
+<div class="head_category_block"><a href="https://www.coelacanth-dream.com/categories/amd/" class="head_category_lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_category_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head_category_lower">Software</a></div><h1>Radeon向けMesaビルド方法　―― RadeonSI, RADV</h1><nav class="article_share">
 
   <div class="share_button_links">
     <button class="share_copy_button" onclick="copy_url()">Copy URL</button>
-    <button class="share_copy_button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Radeon%e5%90%91%e3%81%91Mesa%e3%83%93%e3%83%ab%e3%83%89%e6%96%b9%e6%b3%95%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/&hashtags=Radeon%2cRadeonSI%2cMesa" rel="noreferrer noopener" target="_blank" class="share_tw">Tweet</a>
+    <button class="share_copy_button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Radeon%e5%90%91%e3%81%91Mesa%e3%83%93%e3%83%ab%e3%83%89%e6%96%b9%e6%b3%95%e3%80%80%e2%80%95%e2%80%95%20RadeonSI%2c%20RADV%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/&hashtags=Radeon%2cRadeonSI%2cMesa" rel="noreferrer noopener" target="_blank" class="share_tw">Tweet</a>
   </div>
 </nav><div class="head_time">
   <time datetime="2019-12-04 21:00+09:00">Post: 2019/12/04 21:00 JST</time>
-  <div class="head_time_update">Update: 2020/07/20 11:51 JST</div>
+  <div class="head_time_update">Update: 2021/01/03 21:54 JST</div>
 </div>
 
 
@@ -405,7 +405,7 @@ Mesaビルド一連の流れはbash シェルスクリプトで実行してる�
 <p>最後に、最新版のMesaを自力でビルドすることの意義だが、最新の機能、ハードウェアを試せるというロマンに尽きると思う。</p>
 <div class="article_time">
   <time datetime="2019-12-04 21:00+09:00">Post: 2019/12/04 21:00 JST</time>
-  <div class="article_time_update">Update: 2020/07/20 11:51 JST</div>
+  <div class="article_time_update">Update: 2021/01/03 21:54 JST</div>
 </div>
 <div class="article_author">Umio Yasuno</div>
   <hr>
@@ -421,6 +421,7 @@ Mesaビルド一連の流れはbash シェルスクリプトで実行してる�
   <div class="amzn_links">
 <div class="amzn_link_block">
    <a href="https://amzn.to/2J2UnRG" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazon.co.jp: アカウントにチャージ</a>
+      <div class="amzn_link_desc">負担のない支援</div>
 </div>
 <div class="amzn_link_block">
    <a href="https://amzn.to/3mfAiWd" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Sapphire NITRO+ Radeon RX 6800 OC</a>
@@ -473,7 +474,7 @@ Mesaビルド一連の流れはbash シェルスクリプトで実行してる�
 
   <div class="share_button_links">
     <button class="share_copy_button" onclick="copy_url()">Copy URL</button>
-    <button class="share_copy_button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Radeon%e5%90%91%e3%81%91Mesa%e3%83%93%e3%83%ab%e3%83%89%e6%96%b9%e6%b3%95%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/&hashtags=Radeon%2cRadeonSI%2cMesa" rel="noreferrer noopener" target="_blank" class="share_tw">Tweet</a>
+    <button class="share_copy_button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Radeon%e5%90%91%e3%81%91Mesa%e3%83%93%e3%83%ab%e3%83%89%e6%96%b9%e6%b3%95%e3%80%80%e2%80%95%e2%80%95%20RadeonSI%2c%20RADV%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/&hashtags=Radeon%2cRadeonSI%2cMesa" rel="noreferrer noopener" target="_blank" class="share_tw">Tweet</a>
   </div>
 </nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu_site_search">Site Search by Google</a>
 
