@@ -290,11 +290,17 @@ h1 {
  のチップ構成</h2>
 
 <p><span class="xe_gpu_arch">X<sup>e</sup>-HPC</span>
- は Base Tile、Compute Tile、Rambo Cache Tile、<span class="xe_gpu_arch">X<sup>e</sup></span>
- Link I/O Tile、それと HBM2メモリで構成され、それらは 3Dパッケージング技術 Forveros、Forverosパッケージを複数組み合わせる Co-EMIB によってパッケージングされる。<br />
-より詳細な構成を言えば、Base Tile、Compute Tile、Rambo Cache Tile を Forveros技術で積層、それに HBM2メモリ、<span class="xe_gpu_arch">X<sup>e</sup></span>
- Link I/O Tile が EMIB で接続される。<br />
+ は <em>Base Tile</em> 、 <em>Compute Tile</em> 、 <em>Rambo Cache Tile</em> 、 <em><span class="xe_gpu_arch">X<sup>e</sup></span>
+ Link I/O Tile</em> 、それと HBM2メモリで構成され、それらは 3Dパッケージング技術 Forveros、Forverosパッケージを複数組み合わせる Co-EMIB によってパッケージングされる。<br />
+より詳細な構成を言えば、<em>Base Tile</em> 、 <em>Compute Tile</em> 、 <em>Rambo Cache Tile</em> を Forveros技術で積層、それに HBM2メモリ、 <em><span class="xe_gpu_arch">X<sup>e</sup></span>
+ Link I/O Tile</em> が EMIB で接続される。<br />
 そして、それらをもう 1セット Co-EMIB で互いを接続したものが、コードネーム <strong>Ponte Vecchio</strong> 1パッケージとなる。</p>
+
+<p>また、各チップ (Tile) はそれぞれ別のプロセスで製造され、<br />
+<em>Base Tile</em> は Intel 10nm SuperFin、 <em>Compute Tile</em> は Intel の次世代プロセス <span class="complement">恐らくは 7nm</span>
+ と外部ファウンダリ、<em>Rambo Cache Tile</em> は Intel 10nm Enhanced SuperFin、 <em><span class="xe_gpu_arch">X<sup>e</sup></span>
+ Link I/O Tile</em> は外部ファウンダリのプロセスのみを採用している。<br />
+Intel 7nmプロセスは 2023年頃に製品が出てくる予定にあるため、画像の <em>Compute Tile</em> は外部ファウンダリで製造されたものである可能性が高いと思われる。</p>
 
 <p>Raja氏が公開した画像から、各チップの配置を推測したものが以下。<br />
 一見 HBM2メモリの大きさが合ってないように思えるが、これは画像が真上ではなくそこから少し右から撮影されたからで、縦幅は一致した。</p>
@@ -312,10 +318,17 @@ h1 {
  と HBM2メモリに間にあるチップを Rambo Cache と判断したのは、Intel は以前 XeMF (Xe Memory Fabric) と Rambo Cache がセットであるように発表しており、<br />
 XeMF は 8x <span class="xe_gpu_arch">X<sup>e</sup>-HPC</span>
 用ともう片方のタイルとの接続用とで計 6基確認でき、Rambo Cache の数と一致するからだ。<br />
-Rambo Cache の容量等は明かされていないが、帯域については、GPU内のキャッシュ (SRAM) と HBM2メモリの間に位置し、2つのギャップを埋める程であることが発表されている。</p>
+Rambo Cache の容量等は明かされていないが、帯域については、GPU内のキャッシュ (SRAM) と HBM2メモリの間に位置し、2つのギャップを埋める程であることが発表されている。<sup class="footnote-ref" id="fnref:rambo-cache"><a href="#fn:rambo-cache">1</a></sup></p>
+
+<p><span class="xe_gpu_arch">X<sup>e</sup>-HPC</span>
+ の規模もまた不明だが、アーキテクチャの特徴として HPC、機械学習に最適化されており、<span class="xe_gpu_arch">X<sup>e</sup>-LP</span>
+アーキテクチャには搭載されていない FP64ユニットと Matrix Extension (XMX) が <span class="xe_gpu_arch">X<sup>e</sup>-HPC</span>
+ では搭載されている。<br />
+マルチメディアエンジンの有無についてもこれまでに触れられていないが、<strong>AMD MI100</strong> が機械学習時のオブジェクト検出等を想定してエンジンを搭載していたことを考えると、<span class="xe_gpu_arch">X<sup>e</sup>-HPC</span>
+ でも最低限搭載している可能性はある。</p>
 
 <p>エクサスケールスパコン Aurora は、ノードを <em>Sapphire Rapids</em> CPU 2基、<em>Ponte Vecchio</em> GPU 6基で構成し、今年 2021年に納入予定にある。<br />
-<em>Sapphire Rapids</em> のパッケージ等はまだ公開されていないが、Linux Kernel へのパッチにログの一部があり、そちらも既に Intelラボ内部では動作していると思われる。<sup class="footnote-ref" id="fnref:idxd-spr"><a href="#fn:idxd-spr">1</a></sup></p>
+<em>Sapphire Rapids</em> のパッケージ等はまだ公開されていないが、Linux Kernel へのパッチにログの一部があり、そちらも既に Intelラボ内部では動作していると思われる。<sup class="footnote-ref" id="fnref:idxd-spr"><a href="#fn:idxd-spr">2</a></sup></p>
 
 <hr>
 <div class="reference">
@@ -331,13 +344,15 @@ Rambo Cache の容量等は明かされていないが、帯域については�
 <hr />
 
 <ol>
+<li id="fn:rambo-cache"><a href="https://nvmexpress.org/wp-content/uploads/NVMe-Technology-Powering-the-Connected-Universe.pdf" rel="noreferrer" target="_blank">NVMe® Technology Powering the Connected Universe</a>
+ <a class="footnote-return" href="#fnref:rambo-cache"><sup>[return]</sup></a></li>
 <li id="fn:idxd-spr"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20210125&amp;id=16e19e11228ba660d9e322035635e7dcf160d5c2" rel="noreferrer" target="_blank">dmaengine: idxd: Fix list corruption in description completion</a>
  <a class="footnote-return" href="#fnref:idxd-spr"><sup>[return]</sup></a></li>
 </ol>
 </div>
 <div class="article_time">
   <time datetime="2021-01-27 06:08+09:00">Post: 2021/01/27 06:08 JST</time>
-  <div class="article_time_update">Update: 2021/01/27 07:48 JST</div>
+  <div class="article_time_update">Update: 2021/01/27 13:51 JST</div>
 </div>
 <div class="article_author">Umio Yasuno</div><div class="amzn">
   <div class="amzn_head">Amazonアソシエイト</div>
