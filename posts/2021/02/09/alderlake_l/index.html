@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/02/09/alderlake_l/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>ALDERLAKE_L と Alder Lake-P/M | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="ALDERLAKE_L と Alder Lake-P/M | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="ALDERLAKE_L と Alder Lake-P/M | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/02/09/alderlake_l/">
+  <meta name="description" content="先日 2021/01/21、Linux Kernel に ALDERLAEK_L / Alder Lake mobile の x86_model を追加するパッチが投稿された。 このことで自分が言いたいのは、Alder Lake-L なるものが存在し、">
+  <meta property="og:description" content="先日 2021/01/21、Linux Kernel に ALDERLAEK_L / Alder Lake mobile の x86_model を追加するパッチが投稿された。 このことで自分が言いたいのは、Alder Lake-L なるものが存在し、">
+  <meta name="twitter:description" content="先日 2021/01/21、Linux Kernel に ALDERLAEK_L / Alder Lake mobile の x86_model を追加するパッチが投稿された。 このことで自分が言いたいのは、Alder Lake-L なるものが存在し、">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/02/09/alderlake_l/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/02/09/alderlake_l/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Alder Lake">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+    <style>
+html {
+   background-size: 100%;
+   background-attachment: fixed;
+   background-image: radial-gradient(ellipse 100% 54%, #004b56 0%, #004750 88%, #002f39 100%);
+   background-repeat: no-repeat;
+   font-size: .96rem;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: .5vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 1;
+   grid-column: 3 / -2;
+   margin-top: 16px;
+}
+.site_title {
+   font: normal 23pt/25pt monospace;
+   text-decoration: none;
+   word-spacing: 100vw;
+   margin-left: auto;
+   text-align: end;
+   word-break: keep-all;
+   overflow-wrap: normal;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .21em .18em .21em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #A0E0FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.7rem;
+   overflow-x: auto;
+   grid-row: 3;
+   grid-column: 1 / -1;
+}
+article > p {
+   margin: .4rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer,
+.home,
+.posts,
+.tags,
+.categories,
+.entry {
+   display: none;
+ 
+}
+.side {
+  transform: translateX(100vw);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+footer {
+   grid-row: 5;
+   grid-column: 1 / -1;
+
+
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 12px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+  display: none;
+}
+h1 {
+
+   color: #FFA020;
+   font: normal 1.2rem/1.6rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 0;
+   overflow-wrap: break-word;
+   word-break: break-word;
+   padding-bottom: 100vh;
+}
+ 
+  .slide {
+    display: none;
+  }
+.head_cat_tag {
+
+  border: 1px solid teal;
+  max-width: max-content;
+  padding: 5px 2px;
+  margin-bottom: 8px;
+  font-size: .96rem;
+  line-height: 1rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 8px;
+  font-family: monospace;
+}
+.head_cat_block,
+.head_tag_block {
+  max-width: max-content;
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 4px;
+}
+.head_cat_tag_type {
+  color: #38d8c8;
+  margin-top: auto;
+  padding: 0 .3rem;
+}
+.head_cat_lower,
+.head_tag_lower {
+  margin: 0 .4rem;
+  padding: 0 .1rem;
+}
+
+@media (min-width: 840px) {
+  main {
+    display: grid;
+    grid-template-rows: repeat(5, auto) 6vh;
+    grid-template-columns: 216px 8px 12px auto 16px;
+
+    row-gap: 4px;
+  }
+  article {
+    grid-template-columns: .5% .5% auto 2%;
+  }
+  .text {
+    grid-row: 3;
+    grid-column: 3 / -1;
+  }
+  .side {
+
+    transform: unset;
+    height: 96vh;
+    width: 198px;
+    position: fixed;
+      top: 1vh;
+      left: 0;
+    padding: 12px 8px 0 12px;
+    color: #20B2AA;
+    border-right: 1px solid #008F8F40;
+    font-size: 1rem;
+
+
+    overflow: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #008F8F20 transparent;
+  }
+  .side_block,
+  .foot_pagination,
+  .foot_tag_category {
+    display: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width:  6px;
+  height: 4px;
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #008F8F70;
+}
+::-webkit-scrollbar-corner,
+::-webkit-resizer {
+  display: none;
+}
+</style>
+<link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "ALDERLAKE_L と Alder Lake-P/M",
+  "headline" : "ALDERLAKE_L と Alder Lake-P/M",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-02-09",
+    "datePublished" : "2021-02-09",
+    "dateModufied"  : "2021-02-09",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head_cat_tag"><div class="head_cat_block"><a href="https://www.coelacanth-dream.com/categories/" class="head_cat_tag_type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head_cat_lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_cat_lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head_cat_lower">Intel</a></div><div class="head_tag_block"><a href="https://www.coelacanth-dream.com/tags/" class="head_cat_tag_type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="head_tag_lower">Alder Lake</a></div>
+    </div>
+  <h1>ALDERLAKE_L と Alder Lake-P/M</h1><nav class="article_share">
+
+  <div class="share_button_links">
+    <button class="share_copy_button" onclick="copy_url()">Copy URL</button>
+    <button class="share_copy_button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=ALDERLAKE_L%20%e3%81%a8%20Alder%20Lake-P%2fM%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/02/09/alderlake_l/&hashtags=AlderLake" rel="noreferrer noopener" target="_blank" class="share_tw">Tweet</a>
+  </div>
+</nav>
+
+<p>先日 2021/01/21、Linux Kernel に <em>ALDERLAEK_L / Alder Lake mobile</em> の x86_model を追加するパッチが投稿された。<br />
+このことで自分が言いたいのは、<em>Alder Lake-L</em> なるものが存在し、<em>Alder Lake-S/P/M</em> に並ぶバリアントとなる、訳ではないだろうということだ。</p>
+
+<ul>
+<li><a href="https://github.com/torvalds/linux/commit/6e1239c13953f3c2a76e70031f74ddca9ae57cd3#diff-7bf85b32beb96091abd89790e701cd01fb13bafbbbca17433ad47830820c1391" rel="noreferrer" target="_blank">x86/cpu: Add another Alder Lake CPU to the Intel family · torvalds/linux@6e1239c</a></li>
+<li><a href="https://lore.kernel.org/lkml/20210121215004.11618-1-tony.luck@intel.com/" rel="noreferrer" target="_blank">[PATCH] x86/cpu: Add another Alder Lake CPU to the Intel family - Tony Luck</a></li>
+</ul>
+
+<blockquote>
+<pre><code>    #define  INTEL_FAM6_LAKEFIELD        0x8A
+    #define INTEL_FAM6_ALDERLAKE     0x97
+   +#define INTEL_FAM6_ALDERLAKE_L       0x9A
+
+    /* &#34;Small Core&#34; Processors (Atom) */</code></pre>
+<div class="quote_source">引用元:&nbsp;<cite><a href="https://lore.kernel.org/lkml/20210121215004.11618-1-tony.luck@intel.com/" rel="noreferrer" target="_blank">[PATCH] x86/cpu: Add another Alder Lake CPU to the Intel family - Tony Luck</a></cite>
+</div>
+
+</blockquote>
+
+<h2 id="alderlake-l-と-alder-lake-p-m">ALDERLAKE_L と Alder Lake-P/M</h2>
+
+<h3 id="intel-family-h">intel-family.h</h3>
+
+<p>まず今回、パッチの投稿先であるファイル <a href="https://github.com/torvalds/linux/blob/6e1239c13953f3c2a76e70031f74ddca9ae57cd3/arch/x86/include/asm/intel-family.h" rel="noreferrer" target="_blank">intel-family.h</a> は、Intelプロセッサの x86_model をまとめたヘッダファイルであり、<br />
+そのファイルを先頭部分に記述されたコメントによると、末尾の <code>_L, _X, _D</code> 等はマーケットセグメントにおける担当を示すものであることが分かる。</p>
+
+<blockquote>
+<pre><code>    * OPTDIFF    If needed, a short string to differentiate by market segment.
+    *
+    *        Common OPTDIFFs:
+    *
+    *            - regular client parts
+    *        _L  - regular mobile parts
+    *        _G  - parts with extra graphics on
+    *        _X  - regular server parts
+    *        _D  - micro server parts
+    *
+    *        Historical OPTDIFFs:
+    *
+    *        _EP - 2 socket server parts
+    *        _EX - 4+ socket server parts
+    *
+    * The #define line may optionally include a comment including platform names.
+    */</code></pre></blockquote>
+
+<p>そのため、<span class="complement">そもそもパッチのコメントにも書かれているが</span>
+ 追加された <code>ALDERLAKE_L</code> はモバイル向け <em>Alder Lake</em> となり、その x86_model は <code>0x9A (154)</code> ということになる。</p>
+
+<p>そして、<em>Alder Lake-S/P/M</em> の x86_model については、Coreboot へのパッチから既に判明しており、<br />
+<em>Alder Lake-S</em> は <code>Family: 0x6, Model: 0x97</code> 、<em>Alder Lake-P/M</em> は <code>Family: 0x6, Model: 0x9A</code> とされる。<br />
+それらは Coreboot のファイルに記述された CPUID が読み取れ、以下の場合は左から 16進数であることを示す <code>0x</code> の後に続いて、<code>Extended Model</code>、<code>Extended Family</code>、<code>Family</code>、<code>Model</code> といった風に並び、そして末尾が <code>Stepping</code> を意味する。<sup class="footnote-ref" id="fnref:coreboot-cpuid"><a href="#fn:coreboot-cpuid">1</a></sup><br />
+<span class="thread_link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/02/adl-p-chromebook-board-adl-m/">Alder Lake-P を搭載する Chromebookボード 「Brya」、そして Alder Lake-M | Coelacanth's Dream</a></span>
+</p>
+
+<blockquote>
+<pre><code>   #define CPUID_ALDERLAKE_S_A0  0x90670
+   #define CPUID_ALDERLAKE_P_A0  0x906a0
+   #define CPUID_ALDERLAKE_M_A0  0x906a1</code></pre>
+<div class="quote_source">引用元:&nbsp;<cite><a href="https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/include/intelblocks/mp_init.h" rel="noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/include/intelblocks/mp_init.h</a></cite>
+</div>
+
+</blockquote>
+
+<p><code>ALDERLAKE_L</code> と <em>Alder Lake-P/M</em> の x86_model は一致する。<br />
+まとめると、マーケットセグメントとして <code>ALDERLAKE_L [Model: 0x9A (154)]</code> があり、それに <em>Alder Lake-P/M</em> 2種があたる、という解釈が最も自然と思われる。</p>
+
+<ul>
+<li>ALDERLAKE (Model: 0x97 {151})
+
+<ul>
+<li><em>Alder Lake-S</em></li>
+</ul></li>
+<li>ALDERLAKE_L (Model: 0x9A {154})
+
+<ul>
+<li><em>Alder Lake-P</em></li>
+<li><em>Alder Lake-M</em></li>
+</ul></li>
+</ul>
+
+<p>それだけのお話。<br />
+それとついでに言えば、モバイル向け <em>Alder Lake</em> の x86_model が <code>0x9A (154)</code> であることは、2020/11/25 に Linux向け電力管理ツールである <a href="https://github.com/fenrus75/powertop" rel="noreferrer" target="_blank">PowerTOP</a> に投稿されたパッチ、プルリクエストから確認されていた。<sup class="footnote-ref" id="fnref:powertop"><a href="#fn:powertop">2</a></sup><br />
+それを投稿した <a href="https://github.com/gkammela" rel="noreferrer" target="_blank">Gayatri Kammela (ユーザー名: gkammela)</a> 氏は Intel のソフトウェアエンジニアであり、Linux Kernel 周りを担当している。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:coreboot-cpuid"><a href="https://github.com/coreboot/coreboot/commit/dcea700762bc97bd7fcabf2e960d47805129aeb1?branch=dcea700762bc97bd7fcabf2e960d47805129aeb1&amp;diff=unified" rel="noreferrer" target="_blank">inteltool: Print raw CPUID and make hexadecimal values unambiguous · coreboot/coreboot@dcea700</a>
+ <a class="footnote-return" href="#fnref:coreboot-cpuid"><sup>[return]</sup></a></li>
+<li id="fn:powertop"><a href="https://github.com/fenrus75/powertop/pull/77/commits/b4026d1996a6e091aef313c0b2ad4851b1dee56f" rel="noreferrer" target="_blank">Add Sapphire rapids, Alder Lake mobile and desktop support in Powertop by gkammela · Pull Request #77 · fenrus75/powertop</a>
+ <a class="footnote-return" href="#fnref:powertop"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article_time">
+  <time datetime="2021-02-09 19:49+09:00">Post: 2021/02/09 19:49 JST</time>
+  <div class="article_time_update">Update: 2021/02/09 20:44 JST</div>
+</div>
+
+    <hr>
+    <div class="related_article">
+      <div class="related_article_title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2021/01/21/adl_m-coreboot/" target="_blank" class="related_article_link">Alder Lake-M 関連のパッチが Coreboot に投稿される　―― ADL-M は ADL-P の I/O 縮小版か</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/01/12/intel-ces2021-rkl-jsl-adl_s/" target="_blank" class="related_article_link">Intel、Rocket Lake、Tiger Lake-H、Jasper Lake など新世代プロセッサを正式発表</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/01/01/adl_p-gen5-tgl_h-gen4-x20/" target="_blank" class="related_article_link">Alder Lake は PCIe Gen5 に対応、Tiger Lake-H は Gen4 20-Lane を備える</a>
+    </div>
+    <hr>
+  <div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+<div class="amzn_link_block">
+  <a href="https://amzn.to/2J2UnRG" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazon.co.jp: アカウントにチャージ</a>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+    <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+    <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+</div>
+
+<div class="amzn_link_block">
+  <a href="https://amzn.to/36QaP15" class="amzn_link_main" target="_blank" rel="noopener noreferrer"> ARCTIC MX-4 (4 g) Edition 2019 – High Performance Thermal Paste </a>
+</div>
+    <br></div>
+</div>
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side_block" id="side_menu"><nav class="menu_links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu_tag_block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu_tag_title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu_tag_lower">Alder Lake</a>
+</div>
+<div class="menu_category_block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu_category_title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu_category_lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu_category_lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu_category_lower">Intel</a>
+</div>
+<nav class="menu_share">
+
+  <div class="share_button_links">
+    <button class="share_copy_button" onclick="copy_url()">Copy URL</button>
+    <button class="share_copy_button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=ALDERLAKE_L%20%e3%81%a8%20Alder%20Lake-P%2fM%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/02/09/alderlake_l/&hashtags=AlderLake" rel="noreferrer noopener" target="_blank" class="share_tw">Tweet</a>
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu_site_search">Site Search by Google</a>
+
+    <nav class="menu_about"><a class="menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/02/09/alderlake_l.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot_links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/02/09/alderlake_l.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer><div class="slide">
+  <input type="radio" name="menu_open_close" id="open_menu" value="open" class="menu_open_input">
+  <label class="menu_open_label" for="open_menu"></label>
+  <input type="radio" name="menu_open_close" id="close_menu" value="close" class="menu_close_input" checked="">
+  <label class="menu_close_label" for="close_menu"></label>
+
+  <div class="slide_menu_block"><nav class="menu_links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu_tag_block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu_tag_title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu_tag_lower">Alder Lake</a>
+</div>
+<div class="menu_category_block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu_category_title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu_category_lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu_category_lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu_category_lower">Intel</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu_site_search">Site Search by Google</a>
+<nav class="menu_about"><a class="menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/02/09/alderlake_l.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+  </nav>
+  </div>
+</div>
+
+    </main>
+      <script>
+
+var title = document.title;
+var url = window.location.href;
+
+function copy_url() {
+  navigator.clipboard.writeText(url);
+  alert("Copied the URL\n");
+}
+
+function copy_title_url() {
+  navigator.clipboard.writeText(title + "\n\n" + url);
+  alert("Copied the Title & URL\n");
+}
+
+</script>
+
+    <div class="crt"></div>
+  </body>
+</html>
