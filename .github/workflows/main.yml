@@ -1,0 +1,24 @@
+# This is a basic workflow to help you get started with Actions
+
+name: sitemap-ping
+
+# Controls when the action will run. 
+on:
+#  page_build:
+  workflow_dispatch:
+  
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  ping:
+    runs-on: ubuntu-18.04
+    env:
+      MAP_URL: "https://www.coelacanth-dream.com/sitemap.xml"
+    steps:
+      - name: ping
+        run: |
+          curl -s "http://www.google.com/ping?sitemap=${MAP_URL}" > /dev/null &
+          curl -s "http://www.bing.com/ping?sitemap=${MAP_URL}" > /dev/null &
+          wait
+          echo "Done"
+
