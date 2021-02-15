@@ -1,23 +1,32 @@
 # This is a basic workflow to help you get started with Actions
 
-name: sitemap-ping
+name: gh_pages-sitemap-ping
 
-# Controls when the action will run. 
 on:
   page_build:
   workflow_dispatch:
   
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  ping:
+  gh_pages-sitemap-ping:
     runs-on: ubuntu-18.04
-    env:
-      MAP_URL: "https://www.coelacanth-dream.com/sitemap.xml"
     steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v2
+
       - name: ping
+        env:
+          MAP_URL: "NULL" # set custom URL if you use it
         run: |
-          curl -s "http://www.google.com/ping?sitemap=${MAP_URL}" > /dev/null &
-          curl -s "http://www.bing.com/ping?sitemap=${MAP_URL}" > /dev/null &
+          if [ "NULL" = "${MAP_URL}" ]; then
+            if [ -s CNAME ]; then
+              MAP_URL="$(cat CNAME)"
+            else
+              MAP_URL="$(echo ${{ github.repository }} | sed -e "s/^.*${{ github.github.repository_owner }}\///")"
+            fi
+              MAP_URL="https://${MAP_URL}/sitemap.xml"
+          fi
+
+          curl -v "http://www.google.com/ping?sitemap=${MAP_URL}" &
+          curl -v "http://www.bing.com/ping?sitemap=${MAP_URL}" &
           wait
           echo "Done"
