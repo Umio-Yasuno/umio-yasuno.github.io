@@ -371,6 +371,129 @@ WGP 2基で比較したのは、配置によっては一部ユニットの構造
 </tbody>
 </table>
 
+<p><em>PS5</em> はダイに WGP 20基を搭載しているが、2基を歩留まり向上のため冗長ユニットとし、WGP 18基の製品仕様を満たしている。これは <em>XSX</em> でも同じで、WGP 28基中 2基を冗長ユニットとしている。</p>
+
+<h2 id="余談-xsx-の-rb数">余談: XSX の RB数</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">PS5</th>
+<th align="center">XSX</th>
+<th align="center">Navi21</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Shader Engine</td>
+<td align="center">2?</td>
+<td align="center">2</td>
+<td align="center">4</td>
+</tr>
+
+<tr>
+<td align="left">Shader Array per SE</td>
+<td align="center">2</td>
+<td align="center">2</td>
+<td align="center">2</td>
+</tr>
+
+<tr>
+<td align="left">WGP per SA</td>
+<td align="center">4/5</td>
+<td align="center">6/7</td>
+<td align="center">5</td>
+</tr>
+
+<tr>
+<td align="left">GPU WGP(CU)</td>
+<td align="center">18(36) WGP</td>
+<td align="center">26(52) WGP</td>
+<td align="center">40(80) WGP</td>
+</tr>
+
+<tr>
+<td align="left">GPU Clock</td>
+<td align="center">2.23 GHz</td>
+<td align="center">1.825 GHz</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">Peak FP32</td>
+<td align="center">10.3 TFLOS</td>
+<td align="center">12.1 TFLOPS</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">RB</td>
+<td align="center">16RB?</td>
+<td align="center">16RB</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">Peak Pixel Fill-Rate</td>
+<td align="center">142.72 Gpix/s?</td>
+<td align="center">116.8 Gpix/s</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">Peak Geometry Fill-Rate</td>
+<td align="center">8.92 Gtri/s</td>
+<td align="center">7.3 Gtri/s</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">Memory Bus Width</td>
+<td align="center">256-bit</td>
+<td align="center">320-bit</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">Memory BW</td>
+<td align="center">448 GB/s</td>
+<td align="center">560 GB/s (high)<br>336 GB/s (low)</td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+
+<p>HotChips 32 のスライドを見返して気付いたが、<em>XSX</em> はメモリバス幅 320-bit に対して、RB (Render Backend) を 16基 <em>しか</em> 搭載していない。<br />
+というのも、RB は最終的なピクセルを VRAM のフレームバッファに書き込む役割を持つため、メモリチャネル数に合わせて搭載、配置されることがほとんどだ。<br />
+例えば <em>Navi10</em> は GDDR6 256-bit (16-bit * 16ch) に対応して、RB 16基が搭載されている。<br />
+しかし、<em>XSX</em> は GDDR6 320-bit (16-bit * 20ch) に対し、RB 16基となっている。<br />
+恐らくは特殊なメモリアーキテクチャと関係しているのかもしれないが、ピーククロックの差もあり、<span class="complement"><em>PS5</em> が RB 16基と仮定すると</span>
+ 最大ピクセル処理性能は <em>PS5</em> より約2割低いものとなっている。WGP(CU) 数が影響する FP32性能とは逆だ。</p>
+
+<p><em>XSX</em> ではピクセル処理性能がボトルネックとなる懸念があるように思われるが、単純に Microsoft がこれで充分だと判断したからその規模になったのだろうという見方もできる。<br />
+こればかりはゲーム開発者か誰かが検証しない限り、実性能にどれだけ影響するかは分からない。</p>
+
+<p>それと <em>RDNA 2</em> からは RB が RB+ となり、1基あたり 8-pixel の処理が可能となったが、以前まとめたように、<em>Vega/GFX9</em> 世代から RB+ のレジスタ自体は実装されているため、ダイショットから判別はできないように思う。<br />
+<span class="thread_link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/11/10/what-is-rbplus/">一部の AMD GPU で実装、有効化されている RB+ とは何か | Coelacanth's Dream</a></span>
+</p>
+
+<blockquote>
+<pre><code>  info-&gt;has_rbplus = info-&gt;family == CHIP_STONEY || info-&gt;chip_class &gt;= GFX9;
+
+  /* Some chips have RB+ registers, but don&#39;t support RB+. Those must
+   * always disable it.
+   */
+  info-&gt;rbplus_allowed =
+     info-&gt;has_rbplus &amp;&amp;
+     (info-&gt;family == CHIP_STONEY || info-&gt;family == CHIP_VEGA12 || info-&gt;family == CHIP_RAVEN ||
+      info-&gt;family == CHIP_RAVEN2 || info-&gt;family == CHIP_RENOIR || info-&gt;chip_class &gt;= GFX10_3);</code></pre>
+<div class="quote_source">引用元:&nbsp;<cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/3c2489d2e45b3013361c7284ed9de14fe40554cc/src/amd/common/ac_gpu_info.c" rel="noreferrer" target="_blank">src/amd/common/ac_gpu_info.c · 3c2489d2e45b3013361c7284ed9de14fe40554cc · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+
 <hr>
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
@@ -394,7 +517,7 @@ WGP 2基で比較したのは、配置によっては一部ユニットの構造
 </div>
 <div class="article_time">
   <time datetime="2021-02-15 23:04+09:00">Post: 2021/02/15 23:04 JST</time>
-  <div class="article_time_update">Update: 2021/02/16 02:43 JST</div>
+  <div class="article_time_update">Update: 2021/02/16 05:31 JST</div>
 </div>
 <div class="amzn">
   <div class="amzn_head">Amazonアソシエイト</div>
