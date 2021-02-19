@@ -366,16 +366,16 @@ h1 {
 </ul>
 
 <p><em>TgSplit</em> は <em>Thread group Split</em> の略とされる。<br />
-1つの Workgroup は通常同じ CU に割り振られ、CU内の異なる SIMDユニットで実行されるが
-<span class="complement">GCNアーキテクチャでは CUあたり 4 SIMDユニット、RDNA では 2 SIMDユニット)</span>
-
-<em>TGsplit</em> では Workgroup を分割し、異なる CU で実行することが可能となる。<br />
+1つの Workgroup は通常同じ CU に割り振られ、CU内の異なる SIMDユニットで実行されるが、 <em>TgSplit</em> では Workgroup を分割し、異なる CU で実行することが可能となる。<br />
+CU内の SIMDユニット数は、GCNアーキテクチャでは CUあたり 4 SIMDユニット、RDNA では 2 SIMDユニットとなる。<br />
 Workgroup は GPU が処理するカーネル内のブロックであり、スレッドの塊である Wavefront が最大 16個格納されている。Wavefront の単位は GCN では 64スレッド、RDNA では 32スレッド。RDNA は 64スレッドにも対応している。</p>
 
-<p>少ない Workgroup 数であっても CU の稼働率を引き上げられる機能に見えるが、CU内の高速なローカルメモリ、LDS (Local Data Share) は 1つの Workgroup内のスレッド間で共有するため、Workgroup を分割し、異なる CU で実行する <em>TgSplit</em> モードでは LDS が割り当てられない場合があるとしている。<br />
+<p><em>TgSplit</em> モードは少ない Workgroup 数であっても CU の稼働率を引き上げられる機能に見えるが、CU内の高速なローカルメモリ、LDS (Local Data Share) は 1つの Workgroup内のスレッド間で共有するため、Workgroup を分割し、異なる CU で実行する <em>TgSplit</em> モードでは LDS が割り当てられない場合があるとしている。<br />
 そのため、<em>TgSplit</em> モードを活用し、性能を引き出すにはソフトウェア側の新たな最適化が必要と考えられるが、そこは ROCmソフトウェアが担当するのだろう。</p>
 
-<p>実行フローにおける新たな <em>TgSplit</em> モードの追加は、AMD GPUアーキテクチャとして大きな変更点だと言える。</p>
+<p>実行フローにおける新たな <em>TgSplit</em> モードの追加は、AMD GPUアーキテクチャとして大きな変更点だと言える。<br />
+<em>gfx90a</em> では演算部が大きく強化されているが、それはユニット面積、GPUチップの製造コストにも響く。<em>gfx90a</em> の CU はこれまでの AMD GPU より大きくなるだろう。<em>Arcturus/gfx908</em> から増設された miSIMDユニット (Machine Intelligence SIMD) と AccVGPR (Accumulation VGPR) の存在もある。<br />
+そういった点では、<em>TgSplit</em> モードは増強された CU の稼働率を上げ、ダイに掛かるコストパフォーマンスを高めるために必要だったのではないか、という見方もできる。</p>
 
 <p>また、 <em>XGMI/Infinity Fabric Link</em> によるメモリ共有が可能なマルチGPU構成時のメモリモデルも改良され、仮想アドレスが割り当てられている L2キャッシュを、必要以上に無効化することを減らす工夫が採り入れられている。</p>
 
@@ -419,7 +419,7 @@ Workgroup は GPU が処理するカーネル内のブロックであり、ス�
 </tr>
 
 <tr>
-<td align="left"><em>MI200</em></td>
+<td align="left"><em>MI200?</em></td>
 <td align="center"><em>gfx90a?</em></td>
 </tr>
 
@@ -466,7 +466,7 @@ Workgroup は GPU が処理するカーネル内のブロックであり、ス�
 </table>
 <div class="article_time">
   <time datetime="2021-02-19 13:48+09:00">Post: 2021/02/19 13:48 JST</time>
-  <div class="article_time_update">Update: 2021/02/19 16:08 JST</div>
+  <div class="article_time_update">Update: 2021/02/19 16:47 JST</div>
 </div>
 <div class="amzn">
   <div class="amzn_head">Amazonアソシエイト</div>
