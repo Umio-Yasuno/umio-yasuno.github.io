@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/02/20/intel-dg1-prm/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Intel、DG1/Iris Xe Max PRM を公開 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Intel、DG1/Iris Xe Max PRM を公開 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Intel、DG1/Iris Xe Max PRM を公開 | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/02/20/intel-dg1-prm/">
+  <meta name="description" content="Intel は GPUのオープンソースドライバーに関係したリソースを公開する Intel® Graphics for Linux* | 01.org にて、Intel® Iris® XeMAX Graphics Open SourceProgrammer&#39;s Reference Manual を新たに公開した。">
+  <meta property="og:description" content="Intel は GPUのオープンソースドライバーに関係したリソースを公開する Intel® Graphics for Linux* | 01.org にて、Intel® Iris® XeMAX Graphics Open SourceProgrammer&#39;s Reference Manual を新たに公開した。">
+  <meta name="twitter:description" content="Intel は GPUのオープンソースドライバーに関係したリソースを公開する Intel® Graphics for Linux* | 01.org にて、Intel® Iris® XeMAX Graphics Open SourceProgrammer&#39;s Reference Manual を新たに公開した。">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/02/20/intel-dg1-prm/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/02/20/intel-dg1-prm/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="DG1, Gen12">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>
+html {
+   background-size: 100%;
+   background-attachment: fixed;
+   background-image: radial-gradient(ellipse 100% 54%, #004b56 0%, #004750 92%, #002c35 100%);
+   background-repeat: no-repeat;
+   font-size: .96rem;
+}
+main {
+   display: grid;
+   grid-template-rows: repeat(6, auto) 3rem;
+   grid-template-columns: .5vw 1vw auto 4vw;
+   row-gap: 20px;
+}
+header {
+   grid-row: 1;
+   grid-column: 3 / -2;
+   margin-top: 16px;
+}
+.site_title {
+   font: normal 23pt/25pt monospace;
+   text-decoration: none;
+   word-spacing: 100vw;
+   margin-left: auto;
+   text-align: end;
+   word-break: keep-all;
+   overflow-wrap: normal;
+}
+.site_title a {
+   color: #819BA1;
+   text-shadow: -4px 2px 1.8rem #748B90;
+   padding: 0;
+}
+.site_title a:hover {
+   color: #90B4BD;
+   text-shadow: -4px 2px 1.8rem #81A2AA;
+   text-decoration: none;
+}
+.site_title .lain_e {
+   display: inline-block;
+   font: normal .8em/.8em monospace;
+   padding: 0 .21em .18em .21em;
+   margin: 0 -3px 0 0;
+   vertical-align: middle;
+
+   background-color: rgba(0,0,0, .2);
+   border-radius: 100%;
+   transform: rotateZ(-24deg);
+}
+.site_title a:hover .lain_e {
+   background-color: rgba(0,0,0, .5);
+}
+a {
+   color: #A0E0FF;
+   text-decoration: none;
+   padding: 0 .3rem 0 .28rem;
+   margin: 0;
+}
+.text {
+   color: snow;
+   box-sizing: border-box;
+   overflow-wrap: break-word;
+   font-size: 1rem;
+   line-height: 1.7rem;
+   overflow-x: auto;
+   grid-row: 3;
+   grid-column: 1 / -1;
+}
+article > p {
+   margin: .4rem 0;
+}
+article > p::before {
+   padding-right: .55rem;
+   content: ' ';
+}
+footer,
+.home,
+.posts,
+.tags,
+.categories,
+.entry {
+   display: none;
+ 
+}
+.side {
+  transform: translateX(100vw);
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+footer {
+   grid-row: 5;
+   grid-column: 1 / -1;
+
+
+}
+article {
+   display: grid;
+   grid-template-rows: auto;
+   grid-template-columns: .5% 1% auto 2%;
+   row-gap: 12px;
+}
+article > * {
+   grid-column: 3 / -1;
+}
+article > h1 ~ * {
+  display: none;
+}
+h1 {
+
+   color: #FFA020;
+   font: normal 1.2rem/1.6rem sans-serif;
+   grid-column: 2 / -1;
+   margin: 0;
+   overflow-wrap: break-word;
+   word-break: break-word;
+   padding-bottom: 100vh;
+}
+ 
+  .slide {
+    display: none;
+  }
+.head_cat_tag {
+
+  border: 1px solid teal;
+  max-width: max-content;
+  padding: 5px 2px;
+  margin-bottom: 8px;
+  font-size: .96rem;
+  line-height: 1rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 8px;
+  font-family: monospace;
+}
+.head_cat_block,
+.head_tag_block {
+  max-width: max-content;
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 4px;
+}
+.head_cat_tag_type {
+  color: #38d8c8;
+  margin-top: auto;
+  padding: 0 .3rem;
+}
+.head_cat_lower,
+.head_tag_lower {
+  margin: 0 .4rem;
+  padding: 0 .1rem;
+}
+
+@media (min-width: 840px) {
+  main {
+    display: grid;
+    grid-template-rows: repeat(5, auto) 6vh;
+    grid-template-columns: 216px 8px 12px auto 16px;
+
+    row-gap: 4px;
+  }
+  article {
+    grid-template-columns: .5% .5% auto 2%;
+  }
+  .text {
+    grid-row: 3;
+    grid-column: 3 / -1;
+  }
+  .side {
+
+    transform: unset;
+    height: 96vh;
+    width: 198px;
+    position: fixed;
+      top: 1vh;
+      left: 0;
+    padding: 12px 8px 0 12px;
+    color: #20B2AA;
+    border-right: 1px solid #008F8F40;
+    font-size: 1rem;
+
+
+    overflow: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #008F8F20 transparent;
+  }
+  .side_block,
+  .foot_pagination,
+  .foot_tag_category {
+    display: none;
+  }
+}
+
+.share_copy_button,
+.share_tw {
+  display: inline-block;
+  font-size: 12px;
+  line-height: 1em;
+  margin: auto 0;
+  padding: 3px 8px 5px;
+  max-width: max-content;
+
+  border: 2px solid #00787c;
+  background-image: linear-gradient(to bottom, #00686c 0%, #00484c 120%);
+  color: #f0fff0;
+  text-align: center;
+  cursor: pointer;
+}
+.share_copy_button:active,
+.share_tw:active {
+
+  background-image: linear-gradient(to bottom, #005f5f 0%, #003f3f 120%);
+  color: #f0ffff;
+}
+
+::-webkit-scrollbar {
+  width:  6px;
+  height: 4px;
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #008F8F70;
+}
+::-webkit-scrollbar-corner,
+::-webkit-resizer {
+  display: none;
+}
+</style>
+<link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Intel、DG1/Iris Xe Max PRM を公開",
+  "headline" : "Intel、DG1/Iris Xe Max PRM を公開",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-02-20",
+    "datePublished" : "2021-02-20",
+    "dateModufied"  : "2021-02-20",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site_title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain_e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head_cat_tag"><div class="head_cat_block"><a href="https://www.coelacanth-dream.com/categories/" class="head_cat_tag_type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head_cat_lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head_cat_lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head_cat_lower">Intel</a></div><div class="head_tag_block"><a href="https://www.coelacanth-dream.com/tags/" class="head_cat_tag_type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/dg1/" class="head_tag_lower">DG1</a>/<a href="https://www.coelacanth-dream.com/tags/gen12/" class="head_tag_lower">Gen12</a></div>
+    </div>
+  <h1>Intel、DG1/Iris Xe Max PRM を公開</h1><nav class="article_share">
+  <div class="share_button_links">
+    <button class="share_copy_button" onclick="copy_url()">Copy URL</button>
+    <button class="share_copy_button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Intel%e3%80%81DG1%2fIris%20Xe%20Max%20PRM%20%e3%82%92%e5%85%ac%e9%96%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/02/20/intel-dg1-prm/" rel="noreferrer noopener" target="_blank" class="share_tw">Tweet</a>
+      <div class="splash_msg"></div>
+  </div>
+</nav>
+
+<p>Intel は GPUのオープンソースドライバーに関係したリソースを公開する <a href="https://01.org/linuxgraphics" rel="noreferrer" target="_blank">Intel® Graphics for Linux* | 01.org</a> にて、<em>Intel® Iris® XeMAX Graphics Open SourceProgrammer's Reference Manual</em> を新たに公開した。</p>
+
+<ul>
+<li><a href="https://01.org/node/37109" rel="noreferrer" target="_blank">2020 Discrete GPU formerly named &quot;DG1&quot; | 01.org</a></li>
+</ul>
+
+<h2 id="dg1-スペック">DG1 スペック</h2>
+
+<p>SKU とそのスペック一覧は <em>Volume 4: Configurations</em> に記載されている。</p>
+
+<ul>
+<li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol04-configurations.pdf" rel="noreferrer" target="_blank">Intel® Iris® Xe MAX Graphics Open Source Programmer's Reference Manual For the 2020 Discrete GPU formerly named &quot;DG1&quot; Volume 4: Configurations</a></li>
+</ul>
+
+<p>個人的に気になっていた Pixel Rate は 24 pixel/clock (24-ROP相当) とあった。<br />
+資料に記載されているのは <em>DG1</em> のスペックのみで、<em>Tiger Lake</em> は無いため、その Pixel Rate が <em>DG1</em> 固有なのか、<em>Gen12 GT2</em> で共通しているのかは不明。</p>
+
+<h3 id="dg1-gen12lpアーキテクチャでの変更点">DG1/Gen12LPアーキテクチャでの変更点</h3>
+
+<p>Intel の最近の GPUアーキテクチャは大体、Slice と呼ぶ塊の中に ジオメトリエンジンやラスタライザ、ピクセルバックエンド、複数の Sub-Slice が収められ、<br />
+Sub-Slice には、実行ユニットである EU、テクスチャ/メディアサンプラー、ロード/ストアユニット、SLM (Shared Local Memory)、L1データ/命令キャッシュが格納されている。</p>
+
+<p>前世代の Gen11アーキテクチャは全体で Slice 1基、Sub-Slice は最大 8基、Sub-Slice内の EU は 8基という構成を採っていた。<br />
+Gen12LPアーキテクチャでも Slice 1基というのは変わらないが、Sub-Slice が Dual Sub-Slice と名を変え、Dual Sub-Slice内の EU数は 16基となっている。<br />
+サンプラーの数は見かけ上では減ったが、スループットは倍となっており、EU数に対する性能は変わらない。<br />
+ロード/ストアユニットのデータポートは、Gen11 では Sub-Slice 2基あたり 1ポートだったのが、Gen12 では Dual Sub-Slice 1基あたり 1ポートとなり、L3キャッシュ、SLM に対するロード/ストア性能は大きく向上している。<br />
+ただ、Dual Sub-Slice とするにあたって、内部の規模を全て倍とした訳ではないようで、L1命令キャッシュは 48KB のままとなっており、相対的に減っていると見ることもできる部分もある。</p>
+
+<p>サンプラー等の固定機能ユニットが利用/管理するオンチップメモリ、URB (Unified Return Buffer) は、Gen11 では L3キャッシュの一部を割り当てる方式 (プログラマブル) だったが、<em>DG1</em> では全体で 768KB の固定サイズが割り当てられるようになった。<br />
+Gen11 では L3キャッシュバンクあたり最大 128KB を URB に割り当てることが可能であり、<em>DG1</em> は L3キャッシュバンクを 6基持つため、容量自体は Gen11 から引き継いでいる。<br />
+<em>DG1</em> は 16MB という巨大な L3キャッシュを持つが、URB を固定サイズとし、L3キャッシュとは別に持つことで、より多い容量をデータキャッシュやタイルキャッシュに割り当てられるようになっている。<br />
+しかし、L3キャッシュと URB を完全に分離した訳ではなく、Read はそれぞれ独立した帯域を確保できるが、Write は L3キャッシュと URB で共有するとある。<br />
+また、L3キャッシュとメモリコントローラーとを繋ぐ GTI (Graphics Technology Interface) / Ring Interface は 2基に増やされている。</p>
+
+<p>これらの変更点から、Gen12LPアーキテクチャは前世代から単純に強化したのではなく、dGPU として独立してメモリを扱うことを想定して演算性能とそれに対するキャッシュサイズ、帯域を見直したという印象を受ける。</p>
+
+<hr>
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://news.mynavi.jp/article/20200901-1262986/" rel="noreferrer" target="_blank">4つのマイクロアーキテクチャからなるIntelの新GPU「Xe」 - Hot Chips 32 (1) | TECH+</a></li>
+<li><a href="https://www.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Intel_Xe_David_Blythe.pdf" rel="noreferrer" target="_blank">HotChips2020_GPU_Intel_Xe_David_Blythe.pdf</a></li>
+</ul>
+
+</div>
+
+<div class="article_time">
+  <time datetime="2021-02-20 15:20+09:00">Post: 2021/02/20 15:20 JST</time>
+  <div class="article_time_update">Update: 2021/02/20 17:37 JST</div>
+</div>
+<div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+<div class="amzn_link_block">
+  <a href="https://amzn.to/36QaP15" class="amzn_link_main" target="_blank" rel="noopener noreferrer"> ARCTIC MX-4 (4 g) Edition 2019 – High Performance Thermal Paste </a>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+    <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+    <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+</div>
+
+    <br>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/2J2UnRG" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazon.co.jp: アカウントにチャージ</a>
+</div></div>
+</div>
+
+    <hr>
+    <div class="related_article">
+      <div class="related_article_title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2020/12/21/intel-xe-dgpu-recent-info/" target="_blank" class="related_article_link">Intel Xe GPU 近況　――  Xe-HPのメモリリージョン, PXP, Iris Xe MAX のサポート状況</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/11/12/intel-sg1/" target="_blank" class="related_article_link">Intel、サーバー向け GPU 「SG1」 と搭載カードを正式発表</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/11/01/intel-iris-xe-max/" target="_blank" class="related_article_link">Intel、モバイル向け dGPU &#34;Iris Xe Max&#34; を正式発表</a>
+    </div>
+    <hr>
+  
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side_block" id="side_menu"><nav class="menu_links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu_tag_block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu_tag_title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/dg1/" class="menu_tag_lower">DG1</a>
+      <a href="https://www.coelacanth-dream.com/tags/gen12/" class="menu_tag_lower">Gen12</a>
+</div>
+<div class="menu_category_block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu_category_title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu_category_lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu_category_lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu_category_lower">Intel</a>
+</div>
+<nav class="menu_share">
+  <div class="share_button_links">
+    <button class="share_copy_button" onclick="copy_url()">Copy URL</button>
+    <button class="share_copy_button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Intel%e3%80%81DG1%2fIris%20Xe%20Max%20PRM%20%e3%82%92%e5%85%ac%e9%96%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/02/20/intel-dg1-prm/" rel="noreferrer noopener" target="_blank" class="share_tw">Tweet</a>
+      <div class="splash_msg"></div>
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu_site_search">Site Search by Google</a>
+
+    <nav class="menu_about"><a class="menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/02/20/intel-dg1-prm.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot_links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot_about"><a class="foot_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/02/20/intel-dg1-prm.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot_share_search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot_site_search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer><div class="slide">
+  <input type="radio" name="menu_open_close" id="open_menu" value="open" class="menu_open_input">
+  <label class="menu_open_label" for="open_menu"></label>
+  <input type="radio" name="menu_open_close" id="close_menu" value="close" class="menu_close_input" checked="">
+  <label class="menu_close_label" for="close_menu"></label>
+
+  <div class="slide_menu_block"><nav class="menu_links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu_tag_block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu_tag_title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/dg1/" class="menu_tag_lower">DG1</a>
+      <a href="https://www.coelacanth-dream.com/tags/gen12/" class="menu_tag_lower">Gen12</a>
+</div>
+<div class="menu_category_block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu_category_title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu_category_lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu_category_lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu_category_lower">Intel</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu_site_search">Site Search by Google</a>
+<nav class="menu_about"><a class="menu_history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/02/20/intel-dg1-prm.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side_mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+    </nav>
+  </div>
+</div>
+
+    </main>
+  <script>
+var title = document.title;
+var url = window.location.href;
+
+function copy_url() {
+  navigator.clipboard.writeText(url);
+
+}
+
+function copy_title_url() {
+  navigator.clipboard.writeText(title + "\n\n" + url);
+
+}
+</script>
+
+    <div class="crt"></div>
+  </body>
+</html>
