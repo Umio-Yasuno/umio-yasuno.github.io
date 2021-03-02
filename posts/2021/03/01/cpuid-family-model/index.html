@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点 | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/">
+  <meta name="description" content="CPU の判定とかに使われる Family、Model についての話。 Index Base と Extended 一部ソフトウェアの問題点 Base と Extended CPU の Family、Model、Stepping">
+  <meta property="og:description" content="CPU の判定とかに使われる Family、Model についての話。 Index Base と Extended 一部ソフトウェアの問題点 Base と Extended CPU の Family、Model、Stepping">
+  <meta name="twitter:description" content="CPU の判定とかに使われる Family、Model についての話。 Index Base と Extended 一部ソフトウェアの問題点 Base と Extended CPU の Family、Model、Stepping">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Coelacanth&#39;s Dream, Hardware, CPU, GPU">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>
+html {
+  background-size: 100%;
+  background-attachment: fixed;
+  background-image: radial-gradient(ellipse 83% 59%, #004959 0%, #004750 94%, #002c35 102%);
+  background-repeat: no-repeat;
+  font-size: .95rem;
+  z-index: -1;
+}
+main {
+  display: grid;
+  grid-template-rows: repeat(6, auto) 3rem;
+  grid-template-columns: .5vw 1vw auto 4vw;
+  row-gap: 20px;
+  z-index: 0;
+}
+header {
+  grid-row: 1;
+  grid-column: 3 / -2;
+  margin-top: 16px;
+}
+.site-title {
+  font: normal 23pt/1.2 monospace;
+  text-decoration: none;
+  word-spacing: 100vw;
+  margin-left: auto;
+  text-align: end;
+  word-break: keep-all;
+  overflow-wrap: normal;
+
+}
+.site-title a {
+  color: #819BA1;
+  text-shadow: -4px 2px 1.8rem #748B90;
+  padding: 0;
+}
+.site-title a:hover {
+  color: #90B4BD;
+  text-shadow: -4px 2px 1.8rem #81A2AA;
+  text-decoration: none;
+}
+.site-title .lain-e {
+  display: inline-block;
+  font: normal .8em/.8 monospace;
+  padding: 0 .21em .18em .21em;
+  margin: 0 -3px 0 0;
+  vertical-align: middle;
+
+  background-color: rgba(0,0,0, .2);
+  border-radius: 100%;
+  transform: rotateZ(-24deg);
+}
+.site-title a:hover .lain-e {
+  background-color: rgba(0,0,0, .5);
+}
+a {
+  color: #A0E0FF;
+  text-decoration: none;
+  padding: 0 .3rem 0 .28rem;
+  margin: 0;
+}
+.text {
+  color: snow;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  grid-row: 3;
+  grid-column: 1 / -1;
+}
+article > p {
+  margin: .4rem 0;
+}
+article > p::before {
+  padding-right: .55rem;
+  content: ' ';
+}
+footer,
+.home,
+.posts,
+.tags,
+.categories,
+.entry {
+  display: none;
+}
+.side {
+  transform: translateX(100vw);
+  position: fixed;
+  top: 1vh;
+  left: 0;
+}
+footer {
+  grid-row: 5;
+  grid-column: 1 / -1;
+
+
+}
+article {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: .5% 1% auto 2%;
+  row-gap: 12px;
+}
+article > * {
+  grid-column: 3 / -1;
+}
+article > h1 ~ * {
+  display: none;
+  will-change: display;
+}
+h1 {
+
+  color: #FFA020;
+  font: normal 1.2rem/1.5 sans-serif;
+  grid-column: 2 / -1;
+  margin: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding-bottom: 100vh;
+}
+  
+.slide {
+  display: none;
+}
+.head-cat-tag {
+
+  border: 1px solid teal;
+  max-width: max-content;
+  padding: 8px 2px 6px;
+  margin-bottom: 8px;
+  font-size: .96rem;
+  line-height: 1rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 8px;
+  font-family: monospace;
+}
+.head-cat-block,
+.head-tag-block {
+  max-width: max-content;
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 4px;
+}
+.head-cat-tag-type {
+  color: #38d8c8;
+  margin-top: auto;
+  padding: 0 .3rem;
+}
+.head-cat-lower,
+.head-tag-lower {
+  margin: 0 .3rem;
+  padding: 0 .2rem;
+}
+
+@media (min-width: 840px) {
+  main {
+    display: grid;
+    grid-template-rows: repeat(5, auto) 6vh;
+    grid-template-columns: 200px 8px 12px auto 16px;
+
+    row-gap: 4px;
+  }
+  article {
+    grid-template-columns: .5% .5% auto 2%;
+  }
+  .text {
+    grid-row: 3;
+    grid-column: 3 / -1;
+  }
+  .side {
+
+    transform: translateX(0);
+    height: 96vh;
+    width: 180px;
+   
+    padding: 12px 8px 0 12px;
+    color: #20B2AA;
+    border-right: 1px solid #008F8F40;
+    font-size: 1rem;
+
+
+    overflow: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #008F8F20 transparent;
+  }
+  .side-block,
+  .foot-pagination,
+  .foot-tag-category {
+    display: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width:  6px;
+  height: 4px;
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #008F8F70;
+}
+::-webkit-scrollbar-corner,
+::-webkit-resizer {
+  display: none;
+}
+
+.crt {
+  background-image: linear-gradient(red     0%, red     33%,
+                                    green  33%, green   67%,
+                                    blue   67%, blue   100%);
+  background-size: 100% 1.3vh;
+  width: 100%;
+  height: 100%;
+  opacity: .02;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+</style>
+<link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点",
+  "headline" : "【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-03-01",
+    "datePublished" : "2021-03-01",
+    "dateModufied"  : "2021-03-02",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/diary/" class="head-cat-lower">Diary</a></div>
+    </div>
+  <h1>【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button class="share-copy-button" onclick="copy_url()">Copy URL</button>
+    <button class="share-copy-button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=%e3%80%90%e9%9b%91%e8%a8%98%e3%80%91CPUID%20%e3%81%ae%20Family%20%e3%81%a8%20Model%e3%80%81%e8%a1%a8%e7%a4%ba%e3%81%99%e3%82%8b%e4%b8%80%e9%83%a8%e3%82%bd%e3%83%95%e3%83%88%e3%82%a6%e3%82%a7%e3%82%a2%e3%81%ae%e5%95%8f%e9%a1%8c%e7%82%b9%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/" rel="noreferrer noopener" target="_blank" class="share-tw">Tweet</a>
+  </div>
+</nav><div class="article_time">
+  <time datetime="2021-03-01 16:47+09:00">Post: 2021/03/01 16:47 JST</time>
+  <div class="article_time_update">Update: 2021/03/02 19:30 JST</div>
+</div>
+
+
+<p>CPU の判定とかに使われる Family、Model についての話。</p>
+
+<h2 id="page-index">Index</h2>
+<div class="page-index">
+  <ul>
+<li><a href="#base-and-ext">Base と Extended</a></li>
+<li><a href="#oroblem">一部ソフトウェアの問題点</a></li>
+</ul>
+
+</div>
+
+
+<h2 id="base-and-ext">Base と Extended</h2>
+
+<p>CPU の Family、Model、Stepping 等の情報は CPUID から読み取ることができ、その CPUID のバイナリは以下のフォーマットになっている。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">CPUID (bit)</th>
+<th align="center">31-28</th>
+<th align="center">27-20</th>
+<th align="center">19-16</th>
+<th align="center">15-14</th>
+<th align="center">13-12</th>
+<th align="center">11-8</th>
+<th align="center">7-4</th>
+<th align="center">3-0</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">EAX</td>
+<td align="center">Reserved</td>
+<td align="center">Extended<br>Family</td>
+<td align="center">Extended<br>Model</td>
+<td align="center">Reserved</td>
+<td align="center">Processor<br>Type</td>
+<td align="center">Base<br>Family</td>
+<td align="center">Base<br>Model</td>
+<td align="center">Stepping<br>ID</td>
+</tr>
+</tbody>
+</table>
+
+<p>主に CPU の判定に使われる Family、Model は、CPUID では Family/Model と Extended.Family/Model に分けられており、それらが組み合わされて表現される。<br />
+AMD の PRR (Processor Programming Reference) では、CPUID のを Base.Family/Model と Extended.Family/Model とし、それらが組み合わせられて Family/Model が表現されると記述しており、そちらのが分かりやすいため、ここではその方式を採用して解説する。</p>
+
+<p>組み合わせ方は Family と Model で若干異なっており、Family は <code>(Extended.Family + Base.Family)</code> で表現されるが、Model は <code>((Extended.Model &lt;&lt; 4) + (Base.Model))</code> と、Extended.Model を 16進数 1桁分 (4-bit) を拡張、それから加算して表現される。</p>
+
+<p>以下は Coreboot 内のコードで、CPUID から Processor Type、Family、Model、Stepping を読み取って出力する部分となる。</p>
+
+<blockquote>
+<pre><code>     printf(&#34;CPU: ID 0x%x, Processor Type 0x%x, Family 0x%x, Model 0x%x, Stepping 0x%x\n&#34;,
+             id, (id &gt;&gt; 12) &amp; 0x3, ((id &gt;&gt; 8) &amp; 0xf) + ((id &gt;&gt; 20) &amp; 0xff),
+             ((id &gt;&gt; 12) &amp; 0xf0) + ((id &gt;&gt; 4) &amp; 0xf), (id &amp; 0xf));</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/coreboot/coreboot/blob/1e678169616b959921c38a2f25ca23b7f3e4cc77/util/inteltool/inteltool.c#L554" rel="noreferrer" target="_blank">coreboot/inteltool.c at 1e678169616b959921c38a2f25ca23b7f3e4cc77 · coreboot/coreboot</a></cite>
+</div>
+
+</blockquote>
+
+<p>処理内容としては、まず <code>0x90670 (Alder Lake-S)</code> のような CPUID が渡され、それをビット単位の右シフト演算 (<code>id &gt;&gt; n</code>) を行い、次にビット単位の論理積を (<code>(id &gt;&gt; n) &amp; 0xf</code>) を求めることで、指定の桁の値を得る、というものになっている。16進数では桁あたり 4-bit で表現されるから、<code>id &gt;&gt; 4</code> で右に 1桁ずらすことができる。<br />
+例に出した <em>Alder Lake-S</em> の CPUID では、上 2桁、Reserved と Extended.Family の上位 4-bit が省略されている。</p>
+
+<p>Processor Type を <code>(id &gt;&gt; 12) &amp; 0x3</code> としているのは、上の CPUID のフォーマットからも分かるように、Processor Type に定義されているのは 4種 (2-bit) までだからとなる。<br />
+Extended.Family は 8-bit、他は基本 4-bit となっているが、Processor Type の左 2-bit は 予約領域 (Reserved) に割り当てられており、16進数で表現した時にずれることはない。</p>
+
+<p>Processor Type の各定義は以下のようになっている。<sup class="footnote-ref" id="fnref:processor-type"><a href="#fn:processor-type">1</a></sup></p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Type</th>
+<th align="center">Encoding</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Original OEM Processor</td>
+<td align="center">00B</td>
+</tr>
+
+<tr>
+<td align="left">Intel OverDrive Processor</td>
+<td align="center">01B</td>
+</tr>
+
+<tr>
+<td align="left">Dual processor (not applicable to Intel486 processors)</td>
+<td align="center">10B</td>
+</tr>
+
+<tr>
+<td align="left">Intel reserved</td>
+<td align="center">11B</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="oroblem">一部ソフトウェアの問題点</h2>
+
+<p>CPU の Family、Model は各種システム情報を表示するソフトウェアで使われることもあるが、Windows OS で主に使われている <a href="https://www.cpuid.com/softwares/cpu-z.html" rel="noreferrer" target="_blank">CPU-Z</a> 等では正しく使われていない。</p>
+
+<p>CPU-Z では CPU の項目に、[Family] と [Ext.Family]、[Model] と [Ext.Model] を表示しているが、それらの中身は [Family] が Base.Family、[Ext.Family] が本当の Family (Base + Extended) となっており、値の意味と一致しない。Model についてもそのようになっている。<br />
+Intel の資料では Base.Family はただ Family と記述されているが、それは実際には組み合わせた値と区別されるべきものである。<br />
+他のソフトウェアでも同じ仕様になっているものがあり、Linux、FreeBSD で動作する、CPU-Z に似たソフトウェア <a href="https://github.com/X0rg/CPU-X" rel="noreferrer" target="_blank">CPU-X</a> がそうだ。</p>
+
+<figure>
+  <a href="https://www.coelacanth-dream.com/image/2021/03/01/cpu-x-fam-mod.webp" target="_blank"  >
+  <img src="https://www.coelacanth-dream.com/image/2021/03/01/cpu-x-fam-mod.webp"
+      alt="CPU-X CPU Tab"/>
+</a><figcaption>
+      <h4>CPU-X CPU Tab</h4>
+  </figcaption>
+</figure>
+
+
+<p>ただこの問題は CPU-X 自体よりも、CPU-X が用いているライブラリ <a href="https://github.com/anrieff/libcpuid" rel="noreferrer" target="_blank">libcpuid</a> に起因している。<br />
+<code>ext_family</code> に <code>Base.Family + Extended.Family</code> を、<code>ext_model</code> に <code>Base.Model + Extended.Model</code> を代入しており、以下がその該当部分となる。<br />
+Github で確認できる限りでは、v0.2.1 (2015-10-10) からこの仕様となっており、今も続いている。<br />
+libcpuid 最初のリリースは 2008-10-15 と ChangeLog にあるため、もっと前から問題が存在している可能性がある。</p>
+
+<blockquote>
+<pre><code>             data-&gt;ext_family = data-&gt;family + xfamily;
+         data-&gt;ext_model = data-&gt;model + (xmodel &lt;&lt; 4);</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/anrieff/libcpuid/blob/52c5f505cff57266b32aa8eb95eb7c7fc47db94b/libcpuid/cpuid_main.c#L323" rel="noreferrer" target="_blank">libcpuid/cpuid_main.c at 52c5f505cff57266b32aa8eb95eb7c7fc47db94b · anrieff/libcpuid</a></cite>
+</div>
+
+</blockquote>
+
+<p>本来であれば、項目[Family] に (Base + Ext) が使われ、[Ext.Family] に Extended.Family が表示されるべきだと考えている。<br />
+というより、言ってしまえば Family と Model それぞれに項目は 2つも必要ない、本当の Family/Model (Base + Extended) だけで十分だ。<br />
+Linux Kernel では以下のように本当の Family/Model、それと Stepping だけを表示しているし、コンパイラ等も、細かい Base/Extended.Family/Model を使うことはなく、本当の Family/Model で CPU の判定を行っている。</p>
+
+<blockquote>
+<pre><code> [    0.170939] smpboot: CPU0: AMD Ryzen 5 2600 Six-Core Processor (family: 0x17, model: 0x8, stepping: 0x2)</code></pre></blockquote>
+
+<p>わざわざ Base/Extended.Family/Model を個別に表示する必要性はかなり薄いし、ややこしくなるだけだ。<br />
+システム情報を表示する一部の <span class="complement">それに人気でもある</span>
+ ソフトウェアは、正しく値を用いないために、さも丁寧で親切な顔をしながら問題をもっと厄介なものにしている。<br />
+さらにひどいことに、CPU-Z は 16進数で表示しながら、接頭辞に <code>0x</code> を付けていない。CPU-X は付けているから、まだマシではある。<br />
+接頭辞を正しく付けないことの何がひどいかと言えば、まだ正式リリースされていない CPU が登場する場として <a href="https://browser.geekbench.com/" rel="noreferrer" target="_blank">Geekbench</a> があるが、そこでは CPU の Family、Model、Stepping が 10進数で表示されている。<br />
+だから、CPU-Z と Geekbench の情報を見比べると、同じような表記をしているが、Family は一致しても、Model はどれとも一致しない、ということが普通に起こり得る。<br />
+近年の Intel CPU は <code>Family: 0x6 (6)</code> であるため、16進数でも 10進数でもそれは一致する。</p>
+
+<p>Family/Model の意味と表記方法の違いを正しく理解し、かつ既に OSS へのパッチ等からある CPU の Family/Model が知られていれば、無駄に考えてる振りしてキャッシュ構成からしてどうだの言ったり、あるいは根拠も無く推測を言ったり、または怪しんだりすることなく、<br />
+すぐに判断することができるが、一部の誤った使い方によってそれが難しくされてしまっている。</p>
+
+<p>自分が知っている限りで、CPUID から得られる情報を最も誠実に表示しているのは、Linux 上で動作する <a href="http://www.etallen.com/cpuid.html" rel="noreferrer" target="_blank">cpuid</a> コマンドだ。<br />
+以下は実行例の一部だが、Base/Extended をどちらも正しく表示し、本当の Family/Model についても、それが組み合わされたものと分かるようにしてある。<br />
+さらには 16進数と 10進数の両方を表示しているため、他のソフトウェア、ベンチマークで表示される値と比較してもどれかは一致するし、相違点も分かりやすい。</p>
+
+<blockquote>
+<pre><code>   CPU 0:
+      vendor_id = &#34;AuthenticAMD&#34;
+      version information (1/eax):
+         processor type  = primary processor (0)
+         family          = 0xf (15)
+         model           = 0x8 (8)
+         stepping id     = 0x2 (2)
+         extended family = 0x8 (8)
+         extended model  = 0x0 (0)
+         (family synth)  = 0x17 (23)
+         (model synth)   = 0x8 (8)
+         (simple synth)  = AMD Ryzen (Pinnacle Ridge PiR-B2) [Zen+], 12nm</code></pre></blockquote>
+
+<p><br>
+CPUID と Family/Model は 1種の記号であり、確かな意味を持っている。<br />
+しかしそれを正しく認識するには、表記の違いや、そのソフトウェアの表示が信頼できるかどうかを考える必要がある。</p>
+
+<p>このことに気付いたのは最近ではあるが、まだ libcpuid のレポジトリに issue は送っていない。<br />
+CPU-X の方には issue と Pull Request を送ったが、libcpuid の問題だとしてマージは見送られた。<br />
+以下はそれを適用した場合の表示だが、Family と Model だけとし、Ext. の項目は無駄なので省き、空いたスペースを活用して項目の幅を拡張、10進数表示を加えている。</p>
+
+<figure>
+  <a href="https://www.coelacanth-dream.com/image/2021/03/01/cpu-x-fix-fam-mod.webp" target="_blank"  >
+  <img src="https://www.coelacanth-dream.com/image/2021/03/01/cpu-x-fix-fam-mod.webp"
+      alt="cpu x fix fam mod"/>
+</a>
+</figure>
+
+
+<p>libcpuid の方にもさっさと送るべき、最低でも報告はするべきなのだろうが、それをしない理由を端的に言えば気力の問題だ。<br />
+上で述べたようにこれは長年放置されている問題で、それは多くの人が、ユーザー、開発者を含めて関心を持っていないことによるものと考えられる。<br />
+また、そういったソフトウェアでは値をほとんどそのまま表示するため、バグや不具合として検出されないことも原因としてある。この前は、MB でメモリ容量を表示しているが、内部では ( KiB[2^10] / 10^3 ) で計算されていることに気付き <span class="complement">これは MB [10^6] とも MiB [2^20] とも異なるずれた値になる</span>
+、単位を MiB に変更、内部処理も ( KiB[2^10] / 2^10 ) に修正したりもした。その部分のコードは 5年近く前からあった。libcpuid は最低でも 5年、それ以上前から存在して、放置され続けてきた可能性がある問題だ。<br />
+1つのソフトウェアの問題を修正するだけならまだ簡単だが、ライブラリとなると影響範囲も大きくなる。<br />
+値を間違った解釈で使ってはいるが、それは長い間受け容れられてきた解釈でありもはや仕様だ。<br />
+だから修正がちゃんと望む形で適用されるか、不安に思っている。<br />
+そして、やり取りは全て英語で行わなければならないということが壁として存在する。<br />
+気力の問題と言ったのはそういう訳だ。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:processor-type"><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-2a-manual.html" rel="noreferrer" target="_blank">Intel® 64 and IA-32 Architectures Developer's Manual: Vol. 2A</a> (Page 307)
+ <a class="footnote-return" href="#fnref:processor-type"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+<div class="amzn_link_block">
+  <a href="https://amzn.to/36QaP15" class="amzn_link_main" target="_blank" rel="noopener noreferrer"> ARCTIC MX-4 (4 g) Edition 2019 – High Performance Thermal Paste </a>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+    <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+    <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+</div>
+
+<div class="amzn_link_block">
+  <a href="https://amzn.to/2J2UnRG" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazon.co.jp: アカウントにチャージ</a>
+</div></div>
+</div>
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/tags/">Tag</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-category-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-category-lower">Diary</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button class="share-copy-button" onclick="copy_url()">Copy URL</button>
+    <button class="share-copy-button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=%e3%80%90%e9%9b%91%e8%a8%98%e3%80%91CPUID%20%e3%81%ae%20Family%20%e3%81%a8%20Model%e3%80%81%e8%a1%a8%e7%a4%ba%e3%81%99%e3%82%8b%e4%b8%80%e9%83%a8%e3%82%bd%e3%83%95%e3%83%88%e3%82%a6%e3%82%a7%e3%82%a2%e3%81%ae%e5%95%8f%e9%a1%8c%e7%82%b9%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/" rel="noreferrer noopener" target="_blank" class="share-tw">Tweet</a>
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/01/cpuid-family-model.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side-mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/tags/">Tag</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a class="foot-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/01/cpuid-family-model.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side-mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-share-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer><div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/tags/">Tag</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-category-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-category-lower">Diary</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/01/cpuid-family-model.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side-mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+    </nav>
+  </div>
+</div>
+
+    </main>
+      <div class="crt"></div>
+  <script>
+
+var title = document.title;
+var url   = window.location.href;
+
+function copy_url() {
+  navigator.clipboard.writeText(url);
+  alert("Copied the URL\n");
+}
+
+function copy_title_url() {
+  navigator.clipboard.writeText(title + "\n\n" + url);
+  console.log(title + "\n\n" + url);
+  alert("Copied the Title & URL\n");
+}
+
+</script>
+
+  </body>
+</html>
