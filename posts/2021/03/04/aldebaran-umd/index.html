@@ -244,7 +244,7 @@ h1 {
   background-image: linear-gradient(red     0%, red     33%,
                                     green  33%, green   67%,
                                     blue   67%, blue   100%);
-  background-size: 100% 1.3vh;
+  background-size: 100% 1.5vh;
   width: 100%;
   height: 100%;
   opacity: .02;
@@ -293,7 +293,7 @@ h1 {
   </div>
 </nav><div class="article_time">
   <time datetime="2021-03-04 01:25+09:00">Post: 2021/03/04 01:25 JST</time>
-  <div class="article_time_update">Update: 2021/03/04 04:33 JST</div>
+  <div class="article_time_update">Update: 2021/03/04 04:55 JST</div>
 </div>
 
 
@@ -356,12 +356,11 @@ GPUID <em>gfx90a</em> では、LLVM に投稿されたパッチの内容から�
 
 </blockquote>
 
-<p>ここでの命令のプリフェッチ機能は <em>RDNA/GFX10</em> から追加された機能であり、<em>RDNA/GFX10</em> では命令を、現在の PC (Program Counter)<sup class="footnote-ref" id="fnref:pc"><a href="#fn:pc">1</a></sup> から最大 3個のキャッシュライン (各 64 Bytes) 分プリフェッチすることができる。<br />
+<p>ここでの命令のプリフェッチ機能は <em>RDNA/GFX10</em> から追加された機能であり、<em>RDNA/GFX10</em> では命令を、現在の PC (Program Counter)<sup class="footnote-ref" id="fnref:pc"><a href="#fn:pc">1</a></sup> から最大 3個のキャッシュライン分 (各 64 Bytes) プリフェッチすることができる。<br />
 それが <em>Aldebaran</em> では最大 16個のキャッシュライン分プリフェッチできるよう強化されている。<br />
 命令のプリフェッチがうまく働ければ、命令のロードを短縮することができ、演算速度の向上に繋がる。</p>
 
-<p>この機能は <em>CDNA 1 アーキテクチャ</em> 、 <em>Arcturus/MI100</em> ではサポートされていなかったため、CDNA 系では <em>CDNA 2 アーキテクチャ</em> から追加された機能と言え、<br />
-<em>RDNA/2 アーキテクチャ</em> とのプリフェッチの規模の違いはそれぞれの特徴を表しているとも言える。</p>
+<p>この機能は <em>CDNA 1 アーキテクチャ</em> 、 <em>Arcturus/MI100</em> ではサポートされていなかったため、CDNA 系では <em>CDNA 2 アーキテクチャ</em> から追加された機能と言え、<em>RDNA/2 アーキテクチャ</em> とのプリフェッチの規模の違いはそれぞれの特徴を表しているとも言える。</p>
 
 <p><em>Alderbaran</em> で <em>RDNA/2</em> よりも強化した理由については、<em>TgSplit</em> モードと同様に、<code>FullRate64Ops</code> の対応によって規模が大きくなった演算部の使用率/稼働率を高める目的があるのではないかと思われる。</p>
 
@@ -377,7 +376,7 @@ GPUID <em>gfx90a</em> では、LLVM に投稿されたパッチの内容から�
 
 </blockquote>
 
-<p>これまでの <em>GCN アーキテクチャ</em> と <em>Arcturus/MI100</em> では L2キャッシュのキャッシュラインサイズは 64 Bytes だったが、<em>Aldebaran</em> では 128 Bytes となる。<br />
+<p>これまでの <em>GCN アーキテクチャ</em> と <em>Arcturus/MI100</em> では L2キャッシュのキャッシュラインサイズは基本 64 Bytes だったが、<em>Aldebaran</em> では 128 Bytes となる。<br />
 上の引用部では見切れてしまっているが (含めようとすると今回のパッチで削除された部分も入ってしまう)、<em>RDNA アーキテクチャ</em> では <em>RDNA/GFX10</em> からキャッシュラインサイズは 128 Bytes となっており、命令のプリフェッチ機能のように、 <em>CDNA 2 アーキテクチャ</em> が <em>RDNA アーキテクチャ</em> から取り込んだ部分と言えなくもない。<br />
 単に開発時期の違いから <em>RDNA</em> が先に採り入れていた、というだけのこととも考えられるが。</p>
 
@@ -406,7 +405,9 @@ GPUID <em>gfx90a</em> では、LLVM に投稿されたパッチの内容から�
 
 </blockquote>
 
-<p>これは LLVM の記述と合わせて、 <em>Arcturus/MI100</em> ではドット積の演算を主に処理する miSIMDユニット側からのみ扱えた AccVGPR を、通常の SIMDユニット shSIMD (shader SIMD) からも扱えるよう変更したのではないかと考えられる。</p>
+<p>これは LLVM の記述と合わせて、 <em>Arcturus/MI100</em> ではドット積の演算を主に処理する miSIMDユニット側からのみ扱えた AccVGPR を、通常の SIMDユニット shSIMD (shader SIMD) からも扱えるよう変更したのではないかと考えられる。<br />
+shSIMD から扱えるベクタレジスタ数が増えることで、通常の処理において、レジスタから追い出されること (再割り当て) の頻度を減らすことができる。<br />
+上 2つは <em>RDNA アーキテクチャ</em> から採り入れたようにも見える機能だったが、この改良については <em>CDNA アーキテクチャ</em> から続くものだろう。</p>
 
 <blockquote>
 <pre><code>     SQ_MAX_PGM_VGPRS = 512, // Maximum programmable VGPRs across all targets.
