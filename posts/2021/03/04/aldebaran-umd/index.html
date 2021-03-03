@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/">
+  <meta name="description" content="オープンソースで開発される AMD GPU 向け OpenGLドライバー RadeonSI に、CDNA 2 アーキテクチャ を採用すると思われる Aldebran GPU のサポートを追加するパッチが投稿さ">
+  <meta property="og:description" content="オープンソースで開発される AMD GPU 向け OpenGLドライバー RadeonSI に、CDNA 2 アーキテクチャ を採用すると思われる Aldebran GPU のサポートを追加するパッチが投稿さ">
+  <meta name="twitter:description" content="オープンソースで開発される AMD GPU 向け OpenGLドライバー RadeonSI に、CDNA 2 アーキテクチャ を採用すると思われる Aldebran GPU のサポートを追加するパッチが投稿さ">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="gfx90a, MI200, Aldebaran, RadeonSI">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>
+html {
+  background-size: 100%;
+  background-attachment: fixed;
+  background-image: radial-gradient(ellipse 83% 59%, #004959 0%, #004750 94%, #002c35 102%);
+  background-repeat: no-repeat;
+  font-size: .95rem;
+  z-index: -1;
+}
+main {
+  display: grid;
+  grid-template-rows: repeat(6, auto) 3rem;
+  grid-template-columns: .5vw 1vw auto 4vw;
+  row-gap: 20px;
+  z-index: 0;
+}
+header {
+  grid-row: 1;
+  grid-column: 3 / -2;
+  margin-top: 16px;
+}
+.site-title {
+  font: normal 23pt/1.2 monospace;
+  text-decoration: none;
+  word-spacing: 100vw;
+  margin-left: auto;
+  text-align: end;
+  word-break: keep-all;
+  overflow-wrap: normal;
+
+}
+.site-title a {
+  color: #819BA1;
+  text-shadow: -4px 2px 1.8rem #748B90;
+  padding: 0;
+}
+.site-title a:hover {
+  color: #90B4BD;
+  text-shadow: -4px 2px 1.8rem #81A2AA;
+  text-decoration: none;
+}
+.site-title .lain-e {
+  display: inline-block;
+  font: normal .8em/.8 monospace;
+  padding: 0 .21em .18em .21em;
+  margin: 0 -3px 0 0;
+  vertical-align: middle;
+
+  background-color: rgba(0,0,0, .2);
+  border-radius: 100%;
+  transform: rotateZ(-24deg);
+}
+.site-title a:hover .lain-e {
+  background-color: rgba(0,0,0, .5);
+}
+a {
+  color: #A0E0FF;
+  text-decoration: none;
+  padding: 0 .3rem 0 .28rem;
+  margin: 0;
+}
+.text {
+  color: snow;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  grid-row: 3;
+  grid-column: 1 / -1;
+}
+article > p {
+  margin: .4rem 0;
+}
+article > p::before {
+  padding-right: .55rem;
+  content: ' ';
+}
+footer,
+.home,
+.posts,
+.tags,
+.categories,
+.entry {
+  display: none;
+}
+.side {
+  transform: translateX(100vw);
+  position: fixed;
+  top: 1vh;
+  left: 0;
+}
+footer {
+  grid-row: 5;
+  grid-column: 1 / -1;
+
+
+}
+article {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: .5% 1% auto 2%;
+  row-gap: 12px;
+}
+article > * {
+  grid-column: 3 / -1;
+}
+article > h1 ~ * {
+  display: none;
+  will-change: display;
+}
+h1 {
+
+  color: #FFA020;
+  font: normal 1.2rem/1.5 sans-serif;
+  grid-column: 2 / -1;
+  margin: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding-bottom: 100vh;
+}
+  
+.slide {
+  display: none;
+}
+.head-cat-tag {
+
+  border: 1px solid teal;
+  max-width: max-content;
+  padding: 8px 2px 6px;
+  margin-bottom: 8px;
+  font-size: .96rem;
+  line-height: 1rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 8px;
+  font-family: monospace;
+}
+.head-cat-block,
+.head-tag-block {
+  max-width: max-content;
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 4px;
+}
+.head-cat-tag-type {
+  color: #38d8c8;
+  margin-top: auto;
+  padding: 0 .3rem;
+}
+.head-cat-lower,
+.head-tag-lower {
+  margin: 0 .3rem;
+  padding: 0 .2rem;
+}
+
+@media (min-width: 840px) {
+  main {
+    display: grid;
+    grid-template-rows: repeat(5, auto) 6vh;
+    grid-template-columns: 200px 8px 12px auto 16px;
+
+    row-gap: 4px;
+  }
+  article {
+    grid-template-columns: .5% .5% auto 2%;
+  }
+  .text {
+    grid-row: 3;
+    grid-column: 3 / -1;
+  }
+  .side {
+
+    transform: translateX(0);
+    height: 96vh;
+    width: 180px;
+   
+    padding: 12px 8px 0 12px;
+    color: #20B2AA;
+    border-right: 1px solid #008F8F40;
+    font-size: 1rem;
+
+
+    overflow: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #008F8F20 transparent;
+  }
+  .side-block,
+  .foot-pagination,
+  .foot-tag-category {
+    display: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width:  6px;
+  height: 4px;
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #008F8F70;
+}
+::-webkit-scrollbar-corner,
+::-webkit-resizer {
+  display: none;
+}
+
+.crt {
+  background-image: linear-gradient(red     0%, red     33%,
+                                    green  33%, green   67%,
+                                    blue   67%, blue   100%);
+  background-size: 100% 1.3vh;
+  width: 100%;
+  height: 100%;
+  opacity: .02;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+</style>
+<link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される",
+  "headline" : "RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-03-04",
+    "datePublished" : "2021-03-04",
+    "dateModufied"  : "2021-03-04",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="head-tag-lower">Aldebaran</a>/<a href="https://www.coelacanth-dream.com/tags/gfx90a/" class="head-tag-lower">gfx90a</a>/<a href="https://www.coelacanth-dream.com/tags/mi200/" class="head-tag-lower">MI200</a>/<a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="head-tag-lower">RadeonSI</a></div>
+    </div>
+  <h1>RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button class="share-copy-button" onclick="copy_url()">Copy URL</button>
+    <button class="share-copy-button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=RadeonSI%20%e3%81%ab%20Aldebaran%20GPU%20%e3%81%ae%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%e3%82%92%e8%bf%bd%e5%8a%a0%e3%81%99%e3%82%8b%e3%83%91%e3%83%83%e3%83%81%e3%81%8c%e6%8a%95%e7%a8%bf%e3%81%95%e3%82%8c%e3%82%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/" rel="noreferrer noopener" target="_blank" class="share-tw">Tweet</a>
+  </div>
+</nav><div class="article_time">
+  <time datetime="2021-03-04 01:25+09:00">Post: 2021/03/04 01:25 JST</time>
+  <div class="article_time_update">Update: 2021/03/04 04:33 JST</div>
+</div>
+
+
+<p>オープンソースで開発される AMD GPU 向け OpenGLドライバー <strong>RadeonSI</strong> に、<em>CDNA 2 アーキテクチャ</em> を採用すると思われる <em>Aldebran</em> GPU のサポートを追加するパッチが投稿された。<br />
+<em>Aldebaran</em> はグラフィクス機能を持たないコンピュート専用 GPU だが、マルチメディアエンジンを搭載する関係でサポートが <strong>RadeonSI</strong> にも追加される。<br />
+それは <em>Arcturus/MI100</em> でも同様で、マルチメディアエンジンの用途には機械学習におけるオブジェクト検出等が想定されている。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/25/amd-aldebaran-gpu/">Linux Kernel に 「Aldebaran」 GPU をサポートするパッチが投稿される　―― CDNA 2/MI200 のコードネーム? | Coelacanth's Dream</a></span>
+</p>
+
+<h2 id="page-index">Index</h2>
+<div class="page-index">
+  <ul>
+<li><a href="#gfx90a">Aldebaran は gfx90a</a></li>
+<li><a href="#inst-prefetch">命令のプリフェッチ機能が強化</a></li>
+<li><a href="#tcc-line-128B">L2キャッシュのラインサイズが 128 Bytes に</a></li>
+<li><a href="#vgpr">割り当て可能なベクタレジスタの個数が倍に？</a></li>
+</ul>
+
+</div>
+
+
+<h2 id="gfx90a">Aldebaran は gfx90a</h2>
+
+<p>パッチが投稿されたタイミングや内容から、<em>Aldebaran</em> 、<em>MI200</em> の GPUID は <em>gfx90a</em> ではないかと考えられたが、今回投稿されたパッチからそれが確定した。<br />
+GPUID <em>gfx90a</em> では、LLVM に投稿されたパッチの内容から、<code>FullRateFP64Ops</code> 、<code>PackedFP32Ops</code> をサポートすることが分かっており、演算ユニットが大幅に強化されていることが予想できる。<br />
+また、Workgroup を分割し、異なる CU でそれぞれ実行することを可能とする <em>TgSplit</em> モードのサポートも追加されている。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth's Dream</a></span>
+</p>
+
+<blockquote>
+<pre><code>         return &#34;gfx909&#34;;
+      case CHIP_ARCTURUS:
+         return &#34;gfx908&#34;;
+      case CHIP_ALDEBARAN:
+         return &#34;gfx90a&#34;;
+      case CHIP_NAVI10:
+         return &#34;gfx1010&#34;;
+      case CHIP_NAVI12:</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/9389/diffs?commit_id=a563caa8a24b46ccb90afc88ffd4089328640597#diff-content-fbbe09bc487101e3f2f96c0b8fe543c915fa99bf" rel="noreferrer" target="_blank">amd: add Aldebaran chip enum</a></cite>
+</div>
+
+</blockquote>
+
+<h2 id="inst-prefetch">命令のプリフェッチ機能が強化</h2>
+
+<p><em>Aldebaran</em> では命令のプリフェッチ (先読み) 機能が、 <em>RDNA アーキテクチャ</em> よりも離れた命令を読み込めるよう強化されている。</p>
+
+<blockquote>
+<pre><code>      unsigned prefetch_distance = 0;
+
+      if (!i.info-&gt;has_graphics &amp;&amp; i.info-&gt;family &gt;= CHIP_ALDEBARAN)
+         prefetch_distance = 16;
+      else if (i.info-&gt;chip_class &gt;= GFX10)
+         prefetch_distance = 3;
+
+      if (prefetch_distance)
+         binary-&gt;rx_size = align(binary-&gt;rx_size + prefetch_distance * 64, 64);</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/9389/diffs?commit_id=4b1325902be3d22386b79929987f57dd95d6ac75#diff-content-4ebf7901a3eaa2bb371e22bccfbed14df52e0608" rel="noreferrer" target="_blank">ac: handle bigger instruction prefetch for Aldebaran</a></cite>
+</div>
+
+</blockquote>
+
+<p>ここでの命令のプリフェッチ機能は <em>RDNA/GFX10</em> から追加された機能であり、<em>RDNA/GFX10</em> では命令を、現在の PC (Program Counter)<sup class="footnote-ref" id="fnref:pc"><a href="#fn:pc">1</a></sup> から最大 3個のキャッシュライン (各 64 Bytes) 分プリフェッチすることができる。<br />
+それが <em>Aldebaran</em> では最大 16個のキャッシュライン分プリフェッチできるよう強化されている。<br />
+命令のプリフェッチがうまく働ければ、命令のロードを短縮することができ、演算速度の向上に繋がる。</p>
+
+<p>この機能は <em>CDNA 1 アーキテクチャ</em> 、 <em>Arcturus/MI100</em> ではサポートされていなかったため、CDNA 系では <em>CDNA 2 アーキテクチャ</em> から追加された機能と言え、<br />
+<em>RDNA/2 アーキテクチャ</em> とのプリフェッチの規模の違いはそれぞれの特徴を表しているとも言える。</p>
+
+<p><em>Alderbaran</em> で <em>RDNA/2</em> よりも強化した理由については、<em>TgSplit</em> モードと同様に、<code>FullRate64Ops</code> の対応によって規模が大きくなった演算部の使用率/稼働率を高める目的があるのではないかと思われる。</p>
+
+<h2 id="tcc-line-128B">L2キャッシュのラインサイズが 128 Bytes に</h2>
+
+<blockquote>
+<pre><code>         if (!info-&gt;has_graphics &amp;&amp; info-&gt;family &gt;= CHIP_ALDEBARAN)
+            info-&gt;tcc_cache_line_size = 128;
+         else
+            info-&gt;tcc_cache_line_size = 64;</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/9389/diffs?commit_id=1a03a53c51911cf48d6007ee5745643a836a4a72#diff-content-c3cf206d71203e77a4252c3915daf913c9251dc3" rel="noreferrer" target="_blank">ac: set the TCC line size for Aldebaran</a></cite>
+</div>
+
+</blockquote>
+
+<p>これまでの <em>GCN アーキテクチャ</em> と <em>Arcturus/MI100</em> では L2キャッシュのキャッシュラインサイズは 64 Bytes だったが、<em>Aldebaran</em> では 128 Bytes となる。<br />
+上の引用部では見切れてしまっているが (含めようとすると今回のパッチで削除された部分も入ってしまう)、<em>RDNA アーキテクチャ</em> では <em>RDNA/GFX10</em> からキャッシュラインサイズは 128 Bytes となっており、命令のプリフェッチ機能のように、 <em>CDNA 2 アーキテクチャ</em> が <em>RDNA アーキテクチャ</em> から取り込んだ部分と言えなくもない。<br />
+単に開発時期の違いから <em>RDNA</em> が先に採り入れていた、というだけのこととも考えられるが。</p>
+
+<p>キャッシュラインサイズはメモリにアクセスするデータの単位を表し、ラインサイズを増やすことは 1度にアクセスするメモリのデータ量を増やすことを意味する。<br />
+<em>RDNA アーキテクチャ</em> の資料では 128 Bytes に増やした利点について、少ないメモリリクエストで広い帯域を活用できる、と説明していた。<sup class="footnote-ref" id="fnref:rdna-doc"><a href="#fn:rdna-doc">2</a></sup> <em>Aldebaran</em> も同様の効果を狙って増やしたものと考えられる。<br />
+また、キャッシュラインに付けられたメモリアドレスを記録するタグに対するサイズが増え、より効率的にデータ部にキャッシュメモリを使うことができる。</p>
+
+<p>それと TCC は Texture Channel Cache の略とされ、L2キャッシュの意。</p>
+
+<h2 id="vgpr">割り当て可能なベクタレジスタの個数が倍に？</h2>
+
+<p>また、<em>Aldebaran</em> ではスレッドあたりに割り当て可能な VGPR/ベクタレジスタの数が 512個となった。</p>
+
+<blockquote>
+<pre><code>      if (!info-&gt;has_graphics &amp;&amp; info-&gt;family &gt;= CHIP_ALDEBARAN) {
+         info-&gt;min_wave64_vgpr_alloc = 8;
+         info-&gt;max_vgpr_alloc = 512;
+         info-&gt;wave64_vgpr_alloc_granularity = 8;
+      } else {
+         info-&gt;min_wave64_vgpr_alloc = 4;
+         info-&gt;max_vgpr_alloc = 256;
+         info-&gt;wave64_vgpr_alloc_granularity = 4;
+      }</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/9389/diffs?commit_id=93c29b82e026e67ad5399864a3779d6f6841fb74" rel="noreferrer" target="_blank">ac,radeonsi: use correct VGPR granularity on Aldebaran</a></cite>
+</div>
+
+</blockquote>
+
+<p>これは LLVM の記述と合わせて、 <em>Arcturus/MI100</em> ではドット積の演算を主に処理する miSIMDユニット側からのみ扱えた AccVGPR を、通常の SIMDユニット shSIMD (shader SIMD) からも扱えるよう変更したのではないかと考えられる。</p>
+
+<blockquote>
+<pre><code>     SQ_MAX_PGM_VGPRS = 512, // Maximum programmable VGPRs across all targets.
+     AGPR_OFFSET = 226, // Maximum programmable ArchVGPRs across all targets.</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/llvm/llvm-project/commit/a8d9d50762c42d726274d3f1126ec97ff96e2a22#diff-86355ae43faace12f363d845b2794391c7f0e1787a1e09862012f8f6d158a9ad" rel="noreferrer" target="_blank">[AMDGPU] gfx90a support · llvm/llvm-project@a8d9d50</a></cite>
+</div>
+
+</blockquote>
+
+<figure>
+  <a href="https://www.coelacanth-dream.com/image/2020/12/15/cdna-vgpr.webp" target="_blank"  >
+  <img src="https://www.coelacanth-dream.com/image/2020/12/15/cdna-vgpr.webp"
+      alt="画像出典: &amp;quot;AMD Instinct MI100&amp;quot; Instruction Set Architecture: Reference Guide - CDNA1_Shader_ISA_14December2020.pdf"/>
+</a><figcaption>
+      <p><cite>画像出典: <a href="https://developer.amd.com/wp-content/resources/CDNA1_Shader_ISA_14December2020.pdf" rel="noreferrer" target="_blank">&quot;AMD Instinct MI100&quot; Instruction Set Architecture: Reference Guide - CDNA1_Shader_ISA_14December2020.pdf</a></cite></p>
+  </figcaption>
+</figure>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:pc">(PC, Program Counter: 次に実行する命令のアドレスを格納しているレジスタ)
+ <a class="footnote-return" href="#fnref:pc"><sup>[return]</sup></a></li>
+<li id="fn:rdna-doc"><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" rel="noreferrer" target="_blank">AMD PowerPoint- White Template - RDNA_Architecture_public.pdf</a>
+ <a class="footnote-return" href="#fnref:rdna-doc"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+<div class="amzn_link_block">
+  <a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「Radeon」</a>
+    <div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/2LvmAlY" class="amzn_link_main" target="_blank" rel="noopener noreferrer">玄人志向 AMD Radeon RX550搭載 グラフィックボード GDDR5 2GB Low Profile対応 シングルファンモデル</a>
+    <div class="amzn_link_desc">1スロLPな RX 550、最新のオープンソースドライバーを使えるため、小型サーバーに適している</div>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/3pSoUCL" class="amzn_link_main" target="_blank" rel="noopener noreferrer">SAPPHIRE PULSE RADEON RX 5500 XT 4G</a>
+    <div class="amzn_link_desc">とにかく RDNA GPU を試したいなら。一般用途としては十分過ぎる性能も持っている。</div>
+</div>
+    <br>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/36QaP15" class="amzn_link_main" target="_blank" rel="noopener noreferrer"> ARCTIC MX-4 (4 g) Edition 2019 – High Performance Thermal Paste </a>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+    <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+</div>
+<div class="amzn_link_block">
+  <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+    <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+</div>
+
+<div class="amzn_link_block">
+  <a href="https://amzn.to/2J2UnRG" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazon.co.jp: アカウントにチャージ</a>
+</div></div>
+</div>
+
+    <hr><div class="related-article">
+      <div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2021/02/25/amd-aldebaran-gpu/" target="_blank" class="related-article-link">Linux Kernel に 「Aldebaran」 GPU をサポートするパッチが投稿される　―― CDNA 2/MI200 のコードネーム?</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/02/22/mi200-hpc-system/" target="_blank" class="related-article-link">MI200 は Frontier、LUMI に採用され、LUMI は 2021年半ばから運用開始予定</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/" target="_blank" class="related-article-link">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か</a>
+    </div>
+    <hr>
+  
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="menu-tag-lower">Aldebaran</a>
+      <a href="https://www.coelacanth-dream.com/tags/gfx90a/" class="menu-tag-lower">gfx90a</a>
+      <a href="https://www.coelacanth-dream.com/tags/mi200/" class="menu-tag-lower">MI200</a>
+      <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-tag-lower">RadeonSI</a>
+</div>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-category-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-category-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-category-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button class="share-copy-button" onclick="copy_url()">Copy URL</button>
+    <button class="share-copy-button" onclick="copy_title_url()">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=RadeonSI%20%e3%81%ab%20Aldebaran%20GPU%20%e3%81%ae%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%e3%82%92%e8%bf%bd%e5%8a%a0%e3%81%99%e3%82%8b%e3%83%91%e3%83%83%e3%83%81%e3%81%8c%e6%8a%95%e7%a8%bf%e3%81%95%e3%82%8c%e3%82%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/" rel="noreferrer noopener" target="_blank" class="share-tw">Tweet</a>
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/04/aldebaran-umd.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side-mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a class="foot-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/04/aldebaran-umd.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side-mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-share-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer><div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="menu-tag-lower">Aldebaran</a>
+      <a href="https://www.coelacanth-dream.com/tags/gfx90a/" class="menu-tag-lower">gfx90a</a>
+      <a href="https://www.coelacanth-dream.com/tags/mi200/" class="menu-tag-lower">MI200</a>
+      <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-tag-lower">RadeonSI</a>
+</div>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-category-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-category-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-category-lower">Hardware</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/04/aldebaran-umd.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side-mail">Mail</a>
+
+<a href="https://www.coelacanth-dream.com/index.xml">RSS</a>
+
+    </nav>
+  </div>
+</div>
+
+    </main>
+      <div class="crt"></div>
+  <script>
+
+var title = document.title;
+var url   = window.location.href;
+
+function copy_url() {
+  navigator.clipboard.writeText(url);
+  alert("Copied the URL\n");
+}
+
+function copy_title_url() {
+  navigator.clipboard.writeText(title + "\n\n" + url);
+  console.log(title + "\n\n" + url);
+  alert("Copied the Title & URL\n");
+}
+
+</script>
+
+  </body>
+</html>
