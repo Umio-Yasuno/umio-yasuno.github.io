@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/03/12/intel-xe_lpd-display13/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Intel、Display13 改め &#34;XE_LPD&#34; をサポートするパッチを投稿　―― 今後は独立して各 IP が更新されるように | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Intel、Display13 改め &#34;XE_LPD&#34; をサポートするパッチを投稿　―― 今後は独立して各 IP が更新されるように | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Intel、Display13 改め &#34;XE_LPD&#34; をサポートするパッチを投稿　―― 今後は独立して各 IP が更新されるように | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/03/12/intel-xe_lpd-display13/">
+  <meta name="description" content="Intel GPU のディスプレイエンジンIP XE_LPD をサポートするパッチが Linux Kernel (intel-gfx) に投稿された。 パッチの中身としては、以前投稿された Display13 をサポートするパッチと同じであり">
+  <meta property="og:description" content="Intel GPU のディスプレイエンジンIP XE_LPD をサポートするパッチが Linux Kernel (intel-gfx) に投稿された。 パッチの中身としては、以前投稿された Display13 をサポートするパッチと同じであり">
+  <meta name="twitter:description" content="Intel GPU のディスプレイエンジンIP XE_LPD をサポートするパッチが Linux Kernel (intel-gfx) に投稿された。 パッチの中身としては、以前投稿された Display13 をサポートするパッチと同じであり">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/03/12/intel-xe_lpd-display13/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/03/12/intel-xe_lpd-display13/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Gen13">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>
+html {
+  background-size: 100%;
+  background-attachment: fixed;
+  background-image: radial-gradient(ellipse 83% 59%,
+                                    #004c55 0%,
+                                    #004750 94%,
+                                    #002c35 102%);
+  background-repeat: no-repeat;
+  font-size: .95rem;
+  z-index: -1;
+}
+main {
+  display: grid;
+  grid-template-rows: repeat(6, auto) 3rem;
+  grid-template-columns: .5vw 1vw auto 4vw;
+  row-gap: 20px;
+  z-index: 0;
+}
+header {
+  grid-row: 1;
+  grid-column: 3 / -2;
+  margin-top: 16px;
+}
+.site-title {
+  font: normal 23pt/1.1 monospace;
+  text-decoration: none;
+  word-spacing: 100vw;
+  margin-left: auto;
+  text-align: end;
+  word-break: keep-all;
+  overflow-wrap: normal;
+
+}
+.site-title a {
+  color: #819BA1;
+  text-shadow: -4px 2px 1.8rem #748B90;
+  padding: 0;
+}
+.site-title a:hover {
+  color: #90B4BD;
+  text-shadow: -4px 2px 1.8rem #81A2AA;
+  text-decoration: none;
+}
+.site-title .lain-e {
+  display: inline-block;
+  font: normal .8em/.8 monospace;
+  padding: 0 .21em .18em .21em;
+  margin: 0 -3px 0 0;
+  vertical-align: middle;
+
+  background-color: rgba(0,0,0, .2);
+  border-radius: 100%;
+  transform: rotateZ(-24deg);
+}
+.site-title a:hover .lain-e {
+  background-color: rgba(0,0,0, .5);
+}
+a {
+  color: #A0E0FF;
+  text-decoration: none;
+  padding: 0 .3rem 0 .28rem;
+  margin: 0;
+}
+.text {
+  color: snow;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  grid-row: 3;
+  grid-column: 1 / -1;
+}
+article > p {
+  margin: .4rem 0;
+}
+article > p::before {
+  padding-right: .55rem;
+  content: ' ';
+}
+footer,
+.home,
+.posts,
+.tags,
+.categories,
+.entry {
+  display: none;
+}
+.side {
+  transform: translateX(100vw);
+  position: fixed;
+  top: 1vh;
+  left: 0;
+}
+footer {
+  grid-row: 5;
+  grid-column: 1 / -1;
+
+
+}
+article {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: .5% 1% auto 2%;
+  row-gap: 12px;
+}
+article > * {
+  grid-column: 3 / -1;
+}
+article > h1 ~ * {
+  display: none;
+  will-change: display;
+}
+h1 {
+
+  color: #FFA020;
+  font: normal 1.2rem/1.5 sans-serif;
+  grid-column: 2 / -1;
+  margin: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding-bottom: 100vh;
+} 
+.slide {
+  display: none;
+}
+.head-cat-tag {
+  border: 1px solid teal;
+  max-width: max-content;
+  padding: 8px 2px 6px;
+  margin-bottom: 8px;
+  font-size: .96rem;
+  line-height: 1.1;
+
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 10px;
+  font-family: monospace;
+}
+.head-cat-block,
+.head-tag-block {
+  max-width: max-content;
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 4px;
+}
+.head-cat-tag-type {
+  color: #38d8c8;
+  margin-top: auto;
+  padding: 0 .1rem;
+  margin: 0 .3rem;
+}
+.head-cat-lower,
+.head-tag-lower {
+  margin: 0 .1rem 0 .4rem;
+  padding: 0 .1rem;
+}
+.head-cat-tag a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 840px) {
+  main {
+    display: grid;
+    grid-template-rows: repeat(5, auto) 6vh;
+    grid-template-columns: 200px 8px 12px auto 16px;
+
+    row-gap: 4px;
+  }
+  article {
+    grid-template-columns: .5% .5% auto 2%;
+  }
+  .text {
+    grid-row: 3;
+    grid-column: 3 / -1;
+  }
+  .side {
+
+    transform: translateX(0);
+    height: 96vh;
+    width: 180px;
+   
+    padding: 12px 8px 0 12px;
+    color: #20B2AA;
+    border-right: 1px solid #008F8F40;
+    font-size: 1rem;
+
+
+    overflow: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #008F8F20 transparent;
+  }
+  .side-block,
+  .foot-pagination,
+  .foot-tag-category {
+    display: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width:  6px;
+  height: 4px;
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #008F8F70;
+}
+::-webkit-scrollbar-corner,
+::-webkit-resizer {
+  display: none;
+}
+
+.crt {
+  background-image: linear-gradient(red     0%, red     33%,
+                                    green  33%, green   67%,
+                                    blue   67%, blue   100%);
+  background-size: 100% 1.5vh;
+  width: 100%;
+  height: 100%;
+  opacity: .02;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+</style>
+<link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Intel、Display13 改め &#34;XE_LPD&#34; をサポートするパッチを投稿　―― 今後は独立して各 IP が更新されるように",
+  "headline" : "Intel、Display13 改め &#34;XE_LPD&#34; をサポートするパッチを投稿　―― 今後は独立して各 IP が更新されるように",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-03-12",
+    "datePublished" : "2021-03-12",
+    "dateModufied"  : "2021-03-12",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head-cat-lower">Intel</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/gen13/" class="head-tag-lower">Gen13</a></div>
+    </div>
+  <h1>Intel、Display13 改め &#34;XE_LPD&#34; をサポートするパッチを投稿　―― 今後は独立して各 IP が更新されるように</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button class="share-copy-button" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Intel%e3%80%81Display13%20%e6%94%b9%e3%82%81%20%22XE_LPD%22%20%e3%82%92%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%e3%81%99%e3%82%8b%e3%83%91%e3%83%83%e3%83%81%e3%82%92%e6%8a%95%e7%a8%bf%e3%80%80%e2%80%95%e2%80%95%20%e4%bb%8a%e5%be%8c%e3%81%af%e7%8b%ac%e7%ab%8b%e3%81%97%e3%81%a6%e5%90%84%20IP%20%e3%81%8c%e6%9b%b4%e6%96%b0%e3%81%95%e3%82%8c%e3%82%8b%e3%82%88%e3%81%86%e3%81%ab%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/12/intel-xe_lpd-display13/
+  " rel="noreferrer noopener" target="_blank" class="share-tw">Tweet</a><a href="https://www.coelacanth-dream.com/index.xml" class="rss-button" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article_time">
+  <time datetime="2021-03-12 02:09+09:00">Post: 2021/03/12 02:09 JST</time>
+  <div class="article_time_update">Update: 2021/03/12 03:19 JST</div>
+</div>
+
+
+<p>Intel GPU のディスプレイエンジンIP <em>XE_LPD</em> をサポートするパッチが Linux Kernel (intel-gfx) に投稿された。<br />
+パッチの中身としては、以前投稿された <em>Display13</em> をサポートするパッチと同じであり、パッチのタイトルやコード中のコメントにあった <em>Display13</em> を <em>XE_LPD</em> にリネームしたのがほとんどとなる。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/29/intel-display13/">Linux Kernel に Intel &quot;Display13&quot; をサポートする最初のパッチが投稿される | Coelacanth's Dream</a></span>
+
+パッチの目的はむしろ、新たなディスプレイIPをサポートすることよりも、将来の GPU のため、IP のバージョン管理を変更することにある。</p>
+
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-March/262071.html" rel="noreferrer" target="_blank">[Intel-gfx] [PATCH v2 00/23] Separate display version numbering and add XE_LPD (version 13)</a></li>
+</ul>
+
+<h2 id="今後-gpuコア-メディア-ディスプレイは独立して更新するように">今後 GPUコア、メディア、ディスプレイは独立して更新するように</h2>
+
+<p>Intel の GPUアーキテクチャは基本 <em>Gen11</em> とか <em>Gen12</em> といったように、単一のバージョン番号で語られることが多いが、ハードウェア的には GPUコア、メディアエンジン、ディスプレイエンジンで分かれている。</p>
+
+<figure>
+  <a href="https://www.coelacanth-dream.com/image/2021/03/12/dg1-ip-ver.webp" target="_blank"  >
+  <img src="https://www.coelacanth-dream.com/image/2021/03/12/dg1-ip-ver.webp"
+      alt="画像出典: Intel® Iris® Xe MAX Graphics Open Source Programmer&#39;s Reference Manual For the 2020 Discrete GPU formerly named &amp;quot;DG1&amp;quot; Volume 4: Configurations - intel-gfx-prm-osrc-dg1-vol04-configurations.pdf"/>
+</a><figcaption>
+      <h4>DG1 IP version</h4><p>画像出典: <a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol04-configurations.pdf" rel="noreferrer" target="_blank">Intel® Iris® Xe MAX Graphics Open Source Programmer's Reference Manual For the 2020 Discrete GPU formerly named &quot;DG1&quot; Volume 4: Configurations - intel-gfx-prm-osrc-dg1-vol04-configurations.pdf</a></p>
+  </figcaption>
+</figure>
+
+
+<p><a href="https://www.coelacanth-dream.com/tags/dg1">DG1</a> はまだそれらのバージョン番号が統一されており、それまでも基本そうだったが、今後の Intel GPU では別々に独立してハードウェアIPが更新されるようになるため、そうもいかなくなった。<br />
+バージョンが統一されていない特殊な例として、GPUコアは <em>Gen9 アーキテクチャ</em> だが、ディスプレイエンジンは HDMI 2.0 に対応していた、<em>Gemini Lake</em> が存在する。</p>
+
+<p>今後は、「GPUコア (graphics version)」、「メディアエンジン (media version)」、「ディスプレイエンジン (display version)」を、ドライバー側がまず GPU の DeviceID (PCI ID) を読み取り、それから判断するのではなく、MMIOレジスタからそれらバージョンを直接読み取れるよう変更する予定にあるとのこと。<br />
+これらはハードウェアチームから提案されたものだという。</p>
+
+<p>また、<em>XE_LPD</em> という呼称はマーケティングにも導入するとしている。<br />
+<em>Gen12LP アーキテクチャ</em> も、発表の場では <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
+アーキテクチャ</em> と呼ばれており、他の <span class="xe-gpu-arch">X<sup>e</sup></span>
+系列も <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+、<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+、<span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
+</em> として紹介されていたため、マーケティングでは <em>XE_LPD</em> の方が自然かもしれない。</p>
+
+<p>パッチでは同時に、 <em>間もなく</em> 登場するハードウェアプラットフォームでは、GPUコアは <em>Gen12</em> 、ディスプレイエンジンは新たな <em>XE_LPD/Display13</em> が採用されることを明らかにしている。</p>
+
+<blockquote>
+<pre><code>   The next hardware platform we&#39;ll be upstreaming (very soon!) will have a
+   display version of 13 and a graphics version of 12, so let&#39;s just the
+   first step of breaking out DISPLAY_VER(), but leaving the rest of
+   INTEL_GEN() untouched for now.  For now we&#39;ll automatically
+   derive the display version from the platform&#39;s INTEL_GEN() value except
+   in cases where an alternative display version is explicitly provided in
+   the device info structure.</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-March/262073.html" rel="noreferrer" target="_blank">[Intel-gfx] [PATCH v2 02/23] drm/i915: Add DISPLAY_VER()</a></cite>
+</div>
+
+</blockquote>
+
+<p>それがディスクリートGPUなのか、それともハードウェアプラットフォームという呼び方から統合グラフィクスなのかも、まだはっきりしないが、<em>間もなく (very soon!)</em> と言うくらいなのだから、そう期待の熱が冷めない内にパッチか正式リリースの形で発表してくれることだろう。</p>
+
+<p><em>Display13</em> 改め <em>XE_LPD</em> の主な新機能には、16K 解像度への対応、仮想機能 (Intel VT-d) の対応強化、パワードメインの変更、Watermak 数の増加による電力効率の向上等が挙げられる。<br />
+ディスプレイエンジンの更新ということで、体感しやすい性能への影響は小さいが、解像度や仮想機能、電力効率向上と、着実にユーザーの利便性を向上してくれる機能が並んでいる。</p>
+<div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2NOI2Do" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「Intel CPU」</a>
+      <div class="amzn_link_desc">カテゴリー: CPU、出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/30nAXwB" class="amzn_link_main" target="_blank" rel="noopener noreferrer">第11世代 インテル® Core™ プロセッサーファミリー搭載ノートPC特集</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/36QaP15" class="amzn_link_main" target="_blank" rel="noopener noreferrer"> ARCTIC MX-4 (4 g) Edition 2019 – High Performance Thermal Paste </a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div>
+
+
+  </div>
+</div>
+
+    <hr><div class="related-article">
+      <div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2021/01/29/intel-display13/" target="_blank" class="related-article-link">Linux Kernel に Intel &#34;Display13&#34; をサポートする最初のパッチが投稿される</a>
+    </div>
+    <hr>
+  
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/gen13/" class="menu-tag-lower">Gen13</a>
+</div>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-category-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-category-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-category-lower">Intel</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button class="share-copy-button" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Intel%e3%80%81Display13%20%e6%94%b9%e3%82%81%20%22XE_LPD%22%20%e3%82%92%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%e3%81%99%e3%82%8b%e3%83%91%e3%83%83%e3%83%81%e3%82%92%e6%8a%95%e7%a8%bf%e3%80%80%e2%80%95%e2%80%95%20%e4%bb%8a%e5%be%8c%e3%81%af%e7%8b%ac%e7%ab%8b%e3%81%97%e3%81%a6%e5%90%84%20IP%20%e3%81%8c%e6%9b%b4%e6%96%b0%e3%81%95%e3%82%8c%e3%82%8b%e3%82%88%e3%81%86%e3%81%ab%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/12/intel-xe_lpd-display13/
+  " rel="noreferrer noopener" target="_blank" class="share-tw">Tweet</a><a href="https://www.coelacanth-dream.com/index.xml" class="rss-button" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/12/intel-xe_lpd-display13.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side-mail">Mail</a>
+
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a class="foot-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/12/intel-xe_lpd-display13.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side-mail">Mail</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-share-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer><div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/gen13/" class="menu-tag-lower">Gen13</a>
+</div>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-category-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-category-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-category-lower">Intel</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/12/intel-xe_lpd-display13.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@pm.me" class="side-mail">Mail</a>
+
+
+    </nav>
+  </div>
+</div>
+
+    </main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
