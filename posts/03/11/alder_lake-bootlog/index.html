@@ -301,7 +301,7 @@ h1 {
   </div>
 </nav><div class="article_time">
   <time datetime="2021-03-11 15:33+09:00">Post: 2021/03/11 15:33 JST</time>
-  <div class="article_time_update">Update: 2021/03/11 18:03 JST</div>
+  <div class="article_time_update">Update: 2021/03/11 23:18 JST</div>
 </div>
 
 
@@ -338,10 +338,11 @@ h1 {
 </blockquote>
 
 <p>CPU の機能に目を向けると、コンパイラ等へのパッチから判明していたように、AVX/2 をサポートしていることが分かる。<br />
-AVX-512 命令は非対応とされているが、これは <a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html" rel="noreferrer" target="_blank">Intel® Architecture Instruction Set Extensions Programming Reference</a> で <em>「Intel Hybrid Technology は AVX512 をサポートしない」</em> とあり、そのためアーキテクチャ自体がサポートしていない場合と区別してある。<br />
+AVX-512 命令は非対応とされているが、これは <a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html" rel="noreferrer" target="_blank">Intel® Architecture Instruction Set Extensions Programming Reference</a> では <em>「Intel Hybrid Technology は AVX512 をサポートしない」</em> とあり、そのためアーキテクチャ自体がサポートしていない場合と区別してある。<br />
 Intel ハイブリッドプロセッサでは、非対称な CPUアーキテクチャを搭載していても両方が対応している命令のみが有効化され、命令の対応レベルでは対称的となる。</p>
 
-<p>しかし、<em>Alder Lake</em> に採用される Atom (Small) コア <em>Gracemont</em> は <em>Atom系アーキテクチャ</em> としては初めて AVX/2 をサポートしていることとなり、大きな変化と言えるだろう。</p>
+<p>しかし、<em>Alder Lake</em> に採用される Atom (Small) コア <em>Gracemont</em> は <em>Atom系アーキテクチャ</em> としては初めて AVX/2 をサポートしていることとなり、大きな変化と言えるだろう。<br />
+同時に新たに追加された AVX-VNNI (Vector Neural Network Instructions) も <em>Gracemont</em> ではサポートされている。</p>
 
 <blockquote>
 <pre><code>   [    0.000000] x86/fpu: Supporting XSAVE feature 0x001: &#39;x87 floating point registers&#39;
@@ -387,11 +388,17 @@ Energy Model Framework は 2018/12/03 に、当時 Arm に所属していた、�
 
 </blockquote>
 
-<p>ハードウェア側では、<em>Alder Lake</em> からサポートしている <code>HFI (Hardware Feedback Interface)</code> が機能している。<br />
-<code>HFI</code> は OS のソフトウェアスケジューラーを手助けする機能と言え、メモリに配置されるテーブルとそのテーブルのインデックスから、あるソフトウェアスレッドを性能重視の CPU (Core [Big]) と電力効率重視の CPU (Atom [Small]) のどちらに割り当てるかを OS に指示する。<br />
-以前、Intel Architecture Day 2020 にて Raja Koduri 氏は、「 <em>Alder Lake</em> は <em>Lakefield</em> よりも拡張されたハードウェアベースのスケジューラーを実装している」と語っていたが、その中身が <code>HFI (Hardware Feedback Interface)</code> ではないかと思われる。</p>
+<p>ハードウェア側では、<em>Alder Lake</em> からサポートしている <code>HFI/EFHI (Enhanced/ Hardware Feedback Interface)</code> が機能している。<br />
+<code>HFI/EHFI</code> は OS のソフトウェアスケジューラーを手助けする機能と言え、メモリに配置されるテーブルとそのテーブルのインデックスから、あるソフトウェアスレッドを性能重視の CPU (Core [Big]) と電力効率重視の CPU (Atom [Small]) のどちらに割り当てるかを OS にアドバイスする。<br />
+OSスケジューラーはそれを元に、性能比あるいは電力効率比を計算し、スレッドを割り当てる。OS として性能を重視するか、電力効率を重視するかの設定も影響する。<br />
+また、テーブルは CPU の消費電力等、状況に応じて動的に更新される。<sup class="footnote-ref" id="fnref:ehfi"><a href="#fn:ehfi">5</a></sup></p>
 
-<p>今調べた限りでは、<code>HFI</code> をサポートするパッチはまだ Linux Kernel に投稿されておらず、Intel 内部でまだ開発中のハードウェアと、それをサポートする Linux Kernel のログを読めるのは中々珍しい機会だと言えるかもしれない。</p>
+<p>以前、Intel Architecture Day 2020 にて Raja Koduri 氏は、「 <em>Alder Lake</em> は <em>Lakefield</em> よりも拡張されたハードウェアベースのスケジューラーを実装している」と語っていたが、その中身が <code>HFI/EHFI (Enhanced/ Hardware Feedback Interface)</code> ではないかと思われる。</p>
+
+<p>今調べた限りでは、<code>HFI/EHFI</code> をサポートするパッチはまだ Linux Kernel に投稿されておらず、Intel 内部でまだ開発中のハードウェアと、それをサポートする Linux Kernel のログを読めるのは中々珍しい機会だと言えるかもしれない。</p>
+
+<p><code>HFI</code> と <code>HEFI</code> の違いについては、<code>HFI</code> は物理コアのみをサポートするが、<code>EHFI</code> は SMT による論理コアもサポートする、ということと思われる、たぶん。<br />
+恐らく、正式にパッチが投稿された時、パッチのコメントと実装されたコードから、<em>Alder Lake</em> のスケジュラーについてより詳細が明らかにされるだろう。</p>
 <div class="footnotes">
 
 <hr />
@@ -405,6 +412,8 @@ Energy Model Framework は 2018/12/03 に、当時 Arm に所属していた、�
  <a class="footnote-return" href="#fnref:em"><sup>[return]</sup></a></li>
 <li id="fn:hybrid-doc"><a href="https://lore.kernel.org/lkml/20210311070742.9318-28-yao.jin@linux.intel.com/" rel="noreferrer" target="_blank">[PATCH v2 27/27] perf Documentation: Document intel-hybrid support - Jin Yao</a>
  <a class="footnote-return" href="#fnref:hybrid-doc"><sup>[return]</sup></a></li>
+<li id="fn:ehfi"><a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html" rel="noreferrer" target="_blank">Intel® Architecture Instruction Set Extensions Programming Reference</a> (Page 191)
+ <a class="footnote-return" href="#fnref:ehfi"><sup>[return]</sup></a></li>
 </ol>
 </div>
 <div class="amzn">
