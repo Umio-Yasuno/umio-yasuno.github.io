@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/03/16/amd-3rd-gen-epyc-milan/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMD、Zen 3 アーキテクチャを採用した EPYC 7003シリーズ を正式発表　―― INT8 のスループット 2倍 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMD、Zen 3 アーキテクチャを採用した EPYC 7003シリーズ を正式発表　―― INT8 のスループット 2倍 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMD、Zen 3 アーキテクチャを採用した EPYC 7003シリーズ を正式発表　―― INT8 のスループット 2倍 | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/03/16/amd-3rd-gen-epyc-milan/">
+  <meta name="description" content="現地時間 2021/03/15 付で、Zen 3 アーキテクチャ を採用する EPYC 7003シリーズ (Milan) が正式発表された。 Introducing 3rd Gen AMD EPYC Processors for the Modern Data Center - Youtube AMD EPYC™ 7003 Series CPUs Set New Standard as Highest Performance Server">
+  <meta property="og:description" content="現地時間 2021/03/15 付で、Zen 3 アーキテクチャ を採用する EPYC 7003シリーズ (Milan) が正式発表された。 Introducing 3rd Gen AMD EPYC Processors for the Modern Data Center - Youtube AMD EPYC™ 7003 Series CPUs Set New Standard as Highest Performance Server">
+  <meta name="twitter:description" content="現地時間 2021/03/15 付で、Zen 3 アーキテクチャ を採用する EPYC 7003シリーズ (Milan) が正式発表された。 Introducing 3rd Gen AMD EPYC Processors for the Modern Data Center - Youtube AMD EPYC™ 7003 Series CPUs Set New Standard as Highest Performance Server">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/03/16/amd-3rd-gen-epyc-milan/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/03/16/amd-3rd-gen-epyc-milan/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Zen 3">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>
+html {
+  background-size: 100%;
+  background-attachment: fixed;
+  background-image: radial-gradient(ellipse 72% 62%,
+                                    #024952 0%,
+                                    #004750 96%,
+                                    #002c35 104%);
+  background-repeat: no-repeat;
+  font-size: .95rem;
+  z-index: -1;
+}
+main {
+  display: grid;
+  grid-template-rows: repeat(6, auto) 3rem;
+  grid-template-columns: .5vw 1vw auto 4vw;
+  row-gap: 20px;
+  z-index: 0;
+}
+header {
+  grid-row: 1;
+  grid-column: 3 / -2;
+  margin-top: 16px;
+}
+.site-title {
+  font: normal 23pt/1.1 monospace;
+  text-decoration: none;
+  word-spacing: 100vw;
+  margin-left: auto;
+  text-align: end;
+  word-break: keep-all;
+  overflow-wrap: normal;
+
+}
+.site-title a {
+  color: #819BA1;
+  text-shadow: -4px 2px 1em #748B90;
+  padding: 0;
+}
+.site-title a:hover {
+  color: #90B4BD;
+  text-shadow: -4px 2px 1em #81A2AA;
+  text-decoration: none;
+}
+.site-title .lain-e {
+  display: inline-block;
+  font: normal .8em/.8 monospace;
+  padding: 0 .2em .16em;
+  margin: 0 -2px 0 0;
+  vertical-align: bottom;
+
+  background-color: #0004;
+  border-radius: 100%;
+  transform: rotateZ(-24deg);
+}
+.site-title a:hover .lain-e {
+  background-color: #0006;
+}
+a {
+  color: #A0E0FF;
+  text-decoration: none;
+  padding: 0 .3rem 0 .28rem;
+  margin: 0;
+}
+.text {
+  color: snow;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  grid-row: 3;
+  grid-column: 1 / -1;
+}
+article > p {
+  margin: .4rem 0;
+}
+article > p::before {
+  padding-right: .55rem;
+  content: ' ';
+}
+footer,
+.home,
+.posts,
+.tags,
+.categories,
+.entry {
+  display: none;
+}
+.side {
+  transform: translateX(100vw);
+  position: fixed;
+  top: 1vh;
+  left: 0;
+}
+footer {
+  grid-row: 5;
+  grid-column: 1 / -1;
+
+
+}
+article {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: .5% 1% auto 2%;
+  row-gap: 12px;
+}
+article > * {
+  grid-column: 3 / -1;
+}
+article > h1 ~ * {
+  display: none;
+  will-change: display;
+}
+h1 {
+
+  color: #FFA020;
+  font: normal 1.1rem/1.4 sans-serif;
+  grid-column: 2 / -1;
+  margin: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding-bottom: 100vh;
+} 
+.slide {
+  display: none;
+}
+.head-cat-tag {
+  border: 1px solid teal;
+  max-width: max-content;
+  padding: 8px 2px 6px;
+  margin-bottom: 8px;
+  font-size: .96rem;
+  line-height: 1.1;
+
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 10px;
+  font-family: monospace;
+}
+.head-cat-block,
+.head-tag-block {
+  max-width: max-content;
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 4px;
+}
+.head-cat-tag-type {
+  color: #38d8c8;
+  margin-top: auto;
+  padding: 0 .1rem;
+  margin: 0 .3rem;
+}
+.head-cat-lower,
+.head-tag-lower {
+  margin: 0 .1rem 0 .4rem;
+  padding: 0 .1rem;
+}
+.head-cat-tag a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 840px) {
+  main {
+    display: grid;
+    grid-template-rows: repeat(5, auto) 6vh;
+    grid-template-columns: 200px 8px 12px auto 16px;
+
+    row-gap: 4px;
+  }
+  article {
+    grid-template-columns: .5% .5% auto 2%;
+  }
+  .text {
+    grid-row: 3;
+    grid-column: 3 / -1;
+  }
+  .side {
+
+    transform: translateX(0);
+    height: 96vh;
+    width: 180px;
+   
+    padding: 12px 8px 0 12px;
+    color: #20B2AA;
+    border-right: 1px solid #0994;
+    font-size: 1rem;
+
+
+    overflow: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #0992 #0000;
+  }
+  .side-block,
+  .foot-pagination,
+  .foot-tag-category {
+    display: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width:  6px;
+  height: 4px;
+  background-color: #0000;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #0997;
+}
+::-webkit-scrollbar-corner,
+::-webkit-resizer {
+  display: none;
+}
+
+.crt {
+  background-image: linear-gradient(0deg,
+                                    red     0%, red     33%,
+                                    green  33%, green   67%,
+                                    blue   67%, blue   100%);
+  background-size: 100% 1.5vh;
+  width: 100%;
+  height: 100%;
+  opacity: .018;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+</style>
+<link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMD、Zen 3 アーキテクチャを採用した EPYC 7003シリーズ を正式発表　―― INT8 のスループット 2倍",
+  "headline" : "AMD、Zen 3 アーキテクチャを採用した EPYC 7003シリーズ を正式発表　―― INT8 のスループット 2倍",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-03-16",
+    "datePublished" : "2021-03-16",
+    "dateModufied"  : "2021-03-16",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/zen_3/" class="head-tag-lower">Zen 3</a></div>
+    </div>
+  <h1>AMD、Zen 3 アーキテクチャを採用した EPYC 7003シリーズ を正式発表　―― INT8 のスループット 2倍</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=AMD%e3%80%81Zen%203%20%e3%82%a2%e3%83%bc%e3%82%ad%e3%83%86%e3%82%af%e3%83%81%e3%83%a3%e3%82%92%e6%8e%a1%e7%94%a8%e3%81%97%e3%81%9f%20EPYC%207003%e3%82%b7%e3%83%aa%e3%83%bc%e3%82%ba%20%e3%82%92%e6%ad%a3%e5%bc%8f%e7%99%ba%e8%a1%a8%e3%80%80%e2%80%95%e2%80%95%20INT8%20%e3%81%ae%e3%82%b9%e3%83%ab%e3%83%bc%e3%83%97%e3%83%83%e3%83%88%202%e5%80%8d%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/16/amd-3rd-gen-epyc-milan/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article_time">
+  <time datetime="2021-03-16 01:26+09:00">Post: 2021/03/16 01:26 JST</time>
+  <div class="article_time_update">Update: 2021/03/16 04:55 JST</div>
+</div>
+
+
+<p>現地時間 2021/03/15 付で、<em>Zen 3 アーキテクチャ</em> を採用する <strong>EPYC 7003シリーズ</strong> (<em>Milan</em>) が正式発表された。</p>
+
+<ul>
+<li><a href="https://www.youtube-nocookie.com/embed/xtrhHH0kQI0" rel="noreferrer" target="_blank">Introducing 3rd Gen AMD EPYC Processors for the Modern Data Center - Youtube</a></li>
+<li><a href="https://ir.amd.com/news-events/press-releases/detail/993/amd-epyc-7003-series-cpus-set-new-standard-as-highest" rel="noreferrer" target="_blank">AMD EPYC™ 7003 Series CPUs Set New Standard as Highest Performance Server Processor :: Advanced Micro Devices, Inc. (AMD)</a></li>
+</ul>
+
+<p><em>Zen 3 アーキテクチャ</em> を採用する <strong>Ryzen 5000シリーズ</strong> は 2020/10/08 に発表され、<em>Zen 3 アーキテクチャ</em> の詳細も既に、<em>Software Optimization Guide for the AMD Family 19h Processors</em> が 2020/11/07 には公開されていることもあって<sup class="footnote-ref" id="fnref:fam19h-doc"><a href="#fn:fam19h-doc">1</a></sup>、<br />
+<strong>EPYC 7003シリーズ</strong> の発表は概ね <em>Zen系アーキテクチャ</em> の振り返りと、対抗となる Intel Xeonプロセッサとの比較、そして採用事例というものだった。</p>
+
+<p>しかし、その中で際立っていたのが、<em>「INT8精度の演算スループットが 2倍になった」</em> という記述だ。<br />
+上述したように、<em>Zen 3 アーキテクチャ</em> 自体は既に発表済みであり、採用したプロセッサが <span class="complement">十分かはともかく</span>
+ 世に出回っているが、新機能としてアピールされた中に INT8 のスループットに関するものは無かったと記憶している。<br />
+メディア向けに配布された資料ではなく、AMD公式から誰でも入手できる範囲で資料を探したが、やはり同様の記述は無かった。</p>
+
+<figure>
+  <a href="https://www.coelacanth-dream.com/image/2021/03/16/amd-epyc-milan-feature.webp" target="_blank"  >
+  <img src="https://www.coelacanth-dream.com/image/2021/03/16/amd-epyc-milan-feature.webp"
+      alt="画像出典: Introducing 3rd Gen AMD EPYC Processors for the Modern Data Center - Youtube"/>
+</a><figcaption>
+      <p>画像出典: <a href="https://www.youtube-nocookie.com/embed/xtrhHH0kQI0?start=567" rel="noreferrer" target="_blank">Introducing 3rd Gen AMD EPYC Processors for the Modern Data Center - Youtube</a></p>
+  </figcaption>
+</figure>
+
+
+<figure>
+  <a href="https://www.coelacanth-dream.com/image/2021/03/16/amd-ryzen-5000-feature.webp" target="_blank"  >
+  <img src="https://www.coelacanth-dream.com/image/2021/03/16/amd-ryzen-5000-feature.webp"
+      alt="Ryzen 5000シリーズ 発表時のもの。INT8 演算に関しては触れられていない。
+画像出典: Where Gaming Begins | AMD Ryzen™ Desktop Processors - Youtube"/>
+</a><figcaption>
+      <p><strong>Ryzen 5000シリーズ</strong> 発表時のもの。INT8 演算に関しては触れられていない。<br>画像出典: <a href="https://www.youtube-nocookie.com/embed/iuiO6rqYV4o?start=506" rel="noreferrer" target="_blank">Where Gaming Begins | AMD Ryzen™ Desktop Processors - Youtube</a></p>
+  </figcaption>
+</figure>
+
+
+<h2 id="2x-int8">INT8 のスループット 2倍</h2>
+
+<p>結論から言えば、直接的ではないが、確かに <em>Zen 3 アーキテクチャ</em> で前世代から強化された部分に INT8精度演算に関するものがあり、スループットは 2倍になっていた。</p>
+
+<p><em>「Software Optimization Guide」</em> に同梱している、ある命令を処理するユニット、処理に掛かるレイテンシ、スループット等が記載された表によると、<br />
+<em>Zen 2 アーキテクチャ (Family 17h Models 30h and Greater Processors)</em> では <code>VPMADDUBSW</code> 命令、<code>VPMADDWD</code> 命令を処理できるのは FP0ユニットのみで、命令スループット: 1 となっていたが、<br />
+<em>Zen 3 アーキテクチャ (Family 19h)</em> では、FP0ユニットに加え、FP3ユニットでも処理が可能となり、命令スループットは倍の 2 になった。<br />
+<code>VPADDD</code> 命令も <em>Zen 2 アーキテクチャ</em> は FP0/1/3ユニットで処理可能で、命令スループット: 3 だったのが、<em>Zen 3 アーキテクチャ</em> では FP0/1/2/3ユニット へと対応が拡張され、命令スループットは 4 に高速化されている。</p>
+
+<p><em>Zen系アーキテクチャ</em> では、各 FPユニット (パイプ) は対称的となるようそれぞれ 1基ずつ配置されているが、一部の複雑な命令は片方だけの実装とされており、それを新世代のアーキテクチャで他のユニット (パイプ) にも実装することで前世代よりも高速化できる。</p>
+
+<p><code>VPMADDUBSW/VPMADDWD/VPADDD</code> 命令は INT8 での低精度で行う推論処理における積和演算に使われている命令で、<br />
+<code>VPMADDUBSW</code>命令は、<em>符号無し 8-bit 整数/unsigned int8 (u8)</em> と <em>符号付き 8-bit 整数/signed int8 (s8)</em> 2組の値を乗算し、結果を <em>符号付き 16-bit 整数/signed int16 (s16)</em> のフォーマットに出力、<br />
+<code>VDMADDWD</code> 命令はそれで得られた <em>s16</em> の値をもう 1つ、ペアで <em>符号付き 32-bit 整数/signed int32 (s32)</em> に合計して結果を出力する。<br />
+<code>VPADDD</code> 命令はその <em>s32</em> の値を、ソースとなるもう 1つの <em>s32</em> と加算する。<br />
+こうして INT8 の乗算から INT32 に結果を累算する、畳み込み処理を行える。<br />
+自分では非常にざっくりとした説明しかできないため、より正確な内容は参考リンク先を参照して頂きたい。</p>
+
+<p>これら 3つの命令と処理フローをまとめた命令が <code>AVX512_VNNI/VPDPBUSD</code> 命令であり、Intel プロセッサでは <em>Cascade Lake</em> から対応している。<sup class="footnote-ref" id="fnref:avx512"><a href="#fn:avx512">2</a></sup> マーケティング的には <strong>Intel DL Boost</strong> とも呼ばれている。<br />
+<code>AVX512_VNNI/VPDPBUSD</code> 命令に対応していない CPU では <code>VPMADDUBSW/VPMADDWD/VPADDD</code> 3個の命令が必要だが、対応している CPU では 1個だけでいいため、理論上のピーク性能は 3倍となる。</p>
+
+<p>まとめると、<em>Zen 3 アーキテクチャ</em> では FPユニットの実装と対応が拡張されたことで INT8 精度の演算を行う一部命令が高速化されており、これが INT8 スループット 2倍の根拠と考えられる。<br />
+<strong>Ryzen 5000シリーズ</strong> 発表時にはアピールされなかった点が今回 <strong>EPYC 7003シリーズ</strong> で強調されたのは、Intel Xeonプロセッサを意識したからだろう。<br />
+<em>Zen 3 アーキテクチャ</em> ではまだ <code>AVX512_VNNI/VPDPBUSD</code> 命令は実装されていないが、AMD も CPU による推論処理の高速化を念頭に置いており、そこでもある程度 Intel Xeon と対抗は可能ということと、今後の CPUアーキテクチャで強化していく方向性を持っていることを示したかったのではないかと思われる。</p>
+
+<hr>
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://blog.cybozu.io/entry/2019/04/15/170000" rel="noreferrer" target="_blank">MKL-DNNで学ぶIntel CPUの最適化手法 - Cybozu Inside Out | サイボウズエンジニアのブログ</a></li>
+<li><a href="https://jp.xlsoft.com/documents/intel/compiler/19/cpp_19_win_lin/GUID-E70D11BD-217B-4E52-9C3F-1A9177658929.html" rel="noreferrer" target="_blank">算術演算の組込み関数</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/lowering-numerical-precision-increase-deep-learning-performance.html" rel="noreferrer" target="_blank">Lowering Numerical Precision to Increase Deep Learning Performance</a></li>
+<li><a href="https://docs.oneapi.com/versions/latest/onednn/dev_guide_int8_computations.html" rel="noreferrer" target="_blank">oneDNN: Nuances of int8 Computations</a></li>
+<li><a href="https://www.amd.com/en/support/tech-docs?keyword=Software+Optimization+19h" rel="noreferrer" target="_blank">56665, Software Optimization Guide for AMD Family 19h Processors (PUB)</a></li>
+<li><a href="https://www.amd.com/en/support/tech-docs?keyword=Software+Optimization+17h+30h" rel="noreferrer" target="_blank">Software Optimization Guide for AMD Family 17h Models 30h and Greater Processors</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:fam19h-doc"><a href="https://www.coelacanth-dream.com/posts/2020/11/07/amd-zen_3-arch-detail/">AMD、Zen 3 アーキテクチャの詳細を公開 | Coelacanth's Dream</a>
+ <a class="footnote-return" href="#fnref:fam19h-doc"><sup>[return]</sup></a></li>
+<li id="fn:avx512"><a href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth's Dream</a>
+ <a class="footnote-return" href="#fnref:avx512"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">Hisa Ando 氏による Intel Xe を含めた最新 GPU アーキテクチャの解説等を追加した増補改訂版、その他機械学習専用チップをもカバーしている</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div>
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3klQK8b" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「AMD CPU」</a>
+      <div class="amzn_link_desc">カテゴリー: CPU、出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3lNHZTw" class="amzn_link_main" target="_blank" rel="noopener noreferrer">AMD Ryzen 5 3600 with Wraith Stealth cooler 3.6GHz 6コア / 12スレッド 35MB 65W【国内正規代理店品】</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3mNjUgN" class="amzn_link_main" target="_blank" rel="noopener noreferrer">AMD Ryzen 5 3600XT with Wraith Spire cooler 3.8GHz 6コア / 12スレッド 35MB 95W【国内正規代理店品】</a>
+  </div><br>
+
+  </div>
+</div>
+
+
+    <hr><div class="related-article">
+      <div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2020/11/07/amd-zen_3-arch-detail/" target="_blank" class="related-article-link">AMD、Zen 3 アーキテクチャの詳細を公開</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/10/10/amd-zen_3/" target="_blank" class="related-article-link">AMD Zen 3 アーキテクチャで分かってること、いないこと</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/08/31/amd-cezanne-benchmark/" target="_blank" class="related-article-link">AMD Cezanne APU ベンチマーク結果　―― 8-Core/16-Thread, 3.6GHz、構成は Zen 3 &#43; Vega か</a>
+    </div>
+    <hr>
+  
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/zen_3/" class="menu-tag-lower">Zen 3</a>
+</div>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-category-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-category-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-category-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=AMD%e3%80%81Zen%203%20%e3%82%a2%e3%83%bc%e3%82%ad%e3%83%86%e3%82%af%e3%83%81%e3%83%a3%e3%82%92%e6%8e%a1%e7%94%a8%e3%81%97%e3%81%9f%20EPYC%207003%e3%82%b7%e3%83%aa%e3%83%bc%e3%82%ba%20%e3%82%92%e6%ad%a3%e5%bc%8f%e7%99%ba%e8%a1%a8%e3%80%80%e2%80%95%e2%80%95%20INT8%20%e3%81%ae%e3%82%b9%e3%83%ab%e3%83%bc%e3%83%97%e3%83%83%e3%83%88%202%e5%80%8d%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/16/amd-3rd-gen-epyc-milan/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/16/amd-3rd-gen-epyc-milan.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@protonmail.com" class="mail">Mail</a>
+
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a class="foot-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/16/amd-3rd-gen-epyc-milan.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@protonmail.com" class="mail">Mail</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-share-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer><div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/zen_3/" class="menu-tag-lower">Zen 3</a>
+</div>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-category-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-category-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-category-lower">Hardware</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/16/amd-3rd-gen-epyc-milan.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@protonmail.com" class="mail">Mail</a>
+
+
+    </nav>
+  </div>
+</div>
+
+    </main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
