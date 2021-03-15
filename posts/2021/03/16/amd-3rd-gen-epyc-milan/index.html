@@ -302,7 +302,7 @@ h1 {
   </div>
 </nav><div class="article_time">
   <time datetime="2021-03-16 01:26+09:00">Post: 2021/03/16 01:26 JST</time>
-  <div class="article_time_update">Update: 2021/03/16 04:55 JST</div>
+  <div class="article_time_update">Update: 2021/03/16 05:14 JST</div>
 </div>
 
 
@@ -358,9 +358,10 @@ h1 {
 <code>VDMADDWD</code> 命令はそれで得られた <em>s16</em> の値をもう 1つ、ペアで <em>符号付き 32-bit 整数/signed int32 (s32)</em> に合計して結果を出力する。<br />
 <code>VPADDD</code> 命令はその <em>s32</em> の値を、ソースとなるもう 1つの <em>s32</em> と加算する。<br />
 こうして INT8 の乗算から INT32 に結果を累算する、畳み込み処理を行える。<br />
-自分では非常にざっくりとした説明しかできないため、より正確な内容は参考リンク先を参照して頂きたい。</p>
+ただ、自分では非常にざっくりとした説明しかできないため、より正確な内容は参考リンク先を参照して頂きたい。</p>
 
-<p>これら 3つの命令と処理フローをまとめた命令が <code>AVX512_VNNI/VPDPBUSD</code> 命令であり、Intel プロセッサでは <em>Cascade Lake</em> から対応している。<sup class="footnote-ref" id="fnref:avx512"><a href="#fn:avx512">2</a></sup> マーケティング的には <strong>Intel DL Boost</strong> とも呼ばれている。<br />
+<p>従来の <em>Zen/2 アーキテクチャ</em> では <code>VPMADDUBSW/VPMADDWD</code> 命令のスループットが 1 で、上記の処理を行う時ボトルネックとなっていたのが、<em>Zen 3 アーキテクチャ</em> では軽減され、倍のスループットを得ている。<br />
+それと、<code>VPMADDUBSW/VPMADDWD/VPADDD</code> 命令 3個と処理フローをまとめた命令が <code>AVX512_VNNI/VPDPBUSD</code> 命令であり、Intel プロセッサでは <em>Cascade Lake</em> から対応している。<sup class="footnote-ref" id="fnref:avx512"><a href="#fn:avx512">2</a></sup> マーケティング的には <strong>Intel Deep Learning Boost</strong> という名もある。<sup class="footnote-ref" id="fnref:dl-boost"><a href="#fn:dl-boost">3</a></sup><br />
 <code>AVX512_VNNI/VPDPBUSD</code> 命令に対応していない CPU では <code>VPMADDUBSW/VPMADDWD/VPADDD</code> 3個の命令が必要だが、対応している CPU では 1個だけでいいため、理論上のピーク性能は 3倍となる。</p>
 
 <p>まとめると、<em>Zen 3 アーキテクチャ</em> では FPユニットの実装と対応が拡張されたことで INT8 精度の演算を行う一部命令が高速化されており、これが INT8 スループット 2倍の根拠と考えられる。<br />
@@ -389,6 +390,8 @@ h1 {
  <a class="footnote-return" href="#fnref:fam19h-doc"><sup>[return]</sup></a></li>
 <li id="fn:avx512"><a href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth's Dream</a>
  <a class="footnote-return" href="#fnref:avx512"><sup>[return]</sup></a></li>
+<li id="fn:dl-boost"><a href="https://www.intel.com/content/www/us/en/artificial-intelligence/deep-learning-boost.html" rel="noreferrer" target="_blank">Intel® Deep Learning Boost - Intel® AI</a>
+ <a class="footnote-return" href="#fnref:dl-boost"><sup>[return]</sup></a></li>
 </ol>
 </div>
 <div class="amzn">
