@@ -302,7 +302,7 @@ h1 {
   </div>
 </nav><div class="article_time">
   <time datetime="2021-03-16 01:26+09:00">Post: 2021/03/16 01:26 JST</time>
-  <div class="article_time_update">Update: 2021/03/16 05:14 JST</div>
+  <div class="article_time_update">Update: 2021/03/16 15:35 JST</div>
 </div>
 
 
@@ -361,12 +361,13 @@ h1 {
 ただ、自分では非常にざっくりとした説明しかできないため、より正確な内容は参考リンク先を参照して頂きたい。</p>
 
 <p>従来の <em>Zen/2 アーキテクチャ</em> では <code>VPMADDUBSW/VPMADDWD</code> 命令のスループットが 1 で、上記の処理を行う時ボトルネックとなっていたのが、<em>Zen 3 アーキテクチャ</em> では軽減され、倍のスループットを得ている。<br />
-それと、<code>VPMADDUBSW/VPMADDWD/VPADDD</code> 命令 3個と処理フローをまとめた命令が <code>AVX512_VNNI/VPDPBUSD</code> 命令であり、Intel プロセッサでは <em>Cascade Lake</em> から対応している。<sup class="footnote-ref" id="fnref:avx512"><a href="#fn:avx512">2</a></sup> マーケティング的には <strong>Intel Deep Learning Boost</strong> という名もある。<sup class="footnote-ref" id="fnref:dl-boost"><a href="#fn:dl-boost">3</a></sup><br />
-<code>AVX512_VNNI/VPDPBUSD</code> 命令に対応していない CPU では <code>VPMADDUBSW/VPMADDWD/VPADDD</code> 3個の命令が必要だが、対応している CPU では 1個だけでいいため、理論上のピーク性能は 3倍となる。</p>
+それと、<code>VPMADDUBSW/VPMADDWD/VPADDD</code> 命令 3個と処理フローをまとめた命令が <code>AVX-VNNI/VPDPBUSD</code> 命令であり、Intel プロセッサでは <em>Cascade Lake</em> から 512-bit幅 (<code>AVX512</code>) で対応している。<sup class="footnote-ref" id="fnref:avx512"><a href="#fn:avx512">2</a></sup> マーケティング的には <strong>Intel Deep Learning Boost</strong> という名もある。<sup class="footnote-ref" id="fnref:dl-boost"><a href="#fn:dl-boost">3</a></sup><br />
+<em>Alder Lake</em> に搭載される <em>Golden Cove (Core/Big)</em> 、<em>Gracemont (Atom/Small)</em> からは 128-bit幅、256-bit幅の <code>AVX-VNNI/VPDPBUSD</code> 命令に対応している。<br />
+<code>AVX-VNNI/VPDPBUSD</code> 命令に対応していない CPU では <code>VPMADDUBSW/VPMADDWD/VPADDD</code> 3個の命令が必要だが、対応している CPU では 1個だけでいいため、理論上のピーク性能は 3倍となる。</p>
 
 <p>まとめると、<em>Zen 3 アーキテクチャ</em> では FPユニットの実装と対応が拡張されたことで INT8 精度の演算を行う一部命令が高速化されており、これが INT8 スループット 2倍の根拠と考えられる。<br />
 <strong>Ryzen 5000シリーズ</strong> 発表時にはアピールされなかった点が今回 <strong>EPYC 7003シリーズ</strong> で強調されたのは、Intel Xeonプロセッサを意識したからだろう。<br />
-<em>Zen 3 アーキテクチャ</em> ではまだ <code>AVX512_VNNI/VPDPBUSD</code> 命令は実装されていないが、AMD も CPU による推論処理の高速化を念頭に置いており、そこでもある程度 Intel Xeon と対抗は可能ということと、今後の CPUアーキテクチャで強化していく方向性を持っていることを示したかったのではないかと思われる。</p>
+<em>Zen 3 アーキテクチャ</em> ではまだ <code>AVX-VNNI/VPDPBUSD</code> 命令は実装されていないが、AMD も CPU による推論処理の高速化を念頭に置いており、そこでもある程度 Intel Xeon と対抗は可能ということと、今後の CPUアーキテクチャで強化していく方向性を持っていることを示したかったのではないかと思われる。</p>
 
 <hr>
 <div class="reference">
