@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>VanGogh APU ブートログ | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="VanGogh APU ブートログ | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="VanGogh APU ブートログ | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/">
+  <meta name="description" content="2021/03/11 に、Alex Deucher 氏による不具合報告の中で VanGogh APU の Linux Kernel ブートログが投稿されていた。 Alex Deucher 氏は AMD のソフトエンジニアであり、AMD GPU の Linux Kernelドライ">
+  <meta property="og:description" content="2021/03/11 に、Alex Deucher 氏による不具合報告の中で VanGogh APU の Linux Kernel ブートログが投稿されていた。 Alex Deucher 氏は AMD のソフトエンジニアであり、AMD GPU の Linux Kernelドライ">
+  <meta name="twitter:description" content="2021/03/11 に、Alex Deucher 氏による不具合報告の中で VanGogh APU の Linux Kernel ブートログが投稿されていた。 Alex Deucher 氏は AMD のソフトエンジニアであり、AMD GPU の Linux Kernelドライ">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="VanGogh, Zen 2, RDNA 2">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>
+html {
+  background-size: 100%;
+  background-attachment: fixed;
+  background-image: radial-gradient(ellipse 72% 62%,
+                                    #024952 0%,
+                                    #004750 96%,
+                                    #002c35 104%);
+  background-repeat: no-repeat;
+  font-size: .95rem;
+  z-index: -1;
+}
+main {
+  display: grid;
+  grid-template-rows: repeat(6, auto) 3rem;
+  grid-template-columns: .5vw 1vw auto 4vw;
+  row-gap: 20px;
+  z-index: 0;
+}
+header {
+  grid-row: 1;
+  grid-column: 3 / -2;
+  margin-top: 16px;
+}
+.site-title {
+  font: normal 23pt/1.1 monospace;
+  text-decoration: none;
+  word-spacing: 100vw;
+  margin-left: auto;
+  text-align: end;
+  word-break: keep-all;
+  overflow-wrap: normal;
+
+}
+.site-title a {
+  color: #819BA1;
+  text-shadow: -4px 4px 1.2em #89a;
+  padding: 0;
+}
+.site-title a:hover {
+  color: #90B4BD;
+  text-shadow: -4px 4px 1.2em #abc;
+  text-decoration: none;
+}
+.site-title .lain-e {
+  display: inline-block;
+  font: normal .8em/.8 monospace;
+  padding: 0 .2em .18em;
+  margin: 0 -.1em 0 .05em;
+  vertical-align: bottom;
+
+  background-color: #0003;
+  border-radius: 1em;
+  transform: rotateZ(-24deg);
+}
+.site-title a:hover .lain-e {
+  background-color: #0004;
+}
+a {
+  color: #A0E0FF;
+  text-decoration: none;
+  padding: 0 .3rem 0 .28rem;
+  margin: 0;
+}
+.text {
+  color: snow;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-x: auto;
+  grid-row: 3;
+  grid-column: 1 / -1;
+}
+article > p {
+  margin: .4rem 0;
+}
+article > p::before {
+  padding-right: .55rem;
+  content: ' ';
+}
+footer,
+.home,
+.posts,
+.tags,
+.categories,
+.entry {
+  display: none;
+}
+.side {
+  transform: translateX(100vw);
+  position: fixed;
+  top: 1vh;
+  left: 0;
+}
+footer {
+  grid-row: 5;
+  grid-column: 1 / -1;
+
+
+}
+article {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: .5% 1% auto 2%;
+  row-gap: 12px;
+}
+article > * {
+  grid-column: 3 / -1;
+}
+article > h1 ~ * {
+  display: none;
+  will-change: display;
+}
+h1 {
+
+  color: #FFA020;
+  font: normal 1.1rem/1.4 sans-serif;
+  grid-column: 2 / -1;
+  margin: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding-bottom: 100vh;
+} 
+.slide {
+  display: none;
+}
+.head-cat-tag {
+  border: 1px solid teal;
+  max-width: max-content;
+  padding: 8px 2px 6px;
+  margin-bottom: 8px;
+  font-size: .96rem;
+  line-height: 1.1;
+
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 10px;
+  font-family: monospace;
+}
+.head-cat-block,
+.head-tag-block {
+  max-width: max-content;
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 4px;
+}
+.head-cat-tag-type {
+  color: #38d8c8;
+  margin-top: auto;
+  padding: 0 .1rem;
+  margin: 0 .3rem;
+}
+.head-cat-lower,
+.head-tag-lower {
+  margin: 0 .1rem 0 .4rem;
+  padding: 0 .1rem;
+}
+.head-cat-tag a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 840px) {
+  main {
+    display: grid;
+    grid-template-rows: repeat(5, auto) 6vh;
+    grid-template-columns: 200px 8px 12px auto 16px;
+
+    row-gap: 4px;
+  }
+  article {
+    grid-template-columns: .5% .5% auto 2%;
+  }
+  .text {
+    grid-row: 3;
+    grid-column: 3 / -1;
+  }
+  .side {
+
+    transform: translateX(0);
+    height: 96vh;
+    width: 180px;
+   
+    padding: 12px 8px 0 12px;
+    color: #20B2AA;
+    border-right: 1px solid #0994;
+    font-size: 1rem;
+
+
+    overflow: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #0992 #0000;
+  }
+  .side-block,
+  .foot-pagination,
+  .foot-tag-category {
+    display: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width:  6px;
+  height: 4px;
+  background-color: #0000;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #0997;
+}
+::-webkit-scrollbar-corner,
+::-webkit-resizer {
+  display: none;
+}
+
+.crt {
+  background-image: linear-gradient(0deg,
+                                    red     0%, red     33%,
+                                    green  33%, green   67%,
+                                    blue   67%, blue   100%);
+  background-size: 100% 1.5vh;
+  width: 100%;
+  height: 100%;
+  opacity: .018;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+</style>
+<link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "VanGogh APU ブートログ",
+  "headline" : "VanGogh APU ブートログ",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-03-17",
+    "datePublished" : "2021-03-17",
+    "dateModufied"  : "2021-03-17",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/apu/" class="head-cat-lower">APU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-tag-lower">RDNA 2</a>/<a href="https://www.coelacanth-dream.com/tags/vangogh/" class="head-tag-lower">VanGogh</a>/<a href="https://www.coelacanth-dream.com/tags/zen_2/" class="head-tag-lower">Zen 2</a></div>
+    </div>
+  <h1>VanGogh APU ブートログ</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=VanGogh%20APU%20%e3%83%96%e3%83%bc%e3%83%88%e3%83%ad%e3%82%b0%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article_time">
+  <time datetime="2021-03-17 08:06+09:00">Post: 2021/03/17 08:06 JST</time>
+  <div class="article_time_update">Update: 2021/03/17 11:33 JST</div>
+</div>
+
+
+<p>2021/03/11 に、Alex Deucher 氏による不具合報告の中で <em>VanGogh APU</em> の Linux Kernel ブートログが投稿されていた。<br />
+Alex Deucher 氏は AMD のソフトエンジニアであり、AMD GPU の Linux Kernelドライバーの開発を担当している。</p>
+
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html" rel="noreferrer" target="_blank">slow boot with 7fef431be9c9 (&quot;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></li>
+</ul>
+
+<p>使用しているボードは <em>AMD Chachani-VN/Chachani-VN</em> 。この名前は過去にも <em>VanGogh</em> 関連のパッチの中で登場していた。<sup class="footnote-ref" id="fnref:chachani-vn"><a href="#fn:chachani-vn">1</a></sup><br />
+<em>Chachani</em> はプラットフォーム、開発用のリファレンスボードに対するコードネームで、<em>VN</em> は <em>VanGogh</em> の略だろう。<br />
+プラットフォーム・コードネームには、モバイル向けリファレンスボード (FP6パッケージ) に <em>Celadon</em> 、AM4ソケットを採用するデスクトップ向けに <em>Mytle</em> <sup class="footnote-ref" id="fnref:myrtle"><a href="#fn:myrtle">2</a></sup>、(恐らくは) デスクトップ向け APU に <em>Artic</em> 等が使われてきている。</p>
+
+<blockquote>
+<pre><code>   [  135.183257] Hardware name: AMD Chachani-VN/Chachani-VN, BIOS WCH1304N 03/04/2021</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html" rel="noreferrer" target="_blank">slow boot with 7fef431be9c9 (&quot;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
+</div>
+
+</blockquote>
+
+<h2 id="page-index">Index</h2>
+<div class="page-index">
+  <ul>
+<li><a href="#zen_2">Zen 2</a></li>
+<li><a href="#mem">怪しいメモリ</a></li>
+<li><a href="#lspci">lspci -vv</a>
+
+<ul>
+<li><a href="#isp">ISP (Image Signal Processor)</a></li>
+<li><a href="#pci_id">PCI/DeviceID</a></li>
+</ul></li>
+<li><a href="#spec">VanGogh APU Spec</a></li>
+</ul>
+
+</div>
+
+
+<h2 id="zen_2">Zen 2</h2>
+
+<p>プロセッサ名は <strong>AMD Eng Sample: 100-000000405-03_35/24_N</strong> 、その名の通りサンプリング品とされる。<br />
+CPU の判別等に使われる Family, Model は <code>family: 0x17, model: 0x90</code> 。</p>
+
+<blockquote>
+<pre><code>   [    0.353153] smpboot: CPU0: AMD Eng Sample: 100-000000405-03_35/24_N (family: 0x17, model: 0x90, stepping: 0x1)</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html" rel="noreferrer" target="_blank">slow boot with 7fef431be9c9 (&quot;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
+</div>
+
+</blockquote>
+
+<p><em>VanGogh</em> の TLBエントリ数は以下のようになっており、<em>Zen 2 アーキテクチャ</em> のそれと一致する。<code>family: 0x17</code> ということとも矛盾しない。</p>
+
+<blockquote>
+<pre><code>   [    0.230926] Last level iTLB entries: 4KB 1024, 2MB 1024, 4MB 512
+   [    0.231010] Last level dTLB entries: 4KB 2048, 2MB 2048, 4MB 1024, 1GB 0</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html" rel="noreferrer" target="_blank">slow boot with 7fef431be9c9 (&quot;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
+</div>
+
+</blockquote>
+
+<p>CPUスレッド数は 8-Thread 認識されており、以前 Linux Kernel (amd-gfx) に投稿されたパッチのコメントから<sup class="footnote-ref" id="fnref:vgh-power"><a href="#fn:vgh-power">3</a></sup>、SMTを有効にした、4-Core/8-Thread 構成だと考えられる。その時投稿されたパッチは、GPUドライバー側でサポートする電力管理機能で、GPU だけでなく CPU も管理するよう対応を拡張する、というものだった。</p>
+
+<p><em>Zen 2 アーキテクチャ</em> を採用する APU には <a href="https://www.coelacanth-dream.com/tags/renoir">Renoir</a>, <a href="https://www.coelacanth-dream.com/tags/lucienne">Lucienne</a> がいるが、両者は 8-Core/16-Thread (2-CCX) の構成を取っている。対し、<em>VanGogh</em> は 4-Core/8-Thread (1-CCX) の構成と考えられ、CCX間の通信によるレイテンシが発生しない、コンパクトな設計となる。</p>
+
+<p>それと、今回の <em>VanGogh</em> はベースクロック 2.4 GHz (2400 MHz) で動作している。</p>
+
+<blockquote>
+<pre><code>   [    0.583839] x86: Booting SMP configuration:
+   [    0.584209] .... node  #0, CPUs:        #1  #2  #3  #4  #5  #6  #7
+   [    0.773093] smp: Brought up 1 node, 8 CPUs
+   [    0.773952] smpboot: Max logical packages: 2
+   [    0.774378] smpboot: Total of 8 processors activated (38401.47 BogoMIPS)</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html" rel="noreferrer" target="_blank">slow boot with 7fef431be9c9 (&quot;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
+</div>
+
+</blockquote>
+
+<h2 id="mem">怪しいメモリ</h2>
+
+<p>このブートログでは GPU部も有効化されており、そこからも <em>VanGogh APU</em> であることが確認できる。</p>
+
+<blockquote>
+<pre><code>   [   99.930720] [drm] initializing kernel modesetting (VANGOGH 0x1002:0x163F 0x1002:0x0123 0xAE).</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html" rel="noreferrer" target="_blank">slow boot with 7fef431be9c9 (&quot;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
+</div>
+
+</blockquote>
+
+<p>メモリバス幅とメモリタイプも出力されているが、これは明らかに怪しい情報である。<br />
+DDR5 という点は、Linux Kernel (amd-gfx) に投稿された <em>VanGogh</em> 関連のパッチから、<em>VanGogh</em> は LPDDR5メモリをサポートすることが分かっており、そして Kernelドライバー部では LPDDR5 も DDR5 も、メモリタイプとしては両方 DDR5 として認識されるため、おかしくはない。<br />
+怪しいのは 256-bit幅というので、ブートログから搭載されているメモリサイズは 7200304K <span class="complement">約 8 GB/7.45 GiB、予約分等があるため若干少なく表示される</span>
+ と読み取れるのに、メモリバス幅が 256-bit とやけに広いのは不自然だ。<br />
+それらしいメモリ構成を考えるならば、LPDDR5 64-bit幅 (64Gb/8GB) とかだろうか。</p>
+
+<blockquote>
+<pre><code>   [   99.984978] [drm] Detected VRAM RAM=1024M, BAR=1024M
+   [   99.984981] [drm] RAM width 256bits DDR5
+   [   99.985223] [drm] amdgpu: 1024M of VRAM memory ready
+   [   99.985233] [drm] amdgpu: 3072M of GTT memory ready.</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html" rel="noreferrer" target="_blank">slow boot with 7fef431be9c9 (&quot;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
+</div>
+
+</blockquote>
+
+<p>また、VBIOS に <em>AMD Aerith</em> というコードネームが使われているが、<em>VanGogh</em> の名を使わなかった理由は不明。通常はシリアルナンバーのようなものか、その APU/GPU のコードネームが入ったものが使われる。</p>
+
+<blockquote>
+<pre><code>   [   99.983800] amdgpu 0000:04:00.0: amdgpu: Fetched VBIOS from VFCT
+   [   99.983833] amdgpu: ATOM BIOS: 113-AMDAerith-004</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html" rel="noreferrer" target="_blank">slow boot with 7fef431be9c9 (&quot;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
+</div>
+
+</blockquote>
+
+<h2 id="lspci">lspci -vv</h2>
+
+<p>関連スレッドには他のブートログもアップロードされており、そこでは GPUドライバーは無効化されていたが、<code>lspci</code>, <code>lsusb</code> の実行結果も含んだものがあった。</p>
+
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060720.html" rel="noreferrer" target="_blank">https://lists.freedesktop.org/archives/amd-gfx/2021-March/060720.html</a></li>
+</ul>
+
+<!--
+ * <https://lists.freedesktop.org/archives/amd-gfx/2021-March/060616.html>
+-->
+
+<h3 id="isp">ISP (Image Signal Processor)</h3>
+
+<p><code>lspci</code> の実行結果中に、<em>Signal processing controller</em> というデバイスがあった。<br />
+これはイメージセンサーから信号を取り込み、画像処理を行う ISP (Image Signal Processor) と考えられ、GPUドライバーが電力管理機能を適用する各種 IP にも ISP はあった。<br />
+実行結果中からは確認できなかったが、<em>VanGogh</em> に内蔵される IP には、それ以外に CVIP というのがあり、これは <em>Computer Vison Image Processing/Processor</em> ではないかと思われる。<br />
+CVIP では、ISP が画像処理したデータを元に、スケーリングやフィルターの適用、推論によるオブジェクト検出等を行う。<sup class="footnote-ref" id="fnref:cvip"><a href="#fn:cvip">4</a></sup></p>
+
+<p>これら ISP、CVIP を搭載した目的として、<em>VanGogh</em> は組み込みやエッジAI用途が想定されているのだろう。<br />
+4-Core/8-Thread という現行の <em>Renoir/Lucienne/Cezanne APU</em> と比較して小さい規模から、 <em>VanGogh</em> をベースに、<strong>Ryzen Embedded R1000シリーズ</strong> の次世代、<strong>R2000シリーズ</strong> を構築することも考えられる。<br />
+現 <strong>R1000シリーズ</strong> は 14nmプロセスで製造される <a href="https://www.coelacanth-dream.com/tags/raven2">Raven2 APU</a> で構築されている。<em>Raven2</em> は、CPU Zen 2-Core/4-Thread、GPU Vega 3CU と規模が控えめの SoC であり、そうした特徴は <em>VanGogh</em> に近いものがある。</p>
+
+<p>また、<em>VanGogh</em> は GPU部に <em>RDNA 2 アーキテクチャ</em> を採用しており、<em>RDNA 2</em> では INT4、INT8 といった低精度でのドット積を処理する命令がサポートされている。それらは推論処理に活用できる。</p>
+
+<h3 id="pci_id">PCI/DeviceID</h3>
+
+<p><code>lspci</code> 実行結果から読み取れたデバイスとその PCI/DeviceID をまとめた表が以下。<br />
+<code>lspci</code> ではどうも<a href="https://pci-ids.ucw.cz/read/PC/1022" rel="noreferrer" target="_blank">データベース</a>に存在するものはデバイス名を表示するが、同時に PCI/DeviceID は表示しないらしく、それらはほとんど省いてある。</p>
+
+<p>デバイスはいくつか <em>Renoir APU</em> と同じものが見受けられ、また各デバイスのリンク情報は PCIe Gen3 となっていた。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">PCI/DeviceID</th>
+<th align="center">VanGogh</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">145a</td>
+<td align="center">PCIe Dummy Function</td>
+</tr>
+
+<tr>
+<td align="left">15e3</td>
+<td align="center">Audio Processor – HD Audio Controller (Standalone AZ) (Renoir)</td>
+</tr>
+
+<tr>
+<td align="left">1632</td>
+<td align="center">PCIe® Dummy Host Bridge (Renoir)</td>
+</tr>
+
+<tr>
+<td align="left">163a</td>
+<td align="center">USB controller</td>
+</tr>
+
+<tr>
+<td align="left">163b</td>
+<td align="center">USB controller</td>
+</tr>
+
+<tr>
+<td align="left">163f<br>(VendorID: 1002)</td>
+<td align="center">Internal GPU (GFX)</td>
+</tr>
+
+<tr>
+<td align="left">1640<br>(VendorID: 1002)</td>
+<td align="center">Audio device /<br>Display HD Audio Controller (GFXAZ)</td>
+</tr>
+
+<tr>
+<td align="left">1645</td>
+<td align="center">Host bridge</td>
+</tr>
+
+<tr>
+<td align="left">1646</td>
+<td align="center">IOMMU</td>
+</tr>
+
+<tr>
+<td align="left">1647</td>
+<td align="center">PCI bridge</td>
+</tr>
+
+<tr>
+<td align="left">164a</td>
+<td align="center">Signal processing controller</td>
+</tr>
+
+<tr>
+<td align="left">1660</td>
+<td align="center">Host bridge /<br>Data Fabric: Device 18h; Function 0</td>
+</tr>
+
+<tr>
+<td align="left">1661</td>
+<td align="center">Host bridge /<br>Data Fabric: Device 18h; Function 1</td>
+</tr>
+
+<tr>
+<td align="left">1662</td>
+<td align="center">Host bridge /<br>Data Fabric: Device 18h; Function 2</td>
+</tr>
+
+<tr>
+<td align="left">1663</td>
+<td align="center">Host bridge /<br>Data Fabric: Device 18h; Function 3</td>
+</tr>
+
+<tr>
+<td align="left">1664</td>
+<td align="center">Host bridge /<br>Data Fabric: Device 18h; Function 4</td>
+</tr>
+
+<tr>
+<td align="left">1665</td>
+<td align="center">Host bridge /<br>Data Fabric: Device 18h; Function 5</td>
+</tr>
+
+<tr>
+<td align="left">1666</td>
+<td align="center">Host bridge /<br>Data Fabric: Device 18h; Function 6</td>
+</tr>
+
+<tr>
+<td align="left">1667</td>
+<td align="center">Host bridge /<br>Data Fabric: Device 18h; Function 7</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="spec">VanGogh APU Spec</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">AMD VanGogh</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Platform Codename</td>
+<td align="center">Chachani<br>(Aerith?)</td>
+</tr>
+
+<tr>
+<td align="left">CPU Arch</td>
+<td align="center">Zen 2</td>
+</tr>
+
+<tr>
+<td align="left">CPU Core/Thread</td>
+<td align="center">4/8?</td>
+</tr>
+
+<tr>
+<td align="left">CPU Clock Range<br>(default)</td>
+<td align="center">1.4GHz - 3.5GHz?</td>
+</tr>
+
+<tr>
+<td align="left">GPU Arch</td>
+<td align="center">RDNA 2/GFX10.3<br>(gfx1033?)</td>
+</tr>
+
+<tr>
+<td align="left">Media Engine</td>
+<td align="center">VCN 3.0</td>
+</tr>
+
+<tr>
+<td align="left">Display</td>
+<td align="center">DCN 3.01 <br> 4 Display controller</td>
+</tr>
+
+<tr>
+<td align="left">Memory</td>
+<td align="center">DDR4/LPDDR4?/LPDDR5<br>(DDR5?)</td>
+</tr>
+
+<tr>
+<td align="left">Power</td>
+<td align="center">~29W?</td>
+</tr>
+</tbody>
+</table>
+
+<hr>
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="http://cvip.computing.dundee.ac.uk/" rel="noreferrer" target="_blank">CVIP | Computer Vision and Image Processing</a></li>
+<li><a href="https://www.edge-ai-vision.com/2019/01/combining-an-isp-and-vision-processor-to-implement-computer-vision/" rel="noreferrer" target="_blank">Combining an ISP and Vision Processor to Implement Computer Vision - Edge AI and Vision Alliance</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:chachani-vn"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-October/054813.html" rel="noreferrer" target="_blank">[PATCH 1/2] drm/amdgpu/display: fix the NULL pointer reference on dmucb on dcn301</a>
+ <a class="footnote-return" href="#fnref:chachani-vn"><sup>[return]</sup></a></li>
+<li id="fn:myrtle"><a href="https://drivers.amd.com/relnotes/amd_nvme_sata_raid_quick_start_guide_for_windows_operating_systems.pdf" rel="noreferrer" target="_blank">https://drivers.amd.com/relnotes/amd_nvme_sata_raid_quick_start_guide_for_windows_operating_systems.pdf</a>
+ <a class="footnote-return" href="#fnref:myrtle"><sup>[return]</sup></a></li>
+<li id="fn:vgh-power"><a href="https://www.coelacanth-dream.com/posts/2021/01/08/amd-vgh-cpu-fgcg/">VanGogh APU がサポートする &quot;Fine Grain Clock Gating&quot; は CPU にも適用　―― 最大 4コアか | Coelacanth's Dream</a> / <a href="https://lists.freedesktop.org/archives/amd-gfx/2021-January/058001.html" rel="noreferrer" target="_blank">[PATCH 7/7] drm/amd/pm: implement processor fine grain feature for vangogh</a>
+ <a class="footnote-return" href="#fnref:vgh-power"><sup>[return]</sup></a></li>
+<li id="fn:cvip"><a href="http://cvip.computing.dundee.ac.uk/" rel="noreferrer" target="_blank">CVIP | Computer Vision and Image Processing</a> / <a href="https://www.edge-ai-vision.com/2019/01/combining-an-isp-and-vision-processor-to-implement-computer-vision/" rel="noreferrer" target="_blank">Combining an ISP and Vision Processor to Implement Computer Vision - Edge AI and Vision Alliance</a>
+ <a class="footnote-return" href="#fnref:cvip"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">Hisa Ando 氏による Intel Xe を含めた最新 GPU アーキテクチャの解説等を追加した増補改訂版、その他機械学習専用チップをもカバーしている</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div>
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/36PJP0w" class="amzn_link_main" target="_blank" rel="noopener noreferrer">AMD Athlon 3000G Processor with Radeon Graphics 3.5GHz 2コア / 4スレッド 5MB 35W</a>
+      <div class="amzn_link_desc">低価格省電力なAPU</div>
+  </div><br>
+
+  </div>
+</div>
+
+
+    <hr><div class="related-article">
+      <div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2020/11/26/vgh-apu-ngg-default/" target="_blank" class="related-article-link">VanGogh APU でも NGG/プリミティブシェーダーがデフォルトで有効に</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/11/04/amd-linux-kernel-fgcg-support/" target="_blank" class="related-article-link">Linux Kernel に &#34;Fine Grain Clock Gating&#34; のサポートが追加される</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/09/26/amd-vgh-linux-kernel-patch/" target="_blank" class="related-article-link">Linux Kernel に AMD の次世代 APU &#34;VanGogh&#34; をサポートするパッチが投稿される</a>
+    </div>
+    <hr>
+  
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
+      <a href="https://www.coelacanth-dream.com/tags/vangogh/" class="menu-tag-lower">VanGogh</a>
+      <a href="https://www.coelacanth-dream.com/tags/zen_2/" class="menu-tag-lower">Zen 2</a>
+</div>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-category-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-category-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-category-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=VanGogh%20APU%20%e3%83%96%e3%83%bc%e3%83%88%e3%83%ad%e3%82%b0%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/17/vgh-bootlog.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@protonmail.com" class="mail">Mail</a>
+
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a class="foot-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/17/vgh-bootlog.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@protonmail.com" class="mail">Mail</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-share-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer><div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
+      <a href="https://www.coelacanth-dream.com/tags/vangogh/" class="menu-tag-lower">VanGogh</a>
+      <a href="https://www.coelacanth-dream.com/tags/zen_2/" class="menu-tag-lower">Zen 2</a>
+</div>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-category-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-category-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-category-lower">Hardware</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/17/vgh-bootlog.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@protonmail.com" class="mail">Mail</a>
+
+
+    </nav>
+  </div>
+</div>
+
+    </main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
