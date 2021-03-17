@@ -10,9 +10,9 @@
   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
   <meta name="twitter:card" content="summary">
   <meta property="og:type" content="article">
-  <title>VanGogh APU ブートログ | Coelacanth&#39;s Dream</title>
-  <meta property="og:title" content="VanGogh APU ブートログ | Coelacanth&#39;s Dream">
-  <meta name="twitter:title" content="VanGogh APU ブートログ | Coelacanth&#39;s Dream">
+  <title>AMD VanGogh APU ブートログ | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMD VanGogh APU ブートログ | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMD VanGogh APU ブートログ | Coelacanth&#39;s Dream">
 
   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/">
   <meta name="description" content="2021/03/11 に、Alex Deucher 氏による不具合報告の中で VanGogh APU の Linux Kernel ブートログが投稿されていた。 Alex Deucher 氏は AMD のソフトエンジニアであり、AMD GPU の Linux Kernelドライ">
@@ -268,8 +268,8 @@ h1 {
     <script type="application/ld+json">{
   "@context" : "https://schema.org/",
   "@type" : "Article",
-  "name"     : "VanGogh APU ブートログ",
-  "headline" : "VanGogh APU ブートログ",
+  "name"     : "AMD VanGogh APU ブートログ",
+  "headline" : "AMD VanGogh APU ブートログ",
   "author" : {
     "@type" : "Person",
     "name"  : "Umio Yasuno"
@@ -293,16 +293,16 @@ h1 {
 <article class="text">
     <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/apu/" class="head-cat-lower">APU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-tag-lower">RDNA 2</a>/<a href="https://www.coelacanth-dream.com/tags/vangogh/" class="head-tag-lower">VanGogh</a>/<a href="https://www.coelacanth-dream.com/tags/zen_2/" class="head-tag-lower">Zen 2</a></div>
     </div>
-  <h1>VanGogh APU ブートログ</h1><nav class="article-share">
+  <h1>AMD VanGogh APU ブートログ</h1><nav class="article-share">
   <div class="share-button-links">
     <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
-    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=VanGogh%20APU%20%e3%83%96%e3%83%bc%e3%83%88%e3%83%ad%e3%82%b0%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=AMD%20VanGogh%20APU%20%e3%83%96%e3%83%bc%e3%83%88%e3%83%ad%e3%82%b0%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/
   " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
 
   </div>
 </nav><div class="article_time">
   <time datetime="2021-03-17 08:06+09:00">Post: 2021/03/17 08:06 JST</time>
-  <div class="article_time_update">Update: 2021/03/17 12:40 JST</div>
+  <div class="article_time_update">Update: 2021/03/17 20:52 JST</div>
 </div>
 
 
@@ -344,7 +344,7 @@ Alex Deucher 氏は AMD のソフトエンジニアであり、AMD GPU の Linux
 <h2 id="zen_2">Zen 2</h2>
 
 <p>プロセッサ名は <strong>AMD Eng Sample: 100-000000405-03_35/24_N</strong> 、その名の通りサンプリング品とされる。<br />
-CPU の判別等に使われる Family, Model は <code>family: 0x17, model: 0x90</code> 。</p>
+CPU の判別等に使われる Family, Model は <code>family: 0x17 (23), model: 0x90 (144)</code> 。</p>
 
 <blockquote>
 <pre><code>   [    0.353153] smpboot: CPU0: AMD Eng Sample: 100-000000405-03_35/24_N (family: 0x17, model: 0x90, stepping: 0x1)</code></pre>
@@ -363,11 +363,9 @@ CPU の判別等に使われる Family, Model は <code>family: 0x17, model: 0x9
 
 </blockquote>
 
-<p>CPUスレッド数は 8-Thread 認識されており、以前 Linux Kernel (amd-gfx) に投稿されたパッチのコメントから<sup class="footnote-ref" id="fnref:vgh-power"><a href="#fn:vgh-power">3</a></sup>、SMTを有効にした、4-Core/8-Thread 構成だと考えられる。その時投稿されたパッチは、GPUドライバー側でサポートする電力管理機能で、GPU だけでなく CPU も管理するよう対応を拡張する、というものだった。</p>
-
-<p><em>Zen 2 アーキテクチャ</em> を採用する APU には <a href="https://www.coelacanth-dream.com/tags/renoir">Renoir</a>, <a href="https://www.coelacanth-dream.com/tags/lucienne">Lucienne</a> がいるが、両者は 8-Core/16-Thread (2-CCX) の構成を取っている。対し、<em>VanGogh</em> は 4-Core/8-Thread (1-CCX) の構成と考えられ、CCX間の通信によるレイテンシが発生しない、コンパクトな設計となる。</p>
-
-<p>それと、今回の <em>VanGogh</em> はベースクロック 2.4 GHz (2400 MHz) で動作している。</p>
+<p>CPUスレッド数は 8-Thread 認識されており、以前 Linux Kernel (amd-gfx) に投稿されたパッチのコメントから<sup class="footnote-ref" id="fnref:vgh-power"><a href="#fn:vgh-power">3</a></sup>、SMTを有効にした、4-Core/8-Thread 構成だと考えられる。その時投稿されたパッチは、GPUドライバー側でサポートする電力管理機能で、GPU だけでなく CPU も管理するよう対応を拡張する、というものだった。<br />
+<em>Zen 2 アーキテクチャ</em> を採用する APU には <a href="https://www.coelacanth-dream.com/tags/renoir">Renoir</a>, <a href="https://www.coelacanth-dream.com/tags/lucienne">Lucienne</a> がいるが、両者は 8-Core/16-Thread (2-CCX) の構成を取っている。対し、<em>VanGogh</em> は 4-Core/8-Thread (1-CCX) の構成と考えられ、CCX間の通信によるレイテンシが発生しない、コンパクトな設計となる。<br />
+それと、今回の <em>VanGogh</em> はベースクロック 2.4 GHz (2400 MHz) で動作している。ブーストクロックはプロセッサ名とその法則から 3.4 GHz と思われる。</p>
 
 <blockquote>
 <pre><code>   [    0.583839] x86: Booting SMP configuration:
@@ -712,7 +710,7 @@ CVIP では、ISP が画像処理したデータを元に、スケーリング�
 <nav class="menu-share">
   <div class="share-button-links">
     <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
-    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=VanGogh%20APU%20%e3%83%96%e3%83%bc%e3%83%88%e3%83%ad%e3%82%b0%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=AMD%20VanGogh%20APU%20%e3%83%96%e3%83%bc%e3%83%88%e3%83%ad%e3%82%b0%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/
   " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
 
   </div>
