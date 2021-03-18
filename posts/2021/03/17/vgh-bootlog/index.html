@@ -91,13 +91,13 @@ header {
   background-color: #0004;
 }
 a {
-  color: #A0E0FF;
+  color: #aef;
   text-decoration: none;
   padding: 0 .3rem 0 .28rem;
   margin: 0;
 }
 .text {
-  color: snow;
+  color: #fee;
   box-sizing: border-box;
   overflow-wrap: break-word;
   font-size: 1rem;
@@ -302,7 +302,7 @@ h1 {
   </div>
 </nav><div class="article_time">
   <time datetime="2021-03-17 08:06+09:00">Post: 2021/03/17 08:06 JST</time>
-  <div class="article_time_update">Update: 2021/03/18 02:01 JST</div>
+  <div class="article_time_update">Update: 2021/03/18 21:20 JST</div>
 </div>
 
 
@@ -315,7 +315,7 @@ Alex Deucher 氏は AMD のソフトエンジニアであり、AMD GPU の Linux
 
 <p>使用しているボードは <em>AMD Chachani-VN/Chachani-VN</em> 。この名前は過去にも <em>VanGogh</em> 関連のパッチの中で登場していた。<sup class="footnote-ref" id="fnref:chachani-vn"><a href="#fn:chachani-vn">1</a></sup><br />
 <em>Chachani</em> はプラットフォーム、開発用のリファレンスボードに対するコードネームで、<em>VN</em> は <em>VanGogh</em> の略だろう。<br />
-プラットフォーム・コードネームには、モバイル向けリファレンスボード (FP6パッケージ) に <em>Celadon</em> 、AM4ソケットを採用するデスクトップ向けに <em>Mytle</em> <sup class="footnote-ref" id="fnref:myrtle"><a href="#fn:myrtle">2</a></sup>、(恐らくは) デスクトップ向け APU に <em>Artic</em> 等が使われてきている。</p>
+プラットフォーム・コードネームには、モバイル向けリファレンスボード (FP6パッケージ) に <em>Celadon</em> または <em>Majolica</em> <sup class="footnote-ref" id="fnref:majolica"><a href="#fn:majolica">2</a></sup> 、AM4ソケットを採用するデスクトップ向けに <em>Mytle</em> <sup class="footnote-ref" id="fnref:myrtle"><a href="#fn:myrtle">3</a></sup>、(恐らくは) デスクトップ向け APU に <em>Artic</em> 等が使われてきている。</p>
 
 <blockquote>
 <pre><code>   [  135.183257] Hardware name: AMD Chachani-VN/Chachani-VN, BIOS WCH1304N 03/04/2021</code></pre>
@@ -363,7 +363,7 @@ CPU の判別等に使われる Family, Model は <code>family: 0x17 (23), model
 
 </blockquote>
 
-<p>CPUスレッド数は 8-Thread 認識されており、以前 Linux Kernel (amd-gfx) に投稿されたパッチのコメントから<sup class="footnote-ref" id="fnref:vgh-power"><a href="#fn:vgh-power">3</a></sup>、SMTを有効にした、4-Core/8-Thread 構成だと考えられる。その時投稿されたパッチは、GPUドライバー側でサポートする電力管理機能で、GPU だけでなく CPU も管理するよう対応を拡張する、というものだった。<br />
+<p>CPUスレッド数は 8-Thread 認識されており、以前 Linux Kernel (amd-gfx) に投稿されたパッチのコメントから<sup class="footnote-ref" id="fnref:vgh-power"><a href="#fn:vgh-power">4</a></sup>、SMTを有効にした、4-Core/8-Thread 構成だと考えられる。その時投稿されたパッチは、GPUドライバー側でサポートする電力管理機能で、GPU だけでなく CPU も管理するよう対応を拡張する、というものだった。<br />
 <em>Zen 2 アーキテクチャ</em> を採用する APU には <a href="https://www.coelacanth-dream.com/tags/renoir">Renoir</a>, <a href="https://www.coelacanth-dream.com/tags/lucienne">Lucienne</a> がいるが、両者は 8-Core/16-Thread (2-CCX) の構成を取っている。対し、<em>VanGogh</em> は 4-Core/8-Thread (1-CCX) の構成と考えられ、CCX間の通信によるレイテンシが発生しない、コンパクトな設計となる。<br />
 それと、今回の <em>VanGogh</em> はベースクロック 2.4 GHz (2400 MHz) で動作している。ブーストクロックはプロセッサ名とその法則から 3.4 GHz と思われる。</p>
 
@@ -389,12 +389,7 @@ CPU の判別等に使われる Family, Model は <code>family: 0x17 (23), model
 
 </blockquote>
 
-<p>メモリバス幅とメモリタイプも出力されているが、これは明らかに怪しい情報である。<br />
-DDR5 という点は、Linux Kernel (amd-gfx) に投稿された <em>VanGogh</em> 関連のパッチから、<em>VanGogh</em> は LPDDR5メモリをサポートすることが分かっている。そして Kernelドライバー部では LPDDR5 も DDR5 も、メモリタイプとしては両方 DDR5 として認識されるため、搭載しているのがどちらかはともかく、表示自体はおかしくない。。<br />
-怪しいのは 256-bit幅というので、ブートログから搭載されているメモリサイズは 7200304K <span class="complement">約 8 GB/7.45 GiB、予約分等があるため若干少なく表示される</span>
- と読み取れるのに、メモリバス幅が 256-bit とやけに広いのは不自然だ。<br />
-メモリバス幅は VBIOS から読み取った値を表示するため、VBIOS が開発途中で、間違った値が表示されている可能性がある。他のブートログでは GPUドライバーが無効化されているため、開発途中である可能性は高い。GPU部の ShaderEngine、ShareArray、CU の構成情報等、出力されていない情報がいくつかあることもそれを裏付けている。<br />
-一応、もっともらしいメモリ構成を考えるならば、LPDDR5 64-bit幅 (64Gb/8GB) とかだろうか。</p>
+<p>メモリバス幅とメモリタイプも出力されているが、これは明らかに怪しい情報である。</p>
 
 <blockquote>
 <pre><code>   [   99.984978] [drm] Detected VRAM RAM=1024M, BAR=1024M
@@ -405,6 +400,27 @@ DDR5 という点は、Linux Kernel (amd-gfx) に投稿された <em>VanGogh</em
 </div>
 
 </blockquote>
+
+<p>DDR5 という点は、Linux Kernel (amd-gfx) に投稿された <em>VanGogh</em> 関連のパッチから、<em>VanGogh</em> は LPDDR5メモリをサポートすることが分かっている。そして Kernelドライバー部では LPDDR5 も DDR5 も、メモリタイプとしては両方 DDR5 として認識されるため、搭載しているのがどちらかはともかく、表示自体はおかしくない。これは誤検出などではなく、仕様である。<sup class="footnote-ref" id="fnref:vgh-ddr5"><a href="#fn:vgh-ddr5">5</a></sup></p>
+
+<blockquote>
+<pre><code>         case Ddr4MemType:
+         case LpDdr4MemType:
+             vram_type = AMDGPU_VRAM_TYPE_DDR4;
+             break;
+         case Ddr5MemType:
+         case LpDdr5MemType:
+             vram_type = AMDGPU_VRAM_TYPE_DDR5;
+             break;</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/torvalds/linux/blob/12f2df72205fe348481d941c3e593e8068d2d23d/drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c" rel="noreferrer" target="_blank">linux/amdgpu_atomfirmware.c at 12f2df72205fe348481d941c3e593e8068d2d23d · torvalds/linux</a></cite>
+</div>
+
+</blockquote>
+
+<p>怪しいのは 256-bit幅というので、ブートログから搭載されているメモリサイズは 7200304K <span class="complement">約 8 GB/7.45 GiB、予約分等があるため若干少なく表示される</span>
+ と読み取れるのに、メモリバス幅が 256-bit とやけに広いのは不自然だ。<br />
+メモリバス幅は VBIOS から読み取った値を表示するため、VBIOS が開発途中で、間違った値が表示されている可能性がある。他のブートログでは GPUドライバーが無効化されているため、開発途中である可能性は高い。GPU部の ShaderEngine、ShareArray、CU の構成情報等、出力されていない情報がいくつかあることもそれを裏付けている。<br />
+一応、もっともらしいメモリ構成を考えるならば、LPDDR5 64-bit幅 (64Gb/8GB) とかだろうか。</p>
 
 <p>また、VBIOS に <em>AMD Aerith</em> というコードネームが使われているが、<em>VanGogh</em> の名を使わなかった理由は不明。通常はシリアルナンバーのようなものか、その APU/GPU のコードネームが入ったものが使われる。</p>
 
@@ -433,7 +449,7 @@ DDR5 という点は、Linux Kernel (amd-gfx) に投稿された <em>VanGogh</em
 <p><code>lspci</code> の実行結果中に、<em>Signal processing controller</em> というデバイスがあった。<br />
 これはイメージセンサーから信号を取り込み、画像処理を行う ISP (Image Signal Processor) と考えられ、GPUドライバーが電力管理機能を適用する各種 IP にも ISP はあった。<br />
 実行結果中からは確認できなかったが、<em>VanGogh</em> に内蔵される IP には、それ以外に CVIP というのがあり、これは <em>Computer Vison Image Processing/Processor</em> ではないかと思われる。<br />
-CVIP では、ISP が画像処理したデータを元に、スケーリングやフィルターの適用、推論によるオブジェクト検出等を行う。<sup class="footnote-ref" id="fnref:cvip"><a href="#fn:cvip">4</a></sup></p>
+CVIP では、ISP が画像処理したデータを元に、スケーリングやフィルターの適用、推論によるオブジェクト検出等を行う。<sup class="footnote-ref" id="fnref:cvip"><a href="#fn:cvip">6</a></sup></p>
 
 <p>これら ISP、CVIP を搭載した目的として、<em>VanGogh</em> は組み込みやエッジAI用途が想定されているのだろう。<br />
 4-Core/8-Thread という現行の <em>Renoir/Lucienne/Cezanne APU</em> と比較して小さい規模から、 <em>VanGogh</em> をベースに、<strong>Ryzen Embedded R1000シリーズ</strong> の次世代、<strong>R2000シリーズ</strong> を構築することも考えられる。<br />
@@ -636,10 +652,14 @@ CVIP では、ISP が画像処理したデータを元に、スケーリング�
 <ol>
 <li id="fn:chachani-vn"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-October/054813.html" rel="noreferrer" target="_blank">[PATCH 1/2] drm/amdgpu/display: fix the NULL pointer reference on dmucb on dcn301</a>
  <a class="footnote-return" href="#fnref:chachani-vn"><sup>[return]</sup></a></li>
+<li id="fn:majolica"><a href="https://www.coelacanth-dream.com/posts/2020/11/22/lcn-czn-fp6-chromebook-board/">Lucienne/Cezanne APU を搭載する Chromebookボード　―― Guybrush、Mancomb | Coelacanth's Dream</a>
+ <a class="footnote-return" href="#fnref:majolica"><sup>[return]</sup></a></li>
 <li id="fn:myrtle"><a href="https://drivers.amd.com/relnotes/amd_nvme_sata_raid_quick_start_guide_for_windows_operating_systems.pdf" rel="noreferrer" target="_blank">https://drivers.amd.com/relnotes/amd_nvme_sata_raid_quick_start_guide_for_windows_operating_systems.pdf</a>
  <a class="footnote-return" href="#fnref:myrtle"><sup>[return]</sup></a></li>
 <li id="fn:vgh-power"><a href="https://www.coelacanth-dream.com/posts/2021/01/08/amd-vgh-cpu-fgcg/">VanGogh APU がサポートする &quot;Fine Grain Clock Gating&quot; は CPU にも適用　―― 最大 4コアか | Coelacanth's Dream</a> / <a href="https://lists.freedesktop.org/archives/amd-gfx/2021-January/058001.html" rel="noreferrer" target="_blank">[PATCH 7/7] drm/amd/pm: implement processor fine grain feature for vangogh</a>
  <a class="footnote-return" href="#fnref:vgh-power"><sup>[return]</sup></a></li>
+<li id="fn:vgh-ddr5"><a href="https://github.com/torvalds/linux/commit/15c90a1fbcb1621be0ba492bc5d7b88edf3d2e22" rel="noreferrer" target="_blank">drm/amdgpu: get the correct vram type for van gogh · torvalds/linux@15c90a1</a>
+ <a class="footnote-return" href="#fnref:vgh-ddr5"><sup>[return]</sup></a></li>
 <li id="fn:cvip"><a href="http://cvip.computing.dundee.ac.uk/" rel="noreferrer" target="_blank">CVIP | Computer Vision and Image Processing</a> / <a href="https://www.edge-ai-vision.com/2019/01/combining-an-isp-and-vision-processor-to-implement-computer-vision/" rel="noreferrer" target="_blank">Combining an ISP and Vision Processor to Implement Computer Vision - Edge AI and Vision Alliance</a>
  <a class="footnote-return" href="#fnref:cvip"><sup>[return]</sup></a></li>
 </ol>
