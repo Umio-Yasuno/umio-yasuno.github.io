@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/03/23/intel-lgm-soc/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Intel Lightning Mountain を追う | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Intel Lightning Mountain を追う | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Intel Lightning Mountain を追う | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/03/23/intel-lgm-soc/">
+  <meta name="description" content="2019/08頃に、Intel の新しいネットワークプロセッサ SoC Lightning Mountain をサポートするパッチが Linux Kernel に投稿され始めた。1 Lightning Mountain は、Intel 14nmプロセ">
+  <meta property="og:description" content="2019/08頃に、Intel の新しいネットワークプロセッサ SoC Lightning Mountain をサポートするパッチが Linux Kernel に投稿され始めた。1 Lightning Mountain は、Intel 14nmプロセ">
+  <meta name="twitter:description" content="2019/08頃に、Intel の新しいネットワークプロセッサ SoC Lightning Mountain をサポートするパッチが Linux Kernel に投稿され始めた。1 Lightning Mountain は、Intel 14nmプロセ">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/03/23/intel-lgm-soc/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/03/23/intel-lgm-soc/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Coelacanth&#39;s Dream, Hardware, CPU, GPU">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>
+html {
+  background-size: 100%;
+  background-attachment: fixed;
+  background-image: radial-gradient(ellipse 72% 62%,
+                                    #024952 0%,
+                                    #004750 96%,
+                                    #002c35 104%);
+  background-repeat: no-repeat;
+  font-size: .95rem;
+  z-index: -1;
+}
+main {
+  display: grid;
+  grid-template-rows: repeat(6, auto) 3rem;
+  grid-template-columns: .5vw 1vw auto 4vw;
+  row-gap: 20px;
+  z-index: 0;
+}
+header {
+  grid-row: 1;
+  grid-column: 3 / -2;
+  margin-top: 16px;
+}
+.site-title {
+  font: normal 23pt/1.1 monospace;
+  text-decoration: none;
+  word-spacing: 100vw;
+  margin-left: auto;
+  text-align: end;
+  word-break: keep-all;
+  overflow-wrap: normal;
+
+}
+.site-title a {
+  color: #819BA1;
+  text-shadow: -4px 4px 1.2em #89a;
+  padding: 0;
+}
+.site-title a:hover {
+  color: #90B4BD;
+  text-shadow: -4px 4px 1.2em #abc;
+  text-decoration: none;
+}
+.site-title .lain-e {
+  display: inline-block;
+  font: normal .8em/.8 monospace;
+  padding: 0 .2em .18em;
+  margin: 0 -.1em 0 .05em;
+  vertical-align: bottom;
+
+  background-color: #0003;
+  border-radius: 1em;
+  transform: rotateZ(-24deg);
+}
+.site-title a:hover .lain-e {
+  background-color: #0004;
+}
+a {
+  color: #bef;
+  text-decoration: none;
+  padding: 0 .3rem 0 .28rem;
+  margin: 0;
+}
+.text {
+  color: #fcffff;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
+  font-size: 1rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  grid-row: 3;
+  grid-column: 1 / -1;
+}
+article > p {
+  margin: .4rem 0;
+}
+article > p::before {
+  padding-right: .55rem;
+  content: ' ';
+}
+footer,
+.home,
+.posts,
+.tags,
+.categories,
+.entry {
+  display: none;
+}
+.side {
+  transform: translateX(100vw);
+  position: fixed;
+  top: 1vh;
+  left: 0;
+}
+footer {
+  grid-row: 5;
+  grid-column: 1 / -1;
+
+
+}
+article {
+  display: grid;
+  grid-template-rows: auto;
+  grid-template-columns: .5% 1% auto 2%;
+  row-gap: 12px;
+}
+article > * {
+  grid-column: 3 / -1;
+}
+article > h1 ~ * {
+  display: none;
+  will-change: display;
+}
+h1 {
+
+  color: #FFA020;
+  font: normal 1.1rem/1.4 sans-serif;
+  grid-column: 2 / -1;
+  margin: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  padding-bottom: 100vh;
+} 
+.slide {
+  display: none;
+}
+.head-cat-tag {
+  border: 1px solid teal;
+  max-width: max-content;
+  padding: 8px 2px 6px;
+  margin-bottom: 8px;
+  font-size: .96rem;
+  line-height: 1.1;
+
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 10px;
+  font-family: monospace;
+}
+.head-cat-block,
+.head-tag-block {
+  max-width: max-content;
+  display: flex;
+  flex-flow: row wrap;
+  row-gap: 4px;
+}
+.head-cat-tag-type {
+  color: #38d8c8;
+  margin-top: auto;
+  padding: 0 .1rem;
+  margin: 0 .3rem;
+}
+.head-cat-lower,
+.head-tag-lower {
+  margin: 0 .1rem 0 .4rem;
+  padding: 0 .1rem;
+}
+.head-cat-tag a:hover {
+  text-decoration: underline;
+}
+
+@media (min-width: 840px) {
+  main {
+    display: grid;
+    grid-template-rows: repeat(5, auto) 6vh;
+    grid-template-columns: 200px 8px 12px auto 16px;
+
+    row-gap: 4px;
+  }
+  article {
+    grid-template-columns: .5% .5% auto 2%;
+  }
+  .text {
+    grid-row: 3;
+    grid-column: 3 / -1;
+  }
+  .side {
+
+    transform: translateX(0);
+    height: 96vh;
+    width: 180px;
+   
+    padding: 12px 8px 0 12px;
+    color: #20B2AA;
+    border-right: 1px solid #0994;
+    font-size: 1rem;
+
+
+    overflow: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: #0992 #0000;
+  }
+  .side-block,
+  .foot-pagination,
+  .foot-tag-category {
+    display: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width:  6px;
+  height: 4px;
+  background-color: #0000;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #0997;
+}
+::-webkit-scrollbar-corner,
+::-webkit-resizer {
+  display: none;
+}
+
+.crt {
+  background-image: linear-gradient(0deg,
+                                    red     0%, red     33%,
+                                    green  33%, green   67%,
+                                    blue   67%, blue   100%);
+  background-size: 100% 1.5vh;
+  width: 100%;
+  height: 100%;
+  opacity: .018;
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+</style>
+<link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Intel Lightning Mountain を追う",
+  "headline" : "Intel Lightning Mountain を追う",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-03-23",
+    "datePublished" : "2021-03-23",
+    "dateModufied"  : "2021-03-24",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title">
+   <a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a><br>
+
+</div>
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head-cat-lower">Intel</a></div>
+    </div>
+  <h1>Intel Lightning Mountain を追う</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Intel%20Lightning%20Mountain%20%e3%82%92%e8%bf%bd%e3%81%86%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/23/intel-lgm-soc/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article_time">
+  <time datetime="2021-03-23 00:00+09:00">Post: 2021/03/23 00:00 JST</time>
+  <div class="article_time_update">Update: 2021/03/24 00:01 JST</div>
+</div>
+
+
+<p>2019/08頃に、Intel の新しいネットワークプロセッサ SoC <em>Lightning Mountain</em> をサポートするパッチが Linux Kernel に投稿され始めた。<sup class="footnote-ref" id="fnref:lgm-first-patch"><a href="#fn:lgm-first-patch">1</a></sup><br />
+<em>Lightning Mountain</em> は、Intel 14nmプロセスにおける第一世代 Atomアーキテクチャ <em>Airmont</em> を採用する SoC とされる。そのため、Linux Kernel上では新登場する SoC であっても、その中身は特別新しくはない。<br />
+しかし <em>Lightning Mountain</em> の特別興味を惹く点は、最初の 2019/08頃のパッチ以降もポツポツと新たなパッチが投稿されてはいるが、積極的にサポートをアップストリームに統合させようとする様子は見られず、<br />
+さらには既存のパッチについても十分にメンテナンスが行われているとは言い難く、SUSE のソフトウェアエンジニアである <a href="https://archive.fosdem.org/2007/schedule/speakers/pavel+machek.html" rel="noreferrer" target="_blank">Pavel Machek</a> 氏より、<em>Lightning Mountain</em> の LEDデバイスドライバーのビルドが失敗することが 2021/03/09 に報告された。<sup class="footnote-ref" id="fnref:lgm-led-fail"><a href="#fn:lgm-led-fail">2</a></sup><br />
+そして、<a href="https://pl.linkedin.com/in/adam-borowski-bba80363" rel="noreferrer" target="_blank">Adam Borowski</a> 氏が聞いたところでは、<em>Lightning Mountain</em> を含む Intel のホームゲートウェイ向けプロセッサの部門は <a href="https://www.maxlinear.com/" rel="noreferrer" target="_blank">MaxLinear</a>社に売却されたらしく、元のパッチを投稿したエンジニアも移ったはずだが、その MaxLinearの連絡先を知らないとのこと。<br />
+MaxLinear社による Intel ホームゲートウェイ部門の買収は 2020/04/06 に行われている。<sup class="footnote-ref" id="fnref:maxlinear-acquire"><a href="#fn:maxlinear-acquire">3</a></sup><br />
+これら一連の流れについては <a href="https://www.phoronix.com/" rel="noreferrer" target="_blank">Phoronix</a> の記事が詳しい。</p>
+
+<ul>
+<li><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Lightning-Mountain-Code-2021" rel="noreferrer" target="_blank">Intel's Lightning Mountain Appears Punted Off Or Canned As Part Of MaxLinear Acquisition - Phoronix</a></li>
+</ul>
+
+<p>その後、MaxLinear社は <em>Lightning Mountain</em> のコードをメンテナンスしていく意思を見せたとのことだが、新しいようでそうではなく、サポートもそう積極的に行われていない <em>Lightning Mountain</em> に自分は興味を惹かれ、一度記事にまとめるに至った。</p>
+
+<!--
+ * [Search · lgm OR "Lightning Mountain" OR "LightningMountain"](https://github.com/torvalds/linux/search?o=asc&q=lgm+OR+%22Lightning+Mountain%22+OR+%22LightningMountain%22&s=committer-date&type=commits)
+-->
+
+<h2 id="page-index">Index</h2>
+<div class="page-index">
+  <ul>
+<li><a href="#lgm-2017">2017年に登場してた Lightning Mountain</a>
+
+<ul>
+<li><a href="#sc9853i-9816g">SC9853I と SC9861G</a></li>
+<li><a href="#car-radio">今はカーラジオに採用されて販売中</a></li>
+</ul></li>
+</ul>
+
+</div>
+
+
+<h2 id="lgm-2017">2017年に登場してた Lightning Mountain</h2>
+
+<p>ホームゲートウェイ部門の売却と関係してか、Intel のサイトで <em>Lightning Mountain</em> を検索しても情報は得られなかった。<br />
+そのため、投稿されたパッチから追うことにする。</p>
+
+<blockquote>
+<pre><code>   #define INTEL_FAM6_ATOM_AIRMONT       0x4C /* Cherry Trail, Braswell */
+   #define INTEL_FAM6_ATOM_AIRMONT_MID   0x5A /* Moorefield */
+   #define INTEL_FAM6_ATOM_AIRMONT_NP    0x75 /* Lightning Mountain */</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/torvalds/linux/blob/e68061375f792af245fefbc13e3e078fa92d3539/arch/x86/include/asm/intel-family.h#L115" rel="noreferrer" target="_blank">linux/intel-family.h at e68061375f792af245fefbc13e3e078fa92d3539 · torvalds/linux</a></cite>
+</div>
+
+</blockquote>
+
+<p><em>Lightning Mountain</em> の x86_Model は <a href="https://github.com/torvalds/linux/blob/e68061375f792af245fefbc13e3e078fa92d3539/arch/x86/include/asm/intel-family.h#L115" rel="noreferrer" target="_blank">linux/intel-family.h</a> に記述されており、CPU の識別情報は <code>Family: 0x6(6), Model: 0x75(117)</code> となる。この部分のパッチは 2019/09/05 に投稿されていた。<sup class="footnote-ref" id="fnref:lgm-model"><a href="#fn:lgm-model">4</a></sup><br />
+バリアントとしては <code>AIRMONT_NP</code> であり、NP は <em>Network Processor</em> の意と思われる。<sup class="footnote-ref" id="fnref:lgm-np"><a href="#fn:lgm-np">5</a></sup><br />
+これが <em>Lightning Mountain</em> を追う上で重要な手掛かりとなる。</p>
+
+<p>特定のプロセッサ情報を探す際に有用な方法として、<code>site:browser.geekbench.com &quot;Family &lt;familyN&gt; Model &lt;modelN&gt;&quot;</code> を検索エンジンに入力して検索するというものがある。<br />
+これによってそのプロセッサの Geekbench実行結果を効率良く探すことができる。<br />
+Geekbenchの検索機能でもいいが、それだと Family, Model の値がベンチマークスコアにも引っ掛かりノイズが増える。また、Geekbench は複数のバージョンに分かれ、CPUベンチマークと GPU向けのコンピュートベンチマークとがそれぞれ存在するため、外部の検索エンジンを利用した方がまとめて探せて楽だろう。<br />
+<code>family: 0x&lt;familyN&gt; model: 0x&lt;modelN&gt;</code> で検索し、Linux Kernel のブートログ (<code>dmesg</code>) を探す方法もある。<br />
+前者の Geekbench は Family, Model を 10進数で、Linux Kernel は 16進数で表現しているため、そこは注意が必要となる。</p>
+
+<p>そして前者の方法で検索したところ、以下の Geekbench実行結果が見付かった。</p>
+
+<ul>
+<li><a href="https://browser.geekbench.com/v4/cpu/4109751" rel="noreferrer" target="_blank">LEAGOO T5c - Geekbench Browser - September 21st 2017, 8:38pm</a></li>
+</ul>
+
+<h3 id="sc9853i-9816g">SC9853I と SC9861G</h3>
+
+<p>ここではプロセッサ名は <strong>Spreadtrum IA</strong> とだけあるが、その後にアップロードされた他の実行結果では <strong>Spreadtrum SC9853I</strong> と表示されている。<sup class="footnote-ref" id="fnref:lgm-gb4"><a href="#fn:lgm-gb4">6</a></sup> また、<strong>SC9853I</strong> は GPU に Mali T820 MP2 を搭載している。<br />
+<strong>Spreadtrum SC9853I</strong> を搭載する <strong>Leagoo T5c</strong> スマートフォンは 2017/12頃にリリースされた <em>らしい</em> のだが<sup class="footnote-ref" id="fnref:t5c"><a href="#fn:t5c">7</a></sup>、公式サイトにも情報が無く、それ以上はっきりしたことは分からない。<br />
+2018年の 2月頃には購入者に届き始め、日本語で書かれたレビュー記事も検索すればいくつかヒットする。</p>
+
+<p>Spreadtrum は中国に本拠地を置く、モバイル向けチップセットを開発するファブレス企業。2018/06/13 に RDA と新ブランド UNISOC に統合されている。<sup class="footnote-ref" id="fnref:unisoc"><a href="#fn:unisoc">8</a></sup></p>
+
+<p><strong>Leagoo T5c</strong> が <strong>SC9853I (Lightning Mountain)</strong> を搭載した初のスマートフォンとのことで、他にも <strong>SC9853I</strong> を採用した製品がいくつか見付かった。<br />
+Panasonic からインド市場向けに <strong>ELUGA Ray 800</strong> <sup class="footnote-ref" id="fnref:ray-800"><a href="#fn:ray-800">9</a></sup>、タイの True Move H からは <strong>True SMART 4G P1 Prime</strong> <sup class="footnote-ref" id="fnref:4g-p1-prime"><a href="#fn:4g-p1-prime">10</a></sup>、中国の KONKA からは <strong>KONKA 711S</strong> <sup class="footnote-ref" id="fnref:711s"><a href="#fn:711s">11</a></sup>が発売されている。<br />
+ただこれらが <strong>Leagoo T5c</strong> と違うのは、Intel 8コア x86-64プロセッサということがアピールされていないどころか隠されている点で、まともに製品ページが今も存在する Panasonic <strong>ELUGA Ray 800</strong> でもプロセッサ名は記載せず、オクタコアプロセッサとあるだけだ。</p>
+
+<p>Intel と Spreadtrum の提携は 2017/02/27 にニュースリリースが出されており、Mobile World Congress (MWC) 2017 にて、Intel 14nmプロセスで製造され <em>Atom Airmontアーキテクチャ</em> コアを 8コア搭載、そして LTEモデムを統合した <strong>SC9861G-IA</strong> が発表されている。<sup class="footnote-ref" id="fnref:mwc"><a href="#fn:mwc">12</a></sup><br />
+製品ターゲットには、グローバルなミッド、プレミアムレベルのスマートフォンを挙げている。<br />
+<strong>SC9861G</strong> は Spreadtrum側のプレスリリースで 2GHz動作することがアピールされており、先に書いた <strong>SC9853I</strong> は最大 1.87GHz 動作である。<br />
+しかし、<strong>SC9853I</strong> は少なくはあるが採用製品が世に出ているのに対し、<strong>SC9861G</strong> は採用製品の情報が無い。<br />
+一応 Geekbench に <strong>SC9816G</strong> らしき実行結果が 2つあり、片方はプレスリリース通り 2GHz (2.03GHz) で動作しているが、プロセッサ名に正式な SKU名だろう <strong>SC9816G</strong> が無い。マザーボード側にそれらしきものがあるにはあるが、末尾が G ではなく E になっている。<br />
+また、Stepping: 8 と <strong>SC9853I</strong> (Stepping: 10) よりも若干前のプロセッサである。</p>
+
+<ul>
+<li><a href="https://browser.geekbench.com/v4/cpu/3724869" rel="noreferrer" target="_blank">SPRD sp9861e_1h10 - Geekbench Browser - August 17th 2017, 11:34am</a></li>
+</ul>
+
+<p>そのため、何らかの理由で <strong>SC9816G</strong> をキャンセル、代わりに最大動作クロックを 1.87GHzに設定した <strong>SC9853I</strong> を立て、ターゲットもコストパフォーマンスを重視したエントリー付近に変えたのではないかと考えられる。<strong>Leagoo T5c</strong> に続く <strong>SC9853I</strong> 採用製品でプロセッサが強調されていないことと関係しているかもしれない。<br />
+だが、<strong>SC9816G</strong> 発表時点では GPU に <em>PowerVR GT7200</em> を採用するとのことだったが、<strong>SC9853I</strong> は <em>Mali-T820 MP2</em> を採用している。<br />
+そのため、クロックの変更だけではなく大きな仕様変更が途中行われた可能性も考えられる。</p>
+
+<h2 id="car-radio">今はカーラジオに採用されて販売中</h2>
+
+<p>調べていて気付いたのは、スマートフォン以外に <strong>SC9853I (Lightning Mountain)</strong> を搭載したマシンによる実行結果が、比較的最近にアップロードされていることだ。つい一週間前 (2021/03/20) に実行されたものもある。</p>
+
+<ul>
+<li><a href="https://browser.geekbench.com/v5/cpu/7036360" rel="noreferrer" target="_blank">SPRD sp9853i_1h10_vmm - Geekbench Browser - March 20th 2021, 7:36pm</a></li>
+</ul>
+
+<p>上のモデル名 <em>SPRD sp9853i_1h10_vmm</em> で検索を掛けたところ GPS Power というフォーラムで、「Android搭載カーラジオで Tomtom (というアプリ) を実行することは出来ないか」といった内容の書き込みが見付かった。そのカーラジオに使われているボードが <em>SPRD sp9853i_1h10_vmm</em> となる。<sup class="footnote-ref" id="fnref:gpupower"><a href="#fn:gpupower">13</a></sup></p>
+
+<p>そこからさらに進めると、AliExpress に並ぶ <strong>SC9853I</strong> を搭載した ARKRIGHT製のカーラジオに行き着く。</p>
+
+<ul>
+<li><a href="https://www.aliexpress.com/item/4000420840058.html" rel="noreferrer" target="_blank">2 din 9 Inch Universal Car Radio GPS Navigation Android 8.1 SC9853 Octa Core Car Radio Stereo DSP 4G Sim Card Multimedia Player|Car Multimedia Player| - AliExpress</a></li>
+</ul>
+
+<p>カーラジオは <em>Lightning Mountain SoC</em> らしく 4Gモジュールが組み込まれていることを売りの一つにしている。<br />
+AliExpress で <strong>SC9853I</strong> を検索すると、カーラジオを 13種程出てくる。それらの主な違いは、ディスプレイサイズとインターフェイス、メモリサイズ、ストレージサイズとなる。</p>
+
+<p>また、他の <em>Airmontアーキテクチャ</em> を採用する Atomプロセッサが LPDDR3メモリまでの対応だったのに対し、<em>Lightning Mountain SoC</em> は LPDDR4メモリにも対応している。<br />
+Atom系プロセッサでは、<em>Airmont</em> から 1つ世代が進んだ <em>Goldmontアーキテクチャ</em> を採用する <em>Apollo Lake</em> から対応している。<em>Apollo Lake</em> の発売開始時期は 2016Q3 とあるので<sup class="footnote-ref" id="fnref:apl"><a href="#fn:apl">14</a></sup>、時期を考えれば自然かもしれないが、アーキテクチャとの差異を考えると興味深い点ではある。</p>
+
+<p>ただ、自分が AliExpress に慣れていないというのもあるが、一連のカーラジオのリリース時期、いつから販売しているのかを知ることは出来なかった。</p>
+
+<p><br>
+ここまででいくつかの <em>Lightning Mountain SoC</em> が過去にスマートフォン向けに 2017年登場、採用され、今はカーラジオが販売されていることまでは分かったが、切っ掛けである最初のパッチが何故 2019/08頃に投稿されたのかは不明なままだ。<br />
+Android は Linux Kernel を採用しているため、搭載製品に使われているソースコードを入手できれば何かしら分かるのではと期待したが、サポートページを探しても <span class="complement">または製品、サポートページ自体が</span>
+ 見付からなかった。<br />
+<em>Lightning Mountain SoC</em> 自体よりも、その扱いが一番の謎と言えるかもしれない。</p>
+
+<p>中国市場は独特の流れを持つらしく、いつかに <em>Xbox One SoC</em> を転用した <em>AMD Cato APU</em> 搭載製品が中国市場で発売されたことがあった。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/14/a9-9820-silicon/">A9-9820 は Xbox One SoC と同一ダイ | Coelacanth's Dream</a></span>
+
+<em>Lightning Mountain</em> もまた、<span class="complement">不遇に思える点はあるが</span>
+ そうした魅力を持つプロセッサの 1つだろう。</p>
+
+<hr>
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Lightning-Mountain-Code-2021" rel="noreferrer" target="_blank">Intel's Lightning Mountain Appears Punted Off Or Canned As Part Of MaxLinear Acquisition - Phoronix</a></li>
+<li><a href="http://web.archive.org/web/20170301092811/www.spreadtrum.com/en/show_news.html?id=fe766282-e9cc-4ffd-b211-e3d19675d3f7" rel="noreferrer" target="_blank">Spreadtrum launches 14nm 8-core 64-bit mid- and high-end LTE SoC platform - Spreadtrum Communications, Inc.</a></li>
+<li><a href="https://newsroom.intel.com/news/intel-demonstrates-5g-power-versatility-with-att-introduces-mobile-soc-with-spreadtrum/" rel="noreferrer" target="_blank">Intel Demonstrates 5G Power, Versatility with AT&T; Introduces New Mobile SoC with Spreadtrum</a></li>
+<li><a href="https://blog.osakana.net/archives/8561" rel="noreferrer" target="_blank">Intel Airmont採用の中華SoC Spreadtrum SC9853i採用のLeagoo T5cを使ってみた – OSAKANA TAROのメモ帳</a></li>
+<li><a href="https://www.maxlinear.com/Company/press-releases/2020/MaxLinear-to-acquire-Intel%E2%80%99s-Home-Gateway-Platform" rel="noreferrer" target="_blank">MaxLinear to acquire Intel’s Home Gateway Platform Division - MaxLinear</a></li>
+<li><a href="http://dennouarekore.blog.jp/archives/23088978.html" rel="noreferrer" target="_blank">電脳あれこれ : 【レビュー】LEAGOO T5c</a></li>
+<li><a href="https://gad23.com/leagoo-t5s-donotbuy/" rel="noreferrer" target="_blank">【Leagoo T5c】実機レビュー この端末を買ってはいけない理由 | ガジェット23(gad23.com)</a></li>
+<li><a href="https://phablet.jp/?p=36202" rel="noreferrer" target="_blank">タイでTrue SMART 4G P1 Prime発売、5.45インチ・デュアルカメラ搭載のスマートフォン | phablet.jp (ファブレット.jp)</a></li>
+<li><a href="https://gpad.tv/phone/panasonic-eluga-ray-800/" rel="noreferrer" target="_blank">パナソニック、インド市場向け 4000mAh バッテリー搭載 5.5インチスマートフォン「ELUGA Ray 800」発表 | GPad</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:lgm-first-patch"><a href="https://lore.kernel.org/linux-serial/cover.1565257887.git.rahul.tanwar@linux.intel.com/" rel="noreferrer" target="_blank">[PATCH v2 0/3] serial: lantiq: Update driver to support new SoC - Rahul Tanwar</a> / <a href="https://lore.kernel.org/linux-serial/57e2b69e9fbd93328a477b4c7dd2dcc78784ecb1.1565257887.git.rahul.tanwar@linux.intel.com/" rel="noreferrer" target="_blank">[PATCH v2 1/3] serial: lantiq: Use proper DT compatible string - Rahul Tanwar</a>
+ <a class="footnote-return" href="#fnref:lgm-first-patch"><sup>[return]</sup></a></li>
+<li id="fn:lgm-led-fail"><a href="https://lkml.org/lkml/2021/3/9/1006" rel="noreferrer" target="_blank">LKML: Pavel Machek: Intel, please maintain your drivers was Re: [PATCH] leds: lgm: fix gpiolib dependency</a>
+ <a class="footnote-return" href="#fnref:lgm-led-fail"><sup>[return]</sup></a></li>
+<li id="fn:maxlinear-acquire"><a href="https://www.maxlinear.com/Company/press-releases/2020/MaxLinear-to-acquire-Intel%E2%80%99s-Home-Gateway-Platform" rel="noreferrer" target="_blank">MaxLinear to acquire Intel’s Home Gateway Platform Division - MaxLinear</a>
+ <a class="footnote-return" href="#fnref:maxlinear-acquire"><sup>[return]</sup></a></li>
+<li id="fn:lgm-model"><a href="https://lore.kernel.org/lkml/20190905193020.14707-4-tony.luck@intel.com/" rel="noreferrer" target="_blank">[PATCH 3/4] x86/cpu: Add new Airmont variant to Intel family - Tony Luck</a>
+ <a class="footnote-return" href="#fnref:lgm-model"><sup>[return]</sup></a></li>
+<li id="fn:lgm-np"><a href="https://github.com/torvalds/linux/commit/d058fd9e8984cd9f18564f7fec38e07ce671c8b8" rel="noreferrer" target="_blank">clk: intel: Add CGU clock driver for a new SoC · torvalds/linux@d058fd9</a>
+ <a class="footnote-return" href="#fnref:lgm-np"><sup>[return]</sup></a></li>
+<li id="fn:lgm-gb4"><a href="https://browser.geekbench.com/v4/cpu/8417421" rel="noreferrer" target="_blank">LEAGOO T5c - Geekbench Browser - May 27th 2018, 9:05am</a>
+ <a class="footnote-return" href="#fnref:lgm-gb4"><sup>[return]</sup></a></li>
+<li id="fn:t5c"><a href="https://www.gizmochina.com/product/leagoo-t5c-2/" rel="noreferrer" target="_blank">Leagoo T5c Smartphone Full Specification And Features</a>
+ <a class="footnote-return" href="#fnref:t5c"><sup>[return]</sup></a></li>
+<li id="fn:unisoc"><a href="https://blog.osakana.net/archives/8745" rel="noreferrer" target="_blank">SpreadtrumとRDAの合併が完了しUNISOC誕生 – OSAKANA TAROのメモ帳</a> / <a href="https://www.prnewswire.com/news-releases/unigroup-spreadtrum--rda-launches-its-integrated-new-brand---unisoc-300665467.html" rel="noreferrer" target="_blank">Unigroup Spreadtrum &amp; RDA Launches Its Integrated New Brand - UNISOC</a>
+ <a class="footnote-return" href="#fnref:unisoc"><sup>[return]</sup></a></li>
+<li id="fn:ray-800"><a href="https://mobile.panasonic.com/in/smartphones/eluga-ray-800" rel="noreferrer" target="_blank">Panasonic Eluga Ray 800 Smartphone - Overview, Reviews, Features &amp; Specs</a> / <a href="https://browser.geekbench.com/v5/cpu/1445043" rel="noreferrer" target="_blank">PANASONIC Eluga_Ray_800 - Geekbench Browser</a>
+ <a class="footnote-return" href="#fnref:ray-800"><sup>[return]</sup></a></li>
+<li id="fn:4g-p1-prime"><a href="https://browser.geekbench.com/v4/cpu/16009588" rel="noreferrer" target="_blank">true SMART 4G P1 Prime - Geekbench Browser</a> / <a href="https://phablet.jp/?p=36202" rel="noreferrer" target="_blank">タイでTrue SMART 4G P1 Prime発売、5.45インチ・デュアルカメラ搭載のスマートフォン | phablet.jp (ファブレット.jp)</a>
+ <a class="footnote-return" href="#fnref:4g-p1-prime"><sup>[return]</sup></a></li>
+<li id="fn:711s"><a href="https://browser.geekbench.com/v4/cpu/15141602" rel="noreferrer" target="_blank">KONKA 711S-JS - Geekbench Browser</a> / <a href="https://www.needrom.com/download/konka-711s/" rel="noreferrer" target="_blank">ROM KONKA 711S | [Official] add the 01/20/2018 on Needrom</a>
+ <a class="footnote-return" href="#fnref:711s"><sup>[return]</sup></a></li>
+<li id="fn:mwc"><a href="http://web.archive.org/web/20170301092811/www.spreadtrum.com/en/show_news.html?id=fe766282-e9cc-4ffd-b211-e3d19675d3f7" rel="noreferrer" target="_blank">Spreadtrum launches 14nm 8-core 64-bit mid- and high-end LTE SoC platform - Spreadtrum Communications, Inc.</a> / <a href="https://newsroom.intel.com/news/intel-demonstrates-5g-power-versatility-with-att-introduces-mobile-soc-with-spreadtrum/" rel="noreferrer" target="_blank">Intel Demonstrates 5G Power, Versatility with AT&T; Introduces New Mobile SoC with Spreadtrum</a>
+ <a class="footnote-return" href="#fnref:mwc"><sup>[return]</sup></a></li>
+<li id="fn:gpupower"><a href="https://www.gpspower.net/tomtom-android/362748-tomtom-apk-broken-car-radio-android.html" rel="noreferrer" target="_blank">Tomtom apk - broken in car radio with android</a>
+ <a class="footnote-return" href="#fnref:gpupower"><sup>[return]</sup></a></li>
+<li id="fn:apl"><a href="https://ark.intel.com/content/www/jp/ja/ark/products/codename/80644/apollo-lake.html" rel="noreferrer" target="_blank">製品の開発コード名 Apollo Lake</a>
+ <a class="footnote-return" href="#fnref:apl"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/36TCzB6" class="amzn_link_main" target="_blank" rel="noopener noreferrer">コンピュータアーキテクチャ技術入門 ~高速化の追求×消費電力の壁 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">Hisa Ando 氏による Intel Xe を含めた最新 GPU アーキテクチャの解説等を追加した増補改訂版、その他機械学習専用チップをもカバーしている</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div>
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2NOI2Do" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「Intel CPU」</a>
+      <div class="amzn_link_desc">カテゴリー: CPU、出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/30nAXwB" class="amzn_link_main" target="_blank" rel="noopener noreferrer">第11世代 インテル® Core™ プロセッサーファミリー搭載ノートPC特集</a>
+  </div><br>
+
+  </div>
+</div>
+
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/tags/">Tag</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-category-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-category-lower">Intel</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Intel%20Lightning%20Mountain%20%e3%82%92%e8%bf%bd%e3%81%86%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/23/intel-lgm-soc/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/23/intel-lgm-soc.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@protonmail.com" class="mail">Mail</a>
+
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/tags/">Tag</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a class="foot-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/23/intel-lgm-soc.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@protonmail.com" class="mail">Mail</a>
+
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-share-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer><div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/tags/">Tag</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-category-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-category-lower">Intel</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about"><a class="menu-history" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/23/intel-lgm-soc.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://github.com/Umio-Yasuno/" target="_blank" rel="noreferrer noopener">Github</a>
+<a href="mailto:coelacanth_dream@protonmail.com" class="mail">Mail</a>
+
+
+    </nav>
+  </div>
+</div>
+
+    </main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
