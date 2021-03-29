@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/03/30/amdgpu_cache_info/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMD GPU のキャッシュ構成　―― Dimgrey Cavefish, Aldebran, VanGogh | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMD GPU のキャッシュ構成　―― Dimgrey Cavefish, Aldebran, VanGogh | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMD GPU のキャッシュ構成　―― Dimgrey Cavefish, Aldebran, VanGogh | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/03/30/amdgpu_cache_info/">
+  <meta name="description" content="Vega10 以降の AMD GPU のキャッシュ構成情報をドライバーに追加するパッチが Linux Kernel (amd-gfx) に投稿された。 キャッシュ情報が追加されたのは、Kernelドライバーでも KFD (Kernel">
+  <meta property="og:description" content="Vega10 以降の AMD GPU のキャッシュ構成情報をドライバーに追加するパッチが Linux Kernel (amd-gfx) に投稿された。 キャッシュ情報が追加されたのは、Kernelドライバーでも KFD (Kernel">
+  <meta name="twitter:description" content="Vega10 以降の AMD GPU のキャッシュ構成情報をドライバーに追加するパッチが Linux Kernel (amd-gfx) に投稿された。 キャッシュ情報が追加されたのは、Kernelドライバーでも KFD (Kernel">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/03/30/amdgpu_cache_info/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/03/30/amdgpu_cache_info/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Linux Kernel, Dimgrey Cavefish, Aldebaran, VanGogh">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>
+article{display:grid;grid-template-rows:auto;grid-template-columns:.5% 1% auto 2%;row-gap:12px}article>*{grid-column:3/-1}article>h1~*{display:none;will-change:display}h1{color:#ffa020;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word;padding-bottom:100vh}html{background-size:100%;background-attachment:fixed;background-color:#004750;background-repeat:no-repeat;font-size:.95rem;z-index:-1}main{display:grid;grid-template-rows:repeat(6,auto)3rem;grid-template-columns:.5vw 1vw auto 4vw;row-gap:20px;z-index:0}header{grid-row:1;grid-column:3/-2;margin-top:16px}.site-title{font:23pt/1.1 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#819ba1;text-shadow:-4px 4px 1.2em #89a;padding:0}.site-title a:hover{color:#90b4bd;text-shadow:-4px 4px 1.2em #abc;text-decoration:none}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .18em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;border-radius:1em;transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#bef;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3;grid-column:1/-1;color:#fcffff;box-sizing:border-box;font-size:1rem;line-height:1.6;overflow-x:auto;overflow-wrap:break-word}article>p{margin:.4rem 0}article>p::before{padding-right:.55em;content:''}footer,.home,.posts,.tags,.categories,.slide,.entry{display:none}.side{transform:translateX(100vw);position:fixed;top:1vh;left:0}footer{grid-row:5;grid-column:1/-1}.head-cat-tag{border:1px solid teal;max-width:max-content;padding:8px 2px 6px;margin-bottom:8px;font-size:.96rem;line-height:1.1;color:#4aa;display:flex;flex-flow:column nowrap;row-gap:10px;font-family:monospace}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;row-gap:4px}.head-cat-tag-type{color:#38d8c8;margin-top:auto;padding:0 .1rem;margin:0 .3rem}.head-cat-lower,.head-tag-lower{margin:0 .3rem 0 .2rem;padding:0 .1rem}.head-cat-tag a:hover{text-decoration:underline}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 72% 62%,#fff2 0%,#0000 100%,#000 106%);opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:1;pointer-events:none}.crt{background-image:linear-gradient(0deg,#800 0%,#800 33%,#080 33%,#080 67%,#008 67%,#008 100%);background-size:100% .7em;width:100%;height:100%;opacity:.048}@media (min-width: 840px) {main{display:grid;grid-template-rows:repeat(5,auto)6vh;grid-template-columns:200px 8px 12px auto 16px;row-gap:4px}article{grid-template-columns:.5% .5% auto 2%}.text{grid-row:3;grid-column:3/-1}.side{transform:translateX(0);height:96vh;width:180px;padding:12px 8px 0 12px;color:#20b2aa;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000}.side-block,.foot-pagination,.foot-tag-category{display:none}}
+</style>
+
+<link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMD GPU のキャッシュ構成　―― Dimgrey Cavefish, Aldebran, VanGogh",
+  "headline" : "AMD GPU のキャッシュ構成　―― Dimgrey Cavefish, Aldebran, VanGogh",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-03-30",
+    "datePublished" : "2021-03-30",
+    "dateModufied"  : "2021-03-30",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a><br></div>
+
+</header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="head-tag-lower">Aldebaran</a>/<a href="https://www.coelacanth-dream.com/tags/dimgrey_cavefish/" class="head-tag-lower">Dimgrey Cavefish</a>/<a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="head-tag-lower">Linux Kernel</a>/<a href="https://www.coelacanth-dream.com/tags/vangogh/" class="head-tag-lower">VanGogh</a></div>
+    </div>
+  <h1>AMD GPU のキャッシュ構成　―― Dimgrey Cavefish, Aldebran, VanGogh</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=AMD%20GPU%20%e3%81%ae%e3%82%ad%e3%83%a3%e3%83%83%e3%82%b7%e3%83%a5%e6%a7%8b%e6%88%90%e3%80%80%e2%80%95%e2%80%95%20Dimgrey%20Cavefish%2c%20Aldebran%2c%20VanGogh%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/30/amdgpu_cache_info/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article_time">
+  <time datetime="2021-03-30 02:12+09:00">Post: 2021/03/30 02:12 JST</time>
+  <div class="article_time_update">Update: 2021/03/30 03:34 JST</div>
+</div>
+
+
+<p><em>Vega10</em> 以降の AMD GPU のキャッシュ構成情報をドライバーに追加するパッチが Linux Kernel (amd-gfx) に投稿された。<br />
+キャッシュ情報が追加されたのは、Kernelドライバーでも KFD (Kernel Fusion Driver) の部分であり、KFD は各種ROCmソフトウェアを動作させるためのドライバーとして機能する。<br />
+これまでは CU ごとに持つプライベートな L1ベクタキャッシュの情報だけだったが、今回のパッチにより、複数の CU で共有するスカラL1データ/命令キャッシュ、L2データキャッシュ、そして <em>RDNA 2/GFX10.3</em> 世代から追加された L3データキャッシュの情報が追加された。</p>
+
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noreferrer" target="_blank">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></li>
+</ul>
+
+<h2 id="page-index">Index</h2>
+<div class="page-index">
+  <ul>
+<li><a href="#aldebran">Aldebran のキャッシュ構成</a></li>
+<li><a href="#vgh">VanGogh のキャッシュ構成と CU数　―― GL1キャッシュは持つが L3キャッシュは持たず</a></li>
+<li><a href="#dimgrey_cavefish">Dimgrey Cavefish/Navi23 のキャッシュ構成　―― 32MB の L3キャッシュ</a></li>
+<li><a href="#cache-info">AMD GPU cache info</a></li>
+</ul>
+
+</div>
+
+
+<h2 id="aldebran">Aldebran のキャッシュ構成</h2>
+
+<p><em>Aldebran</em> の CU はプライベートL1キャッシュ 16KB を持ち、これは他の AMD GPU アーキテクチャ、<em>GCN, CDNA, RDNA/2</em> と同じである。<br />
+L1データ/命令キャッシュは、<em>Vega/GFX9</em> 世代では基本 CU 3基で共有していたが、2基で共有する形となる。L1データキャッシュは 16KB、L1命令キャッシュは 32KB で、キャッシュサイズに変わりはない。<br />
+L2データキャッシュは 8192KB (8MB)、CU 14基で共有すると記述されているが、ここでの CU は SE (ShaderEngine) あたりの数であり、全体の規模ではないと思われる。<br />
+しかし、<strong>Radeon Instinct MI50/60</strong> のベースとなる <em>Vega20</em> や <em>CDNA アーキテクチャ</em> を採用する <em>Arcturus/MI100</em> が SE あたりの CU 16基、というバランスを採り続けてきたことを考えると、それよりもわずかに少ない CU 14基となるのは興味深い点ではある。</p>
+
+<blockquote>
+<pre><code>   +static struct kfd_gpu_cache_info aldebaran_cache_info[] = {
+   + {
+   +     /* TCP L1 Cache per CU */
+   +     .cache_size = 16,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 1,
+   + },
+   + {
+   +     /* Scalar L1 Instruction Cache per SQC */
+   +     .cache_size = 32,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_INST_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 2,
+   + },
+   + {
+   +     /* Scalar L1 Data Cache per SQC */
+   +     .cache_size = 16,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 2,
+   + },
+   + {
+   +     /* L2 Data Cache per GPU (Total Tex Cache) */
+   +     .cache_size = 8192,
+   +     .cache_level = 2,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 14,
+   + },
+   +};</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noreferrer" target="_blank">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
+</div>
+
+</blockquote>
+
+<p>ついでだが、今回のパッチでは <em>Vega20</em> と <em>Arcturus</em> のキャッシュ情報を共通のものとしており、そのためか <em>Vega20</em> の L2キャッシュサイズが 8192KB(8MB) になっているが、<em>Vega20</em> は 4MB、<em>Arcturus</em> は 8MB というのが正しいように思われる。</p>
+
+<h2 id="vgh">VanGogh のキャッシュ構成と CU数　―― GL1キャッシュは持つが L3キャッシュは持たず</h2>
+
+<p>パッチでは <em>VanGogh APU</em> のキャッシュ情報も追加されている。<br />
+プライベートL1キャッシュ、スカラL1データ/命令キャッシュは他と同様。<br />
+<em>VanGogh</em> において興味深いのは <em>RDNA/GFX10</em> から追加された GL1キャッシュは持つが、<em>RDNA 2/GFX10.3</em> から追加された <em>L3キャッシュ/Infinity Cache</em> は持たないことだ。</p>
+
+<p><em>VanGogh</em> の前にキャッシュの呼称についての解説を挟むと、<br />
+<em>RDNA系アーキテクチャ</em> では CU内のプライベートL1キャッシュ、複数の CU で共有する L1データ/命令キャッシュと、グローバルでアクセス可能な L2キャッシュの間に階層が 1つ増設された。<br />
+そして、<em>GCN/CDNA アーキテクチャ</em> における L1キャッシュを <em>RDNA アーキテクチャ</em> では L0キャッシュとし、新たなキャッシュ階層を L1キャッシュとした。<br />
+マーケティング上の資料等ではそうした呼び方で問題無いと思われるが、ドライバー等の扱いでは、呼び方が違ってもキャッシュの扱いは同じであるため、その呼び方をそのまま使うのではややこしく、問題が生じる原因となる。<br />
+そのため、オープンソース・ドライバーのコードを読む限りでは、<em>RDNA アーキテクチャ</em> における L1キャッシュを <code>GL1</code> としている。<br />
+AMD GPU のキャッシュの別名は他にもあり、プライベートL1キャッシュは <code>TCP (Texture Cache Private?)</code> 、L2キャッシュは <code>TCC (Total Texture Cache?)</code> <sup class="footnote-ref" id="fnref:tcc"><a href="#fn:tcc">1</a></sup> 、L3キャッシュは <code>MALL (Memory Access at Last Level)</code> とされる。</p>
+
+<p><em>VanGogh</em> の各 L1キャッシュサイズは他と同じで、L1データ/命令キャッシュを CU 2基で共有するのは <em>RDNA系アーキテクチャ</em> で共通する特徴 (WGP) となる。<br />
+そして、<em>VanGogh</em> は GL1キャッシュ 128KB を持ち、これは他の <em>RDNA系アーキテクチャ</em> を採用するディスクリートGPUと同じ規模のキャッシュサイズとなる。<br />
+L2キャッシュは 1024KB (1MB) であり、これは近年の <em>Vega/GFX9</em> 世代 APU <span class="complement">Raven, Picasso, Renoir, Lucienne, Cezanne</span>
+ と同じサイズであり、AMD としては APU の GPU部に持たせる L2キャッシュはまだ 1MB がちょうど良いという判断なのかもしれない。<br />
+それでも GL1キャッシュを持つため、GPU のメモリ性能向上が期待できる。</p>
+
+<p>また、CU 8基で共有するとされているが、他の RDNA系dGPU の情報を見るに、SA (ShaderArray) あたりの CU数ではないかと思われる。<br />
+<em>RDNA系アーキテクチャ</em> では SE あたりの SA数が 2基となっているため、<em>VanGogh</em> でもそうなるかはここでは読み取れない。<br />
+しかし、L2キャッシュ 1MB ということから、<em>Vega/GFX9</em> 世代 APU からそう CU数を増やすことはせず、SE あたり SA 1基という構成を採る可能性は考えられる。</p>
+
+<p>そして、<em>VanGogh APU</em> は GPU部に <em>RDNA 2 アーキテクチャ</em> を採用するが、L3キャッシュ/Infinity Cache は持たない。<br />
+このことはディスプレイエンジン周りのドライバーコードから読み取ることができ、正確な情報と思われる。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth's Dream</a></span>
+</p>
+
+<p><em>RDNA 2アーキテクチャ</em> でありながら L3キャッシュ/Infinity Cache を持たず、また SE あたり SA 1基という構成 <span class="complement">を採る可能性がある</span>
+ からは、コストを重視した APU/SoC という設計思想が垣間見えるだろう。</p>
+
+<blockquote>
+<pre><code>   +static struct kfd_gpu_cache_info vangogh_cache_info[] = {
+   + {
+   +     /* TCP L1 Cache per CU */
+   +     .cache_size = 16,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 1,
+   + },
+   + {
+   +     /* Scalar L1 Instruction Cache per SQC */
+   +     .cache_size = 32,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_INST_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 2,
+   + },
+   + {
+   +     /* Scalar L1 Data Cache per SQC */
+   +     .cache_size = 16,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 2,
+   + },
+   + {
+   +     /* GL1 Data Cache per SA */
+   +     .cache_size = 128,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 8,
+   + },
+   + {
+   +     /* L2 Data Cache per GPU (Total Tex Cache) */
+   +     .cache_size = 1024,
+   +     .cache_level = 2,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 8,
+   + },
+   +};</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noreferrer" target="_blank">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
+</div>
+
+</blockquote>
+
+<h2 id="dimgrey_cavefish">Dimgrey Cavefish/Navi23 のキャッシュ構成　―― 32MB の L3キャッシュ</h2>
+
+<p><em>Dimgrey Cavefish/Navi23</em> のキャッシュ情報も追加されており、そこからはメモリバス幅が読み取れる。</p>
+
+<p><em>Dimgrey Cavefish</em> は L2キャッシュ 2048KB (2MB)、L3キャッシュ/Infinity Cache 32MB を持つ。<br />
+L3キャッシュ/Infinity Cache については、ディスプレイエンジン周りのドライバーコードから、メモリチャネルあたり 4MB ということが読み取れ、他 <em>RDNA 2</em> dGPU同様に GDDR6メモリ (1ch == 16-bit) だとするとメモリバス幅は 128-bit だと考えられる。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth's Dream</a></span>
+
+L2キャッシュ 2MB からも、他同様に L2キャッシュブロックあたり 256KB とすると 8ブロック (ch) となり、ここでも 128-bit と考えられる。</p>
+
+<p>既に製品が出ている <em>RDNA 2</em> dGPU、<em>Sienna Cichlid/Navi21</em> 、<em>Navy Flounder/Navi22</em> では、メモリチャネルあたり 8MB の L3キャッシュ/Infinity Cache を持ち、<em>Dimgrey Cavefish/Navi23</em> はそれよりも小さいバランスとなるが、これは製造コストを意識した結果、あるいはターゲット帯に必要な性能を考えてのものだろう。<br />
+また、 <em>Dimgrey Cavefish</em> の SA あたりの CU数は 8基とされ、<em>Sienna Cichlid</em> 、<em>Navy Flounder</em> は 10基であったから、ここでも小さめバランスを取ったことが読み取れる。</p>
+
+<blockquote>
+<pre><code>   +static struct kfd_gpu_cache_info dimgrey_cavefish_cache_info[] = {
+   + {
+   +     /* TCP L1 Cache per CU */
+   +     .cache_size = 16,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 1,
+   + },
+   + {
+   +     /* Scalar L1 Instruction Cache per SQC */
+   +     .cache_size = 32,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_INST_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 2,
+   + },
+   + {
+   +     /* Scalar L1 Data Cache per SQC */
+   +     .cache_size = 16,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 2,
+   + },
+   + {
+   +     /* GL1 Data Cache per SA */
+   +     .cache_size = 128,
+   +     .cache_level = 1,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 8,
+   + },
+   + {
+   +     /* L2 Data Cache per GPU (Total Tex Cache) */
+   +     .cache_size = 2048,
+   +     .cache_level = 2,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 8,
+   + },
+   + {
+   +     /* L3 Data Cache per GPU */
+   +     .cache_size = 32*1024,
+   +     .cache_level = 3,
+   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +             CRAT_CACHE_FLAGS_DATA_CACHE |
+   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +     .num_cu_shared = 8,
+   + },
+   +};</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noreferrer" target="_blank">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
+</div>
+
+</blockquote>
+
+<h2 id="cache-info">AMD GPU cache info</h2>
+
+<table>
+<thead>
+<tr>
+<th align="left">AMD GPU<br>cache info</th>
+<th align="center">RDNA L1 (GL1)</th>
+<th align="center">L2 (TCC)</th>
+<th align="center">L3/Infinity Cache (MALL)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Vega20</td>
+<td align="center">N/A</td>
+<td align="center">4M</td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="left">Arcturus</td>
+<td align="center">N/A</td>
+<td align="center">8M?</td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="left">Aldebaran</td>
+<td align="center">N/A</td>
+<td align="center">8M</td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="left">Navi10/Navi12</td>
+<td align="center">128K</td>
+<td align="center">4M</td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="left">Navi14</td>
+<td align="center">128K</td>
+<td align="center">2M</td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="left">VanGogh</td>
+<td align="center">128K</td>
+<td align="center">1M</td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="left">Sienna Cichlid</td>
+<td align="center">128K</td>
+<td align="center">4M</td>
+<td align="center">128M</td>
+</tr>
+
+<tr>
+<td align="left">Navy Flounder</td>
+<td align="center">128K</td>
+<td align="center">3M</td>
+<td align="center">96M</td>
+</tr>
+
+<tr>
+<td align="left">Dimgrey Cavefish</td>
+<td align="center">128K</td>
+<td align="center">2M</td>
+<td align="center">32M</td>
+</tr>
+</tbody>
+</table>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:tcc">Texture Channel Cache とされることも
+ <a class="footnote-return" href="#fnref:tcc"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article-bottom-misc"><a href="https://github.com/Umio-Yasuno" class="sb" target="_blank" ref="noreferrer noopener">Github</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" class="sb" target="_blank" ref="noreferrer noopener">Source repo</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/03/30/amdgpu_cache_info.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+<hr><div class="related-article"><div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/" target="_blank" class="related-article-link">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/09/23/amd-vangogh-dimgrey_cavefish/" target="_blank" class="related-article-link">新たな AMD RDNA 2 GPU、&#34;Dimgrey Cavefish&#34; &amp; &#34;VanGogh&#34;</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/03/19/coelacanth-diary-2021-03-19/" target="_blank" class="related-article-link">【雑記】 VanGogh APU のメモリインターフェイスは (恐らく) LPDDR5 64-bit</a>
+    </div><hr><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">Hisa Ando 氏による Intel Xe を含めた最新 GPU アーキテクチャの解説等を追加した増補改訂版、その他機械学習専用チップをもカバーしている</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div>
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「Radeon」</a>
+      <div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2LvmAlY" class="amzn_link_main" target="_blank" rel="noopener noreferrer">玄人志向 AMD Radeon RX550搭載 グラフィックボード GDDR5 2GB Low Profile対応 シングルファンモデル</a>
+      <div class="amzn_link_desc">1スロLPな RX 550、最新のオープンソースドライバーを使えるため、小型サーバー等に適している</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3pSoUCL" class="amzn_link_main" target="_blank" rel="noopener noreferrer">SAPPHIRE PULSE RADEON RX 5500 XT 4G</a>
+      <div class="amzn_link_desc">とにかく RDNA GPU を試したいなら。一般用途としては十分過ぎる性能も持っている。</div>
+  </div><br>
+
+  </div>
+</div>
+
+
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="menu-tag-lower">Aldebaran</a>
+      <a href="https://www.coelacanth-dream.com/tags/dimgrey_cavefish/" class="menu-tag-lower">Dimgrey Cavefish</a>
+      <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-tag-lower">Linux Kernel</a>
+      <a href="https://www.coelacanth-dream.com/tags/vangogh/" class="menu-tag-lower">VanGogh</a>
+</div>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-category-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-category-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-category-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=AMD%20GPU%20%e3%81%ae%e3%82%ad%e3%83%a3%e3%83%83%e3%82%b7%e3%83%a5%e6%a7%8b%e6%88%90%e3%80%80%e2%80%95%e2%80%95%20Dimgrey%20Cavefish%2c%20Aldebran%2c%20VanGogh%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/03/30/amdgpu_cache_info/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about">
+  <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-share-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer><div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="menu-tag-lower">Aldebaran</a>
+      <a href="https://www.coelacanth-dream.com/tags/dimgrey_cavefish/" class="menu-tag-lower">Dimgrey Cavefish</a>
+      <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-tag-lower">Linux Kernel</a>
+      <a href="https://www.coelacanth-dream.com/tags/vangogh/" class="menu-tag-lower">VanGogh</a>
+</div>
+<div class="menu-category-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-category-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-category-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-category-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-category-lower">Hardware</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+
+    </nav>
+  </div>
+</div>
+
+    </main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
