@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/04/09/gpuopen-navi12/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMDVLK GPUOpenドライバーが Navi12 に対応 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMDVLK GPUOpenドライバーが Navi12 に対応 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMDVLK GPUOpenドライバーが Navi12 に対応 | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/04/09/gpuopen-navi12/">
+  <meta name="description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Library)、X">
+  <meta property="og:description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Library)、X">
+  <meta name="twitter:description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Library)、X">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/04/09/gpuopen-navi12/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/04/09/gpuopen-navi12/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="GPUOpen, Navi12, RDNA">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>
+article{display:grid;grid-template:auto/.5% 1% auto 2%;gap:12px 0}article>*{grid-column:3/-1}article>h1~*{display:none;will-change:display}h1{color:#f90;font:1.1em/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word;padding-bottom:100vh}html{background-size:100%;background-attachment:fixed;background-color:#004750;background-repeat:no-repeat;font-size:.95rem;z-index:-1}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0;z-index:0}header{grid-row:1;grid-column:3/-2;margin-top:16px}.site-title{font:1.9em/1.1 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#899;text-shadow:-4px 4px 1.2em #9aa;padding:0}.site-title a:hover{color:#9bb;text-shadow:-4px 4px 1.2em #acc;text-decoration:none}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .24em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#bef;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3;grid-column:1/-1;color:#fffcfc;box-sizing:border-box;font-size:1rem;line-height:1.6;overflow-x:auto;overflow-wrap:break-word}article>p{margin:.4rem 0}article>p::before{padding-right:.55em;content:''}footer,.home,.posts,.tags,.categories,.slide,.entry{display:none}.side{transform:translateX(100vw);position:fixed;top:1vh;left:0}footer{grid-row:5;grid-column:1/-1}.head-cat-tag{border:1px solid #099;max-width:max-content;padding:8px 2px 6px;margin-bottom:8px;font:.96rem/1.1 monospace;color:#4aa;display:flex;flex-flow:column nowrap;gap:10px 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:4px 0}.head-cat-tag-type{color:#3dc;padding:0 .4em}.head-cat-lower,.head-tag-lower{margin:0 .1em;padding:0 .5em}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 72% 62%,#dee2 0%,#0000 100%,#000 105%);opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:1;pointer-events:none}.crt{background-image:linear-gradient(0deg,#800 0%,#800 33%,#080 33%,#080 67%,#008 67%,#008 100%);background-size:100% .6em;width:100%;height:100%;opacity:.06}.sb{display:inline-block;font:13px/1.2 sans-serif;margin:auto 0;padding:.15em .7em .3em;max-width:max-content;color:#ffe;border:1px solid #178;background-image:linear-gradient(120deg,#188 2%,#077 2%,#066 100%);text-align:center;cursor:pointer}.sb:active{background-image:linear-gradient(120deg,#177 2%,#066 2%,#055 100%)}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}article{grid-template-columns:.5% .5% auto 2%}.text{grid-row:3;grid-column:3/-1}.side{transform:translateX(0);height:96vh;width:180px;padding:12px 8px 0 12px;color:#20b2aa;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000}.side-block,.foot-pagination,.foot-tag-category{display:none}}</style><link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMDVLK GPUOpenドライバーが Navi12 に対応",
+  "headline" : "AMDVLK GPUOpenドライバーが Navi12 に対応",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-04-09",
+    "datePublished" : "2021-04-09",
+    "dateModufied"  : "2021-04-09",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a><br></div>
+</header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="head-tag-lower">GPUOpen</a>/<a href="https://www.coelacanth-dream.com/tags/navi12/" class="head-tag-lower">Navi12</a>/<a href="https://www.coelacanth-dream.com/tags/rdna/" class="head-tag-lower">RDNA</a></div>
+    </div>
+  <h1>AMDVLK GPUOpenドライバーが Navi12 に対応</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=AMDVLK%20GPUOpen%e3%83%89%e3%83%a9%e3%82%a4%e3%83%90%e3%83%bc%e3%81%8c%20Navi12%20%e3%81%ab%e5%af%be%e5%bf%9c%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/04/09/gpuopen-navi12/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-04-09 00:08+09:00" class="time-b">Post: 2021/04/09 00:08 JST</time>
+    <div class="article-time-update time-b">Update: 2021/04/09 01:13 JST</div>
+  </div>
+
+<p>AMD が公式に提供しているオープンソース Vulkanドライバー、<a href="https://github.com/GPUOpen-Drivers/AMDVLK" rel="noreferrer" target="_blank">AMDVLK</a>、それを構成する <a href="https://github.com/GPUOpen-Drivers/llpc" rel="noreferrer" target="_blank">LLPC (LLVM-Based Pipeline Compiler)</a>、<a href="https://github.com/GPUOpen-Drivers/pal" rel="noreferrer" target="_blank">PAL (Platform Abstraction Library)</a>、<a href="https://github.com/GPUOpen-Drivers/xgl" rel="noreferrer" target="_blank">XGL (Vulkan API Layer)</a> が、<strong>Radeon Pro V520</strong> 等の製品に採用されている <a href="https://www.coelacanth-dream.com/tags/navi12">Navi12</a> に対応した。</p>
+
+<ul>
+<li><a href="https://github.com/GPUOpen-Drivers/AMDVLK/commit/8891decec42bb27cf6f9dfeebecb6b84c3b8ec31" rel="noreferrer" target="_blank">2021-4-7 update · GPUOpen-Drivers/AMDVLK@8891dec</a>
+
+<ul>
+<li><a href="https://github.com/GPUOpen-Drivers/llpc/commit/a8ec3c6e6372dcfd812a2ea592141a821e9584b1" rel="noreferrer" target="_blank">Update llpc from commit: bb8a05414 · GPUOpen-Drivers/llpc@a8ec3c6</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/xgl/commit/e1be7ee14c39d3a36d9d1aacd00caf3acc437cde" rel="noreferrer" target="_blank">Update xgl from commit: c728233ca8 · GPUOpen-Drivers/xgl@e1be7ee</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/pal/commit/83635fbee82fb21662a4737e34437c41172c6fe0" rel="noreferrer" target="_blank">Update pal from commit: e0d171c15 · GPUOpen-Drivers/pal@83635fb</a></li>
+</ul></li>
+</ul>
+
+<h2 id="navi12">Navi12 内部構成</h2>
+
+<p><em>Navi12</em> の構成は PAL のコード中から読み取ることができ、全体の SE (ShaderEngine) 数は 2基、SE あたりの SH (ShaderArray) 数は 2基、SH あたりの WGP (CU) 数は 5 (10) 基、SE あたりの RB (RenderBackend) 数は 8基となっている。<br />
+この規模は <em>Navi10</em> と同じであり、メモリサイドキャッシュの L2キャッシュも、ブロック数は 16基、総キャッシュサイズは 4MiB というのも同じだ。<br />
+<em>Navi10</em> と <em>Navi12</em> の大きな違いは対応しているメモリにあり、<em>Navi10</em> は GDDR6メモリを採用するが、<em>Navi12</em> は 3D実装を用いる HBM2メモリを採用している。<br />
+<strong>Radeon Pro V520</strong> では HBM2メモリの ECC機能を有効することもできるようになっている。<br />
+メモリバス幅は 2048-bit、HBM2メモリではメモリチャネルを 128-bit としているため、メモリチャネル数は 16ch (16x128-bit) になる。<em>Navi10</em> もメモリチャネル数で言えば 16ch (16x16-bit) 構成であり、このあたりが L2キャッシュサイズが同じな理由になっている。<br />
+そして、<em>Navi12</em> は INT4/INT8、FP16 等の低い精度を用いるドット積演算を高速化する命令に対応しており、機械学習における推論には <em>Navi10</em> よりも向いている。同様の命令には <em>Navi14</em> も対応しているが、<em>Navi10</em> は対応していない。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/03/09/navi12-recent-info/">Navi12情報近況 (2020-03-09) &amp; 推測 | Coelacanth's Dream</a></span>
+</p>
+
+<p>また、<em>Navi12</em> は RDNA/Navi1x 系列では唯一 MxGPU/SR-IOV、1GPU を仮想的に分割し、複数のユーザーで利用する機能に対応している。</p>
+
+<p>総じて言えば、<em>Navi12</em> は電力効率に優れ高速な HBM2メモリを採用し、低精度のドット積を高速に処理するための命令と MxGPU/SR-IOV に対応している、クラウドゲーミングやサーバー用途に向いた GPU であり、<strong>Radeon Pro V520</strong> はそうした特徴を活かした製品である。<br />
+今回 GPUOpenドライバーにサポートが追加されたのは、Vulkan API を用いるゲームのサポートを強化する向きがあるものと思われる。</p>
+
+<p><strong>Radeon Pro V520</strong> は AWS EC2 G4adインスタンスに採用されており、カード自体の入手は難しいが、クラウド上であれば (比較的) 気軽に利用できる。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/02/aws-radeon-pro-v520/">AWS、RDNAアーキテクチャ GPU 「Radeon Pro V520」を採用する G4adインスタンスを発表 | Coelacanth's Dream</a></span>
+
+自分も一度試したことがあるが、まず GPU を使う環境構築に手こずり、そこからも公式のドライバーのバージョンが少し前のもので結局あまり活用できずにインスタンスを削除した。<br />
+環境構築については、マーケットプレイスにあるものを使うのが一番手っ取り早い。</p>
+
+<blockquote>
+<pre><code>     else if (AMDGPU_IS_NAVI12(m_nullIdLookup.familyId, m_nullIdLookup.eRevId))
+     {
+         pChipInfo-&gt;supportSpiPrefPriority  =    1;
+         pChipInfo-&gt;doubleOffchipLdsBuffers =    1;
+         pChipInfo-&gt;gbAddrConfig            = 0x44; // GB_ADDR_CONFIG_DEFAULT;
+         pChipInfo-&gt;numShaderEngines        =    2; // GPU__GC__NUM_SE;
+         pChipInfo-&gt;numShaderArrays         =    2; // GPU__GC__NUM_SA_PER_SE
+         pChipInfo-&gt;maxNumRbPerSe           =    8; // GPU__GC__NUM_RB_PER_SE;
+         pChipInfo-&gt;nativeWavefrontSize     =   32; // GPU__GC__SQ_WAVE_SIZE;
+         pChipInfo-&gt;minWavefrontSize        =   32;
+         pChipInfo-&gt;maxWavefrontSize        =   64;
+         pChipInfo-&gt;numPhysicalVgprsPerSimd = 1024; // GPU__GC__NUM_GPRS;
+         pChipInfo-&gt;maxNumCuPerSh           =   10; // GPU__GC__NUM_WGP_PER_SA * 2;
+         pChipInfo-&gt;numTccBlocks            =   16; // GPU__GC__NUM_GL2C;
+         pChipInfo-&gt;gsVgtTableDepth         =   32; // GPU__VGT__GS_TABLE_DEPTH;
+         pChipInfo-&gt;gsPrimBufferDepth       = 1792; // GPU__GC__GSPRIM_BUFF_DEPTH;
+         pChipInfo-&gt;maxGsWavesPerVgt        =   32; // GPU__GC__NUM_MAX_GS_THDS;
+     }</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/GPUOpen-Drivers/pal/commit/83635fbee82fb21662a4737e34437c41172c6fe0#diff-334c7874500bba7b14e748047f54e1d18fa3e0db1289adacbb6d62da11124c3f" rel="noreferrer" target="_blank">Update pal from commit: e0d171c15 · GPUOpen-Drivers/pal@83635fb</a></cite>
+</div>
+
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th align="left">RDNA</th>
+<th align="center">Navi10</th>
+<th align="center">Navi12</th>
+<th align="center">Navi14</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Total SE</td>
+<td align="center">2</td>
+<td align="center">1</td>
+<td align="center">2</td>
+</tr>
+
+<tr>
+<td align="left">Total SH</td>
+<td align="center">4</td>
+<td align="center">2</td>
+<td align="center">2</td>
+</tr>
+
+<tr>
+<td align="left">Total WGP (CU)</td>
+<td align="center">20 (40)</td>
+<td align="center">12 (24)</td>
+<td align="center">20 (40)</td>
+</tr>
+
+<tr>
+<td align="left">Total RB</td>
+<td align="center">16</td>
+<td align="center">8</td>
+<td align="center">16</td>
+</tr>
+
+<tr>
+<td align="left">Memory Type</td>
+<td align="center">GDDR6</td>
+<td align="center">GDDR6</td>
+<td align="center">HBM2</td>
+</tr>
+
+<tr>
+<td align="left">Memory Bus Width</td>
+<td align="center">256-bit</td>
+<td align="center">128-bit</td>
+<td align="center">2048-bit</td>
+</tr>
+
+<tr>
+<td align="left">Memory Channel</td>
+<td align="center">16ch (16x16-bit)</td>
+<td align="center">8ch (8x16-bit)</td>
+<td align="center">16ch (16x128-bit)</td>
+</tr>
+
+<tr>
+<td align="left">L2cache Size</td>
+<td align="center">4MiB</td>
+<td align="center">2MiB</td>
+<td align="center">4MiB</td>
+</tr>
+</tbody>
+</table>
+
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://www.amd.com/en/products/server-accelerators/amd-radeon-pro-v520#product-specs" rel="noreferrer" target="_blank">AMD Radeon™ Pro V520 Graphics | AMD</a></li>
+</ul>
+
+</div>
+<hr>
+
+<div class="article-bottom-misc"><a href="https://github.com/Umio-Yasuno" class="sb" target="_blank" rel="noreferrer noopener">Github</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions" class="sb" target="_blank" rel="noreferrer noopener">Discussion</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" class="sb" target="_blank" rel="noreferrer noopener">Source repo</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/04/09/gpuopen-navi12.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+<hr><div class="related-article"><div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2020/12/03/amd-radeon-pro-v520/" target="_blank" class="related-article-link">AMD、Radeon Pro V520 を正式発表 &amp; 仕様公開</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/12/02/aws-radeon-pro-v520/" target="_blank" class="related-article-link">AWS、RDNAアーキテクチャ GPU 「Radeon Pro V520」を採用する G4adインスタンスを発表</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/03/09/navi12-recent-info/" target="_blank" class="related-article-link">Navi12情報近況 (2020-03-09) &amp; 推測</a>
+    </div><hr><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">Hisa Ando 氏による Intel Xe を含めた最新 GPU アーキテクチャの解説等を追加した増補改訂版、その他機械学習専用チップをもカバーしている</div>
+  </div>
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「Radeon」</a>
+      <div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2LvmAlY" class="amzn_link_main" target="_blank" rel="noopener noreferrer">玄人志向 AMD Radeon RX550搭載 グラフィックボード GDDR5 2GB Low Profile対応 シングルファンモデル</a>
+      <div class="amzn_link_desc">1スロLPな RX 550、最新のオープンソースドライバーを使えるため、小型サーバー等に適している</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3pSoUCL" class="amzn_link_main" target="_blank" rel="noopener noreferrer">SAPPHIRE PULSE RADEON RX 5500 XT 4G</a>
+      <div class="amzn_link_desc">とにかく RDNA GPU を試したいなら。一般用途としては十分過ぎる性能も持っている。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+
+
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="menu-tag-lower">GPUOpen</a>
+      <a href="https://www.coelacanth-dream.com/tags/navi12/" class="menu-tag-lower">Navi12</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-tag-lower">RDNA</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=AMDVLK%20GPUOpen%e3%83%89%e3%83%a9%e3%82%a4%e3%83%90%e3%83%bc%e3%81%8c%20Navi12%20%e3%81%ab%e5%af%be%e5%bf%9c%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/04/09/gpuopen-navi12/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about">
+  <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="menu-tag-lower">GPUOpen</a>
+      <a href="https://www.coelacanth-dream.com/tags/navi12/" class="menu-tag-lower">Navi12</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-tag-lower">RDNA</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
