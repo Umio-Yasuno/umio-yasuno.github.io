@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/04/09/intel-kbl-complex/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Intel Kaby Lake 周りの CPU Stepping を整理するパッチ | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Intel Kaby Lake 周りの CPU Stepping を整理するパッチ | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Intel Kaby Lake 周りの CPU Stepping を整理するパッチ | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/04/09/intel-kbl-complex/">
+  <meta name="description" content="Linux Kernel には Intel CPU (Family: 0x6) の判別をするため、Model をまとめたヘッダファイル intel-family.h があるが、Intel の Peter Zijlstra 氏により、そこに複雑な Kaby Lake 周りを整理するためのコ">
+  <meta property="og:description" content="Linux Kernel には Intel CPU (Family: 0x6) の判別をするため、Model をまとめたヘッダファイル intel-family.h があるが、Intel の Peter Zijlstra 氏により、そこに複雑な Kaby Lake 周りを整理するためのコ">
+  <meta name="twitter:description" content="Linux Kernel には Intel CPU (Family: 0x6) の判別をするため、Model をまとめたヘッダファイル intel-family.h があるが、Intel の Peter Zijlstra 氏により、そこに複雑な Kaby Lake 周りを整理するためのコ">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/04/09/intel-kbl-complex/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/04/09/intel-kbl-complex/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Sapphire Rapids, Cannon Lake">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>
+article{display:grid;grid-template:auto/.5% 1% auto 2%;gap:12px 0}article>*{grid-column:3/-1}article>h1~*{display:none;will-change:display}h1{color:#ffa020;font:1.1em/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word;padding-bottom:100vh}html{background-size:100%;background-attachment:fixed;background-color:#004750;background-repeat:no-repeat;font-size:.95rem;z-index:-1}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0;z-index:0}header{grid-row:1;grid-column:3/-2;margin-top:16px}.site-title{font:1.9em/1.1 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#899;text-shadow:-4px 4px 1.2em #9aa;padding:0}.site-title a:hover{color:#9bb;text-shadow:-4px 4px 1.2em #acc;text-decoration:none}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .24em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#bef;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3;grid-column:1/-1;color:#fffcfc;box-sizing:border-box;font-size:1rem;line-height:1.6;overflow-x:auto;overflow-wrap:break-word}article>p{margin:.4rem 0}article>p::before{padding-right:.55em;content:''}footer,.home,.posts,.tags,.categories,.slide,.entry{display:none}.side{transform:translateX(100vw);position:fixed;top:1vh;left:0}footer{grid-row:5;grid-column:1/-1}.head-cat-tag{border:1px solid #099;max-width:max-content;padding:8px 2px 6px;margin-bottom:8px;font:.96rem/1.1 monospace;color:#4aa;display:flex;flex-flow:column nowrap;gap:10px 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:4px 0}.head-cat-tag-type{color:#3dc;padding:0 .4em}.head-cat-lower,.head-tag-lower{margin:0 .1em;padding:0 .5em}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 72% 62%,#dee2 0%,#0000 100%,#000 105%);opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:1;pointer-events:none}.crt{background-image:linear-gradient(0deg,#800 0%,#800 33%,#080 33%,#080 67%,#008 67%,#008 100%);background-size:100% .6em;width:100%;height:100%;opacity:.06}.sb{display:inline-block;font:13px/1.2 sans-serif;margin:auto 0;padding:.15em .7em .3em;max-width:max-content;color:#ffe;border:1px solid #178;background-image:linear-gradient(120deg,#188 2%,#077 2%,#066 100%);text-align:center;cursor:pointer}.sb:active{background-image:linear-gradient(120deg,#177 2%,#066 2%,#055 100%)}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}article{grid-template-columns:.5% .5% auto 2%}.text{grid-row:3;grid-column:3/-1}.side{transform:translateX(0);height:96vh;width:180px;padding:12px 8px 0 12px;color:#20b2aa;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000}.side-block,.foot-pagination,.foot-tag-category{display:none}}</style><link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Intel Kaby Lake 周りの CPU Stepping を整理するパッチ",
+  "headline" : "Intel Kaby Lake 周りの CPU Stepping を整理するパッチ",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-04-09",
+    "datePublished" : "2021-04-09",
+    "dateModufied"  : "2021-04-09",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a><br></div>
+</header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head-cat-lower">Intel</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/cannon_lake/" class="head-tag-lower">Cannon Lake</a>/<a href="https://www.coelacanth-dream.com/tags/sapphire_rapids/" class="head-tag-lower">Sapphire Rapids</a></div>
+    </div>
+  <h1>Intel Kaby Lake 周りの CPU Stepping を整理するパッチ</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Intel%20Kaby%20Lake%20%e5%91%a8%e3%82%8a%e3%81%ae%20CPU%20Stepping%20%e3%82%92%e6%95%b4%e7%90%86%e3%81%99%e3%82%8b%e3%83%91%e3%83%83%e3%83%81%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/04/09/intel-kbl-complex/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-04-09 01:56+09:00" class="time-b">Post: 2021/04/09 01:56 JST</time>
+    <div class="article-time-update time-b">Update: 2021/04/09 06:10 JST</div>
+  </div>
+
+<p>Linux Kernel には Intel CPU (<code>Family: 0x6</code>) の判別をするため、<code>Model</code> をまとめたヘッダファイル <a href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h" rel="noreferrer" target="_blank">intel-family.h</a> があるが、Intel の Peter Zijlstra 氏により、そこに複雑な <em>Kaby Lake</em> 周りを整理するためのコメントを追加するパッチが投稿された。</p>
+
+<ul>
+<li><a href="https://lkml.org/lkml/2021/3/15/2071" rel="noreferrer" target="_blank">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></li>
+<li><a href="https://lore.kernel.org/lkml/YE+HhS8i0gshHD3W@hirez.programming.kicks-ass.net/T/" rel="noreferrer" target="_blank">[PATCH] x86/cpu: Resort and comment Intel models</a></li>
+</ul>
+
+<h2 id="page-index">Index</h2>
+<div class="page-index">
+  <ul>
+<li><a href="#kbl">Kaby Lake</a></li>
+<li><a href="#cnl">Palm Cove</a></li>
+<li><a href="#spr">Sapphire Rapids == Golden Cove? / Willow Cove?</a></li>
+</ul>
+
+</div>
+
+
+<h2 id="kbl">Kaby Lake</h2>
+
+<p>CPUマイクロアーキテクチャに <em>Sky Lake アーキテクチャ</em> を採用し、Intel 14nmプロセスで製造されるプロセッサにはモバイル向け、デスクトップ向けといった括りを無視すれば、<em>Sky Lake / Kaby Lake / Amber Lake / Whiskey Lake / Coffee Lake / Comet Lake</em> の 6種類が存在する。<br />
+<code>Family, Model</code> による CPU の判別において、<em>Sky Lake (_L/X)</em> 、<em>Comet Lake (_L)</em> は <code>Model</code> がそれぞれ違っているため判別することは容易だが、<em>Kaby Lake</em> についてはそうはいかない。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/">【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点 | Coelacanth's Dream</a></span>
+</p>
+
+<p>モバイル向け <em>Kaby Lake (KABYLAKE_L)</em> は <code>Model: 0x8E (142)</code> が与えられているが、同じ Model が <em>Amber Lake(-Y) / Coffee Lake(-U) / Whiskey Lake(-U)</em> が使われている。<br />
+<code>intel-family.h</code> では、末尾 <code>_L</code> がモバイル向け、<code>_X</code> がサーバー向け、<code>_D</code> がマイクロサーバー向け、無印がデスクトップ向けと区別されている。<br />
+デスクトップ向け <em>Kaby Lake</em> は <code>Model: 0x9E (158)</code> が与えられており、同様に <em>Coffee Lake(-S)</em> が同じ Model となる。モバイル向けよりはマシだが、ややこしいことに変わりはない。<br />
+同じ Model を使う <em>Kaby Lake</em> 群は代わりに Stepping で区別され、それをコメントではっきりと示したのが今回のパッチ内容となる。</p>
+
+<p>コメントによれば、<em>Amber Lake(-Y) (AMBERLAKE_L)</em> が <code>Stepping: 9</code> 、<em>Coffee Lake(-U) (COFFEELAKE_L)</em> が <code>Stepping: 0xA (10)</code>、<em>Whiskey Lake(-U) (WHISKEYLAKE_L)</em> が <code>Stepping 0xB/0xC (11/12)</code> を、<br />
+<em>Coffee Lake(-S)</em> が <code>Stepping: 0xA/0xB/0xC/0xD (10/11/12/13)</code> を用いる。</p>
+
+<blockquote>
+<pre><code> +#define INTEL_FAM6_SKYLAKE_L       0x4E    /* Sky Lake             */
+ +#define INTEL_FAM6_SKYLAKE     0x5E    /* Sky Lake             */
+ +#define INTEL_FAM6_SKYLAKE_X       0x55    /* Sky Lake             */
+
+ -#define INTEL_FAM6_CANNONLAKE_L        0x66
+ +#define INTEL_FAM6_KABYLAKE_L      0x8E    /* Sky Lake             */
+ +/*                 AMBERLAKE_L     0x8E       Sky Lake -- s: 9     */
+ +/*                 COFFEELAKE_L        0x8E       Sky Lake -- s: 10    */
+ +/*                 WHISKEYLAKE_L   0x8E       Sky Lake -- s: 11,12 */
+
+ -#define INTEL_FAM6_ICELAKE_X       0x6A
+ -#define INTEL_FAM6_ICELAKE_D       0x6C
+ -#define INTEL_FAM6_ICELAKE     0x7D
+ -#define INTEL_FAM6_ICELAKE_L       0x7E
+ -#define INTEL_FAM6_ICELAKE_NNPI        0x9D
+ +#define INTEL_FAM6_KABYLAKE        0x9E    /* Sky Lake             */
+ +/*                 COFFEELAKE      0x9E       Sky Lake -- s: 10-13 */
+
+ -#define INTEL_FAM6_TIGERLAKE_L     0x8C
+ -#define INTEL_FAM6_TIGERLAKE       0x8D
+ +#define INTEL_FAM6_COMETLAKE       0xA5    /* Sky Lake             */
+ +#define INTEL_FAM6_COMETLAKE_L     0xA6    /* Sky Lake             */</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lkml.org/lkml/2021/3/15/2071" rel="noreferrer" target="_blank">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></cite>
+</div>
+
+</blockquote>
+
+<p>Stepping は基本大きい程進んだものとなっており、以前の Stepping に存在したエラッタの修正や脆弱性への対応が盛り込まれている。<br />
+<em>Coffee Lake(-S)</em> の Stepping 数が多いのは脆弱性への対策が理由として大きく、Intel が公開している情報によれば、<code>B0 (0xB) -&gt; P0 (0xC)</code> で、Spectre v2/v4、Meltdown、L1TF、MDS への策がハードウェア側に追加されている。 (Spectre v2/v4 はソフトウェアと合わせての対策) <sup class="footnote-ref" id="fnref:intel-step"><a href="#fn:intel-step">1</a></sup></p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Coffee Lake(-S)<sup class="footnote-ref" id="fnref:8th-9th-doc"><a href="#fn:8th-9th-doc">2</a></sup></th>
+<th align="center">Stepping</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">S (U0)</td>
+<td align="center">0xA (10)</td>
+</tr>
+
+<tr>
+<td align="left">S (B0)</td>
+<td align="center">0xB (11)</td>
+</tr>
+
+<tr>
+<td align="left">S (P0)</td>
+<td align="center">0xC (12)</td>
+</tr>
+
+<tr>
+<td align="left">H (U0)</td>
+<td align="center">0xA (10)</td>
+</tr>
+
+<tr>
+<td align="left">H (R0)</td>
+<td align="center">0xD (13)</td>
+</tr>
+</tbody>
+</table>
+
+<!--
+| U (D0) | 0xA (10) |
+-->
+
+<p>しかし今回追加されたコメントでもややこしいでも <em>Kaby Lake</em> 周りをすべてカバーできているとは言えず、<em>Kaby Lake</em> にはまだ AMD GPU とコラボした <em>Kaby Lake-G</em> 、LGA2066ソケットに対応したエンスージアスト向けの <em>Kaby Lake-X</em> が存在するからだ。それらは <code>Stepping: 9</code> となっている。</p>
+
+<p>さらには <em>Comet Lake-U</em> に <em>Whiskey Lake-U</em> が紛れ込んでいる。<br />
+<em>Comet Lake-U</em> の 1つに <strong>Core i3-10110U</strong> が存在するが、<a href="https://github.com/InstLatx64" rel="noreferrer" target="_blank">InstLatx64</a> 氏が収集、公開しているデータによれば <code>Family: 0x6, Model: 0x8E, Stepping: 0xC</code> となっており <sup class="footnote-ref" id="fnref:i3-10110u"><a href="#fn:i3-10110u">3</a></sup>、これは <em>Comet Lake-U</em> ではなく <em>Whiskey Lake-U</em> のものと一致する。<br />
+しかし ark.intel.com では <em>Comet Lake</em> としており <sup class="footnote-ref" id="fnref:ark-10110u"><a href="#fn:ark-10110u">4</a></sup>、iGPU の DeviceID (<code>0x9B41/0x9BCA/0x9BCC</code>) も <em>Comet Lake</em> とされている。<sup class="footnote-ref" id="fnref:cml-did"><a href="#fn:cml-did">5</a></sup><br />
+マーケティング、GPU的には <em>Comet Lake</em> とされるが、CPUID (<code>Family, Model, Stepping</code>) 的には <em>Whiskey Lake-U</em> という、曖昧で複雑な CPU だ。<br />
+<em>Coffee Lake(-S)</em> は脆弱性対策で、<em>Kaby Lake-U</em> と <em>Amber Lake-Y / Coffee Lake-U / Whiskey Lake-U</em> は Intel 10nmプロセスの遅延で複雑化した CPU 達とも言えるかもしれない。</p>
+
+<h2 id="cnl">Palm Cove</h2>
+
+<p>パッチでは <em>Cannon Lake</em> についても触れており、CPUマイクロアーキテクチャ名 <em>Palm Cove</em> をコメントに記している。<br />
+<em>Palm Cove</em> というのは以前からネット上では知られていたが、OSS へのパッチ、それも補足コメントという形とはいえ、Intel が公式的に <em>Palm Cove</em> の名を出したのは初めてな気がする。</p>
+
+<blockquote>
+<pre><code> +#define INTEL_FAM6_CANNONLAKE_L        0x66    /* Palm Cove */</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lkml.org/lkml/2021/3/15/2071" rel="noreferrer" target="_blank">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></cite>
+</div>
+
+</blockquote>
+
+<p>ただ、パッチ内で Peter Zijlstra 氏は、<em>Cannon Lake (Palm Cove)</em> は Linux Kernel の CPU性能解析ツール <code>perf</code> コマンドのサポートがされていない、とコメントしており、それは <code>intel-family.h</code> に <em>Cannon Lake</em> のためのマクロを残す必要性が薄いことを意味する。<br />
+<em>Palm Cove</em> の名がようやく? Intel より出されたは、将来的には GPUドライバーのように、コードから <em>Cannon Lake</em> のための部分が削除される可能性も出てきた。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/09/29/intel-cnl-chase/">Cannon Lake を追う | Coelacanth's Dream</a></span>
+</p>
+
+<h2 id="spr">Sapphire Rapids == Golden Cove? / Willow Cove?</h2>
+
+<p>パッチでは他に、<em>Tiger Lake</em> 、<em>Sapphire Rapids</em> 、<em>Alder Lake</em> の CPUマイクロアーキテクチャも補完しているが、<em>Sapphire Rapids</em> が <em>Alder Lake</em> と同じ <em>Golden Cove</em> ではなく、<em>Tiger Lake</em> と同じ <em>Willow Cove</em> とされている。<br />
+しかし、個人的には Peter Zijlstra 氏の間違いではないかと考えている。</p>
+
+<blockquote>
+<pre><code> +#define INTEL_FAM6_TIGERLAKE_L     0x8C    /* Willow Cove */
+ +#define INTEL_FAM6_TIGERLAKE       0x8D    /* Willow Cove */
+ +#define INTEL_FAM6_SAPPHIRERAPIDS_X    0x8F    /* Willow Cove */
+ +
+ +#define INTEL_FAM6_ALDERLAKE       0x97    /* Golden Cove / Gracemont */
+ +#define INTEL_FAM6_ALDERLAKE_L     0x9A    /* Golden Cove / Gracemont */</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lkml.org/lkml/2021/3/15/2071" rel="noreferrer" target="_blank">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></cite>
+</div>
+
+</blockquote>
+
+<p>まず、<em>Alder Lake</em> は Core (Big) 側に <em>Golden Cove アーキテクチャ</em> を採用することが明言されている。<br />
+そして、<em>Alder Lake</em> も <em>Sapphire Rapids</em> も 128-bit/256-bit幅の <code>AVX_VNNI</code> 命令に対応しており、他にも <code>CLDEMOTE / PTWRITE / Architectural LBRs / HLAT / SERIALIZE</code> 等の最新の命令における対応も共通している。<br />
+また、<em>Sapphire Rapids</em> は、用途に 5G基地局等を想定した <code>AVX512_FP16/HFNI</code> 命令に対応しており、それは <em>Golden Cove</em> の特徴として挙げられた Network/5G Perf の文言と一致する。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth's Dream</a></span>
+
+さらには、上で少し触れた <code>perf</code> コマンドの対応に関して、<em>Alder Lake (Golden Cove)</em> の PMU (Performance Monitoring Unit) は <em>Sapphire Rapids</em> のそれと近いというコメントがされている。<sup class="footnote-ref" id="fnref:perf-golden-cove"><a href="#fn:perf-golden-cove">6</a></sup><br />
+そういう訳で <em>Sapphire Rapids</em> の CPUマイクロアーキテクチャは <em>Golden Cove</em> だと考えているが、果たして。</p>
+
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://pc.watch.impress.co.jp/docs/news/1158093.html" rel="noreferrer" target="_blank">Intel、次世代CPUアーキテクチャ「Sunny Cove」の概要を明らかに ～Willow Cove、Golden Coveと進化予定、Atomのロードマップも更新 - PC Watch</a>
+
+<ul>
+<li><a href="https://pc.watch.impress.co.jp/img/pcw/docs/1158/093/html/003.jpg.html" rel="noreferrer" target="_blank">[画像] Intel、次世代CPUアーキテクチャ「Sunny Cove」の概要を明らかに ～Willow Cove、Golden Coveと進化予定、Atomのロードマップも更新(3/15) - PC Watch</a></li>
+</ul></li>
+</ul>
+
+</div>
+<hr>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:intel-step"><a href="https://software.intel.com/security-software-guidance/processors-affected-transient-execution-attack-mitigation-product-cpu-model" rel="noreferrer" target="_blank">Affected Processors: Transient Execution Attacks &amp; Related Security Issues by CPU</a>
+ <a class="footnote-return" href="#fnref:intel-step"><sup>[return]</sup></a></li>
+<li id="fn:8th-9th-doc"><a href="https://cdrdv2.intel.com/v1/dl/getContent/338025" rel="noreferrer" target="_blank">8th and 9th Generation Intel® Core™ Processor Family Specification Update</a>
+ <a class="footnote-return" href="#fnref:8th-9th-doc"><sup>[return]</sup></a></li>
+<li id="fn:i3-10110u"><a href="https://github.com/InstLatx64/InstLatx64/blob/17ee800ec643319215d0b9cb0c59c578ca805e7d/index.htm#L548" rel="noreferrer" target="_blank">InstLatx64/index.htm at 17ee800ec643319215d0b9cb0c59c578ca805e7d · InstLatx64/InstLatx64</a>
+ <a class="footnote-return" href="#fnref:i3-10110u"><sup>[return]</sup></a></li>
+<li id="fn:ark-10110u"><a href="https://ark.intel.com/content/www/us/en/ark/products/196451/intel-core-i3-10110u-processor-4m-cache-up-to-4-10-ghz.html" rel="noreferrer" target="_blank">Intel® Core™ i3-10110U Processor (4M Cache, up to 4.10 GHz) Product Specifications</a>
+ <a class="footnote-return" href="#fnref:ark-10110u"><sup>[return]</sup></a></li>
+<li id="fn:cml-did"><a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/include/pci_ids/i965_pci_ids.h#L210" rel="noreferrer" target="_blank">include/pci_ids/i965_pci_ids.h · master · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:cml-did"><sup>[return]</sup></a></li>
+<li id="fn:perf-golden-cove"><a href="https://github.com/kliang2/perf/commit/83afcae9c7081c8d64a1343262c3e659bf8262c0" rel="noreferrer" target="_blank">perf/x86/intel: Add Alder Lake Hybrid support · kliang2/perf@83afcae</a>
+ <a class="footnote-return" href="#fnref:perf-golden-cove"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article-bottom-misc"><a href="https://github.com/Umio-Yasuno" class="sb" target="_blank" rel="noreferrer noopener">Github</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions" class="sb" target="_blank" rel="noreferrer noopener">Discussion</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" class="sb" target="_blank" rel="noreferrer noopener">Source repo</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/04/09/intel-kbl-complex.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+<hr><div class="related-article"><div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/" target="_blank" class="related-article-link">Intel Sapphire Rapids は AVX512_FP16 をサポート</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/09/29/intel-cnl-chase/" target="_blank" class="related-article-link">Cannon Lake を追う</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/07/10/intel-gcc-patch-spr-adl/" target="_blank" class="related-article-link">Intel、GCC に Sapphire Rapids と Alder Lake をサポートするパッチを投稿</a>
+    </div><hr><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">Hisa Ando 氏による Intel Xe を含めた最新 GPU アーキテクチャの解説等を追加した増補改訂版、その他機械学習専用チップをもカバーしている</div>
+  </div>
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/31LsfIX" class="amzn_link_main" target="_blank" rel="noopener noreferrer"> Intel CPU BX8070811400F シール付き Corei5-11400F 6コア 2.60 GHz LGA1200 5xxChipset 65W 【日本正規流通品】 </a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3fIAxcR" class="amzn_link_main" target="_blank" rel="noopener noreferrer"> Intel CPU BX8070811700 シール付き Corei7-11700 8コア 2.50 GHz LGA1200 5xxChipset【日本正規流通品】 </a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+
+
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/cannon_lake/" class="menu-tag-lower">Cannon Lake</a>
+      <a href="https://www.coelacanth-dream.com/tags/sapphire_rapids/" class="menu-tag-lower">Sapphire Rapids</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-lower">Intel</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Intel%20Kaby%20Lake%20%e5%91%a8%e3%82%8a%e3%81%ae%20CPU%20Stepping%20%e3%82%92%e6%95%b4%e7%90%86%e3%81%99%e3%82%8b%e3%83%91%e3%83%83%e3%83%81%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/04/09/intel-kbl-complex/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about">
+  <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a><a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/cannon_lake/" class="menu-tag-lower">Cannon Lake</a>
+      <a href="https://www.coelacanth-dream.com/tags/sapphire_rapids/" class="menu-tag-lower">Sapphire Rapids</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-lower">Intel</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
