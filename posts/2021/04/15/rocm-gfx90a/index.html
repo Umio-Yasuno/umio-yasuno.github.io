@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/04/15/rocm-gfx90a/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Aldebaran/gfx90a への対応を進める ROCmソフトウェア | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Aldebaran/gfx90a への対応を進める ROCmソフトウェア | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Aldebaran/gfx90a への対応を進める ROCmソフトウェア | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/04/15/rocm-gfx90a/">
+  <meta name="description" content="コードネーム Aldebaran (GPUID: gfx90a) は CDNA 2 アーキテクチャ を GPUアーキテクチャに採り、スーパーコンピューター Frontier や LUMI に採用されると見られ、 MI200 は Frontier、LU">
+  <meta property="og:description" content="コードネーム Aldebaran (GPUID: gfx90a) は CDNA 2 アーキテクチャ を GPUアーキテクチャに採り、スーパーコンピューター Frontier や LUMI に採用されると見られ、 MI200 は Frontier、LU">
+  <meta name="twitter:description" content="コードネーム Aldebaran (GPUID: gfx90a) は CDNA 2 アーキテクチャ を GPUアーキテクチャに採り、スーパーコンピューター Frontier や LUMI に採用されると見られ、 MI200 は Frontier、LU">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/04/15/rocm-gfx90a/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/04/15/rocm-gfx90a/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="ROCm, Aldebaran, gfx90a, MI200">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+<style>article{display:grid;grid-template:auto/.5% 1% auto 2%;gap:12px 0}article>*{grid-column:3/-1}article>h1~*{display:none;will-change:display}article>p{margin:.4rem 0}article>p::before{padding-right:.55em;content:''}h1{color:#ffa000;font:1.1em/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word;padding-bottom:100vh}html{background-size:100%;background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.95rem;z-index:-1}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0;z-index:0}header{grid-row:1;grid-column:3/-2;margin-top:16px}.site-title{font:2em/1.1 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#899;text-shadow:-4px 4px 1.2em #9aa;padding:0}.site-title a:hover{color:#9bb;text-shadow:-4px 4px 1.2em #acc;text-decoration:none}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#bef;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3;grid-column:1/-1;color:#fffcfc;box-sizing:border-box;font-size:1rem;line-height:1.6;overflow-x:auto;overflow-wrap:break-word}footer,.home,.posts,.tags,.categories,.slide,.entry{display:none}.side{transform:translateX(100vw);position:fixed;top:1vh;left:0}footer{grid-row:5;grid-column:1/-1}.head-cat-tag{border:1px solid #099;max-width:max-content;padding:8px 2px 6px;margin-bottom:8px;font:.96rem/1.1 monospace;color:#4aa;display:flex;flex-flow:column nowrap;gap:10px 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:4px 0}.head-cat-tag-type{color:#4ed;padding:0 .4em}.head-cat-lower,.head-tag-lower{margin:0 .1em;padding:0 .5em}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 72% 62%,#eff2 0%,#0000 100%,#000 105%);opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:1;pointer-events:none;mix-blend-mode:lighten}.crt{background-image:linear-gradient(0deg,#800 0%,#800 33%,#080 33%,#080 67%,#008 67%,#008 100%);background-size:100% .7em;width:100%;height:100%;opacity:.05}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}article{grid-template-columns:.5% .5% auto 2%}.text{grid-row:3;grid-column:3/-1}.side{transform:translateX(0);height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000}.side-block,.foot-pagination,.foot-tag-category{display:none}}</style><link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Aldebaran/gfx90a への対応を進める ROCmソフトウェア",
+  "headline" : "Aldebaran/gfx90a への対応を進める ROCmソフトウェア",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-04-15",
+    "datePublished" : "2021-04-15",
+    "dateModufied"  : "2021-04-17",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a><br></div>
+</header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head-cat-lower">Software</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="head-tag-lower">Aldebaran</a>/<a href="https://www.coelacanth-dream.com/tags/gfx90a/" class="head-tag-lower">gfx90a</a>/<a href="https://www.coelacanth-dream.com/tags/mi200/" class="head-tag-lower">MI200</a>/<a href="https://www.coelacanth-dream.com/tags/rocm/" class="head-tag-lower">ROCm</a></div>
+    </div>
+  <h1>Aldebaran/gfx90a への対応を進める ROCmソフトウェア</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Aldebaran%2fgfx90a%20%e3%81%b8%e3%81%ae%e5%af%be%e5%bf%9c%e3%82%92%e9%80%b2%e3%82%81%e3%82%8b%20ROCm%e3%82%bd%e3%83%95%e3%83%88%e3%82%a6%e3%82%a7%e3%82%a2%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/04/15/rocm-gfx90a/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-04-15 21:15+09:00" class="time-b">Post: 2021/04/15 21:15 JST</time>
+    <div class="article-time-update time-b">Update: 2021/04/17 00:19 JST</div>
+  </div>
+
+<p>コードネーム <em>Aldebaran (GPUID: gfx90a)</em> は <em>CDNA 2 アーキテクチャ</em> を GPUアーキテクチャに採り、スーパーコンピューター <em>Frontier</em> や <em>LUMI</em> に採用されると見られ、<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/22/mi200-hpc-system/">MI200 は Frontier、LUMI に採用され、LUMI は 2021年半ばから運用開始予定 | Coelacanth's Dream</a></span>
+
+AMD GPU のオープンソースソフトウェアスタック <strong>ROCm</strong> では既に <em>Aldebaran/gfx90a</em> への対応、最適化作業が進められている。</p>
+
+<ul>
+<li><a href="https://github.com/ROCmSoftwarePlatform/Tensile/pull/1300" rel="noreferrer" target="_blank">Initial implementation support for aldebaran by yoichiyoshida · Pull Request #1300 · ROCmSoftwarePlatform/Tensile</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/rocSOLVER/pull/240" rel="noreferrer" target="_blank">Add gfx90a to AMDGPU_TARGETS if supported by cgmb · Pull Request #240 · ROCmSoftwarePlatform/rocSOLVER</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/MIOpen/pull/836" rel="noreferrer" target="_blank">Enable xldops igmmm on gfx90a by zjing14 · Pull Request #836 · ROCmSoftwarePlatform/MIOpen</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/rocSPARSE/commit/7e91c24f3decb314b0fdf13d4dd3ec7fd7ec7bd6" rel="noreferrer" target="_blank">Add gfx90a targets (#203) · ROCmSoftwarePlatform/rocSPARSE@7e91c24</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/rocFFT/commit/c00598360d340ea85b52ae3fe6c9b4228964f651" rel="noreferrer" target="_blank">Add gfx90a target (#404) · ROCmSoftwarePlatform/rocFFT@c005983</a></li>
+</ul>
+
+<h2 id="memory-model">Aldebaran/gfx90a のメモリモデル</h2>
+
+<p>コンパイラバックエンドである LLVM に <em>Aldebaran/gfx90a</em> のメモリモデルについても解説が一部追加された。</p>
+
+<ul>
+<li><a href="https://github.com/ROCm-Developer-Tools/llvm-project/commit/4658cd4c18ba73257a8642fd757c2124ad840204" rel="noreferrer" target="_blank">[AMDGPU] Update gfx90a memory model support · ROCm-Developer-Tools/llvm-project@4658cd4</a></li>
+</ul>
+
+<p>これまでの AMD GPU は基本的に CPU から独立したメモリを持つ dGPU と、CPU とメモリを共用する APU に分かれていた。<br />
+しかし <em>Aldebaran/gfx90a</em> では CPU との <em>XGMI/Infinity Fabric</em> 接続に対応し、メモリ空間の統合が実現するとされ、そうした枠組みからは外れる。<br />
+さらにはマルチダイ構成を取るとも考えられ、ある GPUダイから見て、近い (ローカル) メモリと片方の GPUダイに接続された遠い (リモート) メモリが存在することになる。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/05/amd-aldebaran-2die-mcm/">Aldebaran GPU は 2-Die 構成か | Coelacanth's Dream</a></span>
+
+追加された部分では、そうした <em>Aldebaran/gfx90a</em> におけるコヒーレント保つため、メモリサイドキャッシュである L2キャッシュの使用、あるいは無効化についてどのように制御されるかが解説されている。</p>
+
+<p>ある GPU から近いメモリに対してのメモリアクセスはキャッシュされ、一貫性を保つためにキャッシュの無効化やライトバックを行う必要はない。遠いメモリに対してはキャッシュせずに直接メモリアクセスするため、同様に特別な操作は行わない。<br />
+CPU から GPU への XGMIリンクを用いたメモリアクセスは CPU側にはキャッシュされる場合があるが、GPU から CPU へのアクセスはキャッシュしないことで一貫性を保つとしている。</p>
+
+<h2 id="8x-aldebaran-のトポロジ構成">8x Aldebaran のトポロジ構成?</h2>
+
+<p>マルチGPU環境におけるコミュニケーションライブラリ <a href="https://github.com/ROCmSoftwarePlatform/rccl" rel="noreferrer" target="_blank">RCCL (ROCm Communication Collectives Library)</a> に <em>Aldebaran/gfx90a</em> 8基のトポロジ構成一例が追加された。</p>
+
+<ul>
+<li><a href="https://github.com/ROCmSoftwarePlatform/rccl/commit/1fe031402a044e3cc4652d11d512015b5c426810" rel="noreferrer" target="_blank">Add gfx90a target (#344) · ROCmSoftwarePlatform/rccl@1fe0314</a></li>
+</ul>
+
+<p>そのトポロジ構成では、<em>AMD Milan</em> に <em>Aldebaran/gfx90a</em> 8基を PCIe Gen4x16 で接続するシングルノードの構成を採っている。<br />
+一応補足すると、RCCL では CPU を、<em>AMD Rome</em> を familyID: 143、modelID: 49 以上、<em>AMD Milan</em> は familyID: 175 と表現している。familyID については元の CPU Family を 0xX0 + 0xF としているものと思われ、<em>AMD Rome</em> は Family: 0x17 (23) であるから、0x8 と 0xF に分解、オフセットを追加し 0x80 (128) + 0xF (15) で familyID: 143 となる。<br />
+GPUID についても、<em>gfx90a</em> ではなく <em>gcn=&quot;910&quot;</em> となっているが、GPUID は Major, Minor, Stepping の 3つで表現されており、省略せずに 10進数で記述すると <em>{9, 0, 10}</em> という形になる。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">AMD GPU の GPU ID は何を意味するか | Coelacanth's Dream</a></span>
+</p>
+
+<p>そして GPU同士リンク <em>XGMI/Infinity Fabric</em> は例では以下の表のようになっている。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">XGMI<br>topo</th>
+<th align="center">c1</th>
+<th align="center">c5</th>
+<th align="center">c9</th>
+<th align="center">cd</th>
+<th align="center">d1</th>
+<th align="center">d5</th>
+<th align="center">d9</th>
+<th align="center">dd</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">c1</td>
+<td align="center">-</td>
+<td align="center">+</td>
+<td align="center">+</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">+</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">c5</td>
+<td align="center">+</td>
+<td align="center">-</td>
+<td align="center"></td>
+<td align="center">+</td>
+<td align="center"></td>
+<td align="center">+</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">c9</td>
+<td align="center">+</td>
+<td align="center"></td>
+<td align="center">-</td>
+<td align="center">+</td>
+<td align="center">+</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">cd</td>
+<td align="center"></td>
+<td align="center">+</td>
+<td align="center">+</td>
+<td align="center">-</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">+</td>
+</tr>
+
+<tr>
+<td align="left">d1</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">+</td>
+<td align="center"></td>
+<td align="center">-</td>
+<td align="center">+</td>
+<td align="center">+</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">d5</td>
+<td align="center"></td>
+<td align="center">+</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">+</td>
+<td align="center">-</td>
+<td align="center"></td>
+<td align="center">+</td>
+</tr>
+
+<tr>
+<td align="left">d9</td>
+<td align="center">+</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">+</td>
+<td align="center"></td>
+<td align="center">-</td>
+<td align="center">+</td>
+</tr>
+
+<tr>
+<td align="left">dd</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">+</td>
+<td align="center"></td>
+<td align="center">+</td>
+<td align="center">+</td>
+<td align="center">-</td>
+</tr>
+</tbody>
+</table>
+
+<p>表形式ではわかりにくいため図式したのが以下。GPU 1基あたり XGMI 3-リンク持っている。<br />
+Linux Kernel への <em>Aldebaran</em> 関連パッチから XGMI に最適化された SDMAエンジン数は 3基であることがわかっており、リンク数はそれと一致する。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/25/amd-aldebaran-gpu/#sdma">Linux Kernel に 「Aldebaran」 GPU をサポートするパッチが投稿される　―― CDNA 2/MI200 のコードネーム? | Coelacanth's Dream</a></span>
+
+<em>Arcturus/MI100/gfx908</em> では XGMI に最適化された SDMAエンジン数は 6基であったから、8-GPU でもほとんどの GPU とは直接繋がり、他 GPU を経由しなければならない GPU が 1基だけ存在する、というネットワーク構成が可能だった。<br />
+<em>Aldebaran</em> は 3基であるから、一番遠い GPU には GPU 3基を経由する必要が出てしまう。<br />
+だが同時に <em>Aldebaran</em> は 2-ダイで構成されるMCMと考えられており、それぞれが独立していると仮定すると下側のようなネットワークになる。<br />
+これならダイ間の経由であれば高速に通信を行うことができ、上側よりは通信による性能への影響を減らせると考えられる。</p>
+
+<p>しかし <em>Aldebaran</em> 8基がそれぞれ <em>AMD Milan</em> と PCIe Gen4x16 で接続されているように記述されている点は気になる。<br />
+<em>AMD Milan</em> は 1基では最大 PCIe Gen4 128-Lane を持つため、NIC との接続にも一部レーンを使用している今回の例では数が合わないように思える。よって、実際どうかは当然不明だが、下側のような構成を取っている <em>可能性</em> は考えられる。</p>
+
+<pre class="ascii-diagram"><code>   +----+   +----+  
+  /| c1 |===| c5 |\ 
+ / +----+   +----+ \ 
+ |   ||       ||   | 
+ | +----+   +----+ | 
+ | | c9 |===| cd |\| 
+ | +----+   +----+ | 
+ |   |             |\
+ |   |             ||
+ | +----+   +----+ /|
+ | | d1 |===| d5 |/ |
+ | +----+   +----+  |
+ |   ||       ||    |
+ \ +----+   +----+ / 
+  \| d9 |===| dd |/ 
+   +----+   +----+   
+
+/* ? */
+ +-------+___+-------+
+ | c1/c9 |___| d1/d9 |
+ +-------+   +-------+
+    | |         | |
+ +-------+___+-------+
+ | c5/cd |___| d5/dd |
+ +-------+   +-------+</code></pre>
+<div class="article-bottom-misc"><a href="https://github.com/Umio-Yasuno" class="sb" target="_blank" rel="noreferrer noopener">Github</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions" class="sb" target="_blank" rel="noreferrer noopener">Discussion</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" class="sb" target="_blank" rel="noreferrer noopener">Source repo</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/04/15/rocm-gfx90a.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+<hr><div class="related-article"><div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2021/03/05/amd-aldebaran-2die-mcm/" target="_blank" class="related-article-link">Aldebaran GPU は 2-Die 構成か</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/" target="_blank" class="related-article-link">RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/02/25/amd-aldebaran-gpu/" target="_blank" class="related-article-link">Linux Kernel に 「Aldebaran」 GPU をサポートするパッチが投稿される　―― CDNA 2/MI200 のコードネーム?</a>
+    </div><hr><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">Hisa Ando 氏による Intel Xe を含めた最新 GPU アーキテクチャの解説等を追加した増補改訂版、その他機械学習専用チップをもカバーしている</div>
+  </div>
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「Radeon」</a>
+      <div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2LvmAlY" class="amzn_link_main" target="_blank" rel="noopener noreferrer">玄人志向 AMD Radeon RX550搭載 グラフィックボード GDDR5 2GB Low Profile対応 シングルファンモデル</a>
+      <div class="amzn_link_desc">1スロLPな RX 550、最新のオープンソースドライバーを使えるため、小型サーバー等に適している</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3pSoUCL" class="amzn_link_main" target="_blank" rel="noopener noreferrer">SAPPHIRE PULSE RADEON RX 5500 XT 4G</a>
+      <div class="amzn_link_desc">とにかく RDNA GPU を試したいなら。一般用途としては十分過ぎる性能も持っている。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+
+
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="menu-tag-lower">Aldebaran</a>
+      <a href="https://www.coelacanth-dream.com/tags/gfx90a/" class="menu-tag-lower">gfx90a</a>
+      <a href="https://www.coelacanth-dream.com/tags/mi200/" class="menu-tag-lower">MI200</a>
+      <a href="https://www.coelacanth-dream.com/tags/rocm/" class="menu-tag-lower">ROCm</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-lower">Software</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Aldebaran%2fgfx90a%20%e3%81%b8%e3%81%ae%e5%af%be%e5%bf%9c%e3%82%92%e9%80%b2%e3%82%81%e3%82%8b%20ROCm%e3%82%bd%e3%83%95%e3%83%88%e3%82%a6%e3%82%a7%e3%82%a2%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/04/15/rocm-gfx90a/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about">
+  <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="menu-tag-lower">Aldebaran</a>
+      <a href="https://www.coelacanth-dream.com/tags/gfx90a/" class="menu-tag-lower">gfx90a</a>
+      <a href="https://www.coelacanth-dream.com/tags/mi200/" class="menu-tag-lower">MI200</a>
+      <a href="https://www.coelacanth-dream.com/tags/rocm/" class="menu-tag-lower">ROCm</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-lower">Software</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
