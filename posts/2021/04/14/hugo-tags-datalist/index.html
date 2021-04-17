@@ -46,7 +46,7 @@
   },
     "dateCreated"   : "2021-04-14",
     "datePublished" : "2021-04-14",
-    "dateModufied"  : "2021-04-16",
+    "dateModufied"  : "2021-04-17",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -67,7 +67,7 @@
   </div>
 </nav><div class="article-time">
     <time datetime="2021-04-14 17:05+09:00" class="time-b">Post: 2021/04/14 17:05 JST</time>
-    <div class="article-time-update time-b">Update: 2021/04/16 19:53 JST</div>
+    <div class="article-time-update time-b">Update: 2021/04/17 21:02 JST</div>
   </div>
 
 <p>気付けばサイトのタグ数が 100個近くになり、自分でもタグから記事を辿るのが面倒くさくなってきたため、HTML5で追加された <code>&lt;input type=&quot;text&quot; autocomple=&quot;on&quot;&gt;</code> <code>&lt;datalist&gt;</code> を活用してタグの選択補完機能を実装してみたのでそのメモ。</p>
@@ -108,7 +108,9 @@
 
 <p><code>&lt;input list=&quot;&lt;name&gt;&quot;&gt;</code> と <code>&lt;datalit id=&quot;&lt;name&gt;&quot;&gt;</code> の &lt;name&gt; を同じものにすることでそれらを関連付けられる。<br />
 <code>{{ range .Pages.ByTitle }}...{{ end }}</code> で自動補完に使う要素をずらっと出力できるのでテンプレート部はかなり楽。 .Pages に .ByTitle を付けることでタグタイトルを昇順にソートしている。<br />
-<code>&lt;option&gt;</code> の value にタグタイトルを、拡張属性の data-url に実際のタグページに使われている URLのパス末尾を置いている。拡張属性は後述のページ偏移で使う。<code>&lt;option&gt;</code> の終了タグは省略可能であり、ここではそのようにしている。<br />
+<code>&lt;option&gt;</code> の value にタグタイトルを、拡張属性の data-url に実際のタグページに使われている URLのパス末尾を置いている。拡張属性は後述のページ偏移で使う。<br />
+パス末尾部分は <code>{{ path.Base ... }}</code> で取り出している。(<code>/tags/&lt;tag name&gt;/ -&gt; &lt;tag name&gt;</code>) <sup class="footnote-ref" id="fnref:path-base"><a href="#fn:path-base">1</a></sup><br />
+<code>&lt;option&gt;</code> の終了タグは省略可能であり、ここではそのようにしている。サイトにもよるが、使われているタグすべてを出力するため、出来るだけ短くした方がいいだろう。<br />
 下 2つの <code>&lt;button&gt;</code> はページ偏移と入力欄をクリアするスクリプトを実行するためのもの。</p>
 
 <h2 id="js">Javascript部</h2>
@@ -171,7 +173,7 @@
 補完に用いるタグ一覧は Hugoテンプレートの機能を使えば楽に生成できるため、実装に掛かるコストも小さい。<br />
 欠点をあげるならば、<code>&lt;datalist&gt;</code> は HTMLファイルに直接出力されるため、ファイルサイズはどうしたって増加する。このサイトの場合、6KB 程サイズが増えた。<br />
 だがこれも経由するページ数が減ったと考えれば大した問題にならない。<br />
-それと、機能自体の問題ではないが、新しいAndroid版Firefox では何故かまだこの <code>&lt;datalist&gt;</code> による自動補完機能をサポートしていないことはとても残念。<sup class="footnote-ref" id="fnref:fenix-datalist"><a href="#fn:fenix-datalist">1</a></sup>以前のAndroid版Firefox やパソコン向け Firefox、Microsoft Edge や Chomium系では期待通り動作してくれる。</p>
+それと、機能自体の問題ではないが、新しいAndroid版Firefox では何故かまだこの <code>&lt;datalist&gt;</code> による自動補完機能をサポートしていないことはとても残念。<sup class="footnote-ref" id="fnref:fenix-datalist"><a href="#fn:fenix-datalist">2</a></sup>以前のAndroid版Firefox やパソコン向け Firefox、Microsoft Edge や Chomium系では期待通り動作してくれる。</p>
 
 <p>どのように動作するかはこのサイトのタグ一覧ページから試すことができる。</p>
 
@@ -194,6 +196,8 @@
 <hr />
 
 <ol>
+<li id="fn:path-base"><a href="https://gohugo.io/functions/path.base/" rel="nofollow noreferrer" target="_blank">path.Base | Hugo</a>
+ <a class="footnote-return" href="#fnref:path-base"><sup>[return]</sup></a></li>
 <li id="fn:fenix-datalist"><a href="https://github.com/mozilla-mobile/fenix/issues/11088" rel="nofollow noreferrer" target="_blank">[Bug] datalist not supported · Issue #11088 · mozilla-mobile/fenix</a>
  <a class="footnote-return" href="#fnref:fenix-datalist"><sup>[return]</sup></a></li>
 </ol>
