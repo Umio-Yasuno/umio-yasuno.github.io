@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/04/26/amd-4700s-identity/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMD 4700S の正体は GPU部を無効化したゲーム機向け APU だったか | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMD 4700S の正体は GPU部を無効化したゲーム機向け APU だったか | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMD 4700S の正体は GPU部を無効化したゲーム機向け APU だったか | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/04/26/amd-4700s-identity/">
+  <meta name="description" content="先日 Geekbench 5 に出現した謎の CPU AMD 4700S だが、搭載したシステムの製品ページからメインメモリに GDDR6 16GB を採用していることが判明し、コンソールゲーム機向け Xbox Series X|S, PS5 の">
+  <meta property="og:description" content="先日 Geekbench 5 に出現した謎の CPU AMD 4700S だが、搭載したシステムの製品ページからメインメモリに GDDR6 16GB を採用していることが判明し、コンソールゲーム機向け Xbox Series X|S, PS5 の">
+  <meta name="twitter:description" content="先日 Geekbench 5 に出現した謎の CPU AMD 4700S だが、搭載したシステムの製品ページからメインメモリに GDDR6 16GB を採用していることが判明し、コンソールゲーム機向け Xbox Series X|S, PS5 の">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/04/26/amd-4700s-identity/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/04/26/amd-4700s-identity/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Zen 2">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+    <style type="text/css">article{display:grid;grid-template:auto/.5% 1% auto 2%;gap:12px 0}article>*{grid-column:3/-1}article>blockquote,article pre{overflow-x:scroll}article>h1~*{visibility:hidden}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#ffa000;font:1.1em/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}html{background-size:100%;background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.95rem;z-index:-1}body{margin:6px}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0;z-index:0}header{grid-row:1;grid-column:3/-2;margin-top:16px}.site-title{font:2rem/1.1 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#9ab;text-shadow:2px 2px 1.1em #abb;padding:0}.site-title a:hover{color:#9bc;text-shadow:2px 2px 1.1em #bcc}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#bef;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3;grid-column:1/-1;color:#fffdfd;box-sizing:border-box;line-height:1.6;overflow-x:auto;overflow-wrap:break-word}footer{visibility:hidden}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0}footer{grid-row:5;grid-column:1/-1}.head-cat-tag{border:1px solid #099;max-width:max-content;padding:8px 2px 6px;margin-bottom:8px;font:.96rem/1.2 monospace;color:#4aa;display:flex;flex-flow:column nowrap;gap:8px 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:4px 0}.head-cat-tag-type{color:#4ed;padding:0 .4em}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 72% 62%,#cdd1 0%,#0000 99%,#000 105%);opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:1;pointer-events:none;mix-blend-mode:lighten}.crt{background-image:linear-gradient(0deg,#800 0%,#800 33%,#080 33%,#080 67%,#008 67%,#008 100%);background-size:100% .7em;width:100%;height:100%;opacity:.05}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}article{grid-template-columns:.5% .5% auto 2%}.text{grid-row:3;grid-column:3/-1}.side{transform:translateX(0);height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000}.side-block{visibility:hidden}footer,.slide{display:none}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMD 4700S の正体は GPU部を無効化したゲーム機向け APU だったか",
+  "headline" : "AMD 4700S の正体は GPU部を無効化したゲーム機向け APU だったか",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-04-26",
+    "datePublished" : "2021-04-26",
+    "dateModufied"  : "2021-04-26",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/zen_2/" class="head-tag-lower">Zen 2</a></div>
+    </div>
+  <h1>AMD 4700S の正体は GPU部を無効化したゲーム機向け APU だったか</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=AMD%204700S%20%e3%81%ae%e6%ad%a3%e4%bd%93%e3%81%af%20GPU%e9%83%a8%e3%82%92%e7%84%a1%e5%8a%b9%e5%8c%96%e3%81%97%e3%81%9f%e3%82%b2%e3%83%bc%e3%83%a0%e6%a9%9f%e5%90%91%e3%81%91%20APU%20%e3%81%a0%e3%81%a3%e3%81%9f%e3%81%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/04/26/amd-4700s-identity/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-04-26 21:58+09:00" class="time-b">Post: 2021/04/26 21:58 JST</time>
+    <div class="article-time-update time-b">Update: 2021/04/26 23:46 JST</div>
+  </div>
+
+<p>先日 Geekbench 5 に出現した謎の CPU <strong>AMD 4700S</strong> だが、搭載したシステムの製品ページからメインメモリに GDDR6 16GB を採用していることが判明し、コンソールゲーム機向け <span class="complement">Xbox Series X|S, PS5</span>
+ の SoC/APU を転用したものであることがほぼ確定した。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/04/22/amd-4700s/">AMD 4700S CPU 出現 | Coelacanth's Dream</a></span>
+</p>
+
+<h2 id="disabled-gpu">無効化されている GPU部</h2>
+
+<p>下記がオンラインショップ <em>天猫Tmall</em> にある <strong>AMD 4700S</strong> を搭載したシステムの製品ページであり、自分は <a href="https://twitter.com/momomo_us" rel="nofollow noreferrer" target="_blank">188号 (@momomo_us) / Twitter</a> 氏のアカウント経由で知った。<sup class="footnote-ref" id="fnref:tw-4700s-system"><a href="#fn:tw-4700s-system">1</a></sup></p>
+
+<ul>
+<li><a href="https://detail.tmall.com/item.htm?id=643602411425&amp;sku_properties=5919063:6536025" rel="nofollow noreferrer" target="_blank">【新品预售】AMD 4700S独显ITX高配吃鸡组装机游戏办公直播编程设计CNC迷你高端台式电脑主机-tmall.com天猫</a></li>
+</ul>
+
+<p>製品ページには、<strong>AMD 4700S</strong> が 7nmプロセスで製造され CPU は 8-Core/16-Thread、最大動作クロックは 4.0 GHz、キャッシュ容量は 12 MB <span class="complement">恐らく 8x 512 KB + 2x 4 MB と思われる</span>
+構成であること、<br />
+メインメモリに GDDR6 16GB を採用すること、Discrete GPU として <strong>Radeon RX 550 (GDDR5 2GB 64-bit)</strong> を搭載していることが特徴に挙げられている。</p>
+
+<p>製造プロセス、CPU、そして GDDR6メモリという点から、コンソールゲーム機向けの SoC/APU を転用したものが <strong>AMD 4700S</strong> だと考えられる。<br />
+単純に、既に <em>Zen 2 アーキテクチャ</em> 8-Core を搭載する <em>Renoir/Lucienne APU</em> 、<em>Zen 3 アーキテクチャ</em> 8-Core の <em>Cezanne APU</em> がある中、わざわざ GDDR6メモリに対応させた SoC/APU を新たに起こすとは考えにくい。<br />
+チップレットアーキテクチャを採り、既存の CCD と新設計した IOD、それと新パッケージで実現している可能性も考えられるには考えられるが、それは深く考えすぎである気がするし、やはり上と同様の理由が適用できる。</p>
+
+<p>ゲーム機向け SoC/APU を転用した前例には、<em>Xbox One SoC</em> を転用した <strong>A9-9820 (Cato) APU</strong> が存在し、<strong>AMD 4700S</strong> も同様のパターンではないかと思われる。突然中国市場に登場する点も共通している。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/14/a9-9820-silicon/">A9-9820 は Xbox One SoC と同一ダイ | Coelacanth's Dream</a></span>
+</p>
+
+<p><strong>A9-9820</strong> と異なるのは、<strong>A9-9820</strong> が DDR3メモリに対応しており、メモリスロットがボード上に実装され、ユーザーがメモリを拡張することが可能だったが、<strong>AMD 4700S</strong> は GDDR6メモリで、メモリがオンボード上に実装されているため、ユーザーによる拡張は不可能なところだ。それでも 16GB 搭載であるから、普段の用途においては十分だろう。<br />
+そして <strong>A9-9820</strong> はフルスペックではないが GPU が有効化されており、APU として確かな要素を持っていたのに対し、<strong>RX 550</strong> というエントリー向け dGPU をわざわざ搭載しているあたり、<strong>AMD 4700S</strong> の GPU部は無効化されていると考えられる。<br />
+そもそも現在半導体の製造キャパシティが逼迫し供給不足が叫ばれている中で、特に需要がありそうなゲーム機向け SoC/APU の転用が可能なのは、CPU部に問題はないが GPU部に不良があり、ゲーム機に使うことができなかったから、というシナリオが想像できる。</p>
+
+<h2 id="memory-config">メモリ構成はどうなっているか</h2>
+
+<p>ゲーム機向け SoC/APU には、<em>Xbox Series X|S</em> 、<em>PS5</em> の 3種があるが、どれもメモリ構成は異なり、<strong>AMD 4700S</strong> がどれを選んでいるかははっきりしない。</p>
+
+<p>3種の SoC/APU は、7nmプロセスで製造され、CPU に <em>Zen 2 アーキテクチャ</em> 8-Core/16-Thread、メモリ GDDR6 という点は共通しており、GPU が大きな違いの 1つと言えるのだが、<strong>AMD 4700S</strong> は GPU部が無効化されており、3種のどれも <strong>AMD 4700S</strong> と搭載システムの仕様を満たすことができる。</p>
+
+<p><em>Xbox Series X|S</em> は特異なメモリアーキテクチャを採っており、容量の違うメモリチップを搭載していたり、一部メモリチップを 32-bit ではなく 16-bit で接続している。<br />
+<strong>Xbox Series X SoC</strong> (以下 XSX SoC) はメモリバス幅 320-bit を持ち、製品的には 6x 16Gb(2GB) + 4x 8Gb(1GB) という容量違いのメモリを混載して GDDR6 16GB のメモリ仕様を採っている。<br />
+<strong>Xbox Series S Soc</strong> (以下 XSS SoC) はメモリバス幅 128-bit を持ち、はっきりとメモリ仕様を記載した資料を見付けられなかったため推測だが、5x 16Gb(2GB) (2x 16-bit + 3x 32-bit = 128-bit) という構成でメモリ仕様 GDDR6 10GB を満たしているものと思われる。<br />
+先 2種に対して <strong>PS5 SoC</strong> のメモリアーキテクチャはシンプルで、メモリバス幅 256-bit、8x 16Gb(2GB)、メモリ仕様は GDDR6 16GB となる。</p>
+
+<p><em>XSX SoC</em>, <em>PS5 SoC</em> は製品でも GDDR6 16GB という仕様であるから、そのまま <strong>AMD 4700S</strong> に適用できる。だが <em>XSX</em> は特異なメモリアーキテクチャであり、メモリチップ 10枚で GDDR6 16GB としているが、部品点数やコストを減らす目的で <strong>AMD 4700S</strong> では <em>PS5</em> 同様に 8x 16Gb(2GB) (256-bit) というメモリ構成を採ることも考えられる。<br />
+<em>XSS SoC</em> については、8x 16Gb(2GB) をそれぞれ 16-bit で接続すればメモリ仕様を達成できる。<strong>AMD 4700S</strong> のピークメモリ帯域は記載されていないため、可能性としては一応ある。</p>
+
+<p>製品ページにある画像の 1つには <em>XSX</em> の画像が使われており、それが <strong>AMD 4700S</strong> の素性に沿ったものであれば <em>XSX SoC</em> を転用していると思われるが、やはりメモリ構成が <em>XSX</em> とは異なる可能性が考えられる。</p>
+
+<p>また、それら 3種の SoC/APU は PCIe Gen4 に対応しているが、<strong>AMD 4700S</strong> 搭載システムの dGPU用 PCIeスロットが Gen4 に対応しているか、レーン数がどうなっているかは不明。</p>
+
+<p><em>Zen 2 アーキテクチャ</em> を採用する CPU は既にあり、<strong>AMD 4700S</strong> の特徴であり魅力は GDDR6メモリをメインメモリに搭載していることだと言える。<br />
+そういう訳で、<strong>AMD 4700S</strong> の素性とメモリ構成は一層関心が持たれる。<br />
+それと実際に手に入れられるかはともかく、別用途向けの SoC/APU を転用したシステムがどれだけ出回るかは個人的に気になるところだ。</p>
+
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://eetimes.jp/ee/articles/2104/05/news012.html" rel="nofollow noreferrer" target="_blank">ゲーム機は先端半導体の宝庫！ 「PS5」「Xbox」のチップを比較する：この10年で起こったこと、次の10年で起こること（51）（1/3 ページ） - EE Times Japan</a></li>
+<li><a href="https://www.xbox.com/en-US/consoles/xbox-series-s#target-specs" rel="nofollow noreferrer" target="_blank">Xbox Series S | Xbox</a></li>
+<li><a href="https://www.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Microsoft_Jeff_Andrews_v2.pdf" rel="nofollow noreferrer" target="_blank">HotChips2020_GPU_Microsoft_Jeff_Andrews_v2.pdf</a></li>
+</ul>
+
+</div>
+<hr>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:tw-4700s-system"><a href="https://twitter.com/momomo_us/status/1386631178304638979" rel="nofollow noreferrer" target="_blank">https://twitter.com/momomo_us/status/1386631178304638979</a>
+ <a class="footnote-return" href="#fnref:tw-4700s-system"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article-bottom-misc"><a href="https://github.com/Umio-Yasuno" class="sb" target="_blank" rel="noreferrer noopener">Github</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions" class="sb" target="_blank" rel="noreferrer noopener">Discussion</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" class="sb" target="_blank" rel="noreferrer noopener">Source repo</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/04/26/amd-4700s-identity.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+<hr><div class="related-article"><div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2021/04/22/amd-4700s/" target="_blank" class="related-article-link">AMD 4700S CPU 出現</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/" target="_blank" class="related-article-link">AMD VanGogh APU ブートログ</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/08/05/amd-epyc-embedded-7001_7002/" target="_blank" class="related-article-link">AMD、EPYC Embedded に 7001/7002シリーズを追加</a>
+    </div><hr><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">Hisa Ando 氏による Intel Xe を含めた最新 GPU アーキテクチャの解説等を追加した増補改訂版、その他機械学習専用チップをもカバーしている</div>
+  </div>
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3klQK8b" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「AMD CPU」</a>
+      <div class="amzn_link_desc">カテゴリー: CPU、出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3lNHZTw" class="amzn_link_main" target="_blank" rel="noopener noreferrer">AMD Ryzen 5 3600 with Wraith Stealth cooler 3.6GHz 6コア / 12スレッド 35MB 65W【国内正規代理店品】</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3mNjUgN" class="amzn_link_main" target="_blank" rel="noopener noreferrer">AMD Ryzen 5 3600XT with Wraith Spire cooler 3.8GHz 6コア / 12スレッド 35MB 95W【国内正規代理店品】</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3dM10Vv" class="amzn_link_main" target="_blank" rel="noopener noreferrer">アイネックス ナノカーボングリスセット BA-GS01</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+
+
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/zen_2/" class="menu-tag-lower">Zen 2</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=AMD%204700S%20%e3%81%ae%e6%ad%a3%e4%bd%93%e3%81%af%20GPU%e9%83%a8%e3%82%92%e7%84%a1%e5%8a%b9%e5%8c%96%e3%81%97%e3%81%9f%e3%82%b2%e3%83%bc%e3%83%a0%e6%a9%9f%e5%90%91%e3%81%91%20APU%20%e3%81%a0%e3%81%a3%e3%81%9f%e3%81%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/04/26/amd-4700s-identity/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about">
+  <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/zen_2/" class="menu-tag-lower">Zen 2</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
