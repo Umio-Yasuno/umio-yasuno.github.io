@@ -5,27 +5,27 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <meta name="format-detection" content="telephone=no, address=no, email=no">
-  <base href="https://www.coelacanth-dream.com/posts/2020/10/17/amd-polaris-gpu-power-multi-display-fix/">
+  <base href="https://www.coelacanth-dream.com/posts/2021/05/04/polaris12-32bit/">
 
   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
   <meta name="twitter:card" content="summary">
   <meta property="og:type" content="article">
-  <title>Linux Kernel に AMD Polaris GPU の電力管理を改良、修正するパッチが投稿される | Coelacanth&#39;s Dream</title>
-  <meta property="og:title" content="Linux Kernel に AMD Polaris GPU の電力管理を改良、修正するパッチが投稿される | Coelacanth&#39;s Dream">
-  <meta name="twitter:title" content="Linux Kernel に AMD Polaris GPU の電力管理を改良、修正するパッチが投稿される | Coelacanth&#39;s Dream">
+  <title>メモリバス幅 32-bit の Polaris12 をベースにした GPU が存在するらしい | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="メモリバス幅 32-bit の Polaris12 をベースにした GPU が存在するらしい | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="メモリバス幅 32-bit の Polaris12 をベースにした GPU が存在するらしい | Coelacanth&#39;s Dream">
 
-  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/10/17/amd-polaris-gpu-power-multi-display-fix/">
-  <meta name="description" content="先日 の LLVM に追加された GPUID といい、前世代の GPU に関するコードの見直しが行なわれているのだろうか。 Linux Kernel (amd-gfx) に、Polaris1x GPU の電力管理を改良、修正す">
-  <meta property="og:description" content="先日 の LLVM に追加された GPUID といい、前世代の GPU に関するコードの見直しが行なわれているのだろうか。 Linux Kernel (amd-gfx) に、Polaris1x GPU の電力管理を改良、修正す">
-  <meta name="twitter:description" content="先日 の LLVM に追加された GPUID といい、前世代の GPU に関するコードの見直しが行なわれているのだろうか。 Linux Kernel (amd-gfx) に、Polaris1x GPU の電力管理を改良、修正す">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/05/04/polaris12-32bit/">
+  <meta name="description" content="しばらくぶりのメモリバス幅 32-bit AMD GPU であり、ほぼ確実に Polaris世代の製品でも最も下に位置する Discrete GPU だろう。 linux-firmware.gitレ">
+  <meta property="og:description" content="しばらくぶりのメモリバス幅 32-bit AMD GPU であり、ほぼ確実に Polaris世代の製品でも最も下に位置する Discrete GPU だろう。 linux-firmware.gitレ">
+  <meta name="twitter:description" content="しばらくぶりのメモリバス幅 32-bit AMD GPU であり、ほぼ確実に Polaris世代の製品でも最も下に位置する Discrete GPU だろう。 linux-firmware.gitレ">
   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
-  <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/10/17/amd-polaris-gpu-power-multi-display-fix/">
-  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/10/17/amd-polaris-gpu-power-multi-display-fix/">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/05/04/polaris12-32bit/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/05/04/polaris12-32bit/">
   <meta property="og:locale" content="ja_JP">
   <meta name="author" content="Umio Yasuno">
   <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
-  <meta name="keywords" content="Polaris10, Linux Kernel, GFX8">
+  <meta name="keywords" content="GFX8">
     <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
     <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
 
@@ -40,14 +40,14 @@
     <script type="application/ld+json">{
   "@context" : "https://schema.org/",
   "@type" : "Article",
-  "name"     : "Linux Kernel に AMD Polaris GPU の電力管理を改良、修正するパッチが投稿される",
-  "headline" : "Linux Kernel に AMD Polaris GPU の電力管理を改良、修正するパッチが投稿される",
+  "name"     : "メモリバス幅 32-bit の Polaris12 をベースにした GPU が存在するらしい",
+  "headline" : "メモリバス幅 32-bit の Polaris12 をベースにした GPU が存在するらしい",
   "author" : {
     "@type" : "Person",
     "name"  : "Umio Yasuno"
   },
-    "dateCreated"   : "2020-10-17",
-    "datePublished" : "2020-10-17",
+    "dateCreated"   : "2021-05-04",
+    "datePublished" : "2021-05-04",
     "dateModufied"  : "2021-05-04",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
@@ -58,61 +58,69 @@
       <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
       <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 <article class="text">
-    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/gfx8/" class="head-tag-lower">GFX8</a>/<a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="head-tag-lower">Linux Kernel</a>/<a href="https://www.coelacanth-dream.com/tags/polaris10/" class="head-tag-lower">Polaris10</a></div>
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/gfx8/" class="head-tag-lower">GFX8</a></div>
     </div>
-  <h1>Linux Kernel に AMD Polaris GPU の電力管理を改良、修正するパッチが投稿される</h1><nav class="article-share">
+  <h1>メモリバス幅 32-bit の Polaris12 をベースにした GPU が存在するらしい</h1><nav class="article-share">
   <div class="share-button-links">
     <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
-    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Linux%20Kernel%20%e3%81%ab%20AMD%20Polaris%20GPU%20%e3%81%ae%e9%9b%bb%e5%8a%9b%e7%ae%a1%e7%90%86%e3%82%92%e6%94%b9%e8%89%af%e3%80%81%e4%bf%ae%e6%ad%a3%e3%81%99%e3%82%8b%e3%83%91%e3%83%83%e3%83%81%e3%81%8c%e6%8a%95%e7%a8%bf%e3%81%95%e3%82%8c%e3%82%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/17/amd-polaris-gpu-power-multi-display-fix/
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=%e3%83%a1%e3%83%a2%e3%83%aa%e3%83%90%e3%82%b9%e5%b9%85%2032-bit%20%e3%81%ae%20Polaris12%20%e3%82%92%e3%83%99%e3%83%bc%e3%82%b9%e3%81%ab%e3%81%97%e3%81%9f%20GPU%20%e3%81%8c%e5%ad%98%e5%9c%a8%e3%81%99%e3%82%8b%e3%82%89%e3%81%97%e3%81%84%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/05/04/polaris12-32bit/
   " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
 
   </div>
 </nav><div class="article-time">
-    <time datetime="2020-10-17 08:38+09:00" class="time-b">Post: 2020/10/17 08:38 JST</time>
-    <div class="article-time-update time-b">Update: 2021/05/04 02:18 JST</div>
-  </div><p><a href="https://www.coelacanth-dream.com/posts/2020/10/11/llvm-add-gfx6_8-gpu/">先日</a> の LLVM に追加された GPUID といい、前世代の GPU に関するコードの見直しが行なわれているのだろうか。</p>
+    <time datetime="2021-05-04 01:34+09:00" class="time-b">Post: 2021/05/04 01:34 JST</time>
+    <div class="article-time-update time-b">Update: 2021/05/04 03:09 JST</div>
+  </div><p>しばらくぶりのメモリバス幅 32-bit AMD GPU であり、ほぼ確実に Polaris世代の製品でも最も下に位置する Discrete GPU だろう。</p>
 
-<p>Linux Kernel (amd-gfx) に、<em>Polaris1x</em> GPU の電力管理を改良、修正する 40個のパッチが投稿された。<br />
-<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-October/054852.html" rel="nofollow noreferrer" target="_blank">[PATCH 00/40] Various Polaris fixes and optimizations</a></span>
+<p><a href="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/about/" rel="nofollow noreferrer" target="_blank">linux-firmware.git</a>レポジトリに、メモリバス幅を 32-bit とする <em>Polaris12</em> ベース GPU のためのファームウェアが追加され、Linux Kernel における AMD GPU ドライバーにもそのファームウェアに対応するパッチが投稿されている。</p>
 
-パッチには、ある温度に達するまでファンを停止する Zero RPM 機能のサポート、マルチディスプレイに関する問題の修正が含まれている。<br />
-<em>Poalris1x</em> GPU のコアクロック、メモリクロック、ファン制御が改良された。そして、マルチディスプレイ時でもメモリクロックの切り替えが行なわれるようになり、アイドル時の消費電力が削減される。</p>
+<p><em>Polaris12</em> は <em>GFX8</em> 世代の dGPU で、Polaris世代 ( <em>Polaris10/11/12</em> ) の中では最も小規模の GPUチップ。<br />
+総 SE (ShaderEngine) 数は 2基、SE あたりの CU数は 5基で総数 10基、総 RenderBackend 数は 4基 (ROP: 16基)。メモリインターフェイスは GDDR5 128-bit (4ch x 32-bit) に対応し、その点では <em>Polaris11</em> と同じだが、メモリサイドキャッシュである L2キャッシュはブロック (メモリチャネル) あたり 128KB となっており、他 Polaris GPU の 256KB よりも半分のキャッシュサイズである。<sup class="footnote-ref" id="fnref:polaris12-l2"><a href="#fn:polaris12-l2">1</a></sup></p>
 
-<p><strong>RX 560 (Polaris11/21)</strong> を愛用している自分には嬉しいパッチと言える。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-April/062711.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: add new MC firmware for Polaris12 32bit ASIC</a></li>
+<li><a href="https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/commit/?id=3f23f5125b1fef5ed2103c0236a5657966e30e4d" rel="nofollow noreferrer" target="_blank">amdgpu: add new polaris 12 MC firmware</a></li>
+</ul>
 
-<p>また、ここまで <em>Polaris1x</em> GPU とまとめて呼んでいるが、ハードウェア側の電力管理ユニットの改良が為された <em>Polaris1x</em> の後継(kicker)、<em>Polaris2x</em> が存在し、それらは <strong>RX 500シリーズ</strong> のベースとなっている。<br />
-それに加え、<em>Polaris20 (RX 580/570 etc)</em> の製造プロセスを GF 14nm から GF 12nm に移行させた <em>Polaris30</em> も存在し、そちらは <strong>RX 590</strong> のベースとなる。<br />
-<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-October/054853.html" rel="nofollow noreferrer" target="_blank">[PATCH 01/40] drm/amd/pm: correct the checks for polaris kickers</a></span>
+<p>メモリバス幅が 32-bit の場合、通常とは違う特殊なメモリコントローラーに関するファームウェアが必要としており、その理由については GPU のメモリコントローラーが基本 64-bit単位であることが考えられる。</p>
+
+<p>dGPU であり、メモリコントローラーも 64-bit単位でありながら 32-bit構成を採ることはまさに特異だと言える。他の <em>Polaris12</em> をベースにする GPU製品を見ても、メモリバス幅は小さくて 64-bit となっている。<br />
+TechPowerUp の <a href="https://www.techpowerup.com/gpu-specs/?buswidth=32%20bit&amp;sort=name" rel="nofollow noreferrer" target="_blank">GPU Specs Database</a> を参照してみたが、ATI/AMD GPU で最後に 32-bit構成の dGPU がリリースされたのは 2007/03 の <strong>ATI Mobility Radeon X2300 HD</strong> であり、実に 14年前となる。オープンソースコードから得られる AMD GPU の情報は GCN世代からが主ということもあるが、正直全く知らない GPU だ。<br />
+NVIDIA GPU では 2006/09 の <strong>GeForece Go 7200</strong> が最後の 32-bit構成 dGPU らしい。<sup class="footnote-ref" id="fnref:tpu-32bit-gpu"><a href="#fn:tpu-32bit-gpu">2</a></sup></p>
+
+<p>メモリバス幅が 32-bit だと、GDDR5 7Gbps メモリチップを使用しても、ピークメモリ帯域は 24GB/s。<br />
+単純に比較すれば、メモリインターフェイスに DDR4 128-bit を採る APU では、2133MT/s のメモリモジュールでもピークメモリ帯域は 32GB/s となるから、dGPU で GDDR5 32-bit というのは明らかに小さく、性能を追い求める向きは無いと見られる。恐らくは省電力で映像出力さえこなしてくれればいいような組み込み向けや、グラフィクス機能を持たない CPU と組み合わせることを想定した製品だろう。PCIeカード型ではなく、オンボード実装が主と思われる。</p>
+
+<p>そういう訳でメモリバス幅 32-bit の <em>Polaris12</em> GPU が存在しても、一般に出回る可能性は低いと思われるが、32-bit幅の AMD GPU が 14年振りに登場し、さらには 14nmプロセスで製造される <em>Polaris12</em> がそのベースとなる。<br />
+マイニング需要、半導体製品の供給不足が影響していることもあるが、Polaris世代の GPU は長く、かつ幅広く活躍する働き者だと言えるだろう。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/03/11/polaris-hard-worker/">働き者のPolaris | Coelacanth's Dream</a></span>
 </p>
 
-<p>そして、今回のパッチで知ったのだが <em>Polaris31</em> も存在するという。ただ、ベースに使われているのは <strong>RX 560X</strong> のみとなる。<sup class="footnote-ref" id="fnref:rx-560x"><a href="#fn:rx-560x">1</a></sup><br />
-<strong>RX 560</strong> と <strong>RX 560X</strong> の違いは正直よく分からず、AMD 公式サイトを見てもベース/ブーストクロックは同じであり、違いとなり得そうな TDP、製造プロセスは記載されていない。<sup class="footnote-ref" id="fnref:560-560x"><a href="#fn:560-560x">2</a></sup><br />
-一応、<em>Polaris30/31</em> の SMC(System Management Controller?) ファームウェアはそれ以外と分けられている。<br />
-さらに、<em>Polaris30</em> をベースとするのは <strong>RX 590</strong> だけではなく、<strong>Radeon RX P30PH</strong> も該当するらしいのだが、この <strong>RX P30PH</strong> についての情報が他に無い。<sup class="footnote-ref" id="fnref:rx-p30ph"><a href="#fn:rx-p30ph">3</a></sup></p>
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://github.com/GPUOpen-Drivers/pal/blob/dev/src/core/os/nullDevice/ndDevice.cpp" rel="nofollow noreferrer" target="_blank">pal/ndDevice.cpp at dev · GPUOpen-Drivers/pal</a></li>
+</ul>
 
-<p>ある世代の GPU の後期に生まれやすい謎と言えるかもしれない。<br />
-先日 <strong>Xbox One SoC</strong> と同一ダイをベースとしていることが判明した <strong>A9-9820 (Cato APU)</strong> のように<sup class="footnote-ref" id="fnref:xbox-one-cato"><a href="#fn:xbox-one-cato">4</a></sup>、前世代の APU/GPU と言っても全てが明かされている訳ではなく、魅力とも言い換えられるであろう謎はまだまだある。</p>
+</div>
+<hr>
+
 <div class="footnotes">
 
 <hr />
 
 <ol>
-<li id="fn:rx-560x"><a href="https://github.com/GPUOpen-Tools/common_src_device_info/blob/0db916e3f16632ea797d703462d4905396951eb8/DeviceInfoUtils.cpp#L368" rel="nofollow noreferrer" target="_blank">https://github.com/GPUOpen-Tools/common_src_device_info/blob/0db916e3f16632ea797d703462d4905396951eb8/DeviceInfoUtils.cpp#L368</a>
- <a class="footnote-return" href="#fnref:rx-560x"><sup>[return]</sup></a></li>
-<li id="fn:560-560x"><a href="https://www.amd.com/en/products/specifications/compare/graphics/1261,7511" rel="nofollow noreferrer" target="_blank">https://www.amd.com/en/products/specifications/compare/graphics/1261,7511</a>
- <a class="footnote-return" href="#fnref:560-560x"><sup>[return]</sup></a></li>
-<li id="fn:rx-p30ph"><a href="https://gitlab.freedesktop.org/mesa/drm/-/blob/5de99aebba44212ff048145a91e66490a98b2233/data/amdgpu.ids#L134" rel="nofollow noreferrer" target="_blank">data/amdgpu.ids · 5de99aebba44212ff048145a91e66490a98b2233 · Mesa / drm · GitLab</a>
- <a class="footnote-return" href="#fnref:rx-p30ph"><sup>[return]</sup></a></li>
-<li id="fn:xbox-one-cato"><a href="https://www.coelacanth-dream.com/posts/2020/10/14/a9-9820-silicon/">A9-9820 は Xbox One SoC と同一ダイ | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:xbox-one-cato"><sup>[return]</sup></a></li>
+<li id="fn:polaris12-l2"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/29ca71e10e58077fb847a914b5051e69a4add352" rel="nofollow noreferrer" target="_blank">ac/gpu_info: conceal L2 cache sizes (29ca71e1) · Commits · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:polaris12-l2"><sup>[return]</sup></a></li>
+<li id="fn:tpu-32bit-gpu"><a href="https://www.techpowerup.com/gpu-specs/?buswidth=32%20bit&amp;sort=name" rel="nofollow noreferrer" target="_blank">https://www.techpowerup.com/gpu-specs/?buswidth=32%20bit&amp;sort=name</a>
+ <a class="footnote-return" href="#fnref:tpu-32bit-gpu"><sup>[return]</sup></a></li>
 </ol>
 </div>
-<div class="article-bottom-misc"><a href="https://github.com/Umio-Yasuno" class="sb" target="_blank" rel="noreferrer noopener">Github</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions" class="sb" target="_blank" rel="noreferrer noopener">Discussion</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" class="sb" target="_blank" rel="noreferrer noopener">Source repo</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/10/17/amd-polaris-gpu-power-multi-display-fix.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+<div class="article-bottom-misc"><a href="https://github.com/Umio-Yasuno" class="sb" target="_blank" rel="noreferrer noopener">Github</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions" class="sb" target="_blank" rel="noreferrer noopener">Discussion</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" class="sb" target="_blank" rel="noreferrer noopener">Source repo</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/05/04/polaris12-32bit.md" target="_blank" rel="noreferrer noopener">Changelog</a>
 </div>
 <hr><div class="related-article"><div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2020/10/17/amd-polaris-gpu-power-multi-display-fix/" target="_blank" class="related-article-link">Linux Kernel に AMD Polaris GPU の電力管理を改良、修正するパッチが投稿される</a>
+        <a href="https://www.coelacanth-dream.com/posts/2020/08/06/polaris11-cu-scaling-test/" target="_blank" class="related-article-link">RX 560 で CU数が GPU性能にどれだけ影響を与えるかを調査 【性能編】</a>
         <a href="https://www.coelacanth-dream.com/posts/2020/03/11/polaris-hard-worker/" target="_blank" class="related-article-link">働き者のPolaris</a>
-        <a href="https://www.coelacanth-dream.com/posts/2020/09/21/xdc2020-amdgpu-tmz/" target="_blank" class="related-article-link">【XDC2020】AMD GPU のメモリ暗号化機能 TMZ　―― DRMへの活用も</a>
-        <a href="https://www.coelacanth-dream.com/posts/2020/08/25/xdc2020-talks/" target="_blank" class="related-article-link">XDC2020 注目の講演　―― ACO, P2P DMA, レイトレーシング……</a>
     </div><hr><div class="amzn">
   <div class="amzn_head">Amazonアソシエイト</div>
   <div class="amzn_links">
@@ -152,8 +160,6 @@
 <div class="menu-tag-block">
   <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
       <a href="https://www.coelacanth-dream.com/tags/gfx8/" class="menu-tag-lower">GFX8</a>
-      <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-tag-lower">Linux Kernel</a>
-      <a href="https://www.coelacanth-dream.com/tags/polaris10/" class="menu-tag-lower">Polaris10</a>
 </div>
 <div class="menu-cat-block">
   <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
@@ -164,7 +170,7 @@
 <nav class="menu-share">
   <div class="share-button-links">
     <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
-    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=Linux%20Kernel%20%e3%81%ab%20AMD%20Polaris%20GPU%20%e3%81%ae%e9%9b%bb%e5%8a%9b%e7%ae%a1%e7%90%86%e3%82%92%e6%94%b9%e8%89%af%e3%80%81%e4%bf%ae%e6%ad%a3%e3%81%99%e3%82%8b%e3%83%91%e3%83%83%e3%83%81%e3%81%8c%e6%8a%95%e7%a8%bf%e3%81%95%e3%82%8c%e3%82%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2020/10/17/amd-polaris-gpu-power-multi-display-fix/
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=%e3%83%a1%e3%83%a2%e3%83%aa%e3%83%90%e3%82%b9%e5%b9%85%2032-bit%20%e3%81%ae%20Polaris12%20%e3%82%92%e3%83%99%e3%83%bc%e3%82%b9%e3%81%ab%e3%81%97%e3%81%9f%20GPU%20%e3%81%8c%e5%ad%98%e5%9c%a8%e3%81%99%e3%82%8b%e3%82%89%e3%81%97%e3%81%84%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/05/04/polaris12-32bit/
   " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
 
   </div>
@@ -206,8 +212,6 @@
 <div class="menu-tag-block">
   <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
       <a href="https://www.coelacanth-dream.com/tags/gfx8/" class="menu-tag-lower">GFX8</a>
-      <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-tag-lower">Linux Kernel</a>
-      <a href="https://www.coelacanth-dream.com/tags/polaris10/" class="menu-tag-lower">Polaris10</a>
 </div>
 <div class="menu-cat-block">
   <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
