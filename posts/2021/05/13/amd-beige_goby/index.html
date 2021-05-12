@@ -25,7 +25,7 @@
   <meta property="og:locale" content="ja_JP">
   <meta name="author" content="Umio Yasuno">
   <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
-  <meta name="keywords" content="Beige Gody, RDNA 2">
+  <meta name="keywords" content="Beige Goby, RDNA 2">
     <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
     <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
 
@@ -58,7 +58,7 @@
       <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
       <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 <article class="text">
-    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/beige_gody/" class="head-tag-lower">Beige Gody</a>/<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-tag-lower">RDNA 2</a></div>
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="head-tag-lower">Beige Goby</a>/<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-tag-lower">RDNA 2</a></div>
     </div>
   <h1>新たな RDNA 2 GPU、&#34;Beige Goby&#34; をサポートするパッチが投稿される</h1><nav class="article-share">
   <div class="share-button-links">
@@ -69,7 +69,7 @@
   </div>
 </nav><div class="article-time">
     <time datetime="2021-05-13 04:02+09:00" class="time-b">Post: 2021/05/13 04:02 JST</time>
-    <div class="article-time-update time-b">Update: 2021/05/13 05:10 JST</div>
+    <div class="article-time-update time-b">Update: 2021/05/13 07:06 JST</div>
   </div>
 
 <p>Linux Kernel (amd-gfx) に、新たな RDNA 2 GPU、<em>Beige Goby</em> をサポートするための 49個のパッチが投稿された。<br />
@@ -226,6 +226,23 @@ dGPU としてはかなり割り切ったものになっているという印象
 
 </blockquote>
 
+<p><em>Beige Goby</em> は RDNA 2 dGPU の中では最も規模の小さい GPU となり、メモリバス幅は 64-bit、マルチメディア機能も一部カットされている。また、最大画面出力数は 2画面と dGPU としては異例の少なさと言える。<br />
+そうした <em>Beige Goby</em> のターゲット帯に考えられるのはモバイル向けだろう。モバイル向けであれば画面出力数の少なさはほとんど問題にならない。64-bit というメモリバス幅も GPU部のフットプリントを減らすのに貢献してくれる。<br />
+また SMU (System Management Unit) に関連したコードに、<strong>Smart Shift</strong> のフラグが追加されており、タイミングとしては <em>Beige Goby</em> で活用することが期待される。<br />
+<strong>Smart Shift</strong> はノートPC向けの機能であり、APU や dGPU を合わせた全体での消費電力を設定し、ワークロードに合わせて電力の割り振りを変えることで、限られた電力内で性能を最大限にするというもの。</p>
+
+<blockquote>
+<pre><code> -#define FEATURE_SPARE_50_BIT            50
+ -#define FEATURE_SPARE_51_BIT            51
+ +#define FEATURE_GFX_PER_PART_VMIN_BIT   50
+ +#define FEATURE_SMART_SHIFT_BIT         51</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-May/063501.html" rel="nofollow noreferrer" target="_blank">[PATCH 27/49] drm/amd/pm: update smu11 driver interface header for beige_goby</a></cite>
+</div>
+
+</blockquote>
+
+<p>モバイル向け Radeon Pro には、<em>Polaris12</em> をベースにした CU 8基、メモリバス幅 64-bit、TBP 35W という仕様の <strong>Radeon Pro WX2100 (Mobile)</strong> が存在するが<sup class="footnote-ref" id="fnref:wx2100"><a href="#fn:wx2100">1</a></sup>、こうした低消費電力の GPU製品を <em>Beige Goby</em> ベースに置き換えていくのかもしれない。</p>
+
 <h2 id="codename">コードネーム: Beige Goby</h2>
 
 <p><em>Beige Goby</em> というコードネームは他 RDNA 2 GPU 同様、色 + 魚 となっており、ベージュ (Beige) は明るい薄茶色、Goby はハゼの英名。</p>
@@ -256,7 +273,7 @@ dGPU としてはかなり割り切ったものになっているという印象
 <tr>
 <td align="left">Raven2</td>
 <td align="center">-</td>
-<td align="center">128K<sup class="footnote-ref" id="fnref:rv2-l2c"><a href="#fn:rv2-l2c">1</a></sup></td>
+<td align="center">128K<sup class="footnote-ref" id="fnref:rv2-l2c"><a href="#fn:rv2-l2c">2</a></sup></td>
 <td align="center">-</td>
 </tr>
 
@@ -336,6 +353,8 @@ dGPU としてはかなり割り切ったものになっているという印象
 <hr />
 
 <ol>
+<li id="fn:wx2100"><a href="https://www.amd.com/en/products/professional-graphics/radeon-pro-wx-2100-mobile" rel="nofollow noreferrer" target="_blank">Radeon™ Pro WX 2100 Graphics | Mobile Graphics | AMD</a>
+ <a class="footnote-return" href="#fnref:wx2100"><sup>[return]</sup></a></li>
 <li id="fn:rv2-l2c"><a href="https://www.coelacanth-dream.com/posts/2021/02/11/raven2-gpu-l2c-size/">Raven2 の GPU L2キャッシュは 128KB | Coelacanth's Dream</a>
  <a class="footnote-return" href="#fnref:rv2-l2c"><sup>[return]</sup></a></li>
 </ol>
@@ -384,7 +403,7 @@ dGPU としてはかなり割り切ったものになっているという印象
   <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
 <div class="menu-tag-block">
   <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
-      <a href="https://www.coelacanth-dream.com/tags/beige_gody/" class="menu-tag-lower">Beige Gody</a>
+      <a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="menu-tag-lower">Beige Goby</a>
       <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
 </div>
 <div class="menu-cat-block">
@@ -437,7 +456,7 @@ dGPU としてはかなり割り切ったものになっているという印象
   <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
 <div class="menu-tag-block">
   <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
-      <a href="https://www.coelacanth-dream.com/tags/beige_gody/" class="menu-tag-lower">Beige Gody</a>
+      <a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="menu-tag-lower">Beige Goby</a>
       <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
 </div>
 <div class="menu-cat-block">
