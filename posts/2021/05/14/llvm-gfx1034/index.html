@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/05/14/llvm-gfx1034/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>LLVM に GPUID: gfx1034 が追加される | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="LLVM に GPUID: gfx1034 が追加される | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="LLVM に GPUID: gfx1034 が追加される | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/05/14/llvm-gfx1034/">
+  <meta name="description" content="AMD GPU とはコンパイラバックエンドとしての関わりを持つ LLVM に GPUID: gfx1034 のサポートを追加するパッチが投稿された。 [AMDGPU] Add gfx1034 target · llvm/llvm-project@464e4dc GPUID は gfx の後に続く数字が Major, Minor, Stepping の並び">
+  <meta property="og:description" content="AMD GPU とはコンパイラバックエンドとしての関わりを持つ LLVM に GPUID: gfx1034 のサポートを追加するパッチが投稿された。 [AMDGPU] Add gfx1034 target · llvm/llvm-project@464e4dc GPUID は gfx の後に続く数字が Major, Minor, Stepping の並び">
+  <meta name="twitter:description" content="AMD GPU とはコンパイラバックエンドとしての関わりを持つ LLVM に GPUID: gfx1034 のサポートを追加するパッチが投稿された。 [AMDGPU] Add gfx1034 target · llvm/llvm-project@464e4dc GPUID は gfx の後に続く数字が Major, Minor, Stepping の並び">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/05/14/llvm-gfx1034/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/05/14/llvm-gfx1034/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Beige Goby, RDNA 2">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+    <style>article{display:grid;grid-template:auto/.5% 1% auto 2%;gap:12px 0}article>*{grid-column:3/-1}article>h1~*{visibility:hidden}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#ffa000;font:1.1em/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word;padding-bottom:100vh}pre{white-space:pre-wrap}html{background-size:100%;background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.95rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:16px}.site-title{font:2rem/1.1 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#9ab;text-shadow:2px 2px 1.1em #abb;padding:0}.site-title a:hover{color:#9bc;text-shadow:2px 2px 1.1em #bcc}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#bef;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3;grid-column:1/-1;color:#fffdfd;line-height:1.6;word-break:break-word}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0}footer{display:none;grid-row:5;grid-column:1/-1}.head-cat-tag{border:1px solid #099;max-width:max-content;padding:8px 2px 6px;margin-bottom:8px;font:.96rem/1.2 monospace;color:#4aa;display:flex;flex-flow:column nowrap;gap:8px 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:4px 0}.head-cat-tag-type{color:#4ed;padding:0 .4em}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 72% 62%,#eee1 0%,#0000 99%,#000 105%);opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:1;pointer-events:none;mix-blend-mode:lighten}.crt{background-image:linear-gradient(0deg,#400 0%,#400 33%,#040 33%,#040 67%,#004 67%,#004 100%);background-size:100% .7em;width:100%;height:100%;opacity:.1}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}article{grid-template-columns:.5% .5% auto 1%}.text{grid-row:3;grid-column:3/-1}.side{transform:translateX(0);height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000}.side-block,footer,.slide{display:none}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "LLVM に GPUID: gfx1034 が追加される",
+  "headline" : "LLVM に GPUID: gfx1034 が追加される",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-05-14",
+    "datePublished" : "2021-05-14",
+    "dateModufied"  : "2021-05-15",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="head-tag-lower">Beige Goby</a>/<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-tag-lower">RDNA 2</a></div>
+    </div>
+  <h1>LLVM に GPUID: gfx1034 が追加される</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=LLVM%20%e3%81%ab%20GPUID%3a%20gfx1034%20%e3%81%8c%e8%bf%bd%e5%8a%a0%e3%81%95%e3%82%8c%e3%82%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/05/14/llvm-gfx1034/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-05-14 23:38+09:00" class="time-b">Post: 2021/05/14 23:38 JST</time>
+    <div class="article-time-update time-b">Update: 2021/05/15 00:27 JST</div>
+  </div><p>AMD GPU とはコンパイラバックエンドとしての関わりを持つ LLVM に <em>GPUID: gfx1034</em> のサポートを追加するパッチが投稿された。</p>
+
+<ul>
+<li><a href="https://github.com/llvm/llvm-project/commit/464e4dc50f4e6e058e12a7020385d5bf29fd1df6" rel="nofollow noreferrer" target="_blank">[AMDGPU] Add gfx1034 target · llvm/llvm-project@464e4dc</a></li>
+</ul>
+
+<p>GPUID は gfx の後に続く数字が Major, Minor, Stepping の並びで構成されており、<em>gfx0134</em> の場合は <code>Major: 10, Minor: 3, Stepping: 4</code> となっている。<br />
+<em>RDNA アーキテクチャ</em> の GPUID には <code>Major: 10, Minor: 1</code>  (gfx101x) が割り当てられ、<em>RDNA 2 アーキテクチャ</em> には基本 <code>Major: 10, Minor: 3</code> (gfx103x) が割り当てられている。<br />
+タイミングを考えれば先日 Linux Kernel (amd-gfx) にパッチが投稿された <em>Beige Goby</em> の GPUID が <em>gfx1034</em> ではないかと思われるが、まだはっきりとそう示されてはいない。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/05/13/amd-beige_goby/">新たな RDNA 2 GPU、&quot;Beige Goby&quot; をサポートするパッチが投稿される | Coelacanth's Dream</a></span>
+</p>
+
+<p>パッチの内容としては、既存のコード内に <em>gfx1034</em> のパターンを追加したものがほとんどであり、<em>gfx1034</em> に向けた特定の機能サポートなどは見受けられない。<br />
+言い換えれば、ベースにした製品が既に発表されている <em>Sienna Cichlid/Navi21/gfx1030</em> 、<em>Navy Flounder/Navi22/gfx1031</em> と、命令/ISAレベルでは同機能ということでもある。</p>
+
+<p><a href="https://github.com/llvm/llvm-project/blob/main/llvm/docs/AMDGPUUsage.rst" rel="nofollow noreferrer" target="_blank">llvm-project/AMDGPUUsage.rst</a> ドキュメントに追加された内容では、<em>gfx1034</em> は dGPU とされている。<br />
+Linux Kernel (amd-gfx) への <em>Beige Goby</em> サポートに向けたパッチでも、APU であることを示すフラグといった、APU に関する記述は無かったため、dGPU であることは <em>Beige Goby</em> と <em>gfx1034</em> とで一致する。<br />
+また、<em>gfx1033</em> は APU であることが同ドキュメントには記述されている。</p>
+
+<blockquote>
+<pre><code>      ``gfx1034``                 ``amdgcn``   dGPU  - cumode          - Absolute      - *pal-amdpal*  *TBA*
+                                                     - wavefrontsize64   flat
+                                                                         scratch                       .. TODO::
+
+                                                                                                         Add product
+                                                                                                         names.</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/llvm/llvm-project/commit/464e4dc50f4e6e058e12a7020385d5bf29fd1df6#diff-e60878666958a89628598e321bbd8dca134904a69313d8afb07aa6771945fc3f" rel="nofollow noreferrer" target="_blank">[AMDGPU] Add gfx1034 target · llvm/llvm-project@464e4dc</a></cite>
+</div>
+
+</blockquote>
+
+<table>
+<thead>
+<tr>
+<th align="left">RDNA 2</th>
+<th align="center">GPUID</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Sienna Cichlid/Navi21</td>
+<td align="center">gfx1030</td>
+</tr>
+
+<tr>
+<td align="left">Navy Flounder/Navi22</td>
+<td align="center">gfx1031</td>
+</tr>
+
+<tr>
+<td align="left">Dimgrey Cavefish/Navi23</td>
+<td align="center">gfx1032?</td>
+</tr>
+
+<tr>
+<td align="left">VanGogh</td>
+<td align="center">gfx1033?</td>
+</tr>
+
+<tr>
+<td align="left">Beige Goby</td>
+<td align="center">gfx1034?</td>
+</tr>
+</tbody>
+</table>
+<div class="article-bottom-misc"><a href="https://github.com/Umio-Yasuno" class="sb" target="_blank" rel="noreferrer noopener">Github</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions" class="sb" target="_blank" rel="noreferrer noopener">Discussion</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" class="sb" target="_blank" rel="noreferrer noopener">Source repo</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/05/14/llvm-gfx1034.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+<hr><div class="related-article"><div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2021/05/13/amd-beige_goby/" target="_blank" class="related-article-link">新たな RDNA 2 GPU、&#34;Beige Goby&#34; をサポートするパッチが投稿される</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/03/20/gpuopen-navi22/" target="_blank" class="related-article-link">AMDVLK GPUOpenドライバーが Navi22/Navy Flounder に対応</a>
+    </div><hr><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「Radeon」</a>
+      <div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">Hisa Ando 氏による Intel Xe を含めた最新 GPU アーキテクチャの解説等を追加した増補改訂版、その他機械学習専用チップをもカバーしている</div>
+  </div>
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3u4LWrT" class="amzn_link_main" target="_blank" rel="noopener noreferrer">XPG VENTO PRO 120 PWM ケースファン [ NIDEC製 Gentle Typhoon ベース 最大28dBA / 2150rpm ] VENTOPRO120PWM-BKCWW 120 mm</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+
+
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="menu-tag-lower">Beige Goby</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=LLVM%20%e3%81%ab%20GPUID%3a%20gfx1034%20%e3%81%8c%e8%bf%bd%e5%8a%a0%e3%81%95%e3%82%8c%e3%82%8b%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/05/14/llvm-gfx1034/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about">
+  <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="menu-tag-lower">Beige Goby</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
