@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/05/19/radeonsi-beige_goby-yellow_carp/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>RadeonSI/RADV に Beige Goby GPU と Yellow Carp APU をサポートする最初のパッチが投稿される　―― Yellow Carp は VanGogh に続く RDNA 2 APU に | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="RadeonSI/RADV に Beige Goby GPU と Yellow Carp APU をサポートする最初のパッチが投稿される　―― Yellow Carp は VanGogh に続く RDNA 2 APU に | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="RadeonSI/RADV に Beige Goby GPU と Yellow Carp APU をサポートする最初のパッチが投稿される　―― Yellow Carp は VanGogh に続く RDNA 2 APU に | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/05/19/radeonsi-beige_goby-yellow_carp/">
+  <meta name="description" content="AMD の GPUドライバー開発者である Marek Olšák 氏により、オープンソースドライバー RadeonSI (OpenGL)、RADV (Vulkan) に向けた、Beige Goby GPU 、 Yellow Carp APU">
+  <meta property="og:description" content="AMD の GPUドライバー開発者である Marek Olšák 氏により、オープンソースドライバー RadeonSI (OpenGL)、RADV (Vulkan) に向けた、Beige Goby GPU 、 Yellow Carp APU">
+  <meta name="twitter:description" content="AMD の GPUドライバー開発者である Marek Olšák 氏により、オープンソースドライバー RadeonSI (OpenGL)、RADV (Vulkan) に向けた、Beige Goby GPU 、 Yellow Carp APU">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/05/19/radeonsi-beige_goby-yellow_carp/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/05/19/radeonsi-beige_goby-yellow_carp/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Beige Goby, Yellow Carp, RDNA 2">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+    <style>article{display:grid;grid-template:auto/.5% 1% auto 2%;gap:12px 0}article>*{grid-column:3/-1}article>h1~*{display:none}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#ffa000;font:1.1em/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word;padding-bottom:100vh}pre{white-space:pre-wrap}html{background-size:100%;background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.95rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:16px}.site-title{font:2rem/1.1 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#9ab;text-shadow:2px 2px 1.1em #abb;padding:0}.site-title a:hover{color:#9bc;text-shadow:2px 2px 1.1em #bcc}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#bef;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3;grid-column:1/-1;color:#fffdfd;line-height:1.6;word-break:break-word}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0}footer{display:none;grid-row:5;grid-column:1/-1}.head-cat-tag{border:1px solid #099;max-width:max-content;padding:8px 2px 6px;margin-bottom:8px;font:.96rem/1.2 monospace;color:#4aa;display:flex;flex-flow:column nowrap;gap:8px 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:4px 0}.head-cat-tag-type{color:#4ed;padding:0 .4em}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 72% 62%,#ddd2 0%,#0000 99%,#000 105%);opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:1;pointer-events:none;mix-blend-mode:lighten}.crt{background-image:linear-gradient(0deg,#400 0%,#400 33%,#040 33%,#040 67%,#004 67%,#004 100%);background-size:100% .7em;width:100%;height:100%;opacity:.1}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}article{grid-template-columns:.5% .5% auto 1%}.text{grid-row:3;grid-column:3/-1}.side{transform:translateX(0);height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000}.side-block,footer,.slide{display:none}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "RadeonSI/RADV に Beige Goby GPU と Yellow Carp APU をサポートする最初のパッチが投稿される　―― Yellow Carp は VanGogh に続く RDNA 2 APU に",
+  "headline" : "RadeonSI/RADV に Beige Goby GPU と Yellow Carp APU をサポートする最初のパッチが投稿される　―― Yellow Carp は VanGogh に続く RDNA 2 APU に",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-05-19",
+    "datePublished" : "2021-05-19",
+    "dateModufied"  : "2021-05-20",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/apu/" class="head-cat-lower">APU</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="head-tag-lower">Beige Goby</a>/<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-tag-lower">RDNA 2</a>/<a href="https://www.coelacanth-dream.com/tags/yellow_carp/" class="head-tag-lower">Yellow Carp</a></div>
+    </div>
+  <h1>RadeonSI/RADV に Beige Goby GPU と Yellow Carp APU をサポートする最初のパッチが投稿される　―― Yellow Carp は VanGogh に続く RDNA 2 APU に</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=RadeonSI%2fRADV%20%e3%81%ab%20Beige%20Goby%20GPU%20%e3%81%a8%20Yellow%20Carp%20APU%20%e3%82%92%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%e3%81%99%e3%82%8b%e6%9c%80%e5%88%9d%e3%81%ae%e3%83%91%e3%83%83%e3%83%81%e3%81%8c%e6%8a%95%e7%a8%bf%e3%81%95%e3%82%8c%e3%82%8b%e3%80%80%e2%80%95%e2%80%95%20Yellow%20Carp%20%e3%81%af%20VanGogh%20%e3%81%ab%e7%b6%9a%e3%81%8f%20RDNA%202%20APU%20%e3%81%ab%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/05/19/radeonsi-beige_goby-yellow_carp/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-05-19 23:13+09:00" class="time-b">Post: 2021/05/19 23:13 JST</time>
+    <div class="article-time-update time-b">Update: 2021/05/20 00:47 JST</div>
+  </div><p>AMD の GPUドライバー開発者である <a href="https://github.com/marekolsak" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏により、オープンソースドライバー <a href="https://www.coelacanth-dream.com/tags/radeonsi">RadeonSI</a> (OpenGL)、<a href="https://www.coelacanth-dream.com/tags/radv">RADV</a> (Vulkan) に向けた、<em>Beige Goby GPU</em> 、 <em>Yellow Carp APU</em> をサポートする最初のパッチが投稿された。</p>
+
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10878/" rel="nofollow noreferrer" target="_blank">amd: add more fish (!10878) · Merge requests · Mesa / mesa · GitLab</a></li>
+</ul>
+
+<p><em>Beige Goby</em> は先日 Linux Kernel (amd-gfx) へのパッチと同時に登場した新たな <em>RDNA 2</em> GPU のコードネーム。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/05/13/amd-beige_goby/">新たな RDNA 2 GPU、&quot;Beige Goby&quot; をサポートするパッチが投稿される | Coelacanth's Dream</a></span>
+
+<em>Yellow Carp</em> は 2020/12 に投稿された SMUv13 (System Management Unit) に関するパッチの中で突然登場した APU のコードネームであり、<em>Yellow Carp</em> をサポートするための巨大なパッチ群はまだ投稿されていない。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/08/amd-yellow-carp-apu/">新たな AMD APU、&quot;Yellow Carp&quot;　―― SMU は v13 に | Coelacanth's Dream</a></span>
+</p>
+
+<p>今回は最初のパッチということもあり、各種ヘッダファイルに <em>Beige Goby</em> を判定するためのマクロや既存のコードにパターンを追加する初期的な対応であり、<em>Beige Goby</em> に限っては新しい話はない。<br />
+しかし <em>Yellow Carp</em> となると話は変わり、AMD のオープンソースドライバーから約半年振りに名前が出されたかと思えば、<em>VanGogh APU</em> に続く <em>RDNA 2</em> APU であることがパッチの内容から明かされた。<br />
+前述のパッチでは、<em>Yellow Carp</em> は APU であることが分かるくらいで、GPUコア部の世代については伏せられていた。</p>
+
+<blockquote>
+<pre><code>    case CHIP_SIENNA_CICHLID:
+    case CHIP_NAVY_FLOUNDER:
+    case CHIP_DIMGREY_CAVEFISH:
+    case CHIP_BEIGE_GOBY:
+    case CHIP_VANGOGH:
+    case CHIP_YELLOW_CARP:
+       return &#34;gfx1030&#34;;</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10878/diffs#diff-content-fbbe09bc487101e3f2f96c0b8fe543c915fa99bf" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10878/diffs#diff-content-fbbe09bc487101e3f2f96c0b8fe543c915fa99bf</a></cite>
+</div>
+
+</blockquote>
+
+<p><em>Yellow Carp APU</em> の GPUファミリーと主に判別に使われる <code>eRevisionId</code> が、 <em>VanGogh</em> 同様に最初から <code>0x01, 0xFF</code> と範囲が埋められているが、 <em>Raven APU (gfx902)</em> に対する <em>Raven2 APU (gfx909)</em> 、<em>Renioir APU (gfx90c)</em> のように、APU の GPU部が細かく派生する予定は今の所ないのだろうか。</p>
+
+<blockquote>
+<pre><code> define AMDGPU_BEIGE_GOBY_RANGE         0x46, 0x50
+
+ #define AMDGPU_VANGOGH_RANGE    0x01, 0xFF
+
+ #define AMDGPU_YELLOW_CARP_RANGE 0x01, 0xFF</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10878/diffs#diff-content-c1f3b41aade2b5733c9e6855b5288f64c3048688" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10878/diffs#diff-content-c1f3b41aade2b5733c9e6855b5288f64c3048688</a></cite>
+</div>
+
+</blockquote>
+
+<p>また、<em>Dimgrey Cavefish/Navi23</em> と <em>VanGogh</em> に存在する、DCC (Delta Color Compression) 機能に関するハードウェアのバグが <em>Yellow Carp</em> にも存在するとのことで、これは開発時期を知るヒントになるかもしれない。 <em>Beige Goby</em> がそこに含まれないのは少し不思議に思うが、少し遅れて開発されたのだろうか？</p>
+
+<blockquote>
+<pre><code>    /* Whether chips are affected by the image load/sample/gather hw bug when
+     * DCC is enabled (ie. WRITE_COMPRESS_ENABLE should be 0).
+     */
+    info-&gt;has_image_load_dcc_bug = info-&gt;family == CHIP_DIMGREY_CAVEFISH ||
+                                   info-&gt;family == CHIP_VANGOGH ||
+                                   info-&gt;family == CHIP_YELLOW_CARP;</code></pre></blockquote>
+
+<p><em>Yellow Carp APU</em> について AMD の開発者より明かされた情報はまだ少なく、<em>VanGogh APU</em> に続く <em>RDNA 2</em> APU となり、SMU は <em>VanGogh</em> の SMUv11.5 よりメジャーバージョンが進んだ SMUv13 を搭載する、くらいだ。組み合わされる CPU や各種IPもまだはっきりしない。<br />
+だが、<em>VanGogh</em> も自分の記事を見返したら最初のパッチが投稿されたのは 2020/09 で、未だ正式発表はされていない。明かされていない情報は数多くあるだろう。<br />
+そういうことで <em>Yellow Carp APU</em> についても、変わらず気長に待つことにする。<br />
+それに UMD (User Mode Driver) にパッチが投稿開始されたことから、Linux Kernel (amd-gfx) へのパッチ群も公開される日が近いかもしれない。</p>
+<div class="article-bottom-misc"><a href="https://github.com/Umio-Yasuno" class="sb" target="_blank" rel="noreferrer noopener">Github</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions" class="sb" target="_blank" rel="noreferrer noopener">Discussion</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" class="sb" target="_blank" rel="noreferrer noopener">Source repo</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/05/19/radeonsi-beige_goby-yellow_carp.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+<hr><div class="related-article"><div class="related-article-title">関連記事</div>
+        <a href="https://www.coelacanth-dream.com/posts/2021/05/14/llvm-gfx1034/" target="_blank" class="related-article-link">LLVM に GPUID: gfx1034 が追加される</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/05/13/amd-beige_goby/" target="_blank" class="related-article-link">新たな RDNA 2 GPU、&#34;Beige Goby&#34; をサポートするパッチが投稿される</a>
+    </div><hr><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「Radeon」</a>
+      <div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">Hisa Ando 氏による Intel Xe を含めた最新 GPU アーキテクチャの解説等を追加した増補改訂版、その他機械学習専用チップをもカバーしている</div>
+  </div>
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3u4LWrT" class="amzn_link_main" target="_blank" rel="noopener noreferrer">XPG VENTO PRO 120 PWM ケースファン [ NIDEC製 Gentle Typhoon ベース 最大28dBA / 2150rpm ] VENTOPRO120PWM-BKCWW 120 mm</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+
+
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="menu-tag-lower">Beige Goby</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
+      <a href="https://www.coelacanth-dream.com/tags/yellow_carp/" class="menu-tag-lower">Yellow Carp</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=RadeonSI%2fRADV%20%e3%81%ab%20Beige%20Goby%20GPU%20%e3%81%a8%20Yellow%20Carp%20APU%20%e3%82%92%e3%82%b5%e3%83%9d%e3%83%bc%e3%83%88%e3%81%99%e3%82%8b%e6%9c%80%e5%88%9d%e3%81%ae%e3%83%91%e3%83%83%e3%83%81%e3%81%8c%e6%8a%95%e7%a8%bf%e3%81%95%e3%82%8c%e3%82%8b%e3%80%80%e2%80%95%e2%80%95%20Yellow%20Carp%20%e3%81%af%20VanGogh%20%e3%81%ab%e7%b6%9a%e3%81%8f%20RDNA%202%20APU%20%e3%81%ab%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/05/19/radeonsi-beige_goby-yellow_carp/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about">
+  <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="menu-tag-lower">Beige Goby</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
+      <a href="https://www.coelacanth-dream.com/tags/yellow_carp/" class="menu-tag-lower">Yellow Carp</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
