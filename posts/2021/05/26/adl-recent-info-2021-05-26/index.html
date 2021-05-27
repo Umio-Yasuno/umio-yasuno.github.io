@@ -69,7 +69,7 @@
   </div>
 </nav><div class="article-time">
     <time datetime="2021-05-26 17:46+09:00" class="time-b">Post: 2021/05/26 17:46 JST</time>
-    <div class="article-time-update time-b">Update: 2021/05/27 04:14 JST</div>
+    <div class="article-time-update time-b">Update: 2021/05/27 13:28 JST</div>
   </div>
 
 <p>最近 Coreboot に投稿された <em>Alder Lake-P/M</em> サポートに向けたパッチから得られる情報をまとめた記事。</p>
@@ -163,7 +163,25 @@ CPUID の末尾 1桁、正確に言えば 4-bit 分の領域はその CPU のス
 
 <p><em>Alder Lake-P</em> においては恐らく <em>Golden Cove (Big/Core)</em> コア数で分かれており、2 (Big) + 8 (Small) + GT2 は PL1: 15W/PL2: 55W、4 + 8 + GT2 は PL1: 28W/PL2: 64W、4 + 8 + GT2 は PL1: 45W/PL2: 115W となっている。<br />
 この値をどう見るかはそれぞれだが、 <em>Tiger Lake UP3</em> では 2-Core が PL1: 15W/PL2: 38W、 4-Core が PL1: 15W/PL2: 60W となっており<sup class="footnote-ref" id="fnref:tgl-up3-pl"><a href="#fn:tgl-up3-pl">2</a></sup>、<em>Alder Lake-P (2+8+2)</em> の PL2: 55W というのは <em>Golden Cove</em> 2-Core に加え <em>Gracemont (Small/Atom)</em> 8-Core も搭載していることを考えれば <em>Tiger Lake UP3</em> とそう変わらないように思える。<br />
-<em>Alder Lake-P (4+8+2)</em> の PL1: 28W/PL2: 64W については <em>Tiger Lake</em> と同じ設定となり、ここでは Bigコアの数が <em>Tiger Lake</em> と一致する。<sup class="footnote-ref" id="fnref:tgl-28w"><a href="#fn:tgl-28w">3</a></sup></p>
+<em>Alder Lake-P (4+8+2)</em> の PL1: 28W/PL2: 64W については、Coreboot に PL1: 28W 時の PL2 は記述されていないが、<em>Tiger Lake UP3 28W</em> と同じ設定となり、ここでは設定と Bigコアの数が <em>Tiger Lake</em> と一致する。<sup class="footnote-ref" id="fnref:tgl-28w"><a href="#fn:tgl-28w">3</a></sup></p>
+
+<blockquote>
+<h5 id="tiger-lake-up3-pl1-pl2">Tiger Lake UP3 PL1/PL2</h5>
+<pre><code>     # Add PL1 and PL2 values
+     register &#34;power_limits_config[POWER_LIMITS_U_2_CORE]&#34; = &#34;{
+         .tdp_pl1_override = 15,
+         .tdp_pl2_override = 38,
+         .tdp_pl4 = 71,
+     }&#34;
+     register &#34;power_limits_config[POWER_LIMITS_U_4_CORE]&#34; = &#34;{
+         .tdp_pl1_override = 15,
+         .tdp_pl2_override = 60,
+         .tdp_pl4 = 105,
+     }&#34;</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up3/devicetree.cb#L130" rel="nofollow noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up3/devicetree.cb#L130</a></cite>
+</div>
+
+</blockquote>
 
 <p><em>Alder Lake-P (6+8+2)</em> では PL1: 45W/PL2: 115W と特別高く、H-Series の一部、あるいは全体をもモバイル向けである <em>Alder Lake-P</em> で構成しようとしていることが予想できる。<br />
 <em>Alder Lake-P</em> は CPU側だけで PCIe Gen5 8-Lane、PCIe Gen4 2x4-Lane を持つことが判明しており、PCIe Gen5 をサポートするような将来の Dicrete GPU とも組み合わせることが可能である。<br />
@@ -247,7 +265,24 @@ CPUID の末尾 1桁、正確に言えば 4-bit 分の領域はその CPU のス
 <p><em>Alder Lake-M (2+8+2)</em> には PL1: 9W/PL2: 30W の値が設定されている。<br />
 小型なパッケージを採用する <em>Tiger Lake UP4</em> も同様に PL1: 9W だが、PL2 は 2-Core が 35W、4-Core は 40W となっており<sup class="footnote-ref" id="fnref:tgl-up4-pl"><a href="#fn:tgl-up4-pl">5</a></sup>、<em>Alder Lake-M (2+8+2)</em> のそれは <em>Tiger Lake UP4</em> よりもわずかに低い値だ。</p>
 
-<p>PL1 からは <em>Tiger Lake UP4</em> の後継が <em>Alder Lake-M</em> になると考えられるが、PL1 は 3-9W の範囲で設定可能であるらしく、9W より低い TDP/PL1 の製品帯も <em>Alder Lake-M</em> でカバーできる。</p>
+<blockquote>
+<pre><code>     # Add PL1 and PL2 values
+     register &#34;power_limits_config[POWER_LIMITS_U_2_CORE]&#34; = &#34;{
+         .tdp_pl1_override = 9,
+         .tdp_pl2_override = 35,
+         .tdp_pl4 = 66,
+     }&#34;
+     register &#34;power_limits_config[POWER_LIMITS_U_4_CORE]&#34; = &#34;{
+         .tdp_pl1_override = 9,
+         .tdp_pl2_override = 40,
+         .tdp_pl4 = 83,
+     }&#34;</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up4/devicetree.cb#L134" rel="nofollow noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up4/devicetree.cb#L134</a></cite>
+</div>
+
+</blockquote>
+
+<p>PL1 からは <em>Tiger Lake UP4</em> の後継が <em>Alder Lake-M</em> になると考えられるが、<em>Alder Lake-M</em> の PL1 は 3-9W の範囲で設定可能であるらしく、9W より低い TDP/PL1 の製品帯も <em>Alder Lake-M</em> でカバーできる。</p>
 
 <blockquote>
 <pre><code>                 ## Power Limits Control
