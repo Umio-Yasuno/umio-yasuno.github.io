@@ -14,9 +14,9 @@
   <meta name="twitter:title" content="RDNA 2 APU &#34;Yellow Carp&#34; をサポートするパッチが Linux Kernel に投稿される　―― DCN3.1 / VanGogh より大きいキャッシュ | Coelacanth&#39;s Dream">
 
   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/06/03/yellow_carp-apu-linux-kernel/">
-  <meta name="description" content="先日にオープンソース OpenGL ドライバー RadeonSI に向けて Marek Olšák 氏より投稿されたパッチから、VanGogh に続く RDNA 2 APU であることが判明した Yellow Carp だが、 Yellow">
-  <meta property="og:description" content="先日にオープンソース OpenGL ドライバー RadeonSI に向けて Marek Olšák 氏より投稿されたパッチから、VanGogh に続く RDNA 2 APU であることが判明した Yellow Carp だが、 Yellow">
-  <meta name="twitter:description" content="先日にオープンソース OpenGL ドライバー RadeonSI に向けて Marek Olšák 氏より投稿されたパッチから、VanGogh に続く RDNA 2 APU であることが判明した Yellow Carp だが、 Yellow">
+  <meta name="description" content="先日に Marek Olšák 氏よりオープンソース OpenGL ドライバー RadeonSI に向けて投稿されたパッチから、VanGogh に続く RDNA 2 APU であることが判明した Yellow Carp だが、 Yellow">
+  <meta property="og:description" content="先日に Marek Olšák 氏よりオープンソース OpenGL ドライバー RadeonSI に向けて投稿されたパッチから、VanGogh に続く RDNA 2 APU であることが判明した Yellow Carp だが、 Yellow">
+  <meta name="twitter:description" content="先日に Marek Olšák 氏よりオープンソース OpenGL ドライバー RadeonSI に向けて投稿されたパッチから、VanGogh に続く RDNA 2 APU であることが判明した Yellow Carp だが、 Yellow">
   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/06/03/yellow_carp-apu-linux-kernel/">
@@ -68,17 +68,36 @@
   </div>
 </nav><div class="article-time">
     <time datetime="2021-06-03 03:59+09:00" class="time-b">Post: 2021/06/03 03:59 JST</time>
-    <div class="article-time-update time-b">Update: 2021/06/03 05:27 JST</div>
+    <div class="article-time-update time-b">Update: 2021/06/03 06:43 JST</div>
   </div>
 
-<p>先日にオープンソース OpenGL ドライバー <strong>RadeonSI</strong> に向けて <a href="https://github.com/marekolsak" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏より投稿されたパッチから、<em>VanGogh</em> に続く RDNA 2 APU であることが判明した <em>Yellow Carp</em> だが、<br />
+<p>先日に <a href="https://github.com/marekolsak" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏よりオープンソース OpenGL ドライバー <strong>RadeonSI</strong> に向けて投稿されたパッチから、<a href="https://www.coelacanth-dream.com/tags/vangogh">VanGogh</a> に続く RDNA 2 APU であることが判明した <em>Yellow Carp</em> だが、<br />
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/05/19/radeonsi-beige_goby-yellow_carp/">Yellow Carp は VanGogh に続く RDNA 2 APU に | Coelacanth's Dream</a></span>
 
-Linux Kernel (amd-gfx) メーリングリスト、KMD (Kernel Mode Driver) 側にも <em>Yellow Carp</em> をサポートするための新たなパッチ 89個が投稿され、より詳細が明らかにされた。</p>
+Linux Kernel (amd-gfx) メーリングリスト、KMD (Kernel Mode Driver) 側にも <em>Yellow Carp</em> をサポートするための新たなパッチ 89個が投稿され、そのさらなる詳細が明らかにされた。</p>
 
 <ul>
 <li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064672.html" rel="nofollow noreferrer" target="_blank">[PATCH 00/89] Add initial support for Yellow Carp</a></li>
 </ul>
+
+<p><em>Yellow Carp</em> というコードネームは 2020/12 に投稿された SMUv13 (System Management Unit) に関するパッチが初出であり、そのパッチ内容から APU とされている。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/08/amd-yellow-carp-apu/">新たな AMD APU、&quot;Yellow Carp&quot;　―― SMU は v13 に | Coelacanth's Dream</a></span>
+</p>
+
+<blockquote>
+<pre><code>   +void yellow_carp_set_ppt_funcs(struct smu_context *smu)
+   +{
+   + smu-&gt;ppt_funcs = &amp;yellow_carp_ppt_funcs;
+   + smu-&gt;message_map = yellow_carp_message_map;
+   + smu-&gt;table_map = yellow_carp_table_map;
+   + smu-&gt;is_apu = true;
+   +}</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-December/057163.html" rel="nofollow noreferrer" target="_blank">[PATCH 6/8] drm/amd/pm: add yellow_carp_ppt implementation(V3)</a></cite>
+</div>
+
+</blockquote>
+
+<p>Linux Kernel (amd-gfx) にサポートを追加する作業自体は以前より行われていたが、最初のパッチから半年して外部にオープンソースとして公開できる段階となったのだろう。</p>
 
 <h2 id="page-index">Index</h2>
 <div class="page-index"><ul>
