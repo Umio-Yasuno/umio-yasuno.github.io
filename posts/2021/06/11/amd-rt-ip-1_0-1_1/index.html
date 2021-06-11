@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/06/11/amd-rt-ip-1_0-1_1/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>現時点で 2バージョン存在する AMD GPU の レイトレーシングHW IP | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="現時点で 2バージョン存在する AMD GPU の レイトレーシングHW IP | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="現時点で 2バージョン存在する AMD GPU の レイトレーシングHW IP | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/06/11/amd-rt-ip-1_0-1_1/">
+  <meta name="description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler">
+  <meta property="og:description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler">
+  <meta name="twitter:description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/06/11/amd-rt-ip-1_0-1_1/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/06/11/amd-rt-ip-1_0-1_1/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Coelacanth&#39;s Dream, RDNA 2, gfx1013, GPUOpen">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="prefetch" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/side.min.css" as="style">
+
+    <style>article{display:grid;grid-template:auto/.5% 1% auto 2%;gap:.8rem 0}article>*{grid-column:3/-1}article>h1~*{visibility:hidden}article blockquote,article pre{overflow-x:scroll}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#ff9d00;font:1.1em/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word;padding-bottom:100vh}html{background-size:100%;background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.95rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:12px}.site-title{font:1.9rem/1.05 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #bcc;padding:0}.site-title a:hover{color:#b7c8c4;text-shadow:2px 2px 1.1em #dee}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#bef;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3;grid-column:1/-1;color:#fffdfd;line-height:1.6;word-break:break-word;overflow-x:hidden}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0}footer{display:none;grid-row:5;grid-column:1/-1}.head-cat-tag{border:1px solid #099;max-width:max-content;padding:8px 2px 6px;margin-bottom:8px;font:.96rem/1.2 monospace;color:#4aa;display:flex;flex-flow:column nowrap;gap:8px 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:4px 0}.head-cat-tag-type{color:#4ed;padding:0 .4em}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 72% 62%,#eee1 0%,#0000 98%,#000 105%);opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:1;pointer-events:none}.crt{background-image:linear-gradient(0deg,#a00 0%,#a00 33%,#050 33%,#050 67%,#00a 67%,#00a 100%);background-size:100% .7em;width:100%;height:100%;opacity:.1;mix-blend-mode:lighten}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}article{grid-template-columns:.5% .5% auto 1%}.text{grid-row:3;grid-column:3/-1}.side{transform:translateX(0);height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000}.side-block,footer,.slide{display:none}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://www.coelacanth-dream.com/image/coelacanth_dream-180x180.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "現時点で 2バージョン存在する AMD GPU の レイトレーシングHW IP",
+  "headline" : "現時点で 2バージョン存在する AMD GPU の レイトレーシングHW IP",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-06-11",
+    "datePublished" : "2021-06-11",
+    "dateModufied"  : "2021-06-11",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/gfx1013/" class="head-tag-lower">gfx1013</a>/<a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="head-tag-lower">GPUOpen</a>/<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-tag-lower">RDNA 2</a></div>
+    </div>
+  <h1>現時点で 2バージョン存在する AMD GPU の レイトレーシングHW IP</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=%e7%8f%be%e6%99%82%e7%82%b9%e3%81%a7%202%e3%83%90%e3%83%bc%e3%82%b8%e3%83%a7%e3%83%b3%e5%ad%98%e5%9c%a8%e3%81%99%e3%82%8b%20AMD%20GPU%20%e3%81%ae%20%e3%83%ac%e3%82%a4%e3%83%88%e3%83%ac%e3%83%bc%e3%82%b7%e3%83%b3%e3%82%b0HW%20IP%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/06/11/amd-rt-ip-1_0-1_1/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-06-11 15:55+09:00" class="time-b">Post: 2021/06/11 15:55 JST</time>
+    <div class="article-time-update time-b">Update: 2021/06/11 16:49 JST</div>
+  </div>
+
+<p>AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、<a href="https://github.com/GPUOpen-Drivers/AMDVLK" rel="nofollow noreferrer" target="_blank">AMDVLK</a> の v-2021.Q2.5 がリリースされ、それを構成する <a href="https://github.com/GPUOpen-Drivers/llpc" rel="nofollow noreferrer" target="_blank">LLPC (LLVM-Based Pipeline Compiler)</a>、<a href="https://github.com/GPUOpen-Drivers/pal" rel="nofollow noreferrer" target="_blank">PAL (Platform Abstraction Library)</a>、<a href="https://github.com/GPUOpen-Drivers/xgl" rel="nofollow noreferrer" target="_blank">XGL (Vulkan API Layer)</a> が共にアップデートされたが、<br />
+その中で AMD GPU が搭載するレイトレーシングハードウェアの IPバージョンが 2種類存在することが新たに明かされた。<br />
+レイトレーシングHW は AMD GPU の CU内に、<em>Ray Accelerator</em> という名で搭載されている。<sup class="footnote-ref" id="fnref:ra"><a href="#fn:ra">1</a></sup></p>
+
+<ul>
+<li><a href="https://github.com/GPUOpen-Drivers/AMDVLK/releases/tag/v-2021.Q2.5" rel="nofollow noreferrer" target="_blank">Release v-2021.Q2.5 · GPUOpen-Drivers/AMDVLK</a>
+
+<ul>
+<li><a href="https://github.com/GPUOpen-Drivers/pal/commit/02ac99ba650afb3aebff3eb8006862ce93d31968" rel="nofollow noreferrer" target="_blank">Update pal from commit: a735a4dfb · GPUOpen-Drivers/pal@02ac99b</a></li>
+</ul></li>
+</ul>
+
+<h2 id="rt-ip-1_0-1_1">RT IP 1.0, 1.1</h2>
+
+<p>今回 <a href="https://github.com/GPUOpen-Drivers/pal" rel="nofollow noreferrer" target="_blank">PAL (Platform Abstraction Library)</a> のアップデートで追加された内容によれば、レイトレーシングHW の IP には現時点で、最初の実装となる <code>RtIp1_0</code> と、そこにトライアングルの重心座標 (<code>triangle barycentrics</code>) を処理する機能を追加した <code>RtIp1_1</code> が存在するとされる。</p>
+
+<blockquote>
+<pre><code> /// Supported RTIP version enumeration
+ enum class RayTracingIpLevel : uint32
+ {
+     _None = 0,
+ #ifndef None
+     None = _None,      ///&lt; The device does not have an RayTracing Ip Level
+ #endif
+
+     RtIp1_0 = 0x1,     ///&lt; First Implementation of HW RT
+     RtIp1_1 = 0x2,     ///&lt; Added computation of triangle barycentrics into HW
+ };</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/GPUOpen-Drivers/pal/blob/02ac99ba650afb3aebff3eb8006862ce93d31968/inc/core/palDevice.h#L754" rel="nofollow noreferrer" target="_blank">pal/palDevice.h at 02ac99ba650afb3aebff3eb8006862ce93d31968 · GPUOpen-Drivers/pal</a></cite>
+</div>
+
+</blockquote>
+
+<p>そして、他の部分に追加されたコードでは、<em>RDNA 2/GFX10.3</em> とそれ以降の HWレイトレーシング IP が <code>RtIp1_1</code> だとしている。  (<code>IsGfx103Plus()</code> は処理的には <em>RDNA/GFX10.1</em> 以降の場合に true を返すようになっている<sup class="footnote-ref" id="fnref:gfx103p-func"><a href="#fn:gfx103p-func">2</a></sup>)</p>
+
+<p>このことは <a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="nofollow noreferrer" target="_blank">&quot;RDNA 2&quot; Instruction Set Architecture: Reference Guide</a> の 「8.2.10 Ray Tracing」セクションでも触れられており、そこでも レイトレーシングHW は重心座標の計算処理を直接サポートするよう設計されていると説明している。</p>
+
+<blockquote>
+<pre><code>         if (IsGfx103Plus(pInfo-&gt;gfxLevel))
+         {
+             pInfo-&gt;gfx9.rayTracingIp = RayTracingIpLevel::RtIp1_1;
+         }</code></pre>
+<div class="quote-source">引用元:&nbsp;<cite><a href="https://github.com/GPUOpen-Drivers/pal/blob/02ac99ba650afb3aebff3eb8006862ce93d31968/src/core/hw/gfxip/gfx9/gfx9Device.cpp#L5200" rel="nofollow noreferrer" target="_blank">pal/gfx9Device.cpp at 02ac99ba650afb3aebff3eb8006862ce93d31968 · GPUOpen-Drivers/pal</a></cite>
+</div>
+
+</blockquote>
+
+<p>そして、<em>RDNA 2/GFX10.3</em> とそれ以降のレイトレーシングHW が <code>RtIp1_1</code> だとされていることからは、<em>RDNA 2/GFX10.3</em> 以前は <code>RtIp1_0</code> を搭載している可能性が示される。<br />
+先日、LLVM に追加された <a href="https://www.coelacanth-dream.com/tags/gfx1013">GPUID: gfx1013</a> は、<em>Navi10 (gfx1010)</em> をベースにしながら <em>RDNA 2/GFX10.3</em> でサポートされているレイトレーシング命令をサポートし、さらには APU という奇妙なものだったが、<br />
+今回 PAL に追加された内容と合わせて、 <em>gfx1013</em> で実装されているレイトレーシングHW <em>RDNA 2/GFX10.3</em> とは異なると考えられる。<br />
+そもそも今回追加された部分は、<em>gfx1013</em> に関する LLVM の変更に合わせたか、AMD のソフトウェアエンジニアが <em>gfx1013</em> のサポートに向けて動き始めたことによるものなのかもしれない。</p>
+
+<p>レイトレーシングHW がトライアングルの重心座標を直接する計算する機能の有無がどれだけ影響するかは、正直自分には推し量れないし、IPバージョンの違いが分かってもまだ <em>gfx1013</em> の正体にはまだ遠いが、わずかでも明らかにされたこと、それを知ることができたことは嬉しい。</p>
+
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="nofollow noreferrer" target="_blank">&quot;RDNA 2&quot; Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:ra"><a href="https://gpuopen.com/wp-content/uploads/slides/AMD_RDNA2_DirectX12_Ultimate_Raytracing1_1.pdf" rel="nofollow noreferrer" target="_blank">DirectX ® Ray tracing 1.1 - AMD_RDNA2_DirectX12_Ultimate_Raytracing1_1.pdf</a>
+ <a class="footnote-return" href="#fnref:ra"><sup>[return]</sup></a></li>
+<li id="fn:gfx103p-func"><a href="https://github.com/GPUOpen-Drivers/pal/blob/7f6e731aa5193a518356bdfddc75571d032a3928/src/core/device.h#L2555" rel="nofollow noreferrer" target="_blank">pal/device.h at 7f6e731aa5193a518356bdfddc75571d032a3928 · GPUOpen-Drivers/pal</a>
+ <a class="footnote-return" href="#fnref:gfx103p-func"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article-bottom-misc">
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions" class="sb" target="_blank" rel="noreferrer noopener">Discussions</a><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions/4" class="sb" target="_blank" rel="noreferrer noopener">Typo</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/06/11/amd-rt-ip-1_0-1_1.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+<hr><div class="related-article"><div class="related-article-title">Related:</div>
+        <a href="https://www.coelacanth-dream.com/posts/2021/03/20/gpuopen-navi22/" target="_blank" class="related-article-link">AMDVLK GPUOpenドライバーが Navi22/Navy Flounder に対応</a>
+        <a href="https://www.coelacanth-dream.com/posts/2021/01/07/gpuopen-driver-mesh-shader/" target="_blank" class="related-article-link">GPUOpenドライバーアップデート ―― Task/Mesh Shader に対応</a>
+    </div><hr><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer">Amazonカスタム検索: 「Radeon」</a>
+      <div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPUアーキテクト、Hisa Ando 氏の著作。現代のプロセッサに詰め込まれている多くの技術が丁寧に解説されている。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/36QaP15" class="amzn_link_main" target="_blank" rel="noopener noreferrer"> ARCTIC MX-4 (4 g) Edition 2019 – High Performance Thermal Paste </a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3u4LWrT" class="amzn_link_main" target="_blank" rel="noopener noreferrer">XPG VENTO PRO 120 PWM ケースファン [ NIDEC製 Gentle Typhoon ベース 最大28dBA / 2150rpm ] VENTOPRO120PWM-BKCWW 120 mm</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+
+
+
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/side.min.css"><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/gfx1013/" class="menu-tag-lower">gfx1013</a>
+      <a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="menu-tag-lower">GPUOpen</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button><a href="https://twitter.com/intent/tweet?text=%e7%8f%be%e6%99%82%e7%82%b9%e3%81%a7%202%e3%83%90%e3%83%bc%e3%82%b8%e3%83%a7%e3%83%b3%e5%ad%98%e5%9c%a8%e3%81%99%e3%82%8b%20AMD%20GPU%20%e3%81%ae%20%e3%83%ac%e3%82%a4%e3%83%88%e3%83%ac%e3%83%bc%e3%82%b7%e3%83%b3%e3%82%b0HW%20IP%20%7c%20Coelacanth%27s%20Dream%0a&url=https://www.coelacanth-dream.com/posts/2021/06/11/amd-rt-ip-1_0-1_1/
+  " rel="noreferrer noopener" target="_blank" class="share-tw sb">Tweet</a><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+
+    <nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer>
+  <hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about">
+  <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="foot-site-search">Site Search by Google</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/gfx1013/" class="menu-tag-lower">gfx1013</a>
+      <a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="menu-tag-lower">GPUOpen</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<a href="https://cse.google.com/cse?cx=008927884807684957224:v2eqv96o8pu" target="_blank" rel="noopener noreferrer" class="menu-site-search">Site Search by Google</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/" target="_blank">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact" target="_blank">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
