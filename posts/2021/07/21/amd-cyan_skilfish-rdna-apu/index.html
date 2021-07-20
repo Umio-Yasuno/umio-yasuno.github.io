@@ -68,7 +68,7 @@
   </div>
 </nav><div class="article-time">
     <time datetime="2021-07-20 16:39 &#43;0000" class="time-b">Post: 2021/07/20 16:39 UTC</time>
-    <div class="article-time-update time-b">Update: 2021/07/20 18:11 UTC</div>
+    <div class="article-time-update time-b">Update: 2021/07/20 18:33 UTC</div>
   </div>
 
 <p>amd-gfxメーリングリストにて、Linux Kernel における AMD GPUドライバーに新たな RDNA APU <em>Cyan Skilfish</em> をサポートするパッチが公開された。一連のパッチの数は 29個で構成されている。</p>
@@ -81,7 +81,11 @@
 
 <h2 id="page-index">Index</h2>
 <div class="page-index"><ul>
-<li><a href="#rdna-apu">&quot;RDNA&quot; APU</a></li>
+<li><a href="#rdna-apu">&quot;RDNA&quot; APU</a>
+
+<ul>
+<li><a href="#display-output">ディスプレイ出力はサポートせず?</a></li>
+</ul></li>
 <li><a href="#v2">Cyan Skilfish と Cyan Skilfish2</a></li>
 <li><a href="#8-core">8-Core APU</a></li>
 </ul>
@@ -245,6 +249,27 @@ GFXコア部に関する部分では <em>Navi10/Navi12/Navi14</em> 、<em>RDNA/G
   };</code></pre>
 
 <div class="quote-source">引用元:<cite id="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066805.html" rel="nofollow noreferrer" target="_blank">[PATCH 03/29] drm/amdgpu: add cyan_skillfish asic type</a></cite>
+</div>
+
+</blockquote>
+
+<h3 id="display-output">ディスプレイ出力はサポートせず?</h3>
+
+<p>それと <em>Cyan Skilfish</em> は APU だが、今回のパッチではディスプレイコントローラー/エンジン部のサポートが追加されていない。<br />
+それだけでなくディスプレイコントローラー/エンジン部の IP に関しても仮想的なものを用いるように記述されており、ディスプレイ出力をサポートした <em>Cyan Skilfish</em> を想定していないか、あるいは本当に元から <em>Cyan Skilfish</em> にディスプレイ出力とコントローラー/エンジンが実装されていないか、だと思われる。</p>
+
+<blockquote>
+<pre><code> +   case CHIP_CYAN_SKILLFISH:
+ +       amdgpu_device_ip_block_add(adev, &amp;nv_common_ip_block);
+ +                amdgpu_device_ip_block_add(adev, &amp;gmc_v10_0_ip_block);
+ +                amdgpu_device_ip_block_add(adev, &amp;navi10_ih_ip_block);
+ +                if (adev-&gt;enable_virtual_display || amdgpu_sriov_vf(adev))
+ +                        amdgpu_device_ip_block_add(adev, &amp;dce_virtual_ip_block);
+ +                amdgpu_device_ip_block_add(adev, &amp;gfx_v10_0_ip_block);
+ +                amdgpu_device_ip_block_add(adev, &amp;sdma_v5_0_ip_block);
+ +       break;</code></pre>
+
+<div class="quote-source">引用元:<cite id="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066808.html" rel="nofollow noreferrer" target="_blank">[PATCH 06/29] drm/amdgpu: set ip blocks for cyan_skillfish</a></cite>
 </div>
 
 </blockquote>
