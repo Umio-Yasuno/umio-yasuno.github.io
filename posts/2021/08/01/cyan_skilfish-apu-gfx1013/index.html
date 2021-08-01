@@ -68,13 +68,29 @@
   </div>
 </nav><div class="article-time">
     <time datetime="2021-08-01 01:36 &#43;0900" class="time-b">Post: 2021/08/01 01:36 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/08/01 12:22 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/08/01 12:38 &#43;0900</div>
   </div>
 
 <p>2021/06 に <em>GPUID: gfx1013</em> のサポート追加する LLVM へのパッチが公開されてから、関連する情報を追い続けてきたが、ある程度集まってくると同時に断片化してきたと感じてきたため、集約し整理した記事を作ることにした。</p>
 
 <p>ここでも最初に一応書くが、AMD GPU ドライバーのコード中では <em>SKILLFISH</em> で統一されているが、パッチタイトルの一部では <em>SKILFISH</em> となっていること、アブラボウズの英名として <em>SKILFISH</em>  があることを踏まえて、ここでは <em>SKILFISH</em> で統一している。<br />
-コード内では統一されているため問題は起きないし、amd-gfx メーリングリスト内で指摘するメッセージも無いため、どちらが正しいとも言い切れず、またそこまでこだわるような事柄でもない。</p>
+コード内では統一されているため問題は起きないし、amd-gfx メーリングリスト内で指摘するメッセージも無いため、どちらが正しいとも言い切れず、またそこまでこだわるような事柄でもないように思える。</p>
+
+<h2 id="page-index">Index</h2>
+<div class="page-index"><ul>
+<li><a href="#gfx1013">gfx1013</a>
+
+<ul>
+<li><a href="#hw-rt-ip">RDNA 2 とは異なる HWレイトレーシング IP</a></li>
+</ul></li>
+<li><a href="#cyan_skilfish">Cyan Skilfish</a>
+
+<ul>
+<li><a href="#8-core">ディスプレイ出力を持たない 8-Core APU</a></li>
+</ul></li>
+</ul>
+</div>
+
 
 <h2 id="gfx1013">gfx1013</h2>
 
@@ -153,6 +169,48 @@
 </blockquote>
 
 <p><em>RDNA アーキテクチャ</em> を採用する APU であり、<em>Navi10 (gfx1010)</em> をベースに <em>RDNA 2/GFX10.3</em> 世代同様のレイトレーシング命令周りを追加した奇妙な AMD GPU が <em>gfx1013</em> となる。</p>
+
+<h3 id="hw-rt-ip">RDNA 2 とは異なる HWレイトレーシング IP</h3>
+
+<p>オープンソースドライバー等で明らかにされている情報として、AMD GPU の HWレイトレーシング IP には現時点で 2バージョン存在する、というものがある。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/11/amd-rt-ip-1_0-1_1/">現時点で 2バージョン存在する AMD GPU の HWレイトレーシング IP | Coelacanth's Dream</a></span>
+</p>
+
+<p><a href="https://github.com/GPUOpen-Drivers/AMDVLK" rel="nofollow noreferrer" target="_blank">AMDVLK</a> ドライバーを構成する一部である <a href="https://github.com/GPUOpen-Drivers/pal" rel="nofollow noreferrer" target="_blank">PAL (Platform Abstraction Library)</a> 内のコードによれば、HWレイトレーシング IPは <code>RtIp1_0</code> と <code>RtIp1_1</code> の 2バージョンが存在し、<br />
+<code>RtIp1_0</code> は最初の実装となり、<code>RtIp1_1</code> はそこにトライアングルの重心座標 (<code>triangle barycentrics</code>) を処理する機能を追加したものとなる。</p>
+
+<blockquote>
+<pre><code> /// Supported RTIP version enumeration
+ enum class RayTracingIpLevel : uint32
+ {
+     _None = 0,
+ #ifndef None
+     None = _None,      ///&lt; The device does not have an RayTracing Ip Level
+ #endif
+
+     RtIp1_0 = 0x1,     ///&lt; First Implementation of HW RT
+     RtIp1_1 = 0x2,     ///&lt; Added computation of triangle barycentrics into HW
+ };</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/02ac99ba650afb3aebff3eb8006862ce93d31968/inc/core/palDevice.h#L754" rel="nofollow noreferrer" target="_blank">pal/palDevice.h at 02ac99ba650afb3aebff3eb8006862ce93d31968 · GPUOpen-Drivers/pal</a></cite>
+</div>
+
+</blockquote>
+
+<p>関連するコード部では、<em>RDNA 2/GFX10.3</em> とそれ以降の AMD GPU では <code>RtIp1_1</code> を採用するとしている記述が存在し、<a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="nofollow noreferrer" target="_blank">&quot;RDNA 2&quot; Instruction Set Architecture: Reference Guide</a> でも「8.2.10 Ray Tracing」セクションにて、HWレイトレーシングは重心座標の計算処理を直接サポートするよう設計されていると説明されている。</p>
+
+<blockquote>
+<pre><code>         if (IsGfx103Plus(pInfo-&gt;gfxLevel))
+         {
+             pInfo-&gt;gfx9.rayTracingIp = RayTracingIpLevel::RtIp1_1;
+         }</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/02ac99ba650afb3aebff3eb8006862ce93d31968/src/core/hw/gfxip/gfx9/gfx9Device.cpp#L5200" rel="nofollow noreferrer" target="_blank">pal/gfx9Device.cpp at 02ac99ba650afb3aebff3eb8006862ce93d31968 · GPUOpen-Drivers/pal</a></cite>
+</div>
+
+</blockquote>
+
+<p>上記引用部の判定から、<em>gfx1013</em> が <em>RDNA/GFX10.1</em> でありながら HWレイトレーシングをサポートしているとすると、<em>RDNA 2/GFX10.3</em> より前の世代、トライアングルの重心座標の処理機能を持たない <code>RtIp1_0</code> を採用していると考えられる。</p>
 
 <h2 id="cyan_skilfish">Cyan Skilfish</h2>
 
