@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/08/01/cyan_skilfish-apu-gfx1013/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>HWレイトレーシングをサポートする RDNA APU 「Cyan Skilfish (gfx1013)」 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="HWレイトレーシングをサポートする RDNA APU 「Cyan Skilfish (gfx1013)」 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="HWレイトレーシングをサポートする RDNA APU 「Cyan Skilfish (gfx1013)」 | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/08/01/cyan_skilfish-apu-gfx1013/">
+  <meta name="description" content="2021/06 に GPUID: gfx1013 のサポート追加する LLVM へのパッチが公開されてから、関連する情報を追い続けてきたが、ある程度集まってくると同時に断片化してきたと感じてき">
+  <meta property="og:description" content="2021/06 に GPUID: gfx1013 のサポート追加する LLVM へのパッチが公開されてから、関連する情報を追い続けてきたが、ある程度集まってくると同時に断片化してきたと感じてき">
+  <meta name="twitter:description" content="2021/06 に GPUID: gfx1013 のサポート追加する LLVM へのパッチが公開されてから、関連する情報を追い続けてきたが、ある程度集まってくると同時に断片化してきたと感じてき">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/08/01/cyan_skilfish-apu-gfx1013/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/08/01/cyan_skilfish-apu-gfx1013/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Coelacanth&#39;s Dream, gfx1013, RDNA, Cyan Skilfish, AMD 4700S">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>article{display:grid;grid-template:auto/.5% 1% auto 2%;gap:.8rem 0}article>*{grid-column:3/-1}article>h1~*{visibility:hidden}article blockquote,article pre{overflow-x:scroll}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#ff9a00;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{max-width:98%;height:50vh}figure img{max-width:auto;max-height:auto}html{background-size:100%;background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.95rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:1rem}.site-title{font:1.9rem/1.05 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #bcc;padding:0}.site-title a:hover{color:#b7c8c4;text-shadow:2px 2px 1.1em #dee}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#aef;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3/4;grid-column:1/-1;color:#fffdfd;line-height:1.6;overflow-wrap:anywhere;word-break:break-word;overflow:clip}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0}footer{visibility:hidden;grid-row:5;grid-column:1/-1}.head-cat-tag{grid-column:1/-1;border:1px solid #0aa;background-color:#0001;max-width:max-content;padding:8px 2px 6px;margin:1rem 0;font:.96rem/1.2 monospace;color:#288;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-tag-type{color:#4ed;padding:0 .4em}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.5rem 0}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 72% 62%,#dcc1 0%,#0000 99%,#000 108%);opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:auto;pointer-events:none;mix-blend-mode:lighten}.crt{background-image:linear-gradient(180deg,#f00 0%,#f00 33%,#0f0 33%,#0f0 67%,#00f 67%,#00f 100%);background-size:100% .6rem;width:100%;height:100%;opacity:.03}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}article{grid-template-columns:.5% .5% auto 1%}.text{grid-row:3;grid-column:3/-1}.side{transform:translateX(0);height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000}.side-block,.slide{visibility:hidden}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "HWレイトレーシングをサポートする RDNA APU 「Cyan Skilfish (gfx1013)」",
+  "headline" : "HWレイトレーシングをサポートする RDNA APU 「Cyan Skilfish (gfx1013)」",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-08-01",
+    "datePublished" : "2021-08-01",
+    "dateModufied"  : "2021-08-01",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css">
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+<article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/apu/" class="head-cat-lower">APU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/amd_4700s/" class="head-tag-lower">AMD 4700S</a>/<a href="https://www.coelacanth-dream.com/tags/cyan_skilfish/" class="head-tag-lower">Cyan Skilfish</a>/<a href="https://www.coelacanth-dream.com/tags/gfx1013/" class="head-tag-lower">gfx1013</a>/<a href="https://www.coelacanth-dream.com/tags/rdna/" class="head-tag-lower">RDNA</a></div>
+    </div>
+  <h1>HWレイトレーシングをサポートする RDNA APU 「Cyan Skilfish (gfx1013)」</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button>
+  
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-08-01 01:36 &#43;0900" class="time-b">Post: 2021/08/01 01:36 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/08/01 12:22 &#43;0900</div>
+  </div>
+
+<p>2021/06 に <em>GPUID: gfx1013</em> のサポート追加する LLVM へのパッチが公開されてから、関連する情報を追い続けてきたが、ある程度集まってくると同時に断片化してきたと感じてきたため、集約し整理した記事を作ることにした。</p>
+
+<p>ここでも最初に一応書くが、AMD GPU ドライバーのコード中では <em>SKILLFISH</em> で統一されているが、パッチタイトルの一部では <em>SKILFISH</em> となっていること、アブラボウズの英名として <em>SKILFISH</em>  があることを踏まえて、ここでは <em>SKILFISH</em> で統一している。<br />
+コード内では統一されているため問題は起きないし、amd-gfx メーリングリスト内で指摘するメッセージも無いため、どちらが正しいとも言い切れず、またそこまでこだわるような事柄でもない。</p>
+
+<h2 id="gfx1013">gfx1013</h2>
+
+<p>まず出てきたのは <em>GPUID: gfx1013</em> であり、GPUID はその割り当てられた GPU の IPバージョンを表現しており、<code>gfx{major}_{minor}_{stepping}</code> のフォーマットとなっている。<br />
+<em>RDNA アーキテクチャ</em> は GFX10.1 (gfx101x) [Major: 10, Minor: 1] を、<em>RDNA 2 アーキテクチャ</em> は GFX10.3 (gfx103x) [Major: 10, Minor: 3] を基本に Stepping で同アーキテクチャを採用する AMD GPU を区別している。<br />
+<em>gfx1013</em> の場合は [Major: 10, Minor: 1, Stepping: 3] となり、GPUID (GFX IP) 的には <em>RDNA アーキテクチャ</em> だと言える。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/04/llvm-gpuid-gfx1013/">RDNA/GFX10.1世代に新たな GPUID、gfx1013? | Coelacanth's Dream</a></span>
+</p>
+
+<p>LLVM へのパッチから分かる <em>gfx1013</em> の特徴としては、<em>RDNA APU</em> であること、対応命令的には <em>Navi10 (gfx1010)</em> をベースにしていること、<em>RDNA 2 アーキテクチャ</em> がサポートしているレイトレーシング命令をサポートしていることが挙げられる。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/06/gfx1013-apu-rt/">GPUID: gfx1013 は RDNA/Navi10ベースの APU で、レイトレーシング命令をサポートしている? | Coelacanth's Dream</a></span>
+</p>
+
+<p><em>Navi10 (gfx1010)</em> は <em>Navi12 (gfx1011)/Navi14 (gfx1012)</em> がサポートしている一部ドット積命令 (<code>dot[1,2,5-7]-insts</code>)をサポートせず、<em>gfx1013</em> も同様にそれら命令をサポートしていないことになっている。</p>
+
+<blockquote>
+<pre><code>     case GK_GFX1012:
+     case GK_GFX1011:
+       Features[&#34;dot1-insts&#34;] = true;
+       Features[&#34;dot2-insts&#34;] = true;
+       Features[&#34;dot5-insts&#34;] = true;
+       Features[&#34;dot6-insts&#34;] = true;
+       Features[&#34;dot7-insts&#34;] = true;
+       LLVM_FALLTHROUGH;
+     case GK_GFX1013:
+     case GK_GFX1010:
+       Features[&#34;dl-insts&#34;] = true;
+       Features[&#34;ci-insts&#34;] = true;
+       Features[&#34;flat-address-space&#34;] = true;
+       Features[&#34;16-bit-insts&#34;] = true;
+       Features[&#34;dpp&#34;] = true;
+       Features[&#34;gfx8-insts&#34;] = true;
+       Features[&#34;gfx9-insts&#34;] = true;
+       Features[&#34;gfx10-insts&#34;] = true;
+       Features[&#34;s-memrealtime&#34;] = true;
+       Features[&#34;s-memtime-inst&#34;] = true;
+       break;</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/aaba37187fda7f5a7fdc4c1e6129cbaaa1bbf709/clang/lib/Basic/Targets/AMDGPU.cpp#L210-L230" rel="nofollow noreferrer" target="_blank">llvm-project/AMDGPU.cpp at aaba37187fda7f5a7fdc4c1e6129cbaaa1bbf709 · llvm/llvm-project</a></cite>
+</div>
+
+</blockquote>
+
+<p>パッチでは、レイトレーシング命令 (<code>image_bvh_intersect_ray/image_bvh64_intersect_ray</code>) と、サンプラーを用いずにコンポーネントから最大 4個のサンプルをロードする <code>image_msaa_load</code> サポートの有無を判定する <code>FeatureGFX10_AEncoding</code> が追加されており、それを <em>gfx1013</em> と <em>RDNA 2 アーキテクチャ/gfx103x</em> が持つとしている。</p>
+
+<blockquote>
+<pre><code> def FeatureISAVersion10_1_3 : FeatureSet&lt;
+   !listconcat(FeatureGroup.GFX10_1_Bugs,
+     [FeatureGFX10,
+      FeatureGFX10_AEncoding,
+      FeatureLDSBankCount32,
+      FeatureDLInsts,
+      FeatureNSAEncoding,
+      FeatureWavefrontSize32,
+      FeatureScalarStores,
+      FeatureScalarAtomics,
+      FeatureScalarFlatScratchInsts,
+      FeatureGetWaveIdInst,
+      FeatureMadMacF32Insts,
+      FeatureDsSrc2Insts,
+      FeatureLdsMisalignedBug,
+      FeatureSupportsXNACK])&gt;;</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/aaba37187fda7f5a7fdc4c1e6129cbaaa1bbf709/llvm/lib/Target/AMDGPU/AMDGPU.td#L1086-L1101" rel="nofollow noreferrer" target="_blank">llvm-project/AMDGPU.td at aaba37187fda7f5a7fdc4c1e6129cbaaa1bbf709 · llvm/llvm-project</a></cite>
+</div>
+
+<pre><code> def FeatureGFX10_AEncoding : SubtargetFeature&lt;&#34;gfx10_a-encoding&#34;,
+   &#34;GFX10_AEncoding&#34;,
+   &#34;true&#34;,
+   &#34;Has BVH ray tracing instructions&#34;
+ &gt;;</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/aaba37187fda7f5a7fdc4c1e6129cbaaa1bbf709/llvm/lib/Target/AMDGPU/AMDGPU.td#L468-L472" rel="nofollow noreferrer" target="_blank">llvm-project/AMDGPU.td at aaba37187fda7f5a7fdc4c1e6129cbaaa1bbf709 · llvm/llvm-project</a></cite>
+</div>
+
+</blockquote>
+
+<p><em>RDNA アーキテクチャ</em> を採用する APU であり、<em>Navi10 (gfx1010)</em> をベースに <em>RDNA 2/GFX10.3</em> 世代同様のレイトレーシング命令周りを追加した奇妙な AMD GPU が <em>gfx1013</em> となる。</p>
+
+<h2 id="cyan_skilfish">Cyan Skilfish</h2>
+
+<p><em>Cyan Skilfish</em> は 2021/07/20、AMD GPU ドライバーにサポートを追加するパッチが公開された <em>RDNA APU</em> 。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/07/21/amd-cyan_skilfish-rdna-apu/">Linux Kernel に RDNA APU 「Cyan Skilfish」 をサポートするパッチが投稿される | Coelacanth's Dream</a></span>
+</p>
+
+<p>LLVM においては <em>gfx1013</em> が、AMD GPU ドライバーでは <em>Cyan Skilfish</em> が唯一の <em>RDNA APU</em> であることから関連が考えられていたが、先日投稿された AMDGPU KFD (Kernel Fusion Driver) に、GPUID 情報を追加するパッチにより、2つが確実に結び付けられた。<br />
+<em>Cyan Skilfish</em> の GPUID は <em>gfx1013</em> であり、上で述べた特徴は <em>Cyan Skilfish</em> に適用されることとなる。</p>
+
+<blockquote>
+<pre><code>  static const struct kfd_device_info cyan_skillfish_device_info = {
+     .asic_family = CHIP_CYAN_SKILLFISH,
+     .asic_name = &#34;cyan_skillfish&#34;,
+ +   .gfx_version = 100103,
+     .max_pasid_bits = 16,
+     .max_no_of_hqd  = 24,
+     .doorbell_size  = 8,</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/067107.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdkfd: Expose GFXIP engine version to sysfs</a></cite>
+</div>
+
+</blockquote>
+
+<h3 id="8-core">ディスプレイ出力を持たない 8-Core APU</h3>
+
+<p>AMD GPU ドライバーへのパッチから分かる <em>Cyan Skilfish</em> の特徴 <span class="complement">というより奇妙な点</span>
+ を言えば、当パッチでは <em>Cyan Skilfish</em> のディスプレイエンジン/コントローラーとマルチメディアエンジンの IPブロックのサポートが追加されていない。</p>
+
+<blockquote>
+<pre><code> +   case CHIP_CYAN_SKILLFISH:
+ +       amdgpu_device_ip_block_add(adev, &amp;nv_common_ip_block);
+ +                amdgpu_device_ip_block_add(adev, &amp;gmc_v10_0_ip_block);
+ +                amdgpu_device_ip_block_add(adev, &amp;navi10_ih_ip_block);
+ +                if (adev-&gt;enable_virtual_display || amdgpu_sriov_vf(adev))
+ +                        amdgpu_device_ip_block_add(adev, &amp;dce_virtual_ip_block);
+ +                amdgpu_device_ip_block_add(adev, &amp;gfx_v10_0_ip_block);
+ +                amdgpu_device_ip_block_add(adev, &amp;sdma_v5_0_ip_block);
+ +       break;</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066808.html" rel="nofollow noreferrer" target="_blank">[PATCH 06/29] drm/amdgpu: set ip blocks for cyan_skillfish</a></cite>
+</div>
+
+</blockquote>
+
+<p>また、GPU ドライバーであるから APU の CPU側の情報は少ないが、SMU (System Management Unit) に関する部分に <em>Cyan Skilfish</em> が 8-Core APU とする記述が存在する。</p>
+
+<blockquote>
+<pre><code> +#define NUMBER_OF_PSTATES      8
+ +#define NUMBER_OF_CORES            8</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066825.html" rel="nofollow noreferrer" target="_blank">[PATCH 24/29] drm/amdgpu: add smu interface header for cyan_skilfish</a></cite>
+</div>
+
+<pre><code> +typedef enum {
+ +   CPU_CORE0 = 0,
+ +   CPU_CORE1,
+ +   CPU_CORE2,
+ +   CPU_CORE3,
+ +   CPU_CORE4,
+ +   CPU_CORE5,
+ +   CPU_CORE6,
+ +   CPU_CORE7
+ +} CORE_ID_e;</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066825.html" rel="nofollow noreferrer" target="_blank">[PATCH 24/29] drm/amdgpu: add smu interface header for cyan_skilfish</a></cite>
+</div>
+
+</blockquote>
+
+<p>ディスプレイ出力機能を持たない、あるいは想定されておらず、CPU 8-Core を持つ AMD APU。<br />
+これに近い存在として <a href="https://www.coelacanth-dream.com/tags/amd_4700s">AMD 4700S Desktop Kit</a> がいる。</p>
+
+<p><em>AMD 4700S</em> は GDDR6メモリを採用することからゲーム機 APU をベースにしている可能性が考えられるCPU で、<em>Zen 2 アーキテクチャ</em> 8-Core を持つ。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/04/26/amd-4700s-identity/">AMD 4700S の正体は GPU部を無効化したゲーム機向け APU だったか | Coelacanth's Dream</a></span>
+
+しかし、APU だとしても <strong>AMD 4700S Desktop Kit</strong> ではディスプレイ出力がボードに実装されておらず、PCIeスロットに搭載した dGPU に頼る必要があり、APU としての GPU部は実質無効化されている。<br />
+ディスプレイ出力がボードに実装されておらず、APU の出力機能を活用することができず、CPU 8-Core を搭載する ―― こうした点が <em>Cyan Skilfish</em> と <strong>AMD 4700S Desktop Kit</strong> で共通する。</p>
+
+<p>あくまでもこれは推測であり、<em>AMD 4700S</em> の <code>lspci</code> 実行結果でも得られればもう少し近付けるように思うが、信頼できる実行結果が必要となる。自分で購入して確かめるのが手っ取り早いが、入手性とか、未だに構成を更新していないメインマシンを後回しにしてまで買うべきなのかとか、まあ色々問題と葛藤が起こる。</p>
+<div class="article-bottom-misc">
+    <a href="https://www.coelacanth-dream.com/about#contact" class="sb" target="_blank" rel="noreferrer noopener">Feedback</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/08/01/cyan_skilfish-apu-gfx1013.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+
+<div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/35Tqk7c" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">アイネックス ナノカーボングリスセット BA-GS01</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3u4LWrT" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">XPG VENTO PRO 120 PWM ケースファン [ NIDEC製 Gentle Typhoon ベース 最大28dBA / 2150rpm ] VENTOPRO120PWM-BKCWW 120 mm</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+
+
+
+</article><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/amd_4700s/" class="menu-tag-lower">AMD 4700S</a>
+      <a href="https://www.coelacanth-dream.com/tags/cyan_skilfish/" class="menu-tag-lower">Cyan Skilfish</a>
+      <a href="https://www.coelacanth-dream.com/tags/gfx1013/" class="menu-tag-lower">gfx1013</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-tag-lower">RDNA</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button>
+  
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+</nav>
+        <small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small>
+  </div>
+</div>
+<footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+</nav><small class="copyright">&copy; 2019 - 2021&ensp;Umio-Yasuno</small></footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/amd_4700s/" class="menu-tag-lower">AMD 4700S</a>
+      <a href="https://www.coelacanth-dream.com/tags/cyan_skilfish/" class="menu-tag-lower">Cyan Skilfish</a>
+      <a href="https://www.coelacanth-dream.com/tags/gfx1013/" class="menu-tag-lower">gfx1013</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-tag-lower">RDNA</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
