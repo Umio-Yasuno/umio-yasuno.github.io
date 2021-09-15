@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/09/15/amd-cyan_skilfish-clock-and-core/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Cyan Skilfish APU の GPUクロックと CPUコア数 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Cyan Skilfish APU の GPUクロックと CPUコア数 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Cyan Skilfish APU の GPUクロックと CPUコア数 | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/09/15/amd-cyan_skilfish-clock-and-core/">
+  <meta name="description" content="RDNA アーキテクチャ APU Cyan Skilfish の各種クロックを、他 AMD GPU/APU 同様に取得し表示するパッチ、GPUクロックと電圧を範囲内で設定可能にするパッチが投稿された。 H">
+  <meta property="og:description" content="RDNA アーキテクチャ APU Cyan Skilfish の各種クロックを、他 AMD GPU/APU 同様に取得し表示するパッチ、GPUクロックと電圧を範囲内で設定可能にするパッチが投稿された。 H">
+  <meta name="twitter:description" content="RDNA アーキテクチャ APU Cyan Skilfish の各種クロックを、他 AMD GPU/APU 同様に取得し表示するパッチ、GPUクロックと電圧を範囲内で設定可能にするパッチが投稿された。 H">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/09/15/amd-cyan_skilfish-clock-and-core/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/09/15/amd-cyan_skilfish-clock-and-core/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Coelacanth&#39;s Dream, RDNA, Cyan Skilfish, gfx1013">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>article{display:grid;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0}article>*{grid-column:3/-1}article>h1~*{visibility:hidden;will-change:visibility}article blockquote,article pre{overflow-x:scroll}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#f92;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:96%;height:54vh}figure img{max-width:auto;max-height:auto}html{background-size:100%;background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.925rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:1rem}.site-title{font:1.9rem/1.05 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #d4dcda;padding:0}.site-title a:hover{color:#c3cfcc;text-shadow:2px 2px 1.1em #fff}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#b4fffc;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3/4;grid-column:1/-1;color:#fffeff;line-height:1.67;overflow-wrap:anywhere;word-break:break-word;overflow:clip}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0;visibility:hidden}footer{visibility:hidden;grid-row:5;grid-column:1/-1}.head-cat-tag{grid-column:1/-1;border:1px solid #0aa;background-color:#0001;max-width:max-content;padding:8px 2px 6px;margin:1rem 0;font:.96rem/1.2 monospace;color:#288;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-tag-type{color:#00e7de;padding:0 .4em}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.5rem 0}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 67% 67%,#fcc1 0%,#0000 97%,#000 103%);opacity:.36;width:100%;height:100%;position:fixed;top:0;left:0;z-index:auto;pointer-events:none;mix-blend-mode:overlay}.crt{background-image:linear-gradient(180deg,#f00 0%,#f00 33%,#0f0 33%,#0f0 66%,#00f 66%,#00f 99%);background-size:100% .7rem;width:100%;height:100%;opacity:.03}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}.text{grid-row:3;grid-column:3/-1}.side{height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000;transform:translateX(0)}.slide{visibility:hidden}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Cyan Skilfish APU の GPUクロックと CPUコア数",
+  "headline" : "Cyan Skilfish APU の GPUクロックと CPUコア数",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-09-15",
+    "datePublished" : "2021-09-15",
+    "dateModufied"  : "2021-09-16",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css">
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/apu/" class="head-cat-lower">APU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/cyan_skilfish/" class="head-tag-lower">Cyan Skilfish</a>/<a href="https://www.coelacanth-dream.com/tags/gfx1013/" class="head-tag-lower">gfx1013</a>/<a href="https://www.coelacanth-dream.com/tags/rdna/" class="head-tag-lower">RDNA</a></div>
+    </div>
+  <h1>Cyan Skilfish APU の GPUクロックと CPUコア数</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button>
+  
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-09-15 22:46 &#43;0900" class="time-b">Post: 2021/09/15 22:46 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/09/16 02:16 &#43;0900</div>
+  </div>
+
+<p><em>RDNA アーキテクチャ</em> APU <em>Cyan Skilfish</em> の各種クロックを、他 AMD GPU/APU 同様に取得し表示するパッチ、GPUクロックと電圧を範囲内で設定可能にするパッチが投稿された。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/08/01/cyan_skilfish-apu-gfx1013/#8-core">HWレイトレーシングをサポートする RDNA APU 「Cyan Skilfish (gfx1013)」 | Coelacanth's Dream</a></span>
+</p>
+
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-September/068809.html" rel="nofollow noreferrer" target="_blank">[PATCH 1/3] drm/amdgpu: update SMU PPSMC for cyan skilfish</a>
+
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-September/068810.html" rel="nofollow noreferrer" target="_blank">[PATCH v3 2/3] drm/amdgpu: update SMU driver interface for cyan skilfish(v3)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-September/068811.html" rel="nofollow noreferrer" target="_blank">[PATCH v3 3/3] drm/amdgpu: add some pptable funcs for cyan skilfish(v3)</a></li>
+</ul></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-September/068812.html" rel="nofollow noreferrer" target="_blank">[PATCH v3] drm/amdgpu: add manual sclk/vddc setting support for cyan skilfish(v3)</a></li>
+</ul>
+
+<p><em>Cyan Skilfish</em> では、GPUクロック (SCLK, GPU gfx/compute engine clock) と、電圧の目標値 (target value) が設定可能となっている。ただ、<em>Cyan Skilfish</em> は (現時点のドライバーで?) DPM (Dynamic Power Management) をサポートしておらず、設定可能な値は 1つだけとなる。<br />
+GPUクロックは 1000 MHz - 2000 MHz、電圧は 700 mv - 1129 mv の範囲内で設定可能とされている。</p>
+
+<blockquote>
+<pre><code> +/* unit: MHz */
+ +#define CYAN_SKILLFISH_SCLK_MIN            1000
+ +#define CYAN_SKILLFISH_SCLK_MAX            2000
+ +#define CYAN_SKILLFISH_SCLK_DEFAULT            1800
+ +
+ +/* unit: mV */
+ +#define CYAN_SKILLFISH_VDDC_MIN            700
+ +#define CYAN_SKILLFISH_VDDC_MAX            1129
+ +#define CYAN_SKILLFISH_VDDC_MAGIC          5118 // 0x13fe
+ +</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-September/068812.html" rel="nofollow noreferrer" target="_blank">[PATCH v3] drm/amdgpu: add manual sclk/vddc setting support for cyan skilfish(v3)</a></cite>
+</div>
+
+</blockquote>
+
+<p>恐らくは設定した値が実質最大 GPUクロック、電圧として動作するのだと思われる。<br />
+GPUクロックがデフォルトで 1800 MHz、最大で 2000 MHz というのは、<a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-5700-xt-50th-anniversary#product-specs" rel="nofollow noreferrer" target="_blank">AMD Radeon™ RX 5700 XT 50th Anniversary</a> の最大クロックが 1980 MHz であるから、<em>RDNA アーキテクチャ</em> らしいクロックと言えるかもしれない。<br />
+<em>RDNA 2 アーキテクチャ</em> では高クロック動作に向けた設計により、同じ消費電力で <em>RDNA アーキテクチャ</em> より 30% 高いクロックを実現している。<sup class="footnote-ref" id="fnref:rdna-2-clk"><a href="#fn:rdna-2-clk">1</a></sup></p>
+
+<h2 id="core-count">Cyan Skilfish の CPUコア数は 8 か 6 か</h2>
+
+<p>最近の AMD APU では、AMD GPU ドライバー側でも CPUコア、CPU L3キャッシュのクロック、温度、消費電力を取得するようになっている。<br />
+ドライバーにはそれら読み取った値を格納する変数が用意されている訳だが、そこに使われている配列のサイズから APU のコア数を言わば逆に読み取ることができる。<br />
+例えば <em>VanGogh APU (Zen 2 + RDNA 2)</em> であれば以下のように 4コア、L3キャッシュ 1基 (CCX 1基) という CPU構成が、</p>
+
+<blockquote>
+<pre><code>   //3rd party tools in Windows need info in the case of APUs
+   uint16_t CoreFrequency[4];     //[MHz]
+   uint16_t CorePower[4];         //[mW]
+   uint16_t CoreTemperature[4];   //[centi-Celsius]
+   uint16_t L3Frequency[1];       //[MHz]
+   uint16_t L3Temperature[1];     //[centi-Celsius]</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/f4994be248b62da0411e9e0f300373f2e56efe5e/drivers/gpu/drm/amd/pm/inc/smu11_driver_if_vangogh.h#L213" rel="nofollow noreferrer" target="_blank">linux/smu11_driver_if_vangogh.h at f4994be248b62da0411e9e0f300373f2e56efe5e · torvalds/linux</a></cite>
+</div>
+
+</blockquote>
+
+<p><em>Renoir APU (Zen 2 + Vega)</em> では 8コア、L3キャッシュ 2基 (CCX 2基) という構成が読み取れる。</p>
+
+<blockquote>
+<pre><code>   uint16_t CoreFrequency[8];            //[MHz]
+   uint16_t CorePower[8];                //[mW]
+   uint16_t CoreTemperature[8];          //[centi-Celsius]
+   uint16_t L3Frequency[2];              //[MHz]
+   uint16_t L3Temperature[2];            //[centi-Celsius]</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/e098bc9612c2b60f94920461d71c92962a916e73/drivers/gpu/drm/amd/pm/inc/smu12_driver_if.h#L189" rel="nofollow noreferrer" target="_blank">linux/smu12_driver_if.h at e098bc9612c2b60f94920461d71c92962a916e73 · torvalds/linux</a></cite>
+</div>
+
+</blockquote>
+
+<p>ちなみに <em>Yellow Carp APU (Zen 3 ? + RDNA 2)</em> では 8コア、L3キャッシュ 1基 (CCX 1基) となっている。<sup class="footnote-ref" id="fnref:yc-smu"><a href="#fn:yc-smu">2</a></sup></p>
+
+<p>今回で <em>Cyan Skilfish</em> に対しても同様のコードが追加されたのだが、以前は存在した、8コアであることを示すような記述を削除して、6コアを想定した記述が追加されている。<br />
+L3キャッシュは 2基 (CCX 2基) となっているため、<em>Cyan Skilfish APU</em> の CPUアーキテクチャは CCX を 4コアで構成する <em>Zen/+/2 アーキテクチャ</em> だと考えられる。コア数から、各 CCX から 1コアを無効化した 3+3 という設定だろうか。</p>
+
+<blockquote>
+<pre><code> +typedef struct SmuMetricsTable_t {
+ +   //CPU status
+ +   uint16_t CoreFrequency[6];              //[MHz]
+ +   uint32_t CorePower[6];                  //[mW]
+ +   uint16_t CoreTemperature[6];            //[centi-Celsius]
+ +   uint16_t L3Frequency[2];                //[MHz]
+ +   uint16_t L3Temperature[2];              //[centi-Celsius]
+ +   uint16_t C0Residency[6];                //Percentage
+
+ -#define NUMBER_OF_PSTATES      8
+ -#define NUMBER_OF_CORES            8</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-September/068810.html" rel="nofollow noreferrer" target="_blank">[PATCH v3 2/3] drm/amdgpu: update SMU driver interface for cyan skilfish(v3)</a></cite>
+</div>
+
+</blockquote>
+
+<p>以前は、<em>Cyan Skilfish</em> のディスプレイエンジンがドライバーでサポートされていないこと、CPU 8コアを持つこと、また <em>Cyan Skilfish (gfx1013)</em> がレイトレーシング命令をサポートしていること等から、<strong>AMD 4700S Desktop Kit</strong> が <em>Cyan Skilfish</em> ではないかと考えた。<br />
+公式に発表はされていないが <strong>AMD 4700S Desktop Kit</strong> はパッケージ、ダイの形状から <strong>PS5 SoC</strong> の一部、主に GPU を無効化した CPU ではないかと言われており<sup class="footnote-ref" id="fnref:ps5-4700s"><a href="#fn:ps5-4700s">3</a></sup>、<strong>PS5 SoC</strong> もまた HWレイトレーシングに対応しているため、<em>Cyan Skilfish・AMD 4700S・PS5</em> で繋がりが生まれる。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/08/01/cyan_skilfish-apu-gfx1013/#8-core">HWレイトレーシングをサポートする RDNA APU 「Cyan Skilfish (gfx1013)」 | Coelacanth's Dream</a></span>
+
+だが <em>Cyan Skilfish</em> が 6コアだとすると、その正体がまた少し戻って曖昧となる。<br />
+<strong>AMD 4700S</strong> 以外に <strong>PS5 SoC</strong> をベースにしたモデルが存在する <strong>可能性</strong> もある。</p>
+
+<p>それと、<strong>AMD 4700S</strong> ではアーキテクチャのバックエンド部に変化があるらしく、FPU の性能が他の <em>Zen 2 アーキテクチャ</em> を採用する AMD CPU より低いらしいが、FPUパイプラインのデータ幅がどうなっているか気になる所だ。<br />
+Zen系 CPU では FPUパイプラインのデータ幅を示す情報を <code>CPUID</code> 命令を使って読み取れるようになっており、EAXレジスタに <code>0x8000001A</code> を入れて <code>CPUID</code> 命令を実行し、EAXレジスタに出力された値の bit 2 が <code>1</code> であれば FP256 (256-bit) 、bit 0 が <code>1</code> であれば FP128 (128-bit) を示す。<sup class="footnote-ref" id="fnref:cpuid"><a href="#fn:cpuid">4</a></sup><br />
+<em>Zen/+ アーキテクチャ</em> では FP128、<em>Zen 2/3 アーキテクチャ</em> であれば FP256 と表示される。<br />
+<em>Zen 2 アーキテクチャ</em> を採用する <strong>AMD 4700S</strong> が FP256 か FP128 のどちらだとしても、他とは部分的に異なる謎の <em>Zen 2? アーキテクチャ</em> であることに変わりはないが。</p>
+
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html" rel="nofollow noreferrer" target="_blank">drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a></li>
+<li>Preliminary Processor Programming Reference (PPR) for AMD Family 19h Model 01h, Revision B1 Processors Volume 1 of 2
+
+<ul>
+<li><a href="https://www.amd.com/system/files/TechDocs/55898_pub.zip" rel="nofollow noreferrer" target="_blank">https://www.amd.com/system/files/TechDocs/55898_pub.zip</a></li>
+</ul></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:rdna-2-clk"><a href="https://ir.amd.com/news-events/press-releases/detail/978/amd-unveils-next-generation-pc-gaming-with-amd-radeon-rx" rel="nofollow noreferrer" target="_blank">AMD Unveils Next-Generation PC Gaming with AMD Radeon™ RX 6000 Series – Bringing Leadership 4K Resolution Performance to AAA Gaming :: Advanced Micro Devices, Inc. (AMD)</a>
+ <a class="footnote-return" href="#fnref:rdna-2-clk"><sup>[return]</sup></a></li>
+<li id="fn:yc-smu"><a href="https://github.com/torvalds/linux/blob/385bb92fdc5813c5f6a8168d6bba8680f2c1d0de/drivers/gpu/drm/amd/pm/inc/smu13_driver_if_yellow_carp.h#L173" rel="nofollow noreferrer" target="_blank">linux/smu13_driver_if_yellow_carp.h at 385bb92fdc5813c5f6a8168d6bba8680f2c1d0de · torvalds/linux</a>
+ <a class="footnote-return" href="#fnref:yc-smu"><sup>[return]</sup></a></li>
+<li id="fn:ps5-4700s"><a href="https://www.hardwareluxx.de/index.php/artikel/hardware/komplettsysteme/57076-ps5-custom-chip-mit-einschraenkungen-das-ryzen-4700s-desktop-kit-im-test.html" rel="nofollow noreferrer" target="_blank">PS5-Custom-Chip mit Einschränkungen: Das Ryzen 4700S Desktop Kit im Test - Hardwareluxx</a>
+ <a class="footnote-return" href="#fnref:ps5-4700s"><sup>[return]</sup></a></li>
+<li id="fn:cpuid"><a href="https://www.amd.com/system/files/TechDocs/55898_pub.zip" rel="nofollow noreferrer" target="_blank">https://www.amd.com/system/files/TechDocs/55898_pub.zip</a>
+ <a class="footnote-return" href="#fnref:cpuid"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article-bottom-misc"><a href="https://www.coelacanth-dream.com/about#contact" class="sb" target="_blank" rel="noreferrer noopener">Feedback</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/09/15/amd-cyan_skilfish-clock-and-core.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+  <div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+</article><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/cyan_skilfish/" class="menu-tag-lower">Cyan Skilfish</a>
+      <a href="https://www.coelacanth-dream.com/tags/gfx1013/" class="menu-tag-lower">gfx1013</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-tag-lower">RDNA</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button>
+  
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+  </div>
+</div>
+<footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+</footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/cyan_skilfish/" class="menu-tag-lower">Cyan Skilfish</a>
+      <a href="https://www.coelacanth-dream.com/tags/gfx1013/" class="menu-tag-lower">gfx1013</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-tag-lower">RDNA</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
