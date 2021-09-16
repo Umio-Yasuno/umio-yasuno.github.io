@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/09/16/intel-xe_hpg-icache/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Xe-LP/HP より大きな命令キャッシュを持つ Xe-HPG | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Xe-LP/HP より大きな命令キャッシュを持つ Xe-HPG | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Xe-LP/HP より大きな命令キャッシュを持つ Xe-HPG | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/09/16/intel-xe_hpg-icache/">
+  <meta name="description" content="Intel oneAPI の深層学習ライブラリ、oneAPI Deep Neural Network Library (oneDNN) に Xe-HP/HPG をサポートするコミットが取り込まれた。 そこには Xe-HP/HPG のアーキテクチャの一部を示す記述が含まれ">
+  <meta property="og:description" content="Intel oneAPI の深層学習ライブラリ、oneAPI Deep Neural Network Library (oneDNN) に Xe-HP/HPG をサポートするコミットが取り込まれた。 そこには Xe-HP/HPG のアーキテクチャの一部を示す記述が含まれ">
+  <meta name="twitter:description" content="Intel oneAPI の深層学習ライブラリ、oneAPI Deep Neural Network Library (oneDNN) に Xe-HP/HPG をサポートするコミットが取り込まれた。 そこには Xe-HP/HPG のアーキテクチャの一部を示す記述が含まれ">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/09/16/intel-xe_hpg-icache/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/09/16/intel-xe_hpg-icache/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Coelacanth&#39;s Dream, DG2, Gen12">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>article{display:grid;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0}article>*{grid-column:3/-1}article>h1~*{visibility:hidden;will-change:visibility}article blockquote,article pre{overflow-x:scroll}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#f92;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:96%;height:54vh}figure img{max-width:84%;max-height:auto}html{background-size:100%;background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.925rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:1rem}.site-title{font:1.9rem/1.05 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #d4dcda;padding:0}.site-title a:hover{color:#c3cfcc;text-shadow:2px 2px 1.1em #fff}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#b4fffc;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3/4;grid-column:1/-1;color:#fffeff;line-height:1.67;overflow-wrap:anywhere;word-break:break-word;overflow:clip}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0;visibility:hidden}footer{visibility:hidden;grid-row:5;grid-column:1/-1}.head-cat-tag{grid-column:1/-1;border:1px solid #0aa;background-color:#0001;max-width:max-content;padding:8px 2px 6px;margin:1rem 0;font:.96rem/1.2 monospace;color:#288;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-tag-type{color:#00e7de;padding:0 .4em}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.5rem 0}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 69% 67%,#fcc1 0%,#0000 97%,#000 103%);opacity:.36;width:100%;height:100%;position:fixed;top:0;left:0;z-index:auto;pointer-events:none;mix-blend-mode:luminosity}.crt{background-image:linear-gradient(180deg,#f00 30%,#0f0 60%,#00f 90%);background-size:100% .7rem;width:100%;height:100%;opacity:.04}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}.text{grid-row:3;grid-column:3/-1}.side{height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000;transform:translateX(0)}.slide{visibility:hidden}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Xe-LP/HP より大きな命令キャッシュを持つ Xe-HPG",
+  "headline" : "Xe-LP/HP より大きな命令キャッシュを持つ Xe-HPG",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-09-16",
+    "datePublished" : "2021-09-16",
+    "dateModufied"  : "2021-09-17",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css">
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head-cat-lower">Intel</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/dg2/" class="head-tag-lower">DG2</a>/<a href="https://www.coelacanth-dream.com/tags/gen12/" class="head-tag-lower">Gen12</a></div>
+    </div>
+  <h1>Xe-LP/HP より大きな命令キャッシュを持つ Xe-HPG</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button>
+  
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-09-16 05:43 &#43;0900" class="time-b">Post: 2021/09/16 05:43 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/09/17 01:44 &#43;0900</div>
+  </div>
+
+<p>Intel oneAPI の深層学習ライブラリ、<a href="https://github.com/oneapi-src/oneDNN" rel="nofollow noreferrer" target="_blank">oneAPI Deep Neural Network Library (oneDNN)</a> に <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span>
+</em> をサポートするコミットが取り込まれた。<br />
+そこには <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span>
+</em> のアーキテクチャの一部を示す記述が含まれている。<br />
+<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+</em> については Intel Architecture Day 2021 で詳細が語られたが、まだ正式リリースがまだということもありそれは一部で、語られていない部分はまだまだある。<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+ アーキテクチャ</em> を採用する最初の GPU/SoC <em>DG2/Alchemist</em> は 2021Q1 でのリリースが予定されている。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="http://localhost:1313/posts/2021/08/26/intel-arch-day-2021-xe-gpu/" rel="nofollow noreferrer" target="_blank">Intel Architecture Day 2021 個人的まとめ　―― 用語が整理された Xe GPU | Coelacanth's Dream</a></span>
+</p>
+
+<ul>
+<li><a href="https://github.com/oneapi-src/oneDNN/commit/e6d288ef1943f93a782a644e3aac8b2a500c9299#diff-83f47fe7c7dcf480d6939a5b6af7df4082a26ee534ac014ca9873ae12d852c96" rel="nofollow noreferrer" target="_blank">src: gpu: backport xe_hp+ gpu support · oneapi-src/oneDNN@e6d288e</a></li>
+</ul>
+
+<h2 id="l1i-cache"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+-Core の L1命令キャッシュサイズ</h2>
+
+<p><em><span class="xe-gpu-arch">X<sup>e</sup></span>
+ アーキテクチャ</em> では複数の EU (Vector Engine, Matrix Engine) やロード/ストアユニットをまとめた <span class="xe-gpu-arch">X<sup>e</sup></span>
+-Core ごとに L1命令キャッシュを持つ。<br />
+<span class="xe-gpu-arch">X<sup>e</sup></span>
+-Core は、以前は Sub-Slice(s) と呼ばれており、Intel GPU 向けのオープンソースソフトウェア、ドライバーではそのまま Sub-Slice(s) を使っている。<br />
+<em>Tiger/Rocket/Alder Lake</em> 、<em>DG1</em> が採用する <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
+ アーキテクチャ</em> では L1命令キャッシュのサイズは 48 KiB となっていた。<br />
+今回追加されたコードによれば、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+</em> は同じ 48 KiB、そして <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+</em> はその倍のサイズとなる 96 KiB を L1命令キャッシュに持つとしている。</p>
+
+<p>L1命令キャッシュサイズは Sub-Slice あたりの EU数等に変化はあったものの、<em>Gen9 アーキテクチャ</em> から 48 KiB で通してきたためアーキテクチャの変更でも注目される点と言える。</p>
+
+<blockquote>
+<pre><code> static size_t icache_size(ngen::HW arch) {
+     switch (arch) {
+         case gpu_gen9: return 48 * 1024;
+         case gpu_xe_lp: return 48 * 1024;
+         case gpu_xe_hp: return 48 * 1024;
+         case gpu_xe_hpg: return 96 * 1024;
+         default: return 0;
+     }
+ }</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/conv/gen_convolution.cpp" rel="nofollow noreferrer" target="_blank">oneDNN/gen_convolution.cpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></cite>
+</div>
+
+</blockquote>
+
+<p>自分は GPUアーキテクトでも無いため確かなことは言えないが、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+</em> で L1命令キャッシュを倍にした意図を個人的に考えていく。</p>
+
+<p>まず、上記コードの各アーキテクチャにおける L1命令キャッシュサイズは、実行するカーネルのサイズと比較し、カーネルが L1命令キャッシュより大きかった場合にメッセージを出力する部分に使われている。<br />
+その点で考えると深層学習、推論処理においてより巨大なカーネルを実行する際の性能改善のため、L1命令キャッシュサイズを倍増させたとも考えられるが、ゲーミング向けの <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+</em> で増やし、コンピューティング向けである <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+</em> は 48 KiB で据え置きというのは少し違和感を覚える。一応 <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+</em> のキャッシュサイズは今後変更される可能性もあるが。<br />
+ただ開発時期や製造プロセスが影響している可能性もある。</p>
+
+<p>L1命令キャッシュの倍増がグラフィクス、ゲーミング性能にどう影響を与えるかを考えれば、Intel は Architecture Day 2021 でアップスケーリング技術 <span class="xe-gpu-arch">X<sup>e</sup></span>
+ SS (Super Sampling) を発表しており、画質向上のため複雑な処理を行う上で有効だと思われる。<br />
+それ以外にも、多数のシェーダーを処理するゲームにおいても効果的なのだろう。</p>
+
+<h2 id="hp-hpg"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+ と <span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+ の共通点</h2>
+
+<p>以前、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+</em> では EU (Vector Engine) あたりのスレッド数が 1つ増えて 8スレッドとなり、また 4スレッドと設定することでスレッドあたりのレジスタファイルを 256エントリに増やす Large GRFモード をサポートすることが <a href="https://github.com/intel/intel-graphics-compiler" rel="nofollow noreferrer" target="_blank">intel/intel-graphics-compiler</a> への新たなコミットで明かされた。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/">Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth's Dream</a></span>
+
+今回 <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+</em> も同じ変更が EU に施されていることが明かされた。</p>
+
+<blockquote>
+<pre><code>     // Assume 7 threads by default
+     int32_t threads_per_eu[2] = {7, 7};
+     switch (gpu_arch_) {
+         case gpu::compute::gpu_arch_t::gen9:
+         case gpu::compute::gpu_arch_t::xe_lp:
+             threads_per_eu[0] = 7;
+             threads_per_eu[1] = 7;
+             break;
+         case gpu::compute::gpu_arch_t::xe_hp:
+         case gpu::compute::gpu_arch_t::xe_hpg:
+             threads_per_eu[0] = 8; // 128 regs/thread
+             threads_per_eu[1] = 4; // 256 regs/thread
+             break;</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/oneapi-src/oneDNN/blob/e6d288ef1943f93a782a644e3aac8b2a500c9299/src/gpu/compute/device_info.cpp#L107" rel="nofollow noreferrer" target="_blank">oneDNN/device_info.cpp at e6d288ef1943f93a782a644e3aac8b2a500c9299 · oneapi-src/oneDNN</a></cite>
+</div>
+
+</blockquote>
+
+<p>ここは <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span>
+</em> で共通する部分となる。<br />
+だが <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+</em> は 64-bit 精度のデータ型にはエミュレートで対応するとし、対し <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+</em> は FP64/Int64 を処理する専用パイプラインを持つとしている。<br />
+そのため EU部において一部共通するが、パイプライン構成についてはそれぞれのターゲットに向けて最適化された別物となる。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"><span class="xe-gpu-arch">X<sup>e</sup></span>
+ EU</th>
+<th align="center"></th>
+<th align="center"></th>
+<th align="center">Issue Port 0</th>
+<th align="center">IP 1</th>
+<th align="center">IP 2</th>
+<th align="center">IP 3</th>
+<th align="center">IP 4?</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
+</td>
+<td align="center">Branch<br>(Control Flow)</td>
+<td align="center">Send</td>
+<td align="center">Short<br>(INT /FP)</td>
+<td align="center">Math</td>
+<td align="center">-</td>
+<td align="center">-</td>
+<td align="center">-</td>
+</tr>
+
+<tr>
+<td align="left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+</td>
+<td align="center"></td>
+<td align="center">Send</td>
+<td align="center">INT? (int8/16/32)<br> /Branch?</td>
+<td align="center">Math?</td>
+<td align="center">DPAS?</td>
+<td align="center">Long?<br>(Int64 /FP64)</td>
+<td align="center">FP?<br>(FP16/32, BF16)</td>
+</tr>
+
+<tr>
+<td align="left"></td>
+<td align="center">In-Order</td>
+<td align="center">Out-of-Order</td>
+<td align="center">In-Order</td>
+<td align="center">Out-of-Order</td>
+<td align="center">Out-of-Order</td>
+<td align="center">In-Order</td>
+<td align="center">In-Order</td>
+</tr>
+</tbody>
+</table>
+
+<span class="thread-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/f5e9e3dcda319339b82f1171c7e55add46884036/visa/iga/IGALibrary/IR/RegDeps.cpp#L100" rel="nofollow noreferrer" target="_blank">intel-graphics-compiler/RegDeps.cpp at f5e9e3dcda319339b82f1171c7e55add46884036 · intel/intel-graphics-compiler</a></span>
+
+
+<table>
+<thead>
+<tr>
+<th align="left"><span class="xe-gpu-arch">X<sup>e</sup></span>
+ GPU</th>
+<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
+</th>
+<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+</th>
+<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+</th>
+<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
+</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Vector Engine</td>
+<td align="center">256-bit?</td>
+<td align="center">256-bit</td>
+<td align="center">?</td>
+<td align="center">512-bit</td>
+</tr>
+
+<tr>
+<td align="left">VE per SS (Sub-Slice)</td>
+<td align="center">16</td>
+<td align="center">16</td>
+<td align="center">?</td>
+<td align="center">8</td>
+</tr>
+
+<tr>
+<td align="left">L1I$ per SS</td>
+<td align="center">48 KB</td>
+<td align="center">96 KB</td>
+<td align="center">48 KB</td>
+<td align="center">?</td>
+</tr>
+
+<tr>
+<td align="left">Matrix Engine</td>
+<td align="center">N/A</td>
+<td align="center">1024-bit</td>
+<td align="center">?</td>
+<td align="center">4096-bit</td>
+</tr>
+
+<tr>
+<td align="left">Load/Store (SLM)</td>
+<td align="center">128B?</td>
+<td align="center">?</td>
+<td align="center">?</td>
+<td align="center">512B</td>
+</tr>
+
+<tr>
+<td align="left">L1D$/SLM per SS</td>
+<td align="center">128 KB</td>
+<td align="center">?</td>
+<td align="center">?</td>
+<td align="center">512 KB</td>
+</tr>
+
+<tr>
+<td align="left">Native FP64</td>
+<td align="center">N/A</td>
+<td align="center">N/A</td>
+<td align="center">Y</td>
+<td align="center">Y</td>
+</tr>
+</tbody>
+</table>
+
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://developer.arm.com/documentation/101897/0200/shader-code/instruction-caches" rel="nofollow noreferrer" target="_blank">Arm Mali GPU Best Practices Developer Guide</a></li>
+<li><a href="https://gpuopen.com/wp-content/uploads/2017/03/GDC2017-Advanced-Shader-Programming-On-GCN.pdf" rel="nofollow noreferrer" target="_blank">PowerPoint Presentation - GDC2017-Advanced-Shader-Programming-On-GCN.pdf</a></li>
+<li><a href="https://developer.apple.com/documentation/metal/optimizing_performance_with_the_gpu_counters_instrument/reducing_shader_bottlenecks" rel="nofollow noreferrer" target="_blank">Reducing Shader Bottlenecks | Apple Developer Documentation</a></li>
+<li><a href="https://developer.nvidia.com/blog/rtx-best-practices/" rel="nofollow noreferrer" target="_blank">Tips and Tricks: Ray Tracing Best Practices | NVIDIA Developer Blog</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/gemm/emulation.hpp" rel="nofollow noreferrer" target="_blank">oneDNN/emulation.hpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/conv/gen_convolution.cpp" rel="nofollow noreferrer" target="_blank">oneDNN/gen_convolution.cpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/ocl/xe_lp_x8s8x_convolution.hpp" rel="nofollow noreferrer" target="_blank">oneDNN/xe_lp_x8s8x_convolution.hpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/ngen/npack/neo_structs.hpp" rel="nofollow noreferrer" target="_blank">oneDNN/neo_structs.hpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/blob/e6d288ef1943f93a782a644e3aac8b2a500c9299/src/gpu/compute/device_info.cpp" rel="nofollow noreferrer" target="_blank">oneDNN/device_info.cpp at e6d288ef1943f93a782a644e3aac8b2a500c9299 · oneapi-src/oneDNN</a></li>
+</ul>
+
+</div>
+
+<div class="article-bottom-misc">
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a><a href="https://www.coelacanth-dream.com/about#contact" class="sb" target="_blank" rel="noreferrer noopener">Feedback</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/09/16/intel-xe_hpg-icache.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+  <div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/31LsfIX" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored"> Intel CPU Corei5-11400F 6コア 2.60 GHz LGA1200 5xxChipset 65W 【日本正規流通品】 </a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+</article><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/dg2/" class="menu-tag-lower">DG2</a>
+      <a href="https://www.coelacanth-dream.com/tags/gen12/" class="menu-tag-lower">Gen12</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-lower">Intel</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button>
+  
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+  </div>
+</div>
+<footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+</footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/dg2/" class="menu-tag-lower">DG2</a>
+      <a href="https://www.coelacanth-dream.com/tags/gen12/" class="menu-tag-lower">Gen12</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-lower">Intel</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
