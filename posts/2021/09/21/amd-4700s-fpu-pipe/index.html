@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/09/21/amd-4700s-fpu-pipe/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>FPU部を削減した AMD 4700S | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="FPU部を削減した AMD 4700S | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="FPU部を削減した AMD 4700S | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/09/21/amd-4700s-fpu-pipe/">
+  <meta name="description" content="チップに関する解説や情報発信といった活動を行っている Nemez (@GPUsAreMagic) 氏 (Nemez | Patreon) と、 Hardwareluxx のエディターである Andreas Schilling (@aschilling) 氏により、Zen 2 アーキテクチャ を採用するとし">
+  <meta property="og:description" content="チップに関する解説や情報発信といった活動を行っている Nemez (@GPUsAreMagic) 氏 (Nemez | Patreon) と、 Hardwareluxx のエディターである Andreas Schilling (@aschilling) 氏により、Zen 2 アーキテクチャ を採用するとし">
+  <meta name="twitter:description" content="チップに関する解説や情報発信といった活動を行っている Nemez (@GPUsAreMagic) 氏 (Nemez | Patreon) と、 Hardwareluxx のエディターである Andreas Schilling (@aschilling) 氏により、Zen 2 アーキテクチャ を採用するとし">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/09/21/amd-4700s-fpu-pipe/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/09/21/amd-4700s-fpu-pipe/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Coelacanth&#39;s Dream, AMD 4700S, Zen 2">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>article{display:grid;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0}article>*{grid-column:3/-1}article>h1~*{visibility:hidden}article blockquote,article pre{overflow-x:scroll}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#f92;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:96%;height:54vh}figure img{max-width:84%}html{background-size:100%;background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.925rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:1rem}.site-title{font:1.9rem/1.05 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #d4dcda;padding:0}.site-title a:hover{color:#c3cfcc;text-shadow:2px 2px 1.1em #fff}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#b4fffc;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3/4;grid-column:1/-1;color:#fffeff;line-height:1.67;overflow-wrap:anywhere;word-break:break-word;overflow:clip}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0;visibility:hidden}footer{visibility:hidden;grid-row:5;grid-column:1/-1}.head-cat-tag{grid-column:1/-1;border:1px solid #0aa;background-color:#0001;max-width:max-content;padding:8px 2px 6px;margin:1rem 0;font:.96rem/1.2 monospace;color:#288;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-tag-type{color:#00e7de;padding:0 .4em}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.5rem 0}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 69% 67%,#fcc1 0%,#0000 97%,#000 103%);opacity:.36;width:100%;height:100%;position:fixed;top:0;left:0;z-index:auto;pointer-events:none;mix-blend-mode:luminosity}.crt{background-image:linear-gradient(180deg,#f00 30%,#0f0 60%,#00f 90%);background-size:100% .7rem;width:100%;height:100%;opacity:.04}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}.text{grid-row:3;grid-column:3/-1}.side{height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000;transform:translateX(0)}.slide{visibility:hidden}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "FPU部を削減した AMD 4700S",
+  "headline" : "FPU部を削減した AMD 4700S",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-09-21",
+    "datePublished" : "2021-09-21",
+    "dateModufied"  : "2021-09-22",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css">
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/amd_4700s/" class="head-tag-lower">AMD 4700S</a>/<a href="https://www.coelacanth-dream.com/tags/zen_2/" class="head-tag-lower">Zen 2</a></div>
+    </div>
+  <h1>FPU部を削減した AMD 4700S</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button>
+  
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-09-21 22:51 &#43;0900" class="time-b">Post: 2021/09/21 22:51 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/09/22 02:51 &#43;0900</div>
+  </div><p>チップに関する解説や情報発信といった活動を行っている <a href="https://twitter.com/GPUsAreMagic" rel="nofollow noreferrer" target="_blank">Nemez (@GPUsAreMagic)</a> 氏 (<a href="https://www.patreon.com/nemezor" rel="nofollow noreferrer" target="_blank">Nemez | Patreon</a>) と、<br />
+<a href="https://www.hardwareluxx.de/" rel="nofollow noreferrer" target="_blank">Hardwareluxx</a> のエディターである <a href="https://twitter.com/aschilling" rel="nofollow noreferrer" target="_blank">Andreas Schilling (@aschilling)</a> 氏により、<em>Zen 2 アーキテクチャ</em> を採用するとしている <strong>AMD 4700S</strong> と同アーキテクチャの <strong>Ryzen Threadripper 3960X</strong> の IPC 計測結果を比較したものが公開された。</p>
+
+<ul>
+<li><a href="https://twitter.com/GPUsAreMagic/status/1439205765559066627" rel="nofollow noreferrer" target="_blank">https://twitter.com/GPUsAreMagic/status/1439205765559066627</a></li>
+<li><a href="https://www.hardwareluxx.de/index.php/artikel/hardware/prozessoren/57076-ps5-custom-chip-mit-einschraenkungen-das-ryzen-4700s-desktop-kit-im-test.html" rel="nofollow noreferrer" target="_blank">PS5-Custom-Chip mit Einschränkungen: Das Ryzen 4700S Desktop Kit im Test - Hardwareluxx</a></li>
+</ul>
+
+<p>IPC の計測には Nemez 氏が開発した <a href="https://git.nemez.net/nemes/ipc-tests" rel="nofollow noreferrer" target="_blank">Nemes / IPC Tests · GitLab</a> が用いられている。テストの中身としては同じ命令をレジスタ依存が発生しないように複数並べることで IPC を計測している。</p>
+
+<ul>
+<li>参考: <a href="http://nano.flop.jp/txt/instruction/index.html" rel="nofollow noreferrer" target="_blank">命令単体の性能を計測する</a></li>
+</ul>
+
+<p><em>Zen/+/2 アーキテクチャ</em> では、FPU部に 4本の実行パイプラインを持ち、2x MUL + 2x ADD で構成されている。<br />
+<a href="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h" rel="nofollow noreferrer" target="_blank">Software Optimization Guide for AMD Family 17h Models 30h and Greater Processors</a> によれば、<em>Zen 2 アーキテクチャ</em> の 各実行パイプと実行ユニットの対応関係は以下のようになっている。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Unit</th>
+<th align="center">Pipe 0 <br> (MUL)</th>
+<th align="center">Pipe 1 <br> (MUL)</th>
+<th align="center">Pipe 2 <br> (ADD)</th>
+<th align="center">Pipe 3 <br> (ADD)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">FMUL</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">FADD</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">X</td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">FCVT</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">FDIV</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">FMISC</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">STORE</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">X</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">VADD</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center"></td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">VMUL</td>
+<td align="center">X</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">VSHUF</td>
+<td align="center"></td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">VSHIFT</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">X</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">VMISC</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">AES</td>
+<td align="center">X</td>
+<td align="center">X</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">CLM<sup class="footnote-ref" id="fnref:clm"><a href="#fn:clm">1</a></sup></td>
+<td align="center"></td>
+<td align="center">S</td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+
+<span class="thread-link"><a href="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h" rel="nofollow noreferrer" target="_blank">Software Optimization Guide for AMD Family 17h Models 30h and Greater Processors</a></span>
+
+
+<p>Nemez 氏は結果から、<strong>AMD 4700S</strong> では通常の <em>Zen 2 アーキテクチャ</em> から FPUパイプ/ポート が 2本に削減されていると述べている。<br />
+自分も 2本の FPUパイプ、MUL, ADD が 1本ずつ減らされていると考えている。</p>
+
+<p>そう考えた理由をつらつらと書いていくと、まず <code>{add, sub, mul, madd, div}_{avx256, sse128}_float</code> の性能が <strong>AMD 4700S</strong> ではほぼ半減している。<br />
+<code>avx256, sse128</code> での性能が変わらないことから、<strong>AMD 4700S</strong> の FPU はデータ幅 256-bit であり、この点は通常の <em>Zen 2 アーキテクチャ</em> と同じである。<br />
+<code>mul_{avx256, sse128}_int</code> の性能は変わらないが、これは通常の <em>Zen 2 アーキテクチャ</em> でも VMUL (<code>VPMULLD/PMULLD</code>) を実行可能なのは Pipe 0 のみとなっているためと思われる。<br />
+<code>{add, sub}_{avx256, sse128}_int</code> の性能は 2/3 (-33%) となっているが、VADD (<code>VPADDD/PADDD</code>) は <em>Zen 2 アーキテクチャ</em> では Pipe0/1/3 で実行可能となっている。MUL と ADD のパイプを 1本ずつ減らし、残った 2本のどちらも VADD が実行可能とした場合 2/3 となり計測結果と一致する。</p>
+
+<p><code>div_{avx256, sse128}_float</code> も元から Pipe 3 のみで実行可能となっているが、<strong>AMD 4700S</strong> ではこの FDIV (<code>VDIVPS/DIVPS</code>) 性能もほぼ半減している。<br />
+これについては正直自分では分からない。<br />
+「Family 17h Models 30h and Greater Instruction Latencies version_1.00」では IPC (Throughput) が 0.20 とされているのに、<strong>3960X</strong> の計測結果では 0.284-0.287 となっていることについては、<br />
+FDIVユニットはパイプが占有中でも 2つのオペレーションを同時に行える点が関係しているのかもしれないが、これは <em>Zen アーキテクチャ</em> にも共通し、手元の <strong>Ryzen 5 2600</strong> で試した所、「Family 17h Instruction Latencies version_1.00」に記載されているのと近い値が出た。<br />
+今回調べるにあたって参考とした <a href="https://github.com/tanakamura" rel="nofollow noreferrer" target="_blank">tanakamura (Takashi Nakamura)</a> 氏が開発している <a href="https://github.com/tanakamura/instruction-bench" rel="nofollow noreferrer" target="_blank">instruction-bench</a> でも、<em>Zen 2 アーキテクチャ</em> の <code>VDIVPS/DIVPS</code> は IPC= 0.29 となっている。<sup class="footnote-ref" id="fnref:inst-bench"><a href="#fn:inst-bench">2</a></sup><br />
+それとして、<strong>AMD 4700S</strong> の FDIV 性能が半減していることについて、FDIVユニットが 1つのオペレーションのみをサポートするよう変更された可能性があるが、はっきりとしない。</p>
+
+<p><code>zen_fpu_mix_{21, 22}</code> は <em>Zen/+/2 アーキテクチャ</em> のレジスタポートにある特有の仕様をテストするもので、各 FPUパイプにはレジスタポートが 2本備えられているが、FMA のような 3 ソースオペランドを必要とする命令を実行する際、Pipe 0/1 (MUL) は Pipe 3 (ADD) のレジスタポートを 1つ使う。<br />
+そのため、FMA と ADD が混ざった命令群を実行するとき Pipe 3 (ADD) の実行が止まる可能性出てくる。<em>Zen 2 アーキテクチャ</em> の場合はピーク IPC が FPUパイプ数の 4 ではなく、3 に近くなる。<br />
+それをテストするのが <code>zen_fpu_mix_{21, 22}</code> であり、<code>zen_fpu_mix_21</code> は 2x FMA (<code>VFMADD132PS</code>) + 1x FADD (<code>VADDPS</code>)、<code>zen_fpu_mix_22</code> は 2x FMA + 2x FADD の塊となっている。</p>
+
+<p>だが <strong>AMD 4700S</strong> では 2 に近く、FADD をブロックすることなく FMA が実行できるよう Pipe 0 にレジスタポートが 3本備えられている <em>可能性</em> があるが、単にうまいこと命令を並び替えて実行している可能性もある。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">AMD 4700S<br>Unit</th>
+<th align="center">Pipe 0 <br> (MUL ?)</th>
+<th align="center">Pipe 1 <br> (ADD ?)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">FMUL</td>
+<td align="center">X</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">FADD</td>
+<td align="center"></td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">FCVT</td>
+<td align="center"></td>
+<td align="center">X ?</td>
+</tr>
+
+<tr>
+<td align="left">FDIV</td>
+<td align="center"></td>
+<td align="center">X ?</td>
+</tr>
+
+<tr>
+<td align="left">FMISC</td>
+<td align="center">X</td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">STORE</td>
+<td align="center"></td>
+<td align="center">X ?</td>
+</tr>
+
+<tr>
+<td align="left">VADD</td>
+<td align="center">X</td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">VMUL</td>
+<td align="center">X</td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">VSHUF</td>
+<td align="center">X ?</td>
+<td align="center">X ?</td>
+</tr>
+
+<tr>
+<td align="left">VSHIFT</td>
+<td align="center"></td>
+<td align="center">X ?</td>
+</tr>
+
+<tr>
+<td align="left">VMISC</td>
+<td align="center">X</td>
+<td align="center">X</td>
+</tr>
+
+<tr>
+<td align="left">AES</td>
+<td align="center">X</td>
+<td align="center"></td>
+</tr>
+
+<tr>
+<td align="left">CLM</td>
+<td align="center">S ?</td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+
+<p><em>Zen/+/2 アーキテクチャ</em> の FPU実行パイプは 2x MUL + 2x ADD という構成だが、細かい部分で実行できる命令はそれぞれ異なり実際には非対称構成となる。<br />
+<strong>AMD 4700S</strong> では FPU実行パイプを 2本に減らしたという推測が当たっているとすると、そうした部分で再設計が必要になると思われるが、手間を掛けてそれを行う理由が自分にはうまいこと思い付かない。<br />
+FPU のデータ幅を 256-bit から 128-bit にするのであれば <em>Zen/+ アーキテクチャ (znver1)</em> のコンパイラにおける最適化を流用できそうだが、パイプ構成を変えたのであればコードを修正する範囲が広がる。<br />
+謎の <strong>AMD 4700S</strong> が製品として出回るようになってもまだ謎は多く残っている。</p>
+
+<p>それと、やはりただの一オタクの推測であるため、ツッコミ、指摘がある場合は <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a> から連絡してくれると自分が喜ぶ。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:clm">Carry-less Multiply, Zen 2 supported by ucode.
+ <a class="footnote-return" href="#fnref:clm"><sup>[return]</sup></a></li>
+<li id="fn:inst-bench"><a href="https://github.com/tanakamura/instruction-bench/blob/master/znver2.log#L98" rel="nofollow noreferrer" target="_blank">instruction-bench/znver2.log at master · tanakamura/instruction-bench</a>
+ <a class="footnote-return" href="#fnref:inst-bench"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article-bottom-misc">
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a><a href="https://www.coelacanth-dream.com/about#contact" class="sb" target="_blank" rel="noreferrer noopener">Feedback</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/09/21/amd-4700s-fpu-pipe.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+  <div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/336AuAg" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">AMD Ryzen 5 3600XT with Wraith Spire cooler 3.8GHz 6コア / 12スレッド 35MB 95W</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3k1xVHM" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">AMD Ryzen 5 5600X with Wraith Stealth cooler 3.7GHz 6コア / 12スレッド 35MB 65W</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+</article><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/amd_4700s/" class="menu-tag-lower">AMD 4700S</a>
+      <a href="https://www.coelacanth-dream.com/tags/zen_2/" class="menu-tag-lower">Zen 2</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button>
+  
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+  </div>
+</div>
+<footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+</footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/amd_4700s/" class="menu-tag-lower">AMD 4700S</a>
+      <a href="https://www.coelacanth-dream.com/tags/zen_2/" class="menu-tag-lower">Zen 2</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
