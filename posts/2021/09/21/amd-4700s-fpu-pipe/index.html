@@ -66,7 +66,7 @@
   </div>
 </nav><div class="article-time">
     <time datetime="2021-09-21 22:51 &#43;0900" class="time-b">Post: 2021/09/21 22:51 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/09/22 03:00 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/09/22 12:13 &#43;0900</div>
   </div><p>チップに関する解説や情報発信といった活動を行っている <a href="https://twitter.com/GPUsAreMagic" rel="nofollow noreferrer" target="_blank">Nemez (@GPUsAreMagic)</a> 氏 (<a href="https://www.patreon.com/nemezor" rel="nofollow noreferrer" target="_blank">Nemez | Patreon</a>) と、<br />
 <a href="https://www.hardwareluxx.de/" rel="nofollow noreferrer" target="_blank">Hardwareluxx</a> のエディターである <a href="https://twitter.com/aschilling" rel="nofollow noreferrer" target="_blank">Andreas Schilling (@aschilling)</a> 氏により、<em>Zen 2 アーキテクチャ</em> を採用するとしている <strong>AMD 4700S</strong> と同アーキテクチャの <strong>Ryzen Threadripper 3960X</strong> の IPC 計測結果を比較したものが公開された。</p>
 
@@ -80,6 +80,8 @@
 <ul>
 <li>参考: <a href="http://nano.flop.jp/txt/instruction/index.html" rel="nofollow noreferrer" target="_blank">命令単体の性能を計測する</a></li>
 </ul>
+
+<p>計測結果から <strong>AMD 4700S</strong> では FPU部に通常の <em>Zen 2 アーキテクチャ</em> から変更、削減された部分があると考えられるため、FPU部を中心に書いていく。</p>
 
 <p><em>Zen/+/2 アーキテクチャ</em> では、FPU部に 4本の実行パイプラインを持ち、2x MUL + 2x ADD で構成されている。<br />
 <a href="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h" rel="nofollow noreferrer" target="_blank">Software Optimization Guide for AMD Family 17h Models 30h and Greater Processors</a> によれば、<em>Zen 2 アーキテクチャ</em> の 各実行パイプと実行ユニットの対応関係は以下のようになっている。</p>
@@ -208,10 +210,12 @@
 <p>Nemez 氏は結果から、<strong>AMD 4700S</strong> では通常の <em>Zen 2 アーキテクチャ</em> から FPUパイプ/ポート が 2本に削減されていると述べている。<br />
 自分も 2本の FPUパイプ、MUL, ADD が 1本ずつ減らされていると考えている。</p>
 
-<p>そう考えた理由をつらつらと書いていくと、まず <code>{add, sub, mul, madd, div}_{avx256, sse128}_float</code> の性能が <strong>AMD 4700S</strong> ではほぼ半減している。<br />
+<p>そう考えた理由をつらつらと書いていく。<br />
+まず <code>{add, sub, mul, madd, div}_{avx256, sse128}_float</code> の性能が <strong>AMD 4700S</strong> ではほぼ半減している。<br />
 <code>avx256, sse128</code> での性能が変わらないことから、<strong>AMD 4700S</strong> の FPU はデータ幅 256-bit であり、この点は通常の <em>Zen 2 アーキテクチャ</em> と同じである。<br />
 <code>mul_{avx256, sse128}_int</code> の性能は変わらないが、これは通常の <em>Zen 2 アーキテクチャ</em> でも VMUL (<code>VPMULLD/PMULLD</code>) を実行可能なのは Pipe 0 のみとなっているためと思われる。<br />
-<code>{add, sub}_{avx256, sse128}_int</code> の性能は 2/3 (-33%) となっているが、VADD (<code>VPADDD/PADDD</code>) は <em>Zen 2 アーキテクチャ</em> では Pipe0/1/3 で実行可能となっている。MUL と ADD のパイプを 1本ずつ減らし、残った 2本のどちらも VADD が実行可能とした場合 2/3 となり計測結果と一致する。</p>
+<code>{add, sub}_{avx256, sse128}_int</code> の性能は 2/3 (-33%) となっているが、VADD (<code>VPADDD/PADDD</code>) は <em>Zen 2 アーキテクチャ</em> では Pipe0/1/3 で実行可能となっている。MUL と ADD のパイプを 1本ずつ減らし、残った 2本のどちらも VADD が実行可能とした場合 2/3 となり計測結果と一致する。<br />
+また、MUL パイプを 1本減らしているとすると、AES の性能も半減しているものと思われる。</p>
 
 <p><code>div_{avx256, sse128}_float</code> も元から Pipe 3 のみで実行可能となっているが、<strong>AMD 4700S</strong> ではこの FDIV (<code>VDIVPS/DIVPS</code>) 性能もほぼ半減している。<br />
 これについては正直自分では分からない。<br />
@@ -317,7 +321,7 @@ FDIVユニットはパイプが占有中でも 2つのオペレーションを�
 </table>
 
 <p><em>Zen/+/2 アーキテクチャ</em> の FPU実行パイプは 2x MUL + 2x ADD という構成だが、細かい部分で実行できる命令はそれぞれ異なり実際には非対称構成となる。<br />
-<strong>AMD 4700S</strong> では FPU実行パイプを 2本に減らしたという推測が当たっているとすると、そうした部分で再設計が必要になると思われるが、手間を掛けてそれを行う理由が自分にはうまいこと思い付かない。<br />
+<strong>AMD 4700S</strong> では FPU実行パイプを 2本に減らしたという推測が当たっているとすると、そうした部分で再設計が必要になると思われるが、手間を掛けてそれを行う理由が自分にはうまいこと思い付かない。CPU 全体のクロックを下げずに、FPU部に掛かる負荷とそれによる熱の発生を抑えるためとかはあるかもしれないが。<br />
 FPU のデータ幅を 256-bit から 128-bit にするのであれば <em>Zen/+ アーキテクチャ (znver1)</em> のコンパイラにおける最適化を流用できそうだが、パイプ構成を変えたのであればコードを修正する範囲が広がる。<br />
 謎の <strong>AMD 4700S</strong> が製品として出回るようになってもまだ謎は多く残っている。</p>
 
