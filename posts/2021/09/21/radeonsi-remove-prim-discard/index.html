@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/09/21/radeonsi-remove-prim-discard/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>RadeonSI ドライバーから非同期コンピュートによるプリミティブカリング機能が削除 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="RadeonSI ドライバーから非同期コンピュートによるプリミティブカリング機能が削除 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="RadeonSI ドライバーから非同期コンピュートによるプリミティブカリング機能が削除 | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/09/21/radeonsi-remove-prim-discard/">
+  <meta name="description" content="先日、AMD のソフトウェアエンジニア Marek Olšák 氏より、非同期コンピュートを用いたプリミティブカリング機能を削除するパッチ (マージリクエスト">
+  <meta property="og:description" content="先日、AMD のソフトウェアエンジニア Marek Olšák 氏より、非同期コンピュートを用いたプリミティブカリング機能を削除するパッチ (マージリクエスト">
+  <meta name="twitter:description" content="先日、AMD のソフトウェアエンジニア Marek Olšák 氏より、非同期コンピュートを用いたプリミティブカリング機能を削除するパッチ (マージリクエスト">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/09/21/radeonsi-remove-prim-discard/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/09/21/radeonsi-remove-prim-discard/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Coelacanth&#39;s Dream, RadeonSI, NGG">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>article{display:grid;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0}article>*{grid-column:3/-1}article>h1~*{visibility:hidden}article blockquote,article pre{overflow-x:scroll}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#f92;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:96%;height:54vh}figure img{max-width:84%}html{background-size:100%;background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.925rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:1rem}.site-title{font:1.9rem/1.05 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #d4dcda;padding:0}.site-title a:hover{color:#c3cfcc;text-shadow:2px 2px 1.1em #fff}.site-title .lain-e{display:inline-block;font:.8em/.8 monospace;padding:0 .2em .2em;margin:0 -.1em 0 .05em;vertical-align:bottom;background-color:#0003;clip-path:circle(50%);transform:rotateZ(-24deg)}.site-title a:hover .lain-e{background-color:#0004}a{color:#b4fffc;text-decoration:none;padding:0 .3rem 0 .28rem;margin:0}.text{grid-row:3/4;grid-column:1/-1;color:#fffeff;line-height:1.67;overflow-wrap:anywhere;word-break:break-word;overflow:clip}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0;visibility:hidden}footer{visibility:hidden;grid-row:5;grid-column:1/-1}.head-cat-tag{grid-column:1/-1;border:1px solid #0aa;background-color:#0001;max-width:max-content;padding:8px 2px 6px;margin:1rem 0;font:.96rem/1.2 monospace;color:#288;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-tag-type{color:#00ddd4;padding:0 .4em}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.5rem 0}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100%;background-image:radial-gradient(ellipse 69% 67%,#fcc1 0%,#0000 97%,#000 103%);opacity:.36;width:100%;height:100%;position:fixed;top:0;left:0;z-index:auto;pointer-events:none;mix-blend-mode:luminosity}.crt{background-image:linear-gradient(180deg,#f00 30%,#0f0 60%,#00f 90%);background-size:100% .7rem;width:100%;height:100%;opacity:.04}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}.text{grid-row:3;grid-column:3/-1}.side{height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000;transform:translateX(0)}.slide{visibility:hidden}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "RadeonSI ドライバーから非同期コンピュートによるプリミティブカリング機能が削除",
+  "headline" : "RadeonSI ドライバーから非同期コンピュートによるプリミティブカリング機能が削除",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-09-21",
+    "datePublished" : "2021-09-21",
+    "dateModufied"  : "2021-09-22",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+    
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css">
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head-cat-lower">Software</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/ngg/" class="head-tag-lower">NGG</a>/<a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="head-tag-lower">RadeonSI</a></div>
+    </div>
+  <h1>RadeonSI ドライバーから非同期コンピュートによるプリミティブカリング機能が削除</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button>
+  
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><div class="article-time">
+    <time datetime="2021-09-21 23:42 &#43;0900" class="time-b">Post: 2021/09/21 23:42 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/09/22 21:06 &#43;0900</div>
+  </div>
+
+<p>先日、AMD のソフトウェアエンジニア <a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏より、非同期コンピュートを用いたプリミティブカリング機能を削除するパッチ (マージリクエスト) が投稿され、メインラインにも組み込まれた。</p>
+
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/12812/commits" rel="nofollow noreferrer" target="_blank">radeonsi: reviewed commits from !12343 (part 2) (!12812) · Merge requests · Mesa / mesa · GitLab</a></li>
+</ul>
+
+<h2 id="prim-discard">Primitive culling with async compute</h2>
+
+<p>非同期コンピュートによるプリミティブカリングが <strong>RadeonSI</strong> に組み込まれたのは約 2年半前 (2019/02)。パッチは、今回削除するパッチを投稿したのと同じ <a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏によって投稿された。<br />
+機能としては頂点シェーダーの前段で非同期コンピュートを活用したカリング処理を行うことで、トライアングル等のプリミティブがサンプルポイントと交差しないため、多数のジオメトリ処理を行うアプリケーションでのパフォーマンスを大幅に向上させる。<br />
+GDC 2016 で発表された <a href="https://archive.org/details/GDC2016Wihlidal" rel="nofollow noreferrer" target="_blank">Optimizing the Graphics Pipeline with Compute</a> を元に実装されているため、より詳細を知りたい方はそちらを参照して頂きたく。</p>
+
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/mesa-dev/2019-February/215085.html" rel="nofollow noreferrer" target="_blank">[Mesa-dev] [PATCH 00/26] RadeonSI: Primitive culling with async compute</a></li>
+</ul>
+
+<p>実装時のパッチのコメントによれば、Paraview での性能比較において約 2-4倍の性能向上を得られている。多数のプリミティブを扱うためメモリ性能の影響が大きいのか、HBM系メモリを採用する <strong>Radeon Fury X, Radeon Vega 56, Radeon VII</strong> では約 3-4倍の性能向上となっている。<br />
+パッチではゲームのベンチマークをする時間が無かったため、まずはすべての Pro カードで有効化するとコメントされている。<br />
+後日、Linux をメインに OSS情報の発信、ハードウェアのレビューを行っている <a href="https://www.phoronix.com/" rel="nofollow noreferrer" target="_blank">Phronix</a> の Michael Larabel 氏が検証したところ、ゲームでは性能向上の効果は無く、むしろ悪化しているケースが多かったため、Proカードのみデフォルトで有効化する点は最後まで変わらなかった。<sup class="footnote-ref" id="fnref:prim-discard-game"><a href="#fn:prim-discard-game">1</a></sup></p>
+
+<h2 id="removed-prim-discard">削除された理由</h2>
+
+<p>ゲームでは効果は無くとも、アプリケーションごとに有効無効の設定は可能であり、削除せずに残しても問題ないと思いもするが、同時に今回削除した理由として複数の理由が挙げられる。</p>
+
+<p>プリミティブカリング機能を削除する該当コミットで Marek Olšák 氏は、<em>「常に機能するものではなく、GFX9 (Vega) とそれ以前のみで効果的であり、そして (コードが) とても複雑だ。」</em> とコメントしている。</p>
+
+<blockquote>
+<pre><code> It doesn&#39;t always work, it&#39;s only useful on gfx9 and older, and it&#39;s too
+ complicated.</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/12812/diffs?commit_id=576f8394db652feffd6f57eaaf5fad4daa0ea409" rel="nofollow noreferrer" target="_blank">radeonsi: reviewed commits from !12343 (part 2) (!12812) · Merge requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+
+<p>常に機能するものではない、という点については、プリミティブカリングは常に有効化するオプションが存在はするが、デフォルトでは巨大なドローコールが呼ばれた時のみに用いられるようになっていた。<br />
+毎回プリミティブカリング機能を使おうとすると、性能への悪影響や視覚的な影響が発生するのだと思われる。</p>
+
+<p>次に <em>GFX9 (Vega)</em> とそれ以前の AMD GPU のみで効果的というのは、<em>GFX10/RDNA, GFX10.3/RDNA 2</em> 世代では <a href="https://www.coelacanth-dream.com/tags/ngg">NGG (Next Generation Geometry)</a> というハードウェアシェーダーステージが追加されており、<em>NGG</em> ではプリミティブの変更が可能となっている。<br />
+そのため、<em>NGG</em> ではコンピュートシェーダーから頂点シェーダーに受け渡す必要なしにカリング処理を行うことができる。<br />
+<em>GFX9 (Vega)</em> とそれ以前の世代のみで非同期コンピュートによるプリミティブカリングが役立つ、というよりも、<em>GFX9</em> 以降の <em>GFX10, GFX10.3</em> 世代ではもっと有用なカリング機能を実装できるから、と言った方が正確かもしれない。<br />
+非同期コンピュート版は OpenGLドライバーである <strong>RadeonSI</strong> のみに実装されていたが、<em>NGG</em> と <em>NGG カリング</em> は Vulkanドライバー <strong>RADV</strong> にも実装されているのも大きい。<br />
+<a href="https://www.phoronix.com/" rel="nofollow noreferrer" target="_blank">Phronix</a> の Michael Larabel 氏が行った検証では、<em>NGG カリング</em> の有効化でいくつか性能が低下しているものもあるが、確かな性能向上を得られているゲームもあり、ここも非同期コンピュート版との大きな違いと言える。<sup class="footnote-ref" id="fnref:nggc-perf"><a href="#fn:nggc-perf">2</a></sup></p>
+
+<p><em>NGG</em> は <strong>RadeonSI, RADV</strong> 共に、<em>Navi14</em> 以外の <em>GFX10</em> とそれ以降の世代でデフォルトで有効化されている。<sup class="footnote-ref" id="fnref:ngg-default"><a href="#fn:ngg-default">3</a></sup>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/07/26/radv-nggc/">RADVドライバーに NGGカリングが実装 | Coelacanth's Dream</a></span>
+
+<em>Navi14</em> で <em>NGG</em> がデフォルトで有効化されない理由はハードウェア的にバグによるものとされている。<sup class="footnote-ref" id="fnref:navi14-hw-bug"><a href="#fn:navi14-hw-bug">4</a></sup><br />
+<em>NGG カリング</em> は、<strong>RadeonSI</strong> では RenderBackend (RB = 4 ROPs, RB+ = 8 ROPs) が 2基以上という条件が付いているが、現時点で存在する <em>GFX10/RDNA, GFX10.3/RDNA 2</em> 世代の dGPU は条件をクリアしているため、デフォルトで有効化される。<sup class="footnote-ref" id="fnref:radeonsi-nggc"><a href="#fn:radeonsi-nggc">5</a></sup><br />
+<strong>RADV</strong> では、安定したパフォーマンスの向上が確認できたなら <em>GFX10.3/RDNA 2</em> 世代でデフォルトで有効化するつもりであることをコメントで触れている。<sup class="footnote-ref" id="fnref:radv-nggc"><a href="#fn:radv-nggc">6</a></sup><br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/17/gfx103-default-ngg-culling/#fn:navi1x-pro-nggc">RadeonSIドライバー + RDNA 2 では NGGカリング/プリミティブシェーダー がデフォルトで有効に | Coelacanth's Dream</a></span>
+</p>
+
+<p>そして、(コードが) とても複雑という点だが、該当コミットではある Issue をクローズしており、そこでは非同期コンピュートによるプリミティブカリングを有効化して UNIGINE Heaven を実行すると、GPU がハングすることが報告されている。<br />
+その問題は後のパッチで修正されたが、他にもアーティファクト (視覚的なエラー?) が発生する問題もあった。</p>
+
+<p>まとめれば、<em>GFX10/RDNA</em> とそれ以降の世代ではもっと有用な <em>NGG</em>, <em>NGG カリング</em> が実装、有効化されている中で、ワークステーション向けのいくつかのアプリケーションのみで効果的に動作する、複雑なコードで実装された非同期コンピュート版を今後時間を掛けてメンテナンスする意味は薄い、と判断されたのだろう。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:prim-discard-game"><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=RadeonSI-Prim-Culling-Tests" rel="nofollow noreferrer" target="_blank">RadeonSI Primitive Culling Yields Mixed Benchmark Results - Phoronix</a>
+ <a class="footnote-return" href="#fnref:prim-discard-game"><sup>[return]</sup></a></li>
+<li id="fn:nggc-perf">[<a href="https://www.phoronix.com/scan.php?page=article&amp;item=radeon-radv-nggc&amp;num=4" rel="nofollow noreferrer" target="_blank">Linux Gaming Performance With Radeon Vulkan NGG Culling - Phoronix</a>]
+ <a class="footnote-return" href="#fnref:nggc-perf"><sup>[return]</sup></a></li>
+<li id="fn:ngg-default"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1242" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1242</a>,<br> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_device.c#L686" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_device.c#L686</a>
+ <a class="footnote-return" href="#fnref:ngg-default"><sup>[return]</sup></a></li>
+<li id="fn:navi14-hw-bug"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/395c0c52c72ce11c52130fecb98ed98cec79eeae/src/amd/common/ac_shader_util.c#L466" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/395c0c52c72ce11c52130fecb98ed98cec79eeae/src/amd/common/ac_shader_util.c#L466</a>
+ <a class="footnote-return" href="#fnref:navi14-hw-bug"><sup>[return]</sup></a></li>
+<li id="fn:radeonsi-nggc"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1246" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1246</a>
+ <a class="footnote-return" href="#fnref:radeonsi-nggc"><sup>[return]</sup></a></li>
+<li id="fn:radv-nggc"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_shader.c#L897" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_shader.c#L897</a>
+ <a class="footnote-return" href="#fnref:radv-nggc"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article-bottom-misc">
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a><a href="https://www.coelacanth-dream.com/about#contact" class="sb" target="_blank" rel="noreferrer noopener">Feedback</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/09/21/radeonsi-remove-prim-discard.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+  <div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">Amazonカスタム検索: 「Radeon」</a>
+      <div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+</article><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/ngg/" class="menu-tag-lower">NGG</a>
+      <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-tag-lower">RadeonSI</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-lower">Software</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb" onclick="copy_url('url')">Copy URL</button>
+    <button type="button" class="share-copy-button sb" onclick="copy_url('title_url')">Copy Title &amp; URL</button>
+  
+    <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS</a>
+
+  </div>
+</nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+  </div>
+</div>
+<footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search">
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+</footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Update</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/ngg/" class="menu-tag-lower">NGG</a>
+      <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-tag-lower">RadeonSI</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-lower">Software</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
