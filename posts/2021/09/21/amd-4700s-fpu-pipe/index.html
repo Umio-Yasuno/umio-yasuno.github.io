@@ -43,7 +43,7 @@
   },
     "dateCreated"   : "2021-09-21",
     "datePublished" : "2021-09-21",
-    "dateModufied"  : "2021-09-22",
+    "dateModufied"  : "2021-09-28",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -66,7 +66,7 @@
   </div>
 </nav><div class="article-time">
     <time datetime="2021-09-21 22:51 &#43;0900" class="time-b">Post: 2021/09/21 22:51 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/09/22 12:13 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/09/28 20:35 &#43;0900</div>
   </div><p>チップに関する解説や情報発信といった活動を行っている <a href="https://twitter.com/GPUsAreMagic" rel="nofollow noreferrer" target="_blank">Nemez (@GPUsAreMagic)</a> 氏 (<a href="https://www.patreon.com/nemezor" rel="nofollow noreferrer" target="_blank">Nemez | Patreon</a>) と、<br />
 <a href="https://www.hardwareluxx.de/" rel="nofollow noreferrer" target="_blank">Hardwareluxx</a> のエディターである <a href="https://twitter.com/aschilling" rel="nofollow noreferrer" target="_blank">Andreas Schilling (@aschilling)</a> 氏により、<em>Zen 2 アーキテクチャ</em> を採用するとしている <strong>AMD 4700S</strong> と同アーキテクチャの <strong>Ryzen Threadripper 3960X</strong> の IPC 計測結果を比較したものが公開された。</p>
 
@@ -230,6 +230,8 @@ FDIVユニットはパイプが占有中でも 2つのオペレーションを�
 
 <p>だが <strong>AMD 4700S</strong> では 2 に近く、FADD をブロックすることなく FMA が実行できるよう Pipe 0 にレジスタポートが 3本備えられている <em>可能性</em> があるが、単にうまいこと命令を並び替えて実行している可能性もある。</p>
 
+<p>また、<code>STORE</code> や <code>FCVT</code> 等、ここで計測されなかったものを処理するためのパイプが、演算メインのパイプとは別に持っている可能性もある。</p>
+
 <table>
 <thead>
 <tr>
@@ -321,7 +323,8 @@ FDIVユニットはパイプが占有中でも 2つのオペレーションを�
 </table>
 
 <p><em>Zen/+/2 アーキテクチャ</em> の FPU実行パイプは 2x MUL + 2x ADD という構成だが、細かい部分で実行できる命令はそれぞれ異なり実際には非対称構成となる。<br />
-<strong>AMD 4700S</strong> では FPU実行パイプを 2本に減らしたという推測が当たっているとすると、そうした部分で再設計が必要になると思われるが、手間を掛けてそれを行う理由が自分にはうまいこと思い付かない。CPU 全体のクロックを下げずに、FPU部に掛かる負荷とそれによる熱の発生を抑えるためとかはあるかもしれないが。<br />
+<strong>AMD 4700S</strong> では FPU実行パイプを 2本に減らしたという推測が当たっているとすると、そうした部分で再設計が必要になると思われる。<br />
+それによって CPU 全体のクロックを下げずに、FPU部に掛かる負荷とそれによる熱の発生を抑えられる等はあるかもしれないが、手間を掛けて FPU部のさらに一部とはいえ再設計、再構成をするに見合うのだろうか。<br />
 FPU のデータ幅を 256-bit から 128-bit にするのであれば <em>Zen/+ アーキテクチャ (znver1)</em> のコンパイラにおける最適化を流用できそうだが、パイプ構成を変えたのであればコードを修正する範囲が広がる。<br />
 謎の <strong>AMD 4700S</strong> が製品として出回るようになってもまだ謎は多く残っている。</p>
 

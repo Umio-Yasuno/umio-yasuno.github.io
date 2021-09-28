@@ -66,7 +66,7 @@
   </div>
 </nav><div class="article-time">
     <time datetime="2021-09-28 05:37 &#43;0900" class="time-b">Post: 2021/09/28 05:37 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/09/28 13:33 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/09/28 20:31 &#43;0900</div>
   </div>
 
 <p>RDNA APU <em>Cyan Skilfish</em> のディスプレイエンジン/コントローラー <strong>DCN 2.01</strong> をサポートするパッチが amd-gfx メーリングリストに投稿された。</p>
@@ -86,7 +86,8 @@
 
 今回サポートが追加されたことで、ディスプレイ出力が有効化された <em>Cyan Skilfish</em> ベースの製品が出てくる可能性が見えてきた。</p>
 
-<p>また、<em>Cyan Skilfish</em> のメディアエンジンについてはまだ有効化、サポートはされていない。</p>
+<p>また、<em>Cyan Skilfish</em> のメディアエンジンについてはまだ有効化、サポートはされていない。<br />
+User Mode Driver、<strong>RadeonSI (OpenGL), RADV (Vulkan)</strong> にもまだサポートは追加されていない。</p>
 
 <h2 id="page-index">Index</h2>
 <div class="page-index"><ul>
@@ -113,21 +114,13 @@
 
 </blockquote>
 
-<p>メモリには、ステイトの <code>.dram_speed_mts</code> の最大値から GDDR6 〜14Gbps、<code>.num_chans</code> から 256-bit (16ch * 16-bit) を想定していると思われる。</p>
+<p>メモリには、ステイトの <code>.dram_speed_mts</code> の最大値から GDDR6 〜14Gbps、<code>.num_chans</code> から 256-bit (16ch * 16-bit) を想定していると思われる。<br />
+<em>Cyan Skilfish</em> のキャッシュ構成は現時点で、<em>Navi10/Navi12</em> と同じものとされており、それに従えば Shader Array ごとに持つ RDNA L1キャッシュ (GL1データキャッシュ) は 128 KiB、メモリサイドキャッシュである L2データキャッシュは 4096 KiB (4MiB) となる。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/07/21/amd-cyan_skilfish-rdna-apu/">Linux Kernel に RDNA APU 「Cyan Skilfish」 をサポートするパッチが投稿される | Coelacanth's Dream</a></span>
+</p>
 
 <blockquote>
 <pre><code> +                       {
- +                               .state = 3,
- +                               .dscclk_mhz = 400.0,
- +                               .dcfclk_mhz = 1000.0,
- +                               .fabricclk_mhz = 250.0,
- +                               .dispclk_mhz = 1200.0,
- +                               .dppclk_mhz = 1200.0,
- +                               .phyclk_mhz = 810.0,
- +                               .socclk_mhz = 1254.0,
- +                               .dram_speed_mts = 14000.0,
- +                       },
- +                       {
  +                               .state = 4,
  +                               .dscclk_mhz = 400.0,
  +                               .dcfclk_mhz = 1000.0,
