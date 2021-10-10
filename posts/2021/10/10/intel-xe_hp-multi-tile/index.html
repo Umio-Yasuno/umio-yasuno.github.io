@@ -64,7 +64,7 @@
 </nav>
 <div class="article-time">
     <time datetime="2021-10-10 23:10 &#43;0900" class="time-b">Post: 2021/10/10 23:10 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/10/11 00:41 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/10/11 00:44 &#43;0900</div>
   </div>
 
 <p>intel-gfxメーリングリストに、Linux Kernel に <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
@@ -90,7 +90,8 @@ AMD はまだそうした使い分けに関しては触れていない (と記�
 <h2 id="multi-die-tile-support">マルチダイ/タイル GPU のソフトウェアサポート</h2>
 
 <p>マルチダイ/タイル構成を GPU に導入する上で、ソフトウェア、ドライバーにおけるサポートは Intel, AMD で共通する部分がある。<br />
-今回のパッチで Matt Roper 氏は、複数のタイルで構成されることはユーザースペース、UMD (User Mode Driver) に対して透過的であり、直接意識する必要はないとコメントしている。KMD (Kernel Mode Driver) がそれを意識することになる。<br />
+今回のパッチで Matt Roper 氏は、複数のタイルで構成されることはユーザースペース、UMD (User Mode Driver) に対して透過的であり、直接意識する必要はないとコメントしている。これはマルチダイ/タイル GPU のプログラミングモデルを簡易にしつつ、性能を引き出す上で重要となる。<br />
+KMD (Kernel Mode Driver) が複数のダイ/タイルを意識し、ユーザースペースには単一の GPU であるように見せる。<br />
 また、CPU と接続されるダイ/タイルはプライマリ/ルートと呼ばれる。</p>
 
 <blockquote>
@@ -106,11 +107,11 @@ AMD はまだそうした使い分けに関しては触れていない (と記�
 <p>こうした点は <em>AMD Aldebaran/MI200</em> においても同じであり、<em>Aldebaran/MI200</em> はプライマリダイとセカンダリダイで構成される。そして、AMD のマルチダイ構成における関連特許から、単一の GPU として認識されると考えられる。<br />
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/09/aldebaran-primary-secondary/">プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth's Dream</a></span>
 
-ただ、<em>Aldebaran/MI200</em> は CPU とも <em>XGMI/Infinity Fabric</em> で接続し、CPU と GPU のメモリ空間を統合する <em>3rd Gen Infinity Architecture</em> を想定している関係で、サポートにおいてドライバー部に必要な変更は <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+<em>Aldebaran/MI200</em> は CPU とも <em>XGMI/Infinity Fabric</em> で接続し、CPU と GPU のメモリ空間を統合する <em>3rd Gen Infinity Architecture</em> を想定している関係で、サポートにおいてドライバー部に必要な変更は <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
 </em> よりも広い。</p>
 
-<p>マルチダイ/タイル構成では、単一の GPU に見せつつ、処理をいかに各ダイ/タイルに分散し、メモリアクセスを最適化するかが重要になる。<br />
-Intel, AMD 共にまだ分散処理の全容は明かしていない。<br />
+<p>マルチダイ/タイル構成では、単一の GPU に見せつつ、処理をいかに各ダイ/タイルに分散し、メモリアクセスを最適化するかが重要になると考えられる。<br />
+ただ、Intel, AMD 共にまだ分散処理の全容は明かしていない。<br />
 <em>Aldebaran/MI200</em> ではプライマリダイが、セカンダリダイと合わせたソケットレベルの電力情報を返すことから、分散処理以外に GPUダイ間のみでそれぞれの温度や電力情報をやり取りしていると推測される。<br />
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/09/04/primary-die-report-total-power/">プライマリーダイがまとめて電力情報を報告する Aldebaran/MI200 GPU | Coelacanth's Dream</a></span>
 </p>
