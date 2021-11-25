@@ -62,7 +62,7 @@
 </nav>
 <div class="article-time">
     <time datetime="2021-11-25 12:53 &#43;0900" class="time-b">Post: 2021/11/25 12:53 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/11/26 00:34 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/11/26 03:34 &#43;0900</div>
   </div><p>Coreboot に、<em>Alder Lake (Golden Cove + Gracemont)</em> のようにハイブリットコア構成を採る CPU における CPPC v3 のサポートに向けて、コアタイプを取得するためのパッチが投稿、公開された。</p>
 
 <ul>
@@ -122,7 +122,48 @@ CPUID では、ハイブリッドコア構成であることを示すビット�
 Atom系コアで構成される製品は、<a href="https://www.coelacanth-dream.com/tags/tremont">Tremont アーキテクチャ</a> を採用する組み込み向けの <em>Elkhart Lake</em> 、モバイル向けの <em>Jasper Lake</em> で最後となるという話があったが<sup class="footnote-ref" id="fnref:ascii-atom"><a href="#fn:ascii-atom">1</a></sup>、方針転換したのかもしれない。<br />
 今回調べ直したところ、特別ハイブリッドコア構成は組み込みに向いていないという訳ではないらしいが<sup class="footnote-ref" id="fnref:emb-big-little"><a href="#fn:emb-big-little">2</a></sup>、<em>Alder Lake</em> においては消費電力やダイサイズから Atomコアのみで構成する方が適していると判断された可能性がある。</p>
 
-<p>また N バリアントは以前にも使われたことがあり、MacbookPro向けの <em>Ice Lake</em> や <em>Jasper Lake</em> が当たるが <sup class="footnote-ref" id="fnref:icp-n"><a href="#fn:icp-n">3</a></sup>、CPU ではなく PCH部に使われており、意味合いとしては異なると思われる。</p>
+<p>また N バリアントは以前にも使われたことがあり、MacbookPro向けの <em>Ice Lake</em> や <em>Jasper Lake</em> が当たるが <sup class="footnote-ref" id="fnref:icp-n"><a href="#fn:icp-n">3</a></sup>、CPU ではなく PCH部に使われており<sup class="footnote-ref" id="fnref:n-pch"><a href="#fn:n-pch">4</a></sup>、意味合いとしては異なると思われる。</p>
+
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="center">Golden Cove (Big)</th>
+<th align="center">Gracemont (Small)</th>
+<th align="center">GPU (Gen12.2)</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Alder Lake-S (Desktop)</td>
+<td align="center">8</td>
+<td align="center">8</td>
+<td align="center">GT1 (32 EU)</td>
+</tr>
+
+<tr>
+<td align="left">Alder Lake-P (Mobile)</td>
+<td align="center">6</td>
+<td align="center">8</td>
+<td align="center">GT2 (96 EU)</td>
+</tr>
+
+<tr>
+<td align="left">Alder Lake-M (Mobile)</td>
+<td align="center">2</td>
+<td align="center">8</td>
+<td align="center">GT2 (96 EU)</td>
+</tr>
+
+<tr>
+<td align="left">Alder Lake-N (Embedded?)</td>
+<td align="center">0</td>
+<td align="center">?</td>
+<td align="center">GT2? (96 EU)</td>
+</tr>
+</tbody>
+</table>
 <div class="footnotes">
 
 <hr />
@@ -134,6 +175,8 @@ Atom系コアで構成される製品は、<a href="https://www.coelacanth-dream
  <a class="footnote-return" href="#fnref:emb-big-little"><sup>[return]</sup></a></li>
 <li id="fn:icp-n"><a href="https://lore.kernel.org/all/20211001173644.16068-1-andriy.shevchenko@linux.intel.com/" rel="nofollow noreferrer" target="_blank">[PATCH v1 1/1] mei: me: add Ice Lake-N device id. - Andy Shevchenko</a>
  <a class="footnote-return" href="#fnref:icp-n"><sup>[return]</sup></a></li>
+<li id="fn:n-pch"><a href="https://review.coreboot.org/c/coreboot/+/49607" rel="nofollow noreferrer" target="_blank">soc/intel/icl: add detection of PCH type PCH-N (I2b730504) · Gerrit Code Review</a>
+ <a class="footnote-return" href="#fnref:n-pch"><sup>[return]</sup></a></li>
 </ol>
 </div>
 <div class="article-bottom-misc">
