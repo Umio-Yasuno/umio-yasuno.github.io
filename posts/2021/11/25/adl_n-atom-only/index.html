@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/11/25/adl_n-atom-only/">
+
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Alder Lake-N は Atom系コアのみの構成か | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Alder Lake-N は Atom系コアのみの構成か | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Alder Lake-N は Atom系コアのみの構成か | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/11/25/adl_n-atom-only/">
+  <meta name="description" content="Coreboot に、Alder Lake (Golden Cove &#43; Gracemont) のようにハイブリットコア構成を採る CPU における CPPC v3 のサポートに向けて、コアタイプを取得するための">
+  <meta property="og:description" content="Coreboot に、Alder Lake (Golden Cove &#43; Gracemont) のようにハイブリットコア構成を採る CPU における CPPC v3 のサポートに向けて、コアタイプを取得するための">
+  <meta name="twitter:description" content="Coreboot に、Alder Lake (Golden Cove &#43; Gracemont) のようにハイブリットコア構成を採る CPU における CPPC v3 のサポートに向けて、コアタイプを取得するための">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/11/25/adl_n-atom-only/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/11/25/adl_n-atom-only/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="Coelacanth&#39;s Dream, Alder Lake, Coreboot">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>article{display:grid;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0}article>*{grid-column:3/-1}article>h1~*{visibility:hidden}article blockquote,article pre{overflow-x:scroll}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#f92;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:96%;height:54vh}figure img{max-width:84%}html{background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.925rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:1rem}.site-title{font:2rem/1.1 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #d4dcda;padding:0}.site-title a:hover{color:#c3cfcc;text-shadow:2px 2px 1.1em #fff}.site-title .lain-e{display:inline-block;font:700 .7em/1 monospace;padding:0 .3em .2em;margin:0 -.2em 0 -.1em;background-color:#1003;clip-path:circle(.48em);transform:rotateZ(-32deg)}.site-title a:hover .lain-e{background-color:#1005}a{color:#b4fffc;text-decoration:none;padding:0 .2rem 0 .18rem;margin:0}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.65;overflow-wrap:anywhere;word-break:break-word;overflow:clip}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0;visibility:hidden}footer{visibility:hidden;grid-row:5;grid-column:1/-1}.head-cat-tag{grid-column:1/-1;border:1px solid #0aa;background-color:#1332;max-width:max-content;padding:8px 2px 6px;margin:1rem 0;font:.96rem/1.2 monospace;color:#288;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-tag-type{color:#00e7de;padding:0 .4em}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.5rem 0}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100% 100%;background-attachment:fixed;background-image:radial-gradient(ellipse 69% 67%,#fdd1 0%,#0000 97%,#000 103%);opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:auto;pointer-events:none;contain:strict;overflow:hidden;isolation:isolate}.crt{background-image:linear-gradient(#f00 0%,#f00 33%,#0f0 33%,#0f0 67%,#00f 67%,#00f 100%);background-size:100% .6rem;width:100%;height:100%;background-repeat:repeat-y;opacity:.04;isolation:isolate}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}.text{grid-row:3;grid-column:3/-1}.side{height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000;transform:translateX(0)}.slide{visibility:hidden}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Alder Lake-N は Atom系コアのみの構成か",
+  "headline" : "Alder Lake-N は Atom系コアのみの構成か",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-11-25",
+    "datePublished" : "2021-11-25",
+    "dateModufied"  : "2021-11-26",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css">
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head-cat-lower">Intel</a></div><div class="head-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="head-tag-lower">Alder Lake</a>/<a href="https://www.coelacanth-dream.com/tags/coreboot/" class="head-tag-lower">Coreboot</a></div>
+    </div>
+  <h1>Alder Lake-N は Atom系コアのみの構成か</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+    <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></div>
+</nav>
+<div class="article-time">
+    <time datetime="2021-11-25 12:53 &#43;0900" class="time-b">Post: 2021/11/25 12:53 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/11/26 00:34 &#43;0900</div>
+  </div><p>Coreboot に、<em>Alder Lake (Golden Cove + Gracemont)</em> のようにハイブリットコア構成を採る CPU における CPPC v3 のサポートに向けて、コアタイプを取得するためのパッチが投稿、公開された。</p>
+
+<ul>
+<li><a href="https://review.coreboot.org/c/coreboot/+/59360/3" rel="nofollow noreferrer" target="_blank">soc/intel/alderlake, soc/common: Add method to determine the cpu type mask (If4ceb24d) · Gerrit Code Review</a></li>
+</ul>
+
+<p>パッチで追加されたコードの一部が、以前に同じく Coreboot へのパッチ内で存在が明らかにされた <em>Alder Lake-N</em> が他バリアントとは異なり、Atom (Small) 系コアのみで構成されることを示している。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/11/16/coreboot-intel-adl_n/">N バリアントも存在する Alder Lake | Coelacanth's Dream</a></span>
+</p>
+
+<blockquote>
+<pre><code> +uint8_t get_soc_cpu_type(void)
+ +{
+ +   struct cpuinfo_x86 cpuinfo;
+ +
+ +   if (cpu_is_hybrid_supported())
+ +       return cpu_get_cpu_type();
+ +
+ +   get_fms(&amp;cpuinfo, cpuid_eax(1));
+ +
+ +   if (cpuinfo.x86 == 0x6 &amp;&amp; cpuinfo.x86_model == 0xBE)
+ +       return CPUID_CORE_TYPE_INTEL_ATOM;
+ +   else
+ +       return CPUID_CORE_TYPE_INTEL_CORE;
+ +}
+ +</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/plugins/gitiles/coreboot/+/3352093f2bb1f6912dd57d19a5e564e8d21ecc26%5E%21/#F0" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/plugins/gitiles/coreboot/+/3352093f2bb1f6912dd57d19a5e564e8d21ecc26%5E%21/#F0</a></cite>
+</div>
+
+</blockquote>
+
+<p>上記引用部が該当のコード <code>get_soc_cpu_type</code> 関数だが、処理内容は非常にシンプルで、まず実行する CPU がハイブリッドコア構成を採っている場合は CPUコアタイプを取得する <code>cpu_get_cpu_type</code> 関数を呼んでいる。<br />
+CPUID では、ハイブリッドコア構成であることを示すビットフラグ (<code>EAX=0x7, ECX=0 [EDX: Bit15]</code>) と、CPUコアタイプを示す値 (<code>EAX=0x1A [0x20: Atom, 0x40: Core]</code>) が定義されている。<br />
+<em>Alder Lake-S/P/M</em> ではその時点で関数はコアタイプを返すが、ハイブリッド構成を採っていない場合は <code>CPUID (EAX=1)</code> から <code>Family, Model, Stepping</code> を取得、そして <code>Faily: 0x6, Model: 0xBE</code> の場合はコアタイプに <code>Atom (0x20)</code> を、それ以外は <code>Core (0x40)</code> を返す。</p>
+
+<p><code>Family: 0x6, Model: 0xBE</code> には <em>Alder Lake-N</em> が該当し、その <code>Family, Model, Stepping</code> を示す CPUID は以前に追加されていた。</p>
+
+<blockquote>
+<pre><code> #define CPUID_ALDERLAKE_S_A0        0x90670
+ #define CPUID_ALDERLAKE_A0      0x906a0
+ #define CPUID_ALDERLAKE_A1      0x906a1
+ #define CPUID_ALDERLAKE_A2      0x906a2
+ #define CPUID_ALDERLAKE_A3      0x906a4
+ #define CPUID_ALDERLAKE_N_A0        0xb06e0</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/59306/1/src/include/cpu/intel/cpu_ids.h" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/59306/1/src/include/cpu/intel/cpu_ids.h</a></cite>
+</div>
+
+</blockquote>
+
+<p>ここでの CPUID では、Bit 0-3 が <code>Stepping</code>、Bit 8-11 が <code>Family ID</code>、Bit 4-7 が <code>Model ID</code>、Bit 20-27 が <code>Extended Family ID</code>、Bit 16-19 が <code>Extended Model ID</code> を表現しており、<code>0xb06e0</code> をデコードすると <code>Family: 0x6, Model: 0xBE, Stepping: 0</code> となる。<br />
+<code>Extended Model ID</code> は 1桁左にずらして (<code>&lt;&lt; 4</code>) から <code>Model ID</code> と組み合わされる。</p>
+
+<p>以上のことから、<em>Alder Lake-N</em> はハイブリッドコア構成を採らず、Atom系コアのみで構成されると考えられる。<br />
+モバイル向けの <code>ALDERLAKE_L (Model: 0x9A)</code> (<em>Alder Lake-P/M</em>) とは異なる Display Model ID であることから、<em>Alder Lake-N</em> は組み込み向けとして想定されているのではないかと思われる。<br />
+Atom系コアで構成される製品は、<a href="https://www.coelacanth-dream.com/tags/tremont">Tremont アーキテクチャ</a> を採用する組み込み向けの <em>Elkhart Lake</em> 、モバイル向けの <em>Jasper Lake</em> で最後となるという話があったが<sup class="footnote-ref" id="fnref:ascii-atom"><a href="#fn:ascii-atom">1</a></sup>、方針転換したのかもしれない。<br />
+今回調べ直したところ、特別ハイブリッドコア構成は組み込みに向いていないという訳ではないらしいが<sup class="footnote-ref" id="fnref:emb-big-little"><a href="#fn:emb-big-little">2</a></sup>、<em>Alder Lake</em> においては消費電力やダイサイズから Atomコアのみで構成する方が適していると判断された可能性がある。</p>
+
+<p>また N バリアントは以前にも使われたことがあり、MacbookPro向けの <em>Ice Lake</em> や <em>Jasper Lake</em> が当たるが <sup class="footnote-ref" id="fnref:icp-n"><a href="#fn:icp-n">3</a></sup>、CPU ではなく PCH部に使われており、意味合いとしては異なると思われる。</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:ascii-atom"><a href="https://ascii.jp/elem/000/004/040/4040489/3/" rel="nofollow noreferrer" target="_blank">ASCII.jp：最後のAtomとなるChromebook向けプロセッサーのJasper Lake　インテル CPUロードマップ (3/3)</a>
+ <a class="footnote-return" href="#fnref:ascii-atom"><sup>[return]</sup></a></li>
+<li id="fn:emb-big-little"><a href="https://interface.cqpub.co.jp/wp-content/uploads/interface/2014/07/if07_060.pdf" rel="nofollow noreferrer" target="_blank">if07_060.pdf</a>
+ <a class="footnote-return" href="#fnref:emb-big-little"><sup>[return]</sup></a></li>
+<li id="fn:icp-n"><a href="https://lore.kernel.org/all/20211001173644.16068-1-andriy.shevchenko@linux.intel.com/" rel="nofollow noreferrer" target="_blank">[PATCH v1 1/1] mei: me: add Ice Lake-N device id. - Andy Shevchenko</a>
+ <a class="footnote-return" href="#fnref:icp-n"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article-bottom-misc">
+  <div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a href="https://www.coelacanth-dream.com/about#contact" class="sb" target="_blank" rel="noreferrer noopener">Contact</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/11/25/adl_n-atom-only.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+
+  <div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">GPU の歴史と周辺技術、プログラミングモデルやトレンドの変化が丁寧に解説されている。GPU の基本知識を得るのに最適。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPU の性能に大きく関わる機能やメモリ、各種 I/O、プロセス技術について解説されている。機能の利点と欠点を丁寧に、テンポ良く書いているため読みやすい。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+
+</article><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-tag-lower">Alder Lake</a>
+      <a href="https://www.coelacanth-dream.com/tags/coreboot/" class="menu-tag-lower">Coreboot</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-lower">Intel</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+    <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></div>
+</nav>
+<div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about#license">License</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+  </div>
+</div>
+<footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about#license">License</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search"><a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+</footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-tag-lower">Alder Lake</a>
+      <a href="https://www.coelacanth-dream.com/tags/coreboot/" class="menu-tag-lower">Coreboot</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-lower">Intel</a>
+</div>
+<div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about#license">License</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
