@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/11/27/radeonsi-wave32-rework/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>RadeonSIドライバーで一部シェーダーを再び Wave32モードで実行するように | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="RadeonSIドライバーで一部シェーダーを再び Wave32モードで実行するように | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="RadeonSIドライバーで一部シェーダーを再び Wave32モードで実行するように | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/11/27/radeonsi-wave32-rework/">
+  <meta name="description" content="1年半近く前 (2020/07) に AMD のソフトウェアエンジニア、Marek Olšák 氏によって投稿されたパッチから、RadeonSI (OpenGL) ドライ">
+  <meta property="og:description" content="1年半近く前 (2020/07) に AMD のソフトウェアエンジニア、Marek Olšák 氏によって投稿されたパッチから、RadeonSI (OpenGL) ドライ">
+  <meta name="twitter:description" content="1年半近く前 (2020/07) に AMD のソフトウェアエンジニア、Marek Olšák 氏によって投稿されたパッチから、RadeonSI (OpenGL) ドライ">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/11/27/radeonsi-wave32-rework/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/11/27/radeonsi-wave32-rework/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
+  <meta name="keywords" content="RadeonSI, RDNA, RDNA 2, NGGCoelacanth&#39;s Dream, ">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>article{display:grid;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0}article>*{grid-column:3/-1}article>h1~*{visibility:hidden}article blockquote,article pre{overflow-x:scroll}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#f92;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:96%;height:54vh}figure img{max-width:84%}html{background-attachment:fixed;background-color:#004854;background-repeat:no-repeat;font-size:.925rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:1rem}.site-title{font:2rem/1.1 monospace;text-decoration:none;word-spacing:100vw;margin-left:auto;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #d4dcda;padding:0}.site-title a:hover{color:#c3cfcc;text-shadow:2px 2px 1.1em #fff}.site-title .lain-e{display:inline-block;font:700 .7em/1 monospace;padding:0 .3em .2em;margin:0 -.2em 0 -.1em;background-color:#1003;clip-path:circle(.48em);transform:rotateZ(-32deg)}.site-title a:hover .lain-e{background-color:#1005}a{color:#b4fffc;text-decoration:none;padding:0 .2rem 0 .18rem;margin:0}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.65;overflow-wrap:anywhere;word-break:break-word;overflow:clip}.side,.slide{transform:translateX(100vw);position:fixed;top:1vh;left:0;visibility:hidden}footer{visibility:hidden;grid-row:5;grid-column:1/-1}.head-cat-tag{grid-column:1/-1;border:1px solid #0aa;background-color:#1332;max-width:max-content;padding:8px 2px 6px;margin:1rem 0;font:.96rem/1.2 monospace;color:#288;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-tag-type{color:#00e7de;padding:0 .4em}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.5rem 0}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:6px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0997}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100% 100%;background-attachment:fixed;background-image:radial-gradient(ellipse 69% 67%,#fdd1 0%,#0000 97%,#000 103%);opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:auto;pointer-events:none;contain:strict;overflow:hidden;isolation:isolate}.crt{background-image:linear-gradient(#f00 0%,#f00 33%,#0f0 33%,#0f0 67%,#00f 67%,#00f 100%);background-size:100% .6rem;width:100%;height:100%;background-repeat:repeat-y;opacity:.04;isolation:isolate}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}.text{grid-row:3;grid-column:3/-1}.side{height:96vh;width:180px;padding:12px 8px 0 12px;color:#2ba;border-right:1px solid #0994;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0992 #0000;transform:translateX(0)}.slide{visibility:hidden}}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "RadeonSIドライバーで一部シェーダーを再び Wave32モードで実行するように",
+  "headline" : "RadeonSIドライバーで一部シェーダーを再び Wave32モードで実行するように",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-11-27",
+    "datePublished" : "2021-11-27",
+    "dateModufied"  : "2021-11-27",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title"><a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a></div></header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css">
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a> :<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head-cat-lower">Software</a></div><div class="head-cat-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a> :<a href="https://www.coelacanth-dream.com/tags/ngg/" class="head-cat-lower">NGG</a>/<a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="head-cat-lower">RadeonSI</a>/<a href="https://www.coelacanth-dream.com/tags/rdna/" class="head-cat-lower">RDNA</a>/<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-cat-lower">RDNA 2</a></div>
+    </div>
+  <h1>RadeonSIドライバーで一部シェーダーを再び Wave32モードで実行するように</h1><nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+    <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></div>
+</nav>
+<div class="article-time">
+    <time datetime="2021-11-27 00:00 &#43;0900" class="time-b">Post: 2021/11/27 00:00 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/11/27 17:09 &#43;0900</div>
+  </div>
+
+<p>1年半近く前 (2020/07) に AMD のソフトウェアエンジニア、<a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏によって投稿されたパッチから、<strong>RadeonSI (OpenGL)</strong> ドライバーでは、Wave32 に対応する RDNA系アーキテクチャであっても、各シェーダーステージを Wave64モードで実行するようになっていた。<sup class="footnote-ref" id="fnref:radeonsi-wave64"><a href="#fn:radeonsi-wave64">1</a></sup><br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/">RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth's Dream</a></span>
+</p>
+
+<p>それが今回、いくつかのマージリクエストに分割された新たなパッチによって、一部のシェーダーでは再び Wave32モードで実行されるようになり、同時に Wave32モードへの最適化も行われた。<br />
+シェーダーステージによって Wave32/64 を切り替えるのではなく、Workgroup (Thread Block) のサイズが小さい場合は Wave32モード、またプロファイリングによる結果から特定のシェーダーは Wave64モードで実行する等、きめ細かい切り替えが行われるようになるため、フラグの最適化も施されている。</p>
+
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13869" rel="nofollow noreferrer" target="_blank">mesa,nir: propagate shader source SHA1 to gallium drivers, a precursor to shader profiles (!13869) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13878" rel="nofollow noreferrer" target="_blank">radeonsi: rework to make the wave size configurable per shader for fine-grained Wave32/64 selection (!13878) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13890" rel="nofollow noreferrer" target="_blank">nir,glsl: serialize divergent fields, handle more instrinsics in divergence analysis, add nir_has_divergent_loop, fix source_sha1 (!13890) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13966" rel="nofollow noreferrer" target="_blank">radeonsi: add Wave32 heuristics and shader profiles (!13966) · Merge requests · Mesa / mesa · GitLab</a></li>
+</ul>
+
+<p><a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏は、シェーダープロファイルと発見 (heuristics) による手直し、クリーンアップだとコメントしている。</p>
+
+<blockquote>
+<pre><code> This is a rework and cleanup to be able to enable Wave32 based on shader profiles and heuristics.  
+ No functional change.</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13878" rel="nofollow noreferrer" target="_blank">radeonsi: rework to make the wave size configurable per shader for fine-grained Wave32/64 selection (!13878) · Merge requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+
+<h2 id="page-index">Index</h2>
+<div class="page-index"><ul>
+<li><a href="#wave32">Wave32</a>
+
+<ul>
+<li><a href="#cs">Compute Shader</a></li>
+<li><a href="#ps">Pixel Shader</a></li>
+<li><a href="#divergent">Divergent loops</a></li>
+</ul></li>
+</ul>
+</div>
+
+
+<p>各シェーダーステージを Wave64 で実行するようにした際、<a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏 Wave32 より性能面で優れていると考えた理由として以下の項目を挙げていた。</p>
+
+<blockquote>
+<ul>
+<li>greater chance of L0 cache hits, because more threads are assigned to the same CU<br /></li>
+<li>scalar instructions are only executed once for 64 threads instead of twice<br /></li>
+<li>VGPR allocation granularity is half of Wave32, so 1 Wave64 can sometimes use fewer VGPRs than 2 Wave32<br /></li>
+<li>TessMark X64 with NGG culling is faster with Wave64<br /></li>
+</ul>
+
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5524" rel="nofollow noreferrer" target="_blank">ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+
+<p>これはコード内にコメントで残されていたが、今回のリワークに伴い、実際のところは正しくなかった (<em>The big comment was not really true.</em>) として削除されている。<sup class="footnote-ref" id="fnref:wave32-true"><a href="#fn:wave32-true">2</a></sup></p>
+
+<h2 id="wave32">Wave32</h2>
+
+<h3 id="cs">Compute Shader</h3>
+
+<p><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" rel="nofollow noreferrer" target="_blank">RDNA_Architecture_public.pdf</a> では元より Compute Shader は通常 Wave32 を選択されるとしていたが、Wave32 で実行すると OpenGL のテストスイートである <a href="https://gitlab.freedesktop.org/mesa/piglit" rel="nofollow noreferrer" target="_blank">piglit</a> が失敗することから <strong>RadeonSI</strong> では Wave64 で実行するようになっていた。<sup class="footnote-ref" id="fnref:piglit-fail-cs32"><a href="#fn:piglit-fail-cs32">3</a></sup></p>
+
+<p>それが今回、Workgroup のサイズが小さい場合は Wave32 で実行するように変更された。<br />
+Waveサイズを指定するデバッグフラグが設定されていない場合は、以前同様 Compute Shader は Wave64 で実行される。</p>
+
+<blockquote>
+<pre><code> +   /* Small workgroups use Wave32 unconditionally. */
+ +   if (stage == MESA_SHADER_COMPUTE &amp;&amp; info &amp;&amp;
+ +       !info-&gt;base.workgroup_size_variable &amp;&amp;
+ +       info-&gt;base.workgroup_size[0] *
+ +       info-&gt;base.workgroup_size[1] *
+ +       info-&gt;base.workgroup_size[2] &lt;= 32)
+ +      return 32;</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13966/diffs?commit_id=d5d3106ddde9b711ed3231c91f97a5a407836ba6#91b7eb4e8feffa75abd6fdc6f3cd66c9ccd30707" rel="nofollow noreferrer" target="_blank">radeonsi: add Wave32 heuristics and shader profiles (!13966) · Merge requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+
+<h3 id="ps">Pixel Shader</h3>
+
+<p><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" rel="nofollow noreferrer" target="_blank">RDNA_Architecture_public.pdf</a> では Pixel Shader のみ、通常 Wave64 が選択されるとしていたが、今回で一部は Pixel Shader も Wave32 で実行されるようになった。</p>
+
+<p>LLVM 13/14 では、ピクセルの廃棄処理 (discard) を含む Pixel Shader を Wave32モードでコンパイルすると、エラーを起こすバグがあるため、Wave64 で実行するとしている。<br />
+新たに追加されたデバッグオプション <code>w32psdiscard (W32_PS_DISCARD)</code> は、そのエラーを無視して Wave32モードでコンパイル、実行するためのもの。</p>
+
+<blockquote>
+<pre><code> +   /* LLVM 13 and 14 have a bug that causes compile failures with discard in Wave32
+ +    * in some cases. Alpha test in Wave32 is luckily unaffected.
+ +    */
+ +   if (stage == MESA_SHADER_FRAGMENT &amp;&amp; info-&gt;base.fs.uses_discard &amp;&amp;
+ +       !(info &amp;&amp; info-&gt;options &amp; SI_PROFILE_IGNORE_LLVM_DISCARD_BUG) &amp;&amp;
+ +       LLVM_VERSION_MAJOR &gt;= 13 &amp;&amp; !(sscreen-&gt;debug_flags &amp; DBG(W32_PS_DISCARD)))
+ +      return 64;</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13966/diffs?commit_id=d5d3106ddde9b711ed3231c91f97a5a407836ba6#91b7eb4e8feffa75abd6fdc6f3cd66c9ccd30707" rel="nofollow noreferrer" target="_blank">radeonsi: add Wave32 heuristics and shader profiles (!13966) · Merge requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+
+<p>そして補間命令の無い Pixel Shader は、Wave32モードにおいて補間性能の低下を受けないため Wave32 で実行する。<br />
+この方針は <a href="https://www.geeks3d.com/gputest/" rel="nofollow noreferrer" target="_blank">GpuTest</a> の PixMark Piano/Voloplosion にて役立つとしている。</p>
+
+<blockquote>
+<pre><code> +   /* Pixel shaders without interp instructions don&#39;t suffer from reduced interpolation
+ +    * performance in Wave32, so use Wave32. This helps Piano and Voloplosion.
+ +    */
+ +   if (stage == MESA_SHADER_FRAGMENT &amp;&amp; !info-&gt;num_inputs)
+ +      return 32;
+ +</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13966/diffs?commit_id=d5d3106ddde9b711ed3231c91f97a5a407836ba6#91b7eb4e8feffa75abd6fdc6f3cd66c9ccd30707" rel="nofollow noreferrer" target="_blank">radeonsi: add Wave32 heuristics and shader profiles (!13966) · Merge requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+
+<h3 id="divergent">Divergent loops</h3>
+
+<p>次の部分は少し複雑で、自分には追いつけない部分がある。<br />
+Tessellation Control Shader または Geometry Shader を実行するが、結果を GS copy shader で Pixel Shader に渡すことはしない場合を <code>merged_shader (true)</code> とし、<br />
+その条件から外れると同時に、(分岐による？) 発散性 (divergent) のあるループは Wave32 で実行するようになった。</p>
+
+<blockquote>
+<pre><code>    /* TODO: Merged shaders must use the same wave size because the driver doesn&#39;t recompile
+     * individual shaders of merged shaders to match the wave size between them.
+     */
+    bool merged_shader = sscreen-&gt;info.chip_class &gt;= GFX9 &amp;&amp; shader &amp;&amp; !shader-&gt;is_gs_copy_shader &amp;&amp;
+                         (shader-&gt;key.ge.as_ls || shader-&gt;key.ge.as_es ||
+                          stage == MESA_SHADER_TESS_CTRL || stage == MESA_SHADER_GEOMETRY);
+
+    /* Divergent loops in Wave64 can end up having too many iterations in one half of the wave
+     * while the other half is idling but occupying VGPRs, preventing other waves from launching.
+     * Wave32 eliminates the idling half to allow the next wave to start.
+     */
+    if (!merged_shader &amp;&amp; info &amp;&amp; info-&gt;has_divergent_loop)
+       return 32;</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13966/diffs?commit_id=d5d3106ddde9b711ed3231c91f97a5a407836ba6#91b7eb4e8feffa75abd6fdc6f3cd66c9ccd30707" rel="nofollow noreferrer" target="_blank">radeonsi: add Wave32 heuristics and shader profiles (!13966) · Merge requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+
+<p><code>merged_shader</code> の判定に <code>sscreen-&gt;info.chip_class &gt;= GFX9</code> があるが、Wave のサイズを返すこの <code>si_determine_wave_size</code> 関数では GFX9 かそれ以前の世代の場合 64 (threads) が返される。<sup class="footnote-ref" id="fnref:return-64"><a href="#fn:return-64">4</a></sup></p>
+
+<p>コメント部の説明と自分の推測による補間を合わせるに、Wave内スレッドの一部が分岐するループを実行する場合、Wave64 だと Wave中の半分が反復する回数が多く、残り半分の Wave がベクタレジスタ (VGPR) を占有したままアイドリング状態となり、次の Wave の実行が妨げられてしまう。<br />
+Wave32 ではアイドリング状態になる半分を排除でき、次の Wave を実行可能になる。</p>
+
+<p>ここでの Wave64 の半分というのは、<em>RDNA系 アーキテクチャ</em> における Wave64 の実行方式を指していると思われる。<br />
+<em>RDNA系 アーキテクチャ</em> では Wave64モードで実行する場合、命令を 2つの Wave32 に分割して実行する。<br />
+命令をある程度ブロックにまとめ、それを low と high に分割し、最初の low 群を実行、次に high 群を実行する Sub-Vectorモードも <em>RDNA系 アーキテクチャ</em> ではサポートされている。<br />
+2つの Wave32 に分割されるといっても、スカラ命令は 1回のみとなる。また Workgroup の最大サイズはスレッド (work-item) 数で決まっているため、Workgroup 内の Wave数は Wave32 の場合は 32 Wave、Wave64 の場合は 16 Wave となる。</p>
+
+<p>シェーダープロファイルによる Wave サイズの選択も、現時点では SPECviewperfベンチマークのみが対象だが、実装されている。<br />
+<a href="https://www.spec.org/gwpg/gpc.static/energy-02.html" rel="nofollow noreferrer" target="_blank">Viewperf/Energy</a> は Pixel Shader の部で挙げた Discard処理を含む Pixel Shader のコンパイルエラーが起きないため Wave32 で実行され、<br />
+<a href="https://www.spec.org/gwpg/gpc.static/med-02.html" rel="nofollow noreferrer" target="_blank">Viewperf/Medical</a> は分岐発散のあるループにおいて上記の Wave32 の恩恵を受けられないため、Wave64 で実行される。プロファイリングの結果による選択とされるが、Marek Olšák 氏はおそらく補間性能の影響を受けているのではないかとしている。</p>
+
+<blockquote>
+<pre><code> +struct si_shader_profile {
+ +   uint32_t sha1[SHA1_DIGEST_LENGTH32];
+ +   uint32_t options;
+ +};
+ +
+ +static struct si_shader_profile profiles[] =
+ +{
+ +   {
+ +      /* Viewperf/Energy isn&#39;t affected by the discard bug. */
+ +      {0x17118671, 0xd0102e0c, 0x947f3592, 0xb2057e7b, 0x4da5d9b0},
+ +      SI_PROFILE_IGNORE_LLVM_DISCARD_BUG,
+ +   },
+ +   {
+ +      /* Viewperf/Medical, a shader with a divergent loop doesn&#39;t benefit from Wave32,
+ +       * probably due to interpolation performance.
+ +       */
+ +      {0x29f0f4a0, 0x0672258d, 0x47ccdcfd, 0x31e67dcc, 0xdcb1fda8},
+ +      SI_PROFILE_WAVE64,
+ +   },
+ +};</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13966/diffs?commit_id=d5d3106ddde9b711ed3231c91f97a5a407836ba6#diff-content-3219867c408aa0515182e3168fad726f47209435" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13966/diffs?commit_id=d5d3106ddde9b711ed3231c91f97a5a407836ba6#diff-content-3219867c408aa0515182e3168fad726f47209435</a></cite>
+</div>
+
+</blockquote>
+
+<p><em>NGG (Next Generation Geometry)</em> を使用しない <em>Legacy GS (pipeline)</em> は Wave64 のみでサポートされるが、<em>RDNA系 アーキテクチャ (GFX10 &lt;=)</em> では <em>Navi14</em> 以外はデフォルトで <em>NGG</em> が有効化される。<br />
+そう深くコードを追ってはいないが、<em>NGG</em> 有効の場合は Wave32 で実行されるものと思われる。</p>
+
+<blockquote>
+<pre><code>    /* Legacy GS only supports Wave64. */
+    if ((stage == MESA_SHADER_VERTEX &amp;&amp; shader-&gt;key.ge.as_es &amp;&amp; !shader-&gt;key.ge.as_ngg) ||
+        (stage == MESA_SHADER_TESS_EVAL &amp;&amp; shader-&gt;key.ge.as_es &amp;&amp; !shader-&gt;key.ge.as_ngg) ||
+        (stage == MESA_SHADER_GEOMETRY &amp;&amp; !shader-&gt;key.ge.as_ngg))
+       return 64;</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/d5d3106ddde9b711ed3231c91f97a5a407836ba6/src/gallium/drivers/radeonsi/si_state_shaders.cpp#L49-53" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/d5d3106ddde9b711ed3231c91f97a5a407836ba6/src/gallium/drivers/radeonsi/si_state_shaders.cpp#L49-53</a></cite>
+</div>
+
+</blockquote>
+
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" rel="nofollow noreferrer" target="_blank">RDNA_Architecture_public.pdf</a></li>
+<li><a href="https://marina.sys.wakayama-u.ac.jp/~tokoi/?date=20090827" rel="nofollow noreferrer" target="_blank">床井研究室 - 第３回 シェーダプログラム</a></li>
+<li><a href="https://juln.hatenablog.com/entry/2021/05/13/181020" rel="nofollow noreferrer" target="_blank">GPU向けコンパイラの最適化の紹介と論文のサーベイ - Jicchoの箱</a></li>
+<li><a href="https://docs.nvidia.com/gameworks/content/developertools/desktop/analysis/report/cudaexperiments/sourcelevel/divergentbranch.htm" rel="nofollow noreferrer" target="_blank">Divergent Branch</a></li>
+</ul>
+
+</div>
+
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:radeonsi-wave64"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5524" rel="nofollow noreferrer" target="_blank">ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge requests · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:radeonsi-wave64"><sup>[return]</sup></a></li>
+<li id="fn:wave32-true"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13878/diffs?commit_id=676d4ddcf83a62973aad8062a34c7c838bfc8a4f#68ea09d61709a8690d922a47246019c3819579d7" rel="nofollow noreferrer" target="_blank">radeonsi: rework to make the wave size configurable per shader for fine-grained Wave32/64 selection (!13878) · Merge requests · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:wave32-true"><sup>[return]</sup></a></li>
+<li id="fn:piglit-fail-cs32"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/a0d330bedb9eb5668bc73c60e525f3c76d23a93a" rel="nofollow noreferrer" target="_blank">radeonsi/gfx10: enable Wave32 for vertex, geometry, and tessellation shaders (a0d330be) · Commits · Mesa / mesa · GitLab</a>
+ <a class="footnote-return" href="#fnref:piglit-fail-cs32"><sup>[return]</sup></a></li>
+<li id="fn:return-64"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/d5d3106ddde9b711ed3231c91f97a5a407836ba6/src/gallium/drivers/radeonsi/si_state_shaders.cpp#L46-47" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/d5d3106ddde9b711ed3231c91f97a5a407836ba6/src/gallium/drivers/radeonsi/si_state_shaders.cpp#L46-47</a>
+ <a class="footnote-return" href="#fnref:return-64"><sup>[return]</sup></a></li>
+</ol>
+</div>
+<div class="article-bottom-misc">
+  <div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a href="https://www.coelacanth-dream.com/about#contact" class="sb" target="_blank" rel="noreferrer noopener">Contact</a><a class="article-history sb" href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/11/27/radeonsi-wave32-rework.md" target="_blank" rel="noreferrer noopener">Changelog</a>
+</div>
+
+  <div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+      <div class="amzn_link_desc">GPU の歴史と周辺技術、プログラミングモデルやトレンドの変化が丁寧に解説されている。GPU の基本知識を得るのに最適。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+      <div class="amzn_link_desc">CPU の性能に大きく関わる機能やメモリ、各種 I/O、プロセス技術について解説されている。機能の利点と欠点を丁寧に、テンポ良く書いているため読みやすい。</div>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lainを観る | Prime Video</a>
+      <div class="amzn_link_desc">玲音を好きになりましょう。</div>
+  </div><br>
+
+  </div>
+</div>
+
+</article><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/ngg/" class="menu-tag-lower">NGG</a>
+      <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-tag-lower">RadeonSI</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-tag-lower">RDNA</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-lower">Software</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+    <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></div>
+</nav>
+<div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+  </div>
+</div>
+<footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+  <nav class="foot-search"><a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021&ensp;Umio-Yasuno
+  </small>
+<div class="hosted">
+  Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.82.1</a>
+</div>
+
+</footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-tag-title">Tag :</a>
+      <a href="https://www.coelacanth-dream.com/tags/ngg/" class="menu-tag-lower">NGG</a>
+      <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-tag-lower">RadeonSI</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-tag-lower">RDNA</a>
+      <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-tag-lower">RDNA 2</a>
+</div>
+<div class="menu-cat-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-lower">Software</a>
+</div>
+<div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
+<nav class="menu-about">
+    <a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
