@@ -62,7 +62,7 @@
 </nav>
 <div class="article-time">
     <time datetime="2021-11-27 00:00 &#43;0900" class="time-b">Post: 2021/11/27 00:00 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/11/27 17:09 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/11/27 19:29 &#43;0900</div>
   </div>
 
 <p>1年半近く前 (2020/07) に AMD のソフトウェアエンジニア、<a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏によって投稿されたパッチから、<strong>RadeonSI (OpenGL)</strong> ドライバーでは、Wave32 に対応する RDNA系アーキテクチャであっても、各シェーダーステージを Wave64モードで実行するようになっていた。<sup class="footnote-ref" id="fnref:radeonsi-wave64"><a href="#fn:radeonsi-wave64">1</a></sup><br />
@@ -103,6 +103,8 @@
 </div>
 
 
+<h2 id="wave32">Wave32</h2>
+
 <p>各シェーダーステージを Wave64 で実行するようにした際、<a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏 Wave32 より性能面で優れていると考えた理由として以下の項目を挙げていた。</p>
 
 <blockquote>
@@ -120,8 +122,6 @@
 </blockquote>
 
 <p>これはコード内にコメントで残されていたが、今回のリワークに伴い、実際のところは正しくなかった (<em>The big comment was not really true.</em>) として削除されている。<sup class="footnote-ref" id="fnref:wave32-true"><a href="#fn:wave32-true">2</a></sup></p>
-
-<h2 id="wave32">Wave32</h2>
 
 <h3 id="cs">Compute Shader</h3>
 
@@ -186,6 +186,10 @@ Waveサイズを指定するデバッグフラグが設定されていない場�
 <p>次の部分は少し複雑で、自分には追いつけない部分がある。<br />
 Tessellation Control Shader または Geometry Shader を実行するが、結果を GS copy shader で Pixel Shader に渡すことはしない場合を <code>merged_shader (true)</code> とし、<br />
 その条件から外れると同時に、(分岐による？) 発散性 (divergent) のあるループは Wave32 で実行するようになった。</p>
+
+<ul>
+<li>参考: <a href="https://juln.hatenablog.com/entry/2021/05/13/181020" rel="nofollow noreferrer" target="_blank">GPU向けコンパイラの最適化の紹介と論文のサーベイ - Jicchoの箱</a></li>
+</ul>
 
 <blockquote>
 <pre><code>    /* TODO: Merged shaders must use the same wave size because the driver doesn&#39;t recompile
