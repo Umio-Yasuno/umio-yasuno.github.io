@@ -21,8 +21,8 @@
   <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/11/27/radeonsi-wave32-rework/">
   <meta property="og:locale" content="ja_JP">
   <meta name="author" content="Umio Yasuno">
-  <meta name="copyright" content="&copy; 2019 - 2021&ensp;Umio-Yasuno">
-  <meta name="keywords" content="RadeonSI, RDNA, RDNA 2, NGGCoelacanth&#39;s Dream, ">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="RadeonSI, RDNA, RDNA 2, NGG, Coelacanth&#39;s Dream">
     <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
     <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
 
@@ -62,7 +62,7 @@
 </nav>
 <div class="article-time">
     <time datetime="2021-11-27 00:00 &#43;0900" class="time-b">Post: 2021/11/27 00:00 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/11/27 19:29 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/11/27 21:26 &#43;0900</div>
   </div>
 
 <p>1年半近く前 (2020/07) に AMD のソフトウェアエンジニア、<a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏によって投稿されたパッチから、<strong>RadeonSI (OpenGL)</strong> ドライバーでは、Wave32 に対応する RDNA系アーキテクチャであっても、各シェーダーステージを Wave64モードで実行するようになっていた。<sup class="footnote-ref" id="fnref:radeonsi-wave64"><a href="#fn:radeonsi-wave64">1</a></sup><br />
@@ -98,6 +98,7 @@
 <li><a href="#cs">Compute Shader</a></li>
 <li><a href="#ps">Pixel Shader</a></li>
 <li><a href="#divergent">Divergent loops</a></li>
+<li><a href="#shader-profile">Shader Profile</a></li>
 </ul></li>
 </ul>
 </div>
@@ -220,6 +221,8 @@ Wave32 ではアイドリング状態になる半分を排除でき、次の Wav
 <em>RDNA系 アーキテクチャ</em> では Wave64モードで実行する場合、命令を 2つの Wave32 に分割して実行する。<br />
 命令をある程度ブロックにまとめ、それを low と high に分割し、最初の low 群を実行、次に high 群を実行する Sub-Vectorモードも <em>RDNA系 アーキテクチャ</em> ではサポートされている。<br />
 2つの Wave32 に分割されるといっても、スカラ命令は 1回のみとなる。また Workgroup の最大サイズはスレッド (work-item) 数で決まっているため、Workgroup 内の Wave数は Wave32 の場合は 32 Wave、Wave64 の場合は 16 Wave となる。</p>
+
+<h3 id="shader-profile">Shader Profile</h3>
 
 <p>シェーダープロファイルによる Wave サイズの選択も、現時点では SPECviewperfベンチマークのみが対象だが、実装されている。<br />
 <a href="https://www.spec.org/gwpg/gpc.static/energy-02.html" rel="nofollow noreferrer" target="_blank">Viewperf/Energy</a> は Pixel Shader の部で挙げた Discard処理を含む Pixel Shader のコンパイルエラーが起きないため Wave32 で実行され、<br />
@@ -354,7 +357,7 @@ Wave32 ではアイドリング状態になる半分を排除でき、次の Wav
 <a href="https://www.coelacanth-dream.com/about#contact">Contact</a>
 </nav>
   <small class="copyright">
-    &copy; 2019 - 2021&ensp;Umio-Yasuno
+    &copy; 2019 - 2021 Umio-Yasuno
   </small>
 <div class="hosted">
   Hosted by
@@ -376,7 +379,7 @@ Wave32 ではアイドリング状態になる半分を排除でき、次の Wav
   <nav class="foot-search"><a class="s-search" href="https://www.coelacanth-dream.com/gh-search" rel="noopener noreferrer">Site Search by Github (Beta)</a>
 </nav>
   <small class="copyright">
-    &copy; 2019 - 2021&ensp;Umio-Yasuno
+    &copy; 2019 - 2021 Umio-Yasuno
   </small>
 <div class="hosted">
   Hosted by
