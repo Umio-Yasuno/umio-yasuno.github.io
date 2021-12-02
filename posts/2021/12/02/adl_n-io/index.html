@@ -5,22 +5,22 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <meta name="format-detection" content="telephone=no, address=no, email=no">
-  <base href="https://www.coelacanth-dream.com/posts/2021/08/12/intel-adl-pl4/">
+  <base href="https://www.coelacanth-dream.com/posts/2021/12/02/adl_n-io/">
   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
   <meta name="twitter:card" content="summary">
   <meta property="og:type" content="article">
-  <title>Alder Lake-P/M の PL4 参考値と Brya の設定値 | Coelacanth&#39;s Dream</title>
-  <meta property="og:title" content="Alder Lake-P/M の PL4 参考値と Brya の設定値 | Coelacanth&#39;s Dream">
-  <meta name="twitter:title" content="Alder Lake-P/M の PL4 参考値と Brya の設定値 | Coelacanth&#39;s Dream">
+  <title>Alder Lake-N の PCIe I/O 構成 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Alder Lake-N の PCIe I/O 構成 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Alder Lake-N の PCIe I/O 構成 | Coelacanth&#39;s Dream">
 
-  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/08/12/intel-adl-pl4/">
-  <meta name="description" content="Coreboot に、Alder Lake の PL4 (Power Limit 4) を ADLRVP (Reference Validation Platform)、Chromebook向けリファレンスボードである Brya に追加するパッチが投稿されている。 PL4 は">
-  <meta property="og:description" content="Coreboot に、Alder Lake の PL4 (Power Limit 4) を ADLRVP (Reference Validation Platform)、Chromebook向けリファレンスボードである Brya に追加するパッチが投稿されている。 PL4 は">
-  <meta name="twitter:description" content="Coreboot に、Alder Lake の PL4 (Power Limit 4) を ADLRVP (Reference Validation Platform)、Chromebook向けリファレンスボードである Brya に追加するパッチが投稿されている。 PL4 は">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/12/02/adl_n-io/">
+  <meta name="description" content="CPUID、DeviceID の追加に続いて、Intel の Usha P 氏により、Coreboot に Alder Lake-N の PCIe I/O 構成情報を追加するパッチが投稿、公開されている">
+  <meta property="og:description" content="CPUID、DeviceID の追加に続いて、Intel の Usha P 氏により、Coreboot に Alder Lake-N の PCIe I/O 構成情報を追加するパッチが投稿、公開されている">
+  <meta name="twitter:description" content="CPUID、DeviceID の追加に続いて、Intel の Usha P 氏により、Coreboot に Alder Lake-N の PCIe I/O 構成情報を追加するパッチが投稿、公開されている">
   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
-  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/08/12/intel-adl-pl4/">
-  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/08/12/intel-adl-pl4/">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/12/02/adl_n-io/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/12/02/adl_n-io/">
   <meta property="og:locale" content="ja_JP">
   <meta name="author" content="Umio Yasuno">
   <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
@@ -37,14 +37,14 @@
     <script type="application/ld+json">{
   "@context" : "https://schema.org/",
   "@type" : "Article",
-  "name"     : "Alder Lake-P/M の PL4 参考値と Brya の設定値",
-  "headline" : "Alder Lake-P/M の PL4 参考値と Brya の設定値",
+  "name"     : "Alder Lake-N の PCIe I/O 構成",
+  "headline" : "Alder Lake-N の PCIe I/O 構成",
   "author" : {
     "@type" : "Person",
     "name"  : "Umio Yasuno"
   },
-    "dateCreated"   : "2021-08-12",
-    "datePublished" : "2021-08-12",
+    "dateCreated"   : "2021-12-02",
+    "datePublished" : "2021-12-02",
     "dateModufied"  : "2021-12-02",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
@@ -59,155 +59,144 @@
     <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head-cat-lower">Intel</a></div><div class="head-cat-block">
     <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="head-cat-lower">Alder Lake</a>/<a href="https://www.coelacanth-dream.com/tags/coreboot/" class="head-cat-lower">Coreboot</a></div>
     </div>
-  <h1>Alder Lake-P/M の PL4 参考値と Brya の設定値</h1><nav class="article-share">
+  <h1>Alder Lake-N の PCIe I/O 構成</h1><nav class="article-share">
   <div class="share-button-links">
     <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
     <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></div>
 </nav>
 <div class="article-time">
-    <time datetime="2021-08-12 03:05 &#43;0900" class="time-b">Post: 2021/08/12 03:05 &#43;0900</time>
+    <time datetime="2021-12-02 01:37 &#43;0900" class="time-b">Post: 2021/12/02 01:37 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/12/02 21:46 &#43;0900</div>
-  </div><p>Coreboot に、<em>Alder Lake</em> の PL4 (Power Limit 4) を ADLRVP (Reference Validation Platform)、Chromebook向けリファレンスボードである Brya に追加するパッチが投稿されている。<br />
-PL4 は SoC、パッケージレベルの最大電力制限となり、電力管理機能は瞬間的にも消費電力が PL4、その基準となる電源アダプタやバッテリーの許容範囲を超えないよう先制的に動作クロック等を調整、制限することになる。<br />
-PL3/PL4 は、プロセッサのデータシートには記載されているもののデフォルトでは無効化されていたが、<em>Tiger Lake</em> の世代からサポート、有効化する向きを見せている。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/07/29/intel-tgl-pl4-support/">Intel Tiger Lake は &quot;Power Limit4&quot; をサポート | Coelacanth's Dream</a></span>
+  </div><p>CPUID、DeviceID の追加に続いて、Intel の <a href="https://review.coreboot.org/q/owner:usha.p%2540intel.com" rel="nofollow noreferrer" target="_blank">Usha P</a> 氏により、Coreboot に <em>Alder Lake-N</em> の PCIe I/O 構成情報を追加するパッチが投稿、公開されている。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/11/16/coreboot-intel-adl_n/">N バリアントも存在する Alder Lake | Coelacanth's Dream</a></span>
 </p>
 
 <ul>
-<li><a href="https://review.coreboot.org/c/coreboot/+/56915/1" rel="nofollow noreferrer" target="_blank">mb/google/brya: set PL4 value dynamically for thermal (I20b98ccd) · Gerrit Code Review</a></li>
-<li><a href="https://review.coreboot.org/c/coreboot/+/56916/1" rel="nofollow noreferrer" target="_blank">mb/google/brya/variants/brya0: add PL4 values for different SKUs (I095e9eda) · Gerrit Code Review</a></li>
-<li><a href="https://review.coreboot.org/c/coreboot/+/56917/1" rel="nofollow noreferrer" target="_blank">soc/intel/alderlake: set default PL4 values for differnt SKUs (I53791bad) · Gerrit Code Review</a></li>
-<li><a href="https://review.coreboot.org/c/coreboot/+/56976" rel="nofollow noreferrer" target="_blank">soc/intel/adl: Update power limits for ADL-M SKU (I40b9b3a5) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/59752/7/" rel="nofollow noreferrer" target="_blank">soc/intel/alderlake: Add support for ADL-N PCH (I7ebbcdcd) · Gerrit Code Review</a></li>
 </ul>
 
-<p>追加された PL4 の値を見てみると、<em>Alder Lake-P (2+8+2)</em> で 123W、<em>4+8+2</em> で 140W、<em>6+8+2</em> で 215W、<em>Alder Lake-M (2+8+2)</em> は 68W が設定されている。(2+8+2) といったフォーマットについては以前の記事を参照。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/05/26/adl-recent-info-2021-05-26/#adl-power">Alder Lake-P/M のステッピング、PL1/PL2 参考値 | Coelacanth's Dream</a></span>
+<p>コミットメッセージとパッチ内容によれば、<em>Alder Lake-N</em> では CPU側の PCIe root ports を持たず、PCH側は 12 PCIe root ports を持つが、PCIe clock sources、clock request signals は 5基となっているため、有効可能なのは 5-Ports までとされる。PCIe Lane 数は最大 9-Lanes だとコメントで触れられている。</p>
+
+<blockquote>
+<pre><code> soc/intel/alderlake: Add support for ADL-N PCH
+
+ Introduce the `SOC_INTEL_ALDERLAKE_PCH_N` Kconfig option and
+ use it to specify the correct amount of PCIe I/O.
+
+ Document number 645550 indicates that Alder Lake-N has
+ 12 PCH root ports and no CPU root ports.
+
+ Document number 645548 indicates ADL-N has 5 clock sources
+ and 5 clock request signals.</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/59752/8" rel="nofollow noreferrer" target="_blank">soc/intel/alderlake: Add support for ADL-N PCH (I7ebbcdcd) · Gerrit Code Review</a></cite>
+</div>
+
+</blockquote>
+
+<p>CPU側 PCIe は、<em>Alder Lake-S (Desktop)</em> では Gen5 8-Lanes x2・Gen4 4-Lanes x2、<em>Alder Lake-P (Mobile)</em> では Gen5 8-Lanes・Gen4 4-Lanes x2、<em>Alder Lake-M (Mobile)</em> では Gen4 4-Lanes をサポートするとされている。<br />
+<em>Alder Lake-N</em> は CPU側 PCIe を持たない構成となるが、これは現世代の Atomプロセッサ <a href="https://www.coelacanth-dream.com/tags/jasper_lake/">Elkhart/Jasper Lake</a> (<a href="https://www.coelacanth-dream.com/tags/tremont/">Tremont</a>) の構成に近い。</p>
+
+<p><em>Elkhart Lake</em> は組み込み向け、<em>Jasper Lake</em> はモバイル向けとなるが、Compute die と PCH die を 1つのパッケージに実装するという構成は共通する。<br />
+<em>Jasper Lake</em> の例では、Compute die には CPU Core、GPU、IPU (Image Processing Unit)、GNA、FIVR、メモリコントローラ/インターフェイス、ディスプレイコントローラ/インターフェイスが集積されており、<em>Ice Lake</em> と同じ Intel 10+nmプロセスで製造される。<br />
+PCH die にはその他各種 I/O が集積され、PCIe I/O は Gen3、最大 5-ports、最大 8-Lanes をサポートしている。製造プロセスは Intel 14nm。<sup class="footnote-ref" id="fnref:jsl-block-diagram"><a href="#fn:jsl-block-diagram">1</a></sup></p>
+
+<p><em>Alder Lake-N</em> のサポート追加に向けた他パッチから、<em>Alder Lake-N</em> は他バリアントと異なりハイブリッドコア構成を採らず、 <em>Gracemont (Atom/small)</em> のみの CPU構成になると考えられる。<br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/11/25/adl_n-atom-only/">Alder Lake-N は Atom系コアのみの構成か | Coelacanth's Dream</a></span>
+
+CPU構成、I/O 規模で言えば、<em>Alder Lake-N</em> は <em>Elkhart/Jasper Lake</em> の構成に近い。<br />
+<em>Jasper Lake</em> は TDP 6W・10W・15W の SKU が、<em>Elkhart Lake</em> は TDP 4.5-10W の SKU がラインナップされているが、<em>Alder Lake-N</em> も近い TDP (PL1) 設定になっているのではないかと思われる。</p>
+
+<p><em>Tiger Lake UP4</em> の後継になると目される <em>Alder Lake-M</em> は、現在 3種類の構成が Coreboot でサポートされている。<br />
+一番 PowerLimit が小さい 2+4+2 (big, small, GPU GT) 構成で PL1: 9W、PL2: 30W であり、<em>Alder Lake-N</em> はそれより PowerLimit を抑えた、低消費電力なバリアントとなる可能性がある。<sup class="footnote-ref" id="fnref:adl-m-power"><a href="#fn:adl-m-power">2</a></sup><br />
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/08/12/intel-adl-pl4/">Alder Lake-P/M の PL4 参考値と Brya の設定値 | Coelacanth's Dream</a></span>
 </p>
 
-<p><em>Alder Lake-M</em> については (2+4+2) の PL1/PL2 設定が後のパッチで追加された。</p>
-
-<blockquote>
-<pre><code>     register &#34;power_limits_config[ADL_P_POWER_LIMITS_282_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 15,
-         .tdp_pl2_override = 55,
-         .tdp_pl4 = 123,
-     }&#34;
-     register &#34;power_limits_config[ADL_P_POWER_LIMITS_482_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 28,
-         .tdp_pl2_override = 64,
-         .tdp_pl4 = 140,
-     }&#34;
-     register &#34;power_limits_config[ADL_P_POWER_LIMITS_682_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 45,
-         .tdp_pl2_override = 115,
-         .tdp_pl4 = 215,
-     }&#34;
-     register &#34;power_limits_config[ADL_M_POWER_LIMITS_282_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 9,
-         .tdp_pl2_override = 30,
-         .tdp_pl4 = 68,
-     }&#34;</code></pre>
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/56917/1/src/soc/intel/alderlake/chipset.cb" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/56917/1/src/soc/intel/alderlake/chipset.cb</a></cite>
-</div>
-
-</blockquote>
-
-<p>パッと見ての印象は高く、実際 <em>Tiger Lake-U (UP3/UP4)</em> と比べても高い値が設定されているのだが、気を付けなければならないのは、PL4 はパッケージレベルの電力制限であり、電源アダプタやバッテリーの許容範囲を超えないよう設定されたものであること、<br />
-そして上記引用部は、<em>Alder Lake-P/M</em> における各 Power Limit の参考値、あるいは最大値であることだ。</p>
+<p><em>Alder Lake-N</em> がモバイル向けにもリリースされるかは、<em>Alder Lake-P/M</em> とは異なる Model ID が割り当てられていることから、その可能性が低いように思える。<br />
+だが、元々 Atom系コアのみで構成されたプロセッサは <em>Elkhart/Jasper Lake</em> で最後になるという話があったが、それに反して <em>Alder Lake-N</em> の存在が浮かび上がってきたことから何らかの方針転換があったと思われ、今後どう展開されるかは判然としない。<sup class="footnote-ref" id="fnref:only-atom"><a href="#fn:only-atom">3</a></sup></p>
 
 <table>
 <thead>
 <tr>
-<th align="left"></th>
-<th align="center">Tiger Lake-U</th>
-<th align="center">Tiger Lake-H</th>
-<th align="center">Alder Lake-P<br>(ADLRVP)</th>
-<th align="center">Alder Lake-M</th>
+<th align="left">Alder Lake</th>
+<th align="center">-S</th>
+<th align="center">-P</th>
+<th align="center">-M</th>
+<th align="center">-N</th>
 </tr>
 </thead>
 
 <tbody>
 <tr>
-<td align="left">PL1</td>
-<td align="center">UP3: &lt;=28W<br>UP4: &lt;=9W</td>
-<td align="center">&lt;=45W</td>
-<td align="center">(2+8+2): &lt;=15W<br>(4+8+2): &lt;=28W<br>(6+8+2): &lt;=45W</td>
-<td align="center">(2+8+2): &lt;=15W<br>(2+4+2) 9W</td>
+<td align="left">Variant (Model)</td>
+<td align="center">Desktop (0x97)</td>
+<td align="center">Mobile (0x9A)</td>
+<td align="center">Mobile (0x9A)</td>
+<td align="center">Embedded? (0xBE)</td>
 </tr>
 
 <tr>
-<td align="left">PL2</td>
-<td align="center">UP3: &lt;=38W (2C), &lt;=60W (4C) <br> UP4: &lt;=35W (2C), &lt;=40W (4C)</td>
-<td align="center">107-135W</td>
-<td align="center">(2+8+2): &lt;=55W<br>(4+8+2): &lt;=64W<br>(6+8+2): &lt;=115W</td>
-<td align="center">(2+8+2): &lt;=45W<br>(2+4+2): &lt;=30W</td>
+<td align="left">CPU (big + small)</td>
+<td align="center">8 + 8</td>
+<td align="center">6 + 8</td>
+<td align="center">2 + 8</td>
+<td align="center">0 + ?</td>
 </tr>
 
 <tr>
-<td align="left">PL4</td>
-<td align="center">UP3: &lt;=71W (2C), &lt;=105W (4C) <br> UP4: &lt;=66W (2C), &lt;=83W (4C)</td>
+<td align="left">GPU (Gen12.2)</td>
+<td align="center">GT1 32EU</td>
+<td align="center">GT2 96EU</td>
+<td align="center">GT2 96EU</td>
+<td align="center">GT2 96EU?</td>
+</tr>
+
+<tr>
+<td align="left">CPU PCIe</td>
+<td align="center">Gen5 8L x2,<br>Gen4 4L x2</td>
+<td align="center">Gen5 8L,<br>Gen4 4L x2</td>
+<td align="center">Gen4 4L ?</td>
+<td align="center">N/A</td>
+</tr>
+
+<tr>
+<td align="left">TDP (PL1)</td>
+<td align="center">-</td>
+<td align="center">15-45W</td>
+<td align="center">9-15W ?</td>
 <td align="center"></td>
-<td align="center">(2+8+2): &lt;=123W <br> (4+8+2): &lt;=140W <br> (6+8+2): &lt;=215W</td>
-<td align="center">(2+8+2): &lt;=68W</td>
 </tr>
 </tbody>
 </table>
 
-<p>そして、<em>Alder Lake-P/M</em> を搭載する Chromebook のリファレンスボードとなる <strong>Brya0</strong> の構成ファイルを見ると、以下のように上とは異なる低い値が設定されている。</p>
+<div class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://review.coreboot.org/q/topic:ADL_N_UPSTREAM" rel="nofollow noreferrer" target="_blank">topic:ADL_N_UPSTREAM · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/49136/8" rel="nofollow noreferrer" target="_blank">soc/intel/alderlake: Refactor SoC code to maintain CPU and PCH PCIE RPs (I92123450) · Gerrit Code Review</a></li>
+</ul>
 
-<blockquote>
-<pre><code> const struct cpu_power_limits limits[] = {
-     /* SKU_ID, pl1_min, pl1_max, pl2_min, pl2_max, pl4 */
-     /* All values are for baseline config as per bug:191906315 comment #10 */
-     { PCI_DEVICE_ID_INTEL_ADL_P_ID_7, 3000, 15000, 39000, 39000, 100000},
-     { PCI_DEVICE_ID_INTEL_ADL_P_ID_5, 4000, 28000, 43000, 43000, 105000},
-     { PCI_DEVICE_ID_INTEL_ADL_P_ID_3, 5000, 45000, 80000, 80000, 159000},
- };</code></pre>
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/56916/1/src/mainboard/google/brya/variants/brya0/ramstage.c" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/56916/1/src/mainboard/google/brya/variants/brya0/ramstage.c</a></cite>
 </div>
 
-</blockquote>
+<div class="footnotes">
 
-<p>PL1 から想定している <em>Alder Lake-P</em> のコア構成を推測し、整理した表が以下。<br />
-<strong>Brya0</strong> の設定は控えめなものと言え、PL1 が同じ <em>Alder Lake-P (4+8+2)</em> と <em>Tiger Lake-U (UP3) 4-Core</em> の参考値と比べても低く、PL4 は同じ値となる。</p>
+<hr />
 
-<table>
-<thead>
-<tr>
-<th align="left"></th>
-<th align="center">Alder Lake-P<br>(brya0, Chromebook reference board)</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td align="left">PL1</td>
-<td align="center">(2+8+2)?: 3-15W <br> (4+8+2)?: 4-28W <br> (6+8+2)?: 5-45W</td>
-</tr>
-
-<tr>
-<td align="left">PL2</td>
-<td align="center">(2+8+2)?: 39W <br> (4+8+2)?: 43W <br> (6+8+2)?: 80W</td>
-</tr>
-
-<tr>
-<td align="left">PL4</td>
-<td align="center">(2+8+2)?: 100W <br> (4+8+2)?: 105W <br> (6+8+2)?: 159W</td>
-</tr>
-</tbody>
-</table>
-
-<p>結局のところ Power Limit はボードと冷却システムを設計する OEMベンダー次第となり、参考値、あるいは最大値だけを見て <em>Alder Lake-P/M</em> の消費電力を判断するのは危険だろう、というのが自分の意見となる。<br />
-<em>Tiger Lake</em> の時点でそういった話があったが、電源供給部や冷却システムの設計が性能により影響する点ではユーザーが混乱しやすく、それはそれで別の意見が出てくるかもしれないが、自分はレビュアーでもなければ、優秀な消費者という訳でもないため、そういったことに関して自分に言えることはそうないと感じている。</p>
+<ol>
+<li id="fn:jsl-block-diagram"><a href="https://edc.intel.com/content/www/us/en/design/ipla/software-development-platforms/servers/platforms/intel-pentium-silver-and-intel-celeron-processors-datasheet-volume-1-of-2/005/block-diagram/" rel="nofollow noreferrer" target="_blank">Block Diagram - 005 - ID:633935 | Intel® Pentium® Silver and Intel® Celeron® Processors Datasheet, Volume 1</a>
+ <a class="footnote-return" href="#fnref:jsl-block-diagram"><sup>[return]</sup></a></li>
+<li id="fn:adl-m-power"><a href="https://github.com/coreboot/coreboot/blob/0c54461cf99010d9ebeae869f0a486b0268ec860/src/soc/intel/alderlake/chipset.cb#L29-L43" rel="nofollow noreferrer" target="_blank">coreboot/chipset.cb at 0c54461cf99010d9ebeae869f0a486b0268ec860 · coreboot/coreboot</a>
+ <a class="footnote-return" href="#fnref:adl-m-power"><sup>[return]</sup></a></li>
+<li id="fn:only-atom"><a href="https://ascii.jp/elem/000/004/040/4040489/3/" rel="nofollow noreferrer" target="_blank">ASCII.jp：最後のAtomとなるChromebook向けプロセッサーのJasper Lake　インテル CPUロードマップ (3/3)</a>
+ <a class="footnote-return" href="#fnref:only-atom"><sup>[return]</sup></a></li>
+</ol>
+</div>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
   <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
 </div>
 <a href="https://www.coelacanth-dream.com/about#contact"  class="sb" target="_blank" rel="noopener noreferrer">Contact</a>
-<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/08/12/intel-adl-pl4.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/12/02/adl_n-io.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
 </div><div class="amzn">
   <div class="amzn_head">Amazonアソシエイト</div>
   <div class="amzn_links">
