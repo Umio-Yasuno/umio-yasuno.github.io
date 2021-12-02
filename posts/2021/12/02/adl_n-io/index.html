@@ -66,7 +66,7 @@
 </nav>
 <div class="article-time">
     <time datetime="2021-12-02 01:37 &#43;0900" class="time-b">Post: 2021/12/02 01:37 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/12/02 21:46 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/12/02 22:24 &#43;0900</div>
   </div><p>CPUID、DeviceID の追加に続いて、Intel の <a href="https://review.coreboot.org/q/owner:usha.p%2540intel.com" rel="nofollow noreferrer" target="_blank">Usha P</a> 氏により、Coreboot に <em>Alder Lake-N</em> の PCIe I/O 構成情報を追加するパッチが投稿、公開されている。<br />
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/11/16/coreboot-intel-adl_n/">N バリアントも存在する Alder Lake | Coelacanth's Dream</a></span>
 </p>
@@ -98,14 +98,17 @@
 <em>Alder Lake-N</em> は CPU側 PCIe を持たない構成となるが、これは現世代の Atomプロセッサ <a href="https://www.coelacanth-dream.com/tags/jasper_lake/">Elkhart/Jasper Lake</a> (<a href="https://www.coelacanth-dream.com/tags/tremont/">Tremont</a>) の構成に近い。</p>
 
 <p><em>Elkhart Lake</em> は組み込み向け、<em>Jasper Lake</em> はモバイル向けとなるが、Compute die と PCH die を 1つのパッケージに実装するという構成は共通する。<br />
-<em>Jasper Lake</em> の例では、Compute die には CPU Core、GPU、IPU (Image Processing Unit)、GNA、FIVR、メモリコントローラ/インターフェイス、ディスプレイコントローラ/インターフェイスが集積されており、<em>Ice Lake</em> と同じ Intel 10+nmプロセスで製造される。<br />
+<em>Jasper Lake</em> の例では、Compute die には Tremont 4-Core CPU、Gen11 32EU GPU、IPU (Image Processing Unit)、GNA、FIVR、メモリコントローラ/インターフェイス、ディスプレイコントローラ/インターフェイスが集積されており、<em>Ice Lake</em> と同じ Intel 10+nmプロセスで製造される。<br />
 PCH die にはその他各種 I/O が集積され、PCIe I/O は Gen3、最大 5-ports、最大 8-Lanes をサポートしている。製造プロセスは Intel 14nm。<sup class="footnote-ref" id="fnref:jsl-block-diagram"><a href="#fn:jsl-block-diagram">1</a></sup></p>
 
-<p><em>Alder Lake-N</em> のサポート追加に向けた他パッチから、<em>Alder Lake-N</em> は他バリアントと異なりハイブリッドコア構成を採らず、 <em>Gracemont (Atom/small)</em> のみの CPU構成になると考えられる。<br />
+<p><em>Alder Lake-N</em> のサポート追加に向けた他パッチから、<em>Alder Lake-N</em> は他バリアントと異なりハイブリッドコア構成を採らず、 <em>Gracemont (Atom/small)</em> のみの CPU構成になるとされる。<br />
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/11/25/adl_n-atom-only/">Alder Lake-N は Atom系コアのみの構成か | Coelacanth's Dream</a></span>
 
-CPU構成、I/O 規模で言えば、<em>Alder Lake-N</em> は <em>Elkhart/Jasper Lake</em> の構成に近い。<br />
+CPU構成、I/O 規模で言えば、<em>Alder Lake-N</em> は <em>Elkhart/Jasper Lake</em> の構成に近いと言える。<br />
 <em>Jasper Lake</em> は TDP 6W・10W・15W の SKU が、<em>Elkhart Lake</em> は TDP 4.5-10W の SKU がラインナップされているが、<em>Alder Lake-N</em> も近い TDP (PL1) 設定になっているのではないかと思われる。</p>
+
+<p>ただ <em>Elkhart/Jasper Lake</em> の GPU部は Gen11 32EU が最大だったのに対し、<em>Alder Lake-N</em> は DeviceID から最大 Gen12 96EU の構成になるとされるため、GPU部の規模は大きく異なる。<br />
+また、<em>Elkhart/Jasper Lake</em> は最大 4-Core、L2キャッシュを共有するクラスタは 1基となる構成だったが、<em>Alder Lake</em> の他バリアントでは <em>Gracemont (Atom/small)</em> コアを最大 8-Core、クラスタ 2基の構成であるため、<em>Alder Lake-N</em> もそれを踏襲することも考えられる。</p>
 
 <p><em>Tiger Lake UP4</em> の後継になると目される <em>Alder Lake-M</em> は、現在 3種類の構成が Coreboot でサポートされている。<br />
 一番 PowerLimit が小さい 2+4+2 (big, small, GPU GT) 構成で PL1: 9W、PL2: 30W であり、<em>Alder Lake-N</em> はそれより PowerLimit を抑えた、低消費電力なバリアントとなる可能性がある。<sup class="footnote-ref" id="fnref:adl-m-power"><a href="#fn:adl-m-power">2</a></sup><br />
