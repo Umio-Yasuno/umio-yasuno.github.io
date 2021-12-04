@@ -45,7 +45,7 @@
   },
     "dateCreated"   : "2021-11-27",
     "datePublished" : "2021-11-27",
-    "dateModufied"  : "2021-12-02",
+    "dateModufied"  : "2021-12-05",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -69,7 +69,7 @@
 </nav>
 <div class="article-time">
     <time datetime="2021-11-27 00:00 &#43;0900" class="time-b">Post: 2021/11/27 00:00 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/12/02 00:45 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/12/05 08:26 &#43;0900</div>
   </div>
 
 <p>1年半近く前 (2020/07) に AMD のソフトウェアエンジニア、<a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏によって投稿されたパッチから、<strong>RadeonSI (OpenGL)</strong> ドライバーでは、Wave32 に対応する RDNA系アーキテクチャであっても、各シェーダーステージを Wave64モードで実行するようになっていた。<sup class="footnote-ref" id="fnref:radeonsi-wave64"><a href="#fn:radeonsi-wave64">1</a></sup><br />
@@ -134,7 +134,7 @@
 <p><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" rel="nofollow noreferrer" target="_blank">RDNA_Architecture_public.pdf</a> では元より Compute Shader は通常 Wave32 を選択されるとしていたが、Wave32 で実行すると OpenGL のテストスイートである <a href="https://gitlab.freedesktop.org/mesa/piglit" rel="nofollow noreferrer" target="_blank">piglit</a> が失敗することから <strong>RadeonSI</strong> では Wave64 で実行するようになっていた。<sup class="footnote-ref" id="fnref:piglit-fail-cs32"><a href="#fn:piglit-fail-cs32">3</a></sup></p>
 
 <p>それが今回、Workgroup のサイズが小さい場合は Wave32 で実行するように変更された。<br />
-Waveサイズを指定するデバッグフラグが設定されていない場合は、以前同様 Compute Shader は Wave64 で実行される。</p>
+Workgroup が十分に大きく、かつ Waveサイズを指定するデバッグフラグが設定されていない場合は、以前同様 Compute Shader は Wave64 で実行される。</p>
 
 <blockquote>
 <pre tabindex="0"><code> +   /* Small workgroups use Wave32 unconditionally. */
