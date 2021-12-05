@@ -70,185 +70,170 @@
 <div class="article-time">
     <time datetime="2021-07-02 06:26 &#43;0900" class="time-b">Post: 2021/07/02 06:26 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/11/15 22:28 &#43;0900</div>
-  </div>
-
-<p>intel-gfx メーリングリストに、Linux Kernel部の Intel GPU ドライバーに <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+  </div><p>intel-gfx メーリングリストに、Linux Kernel部の Intel GPU ドライバーに <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
  SDV (Software Development Vehicle)</em> 、 <em>DG2 (<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 )</em> プラットフォームのサポートを追加する一連のパッチが投稿、公開された。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-July/270869.html" rel="nofollow noreferrer" target="_blank">[Intel-gfx] [PATCH 00/53] Begin enabling Xe_HP SDV and DG2 platforms</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-July/270869.html">[Intel-gfx] [PATCH 00/53] Begin enabling Xe_HP SDV and DG2 platforms</a></li>
 </ul>
-
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
 /<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
-</em> は、パッチを公開し、オープンソースソフトウェアにサポートを追加する段階まで進んだらしく、Linux Kernel 以外にも OpenCLコンパイラ <a href="https://github.com/intel/intel-graphics-compiler" rel="nofollow noreferrer" target="_blank">intel-graphics-compiler</a> 等にもパッチが投稿され、すでにメインラインに取り込まれている。<br />
+</em> は、パッチを公開し、オープンソースソフトウェアにサポートを追加する段階まで進んだらしく、Linux Kernel 以外にも OpenCLコンパイラ <a href="https://github.com/intel/intel-graphics-compiler">intel-graphics-compiler</a> 等にもパッチが投稿され、すでにメインラインに取り込まれている。<br>
 User Mode Driver (UMD) である Mesa3D には、 <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
-</em> で大幅に設計が見直されたとするデータポート <em>LSC (Load Store Cache)</em> のサポートを追加するパッチが投稿されている。<sup class="footnote-ref" id="fnref:lsc"><a href="#fn:lsc">1</a></sup></p>
-
+</em> で大幅に設計が見直されたとするデータポート <em>LSC (Load Store Cache)</em> のサポートを追加するパッチが投稿されている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <p>今回の一連のパッチではまだ実際に動作させることはできないが、今後 LMEM (Local Memory) や GuC (Graphics microController) ファームウェア、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
 </em> が採るマルチタイルアーキテクチャ、それと GPUコアの外部に搭載されると思われる専用のコンピュートエンジンなどのサポートは将来的に追加する予定にあると、パッチのコメントで語られている。</p>
-
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
  アーキテクチャ</em> は GPU IPバージョンに Gen12.5、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
  アーキテクチャ</em> には Gen12.55 が割り当てられている。</p>
-
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
- アーキテクチャ</em> では Gen9アーキテクチャまでの &quot;Slice(s)&quot; という概念が無くなり、新たなコンセプトに GSlice (Geometry Slice), CSlice (Compute Slice), MSlice (Memory Slice) が導入されているとしている。コードを読むに <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
- アーキテクチャ</em> も同様のコンセプトが導入している。<br />
-Slice(s) は一部の固定ユニットと L3 Data Cache、EU (Execution Unit) をまとめた Sub-Slice を複数持つクラスタであり、AMD GPU アーキテクチャにおける Shader Engine が意味や役割としては近いだろう。<br />
-<em>Gen11 アーキテクチャ</em> から複数の Slice が Intel GPU に搭載されることはなくなり、単一の Slice に従来の Intel GPU よりも多い Sub-Slice を搭載する形となっていたため、以前より Slice という単語が持つ意味は薄くなっていた。<br />
+ アーキテクチャ</em> では Gen9アーキテクチャまでの &ldquo;Slice(s)&rdquo; という概念が無くなり、新たなコンセプトに GSlice (Geometry Slice), CSlice (Compute Slice), MSlice (Memory Slice) が導入されているとしている。コードを読むに <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+ アーキテクチャ</em> も同様のコンセプトが導入している。<br>
+Slice(s) は一部の固定ユニットと L3 Data Cache、EU (Execution Unit) をまとめた Sub-Slice を複数持つクラスタであり、AMD GPU アーキテクチャにおける Shader Engine が意味や役割としては近いだろう。<br>
+<em>Gen11 アーキテクチャ</em> から複数の Slice が Intel GPU に搭載されることはなくなり、単一の Slice に従来の Intel GPU よりも多い Sub-Slice を搭載する形となっていたため、以前より Slice という単語が持つ意味は薄くなっていた。<br>
 また、<em>Gen12/<span class="xe-gpu-arch">X<sup>e</sup></span>
- アーキテクチャ</em> からは Sub-Slice あたりの EU数が、従来の倍となる 16基となり、それを理由とするのか、Sub-Slice を Dual Sub-Slice と呼ぶようになった。<br />
+ アーキテクチャ</em> からは Sub-Slice あたりの EU数が、従来の倍となる 16基となり、それを理由とするのか、Sub-Slice を Dual Sub-Slice と呼ぶようになった。<br>
 <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/G</span>
  アーキテクチャ</em> では巨大な Dual Sub-Slice のプールを持ち、それを GSlice/CSlice/MSlice に分割して割り当てる形となるようだが、まだ多くはわかっていない。</p>
-
 <h2 id="xe-hpg">2つのバリアントが存在する <span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </h2>
-
-<p><em>DG2</em> ではディスプレイIP に <em>Alder Lake-P</em> と同じ <em>Xe_LPD (Display13)</em> を採用している。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/29/intel-display13/">Linux Kernel に 「Intel Display13」をサポートする最初のパッチが投稿される | Coelacanth's Dream</a></span>
+<p><em>DG2</em> ではディスプレイIP に <em>Alder Lake-P</em> と同じ <em>Xe_LPD (Display13)</em> を採用している。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/01/29/intel-display13/">Linux Kernel に 「Intel Display13」をサポートする最初のパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p>そして、<em>DG2</em> には <em>DG2-G10</em> と <em>DG2-G11</em> の 2つのバリアントが存在し、それらのハードウェアステッピングは一方から続くものではない、珍しい方式となっている。<br />
+<p>そして、<em>DG2</em> には <em>DG2-G10</em> と <em>DG2-G11</em> の 2つのバリアントが存在し、それらのハードウェアステッピングは一方から続くものではない、珍しい方式となっている。<br>
 バリアント間の違いは今の所、ハードウェアに存在する細かなバグとそれに対する回避策 (ワークアラウンド) くらいしかわからない。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-July/270876.html" rel="nofollow noreferrer" target="_blank">[Intel-gfx] [PATCH 24/53] drm/i915/dg2: add DG2 platform info</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-July/270876.html">[Intel-gfx] [PATCH 24/53] drm/i915/dg2: add DG2 platform info</a></li>
 </ul>
-
 <p>個人的な感覚で言えば <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/G</span>
  アーキテクチャ</em> は、<em>Gen11 アーキテクチャ</em> から <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-Gen12.[0-2] アーキテクチャ</em> へ進んだ時以上に、多くの機能や概念が導入されており、正直ちゃんと読めていない部分が多い。<br />
+Gen12.[0-2] アーキテクチャ</em> へ進んだ時以上に、多くの機能や概念が導入されており、正直ちゃんと読めていない部分が多い。<br>
 全体的な構成とリソースの割り当て方法が変更され、データポートも EU内の実行パイプラインも刷新されている。ディスクリート GPU 向けの <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/G</span>
- アーキテクチャ</em> には、統合 GPU を前提としていた従来の Intel GPU アーキテクチャでは推し量れない部分が多くある。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/">Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth's Dream</a></span>
+ アーキテクチャ</em> には、統合 GPU を前提としていた従来の Intel GPU アーキテクチャでは推し量れない部分が多くある。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/">Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth&rsquo;s Dream</a></span>
 
 そうした部分を Intel GPUアーキテクトがどういった意図で設計、搭載したのか――公式の発表、ドキュメント、あるいはパッチ、どのような形であれ明かされる時が楽しみだ。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">Intel GPU</th>
-<th align="center">Graphics IP ver</th>
-<th align="center">Display IP ver</th>
-<th align="center">Media IP ver</th>
+<th style="text-align:left">Intel GPU</th>
+<th style="text-align:center">Graphics IP ver</th>
+<th style="text-align:center">Display IP ver</th>
+<th style="text-align:center">Media IP ver</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Tiger Lake,<br>Rocket Lake?</td>
-<td align="center">Gen12</td>
-<td align="center">Gen12</td>
-<td align="center">Gen12</td>
+<td style="text-align:left">Tiger Lake,<br>Rocket Lake?</td>
+<td style="text-align:center">Gen12</td>
+<td style="text-align:center">Gen12</td>
+<td style="text-align:center">Gen12</td>
 </tr>
-
 <tr>
-<td align="left">DG1</td>
-<td align="center">Gen12.1</td>
-<td align="center">Gen12</td>
-<td align="center">Gen12</td>
+<td style="text-align:left">DG1</td>
+<td style="text-align:center">Gen12.1</td>
+<td style="text-align:center">Gen12</td>
+<td style="text-align:center">Gen12</td>
 </tr>
-
 <tr>
-<td align="left">Alder Lake-S</td>
-<td align="center">Gen12</td>
-<td align="center">Gen12</td>
-<td align="center">Gen12.2<sup class="footnote-ref" id="fnref:gen12-2"><a href="#fn:gen12-2">2</a></sup></td>
+<td style="text-align:left">Alder Lake-S</td>
+<td style="text-align:center">Gen12</td>
+<td style="text-align:center">Gen12</td>
+<td style="text-align:center">Gen12.2<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
 </tr>
-
 <tr>
-<td align="left">Alder Lake-P</td>
-<td align="center">Gen12</td>
-<td align="center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd">XE_LPD</a>)</td>
-<td align="center">Gen12.2<sup class="footnote-ref" id="fnref:gen12-2"><a href="#fn:gen12-2">2</a></sup></td>
+<td style="text-align:left">Alder Lake-P</td>
+<td style="text-align:center">Gen12</td>
+<td style="text-align:center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd">XE_LPD</a>)</td>
+<td style="text-align:center">Gen12.2<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
 </tr>
-
 <tr>
-<td align="left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
 </td>
-<td align="center">Gen12.5</td>
-<td align="center">-</td>
-<td align="center">Gen12.5</td>
+<td style="text-align:center">Gen12.5</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">Gen12.5</td>
 </tr>
-
 <tr>
-<td align="left"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </td>
-<td align="center">Gen12.55</td>
-<td align="center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd">XE_LPD</a>)</td>
-<td align="center">Gen12.55</td>
+<td style="text-align:center">Gen12.55</td>
+<td style="text-align:center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd">XE_LPD</a>)</td>
+<td style="text-align:center">Gen12.55</td>
 </tr>
 </tbody>
 </table>
-
 <table>
 <thead>
 <tr>
-<th align="left"><span class="xe-gpu-arch">X<sup>e</sup></span>
+<th style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span>
  EU</th>
-<th align="center"></th>
-<th align="center"></th>
-<th align="center">Issue Port 0</th>
-<th align="center">IP 1</th>
-<th align="center">IP 2</th>
-<th align="center">IP 3</th>
-<th align="center">IP 4?</th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center">Issue Port 0</th>
+<th style="text-align:center">IP 1</th>
+<th style="text-align:center">IP 2</th>
+<th style="text-align:center">IP 3</th>
+<th style="text-align:center">IP 4?</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
+<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
 </td>
-<td align="center">Branch<br>(Control Flow)</td>
-<td align="center">Send</td>
-<td align="center">Short<br>(INT /FP)</td>
-<td align="center">Math</td>
-<td align="center">-</td>
-<td align="center">-</td>
-<td align="center">-</td>
+<td style="text-align:center">Branch<br>(Control Flow)</td>
+<td style="text-align:center">Send</td>
+<td style="text-align:center">Short<br>(INT /FP)</td>
+<td style="text-align:center">Math</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
 </td>
-<td align="center"></td>
-<td align="center">Send</td>
-<td align="center">INT? (int8/16/32)<br> /Branch?</td>
-<td align="center">Math?</td>
-<td align="center">DPAS?</td>
-<td align="center">Long?<br>(Int64 /FP64)</td>
-<td align="center">FP?<br>(FP16/32, BF16)</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Send</td>
+<td style="text-align:center">INT? (int8/16/32)<br> /Branch?</td>
+<td style="text-align:center">Math?</td>
+<td style="text-align:center">DPAS?</td>
+<td style="text-align:center">Long?<br>(Int64 /FP64)</td>
+<td style="text-align:center">FP?<br>(FP16/32, BF16)</td>
 </tr>
-
 <tr>
-<td align="left"></td>
-<td align="center">In-Order</td>
-<td align="center">Out-of-Order</td>
-<td align="center">In-Order</td>
-<td align="center">Out-of-Order</td>
-<td align="center">Out-of-Order</td>
-<td align="center">In-Order</td>
-<td align="center">In-Order</td>
+<td style="text-align:left"></td>
+<td style="text-align:center">In-Order</td>
+<td style="text-align:center">Out-of-Order</td>
+<td style="text-align:center">In-Order</td>
+<td style="text-align:center">Out-of-Order</td>
+<td style="text-align:center">Out-of-Order</td>
+<td style="text-align:center">In-Order</td>
+<td style="text-align:center">In-Order</td>
+</tr>
+<tr>
+<td style="text-align:left"><span class="thread-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/f5e9e3dcda319339b82f1171c7e55add46884036/visa/iga/IGALibrary/IR/RegDeps.cpp#L100">intel-graphics-compiler/RegDeps.cpp at f5e9e3dcda319339b82f1171c7e55add46884036 · intel/intel-graphics-compiler</a></span>
+</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-
-<span class="thread-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/f5e9e3dcda319339b82f1171c7e55add46884036/visa/iga/IGALibrary/IR/RegDeps.cpp#L100" rel="nofollow noreferrer" target="_blank">intel-graphics-compiler/RegDeps.cpp at f5e9e3dcda319339b82f1171c7e55add46884036 · intel/intel-graphics-compiler</a></span>
-
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:lsc"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/11600" rel="nofollow noreferrer" target="_blank">intel/compiler: Add support for the LSC (!11600) · Merge requests · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:lsc"><sup>[return]</sup></a></li>
-<li id="fn:gen12-2"><a href="https://github.com/intel/vaapi-fits/pull/306" rel="nofollow noreferrer" target="_blank">Add tests to detect and check MFX runtime. by uartie · Pull Request #306 · intel/vaapi-fits</a>
- <a class="footnote-return" href="#fnref:gen12-2"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/11600">intel/compiler: Add support for the LSC (!11600) · Merge requests · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/intel/vaapi-fits/pull/306">Add tests to detect and check MFX runtime. by uartie · Pull Request #306 · intel/vaapi-fits</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

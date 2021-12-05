@@ -70,84 +70,84 @@
 <div class="article-time">
     <time datetime="2021-01-07 13:29 &#43;0900" class="time-b">Post: 2021/01/07 13:29 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/01/07 17:48 &#43;0900</div>
-  </div><p><a href="https://github.com/GPUOpen-Drivers" rel="nofollow noreferrer" target="_blank">GPUOpenドライバー</a> とそれを構成する各種ソフトウェア (LLPC, XGL, PAL) がアップデートされた。<br />
-AMDVLKドライバーでは、<strong>RADV</strong> ドライバーとの切り換えが可能となった。<sup class="footnote-ref" id="fnref:amdvlk"><a href="#fn:amdvlk">1</a></sup><br />
+  </div><p><a href="https://github.com/GPUOpen-Drivers">GPUOpenドライバー</a> とそれを構成する各種ソフトウェア (LLPC, XGL, PAL) がアップデートされた。<br>
+AMDVLKドライバーでは、<strong>RADV</strong> ドライバーとの切り換えが可能となった。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 他には、<a href="https://www.coelacanth-dream.com/tags/sienna_cichlid">Sienna Cichlid/Navi21</a> への最適化、各種問題の修正、ヘッダーのアップデート、そして Task/Mesh Shader の対応が行なわれている。</p>
-
 <ul>
-<li><a href="https://github.com/GPUOpen-Drivers/llpc/commit/44a22a1e3af35c3209c149c871897fac2b3d6e17" rel="nofollow noreferrer" target="_blank">Update llpc from commit: 2e5cf60e5 · GPUOpen-Drivers/llpc@44a22a1</a></li>
-<li><a href="https://github.com/GPUOpen-Drivers/pal/commit/26cb05f899cc587f9398399a3381ee22ab41f4c2" rel="nofollow noreferrer" target="_blank">Update pal from commit: 5cece43a1 · GPUOpen-Drivers/pal@26cb05f</a></li>
-<li><a href="https://github.com/GPUOpen-Drivers/xgl/commit/86f61a31988a626371131a1633547b0d0ebfcfcb" rel="nofollow noreferrer" target="_blank">Update xgl from commit: 32c048be33 · GPUOpen-Drivers/xgl@86f61a3</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/llpc/commit/44a22a1e3af35c3209c149c871897fac2b3d6e17">Update llpc from commit: 2e5cf60e5 · GPUOpen-Drivers/llpc@44a22a1</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/pal/commit/26cb05f899cc587f9398399a3381ee22ab41f4c2">Update pal from commit: 5cece43a1 · GPUOpen-Drivers/pal@26cb05f</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/xgl/commit/86f61a31988a626371131a1633547b0d0ebfcfcb">Update xgl from commit: 32c048be33 · GPUOpen-Drivers/xgl@86f61a3</a></li>
 </ul>
-
 <p>以前、<a href="https://www.coelacanth-dream.com/tags/aco">ACOバックエンド</a> を開発する、Valve の Timur Kristóf 氏が、XDC2020 の発表にて、Mesh Shader は <em>NGG</em> で実行できる <em>可能性</em> がある、と述べていた。</p>
+<p><em>NGG/Primitve Shader</em> はハードウェア側に新設されたシェーダーステージであり、それまでのバーテックスシェーダー (Vertex Shader, VS)、ジオメトリシェーダー (Geometry Shader, GS) が統合されており、それらを置き換えるものとなる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/">ACOバックエンドでも NGG をサポートする動き | Coelacanth&rsquo;s Dream</a></span>
 
-<p><em>NGG/Primitve Shader</em> はハードウェア側に新設されたシェーダーステージであり、それまでのバーテックスシェーダー (Vertex Shader, VS)、ジオメトリシェーダー (Geometry Shader, GS) が統合されており、それらを置き換えるものとなる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/">ACOバックエンドでも NGG をサポートする動き | Coelacanth's Dream</a></span>
-
-ハードウェア側のシェーダーステージは <em>NGG</em> が有効な場合、LSHS (Local Shader + Hull Shader) 、<em>NGG</em> 、Pixel Shader の 3段と短くなる。<br />
+ハードウェア側のシェーダーステージは <em>NGG</em> が有効な場合、LSHS (Local Shader + Hull Shader) 、<em>NGG</em> 、Pixel Shader の 3段と短くなる。<br>
 また、<em>NGG</em> では早期カリング機能として、 <em>NGG Culling</em> が存在する。</p>
-
-<p>そう多くを読み取れてはいないが、今回のアップデートで追加された部分から、Mesh Shader をハードウェア側では ジオメトリシェーダー部で処理しているものと思われ、<br />
+<p>そう多くを読み取れてはいないが、今回のアップデートで追加された部分から、Mesh Shader をハードウェア側では ジオメトリシェーダー部で処理しているものと思われ、<br>
 上述したように、<em>NGG</em> には ジオメトリシェーダー部も統合されている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  #if (PAL_CLIENT_INTERFACE_MAJOR_VERSION &gt;= 574)
+<pre><code>  #if (PAL_CLIENT_INTERFACE_MAJOR_VERSION &gt;= 574)
           if (HasMeshShader())
           {
               // HasMeshShader(): PipelineMesh
               // API Shader -&gt; Hardware Stage
               // PS -&gt; PS
               // MS -&gt; GS
-
+  
               CalcDynamicStageInfo(graphicsInfo.ms, &amp;pStageInfos-&gt;gs);
           }
           else
-  #endif</code></pre></blockquote>
-
-<p>ただ、判定に <em>NGG</em> の存在や GPU の世代が使われていないため、<em>RDNA 2/GFX10.3</em> 以外、<em>Vega/GFX9</em> 、<em>RDNA/GFX10</em> でも Mesh Shader をサポートする可能性が浮かぶが、実際の所は不明。<br />
+  #endif
+</code></pre>
+</blockquote>
+<p>ただ、判定に <em>NGG</em> の存在や GPU の世代が使われていないため、<em>RDNA 2/GFX10.3</em> 以外、<em>Vega/GFX9</em> 、<em>RDNA/GFX10</em> でも Mesh Shader をサポートする可能性が浮かぶが、実際の所は不明。<br>
 Mesa3D (RadeonSI, RADV) ドライバーで Task/Mesh Shader の本格的な実装が始まれば、断片として、また少し詳細が明らかにされるかもしれない。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   // Mesh shaders are not supported on Gfx6/7/8.
+<pre><code>   // Mesh shaders are not supported on Gfx6/7/8.
    PAL_ASSERT((metadata.pipeline.hasEntry.meshScratchMemorySize == 0) ||
-              (metadata.pipeline.meshScratchMemorySize == 0));</code></pre>
+              (metadata.pipeline.meshScratchMemorySize == 0));
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8/src/core/hw/gfxip/gfx6/gfx6GraphicsPipeline.cpp" rel="nofollow noreferrer" target="_blank">pal/gfx6GraphicsPipeline.cpp at 1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8 · GPUOpen-Drivers/pal</a></cite>
-</div>
-
-<pre tabindex="0"><code>   // Register address for passing the 32-bit GPU virtual address of a buffer storing the shader-emulated task+mesh
-   // pipeline stats query.
-   uint16  taskPipeStatsBufRegAddr;</code></pre>
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8/src/core/hw/gfxip/gfx9/gfx9Chip.h" rel="nofollow noreferrer" target="_blank">pal/gfx9Chip.h at 1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8 · GPUOpen-Drivers/pal</a></cite>
-</div>
-
-<pre tabindex="0"><code>    MeshPipeStatsBuf  = 0x10000014, ///&lt; 32-bit GPU virtual address of a buffer storing the shader-emulated mesh
-                                   ///  pipeline stats query.</code></pre>
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8/src/core/hw/gfxip/gfx9/gfx9Chip.h" rel="nofollow noreferrer" target="_blank">pal/gfx9Chip.h at 1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8 · GPUOpen-Drivers/pal</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8/src/core/hw/gfxip/gfx6/gfx6GraphicsPipeline.cpp">pal/gfx6GraphicsPipeline.cpp at 1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8 · GPUOpen-Drivers/pal</a></cite>
 </div>
 
 </blockquote>
+<blockquote>
+<pre><code>   // Register address for passing the 32-bit GPU virtual address of a buffer storing the shader-emulated task+mesh
+   // pipeline stats query.
+   uint16  taskPipeStatsBufRegAddr;
+</code></pre>
 
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8/src/core/hw/gfxip/gfx9/gfx9Chip.h">pal/gfx9Chip.h at 1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8 · GPUOpen-Drivers/pal</a></cite>
+</div>
+
+</blockquote>
+<blockquote>
+<pre><code>    MeshPipeStatsBuf  = 0x10000014, ///&lt; 32-bit GPU virtual address of a buffer storing the shader-emulated mesh
+                                   ///  pipeline stats query.
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8/src/core/hw/gfxip/gfx9/gfx9Chip.h">pal/gfx9Chip.h at 1e61f9ab6eb2041c73d7e7bd8f2021fa05a4bdd8 · GPUOpen-Drivers/pal</a></cite>
+</div>
+
+</blockquote>
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://developer.nvidia.com/blog/using-mesh-shaders-for-professional-graphics/" rel="nofollow noreferrer" target="_blank">Using Mesh Shaders for Professional Graphics | NVIDIA Developer Blog</a></li>
-<li><a href="https://gpuopen.com/wp-content/uploads/slides/AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf" rel="nofollow noreferrer" target="_blank">PowerPoint Presentation - AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf</a></li>
+<li><a href="https://developer.nvidia.com/blog/using-mesh-shaders-for-professional-graphics/">Using Mesh Shaders for Professional Graphics | NVIDIA Developer Blog</a></li>
+<li><a href="https://gpuopen.com/wp-content/uploads/slides/AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf">PowerPoint Presentation - AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:amdvlk"><a href="https://github.com/GPUOpen-Drivers/AMDVLK/commit/52a9f5750fee299162db35f6ff71bbc8a4f3b003" rel="nofollow noreferrer" target="_blank">Update README.md: Usage of AMD switchable graphics layer · GPUOpen-Drivers/AMDVLK@52a9f57</a>
- <a class="footnote-return" href="#fnref:amdvlk"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/GPUOpen-Drivers/AMDVLK/commit/52a9f5750fee299162db35f6ff71bbc8a4f3b003">Update README.md: Usage of AMD switchable graphics layer · GPUOpen-Drivers/AMDVLK@52a9f57</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

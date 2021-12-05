@@ -70,67 +70,61 @@
 <div class="article-time">
     <time datetime="2020-07-29 16:33 &#43;0900" class="time-b">Post: 2020/07/29 16:33 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/07/29 17:45 &#43;0900</div>
-  </div><p>Intel の次世代モバイル向けプロセッサ <em>Tiger Lake</em> では、SoCパッケージレベルの最大電力制限、<em>Power Limit4</em> をサポートすることがわかった。<br />
-<span class="thread-link"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/?h=bleeding-edge&amp;id=8365a898fe53f85529566501d3b3d88640b3975e" rel="nofollow noreferrer" target="_blank">powercap: Add Power Limit4 support</a></span>
+  </div><p>Intel の次世代モバイル向けプロセッサ <em>Tiger Lake</em> では、SoCパッケージレベルの最大電力制限、<em>Power Limit4</em> をサポートすることがわかった。<br>
+<span class="thread-link"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/?h=bleeding-edge&amp;id=8365a898fe53f85529566501d3b3d88640b3975e">powercap: Add Power Limit4 support</a></span>
 
-この <em>Power Limit4</em> (以下 <em>PL4</em> ) は、以前から Intelプロセッサのデータシートに記述されてはいたが、サポートするプロセッサはこれまで無かった。<sup class="footnote-ref" id="fnref:10th-gen-core-datasheet"><a href="#fn:10th-gen-core-datasheet">1</a></sup></p>
-
-<p><em>PL4</em> は SoC の瞬間的な消費電力が電源アダプタやバッテリーの許容範囲を超えないよう、先制的に SoC の消費電力、動作クロックを制限するためのものとされている。<br />
+この <em>Power Limit4</em> (以下 <em>PL4</em> ) は、以前から Intelプロセッサのデータシートに記述されてはいたが、サポートするプロセッサはこれまで無かった。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p><em>PL4</em> は SoC の瞬間的な消費電力が電源アダプタやバッテリーの許容範囲を超えないよう、先制的に SoC の消費電力、動作クロックを制限するためのものとされている。<br>
 <em>PL4</em> が <em>Tiger Lake</em> でサポートされるということは、<em>Comet Lake</em> から一部のモデルに導入された <em>Velocity Boost</em> のような、温度と消費電力に余裕がある場合に動作クロックを引き上げる機能が <em>Tiger Lake</em> にも導入されるのかもしれない。</p>
-
 <p>そして、<em>Tiger Lake</em> の <em>PL4</em> にはどのような値が設定されているのかというと、ある例では以下のようになっている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  register &#34;power_limits_config[POWER_LIMITS_U_2_CORE]&#34; = &#34;{
+<pre><code>  register &quot;power_limits_config[POWER_LIMITS_U_2_CORE]&quot; = &quot;{
         .tdp_pl1_override = 15,
         .tdp_pl2_override = 38,
         .tdp_pl4 = 71,
-  }&#34;
-  register &#34;power_limits_config[POWER_LIMITS_U_4_CORE]&#34; = &#34;{
+  }&quot;
+  register &quot;power_limits_config[POWER_LIMITS_U_4_CORE]&quot; = &quot;{
         .tdp_pl1_override = 15,
         .tdp_pl2_override = 60,
         .tdp_pl4 = 105,
-  }&#34;
-  register &#34;power_limits_config[POWER_LIMITS_Y_2_CORE]&#34; = &#34;{
+  }&quot;
+  register &quot;power_limits_config[POWER_LIMITS_Y_2_CORE]&quot; = &quot;{
         .tdp_pl1_override = 9,
         .tdp_pl2_override = 35,
         .tdp_pl4 = 66,
-  }&#34;
-  register &#34;power_limits_config[POWER_LIMITS_Y_4_CORE]&#34; = &#34;{
+  }&quot;
+  register &quot;power_limits_config[POWER_LIMITS_Y_4_CORE]&quot; = &quot;{
         .tdp_pl1_override = 9,
         .tdp_pl2_override = 40,
         .tdp_pl4 = 83,
-  }&#34;</code></pre>
-<p>引用元: <a href="https://review.coreboot.org/c/coreboot/+/43607" rel="nofollow noreferrer" target="_blank">soc/intel/tigerlake: Set power limits for Tiger Lake Y-SKU (If4f12264) · Gerrit Code Review</a></p>
+  }&quot;
+</code></pre>
+<p>引用元: <a href="https://review.coreboot.org/c/coreboot/+/43607">soc/intel/tigerlake: Set power limits for Tiger Lake Y-SKU (If4f12264) · Gerrit Code Review</a></p>
 </blockquote>
-
-<p>この時気を付けたいのは、まず上記の値が設定されているのは、<em>Tiger Lake</em> を搭載する Chromebookボードのベースボード、親的な存在である <strong>Volteer</strong> 用の値であり、<em>Tiger Lake</em> のデフォルト設定ではないこと、<br />
-そして、あくまでも <em>PL4</em> は SoC のピーク消費電力を制限するものであり、そこに到達するまで動作クロックを引き上げるものではなく、そもそも到達する前に温度的な限界が来るだろう。<br />
+<p>この時気を付けたいのは、まず上記の値が設定されているのは、<em>Tiger Lake</em> を搭載する Chromebookボードのベースボード、親的な存在である <strong>Volteer</strong> 用の値であり、<em>Tiger Lake</em> のデフォルト設定ではないこと、<br>
+そして、あくまでも <em>PL4</em> は SoC のピーク消費電力を制限するものであり、そこに到達するまで動作クロックを引き上げるものではなく、そもそも到達する前に温度的な限界が来るだろう。<br>
 <em>Tiger Lake</em> は iGPU を搭載し、TDP などを CPU と GPU で分け合うため、CPU だけで食い切れるものでもない。</p>
-
-<p>まあそれ抜きにしても、仕様における TDP を示す <em>PL1</em> と <em>PL2</em> がかけ離れており、中々に凄いものがあるが。<br />
-モバイル向け <em>Ice Lake</em> の <em>PL2</em> は <a href="https://www.anandtech.com/" rel="nofollow noreferrer" target="_blank">AnandTech</a> による検証から、50W に設定されていると考えられるが<sup class="footnote-ref" id="fnref:icelake-pl2-anandtech"><a href="#fn:icelake-pl2-anandtech">2</a></sup>、上記 <em>Tiger Lake-U (4-Core)</em> はそれを超えて 60W に設定されている。</p>
-
+<p>まあそれ抜きにしても、仕様における TDP を示す <em>PL1</em> と <em>PL2</em> がかけ離れており、中々に凄いものがあるが。<br>
+モバイル向け <em>Ice Lake</em> の <em>PL2</em> は <a href="https://www.anandtech.com/">AnandTech</a> による検証から、50W に設定されていると考えられるが<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、上記 <em>Tiger Lake-U (4-Core)</em> はそれを超えて 60W に設定されている。</p>
 <p>しかし、繰り返すが <em>PL2</em> の値もあくまで <strong>Volteer</strong> 用に設定された値であり、<em>Tiger Lake</em> のデフォルト設定ではないことを留意したい。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Intel-TGL-Linux-Power-Limit4" rel="nofollow noreferrer" target="_blank">Linux To Allow Limiting Tiger Lake SoC PL4 Package Maximum Power Limit - Phoronix</a></li>
+<li><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Intel-TGL-Linux-Power-Limit4">Linux To Allow Limiting Tiger Lake SoC PL4 Package Maximum Power Limit - Phoronix</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:10th-gen-core-datasheet"><a href="https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/10th-gen-core-families-datasheet-vol-1-datasheet.pdf#page=56" rel="nofollow noreferrer" target="_blank">https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/10th-gen-core-families-datasheet-vol-1-datasheet.pdf#page=56</a>
- <a class="footnote-return" href="#fnref:10th-gen-core-datasheet"><sup>[return]</sup></a></li>
-<li id="fn:icelake-pl2-anandtech"><a href="https://www.anandtech.com/show/14664/testing-intel-ice-lake-10nm/5" rel="nofollow noreferrer" target="_blank">Power Results (15W and 25W) - The Ice Lake Benchmark Preview: Inside Intel's 10nm</a>
- <a class="footnote-return" href="#fnref:icelake-pl2-anandtech"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/10th-gen-core-families-datasheet-vol-1-datasheet.pdf#page=56">https://www.intel.com/content/dam/www/public/us/en/documents/datasheets/10th-gen-core-families-datasheet-vol-1-datasheet.pdf#page=56</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.anandtech.com/show/14664/testing-intel-ice-lake-10nm/5">Power Results (15W and 25W) - The Ice Lake Benchmark Preview: Inside Intel&rsquo;s 10nm</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

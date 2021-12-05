@@ -69,39 +69,31 @@
 <div class="article-time">
     <time datetime="2020-05-20 02:44 &#43;0900" class="time-b">Post: 2020/05/20 02:44 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/07/20 11:51 &#43;0900</div>
-  </div>
+  </div><p>Microsoft は開催中の開発者向けイベント、<a href="https://news.microsoft.com/build2020/">Microsoft Build 2020</a>の中で、Windows向けグラフィクスAPI DirectX を WSL2 (Windows Subsystem for Linux 2) でサポートすることを発表した。<br>
+機械学習 API DirectML や NVIDIA CUDA といった GPUコンピューティングも WSL2 下で実行可能となる。<br>
+また、リモートデスクトップを用いて、Linux向けGUIアプリケーションを WSL2 から動作させる機能の将来的なサポートも発表している。<br>
+<span class="thread-link"><cite><a href="https://devblogs.microsoft.com/directx/directx-heart-linux/">DirectX ❤ Linux | DirectX Developer Blog</a></cite></span>
 
-<p>Microsoft は開催中の開発者向けイベント、<a href="https://news.microsoft.com/build2020/" rel="nofollow noreferrer" target="_blank">Microsoft Build 2020</a>の中で、Windows向けグラフィクスAPI DirectX を WSL2 (Windows Subsystem for Linux 2) でサポートすることを発表した。<br />
-機械学習 API DirectML や NVIDIA CUDA といった GPUコンピューティングも WSL2 下で実行可能となる。<br />
-また、リモートデスクトップを用いて、Linux向けGUIアプリケーションを WSL2 から動作させる機能の将来的なサポートも発表している。<br />
-<span class="thread-link"><cite><a href="https://devblogs.microsoft.com/directx/directx-heart-linux/" rel="nofollow noreferrer" target="_blank">DirectX ❤ Linux | DirectX Developer Blog</a></cite></span>
-
-<span class="thread-link"><cite><a href="https://devblogs.microsoft.com/commandline/the-windows-subsystem-for-linux-build-2020-summary/" rel="nofollow noreferrer" target="_blank">The Windows Subsystem for Linux BUILD 2020 Summary | Windows Command Line</a></span>
+<span class="thread-link"><cite><a href="https://devblogs.microsoft.com/commandline/the-windows-subsystem-for-linux-build-2020-summary/">The Windows Subsystem for Linux BUILD 2020 Summary | Windows Command Line</a></span>
 </p>
-
-<h2 id="direct-x-on-wsl">Direct X on &quot;WSL&quot;</h2>
-
-<p>仕組みとしては、Linux Kernel に <code>Dxgkrnl</code> と呼ぶ新たな KMD (Kernel Mode Driver) を実装し、Windows OS をホストOSとする Linux は <code>Dxgkrnl</code> を、<code>Dxgkrnl</code> は仮想的なバス (VM Bus) を通して Windows OS内のGPUドライバー、そして物理GPUと通信することで、DirectX 12 API を使用する。<br />
+<h2 id="direct-x-on-wsl">Direct X on &ldquo;WSL&rdquo;</h2>
+<p>仕組みとしては、Linux Kernel に <code>Dxgkrnl</code> と呼ぶ新たな KMD (Kernel Mode Driver) を実装し、Windows OS をホストOSとする Linux は <code>Dxgkrnl</code> を、<code>Dxgkrnl</code> は仮想的なバス (VM Bus) を通して Windows OS内のGPUドライバー、そして物理GPUと通信することで、DirectX 12 API を使用する。<br>
 これは WDDM (Windows Display Driver Model) v2.9 の仕様に統合される。</p>
-
-<p>それと同時に DirectX のライブラリが Linux向けにリリースされる。<br />
-DirectX 12 の Linux向けライブラリ、<code>libd3d12.so</code> は Windows向けである <code>d3d12.dll</code> と同じソースコードからコンパイルされており、仮想化によるオーバーヘッドを除き、同等の機能と性能を提供するとしている。<br />
-現時点で Linux向けの DirextX 12 APIはオフスクリーンレンダリングとコンピュート機能を実行できるが、画面に直接レンダリングするためのスワップチェイン機能はサポートしていない。<br />
-ただこれは、その後に笑顔の顔文字付きで &quot;yet&quot; と書いており、将来的にサポートするつもりだと思われる。<br />
-UMD (User Mode Driver) と KMD が通信する際に用いられるレイヤー、DXGI の Linux向けライブラリ <code>libdxcore.so</code> もリリースされる。<br />
-そして、WSL2 側の UMD は GPUメーカーと連携し、WSL環境で実行可能となるよう再コンパイルされるとのこと。<br />
+<p>それと同時に DirectX のライブラリが Linux向けにリリースされる。<br>
+DirectX 12 の Linux向けライブラリ、<code>libd3d12.so</code> は Windows向けである <code>d3d12.dll</code> と同じソースコードからコンパイルされており、仮想化によるオーバーヘッドを除き、同等の機能と性能を提供するとしている。<br>
+現時点で Linux向けの DirextX 12 APIはオフスクリーンレンダリングとコンピュート機能を実行できるが、画面に直接レンダリングするためのスワップチェイン機能はサポートしていない。<br>
+ただこれは、その後に笑顔の顔文字付きで &ldquo;yet&rdquo; と書いており、将来的にサポートするつもりだと思われる。<br>
+UMD (User Mode Driver) と KMD が通信する際に用いられるレイヤー、DXGI の Linux向けライブラリ <code>libdxcore.so</code> もリリースされる。<br>
+そして、WSL2 側の UMD は GPUメーカーと連携し、WSL環境で実行可能となるよう再コンパイルされるとのこと。<br>
 これもまた、WDDM v2.9 ドライバーに統合される。</p>
-
-<p>留意しておきたいのは、<code>libd3d12.so</code> 、<code>libdxcore.so</code> はクローズドソースであり、事前にコンパイルされたバイナリのみが、Windows の一部として出荷される。<br />
-GPUメーカーが提供する DirectX 12 UMD も当然クローズドソースだ。<br />
+<p>留意しておきたいのは、<code>libd3d12.so</code> 、<code>libdxcore.so</code> はクローズドソースであり、事前にコンパイルされたバイナリのみが、Windows の一部として出荷される。<br>
+GPUメーカーが提供する DirectX 12 UMD も当然クローズドソースだ。<br>
 そのため、WSL2以外 (WindowsをホストOSとしない Linux OS) は UMD が存在しないため、動作させることはできない。</p>
-
-<p>また、Linux 環境下で DirectX を実行するソフトウェアでは、<a href="https://www.winehq.org/#carouselScreenshots" rel="nofollow noreferrer" target="_blank">Wine</a> / <a href="https://github.com/ValveSoftware/Proton/" rel="nofollow noreferrer" target="_blank">Proton</a>が有名だが、Wine は API 呼び出しを変換する形で実行しているため、今回の Microsoft が行なう Linux へのさらなる歩み寄りを、それらに活かせるかは微妙なところと思われる。</p>
-
+<p>また、Linux 環境下で DirectX を実行するソフトウェアでは、<a href="https://www.winehq.org/#carouselScreenshots">Wine</a> / <a href="https://github.com/ValveSoftware/Proton/">Proton</a>が有名だが、Wine は API 呼び出しを変換する形で実行しているため、今回の Microsoft が行なう Linux へのさらなる歩み寄りを、それらに活かせるかは微妙なところと思われる。</p>
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://devblogs.microsoft.com/directx/directx-heart-linux/" rel="nofollow noreferrer" target="_blank">DirectX ❤ Linux | DirectX Developer Blog</a></li>
-<li><cite><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Microsoft-DX12-WSL2" rel="nofollow noreferrer" target="_blank">Microsoft Announces Direct3D 12 For Linux / WSL2 - Phoronix</a></cite></li>
+<li><a href="https://devblogs.microsoft.com/directx/directx-heart-linux/">DirectX ❤ Linux | DirectX Developer Blog</a></li>
+<li><cite><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Microsoft-DX12-WSL2">Microsoft Announces Direct3D 12 For Linux / WSL2 - Phoronix</a></cite></li>
 </ul>
 
 </div>

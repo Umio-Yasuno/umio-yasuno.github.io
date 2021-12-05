@@ -70,155 +70,131 @@
 <div class="article-time">
     <time datetime="2021-10-16 12:58 &#43;0900" class="time-b">Post: 2021/10/16 12:58 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/10/16 14:39 &#43;0900</div>
-  </div>
-
-<p>Intel は 2021/10/04 付でゲーム開発者向けに <em>Alder Lake</em> への性能最適化手法をまとめた <em>「Intel® Codename Alder Lake (ADL) Developer Guide」</em> を公開した。</p>
-
+  </div><p>Intel は 2021/10/04 付でゲーム開発者向けに <em>Alder Lake</em> への性能最適化手法をまとめた <em>「Intel® Codename Alder Lake (ADL) Developer Guide」</em> を公開した。</p>
 <ul>
-<li><a href="https://www.intel.com/content/www/us/en/developer/articles/guide/alder-lake-developer-guide.html?wapkw=alder%20lake" rel="nofollow noreferrer" target="_blank">Intel® Codename Alder Lake (ADL) Developer Guide</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/guide/alder-lake-developer-guide.html?wapkw=alder%20lake">Intel® Codename Alder Lake (ADL) Developer Guide</a></li>
 </ul>
-
 <p><em>Alder Lake</em> は Big/Performance Core (Golden Cove/Core) と Small/Efficient Core (Gracemont/Atom) の異なる 2種類の CPUアーキテクチャを組み合わせたハイブリッドアーキテクチャを採り、最適化のためにはそれを意識したスレッド化が必要となる。</p>
-
-<p>また Intel は現地時間 2021/10/27-2021/10/28 に <a href="https://www.intel.com/content/www/us/en/events/on-event-series.html" rel="nofollow noreferrer" target="_blank">Intel Innovation</a> と題したイベントを予定しており、Alder Lake Developer Guide の公開はそれに合わせたものと思われる。<br />
+<p>また Intel は現地時間 2021/10/27-2021/10/28 に <a href="https://www.intel.com/content/www/us/en/events/on-event-series.html">Intel Innovation</a> と題したイベントを予定しており、Alder Lake Developer Guide の公開はそれに合わせたものと思われる。<br>
 イベントでは <em>「Performance Tuning Games for Alder Lake and Hybrid Architectures」</em> 、 <em>「Alchemist Graphics Architecture and Features for Game Developers」</em> というセッションが予定されている。</p>
-
 <ul>
-<li><a href="https://www.intel.com/content/www/us/en/developer/topic-technology/gamedev/overview.html?wapkw=alder%20lake" rel="nofollow noreferrer" target="_blank">Game Development</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/developer/topic-technology/gamedev/overview.html?wapkw=alder%20lake">Game Development</a></li>
 </ul>
-
 <h2 id="diff-cpu-arch">異なる 2種類の CPUアーキテクチャ</h2>
-
-<p><em>Golden Cove</em> と <em>Gracemont</em> ではキャッシュ構成が異なり、<em>Golden Cove</em> は各コアが L2キャッシュ 1.25 MiB を持ち、L3キャッシュ/LLC (Last Level Cache) に接続されるが、<em>Gracemont</em> は 4コアで L2キャッシュ 2 MiB を共有し、モジュール/クラスターを構成する。<br />
-<em>Golden Cove</em> は Intel Hyper-Threading が有効化されているため 2スレッドで L1キャッシュを共有することになるが、<em>Gracemont</em> では無効化されている、あるいはサポートされていないため 1コア/1スレッドが独自の L1キャッシュを持つといった違いもある。<br />
+<p><em>Golden Cove</em> と <em>Gracemont</em> ではキャッシュ構成が異なり、<em>Golden Cove</em> は各コアが L2キャッシュ 1.25 MiB を持ち、L3キャッシュ/LLC (Last Level Cache) に接続されるが、<em>Gracemont</em> は 4コアで L2キャッシュ 2 MiB を共有し、モジュール/クラスターを構成する。<br>
+<em>Golden Cove</em> は Intel Hyper-Threading が有効化されているため 2スレッドで L1キャッシュを共有することになるが、<em>Gracemont</em> では無効化されている、あるいはサポートされていないため 1コア/1スレッドが独自の L1キャッシュを持つといった違いもある。<br>
 <em>Golden Cove</em> と <em>Gracemont</em> との間でキャッシュを共有する場合は L3/LLC でのコヒーレンスに制限される。</p>
+<p>ハイブリッドアーキテクチャでは対応命令/ISAレベルでは対称的となり、そのため <em>Golden Cove</em> の一部機能は制限される。<br>
+<em>Golden Cove</em> では AVX512系命令に対応しているが、<em>Gracemont</em> は AVX2 までのサポートであるため、<em>Gracemont/E-Core</em> が有効化されている場合、AVX512 は無効化される。<br>
+同時に <em>Gracemont/E-Core</em> を BIOS/UEFI から無効化する機能が存在するが、それをユーザーが切り替え可能とするかは OEM に委ねられるとしている。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/04/29/adl-cpu-type/">Alder Lake では BIOS から一方の CPUタイプを無効化可能 | Coelacanth&rsquo;s Dream</a></span>
 
-<p>ハイブリッドアーキテクチャでは対応命令/ISAレベルでは対称的となり、そのため <em>Golden Cove</em> の一部機能は制限される。<br />
-<em>Golden Cove</em> では AVX512系命令に対応しているが、<em>Gracemont</em> は AVX2 までのサポートであるため、<em>Gracemont/E-Core</em> が有効化されている場合、AVX512 は無効化される。<br />
-同時に <em>Gracemont/E-Core</em> を BIOS/UEFI から無効化する機能が存在するが、それをユーザーが切り替え可能とするかは OEM に委ねられるとしている。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/04/29/adl-cpu-type/">Alder Lake では BIOS から一方の CPUタイプを無効化可能 | Coelacanth's Dream</a></span>
-
-ただ、AVX512 が無効化されている理由に <em>Gracemont/E-Core</em> を挙げているが、<em>Gracemont/E-Core</em> をすべて無効化すれば AVX512 が有効化されるかどうかについては明言されていない。<br />
+ただ、AVX512 が無効化されている理由に <em>Gracemont/E-Core</em> を挙げているが、<em>Gracemont/E-Core</em> をすべて無効化すれば AVX512 が有効化されるかどうかについては明言されていない。<br>
 Intel Architecture Day 2021、Hot Chip 33 で語られたところでは、<em>Gracemont/E-Core</em> を無効化しても AVX-512 等は有効化されず、また AVX-512 ユニットを <em>Alder Lake</em> の <em>Golden Cove/P-Core</em> には物理的に搭載していないという。</p>
-
 <ul>
-<li><a href="https://news.mynavi.jp/article/20210825-1955663/" rel="nofollow noreferrer" target="_blank">Alder Lake DeepDive - HotChipsで垣間見たIntel「Alder Lake」の細部 | マイナビニュース</a></li>
-<li><a href="https://www.anandtech.com/show/16881/a-deep-dive-into-intels-alder-lake-microarchitectures/5" rel="nofollow noreferrer" target="_blank">Instruction Sets: Alder Lake Dumps AVX-512 in a BIG Way - Intel Architecture Day 2021: Alder Lake, Golden Cove, and Gracemont Detailed</a></li>
+<li><a href="https://news.mynavi.jp/article/20210825-1955663/">Alder Lake DeepDive - HotChipsで垣間見たIntel「Alder Lake」の細部 | マイナビニュース</a></li>
+<li><a href="https://www.anandtech.com/show/16881/a-deep-dive-into-intels-alder-lake-microarchitectures/5">Instruction Sets: Alder Lake Dumps AVX-512 in a BIG Way - Intel Architecture Day 2021: Alder Lake, Golden Cove, and Gracemont Detailed</a></li>
 </ul>
-
-<p>SKU (Stock-Keeping Unit) の節で、モバイル向け SKU ではすべてで <em>Gracemont/E-Core</em> が有効化されているが、デスクトップ向けでは <em>Gracemont/E-Core</em> を無効化し、<em>Golden Cove/P-Core</em> のみを有効化した SKU が存在するとしている。<br />
+<p>SKU (Stock-Keeping Unit) の節で、モバイル向け SKU ではすべてで <em>Gracemont/E-Core</em> が有効化されているが、デスクトップ向けでは <em>Gracemont/E-Core</em> を無効化し、<em>Golden Cove/P-Core</em> のみを有効化した SKU が存在するとしている。<br>
 仮に <em>Gracemont/E-Core</em> の無効化で AVX512 のサポート有無が変わると SKU 間で大きな性能差が生まれることになるため、そうした点からも <em>Alder Lake</em> では AVX512 が存在しない可能性が高い。</p>
-
 <h3 id="e-core">E-Core の活用</h3>
-
-<p><em>Alder Lake</em> の性能を最大限引き出すには <em>Gracemont/E-Core</em> の活用が必要となる。<br />
-しかし単一のスレッドプールを <em>Gracemont/E-Core</em> を含めたトポロジに割り当てた場合、スレッドの同期部分で <em>Gracemont/E-Core</em> が足を引っ張り全体の性能が低下する恐れや、スレッドの切り替えによるオーバーヘッドの発生が予想される。<br />
-そこで高性能を必要とする重要度の高いスレッドプールと、非同期的な、性能に影響するクリティカルパスの外にある重要度の低いスレッドプールを用意することが推奨されている。<br />
-それによって ITD (Intel Thread Director) と OSスケジューラーはより適切にスレッドを <em>Golden Cove/P-Core</em> 、<em>Gracemont/E-Core</em> に割り当てることができる。<br />
-重要度の高いスレッドプールには <em>Golden Cove/P-Core</em> のみを割り当てるよう、アプリケーション、ゲーム側で設定できる。<br />
+<p><em>Alder Lake</em> の性能を最大限引き出すには <em>Gracemont/E-Core</em> の活用が必要となる。<br>
+しかし単一のスレッドプールを <em>Gracemont/E-Core</em> を含めたトポロジに割り当てた場合、スレッドの同期部分で <em>Gracemont/E-Core</em> が足を引っ張り全体の性能が低下する恐れや、スレッドの切り替えによるオーバーヘッドの発生が予想される。<br>
+そこで高性能を必要とする重要度の高いスレッドプールと、非同期的な、性能に影響するクリティカルパスの外にある重要度の低いスレッドプールを用意することが推奨されている。<br>
+それによって ITD (Intel Thread Director) と OSスケジューラーはより適切にスレッドを <em>Golden Cove/P-Core</em> 、<em>Gracemont/E-Core</em> に割り当てることができる。<br>
+重要度の高いスレッドプールには <em>Golden Cove/P-Core</em> のみを割り当てるよう、アプリケーション、ゲーム側で設定できる。<br>
 <em>Gracemont/E-Core</em> に向いた処理には、シェーダーコンパイル、音声処理、アセットストリーミング、展開処理等が挙げられている。</p>
-
 <p>モバイル向けでは最大で <em>Golden Cove/P-Core</em> 6コア + <em>Gracemont/E-Core</em> 8コアという構成で、SKU によっては 2コア+8コアという <em>Gracemont/E-Core</em> の比率が大きい構成が用意されているため、こうした <em>Alder Lake</em> 向けの最適化はモバイル向けでは特に重要となる。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">uArch</th>
-<th align="center">Golden Cove</th>
-<th align="center">Willow Cove</th>
-<th align="center">Sunny Cove</th>
-<th align="center">Gracemont</th>
-<th align="center">Tremont</th>
+<th style="text-align:left">uArch</th>
+<th style="text-align:center">Golden Cove</th>
+<th style="text-align:center">Willow Cove</th>
+<th style="text-align:center">Sunny Cove</th>
+<th style="text-align:center">Gracemont</th>
+<th style="text-align:center">Tremont</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">L1 Data size</td>
-<td align="center">48 KiB<br>/12-way</td>
-<td align="center">48 KiB<br>/12-way</td>
-<td align="center">48 KiB<br>/12-way</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
+<td style="text-align:left">L1 Data size</td>
+<td style="text-align:center">48 KiB<br>/12-way</td>
+<td style="text-align:center">48 KiB<br>/12-way</td>
+<td style="text-align:center">48 KiB<br>/12-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
 </tr>
-
 <tr>
-<td align="left">L1D BW<br>(L: Load, S: Store)</td>
-<td align="center">256B?<br>(L: 3x32B? or 2x64B?)<br>(S: 2x64B?)</td>
-<td align="center">?</td>
-<td align="center">192B<br>(L: 2x64B)<br>(S: 1x64B or 2x32B)</td>
-<td align="center">128B???<br>(L: 2x32B? + S: 2x32B?)</td>
-<td align="center">64B???<br>(L: 1x32B + S: 1x32B)<br>(L: 2x32B or S: 2x32B)</td>
+<td style="text-align:left">L1D BW<br>(L: Load, S: Store)</td>
+<td style="text-align:center">256B?<br>(L: 3x32B? or 2x64B?)<br>(S: 2x64B?)</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">192B<br>(L: 2x64B)<br>(S: 1x64B or 2x32B)</td>
+<td style="text-align:center">128B???<br>(L: 2x32B? + S: 2x32B?)</td>
+<td style="text-align:center">64B???<br>(L: 1x32B + S: 1x32B)<br>(L: 2x32B or S: 2x32B)</td>
 </tr>
-
 <tr>
-<td align="left">L1 Inst. size</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">64 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
+<td style="text-align:left">L1 Inst. size</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">64 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
 </tr>
-
 <tr>
-<td align="left">L1I BW</td>
-<td align="center">?</td>
-<td align="center">?</td>
-<td align="center">?</td>
-<td align="center">32B?<br>(2x 16B)</td>
-<td align="center">32B<br>(2x 16B)</td>
+<td style="text-align:left">L1I BW</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">32B?<br>(2x 16B)</td>
+<td style="text-align:center">32B<br>(2x 16B)</td>
 </tr>
-
 <tr>
-<td align="left">L2 size</td>
-<td align="center">1.25 MiB/10-way (Client)<br>2 MiB (Data Center)</td>
-<td align="center">1.25 MiB<br>/20-way</td>
-<td align="center">512 KiB<br>/8-way</td>
-<td align="center">2 MiB<br>/16-way<br>(per Module)</td>
-<td align="center">1.5-4.5 MiB<br>/12-way<br>(per Cluster/Module)</td>
+<td style="text-align:left">L2 size</td>
+<td style="text-align:center">1.25 MiB/10-way (Client)<br>2 MiB (Data Center)</td>
+<td style="text-align:center">1.25 MiB<br>/20-way</td>
+<td style="text-align:center">512 KiB<br>/8-way</td>
+<td style="text-align:center">2 MiB<br>/16-way<br>(per Module)</td>
+<td style="text-align:center">1.5-4.5 MiB<br>/12-way<br>(per Cluster/Module)</td>
 </tr>
-
 <tr>
-<td align="left">L2 BW Peak/Sustained</td>
-<td align="center">?</td>
-<td align="center">?</td>
-<td align="center">64B/48B</td>
-<td align="center">64B/?</td>
-<td align="center"></td>
+<td style="text-align:left">L2 BW Peak/Sustained</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">64B/48B</td>
+<td style="text-align:center">64B/?</td>
+<td></td>
 </tr>
-
 <tr>
-<td align="left">L3 size</td>
-<td align="center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
-<td align="center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
-<td align="center">2 MiB<br>/12-way</td>
-<td align="center">12 MiB<br>/12-way<br>(3 MiB per Cluster/Module)</td>
-<td align="center">4 MiB<br>/16-way</td>
+<td style="text-align:left">L3 size</td>
+<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
+<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
+<td style="text-align:center">2 MiB<br>/12-way</td>
+<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Cluster/Module)</td>
+<td style="text-align:center">4 MiB<br>/16-way</td>
 </tr>
 </tbody>
 </table>
-
 <ul>
 <li>表参考リンク
-
 <ul>
-<li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="nofollow noreferrer" target="_blank">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></li>
-<li>Tremont - <a href="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2" rel="nofollow noreferrer" target="_blank">Tremont: A Wider Front End and Caches - Intel's new Atom Microarchitecture: The Tremont Core in Lakefield</a></li>
-<li>Willow Cove/Sunny Cove - <a href="https://www.anandtech.com/show/16084/intel-tiger-lake-review-deep-dive-core-11th-gen/4" rel="nofollow noreferrer" target="_blank">Cache Architecture: The Effect of Increasing L2 and L3 - Intel’s Tiger Lake 11th Gen Core i7-1185G7 Review and Deep Dive: Baskin’ for the Exotic</a></li>
-<li><a href="https://github.com/projectacrn/acrn-hypervisor/commit/918ec7aaf316b49aba5f58ffed6513f84cc1f96f" rel="nofollow noreferrer" target="_blank">Config_tools: Update board xml for acrn 2.5 · projectacrn/acrn-hypervisor@918ec7a</a>
-
+<li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></li>
+<li>Tremont - <a href="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2">Tremont: A Wider Front End and Caches - Intel&rsquo;s new Atom Microarchitecture: The Tremont Core in Lakefield</a></li>
+<li>Willow Cove/Sunny Cove - <a href="https://www.anandtech.com/show/16084/intel-tiger-lake-review-deep-dive-core-11th-gen/4">Cache Architecture: The Effect of Increasing L2 and L3 - Intel’s Tiger Lake 11th Gen Core i7-1185G7 Review and Deep Dive: Baskin’ for the Exotic</a></li>
+<li><a href="https://github.com/projectacrn/acrn-hypervisor/commit/918ec7aaf316b49aba5f58ffed6513f84cc1f96f">Config_tools: Update board xml for acrn 2.5 · projectacrn/acrn-hypervisor@918ec7a</a>
 <ul>
-<li><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/adl-rvp/adl-rvp.xml" rel="nofollow noreferrer" target="_blank">acrn-hypervisor/adl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a></li>
-</ul></li>
-</ul></li>
+<li><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/adl-rvp/adl-rvp.xml">acrn-hypervisor/adl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a></li>
 </ul>
-
+</li>
+</ul>
+</li>
+</ul>
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://www.intel.com/content/www/us/en/developer/articles/guide/alder-lake-developer-guide.html?wapkw=alder%20lake" rel="nofollow noreferrer" target="_blank">Intel® Codename Alder Lake (ADL) Developer Guide</a></li>
-<li><a href="https://github.com/GameTechDev/HybridDetect" rel="nofollow noreferrer" target="_blank">GameTechDev/HybridDetect: Heterogeneous &amp; Homogeneous CPU Detect for Intel Processors</a></li>
-<li><a href="https://news.mynavi.jp/article/20210825-1955663/" rel="nofollow noreferrer" target="_blank">Alder Lake DeepDive - HotChipsで垣間見たIntel「Alder Lake」の細部 | マイナビニュース</a></li>
-<li><a href="https://www.anandtech.com/show/16881/a-deep-dive-into-intels-alder-lake-microarchitectures/5" rel="nofollow noreferrer" target="_blank">Instruction Sets: Alder Lake Dumps AVX-512 in a BIG Way - Intel Architecture Day 2021: Alder Lake, Golden Cove, and Gracemont Detailed</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/guide/alder-lake-developer-guide.html?wapkw=alder%20lake">Intel® Codename Alder Lake (ADL) Developer Guide</a></li>
+<li><a href="https://github.com/GameTechDev/HybridDetect">GameTechDev/HybridDetect: Heterogeneous &amp; Homogeneous CPU Detect for Intel Processors</a></li>
+<li><a href="https://news.mynavi.jp/article/20210825-1955663/">Alder Lake DeepDive - HotChipsで垣間見たIntel「Alder Lake」の細部 | マイナビニュース</a></li>
+<li><a href="https://www.anandtech.com/show/16881/a-deep-dive-into-intels-alder-lake-microarchitectures/5">Instruction Sets: Alder Lake Dumps AVX-512 in a BIG Way - Intel Architecture Day 2021: Alder Lake, Golden Cove, and Gracemont Detailed</a></li>
 </ul>
 
 </div>

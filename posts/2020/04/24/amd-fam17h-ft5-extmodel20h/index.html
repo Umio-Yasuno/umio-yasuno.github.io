@@ -70,86 +70,68 @@
 <div class="article-time">
     <time datetime="2020-04-24 01:02 &#43;0900" class="time-b">Post: 2020/04/24 01:02 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/07/20 11:51 &#43;0900</div>
-  </div>
-
-<p>以前、ややこしいややこしいと書いた Zen APU に関して、<a href="https://www.coelacanth-dream.com/tags/pollock">Raven2 (Pollock)</a>のx86_Model が <code>20h</code> となることがわかった。</p>
-
-<span class="thread-link">参考: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2153715" rel="nofollow noreferrer" target="_blank">soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review</a></cite></span>
-
+  </div><p>以前、ややこしいややこしいと書いた Zen APU に関して、<a href="https://www.coelacanth-dream.com/tags/pollock">Raven2 (Pollock)</a>のx86_Model が <code>20h</code> となることがわかった。</p>
+<span class="thread-link">参考: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2153715">soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review</a></cite></span>
 
 <h2 id="インデックス">インデックス</h2>
-
 <ul>
 <li><a href="#x86_model">x86_Model</a></li>
-<li><a href="#pollock">Pollock の x86_Model は &quot;0x20&quot;</a>
-
-<ul>
+<li><a href="#pollock">Pollock の x86_Model は &ldquo;0x20&rdquo;</a></li>
 <li><a href="#worry">気がかり</a></li>
-</ul></li>
 </ul>
-
 <h2 id="x86_model">x86_Model</h2>
-
-<p>現在主流の x86-64プロセッサはその判別に Family ID と Model を用いられる。<br />
-基本的に、Family ID は ベースとなるアーキテクチャを、Model はより詳細なプロセッサの種類を表す。<br />
-例で言えば、<strong>Ryzen 5 2600</strong> は Family ID: <code>&quot;0x17&quot;</code>、Model: <code>&quot;0x8&quot;</code> となっており、この値は Linux Kernelの温度センサーに関するコードでは <em>Zen+</em> と判別され、<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>GCCでは <code>znver1</code> と判別される。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup></p>
-
+<p>現在主流の x86-64プロセッサはその判別に Family ID と Model を用いられる。<br>
+基本的に、Family ID は ベースとなるアーキテクチャを、Model はより詳細なプロセッサの種類を表す。<br>
+例で言えば、<strong>Ryzen 5 2600</strong> は Family ID: <code>&quot;0x17&quot;</code>、Model: <code>&quot;0x8&quot;</code> となっており、この値は Linux Kernelの温度センサーに関するコードでは <em>Zen+</em> と判別され、<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>GCCでは <code>znver1</code> と判別される。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p>そして、Linux Kernelの温度センサーに関するコードを読むと、以下のように記述されている。</p>
-
 <blockquote>
-<pre tabindex="0"><code> case 0x1:   /* Zen */
- case 0x8:   /* Zen+ */
- case 0x11:  /* Zen APU */
- case 0x18:  /* Zen+ APU */</code></pre>
-<p>引用元: <cite><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587" rel="nofollow noreferrer" target="_blank">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587</a></cite></p>
+<pre><code>  case 0x1:	/* Zen */
+  case 0x8:	/* Zen+ */
+  case 0x11:	/* Zen APU */
+  case 0x18:	/* Zen+ APU */
+</code></pre>
+<p>引用元: <cite><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587</a></cite></p>
 </blockquote>
-
-<p>これに従えば、<code>&quot;0x18&quot;</code> は <em>Zen+ APU</em> 、<a href="https://www.coelacanth-dream.com/tags/picasso">Picasso</a>となるが、<br />
-<em>Zen APU</em> である<a href="https://www.coelacanth-dream.com/tags/raven2">Raven2</a>までも x86_Model が <code>&quot;0x18&quot;</code> となっており、それによって <em>Zen+ APU /Picasso</em> と判別されてしまう――というのを前回記事にした。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/02/16/raven-family-complex/#cpu">いかに Zen APU は複雑か | Coelacanth's Dream</a></span>
+<p>これに従えば、<code>&quot;0x18&quot;</code> は <em>Zen+ APU</em> 、<a href="https://www.coelacanth-dream.com/tags/picasso">Picasso</a>となるが、<br>
+<em>Zen APU</em> である<a href="https://www.coelacanth-dream.com/tags/raven2">Raven2</a>までも x86_Model が <code>&quot;0x18&quot;</code> となっており、それによって <em>Zen+ APU /Picasso</em> と判別されてしまう――というのを前回記事にした。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/02/16/raven-family-complex/#cpu">いかに Zen APU は複雑か | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<h2 id="pollock">Pollock の x86_Model は &quot;0x20&quot;</h2>
-
+<h2 id="pollock">Pollock の x86_Model は &ldquo;0x20&rdquo;</h2>
 <p>そういうことで <em>Raven2</em> の影が薄いことを勝手に憂いていたが、先日投稿された ChromiumOSのリポジトリにおける Coreboot へのパッチで、<a href="https://www.coelacanth-dream.com/tags/pollock">Pollock</a>の x86_Model が <code>&quot;0x20&quot;</code> であることがわかった。</p>
+<span class="thread-link">参考: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2153715">soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review</a></cite></span>
 
-<span class="thread-link">参考: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2153715" rel="nofollow noreferrer" target="_blank">soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review</a></cite></span>
-
-
-<p>コミットメッセージでは <em>FP5ソケット</em> が <code>&quot;0x18&quot;</code> としているが、これはChromebookに採用される <em>FP5ソケット</em> 搭載のAPUが <em>Raven</em> 以降の <em>Picasso</em> 、<em>Raven2 (Dali)</em> のみであるからと思われる。<br />
-そして、<em>FT5ソケット</em> を <code>&quot;0x20&quot;</code> としているが、それに搭載するAPUは <em>Raven2 (Pollock)</em> だけとなっている。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><br />
+<p>コミットメッセージでは <em>FP5ソケット</em> が <code>&quot;0x18&quot;</code> としているが、これはChromebookに採用される <em>FP5ソケット</em> 搭載のAPUが <em>Raven</em> 以降の <em>Picasso</em> 、<em>Raven2 (Dali)</em> のみであるからと思われる。<br>
+そして、<em>FT5ソケット</em> を <code>&quot;0x20&quot;</code> としているが、それに搭載するAPUは <em>Raven2 (Pollock)</em> だけとなっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 少なくとも <em>Raven2 (Pollock)</em> は、12nm <em>Zen+ APU /Picasso</em> ではなく、14nm <em>Zen APU /Raven2 (Pollock)</em> としっかり判別されるはずだ。</p>
-
 <h3 id="worry">気がかり</h3>
-
-<p>気がかりなのは、CPU-Z<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>といったハードウェアの情報を表示するソフトウェアで<em>FT5ソケット</em> <em>Raven2 (Pollock)</em> を見た時、コードネームの項目に表示されるのは <em>Raven2</em> となるか <em>Pollock</em> となるかだ。<br />
+<p>気がかりなのは、CPU-Z<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>といったハードウェアの情報を表示するソフトウェアで<em>FT5ソケット</em> <em>Raven2 (Pollock)</em> を見た時、コードネームの項目に表示されるのは <em>Raven2</em> となるか <em>Pollock</em> となるかだ。<br>
 個人的には、<em>Pollock</em> は <em>Raven2</em> のリビジョンの1つというものであるため、<em>Raven2</em> と表示してほしい。</p>
-
-<p>それと、<a href="https://www.coelacanth-dream.com/tags/dali">Raven2 (Dali)</a>は恐らく <em>Picasso</em> と判別されるままだろう。<br />
-Chromebookには <em>Raven2 (Dali)</em> ベースの <strong>Ryzen 3 3250C</strong> 、<strong>Athlon Silver 3050C</strong> 、 <strong>Athlon Gold 3150C</strong> も採用されるが、これらは数字セグメント的に <em>FP5ソケット</em> に搭載される可能性が高い。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup><br />
+<p>それと、<a href="https://www.coelacanth-dream.com/tags/dali">Raven2 (Dali)</a>は恐らく <em>Picasso</em> と判別されるままだろう。<br>
+Chromebookには <em>Raven2 (Dali)</em> ベースの <strong>Ryzen 3 3250C</strong> 、<strong>Athlon Silver 3050C</strong> 、 <strong>Athlon Gold 3150C</strong> も採用されるが、これらは数字セグメント的に <em>FP5ソケット</em> に搭載される可能性が高い。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
 そしてコミットメッセージから x86_Model は <code>&quot;0x18&quot;</code> となるはずだ。</p>
-
-<p>つまり、<em>AM4ソケット</em> 、<em>FP5ソケット</em> に搭載される <em>Raven2</em> 、<em>Raven2 (Dali)</em> は <em>Picasso</em> と判別され続け、<br />
+<p>つまり、<em>AM4ソケット</em> 、<em>FP5ソケット</em> に搭載される <em>Raven2</em> 、<em>Raven2 (Dali)</em> は <em>Picasso</em> と判別され続け、<br>
 <em>FT5ソケット</em> に搭載される <em>Raven2 (Pollock)</em> は正しくそのままに判別される。</p>
-
 <p>やっぱりややこしいままな気も。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1"><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L589" rel="nofollow noreferrer" target="_blank">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L589</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2"><a href="https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/i386/cpuinfo.c#L109" rel="nofollow noreferrer" target="_blank">https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/i386/cpuinfo.c#L109</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051509" rel="nofollow noreferrer" target="_blank">soc/amd/picasso: Add Kconfig option for chip footprint (Ia4663d38) · Gerrit Code Review</a>
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:4"><a href="https://www.cpuid.com/softwares/cpu-z.html" rel="nofollow noreferrer" target="_blank">CPU-Z | Softwares | CPUID</a>
- <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
-<li id="fn:5"><a href="https://www.amd.com/en/products/apu/amd-ryzen-3-3250u#product-specs" rel="nofollow noreferrer" target="_blank">AMD Ryzen™ 3 3250U | AMD</a>&emsp;/<a href="https://www.amd.com/en/products/apu/amd-athlon-silver-3050u#product-specs" rel="nofollow noreferrer" target="_blank">AMD Athlon™ Silver 3050U | AMD</a>&emsp;/<a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150u#product-specs" rel="nofollow noreferrer" target="_blank">AMD Athlon™ Gold 3150U | AMD</a>
- <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L589">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L589</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/i386/cpuinfo.c#L109">https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/i386/cpuinfo.c#L109</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2051509">soc/amd/picasso: Add Kconfig option for chip footprint (Ia4663d38) · Gerrit Code Review</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://www.cpuid.com/softwares/cpu-z.html">CPU-Z | Softwares | CPUID</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/apu/amd-ryzen-3-3250u#product-specs">AMD Ryzen™ 3 3250U | AMD</a> /<a href="https://www.amd.com/en/products/apu/amd-athlon-silver-3050u#product-specs">AMD Athlon™ Silver 3050U | AMD</a> /<a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150u#product-specs">AMD Athlon™ Gold 3150U | AMD</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

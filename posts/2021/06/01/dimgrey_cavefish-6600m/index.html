@@ -70,111 +70,90 @@
 <div class="article-time">
     <time datetime="2021-06-01 12:17 &#43;0900" class="time-b">Post: 2021/06/01 12:17 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/06/02 08:37 &#43;0900</div>
-  </div>
-
-<p>AMD は現地時間 2021/05/31、Computex 2021 における基調講演の中で、モバイル向け <em>RDNA 2</em> GPU <strong>Radeon RX 6600M</strong> を発表した。<br />
+  </div><p>AMD は現地時間 2021/05/31、Computex 2021 における基調講演の中で、モバイル向け <em>RDNA 2</em> GPU <strong>Radeon RX 6600M</strong> を発表した。<br>
 他にも <strong>Radeon RX 6800M/6700M</strong> が発表されているが、<strong>Radeon RX 6600M</strong> に注目する理由は、開発コードネーム <em>Dimgrey Cavefish/Navi23</em> をベースにした初の製品とされるからだ。</p>
-
 <ul>
-<li><a href="https://ir.amd.com/news-events/press-releases/detail/1006/amd-unveils-rdna-2-based-mobile-graphics-new-amd-advantage" rel="nofollow noreferrer" target="_blank">AMD Unveils RDNA 2-Based Mobile Graphics, New AMD Advantage Laptops, Broadly Compatible Upscaling Technology and More at Computex 2021 :: Advanced Micro Devices, Inc. (AMD)</a></li>
+<li><a href="https://ir.amd.com/news-events/press-releases/detail/1006/amd-unveils-rdna-2-based-mobile-graphics-new-amd-advantage">AMD Unveils RDNA 2-Based Mobile Graphics, New AMD Advantage Laptops, Broadly Compatible Upscaling Technology and More at Computex 2021 :: Advanced Micro Devices, Inc. (AMD)</a></li>
 </ul>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#dimgrey_cavefish">Dimgrey Cavefish/Navi23</a></li>
 <li><a href="#transistor">RDNA 2 GPU のトランジスタ数</a></li>
 </ul>
 
-
 <h2 id="dimgrey_cavefish">Dimgrey Cavefish/Navi23</h2>
-
 <p><strong>Radeon RX 6600M</strong> は WGP(CU)数 14(28)基、RenderBackend数 8基 (ROP 64基相当)、メモリバス幅 128-bit、Infinity Cache 32MiB という仕様。</p>
-
 <ul>
-<li><a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-6600m#product-specs" rel="nofollow noreferrer" target="_blank">AMD Radeon™ RX 6600M Graphics | AMD</a></li>
+<li><a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-6600m#product-specs">AMD Radeon™ RX 6600M Graphics | AMD</a></li>
 </ul>
+<p>メモリバス幅と Infinity Cache の容量については、過去に Linux Kernel (amd-gfx) へのパッチの中で AMD のソフトウェアエンジニアより公開されてきた <em>Dimgrey Cavefish/Navi23</em> の情報と一致する。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth&rsquo;s Dream</a></span>
 
-<p>メモリバス幅と Infinity Cache の容量については、過去に Linux Kernel (amd-gfx) へのパッチの中で AMD のソフトウェアエンジニアより公開されてきた <em>Dimgrey Cavefish/Navi23</em> の情報と一致する。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth's Dream</a></span>
-
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/30/amdgpu_cache_info/#dimgrey_cavefish">AMD GPU のキャッシュ構成情報　―― Dimgrey Cavefish / Aldebaran / VanGogh | Coelacanth's Dream</a></span>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/30/amdgpu_cache_info/#dimgrey_cavefish">AMD GPU のキャッシュ構成情報　―― Dimgrey Cavefish / Aldebaran / VanGogh | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p>キャッシュ構成情報から、<em>Dimgrey Cavefish</em> は ShaderArray あたり WGP 4基 (CU 8基) を持つと思われるが、<strong>Radeon RX 6600M</strong> は WGP 14基 (CU 28基) という 8の倍数ではない。<br />
+<p>キャッシュ構成情報から、<em>Dimgrey Cavefish</em> は ShaderArray あたり WGP 4基 (CU 8基) を持つと思われるが、<strong>Radeon RX 6600M</strong> は WGP 14基 (CU 28基) という 8の倍数ではない。<br>
 恐らく各 ShaderEngine の WGP 1基をそれぞれ無効化しているのだろう。 <em>Dimgrey Cavefish</em> のフルスペックは ShaderEngine (SE) 2基、SE あたりの ShaderArray (SA) 2基、SA あたりの WGP (CU) 数は 4 (8) 基で、総 WGP (CU) 数は最大 16 (32) 基と考えられる。</p>
-
-<p><em>RDNA/2 アーキテクチャ</em> では ShaderEngine あたりに ShaderArray 2基を持ち、WGP 3基 (CU 6基) の ShaderArray と WGP 4基 (CU 8基) の ShaderArray を組み合わせる非対称な ShaderEngine 内部構成となるが、こうした構成が <em>RDNA/2 アーキテクチャ</em> では許容されている。<br />
-<em>RDNA 2 アーキテクチャ</em> では ShaderEngine 内部の ShaderArray が非対称となる場合の性能効率を向上させる改善が加えられており、<a href="https://www.coelacanth-dream.com/tags/radeonsi">RadeonSI</a> ドライバーの例では、Pixel Shader を処理する際、ShaderArray が非対称な構成では規模の小さい方に処理速度が引っ張られて効率が悪化してしまう。<br />
-そこで小さい方の ShaderArray が持つ WGP (CU) 数に合わせて Wave (スレッドの塊) を発行、実質対称的な ShaderArray として扱うことで効率の悪化を防ぐ。<br />
-あぶれる WGP (CU) が最低でも 1基出ることになるが、その分消費電力をセーブすることができ、それをクロック向上に回すことも可能だ。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/09/23/rdna_2-note-2020-09-23/#shader-array">AMD RDNA 2 ノート　―― 非対称な ShaderArray、gpu_info、XSS 【2020/09/23】 | Coelacanth's Dream</a></span>
+<p><em>RDNA/2 アーキテクチャ</em> では ShaderEngine あたりに ShaderArray 2基を持ち、WGP 3基 (CU 6基) の ShaderArray と WGP 4基 (CU 8基) の ShaderArray を組み合わせる非対称な ShaderEngine 内部構成となるが、こうした構成が <em>RDNA/2 アーキテクチャ</em> では許容されている。<br>
+<em>RDNA 2 アーキテクチャ</em> では ShaderEngine 内部の ShaderArray が非対称となる場合の性能効率を向上させる改善が加えられており、<a href="https://www.coelacanth-dream.com/tags/radeonsi">RadeonSI</a> ドライバーの例では、Pixel Shader を処理する際、ShaderArray が非対称な構成では規模の小さい方に処理速度が引っ張られて効率が悪化してしまう。<br>
+そこで小さい方の ShaderArray が持つ WGP (CU) 数に合わせて Wave (スレッドの塊) を発行、実質対称的な ShaderArray として扱うことで効率の悪化を防ぐ。<br>
+あぶれる WGP (CU) が最低でも 1基出ることになるが、その分消費電力をセーブすることができ、それをクロック向上に回すことも可能だ。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/09/23/rdna_2-note-2020-09-23/#shader-array">AMD RDNA 2 ノート　―― 非対称な ShaderArray、gpu_info、XSS 【2020/09/23】 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <h2 id="transistor">RDNA 2 GPU のトランジスタ数</h2>
-
 <p><strong>Radeon RX 6600M</strong> の製品ページにはトランジスタ数も記載されており、これまでに登場した <em>Sienna Cichlid/Navi21</em> 、<em>Navy Flounder/Navi22</em> と比較した表が以下。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">RDNA 2</th>
-<th align="center">Sienna Cichlid/Navi21</th>
-<th align="center">Navy Flounder/Navi22</th>
-<th align="center">Dimgrey Cavefish/Navi23</th>
+<th style="text-align:left">RDNA 2</th>
+<th style="text-align:center">Sienna Cichlid/Navi21</th>
+<th style="text-align:center">Navy Flounder/Navi22</th>
+<th style="text-align:center">Dimgrey Cavefish/Navi23</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Shader Engine</td>
-<td align="center">4</td>
-<td align="center">2</td>
-<td align="center">2?</td>
+<td style="text-align:left">Shader Engine</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2?</td>
 </tr>
-
 <tr>
-<td align="left">WGP (CU)</td>
-<td align="center">40 (80)</td>
-<td align="center">20 (40)</td>
-<td align="center">16? (32?)</td>
+<td style="text-align:left">WGP (CU)</td>
+<td style="text-align:center">40 (80)</td>
+<td style="text-align:center">20 (40)</td>
+<td style="text-align:center">16? (32?)</td>
 </tr>
-
 <tr>
-<td align="left">RB+</td>
-<td align="center">16</td>
-<td align="center">8</td>
-<td align="center">8</td>
+<td style="text-align:left">RB+</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">8</td>
 </tr>
-
 <tr>
-<td align="left">Memory Bus</td>
-<td align="center">256-bit</td>
-<td align="center">192-bit</td>
-<td align="center">128-bit</td>
+<td style="text-align:left">Memory Bus</td>
+<td style="text-align:center">256-bit</td>
+<td style="text-align:center">192-bit</td>
+<td style="text-align:center">128-bit</td>
 </tr>
-
 <tr>
-<td align="left">Infinity Cache</td>
-<td align="center">128 MiB</td>
-<td align="center">96 MiB</td>
-<td align="center">32 MiB</td>
+<td style="text-align:left">Infinity Cache</td>
+<td style="text-align:center">128 MiB</td>
+<td style="text-align:center">96 MiB</td>
+<td style="text-align:center">32 MiB</td>
 </tr>
-
 <tr>
-<td align="left">Transistor</td>
-<td align="center">26.8 B</td>
-<td align="center">17.2 B</td>
-<td align="center">11.1 B</td>
+<td style="text-align:left">Transistor</td>
+<td style="text-align:center">26.8 B</td>
+<td style="text-align:center">17.2 B</td>
+<td style="text-align:center">11.1 B</td>
 </tr>
 </tbody>
 </table>
-
-<p><em>Dimgrey Cavefish</em> は <em>Navy Flounder</em> の約8割という WGP (CU) 数に対し、トランジスタ数は約6割となっている。<br />
-トランジスタ数のスケール具合で言えば、メモリバス幅 32-bit とそれに対応した Infinity Cache を減らし、WGP (CU) は <em>Sienna Cichlid</em> から半分にまで減らした <em>Navy Flounder</em> と同程度だ。<br />
+<p><em>Dimgrey Cavefish</em> は <em>Navy Flounder</em> の約8割という WGP (CU) 数に対し、トランジスタ数は約6割となっている。<br>
+トランジスタ数のスケール具合で言えば、メモリバス幅 32-bit とそれに対応した Infinity Cache を減らし、WGP (CU) は <em>Sienna Cichlid</em> から半分にまで減らした <em>Navy Flounder</em> と同程度だ。<br>
 トランジスタを多く使用する SRAM である Infinity Cache を、<em>Dimgrey Cavefish</em> ではメモリチャネルあたり 4 MiB に抑え、メモリバス幅も同時に減らしたことで総合的には 32 MiB と他に比べて小さい容量になったことが影響していると思われる。</p>
-
-<p><em>Dimgrey Cavefish</em> と <em>Navy Flounder</em> を比較すると、ShaderEngine数と RenderBackend (RB+) は同数であり、<em>Dimgrey Cavefish</em> はメモリ性能を抑える代わりに WGP (CU)、RenderBackend は多めに搭載してピーク性能を高めているとも捉えられる。<br />
-<em>RDNA 2</em> GPU がサポートしているハードウェアレイトレーシング機能は、内部の命令では BVH (Bounding VolumeHierarchy) データをメモリからフェッチする仕様になっており、<em>Dimgrey Cavefish</em> のそうした向きはレイトレーシング性能に影響が大きそうな気もするが、レイトレーシングはまだハイエンド GPU でなければ性能的に厳しいと考えていることの現れかもしれない。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/08/rdna_2-isa-doc/">AMD、RDNA 2 ISA Reference Guide を公開 | Coelacanth's Dream</a></span>
+<p><em>Dimgrey Cavefish</em> と <em>Navy Flounder</em> を比較すると、ShaderEngine数と RenderBackend (RB+) は同数であり、<em>Dimgrey Cavefish</em> はメモリ性能を抑える代わりに WGP (CU)、RenderBackend は多めに搭載してピーク性能を高めているとも捉えられる。<br>
+<em>RDNA 2</em> GPU がサポートしているハードウェアレイトレーシング機能は、内部の命令では BVH (Bounding VolumeHierarchy) データをメモリからフェッチする仕様になっており、<em>Dimgrey Cavefish</em> のそうした向きはレイトレーシング性能に影響が大きそうな気もするが、レイトレーシングはまだハイエンド GPU でなければ性能的に厳しいと考えていることの現れかもしれない。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/12/08/rdna_2-isa-doc/">AMD、RDNA 2 ISA Reference Guide を公開 | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <div class="article-bottom-misc">
   <div class="rss-block">

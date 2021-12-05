@@ -70,61 +70,52 @@
 <div class="article-time">
     <time datetime="2021-05-20 21:44 &#43;0900" class="time-b">Post: 2021/05/20 21:44 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/21 00:49 &#43;0900</div>
-  </div>
-
-<p>今更とか思われるかもしれないが、 <em>ようやく</em> Intel が公式的に公開した情報。</p>
-
-<h2 id="sapphire-rapids-golden-cove">Sapphire Rapids / Golden Cove</h2>
-
-<p><em>Sapphire Rapids</em> の CPUマイクロアーキテクチャが <em>Tiger Lake</em> と同じ <em>Willow Cove</em> か、<em>Alder Lake</em> の Core (Big) 側と同じ <em>Golden Cove</em> かについては色んな人が推測し、<em>Golden Cove</em> なんじゃないかと言われてきていたが、Intel がそこに言及したことは今まで無かった。少なくとも自分はそう記憶してる。<br />
-<em>Alder Lake</em> は 2020/08/13 に開催された <strong>Intel Architecture Day 2020</strong> で早くに <em>Golden Cove (Core/big)</em> 、 <em>Gracemont (Atom/small)</em> という共に次世代のマイクロアーキテクチャを採用したハイブリッド構成になることが発表されていた。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/#adl">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth's Dream</a></span>
+  </div><p>今更とか思われるかもしれないが、 <em>ようやく</em> Intel が公式的に公開した情報。</p>
+<h2 id="sapphire-rapids--golden-cove">Sapphire Rapids / Golden Cove</h2>
+<p><em>Sapphire Rapids</em> の CPUマイクロアーキテクチャが <em>Tiger Lake</em> と同じ <em>Willow Cove</em> か、<em>Alder Lake</em> の Core (Big) 側と同じ <em>Golden Cove</em> かについては色んな人が推測し、<em>Golden Cove</em> なんじゃないかと言われてきていたが、Intel がそこに言及したことは今まで無かった。少なくとも自分はそう記憶してる。<br>
+<em>Alder Lake</em> は 2020/08/13 に開催された <strong>Intel Architecture Day 2020</strong> で早くに <em>Golden Cove (Core/big)</em> 、 <em>Gracemont (Atom/small)</em> という共に次世代のマイクロアーキテクチャを採用したハイブリッド構成になることが発表されていた。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/#adl">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p>用途に 5G基地局が想定されている <code>HFNI/AVX512_FP16</code> 命令を <em>Sapphire Rapids</em> がサポートすることと、<em>Golden Cove</em> の特徴に Network/5G Perf があったことを合わせれば、公式的に広く公開されている情報を元にある程度の根拠を持って、 <em>Sapphire Rapids</em> は <em>Willow Cove</em> ではなく <em>Golden Cove</em> だと推測することもできた。他にも <em>Alder Lake</em> と <em>Sapphire Rapids</em> は <code>SERIALIZE</code> 、<code>AVX_VNNI (128/256-bit)</code> 命令をサポートしている点で共通している。だが、やはり今まで Intel ははっきりとそう明言してくれることは無かった。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth's Dream</a></span>
+<p>用途に 5G基地局が想定されている <code>HFNI/AVX512_FP16</code> 命令を <em>Sapphire Rapids</em> がサポートすることと、<em>Golden Cove</em> の特徴に Network/5G Perf があったことを合わせれば、公式的に広く公開されている情報を元にある程度の根拠を持って、 <em>Sapphire Rapids</em> は <em>Willow Cove</em> ではなく <em>Golden Cove</em> だと推測することもできた。他にも <em>Alder Lake</em> と <em>Sapphire Rapids</em> は <code>SERIALIZE</code> 、<code>AVX_VNNI (128/256-bit)</code> 命令をサポートしている点で共通している。だが、やはり今まで Intel ははっきりとそう明言してくれることは無かった。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p>さらには Intel CPU の識別に使われる <code>Model</code> 情報をまとめた、Linux Kernel に含まれる <a href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h" rel="nofollow noreferrer" target="_blank">intel-family.h</a> ファイルに CPUマイクロアーキテクチャとの関係性を補完するコメントを追加するパッチが投稿された時には、<em>Sapphire Rapids</em> が <em>Willow Cove アーキテクチャ</em> ということにされており、余計曖昧となっていた。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/04/09/intel-kbl-complex/#spr">Intel Kaby Lake 周りの CPU Stepping を整理するパッチ | Coelacanth's Dream</a></span>
+<p>さらには Intel CPU の識別に使われる <code>Model</code> 情報をまとめた、Linux Kernel に含まれる <a href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h">intel-family.h</a> ファイルに CPUマイクロアーキテクチャとの関係性を補完するコメントを追加するパッチが投稿された時には、<em>Sapphire Rapids</em> が <em>Willow Cove アーキテクチャ</em> ということにされており、余計曖昧となっていた。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/04/09/intel-kbl-complex/#spr">Intel Kaby Lake 周りの CPU Stepping を整理するパッチ | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p><em>Sapphire Rapids</em> の CPUマイクロアーキテクチャはそうした状況にあったが、今回 Intel の <a href="https://github.com/andikleen" rel="nofollow noreferrer" target="_blank">Andi Kleen</a> 氏より新たに投稿されたパッチにて先のパッチで追加したコメントを修正、 <em>Sapphire Rapids</em> は <em>Golden Cove アーキテクチャ</em> を採用することが明言された。</p>
-
+<p><em>Sapphire Rapids</em> の CPUマイクロアーキテクチャはそうした状況にあったが、今回 Intel の <a href="https://github.com/andikleen">Andi Kleen</a> 氏より新たに投稿されたパッチにて先のパッチで追加したコメントを修正、 <em>Sapphire Rapids</em> は <em>Golden Cove アーキテクチャ</em> を採用することが明言された。</p>
 <ul>
-<li><a href="https://lkml.org/lkml/2021/5/13/660" rel="nofollow noreferrer" target="_blank">LKML: Andi Kleen: [PATCH] x86/cpu: Fix comment for Sapphire Rapids</a></li>
-<li><a href="https://lore.kernel.org/lkml/20210513163904.3083274-1-ak@linux.intel.com/" rel="nofollow noreferrer" target="_blank">[PATCH] x86/cpu: Fix comment for Sapphire Rapids - Andi Kleen</a></li>
+<li><a href="https://lkml.org/lkml/2021/5/13/660">LKML: Andi Kleen: [PATCH] x86/cpu: Fix comment for Sapphire Rapids</a></li>
+<li><a href="https://lore.kernel.org/lkml/20210513163904.3083274-1-ak@linux.intel.com/">[PATCH] x86/cpu: Fix comment for Sapphire Rapids - Andi Kleen</a></li>
 </ul>
-
 <blockquote>
-<pre tabindex="0"><code>  Sapphire Rapids uses Golden Cove, not Willow Cove.
-
+<pre><code>  Sapphire Rapids uses Golden Cove, not Willow Cove.
+	
  Cc: peterz@infradead.org
- Fixes: 53375a5a218e (&#34;x86/cpu: Resort and comment Intel models&#34;)
+ Fixes: 53375a5a218e (&quot;x86/cpu: Resort and comment Intel models&quot;)
  Signed-off-by: Andi Kleen &lt;ak@linux.intel.com&gt;
  ---
   arch/x86/include/asm/intel-family.h | 3 ++-
   1 file changed, 2 insertions(+), 1 deletion(-)
-
+	
  diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
  index 955b06d6325a..27158436f322 100644
  --- a/arch/x86/include/asm/intel-family.h
  +++ b/arch/x86/include/asm/intel-family.h
  @@ -102,7 +102,8 @@
-
-  #define INTEL_FAM6_TIGERLAKE_L     0x8C    /* Willow Cove */
-  #define INTEL_FAM6_TIGERLAKE       0x8D    /* Willow Cove */
- -#define INTEL_FAM6_SAPPHIRERAPIDS_X    0x8F    /* Willow Cove */
+	
+  #define INTEL_FAM6_TIGERLAKE_L		0x8C	/* Willow Cove */
+  #define INTEL_FAM6_TIGERLAKE		0x8D	/* Willow Cove */
+ -#define INTEL_FAM6_SAPPHIRERAPIDS_X	0x8F	/* Willow Cove */
  +
- +#define INTEL_FAM6_SAPPHIRERAPIDS_X    0x8F    /* Golden Cove */</code></pre>
+ +#define INTEL_FAM6_SAPPHIRERAPIDS_X	0x8F	/* Golden Cove */
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2021/5/13/660" rel="nofollow noreferrer" target="_blank">LKML: Andi Kleen: [PATCH] x86/cpu: Fix comment for Sapphire Rapids</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2021/5/13/660">LKML: Andi Kleen: [PATCH] x86/cpu: Fix comment for Sapphire Rapids</a></cite>
 </div>
 
 </blockquote>
-
-<p>これで <em>Sapphire Rapids</em> にまつわる一つの小話はめでたしめでたしで終わったと言えるだろう。<br />
-OSS に対して企業のソフトウェアエンジニアが公式に投稿するパッチは、ネット上で信頼できる情報ではかなり上位に位置すると考えているが、やはりエンジニアも人であり間違うこともある。<br />
+<p>これで <em>Sapphire Rapids</em> にまつわる一つの小話はめでたしめでたしで終わったと言えるだろう。<br>
+OSS に対して企業のソフトウェアエンジニアが公式に投稿するパッチは、ネット上で信頼できる情報ではかなり上位に位置すると考えているが、やはりエンジニアも人であり間違うこともある。<br>
 情報を再発信する側は多角的に収集、選別し考えることが必要なのだと改めて実感もした小話の流れでもあった。</p>
 <div class="article-bottom-misc">
   <div class="rss-block">

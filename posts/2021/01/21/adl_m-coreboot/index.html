@@ -70,142 +70,128 @@
 <div class="article-time">
     <time datetime="2021-01-21 00:32 &#43;0900" class="time-b">Post: 2021/01/21 00:32 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/26 23:57 &#43;0900</div>
-  </div>
-
-<p>CPU は <em>Golden Cove (Core)</em> と <em>Gracemont (Atom)</em> のハイブリッド、GPU は <em>Gen12アーキテクチャ</em> となる <em>Alder Lake</em> にはバリアントが、<em>Alder Lake-S</em> 、<em>Alder Lake-P</em> 、<em>Alder Lake-P</em> の 3種類が存在する。<br />
-<em>Alder Lake-S</em> はデスクトップ向け、<em>Alder Lake-P</em> はモバイル向けであることは判明していたが、<em>Alder Lake-M</em> については不明な部分が多い。<br />
+  </div><p>CPU は <em>Golden Cove (Core)</em> と <em>Gracemont (Atom)</em> のハイブリッド、GPU は <em>Gen12アーキテクチャ</em> となる <em>Alder Lake</em> にはバリアントが、<em>Alder Lake-S</em> 、<em>Alder Lake-P</em> 、<em>Alder Lake-P</em> の 3種類が存在する。<br>
+<em>Alder Lake-S</em> はデスクトップ向け、<em>Alder Lake-P</em> はモバイル向けであることは判明していたが、<em>Alder Lake-M</em> については不明な部分が多い。<br>
 それが、今回 Coreboot のレポジトリに投稿された新たなパッチから <em>Alder Lake-M</em> の詳細が一部だが明らかにされた。</p>
-
-<h2 id="alder-lake-p-の-i-o-縮小版">Alder Lake-P の I/O 縮小版？</h2>
-
-<p><em>Alder Lake-M</em> の CPUID が追加されており、<em>Alder Lake-P</em> と末尾 1桁以外一致することから、<em>Alder Lake-M</em> は CPU として <em>Alder Lake-P</em> と同じバリアントであることが推測される。<br />
-この CPUID には、<code>x86_Family</code> 、<code>X86_Model</code> といった情報を意味している。末尾 1桁は <code>Stepping</code> となり、CPU について判断する上で他よりはそれほど大きい意味ではないと思っている。<br />
-読み取り方とかは以下リンクを参照。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/02/adl-p-chromebook-board-adl-m/">Alder Lake-P を搭載する Chromebookボード 「Brya」、そして Alder Lake-M | Coelacanth's Dream</a></span>
+<h2 id="alder-lake-p-の-io-縮小版">Alder Lake-P の I/O 縮小版？</h2>
+<p><em>Alder Lake-M</em> の CPUID が追加されており、<em>Alder Lake-P</em> と末尾 1桁以外一致することから、<em>Alder Lake-M</em> は CPU として <em>Alder Lake-P</em> と同じバリアントであることが推測される。<br>
+この CPUID には、<code>x86_Family</code> 、<code>X86_Model</code> といった情報を意味している。末尾 1桁は <code>Stepping</code> となり、CPU について判断する上で他よりはそれほど大きい意味ではないと思っている。<br>
+読み取り方とかは以下リンクを参照。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/12/02/adl-p-chromebook-board-adl-m/">Alder Lake-P を搭載する Chromebookボード 「Brya」、そして Alder Lake-M | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <blockquote>
-<pre tabindex="0"><code>   #define CPUID_ALDERLAKE_S_A0  0x90670
-   #define CPUID_ALDERLAKE_P_A0  0x906a0
-   #define CPUID_ALDERLAKE_M_A0  0x906a1</code></pre>
+<pre><code>   #define CPUID_ALDERLAKE_S_A0	0x90670
+   #define CPUID_ALDERLAKE_P_A0	0x906a0
+   #define CPUID_ALDERLAKE_M_A0	0x906a1
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/include/intelblocks/mp_init.h" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/include/intelblocks/mp_init.h</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/include/intelblocks/mp_init.h">https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/include/intelblocks/mp_init.h</a></cite>
 </div>
 
 </blockquote>
-
-<p>しかし <em>Alder Lake-M</em> には、I/O の規模に <em>Alder Lake-P</em> との違いが存在し、それよりも小さいものとなっている。<br />
-<em>Alder Lake-P</em> は CPU側に PCIe Gen5 8-Lane x1、PCIe Gen4 4-Lane x2 の計 3ポートを持つが、<em>Alder Lake</em> ではそれが 1ポートに縮小、あるいは制限されている。<br />
+<p>しかし <em>Alder Lake-M</em> には、I/O の規模に <em>Alder Lake-P</em> との違いが存在し、それよりも小さいものとなっている。<br>
+<em>Alder Lake-P</em> は CPU側に PCIe Gen5 8-Lane x1、PCIe Gen4 4-Lane x2 の計 3ポートを持つが、<em>Alder Lake</em> ではそれが 1ポートに縮小、あるいは制限されている。<br>
 PCH側のポートも減らされており、12ポートから 10ポートになっている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   config MAX_PCH_ROOT_PORTS
-     int
-     default 10 if SOC_INTEL_ALDERLAKE_PCH_M
-     default 12
+<pre><code>   config MAX_PCH_ROOT_PORTS
+   	int
+   	default 10 if SOC_INTEL_ALDERLAKE_PCH_M
+   	default 12
    config MAX_CPU_ROOT_PORTS
-     int
-     default 1 if SOC_INTEL_ALDERLAKE_PCH_M
-     default 3
+   	int
+   	default 1 if SOC_INTEL_ALDERLAKE_PCH_M
+   	default 3
    config MAX_ROOT_PORTS
-     int
-     default MAX_PCH_ROOT_PORTS
+   	int
+   	default MAX_PCH_ROOT_PORTS
    config MAX_PCIE_CLOCKS
-     int
-     default 10 if SOC_INTEL_ALDERLAKE_PCH_M
-     default 12</code></pre>
+   	int
+   	default 10 if SOC_INTEL_ALDERLAKE_PCH_M
+   	default 12
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/49630/3/src/soc/intel/alderlake/Kconfig#135" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/49630/3/src/soc/intel/alderlake/Kconfig#135</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/49630/3/src/soc/intel/alderlake/Kconfig#135">https://review.coreboot.org/c/coreboot/+/49630/3/src/soc/intel/alderlake/Kconfig#135</a></cite>
 </div>
 
 </blockquote>
-
-<p>PCIe 以外でも一部減らされており、SATA は <em>Alder Lake-S/P</em> が 6ポート持つのに対し <em>Alder Lake-M</em> は 3ポートに、UART (Universal Asynchronous Receiver/Transmitte, シリアル通信に用いられる) も 7基から 4基となる。<sup class="footnote-ref" id="fnref:adl-m-sata"><a href="#fn:adl-m-sata">1</a></sup></p>
-
+<p>PCIe 以外でも一部減らされており、SATA は <em>Alder Lake-S/P</em> が 6ポート持つのに対し <em>Alder Lake-M</em> は 3ポートに、UART (Universal Asynchronous Receiver/Transmitte, シリアル通信に用いられる) も 7基から 4基となる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <h2 id="adl_m-atom">Alder Lake-M は Atom系プロセッサの後継か</h2>
-
-<p><em>Alder Lake-M</em> は、<em>Alder Lake-P</em> から I/O の規模が減らされたことで、Atom系プロセッサに近づいている。<br />
-ハイブリッドコア構成であることを考えれば、<em>Lakefield</em> に近いとも見られる。<br />
-テクニカルライター 大原雄介 氏の記事によれば、Atomコアのみで構成されたプロセッサは <em>Elkhart/Jasper Lake</em> で最後となり、今後は Core系コアと組み合わせる形となるらしい。<sup class="footnote-ref" id="fnref:ascii"><a href="#fn:ascii">2</a></sup><br />
+<p><em>Alder Lake-M</em> は、<em>Alder Lake-P</em> から I/O の規模が減らされたことで、Atom系プロセッサに近づいている。<br>
+ハイブリッドコア構成であることを考えれば、<em>Lakefield</em> に近いとも見られる。<br>
+テクニカルライター 大原雄介 氏の記事によれば、Atomコアのみで構成されたプロセッサは <em>Elkhart/Jasper Lake</em> で最後となり、今後は Core系コアと組み合わせる形となるらしい。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 <span class="complement">CPU構成はまだ明らかにされていないが</span>
- I/O 規模を見れば、<em>Alder Lake-M</em> はその後継に当てはまるように思える。<br />
+ I/O 規模を見れば、<em>Alder Lake-M</em> はその後継に当てはまるように思える。<br>
 そうなると、<em>Alder Lake-M</em> は CPU側の PCIe が 1ポートのみとなるが、その有効化されるポートが Gen5 8-Lane ではなく、Gen4 4-Lane になる可能性もある。</p>
-
-<p><em>Alder Lake-P</em> と同じとすると GPU部が Gen12 96EU となり、多いように思えるが、電力効率の点では多数のユニットを低いクロックで動作させる方が良く、<br />
-SDP (Scenario Design Power, 実使用を想定した消費電力) 7W の <em>Lakefield</em> 、<strong>Core i5-L16G7</strong> は Gen11 64EU を通常 200MHz、最大でも 500MHz の設定となっている。<sup class="footnote-ref" id="fnref:lkf"><a href="#fn:lkf">3</a></sup><br />
+<p><em>Alder Lake-P</em> と同じとすると GPU部が Gen12 96EU となり、多いように思えるが、電力効率の点では多数のユニットを低いクロックで動作させる方が良く、<br>
+SDP (Scenario Design Power, 実使用を想定した消費電力) 7W の <em>Lakefield</em> 、<strong>Core i5-L16G7</strong> は Gen11 64EU を通常 200MHz、最大でも 500MHz の設定となっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 <a href="https://www.coelacanth-dream.com/tags/dg1">DG1</a> や <a href="https://www.coelacanth-dream.com/tags/tiger_lake">Tiger Lake</a> を見るに、Gen12 GPU は最大 1.5GHz近くでの動作が可能だが、<em>Alder Lake-M</em> ではその 1/2 か 1/3 程度のクロックになることが考えられる。</p>
-
-<p>Atomプロセッサは <em>Elkhart/Jasper Lake</em> で最後となるのは寂しく感じるが、<em>Alder Lake-M</em> がその後継となれば、ハイブリッドコア構成を採ることの恩恵の 1つであるシングルスレッド性能の大きな向上が受けられるのは喜ばしいことだろう。<br />
+<p>Atomプロセッサは <em>Elkhart/Jasper Lake</em> で最後となるのは寂しく感じるが、<em>Alder Lake-M</em> がその後継となれば、ハイブリッドコア構成を採ることの恩恵の 1つであるシングルスレッド性能の大きな向上が受けられるのは喜ばしいことだろう。<br>
 Linux や Coreboot での <em>Lakefield</em> サポートがそう積極的でなかったことから、ハイブリットプロセッサのサポートが <em>Alder Lake</em> の世代が本格的に行われていることも個人的にはかなり嬉しい。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left"></th>
-<th align="center">Tiger Lake</th>
-<th align="center">Tiger Lake-H</th>
-<th align="center">Jasper Lake</th>
-<th align="center">Alder Lake-P</th>
-<th align="center">Alder Lake-M</th>
-<th align="center">Alder Lake-S</th>
+<th style="text-align:left"></th>
+<th style="text-align:center">Tiger Lake</th>
+<th style="text-align:center">Tiger Lake-H</th>
+<th style="text-align:center">Jasper Lake</th>
+<th style="text-align:center">Alder Lake-P</th>
+<th style="text-align:center">Alder Lake-M</th>
+<th style="text-align:center">Alder Lake-S</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">GPU</td>
-<td align="center">Gen12 96EU</td>
-<td align="center">Gen12 32EU</td>
-<td align="center">Gen11 32EU</td>
-<td align="center">Gen12 96EU</td>
-<td align="center">Gen12 96EU?</td>
-<td align="center">Gen12 32EU</td>
+<td style="text-align:left">GPU</td>
+<td style="text-align:center">Gen12 96EU</td>
+<td style="text-align:center">Gen12 32EU</td>
+<td style="text-align:center">Gen11 32EU</td>
+<td style="text-align:center">Gen12 96EU</td>
+<td style="text-align:center">Gen12 96EU?</td>
+<td style="text-align:center">Gen12 32EU</td>
 </tr>
-
 <tr>
-<td align="left">CPU side PCIe</td>
-<td align="center">Gen4<br>4-Lane x2</td>
-<td align="center">Gen4<br> 16-Lane + 4-Lane</td>
-<td align="center"></td>
-<td align="center">Gen5 8-Lane,<br>Gen4 4-Lane x2</td>
-<td align="center">Gen5 8-Lane? or<br>Gen4 4-Lane?</td>
-<td align="center">Gen5 8-Lane x2,<br>Gen4 4-Lane x2</td>
+<td style="text-align:left">CPU side PCIe</td>
+<td style="text-align:center">Gen4<br>4-Lane x2</td>
+<td style="text-align:center">Gen4<br> 16-Lane + 4-Lane</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Gen5 8-Lane,<br>Gen4 4-Lane x2</td>
+<td style="text-align:center">Gen5 8-Lane? or<br>Gen4 4-Lane?</td>
+<td style="text-align:center">Gen5 8-Lane x2,<br>Gen4 4-Lane x2</td>
 </tr>
-
 <tr>
-<td align="left">PCH</td>
-<td align="center">TGP_LP</td>
-<td align="center">TGP_H</td>
-<td align="center">JSP</td>
-<td align="center">ADP_P</td>
-<td align="center">ADP_M</td>
-<td align="center">ADP_S</td>
+<td style="text-align:left">PCH</td>
+<td style="text-align:center">TGP_LP</td>
+<td style="text-align:center">TGP_H</td>
+<td style="text-align:center">JSP</td>
+<td style="text-align:center">ADP_P</td>
+<td style="text-align:center">ADP_M</td>
+<td style="text-align:center">ADP_S</td>
 </tr>
-
 <tr>
-<td align="left">PCH PCIe Ports</td>
-<td align="center">16</td>
-<td align="center">?</td>
-<td align="center">8</td>
-<td align="center">12</td>
-<td align="center">10</td>
-<td align="center">28</td>
+<td style="text-align:left">PCH PCIe Ports</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">28</td>
 </tr>
 </tbody>
 </table>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:adl-m-sata"><a href="https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/sata/sata.c" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/sata/sata.c</a> <br> <a href="https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/uart/uart.c" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/uart/uart.c</a>
- <a class="footnote-return" href="#fnref:adl-m-sata"><sup>[return]</sup></a></li>
-<li id="fn:ascii"><a href="https://ascii.jp/elem/000/004/040/4040489/3/" rel="nofollow noreferrer" target="_blank">ASCII.jp：最後のAtomとなるChromebook向けプロセッサーのJasper Lake　インテル CPUロードマップ (3/3)</a>
- <a class="footnote-return" href="#fnref:ascii"><sup>[return]</sup></a></li>
-<li id="fn:lkf"><a href="https://ark.intel.com/content/www/us/en/ark/products/202777/intel-core-i5-l16g7-processor-4m-cache-up-to-3-0ghz.html?wapkw=Lakefield" rel="nofollow noreferrer" target="_blank">Intel® Core™ i5-L16G7 Processor (4M Cache, up to 3.0GHz) Product Specifications</a>
- <a class="footnote-return" href="#fnref:lkf"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/sata/sata.c">https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/sata/sata.c</a> <br> <a href="https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/uart/uart.c">https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/uart/uart.c</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://ascii.jp/elem/000/004/040/4040489/3/">ASCII.jp：最後のAtomとなるChromebook向けプロセッサーのJasper Lake　インテル CPUロードマップ (3/3)</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://ark.intel.com/content/www/us/en/ark/products/202777/intel-core-i5-l16g7-processor-4m-cache-up-to-3-0ghz.html?wapkw=Lakefield">Intel® Core™ i5-L16G7 Processor (4M Cache, up to 3.0GHz) Product Specifications</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

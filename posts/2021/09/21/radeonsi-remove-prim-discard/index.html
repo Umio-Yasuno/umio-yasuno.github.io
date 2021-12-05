@@ -70,86 +70,74 @@
 <div class="article-time">
     <time datetime="2021-09-21 23:42 &#43;0900" class="time-b">Post: 2021/09/21 23:42 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/10/03 12:15 &#43;0900</div>
-  </div>
-
-<p>先日、AMD のソフトウェアエンジニア <a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏より、非同期コンピュートを用いたプリミティブカリング機能を削除するパッチ (マージリクエスト) が投稿され、メインラインにも組み込まれた。</p>
-
+  </div><p>先日、AMD のソフトウェアエンジニア <a href="https://gitlab.freedesktop.org/mareko">Marek Olšák</a> 氏より、非同期コンピュートを用いたプリミティブカリング機能を削除するパッチ (マージリクエスト) が投稿され、メインラインにも組み込まれた。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/12812/commits" rel="nofollow noreferrer" target="_blank">radeonsi: reviewed commits from !12343 (part 2) (!12812) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/12812/commits">radeonsi: reviewed commits from !12343 (part 2) (!12812) · Merge requests · Mesa / mesa · GitLab</a></li>
 </ul>
-
 <p>なお、今回削除されたのは非同期コンピュートベース、コンピュートシェーダーによるプリミティングカリング実装であり、<em>RDNA/GFX10</em> 世代とそれ以降でサポートされている <em>NGGカリング/プリミティブカリング</em> とは異なる。</p>
-
 <h2 id="prim-discard">Primitive culling with async compute</h2>
-
-<p>非同期コンピュートによるプリミティブカリングが <strong>RadeonSI</strong> に組み込まれたのは約 2年半前 (2019/02)。パッチは、今回削除するパッチを投稿したのと同じ <a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏によって投稿された。<br />
-機能としては頂点シェーダーの前段で非同期コンピュートを活用したカリング処理を行うことで、トライアングル等のプリミティブがサンプルポイントと交差しないため、多数のジオメトリ処理を行うアプリケーションでのパフォーマンスを大幅に向上させる。<br />
-GDC 2016 で発表された <a href="https://archive.org/details/GDC2016Wihlidal" rel="nofollow noreferrer" target="_blank">Optimizing the Graphics Pipeline with Compute</a> を元に実装されているため、より詳細を知りたい方はそちらを参照して頂きたく。</p>
-
+<p>非同期コンピュートによるプリミティブカリングが <strong>RadeonSI</strong> に組み込まれたのは約 2年半前 (2019/02)。パッチは、今回削除するパッチを投稿したのと同じ <a href="https://gitlab.freedesktop.org/mareko">Marek Olšák</a> 氏によって投稿された。<br>
+機能としては頂点シェーダーの前段で非同期コンピュートを活用したカリング処理を行うことで、トライアングル等のプリミティブがサンプルポイントと交差しないため、多数のジオメトリ処理を行うアプリケーションでのパフォーマンスを大幅に向上させる。<br>
+GDC 2016 で発表された <a href="https://archive.org/details/GDC2016Wihlidal">Optimizing the Graphics Pipeline with Compute</a> を元に実装されているため、より詳細を知りたい方はそちらを参照して頂きたく。</p>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/mesa-dev/2019-February/215085.html" rel="nofollow noreferrer" target="_blank">[Mesa-dev] [PATCH 00/26] RadeonSI: Primitive culling with async compute</a></li>
+<li><a href="https://lists.freedesktop.org/archives/mesa-dev/2019-February/215085.html">[Mesa-dev] [PATCH 00/26] RadeonSI: Primitive culling with async compute</a></li>
 </ul>
-
-<p>実装時のパッチのコメントによれば、Paraview での性能比較において約 2-4倍の性能向上を得られている。多数のプリミティブを扱うためメモリ性能の影響が大きいのか、HBM系メモリを採用する <strong>Radeon Fury X, Radeon Vega 56, Radeon VII</strong> では約 3-4倍の性能向上となっている。<br />
-パッチではゲームのベンチマークをする時間が無かったため、まずはすべての Pro カードで有効化するとコメントされている。<br />
-後日、Linux をメインに OSS情報の発信、ハードウェアのレビューを行っている <a href="https://www.phoronix.com/" rel="nofollow noreferrer" target="_blank">Phoronix</a> の Michael Larabel 氏が検証したところ、ゲームでは性能向上の効果は無く、むしろ悪化しているケースが多かったため、Proカードのみデフォルトで有効化する点は最後まで変わらなかった。<sup class="footnote-ref" id="fnref:prim-discard-game"><a href="#fn:prim-discard-game">1</a></sup></p>
-
+<p>実装時のパッチのコメントによれば、Paraview での性能比較において約 2-4倍の性能向上を得られている。多数のプリミティブを扱うためメモリ性能の影響が大きいのか、HBM系メモリを採用する <strong>Radeon Fury X, Radeon Vega 56, Radeon VII</strong> では約 3-4倍の性能向上となっている。<br>
+パッチではゲームのベンチマークをする時間が無かったため、まずはすべての Pro カードで有効化するとコメントされている。<br>
+後日、Linux をメインに OSS情報の発信、ハードウェアのレビューを行っている <a href="https://www.phoronix.com/">Phoronix</a> の Michael Larabel 氏が検証したところ、ゲームでは性能向上の効果は無く、むしろ悪化しているケースが多かったため、Proカードのみデフォルトで有効化する点は最後まで変わらなかった。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <h2 id="removed-prim-discard">削除された理由</h2>
-
 <p>ゲームでは効果は無くとも、アプリケーションごとに有効無効の設定は可能であり、削除せずに残しても問題ないと思いもするが、同時に今回削除した理由として複数の理由が挙げられる。</p>
-
 <p>プリミティブカリング機能を削除する該当コミットで Marek Olšák 氏は、<em>「常に機能するものではなく、GFX9 (Vega) とそれ以前のみで効果的であり、そして (コードが) とても複雑だ。」</em> とコメントしている。</p>
-
 <blockquote>
-<pre tabindex="0"><code> It doesn&#39;t always work, it&#39;s only useful on gfx9 and older, and it&#39;s too
- complicated.</code></pre>
+<pre><code> It doesn't always work, it's only useful on gfx9 and older, and it's too
+ complicated.
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/12812/diffs?commit_id=576f8394db652feffd6f57eaaf5fad4daa0ea409" rel="nofollow noreferrer" target="_blank">radeonsi: reviewed commits from !12343 (part 2) (!12812) · Merge requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/12812/diffs?commit_id=576f8394db652feffd6f57eaaf5fad4daa0ea409">radeonsi: reviewed commits from !12343 (part 2) (!12812) · Merge requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
-
-<p>常に機能するものではない、という点については、プリミティブカリングは常に有効化するオプションが存在はするが、デフォルトでは巨大なドローコールが呼ばれた時のみに用いられるようになっていた。<br />
+<p>常に機能するものではない、という点については、プリミティブカリングは常に有効化するオプションが存在はするが、デフォルトでは巨大なドローコールが呼ばれた時のみに用いられるようになっていた。<br>
 毎回プリミティブカリング機能を使おうとすると、性能への悪影響や視覚的な影響が発生するのだと思われる。</p>
+<p>次に <em>GFX9 (Vega)</em> とそれ以前の AMD GPU のみで効果的というのは、<em>GFX10/RDNA, GFX10.3/RDNA 2</em> 世代では <a href="https://www.coelacanth-dream.com/tags/ngg">NGG (Next Generation Geometry)</a> というハードウェアシェーダーステージが追加されており、<em>NGG</em> ではプリミティブの変更が可能となっている。<br>
+そのため、<em>NGG</em> ではコンピュートシェーダーから頂点シェーダーに受け渡す必要なしにカリング処理を行うことができる。<br>
+<em>GFX9 (Vega)</em> とそれ以前の世代のみで非同期コンピュートによるプリミティブカリングが役立つ、というよりも、<em>GFX9</em> 以降の <em>GFX10, GFX10.3</em> 世代ではもっと有用なカリング機能を実装できるから、と言った方が正確かもしれない。<br>
+非同期コンピュート版は OpenGLドライバーである <strong>RadeonSI</strong> のみに実装されていたが、<em>NGG</em> と <em>NGG カリング</em> は Vulkanドライバー <strong>RADV</strong> にも実装されているのも大きい。<br>
+<a href="https://www.phoronix.com/">Phoronix</a> の Michael Larabel 氏が行った検証では、<em>NGG カリング</em> の有効化でいくつか性能が低下しているものもあるが、確かな性能向上を得られているゲームもあり、ここも非同期コンピュート版との大きな違いと言える。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p><em>NGG</em> は <strong>RadeonSI, RADV</strong> 共に、<em>Navi14</em> 以外の <em>GFX10</em> とそれ以降の世代でデフォルトで有効化されている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/07/26/radv-nggc/">RADVドライバーに NGGカリングが実装 | Coelacanth&rsquo;s Dream</a></span>
 
-<p>次に <em>GFX9 (Vega)</em> とそれ以前の AMD GPU のみで効果的というのは、<em>GFX10/RDNA, GFX10.3/RDNA 2</em> 世代では <a href="https://www.coelacanth-dream.com/tags/ngg">NGG (Next Generation Geometry)</a> というハードウェアシェーダーステージが追加されており、<em>NGG</em> ではプリミティブの変更が可能となっている。<br />
-そのため、<em>NGG</em> ではコンピュートシェーダーから頂点シェーダーに受け渡す必要なしにカリング処理を行うことができる。<br />
-<em>GFX9 (Vega)</em> とそれ以前の世代のみで非同期コンピュートによるプリミティブカリングが役立つ、というよりも、<em>GFX9</em> 以降の <em>GFX10, GFX10.3</em> 世代ではもっと有用なカリング機能を実装できるから、と言った方が正確かもしれない。<br />
-非同期コンピュート版は OpenGLドライバーである <strong>RadeonSI</strong> のみに実装されていたが、<em>NGG</em> と <em>NGG カリング</em> は Vulkanドライバー <strong>RADV</strong> にも実装されているのも大きい。<br />
-<a href="https://www.phoronix.com/" rel="nofollow noreferrer" target="_blank">Phoronix</a> の Michael Larabel 氏が行った検証では、<em>NGG カリング</em> の有効化でいくつか性能が低下しているものもあるが、確かな性能向上を得られているゲームもあり、ここも非同期コンピュート版との大きな違いと言える。<sup class="footnote-ref" id="fnref:nggc-perf"><a href="#fn:nggc-perf">2</a></sup></p>
-
-<p><em>NGG</em> は <strong>RadeonSI, RADV</strong> 共に、<em>Navi14</em> 以外の <em>GFX10</em> とそれ以降の世代でデフォルトで有効化されている。<sup class="footnote-ref" id="fnref:ngg-default"><a href="#fn:ngg-default">3</a></sup>
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/07/26/radv-nggc/">RADVドライバーに NGGカリングが実装 | Coelacanth's Dream</a></span>
-
-<em>Navi14</em> で <em>NGG</em> がデフォルトで有効化されない理由はハードウェア的にバグによるものとされている。<sup class="footnote-ref" id="fnref:navi14-hw-bug"><a href="#fn:navi14-hw-bug">4</a></sup><br />
-<em>NGG カリング</em> は、<strong>RadeonSI</strong> では RenderBackend (RB = 4 ROPs, RB+ = 8 ROPs) が 2基以上という条件が付いているが、現時点で存在する <em>GFX10/RDNA, GFX10.3/RDNA 2</em> 世代の dGPU は条件をクリアしているため、デフォルトで有効化される。<sup class="footnote-ref" id="fnref:radeonsi-nggc"><a href="#fn:radeonsi-nggc">5</a></sup><br />
-<strong>RADV</strong> では、安定したパフォーマンスの向上が確認できたなら <em>GFX10.3/RDNA 2</em> 世代でデフォルトで有効化するつもりであることをコメントで触れている。<sup class="footnote-ref" id="fnref:radv-nggc"><a href="#fn:radv-nggc">6</a></sup><br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/17/gfx103-default-ngg-culling/#fn:navi1x-pro-nggc">RadeonSIドライバー + RDNA 2 では NGGカリング/プリミティブシェーダー がデフォルトで有効に | Coelacanth's Dream</a></span>
+<em>Navi14</em> で <em>NGG</em> がデフォルトで有効化されない理由はハードウェア的にバグによるものとされている。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
+<em>NGG カリング</em> は、<strong>RadeonSI</strong> では RenderBackend (RB = 4 ROPs, RB+ = 8 ROPs) が 2基以上という条件が付いているが、現時点で存在する <em>GFX10/RDNA, GFX10.3/RDNA 2</em> 世代の dGPU は条件をクリアしているため、デフォルトで有効化される。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
+<strong>RADV</strong> では、安定したパフォーマンスの向上が確認できたなら <em>GFX10.3/RDNA 2</em> 世代でデフォルトで有効化するつもりであることをコメントで触れている。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/10/17/gfx103-default-ngg-culling/#fn:navi1x-pro-nggc">RadeonSIドライバー + RDNA 2 では NGGカリング/プリミティブシェーダー がデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p>そして、(コードが) とても複雑という点だが、該当コミットではある Issue をクローズしており、そこでは非同期コンピュートによるプリミティブカリングを有効化して UNIGINE Heaven を実行すると、GPU がハングすることが報告されている。<br />
+<p>そして、(コードが) とても複雑という点だが、該当コミットではある Issue をクローズしており、そこでは非同期コンピュートによるプリミティブカリングを有効化して UNIGINE Heaven を実行すると、GPU がハングすることが報告されている。<br>
 その問題は後のパッチで修正されたが、他にもアーティファクト (視覚的なエラー?) が発生する問題もあった。</p>
-
 <p>まとめれば、<em>GFX10/RDNA</em> とそれ以降の世代ではもっと有用な <em>NGG</em>, <em>NGG カリング</em> が実装、有効化されている中で、ワークステーション向けのいくつかのアプリケーションのみで効果的に動作する、複雑なコードで実装された非同期コンピュート版を今後時間を掛けてメンテナンスする意味は薄い、と判断されたのだろう。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:prim-discard-game"><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=RadeonSI-Prim-Culling-Tests" rel="nofollow noreferrer" target="_blank">RadeonSI Primitive Culling Yields Mixed Benchmark Results - Phoronix</a>
- <a class="footnote-return" href="#fnref:prim-discard-game"><sup>[return]</sup></a></li>
-<li id="fn:nggc-perf">[<a href="https://www.phoronix.com/scan.php?page=article&amp;item=radeon-radv-nggc&amp;num=4" rel="nofollow noreferrer" target="_blank">Linux Gaming Performance With Radeon Vulkan NGG Culling - Phoronix</a>]
- <a class="footnote-return" href="#fnref:nggc-perf"><sup>[return]</sup></a></li>
-<li id="fn:ngg-default"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1242" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1242</a>,<br> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_device.c#L686" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_device.c#L686</a>
- <a class="footnote-return" href="#fnref:ngg-default"><sup>[return]</sup></a></li>
-<li id="fn:navi14-hw-bug"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/395c0c52c72ce11c52130fecb98ed98cec79eeae/src/amd/common/ac_shader_util.c#L466" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/395c0c52c72ce11c52130fecb98ed98cec79eeae/src/amd/common/ac_shader_util.c#L466</a>
- <a class="footnote-return" href="#fnref:navi14-hw-bug"><sup>[return]</sup></a></li>
-<li id="fn:radeonsi-nggc"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1246" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1246</a>
- <a class="footnote-return" href="#fnref:radeonsi-nggc"><sup>[return]</sup></a></li>
-<li id="fn:radv-nggc"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_shader.c#L897" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_shader.c#L897</a>
- <a class="footnote-return" href="#fnref:radv-nggc"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=RadeonSI-Prim-Culling-Tests">RadeonSI Primitive Culling Yields Mixed Benchmark Results - Phoronix</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p>[<a href="https://www.phoronix.com/scan.php?page=article&amp;item=radeon-radv-nggc&amp;num=4">Linux Gaming Performance With Radeon Vulkan NGG Culling - Phoronix</a>]&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1242">https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1242</a>,<br> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_device.c#L686">https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_device.c#L686</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/395c0c52c72ce11c52130fecb98ed98cec79eeae/src/amd/common/ac_shader_util.c#L466">https://gitlab.freedesktop.org/mesa/mesa/-/blob/395c0c52c72ce11c52130fecb98ed98cec79eeae/src/amd/common/ac_shader_util.c#L466</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1246">https://gitlab.freedesktop.org/mesa/mesa/-/blob/99c5e03986294e3aa90be6dc656080d8304d3313/src/gallium/drivers/radeonsi/si_pipe.c#L1246</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_shader.c#L897">https://gitlab.freedesktop.org/mesa/mesa/-/blob/f6d5cb233974ab32b8b62e5d1aff686122298150/src/amd/vulkan/radv_shader.c#L897</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

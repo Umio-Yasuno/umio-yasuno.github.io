@@ -70,36 +70,30 @@
 <div class="article-time">
     <time datetime="2020-12-07 05:32 &#43;0900" class="time-b">Post: 2020/12/07 05:32 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/12/08 16:21 &#43;0900</div>
-  </div><p>AMD GPU のオープンソース OpenGL ドライバー <strong>RadeonSI</strong> に、<em>Smart Access Memory / Resizeable PCI BAR</em> に向けた最適化パッチが投稿された。<br />
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7951/commits" rel="nofollow noreferrer" target="_blank">ac,radeonsi: optimizations for Smart Access Memory (all VRAM visible) (!7951) · Merge Requests · Mesa / mesa · GitLab</a></span>
+  </div><p>AMD GPU のオープンソース OpenGL ドライバー <strong>RadeonSI</strong> に、<em>Smart Access Memory / Resizeable PCI BAR</em> に向けた最適化パッチが投稿された。<br>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7951/commits">ac,radeonsi: optimizations for Smart Access Memory (all VRAM visible) (!7951) · Merge Requests · Mesa / mesa · GitLab</a></span>
 </p>
-
-<p>パッチを投稿した AMD の <a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏は、CPU から一度に GPU VRAM へのアクセスが可能な (CPU から見えている) 状態を <em>Smart Access Memory</em> としている。<br />
+<p>パッチを投稿した AMD の <a href="https://gitlab.freedesktop.org/mareko">Marek Olšák</a> 氏は、CPU から一度に GPU VRAM へのアクセスが可能な (CPU から見えている) 状態を <em>Smart Access Memory</em> としている。<br>
 既に各メディア、テクニカルライターへの AMD による説明から、PCI Express の仕様に存在する <em>Resizeable PCI BAR</em> を利用したものという話が出ていたが、それは Linux環境においても同様で、<em>Smart Access Memory</em> 自体は <em>Resizeable PCI BAR</em> 以上に特別なことはしていないと捉えてよさそうだ。</p>
-
 <p>今回 <strong>RadeonSI</strong> ドライバーには、一度に最大 256MB までしかアクセスできない状況を想定した、バッファを確保するコードを <em>Smart Access Memory / Resizeable PCI BAR</em> が有効な場合はスキップするといった最適化が行なわれている。</p>
-
-<p>以前検証を行なった時は、Vulkan API を用いるソフトウェアのみを試したが、OpenGL API でもある程度の効果はあるのだろう。<br />
+<p>以前検証を行なった時は、Vulkan API を用いるソフトウェアのみを試したが、OpenGL API でもある程度の効果はあるのだろう。<br>
 一連のパッチがメインラインに組み込まれた時は再度検証するつもりだが、やっぱり Linux でも動作する OpenGLベンチマークというのは少なかったりする。</p>
-
 <ins datetime="2020/12/08:00+09:00">
   <span class="insbegin">（追記 2020/12/08）</span>
   <div class="ins-content">
-    <p><strong>RADV (Vulkan)</strong> ドライバーにも同様の最適化パッチが投稿された。<br />
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7979" rel="nofollow noreferrer" target="_blank">radv: Use VRAM for CS &amp; upload buffer if all VRAM is CPU-visible. (!7979) · Merge Requests · Mesa / mesa · GitLab</a></span></p>
-
-<p><strong>RADV</strong> の開発者である <a href="https://gitlab.freedesktop.org/bnieuwenhuizen" rel="nofollow noreferrer" target="_blank">Bas Nieuwenhuizen</a> 氏は検証も行なっており、Basemark では +3%、SotTR (Shadow of the Tomb Raider) では +1fps (0-4%) の性能向上を確認できたとコメントしている。</p>
+    <p><strong>RADV (Vulkan)</strong> ドライバーにも同様の最適化パッチが投稿された。<br>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7979">radv: Use VRAM for CS &amp; upload buffer if all VRAM is CPU-visible. (!7979) · Merge Requests · Mesa / mesa · GitLab</a></span></p>
+<p><strong>RADV</strong> の開発者である <a href="https://gitlab.freedesktop.org/bnieuwenhuizen">Bas Nieuwenhuizen</a> 氏は検証も行なっており、Basemark では +3%、SotTR (Shadow of the Tomb Raider) では +1fps (0-4%) の性能向上を確認できたとコメントしている。</p>
 
   </div>
   <span class="insend">（追記終了）</span>
 </ins>
 <br>
 
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://ascii.jp/elem/000/004/034/4034588/2/" rel="nofollow noreferrer" target="_blank">ASCII.jp：「Radeon RX 6800 XT/6800」で強いRadeonが久々に戻ってきた！【前編】 (2/7)</a></li>
-<li><a href="https://www.4gamer.net/games/461/G046171/20201124135/" rel="nofollow noreferrer" target="_blank">西川善司の3DGE：「Radeon RX 6000」詳報。高性能の鍵となる「Infinity Cache」と「Smart Access Memory」の仕組みとは</a></li>
+<li><a href="https://ascii.jp/elem/000/004/034/4034588/2/">ASCII.jp：「Radeon RX 6800 XT/6800」で強いRadeonが久々に戻ってきた！【前編】 (2/7)</a></li>
+<li><a href="https://www.4gamer.net/games/461/G046171/20201124135/">西川善司の3DGE：「Radeon RX 6000」詳報。高性能の鍵となる「Infinity Cache」と「Smart Access Memory」の仕組みとは</a></li>
 </ul>
 
 </div>

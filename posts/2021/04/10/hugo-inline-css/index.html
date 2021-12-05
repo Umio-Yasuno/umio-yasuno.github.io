@@ -70,45 +70,38 @@
 <div class="article-time">
     <time datetime="2021-04-10 23:09 &#43;0900" class="time-b">Post: 2021/04/10 23:09 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/14 15:51 &#43;0900</div>
-  </div>
-
-<p>このサイトの支えている静的サイトジェネレーター <a href="https://github.com/gohugoio/hugo/" rel="nofollow noreferrer" target="_blank">Hugo</a> のメモ。</p>
-
-<h2 id="scss-inline-css">SCSS -&gt; Inline CSS</h2>
-
-<p>このサイトでは一部の CSS をレンダリング開始速度、CSSファイルがダウンロード、パースされるまでの表示のため HTMLファイルにインライン、<code>&lt;style&gt;...&lt;/style&gt;</code> 内に記述しているが、<br />
-他の CSS は SCSS形式で記述し、サイズ削減のため Hugo の Minify機能を活用している中、インラインCSS だけベタに書いてた。<br />
+  </div><p>このサイトの支えている静的サイトジェネレーター <a href="https://github.com/gohugoio/hugo/">Hugo</a> のメモ。</p>
+<h2 id="scss---inline-css">SCSS -&gt; Inline CSS</h2>
+<p>このサイトでは一部の CSS をレンダリング開始速度、CSSファイルがダウンロード、パースされるまでの表示のため HTMLファイルにインライン、<code>&lt;style&gt;...&lt;/style&gt;</code> 内に記述しているが、<br>
+他の CSS は SCSS形式で記述し、サイズ削減のため Hugo の Minify機能を活用している中、インラインCSS だけベタに書いてた。<br>
 それをどうにかしたくて試行錯誤した結果見付けた方法のメモ。</p>
-
 <p>Hugo のドキュメントにあるように、通常 SCSS から CSS に変換、CSSファイルを生成する場合は以下のように記述する。</p>
-
 <ul>
-<li><a href="https://gohugo.io/hugo-pipes/introduction/" rel="nofollow noreferrer" target="_blank">Hugo Pipes Introduction | Hugo</a></li>
-<li><a href="https://gohugo.io/hugo-pipes/scss-sass/" rel="nofollow noreferrer" target="_blank">SASS / SCSS | Hugo</a></li>
+<li><a href="https://gohugo.io/hugo-pipes/introduction/">Hugo Pipes Introduction | Hugo</a></li>
+<li><a href="https://gohugo.io/hugo-pipes/scss-sass/">SASS / SCSS | Hugo</a></li>
 </ul>
-
 <blockquote>
-<pre tabindex="0"><code> {{- $main_style := resources.Get &#34;css/main.scss&#34; | toCSS | minify -}}
-   &lt;link rel=&#34;preload&#34; href=&#34;{{ $main_style.Permalink }}&#34; as=&#34;style&#34;&gt;
-   &lt;link rel=&#34;stylesheet&#34; href=&#34;{{ $main_style.Permalink }}&#34;&gt;</code></pre></blockquote>
-
-<p>それをベースに、変換結果をインラインに展開したい場合は以下のようになる。1行にまとめることもでき、下がその例。<br />
+<pre><code> {{- $main_style := resources.Get &quot;css/main.scss&quot; | toCSS | minify -}}
+   &lt;link rel=&quot;preload&quot; href=&quot;{{ $main_style.Permalink }}&quot; as=&quot;style&quot;&gt;
+   &lt;link rel=&quot;stylesheet&quot; href=&quot;{{ $main_style.Permalink }}&quot;&gt;
+</code></pre>
+</blockquote>
+<p>それをベースに、変換結果をインラインに展開したい場合は以下のようになる。1行にまとめることもでき、下がその例。<br>
 <code>&lt;styke&gt;...&lt;/style&gt;</code> 内に置く場合は <code>safeCSS</code> をやらないと正常に変換結果が出力されないので注意。</p>
-
 <blockquote>
-<pre tabindex="0"><code> &lt;style&gt;
+<pre><code> &lt;style&gt;
    ...
-   {{- $main_style := resources.Get &#34;css/main.scss&#34; | toCSS | minify -}}
+   {{- $main_style := resources.Get &quot;css/main.scss&quot; | toCSS | minify -}}
    {{- $main_style.Content | safeCSS -}}
    ...
  &lt;/style&gt;
    /* one-line */
-   {{- (resources.Get &#34;css/main.scss&#34; | toCSS | minify).Content | safeCSS -}}</code></pre></blockquote>
-
-<p>これをテンプレート部に使うことで、SCSS形式で記述しながらインラインCSSとして展開でき、レンダリング開始速度を向上させることができる。速度向上には後に表示させたい要素をインラインCSS側で表示しないよう設定する必要があるが。<br />
+   {{- (resources.Get &quot;css/main.scss&quot; | toCSS | minify).Content | safeCSS -}}
+</code></pre>
+</blockquote>
+<p>これをテンプレート部に使うことで、SCSS形式で記述しながらインラインCSSとして展開でき、レンダリング開始速度を向上させることができる。速度向上には後に表示させたい要素をインラインCSS側で表示しないよう設定する必要があるが。<br>
 また、これで CSS/SCSSをまとめて管理できるようになる。</p>
-
-<p>SCSSの変換結果はキャッシュされるらしく、個々の SCSSファイルをテンプレートで取得、変換する方法だとファイル処理のためかビルドに時間が掛かるようになる。<br />
+<p>SCSSの変換結果はキャッシュされるらしく、個々の SCSSファイルをテンプレートで取得、変換する方法だとファイル処理のためかビルドに時間が掛かるようになる。<br>
 そのため、メインとする SCSSファイルを決め、そこで <code>@import &quot;./other.scss&quot;;</code> という風にしてまとめた方が吉。</p>
 <div class="article-bottom-misc">
   <div class="rss-block">

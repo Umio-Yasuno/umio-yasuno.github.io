@@ -65,158 +65,127 @@
   <h1>Hot Chips 32 個人的まとめ</h1><div class="article-time">
     <time datetime="2020-08-18 18:19 &#43;0900" class="time-b">Post: 2020/08/18 18:19 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/08/19 09:55 &#43;0900</div>
-  </div>
-
-<p>企業が公式的にハードウェアの詳細を語ってくれるイベント <a href="https://www.hotchips.org/" rel="nofollow noreferrer" target="_blank">Hot Chips</a>。ハードウェアオタクからしたら最高なのは間違いないが、自分が語れることはそうない。<br />
-メンバー登録(有料)をしていないから画像はどっかから引用・拝借するしかないし、発表の動画、スライドがパブリックになるまでには数ヶ月掛かる。<br />
+  </div><p>企業が公式的にハードウェアの詳細を語ってくれるイベント <a href="https://www.hotchips.org/">Hot Chips</a>。ハードウェアオタクからしたら最高なのは間違いないが、自分が語れることはそうない。<br>
+メンバー登録(有料)をしていないから画像はどっかから引用・拝借するしかないし、発表の動画、スライドがパブリックになるまでには数ヶ月掛かる。<br>
 それに何よりも日本で活躍するテクニカルライター方々が魅力的に解説してくれるから、自分が積極的に語る必要もない。<span class="hide">自分にとって記事を書くこと自体はハードウェア購入資金にはなってくれない。</span></p>
-
 <p>そういう訳で、以下個人的なメモ・補足・疑問点・まとめ。</p>
-
 <h2 id="xbox-series-x">Xbox Series X</h2>
-
-<p><a href="https://www.anandtech.com/show/15994/hot-chips-2020-live-blog-microsoft-xbox-series-x-system-architecture-600pm-pt" rel="nofollow noreferrer" target="_blank">Hot Chips 2020 Live Blog: Microsoft Xbox Series X System Architecture (6:00pm PT)</a></p>
-
-<p>Microsoft が <em>Zen 2 + RDNA 2</em> を搭載する次世代ゲーム機 SoC の概要を発表。<br />
+<p><a href="https://www.anandtech.com/show/15994/hot-chips-2020-live-blog-microsoft-xbox-series-x-system-architecture-600pm-pt">Hot Chips 2020 Live Blog: Microsoft Xbox Series X System Architecture (6:00pm PT)</a></p>
+<p>Microsoft が <em>Zen 2 + RDNA 2</em> を搭載する次世代ゲーム機 SoC の概要を発表。<br>
 製造プロセスは <code>TSMC N7 Enhanced</code> と少しぼかされたが、ダイサイズは 360.4mm<sup>2</sup>。トランジスタ数は 15.3B。</p>
-
-<p>L2キャッシュは 5MB(5120KB)で、対応するメモリチャネル数は 20本であるから、各L2キャッシュブロックの容量は 256KB と、<em>Navi10 /Navi14</em> 等と同様の規模となっている。<br />
-<a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">RDNA Whitepaper</a>では 64KB-512KB の範囲内で設定可能とあるが、<strong>Xbox Series X SoC</strong> の設計でその点を変えることはしなかったようだ。</p>
-
+<p>L2キャッシュは 5MB(5120KB)で、対応するメモリチャネル数は 20本であるから、各L2キャッシュブロックの容量は 256KB と、<em>Navi10 /Navi14</em> 等と同様の規模となっている。<br>
+<a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf">RDNA Whitepaper</a>では 64KB-512KB の範囲内で設定可能とあるが、<strong>Xbox Series X SoC</strong> の設計でその点を変えることはしなかったようだ。</p>
 <p>WGP数は 26基(=CU 52基)で、2基を無効化することで製品としている。
 全体的には 2-ShaderEngine、4-ShaderArray という構成であり、ShaderArray あたりの WGP数は 7基となる。</p>
-
-<p>WGPの内部構成、そして レイ計算ユニットの概要が明かされており、TMU(Texture Mapping Unit) と切り替えて使う方式のようだ。<br />
-少しの(Minor) ダイエリアコストで 3~10倍のアクセラレーションを可能としており、TMU との切り替えであれば、レイトレーシングを採用していないゲームにおいて無駄になるユニット・ダイエリアを少ないものに抑えられる。<br />
+<p>WGPの内部構成、そして レイ計算ユニットの概要が明かされており、TMU(Texture Mapping Unit) と切り替えて使う方式のようだ。<br>
+少しの(Minor) ダイエリアコストで 3~10倍のアクセラレーションを可能としており、TMU との切り替えであれば、レイトレーシングを採用していないゲームにおいて無駄になるユニット・ダイエリアを少ないものに抑えられる。<br>
 気になるのは兼用による、レイトレーシング有効時と無効時の性能差だが、さすがにそこまでは明かされていない。</p>
-
 <p>ごく小さい(Very small) ダイエリアコストで、テクスチャーを解像度に最適化する MIP maps を効率的に行なう <em>Sampler Feedback Streaming</em> を導入しており、これによって最大 60% の I/O を減らせるとしている。</p>
-
-<p>ゲームにも使われるような機械学習の推論でも、ごく小さいダイエリアコストで 3~10倍の性能向上を達成している。<br />
-性能に関しては何との比較かが不明だが、性能向上の中身は <em>Navi12 /Navi14</em> も対応している混合積演算命令ではないかと思う。<br />
-それらは 8個の INT4 をまとめて(パックド) 計算する命令に対応している。<br />
+<p>ゲームにも使われるような機械学習の推論でも、ごく小さいダイエリアコストで 3~10倍の性能向上を達成している。<br>
+性能に関しては何との比較かが不明だが、性能向上の中身は <em>Navi12 /Navi14</em> も対応している混合積演算命令ではないかと思う。<br>
+それらは 8個の INT4 をまとめて(パックド) 計算する命令に対応している。<br>
 コストの小ささから特別ユニットを搭載したものではないだろう。</p>
-
-<p>GPUクロックは、FP32でのピーク性能は 12TFLOPS ということから、約1.8GHzと割り出せる。<br />
+<p>GPUクロックは、FP32でのピーク性能は 12TFLOPS ということから、約1.8GHzと割り出せる。<br>
 また 116 Gpix/sec から、RenderBackend数は 16基(ROP 64基相当)と分かる。</p>
-
-<p>それとダイサイズに関して、スライドに掲載されているダイショットを元にした計算では縦と横の長さは 縦: 約16.34mm、横: 約22.05mm となった。(微妙に合ってない)<br />
+<p>それとダイサイズに関して、スライドに掲載されているダイショットを元にした計算では縦と横の長さは 縦: 約16.34mm、横: 約22.05mm となった。(微妙に合ってない)<br>
 それでもそこから、さらに L2キャッシュを除いた CPUコアと L3キャッシュ(4MB) のダイエリアを求めると、CPUコアは 約2.59mm<sup>2</sup>、L3キャッシュ(4MB) は 約4.53mm<sup>2</sup>と出た。</p>
-
 <p>Zen系APU (<em>Raven, Raven2, Renoir</em>)と比較した表が以下となる。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left"></th>
-<th align="center">RavenRidge</th>
-<th align="center">Raven2</th>
-<th align="center">Renoir</th>
-<th align="center"><strong>XSX SoC</strong></th>
+<th style="text-align:left"></th>
+<th style="text-align:center">RavenRidge</th>
+<th style="text-align:center">Raven2</th>
+<th style="text-align:center">Renoir</th>
+<th style="text-align:center"><strong>XSX SoC</strong></th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Process</td>
-<td align="center">14nm</td>
-<td align="center">14nm</td>
-<td align="center">7nm</td>
-<td align="center"><em>7nm Enhanced</em></td>
+<td style="text-align:left">Process</td>
+<td style="text-align:center">14nm</td>
+<td style="text-align:center">14nm</td>
+<td style="text-align:center">7nm</td>
+<td style="text-align:center"><em>7nm Enhanced</em></td>
 </tr>
-
 <tr>
-<td align="left">Die Size</td>
-<td align="center">208.84mm<sup>2</sup></td>
-<td align="center">148.55mm<sup>2</sup></td>
-<td align="center">155.01.mm<sup>2</sup></td>
-<td align="center">360.4mm<sup>2</sup></td>
+<td style="text-align:left">Die Size</td>
+<td style="text-align:center">208.84mm<sup>2</sup></td>
+<td style="text-align:center">148.55mm<sup>2</sup></td>
+<td style="text-align:center">155.01.mm<sup>2</sup></td>
+<td style="text-align:center">360.4mm<sup>2</sup></td>
 </tr>
-
 <tr>
-<td align="left"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
-
 <tr>
-<td align="left">CPU Arch</td>
-<td align="center">Zen</td>
-<td align="center">Zen</td>
-<td align="center">Zen 2</td>
-<td align="center">Zen 2</td>
+<td style="text-align:left">CPU Arch</td>
+<td style="text-align:center">Zen</td>
+<td style="text-align:center">Zen</td>
+<td style="text-align:center">Zen 2</td>
+<td style="text-align:center">Zen 2</td>
 </tr>
-
 <tr>
-<td align="left">CPU Core Area<br>(non include L2$)</td>
-<td align="center">5.18mm<sup>2</sup></td>
-<td align="center">5.18mm<sup>2</sup></td>
-<td align="center">2.73mm<sup>2</sup></td>
-<td align="center"><em>2.59mm<sup>2</sup>?</em></td>
+<td style="text-align:left">CPU Core Area<br>(non include L2$)</td>
+<td style="text-align:center">5.18mm<sup>2</sup></td>
+<td style="text-align:center">5.18mm<sup>2</sup></td>
+<td style="text-align:center">2.73mm<sup>2</sup></td>
+<td style="text-align:center"><em>2.59mm<sup>2</sup>?</em></td>
 </tr>
-
 <tr>
-<td align="left">Total CPU L3$</td>
-<td align="center">4MB</td>
-<td align="center">4MB</td>
-<td align="center">8MB</td>
-<td align="center">8MB</td>
+<td style="text-align:left">Total CPU L3$</td>
+<td style="text-align:center">4MB</td>
+<td style="text-align:center">4MB</td>
+<td style="text-align:center">8MB</td>
+<td style="text-align:center">8MB</td>
 </tr>
-
 <tr>
-<td align="left">L3$ (4MB) Area</td>
-<td align="center">10.91mm<sup>2</sup></td>
-<td align="center">10.91mm<sup>2</sup></td>
-<td align="center">5.39mm<sup>2</sup></td>
-<td align="center"><em>4.53mm<sup>2</sup>?</em></td>
+<td style="text-align:left">L3$ (4MB) Area</td>
+<td style="text-align:center">10.91mm<sup>2</sup></td>
+<td style="text-align:center">10.91mm<sup>2</sup></td>
+<td style="text-align:center">5.39mm<sup>2</sup></td>
+<td style="text-align:center"><em>4.53mm<sup>2</sup>?</em></td>
 </tr>
 </tbody>
 </table>
-
 <p><em>Renoir</em> と比較して、CPUコアは 約94%、L3キャッシュ(4MB) は 約84%のダイエリアとなっており、確かに <code>7nm Enhanced</code> であるように見える。</p>
-
 <h2 id="xe-lp"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
 アーキテクチャ</h2>
-
-<p><a href="https://www.anandtech.com/show/15993/hot-chips-2020-live-blog-intels-xe-gpu-architecture-530pm-pt" rel="nofollow noreferrer" target="_blank">Hot Chips 2020 Live Blog: Intel's Xe GPU Architecture (5:30pm PT)</a></p>
-
+<p><a href="https://www.anandtech.com/show/15993/hot-chips-2020-live-blog-intels-xe-gpu-architecture-530pm-pt">Hot Chips 2020 Live Blog: Intel&rsquo;s Xe GPU Architecture (5:30pm PT)</a></p>
 <p>Architecture Day 2020 でも <span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-アーキテクチャの詳細は発表されていたが、<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth's Dream</a></span>
+アーキテクチャの詳細は発表されていたが、<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth&rsquo;s Dream</a></span>
 
 今回は <span class="xe-gpu-arch">X<sup>e</sup></span>
-共通の部分も一部解説されており、任意で追加されるユニットとして、<code>FP64</code> と <code>Matrix Extension (XMX)</code> をあげている。<br />
+共通の部分も一部解説されており、任意で追加されるユニットとして、<code>FP64</code> と <code>Matrix Extension (XMX)</code> をあげている。<br>
 恐らく 2つは <span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
-に向けたもので、後者は Intel 次世代サーバー向けプロセッサ <a href="https://www.coelacanth-dream.com/tags/sapphire_rapids">Sapphire Rapids</a> が対応するアクセラレーター向け命令 <code>AMX(Advanced Matrix Extension)</code> と連携するためのユニットとされる。<sup class="footnote-ref" id="fnref:spr-amx"><a href="#fn:spr-amx">1</a></sup></p>
-
+に向けたもので、後者は Intel 次世代サーバー向けプロセッサ <a href="https://www.coelacanth-dream.com/tags/sapphire_rapids">Sapphire Rapids</a> が対応するアクセラレーター向け命令 <code>AMX(Advanced Matrix Extension)</code> と連携するためのユニットとされる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <p>他は <span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
  が HBM2e を採用することが明言されたくらい？</p>
-
 <h2 id="ice_lake-server">Ice Lake (Server)</h2>
-
-<p><em>Ice Lake (Client)</em> も <em>Sunny Cove</em> コアではあるが、<code>AVX-512</code> の実行は <code>Port 0</code> のみとなっており、<br />
+<p><em>Ice Lake (Client)</em> も <em>Sunny Cove</em> コアではあるが、<code>AVX-512</code> の実行は <code>Port 0</code> のみとなっており、<br>
 <em>Ice Lake (Server)</em> は <code>Port 0</code> と <code>Port 1</code> を束ねての実行と、<code>Port 5</code> での実行が可能となっている。</p>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/07/23/ice_lake-client-arch.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/07/23/ice_lake-client-arch.webp"
       alt="画像出典: Intel® 64 and IA-32 Architectures Optimization Reference Manual"/>
 </a><figcaption>
-      <h4 class="fig-title">Ice Lake (Client) Microarchitecture</h4><p>画像出典: <cite><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="nofollow noreferrer" target="_blank">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></cite></p>
+      <h4 class="fig-title">Ice Lake (Client) Microarchitecture</h4><p>画像出典: <cite><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></cite></p>
   </figcaption>
 </figure>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:spr-amx"><a href="https://ascii.jp/elem/000/004/017/4017807/2/" rel="nofollow noreferrer" target="_blank">ASCII.jp：性能が70%向上するCooper Lakeと200Topsの性能を持つPonte Vecchio　インテル CPUロードマップ　 (2/3)</a>
- <a class="footnote-return" href="#fnref:spr-amx"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://ascii.jp/elem/000/004/017/4017807/2/">ASCII.jp：性能が70%向上するCooper Lakeと200Topsの性能を持つPonte Vecchio　インテル CPUロードマップ　 (2/3)</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

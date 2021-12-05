@@ -71,68 +71,65 @@
     <time datetime="2021-01-14 11:36 &#43;0900" class="time-b">Post: 2021/01/14 11:36 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/01/14 13:22 &#43;0900</div>
   </div><p>先日の CES2021 <span class="complement">よりも、主にその発表後のニュースリリース</span>
- で各種 SKU が正式発表された <em>Cezanne APU</em> 、<em>Lucienne APU</em> だが、<sup class="footnote-ref" id="fnref:ces2021"><a href="#fn:ces2021">1</a></sup><br />
-両者と同じく <em>Renoir APU</em> に近い存在として、Linux Kernel (amd-gfx) へのパッチに現れた <em>Green Sardine APU</em> がいた。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/03/amd-apu-green_sardine/">AMD Renoir の兄弟？ Linux Kernel に &quot;Green Sardine&quot; APU をサポートするパッチが投稿される | Coelacanth's Dream</a></span>
+ で各種 SKU が正式発表された <em>Cezanne APU</em> 、<em>Lucienne APU</em> だが、<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+両者と同じく <em>Renoir APU</em> に近い存在として、Linux Kernel (amd-gfx) へのパッチに現れた <em>Green Sardine APU</em> がいた。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/10/03/amd-apu-green_sardine/">AMD Renoir の兄弟？ Linux Kernel に &ldquo;Green Sardine&rdquo; APU をサポートするパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <p>それが、新たに投稿されたパッチから、<em>Green Sardine</em> は <em>Cezanne</em> の別名であることが明らかになった。</p>
-
 <blockquote>
 <p>Add green_sardine PCI id support and map it to renoir asic type.</p>
-<pre tabindex="0"><code>     /* Renoir */
+<pre><code>     /* Renoir */
      {0x1002, 0x1636, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},
- +   {0x1002, 0x1638, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},</code></pre>
+ +	{0x1002, 0x1638, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-January/058408.html" rel="nofollow noreferrer" target="_blank">[PATCH 1/2] drm/amdgpu: add green_sardine device id (v2)</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-January/058408.html">[PATCH 1/2] drm/amdgpu: add green_sardine device id (v2)</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>Cezanne</em> の GPU部に割り当てられた DeviceID は、以前に Coreboot へのパッチからわかっており、<em>Green Sardine</em> の DeviceID <code>0x1638</code> は <em>Cezanne</em> と一致する。<br />
+<p><em>Cezanne</em> の GPU部に割り当てられた DeviceID は、以前に Coreboot へのパッチからわかっており、<em>Green Sardine</em> の DeviceID <code>0x1638</code> は <em>Cezanne</em> と一致する。<br>
 下引用部では、<code>Family: 0x19, Model: 0x51</code> となっているが、<em>Cezanne</em> は <code>Family: 0x19, Model: 0x50</code> であるため、誤字と思われる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   #define PCI_DEVICE_ID_ATI_FAM17H_MODEL60H_GPU         0x1636
-   #define PCI_DEVICE_ID_ATI_FAM17H_MODEL68H_GPU         0x164C
-   #define PCI_DEVICE_ID_ATI_FAM19H_MODEL51H_GPU         0x1638</code></pre>
+<pre><code>   #define PCI_DEVICE_ID_ATI_FAM17H_MODEL60H_GPU			0x1636
+   #define PCI_DEVICE_ID_ATI_FAM17H_MODEL68H_GPU			0x164C
+   #define PCI_DEVICE_ID_ATI_FAM19H_MODEL51H_GPU			0x1638
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/47703" rel="nofollow noreferrer" target="_blank">include/device/pci_ids: add PCI IDs for new AMD SoCs (I0caea562) · Gerrit Code Review</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/47703">include/device/pci_ids: add PCI IDs for new AMD SoCs (I0caea562) · Gerrit Code Review</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>Lucienne</em> の DeviceID <code>0x164C</code> も追加されているが、コードネームについてはこれまで Linux Kernel へのパッチでは触れられていない。<br />
+<p><em>Lucienne</em> の DeviceID <code>0x164C</code> も追加されているが、コードネームについてはこれまで Linux Kernel へのパッチでは触れられていない。<br>
 <em>Lucienne</em> は <em>Renoir Refresh</em> とも言える <span class="complement">いやプロセスも変わらないとすると、ほぼ <em>Renoir</em> そのままかもしれない</span>
- APU であり、恐らくはファームウェアも <em>Renoir</em> と同じものが使えると思われる。<br />
+ APU であり、恐らくはファームウェアも <em>Renoir</em> と同じものが使えると思われる。<br>
 コードでも、<em>Renoir</em> と <em>Lucienne</em> 、<em>Cezanne/Green Sardine</em> とで分けられている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>     case CHIP_RENOIR:
-         adev-&gt;asic_funcs = &amp;soc15_asic_funcs;
--        if (adev-&gt;pdev-&gt;device == 0x1636)
-+        if ((adev-&gt;pdev-&gt;device == 0x1636) ||
-+            (adev-&gt;pdev-&gt;device == 0x164c))
-             adev-&gt;apu_flags |= AMD_APU_IS_RENOIR;
-         else
-             adev-&gt;apu_flags |= AMD_APU_IS_GREEN_SARDINE;</code></pre>
+<pre><code> 	case CHIP_RENOIR:
+ 		adev-&gt;asic_funcs = &amp;soc15_asic_funcs;
+-		if (adev-&gt;pdev-&gt;device == 0x1636)
++		if ((adev-&gt;pdev-&gt;device == 0x1636) ||
++		    (adev-&gt;pdev-&gt;device == 0x164c))
+ 			adev-&gt;apu_flags |= AMD_APU_IS_RENOIR;
+ 		else
+ 			adev-&gt;apu_flags |= AMD_APU_IS_GREEN_SARDINE;
+</code></pre>
+</blockquote>
+<blockquote>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-January/058409.html" rel="nofollow noreferrer" target="_blank">[PATCH 2/2] drm/amdgpu: add new device id for Renior</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-January/058409.html">[PATCH 2/2] drm/amdgpu: add new device id for Renior</a></cite>
 </div>
 
 </blockquote>
-
-<p>一応、<em>Renoir</em> は <code>x86_Model: 0x60</code> 、<em>Lucienne</em> は <code>x86_Model: 0x68</code> となるため、CPU部では分けられている。<br />
+<p>一応、<em>Renoir</em> は <code>x86_Model: 0x60</code> 、<em>Lucienne</em> は <code>x86_Model: 0x68</code> となるため、CPU部では分けられている。<br>
 それでも I/O、GPU部は <em>Renoir</em> と分ける必要がなかったから、コードネームに言及する必要もなかった、ということなのかもしれない。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:ces2021"><a href="https://ir.amd.com/news-events/press-releases/detail/986/amd-announces-worlds-best-mobile-processors-in-ces" rel="nofollow noreferrer" target="_blank">AMD Announces World’s Best Mobile Processors¹ In CES 2021 Keynote :: Advanced Micro Devices, Inc. (AMD)</a>
- <a class="footnote-return" href="#fnref:ces2021"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://ir.amd.com/news-events/press-releases/detail/986/amd-announces-worlds-best-mobile-processors-in-ces">AMD Announces World’s Best Mobile Processors¹ In CES 2021 Keynote :: Advanced Micro Devices, Inc. (AMD)</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

@@ -69,19 +69,16 @@
 <div class="article-time">
     <time datetime="2021-05-21 22:41 &#43;0900" class="time-b">Post: 2021/05/21 22:41 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/22 00:01 &#43;0900</div>
-  </div><p>最近 Rust の勉強も兼ねて CPUID を出力、解析するツールを自作してる。<br />
-今月記事を対して投稿してないのは忙しいとか話が思い付かなかったこともあるが、こうした勉強とツール自作をしていたのも理由の一つ。<br />
-知識の定着のため、ブログに記事を書くこともいいがツールを作って実際に動かすことはもっといい。<br />
+  </div><p>最近 Rust の勉強も兼ねて CPUID を出力、解析するツールを自作してる。<br>
+今月記事を対して投稿してないのは忙しいとか話が思い付かなかったこともあるが、こうした勉強とツール自作をしていたのも理由の一つ。<br>
+知識の定着のため、ブログに記事を書くこともいいがツールを作って実際に動かすことはもっといい。<br>
 まだ作り始めたばかりだが、ここまでの感想を日記に書くことにした。</p>
-
 <ul>
-<li><a href="https://github.com/Umio-Yasuno/rust-cpuid-asm" rel="nofollow noreferrer" target="_blank">Umio-Yasuno/rust-cpuid-asm</a></li>
+<li><a href="https://github.com/Umio-Yasuno/rust-cpuid-asm">Umio-Yasuno/rust-cpuid-asm</a></li>
 </ul>
-
 <p>下は手元の実行例をそのまま貼ったものだが、最近 <code>&lt;pre&gt;&lt;/pre&gt;</code> に <code>white-space: pre</code> を CSS に設定していると Firefox 限定でページ幅が想定よりも広がることに気付いたため、<code>white-space: pre-wrap</code> を設定している。そのためスマホだと改行されて見にくいかもしれない。</p>
-
 <blockquote>
-<pre tabindex="0"><code> CPUID Dump
+<pre><code> CPUID Dump
  ========================================================================
   00000000h_x0: eax=0000000Dh ebx=68747541h ecx=444D4163h edx=69746E65h [AuthenticAMD]
   00000001h_x0: eax=00800F82h ebx=020C0800h ecx=7ED8320Bh edx=178BFBFFh [F: 17h, M: 8h, S: 2]
@@ -114,7 +111,7 @@
   0000000Dh_xC: eax=00000000h ebx=00000000h ecx=00000000h edx=00000000h
   0000000Fh_x0: eax=00000000h ebx=00000000h ecx=00000000h edx=00000000h
   00000010h_x0: eax=00000000h ebx=00000000h ecx=00000000h edx=00000000h
-
+	
   80000000h_x0: eax=8000001Fh ebx=68747541h ecx=444D4163h edx=69746E65h
   80000001h_x0: eax=00800F82h ebx=20000000h ecx=35C233FFh edx=2FD3FBFFh [PkgType: 2]
                                                                         [LAHF/SAHF] [LZCNT] [SSE4A]
@@ -142,57 +139,53 @@
                                                                         [2 thread per core]
   8000001Fh_x0: eax=0000000Fh ebx=0000016Fh ecx=0000000Fh edx=00000000h [SME SEV(-ES)]
   80000020h_x0: eax=00000000h ebx=00000000h ecx=00000000h edx=00000000h
-  80000021h_x0: eax=00000000h ebx=00000000h ecx=00000000h edx=00000000h</code></pre></blockquote>
-
-<p>CPUID周りのドキュメントを読んでいて面白いと思ったのは、AMD CPU だと性能最適化に役立つ情報として FPUパイプラインのデータ幅が CPUID から知ることができるようになっていることだ。<br />
-具体的には EAXレジスタに <code>0x8000_001A</code> をセットして CPUID命令を実行すると EAXレジスタに値が出力され、その 1-bit目が 1 であれば 128-bit幅 (FP128)、3-bit目が 1 であれば 256-bit幅 (FP256) の FPUパイプラインがその AMD CPU に実装されていることがわかる。<br />
-上の <strong>AMD Ryzen 5 2600</strong> の例では FP128 になっているし、 <em>Zen 2/3 アーキテクチャ</em> のプロセッサで実行すれば FP256 となるだろう。<br />
+  80000021h_x0: eax=00000000h ebx=00000000h ecx=00000000h edx=00000000h
+</code></pre>
+</blockquote>
+<p>CPUID周りのドキュメントを読んでいて面白いと思ったのは、AMD CPU だと性能最適化に役立つ情報として FPUパイプラインのデータ幅が CPUID から知ることができるようになっていることだ。<br>
+具体的には EAXレジスタに <code>0x8000_001A</code> をセットして CPUID命令を実行すると EAXレジスタに値が出力され、その 1-bit目が 1 であれば 128-bit幅 (FP128)、3-bit目が 1 であれば 256-bit幅 (FP256) の FPUパイプラインがその AMD CPU に実装されていることがわかる。<br>
+上の <strong>AMD Ryzen 5 2600</strong> の例では FP128 になっているし、 <em>Zen 2/3 アーキテクチャ</em> のプロセッサで実行すれば FP256 となるだろう。<br>
 その値はまだほとんど使われておらず予約領域となっており、今後 AMD CPU で機能の追加、FPUパイプラインのデータ幅拡張が行われれば情報が追加されると思われる。</p>
-
-<p>あと CPUID から対応命令を知ることができるようになっているが、Intel も AMD も自分の所の CPU に実装している命令についてしかドキュメントに書かないものだから、網羅しようとすると何回も両者のドキュメントを往復することになる。<br />
-英語版 Wikipedia の CPUID の記事は、最近追加された命令は含まれていないものの、命令とその対応を示すビットフラグの位置がある程度統合されているので助けられた。<sup class="footnote-ref" id="fnref:wiki-cpuid"><a href="#fn:wiki-cpuid">1</a></sup></p>
-
-<p>自作ツール <code>cpuid_dump</code> では Rust の <code>asm!</code> 機能を使ってアセンブリで記述した CPUID命令を実行している。そして <code>asm!</code> はまだ unstable な機能なため、Nightly版の Rust でないとコンパイルできないので注意。<br />
-その <code>asm!</code> だが、かなり理解しやすいと感じた。<br />
-CPUID命令は EAXレジスタ、時には ECXレジスタにもまず特定の値をセットしてから実行すると、情報がEAX/EBX/ECX/EDXレジスタに出力される。EAXレジスタにセットする値は leaf、ECXレジスタにセットする値は subleaf とも呼ばれる。<sup class="footnote-ref" id="fnref:rs-asm"><a href="#fn:rs-asm">2</a></sup></p>
-
+<p>あと CPUID から対応命令を知ることができるようになっているが、Intel も AMD も自分の所の CPU に実装している命令についてしかドキュメントに書かないものだから、網羅しようとすると何回も両者のドキュメントを往復することになる。<br>
+英語版 Wikipedia の CPUID の記事は、最近追加された命令は含まれていないものの、命令とその対応を示すビットフラグの位置がある程度統合されているので助けられた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>自作ツール <code>cpuid_dump</code> では Rust の <code>asm!</code> 機能を使ってアセンブリで記述した CPUID命令を実行している。そして <code>asm!</code> はまだ unstable な機能なため、Nightly版の Rust でないとコンパイルできないので注意。<br>
+その <code>asm!</code> だが、かなり理解しやすいと感じた。<br>
+CPUID命令は EAXレジスタ、時には ECXレジスタにもまず特定の値をセットしてから実行すると、情報がEAX/EBX/ECX/EDXレジスタに出力される。EAXレジスタにセットする値は leaf、ECXレジスタにセットする値は subleaf とも呼ばれる。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p>インラインアセンブリは C言語 (GCC) だと以下のように書くが、アセンブリ完全初心者の自分には難しい。正直入力元出力先の記法をまだ理解できていない。少し試してそれからは Rust に移った。</p>
 <pre tabindex="0"><code>    __asm__ volatile (
-        &#34;cpuid\n&#34;
-            : &#34;=a&#34; (a[0]), &#34;=b&#34; (a[1]), &#34;=c&#34; (a[2]), &#34;=d&#34; (a[3])
-            : &#34;0&#34; (i)
-    );</code></pre>
-<p>Rust では以下のようにインラインアセンブリ書ける。EAXレジスタに値をセット、後に EAXレジスタに値が出力されることがパッと見てすぐに理解できる。<br />
+        &quot;cpuid\n&quot;
+            : &quot;=a&quot; (a[0]), &quot;=b&quot; (a[1]), &quot;=c&quot; (a[2]), &quot;=d&quot; (a[3])
+            : &quot;0&quot; (i)
+    );
+</code></pre><p>Rust では以下のようにインラインアセンブリ書ける。EAXレジスタに値をセット、後に EAXレジスタに値が出力されることがパッと見てすぐに理解できる。<br>
 レジスタ名も記述する必要があるが、ドキュメントで使われている名称をそのまま使えるためむしろ理解の助けになる。完全初心者の自分には Rust の方がずっと楽だったのは言うまでもない。</p>
-
 <p>結局さらに楽をしようとしてマクロを使うようになり、わかりやすさという利点は早々に失われたが。それでも入口としてとてもよく機能してくれたため、それはそれでいいのかもしれない。</p>
 <pre tabindex="0"><code>    unsafe {
         asm!{
-            &#34;cpuid&#34;,
-            inlateout(&#34;eax&#34;) 0 =&gt; a[0],
-            lateout(&#34;ebx&#34;) a[1],
-            lateout(&#34;ecx&#34;) a[2],
-            lateout(&#34;edx&#34;) a[3],
+            &quot;cpuid&quot;,
+            inlateout(&quot;eax&quot;) 0 =&gt; a[0],
+            lateout(&quot;ebx&quot;) a[1],
+            lateout(&quot;ecx&quot;) a[2],
+            lateout(&quot;edx&quot;) a[3],
         }
-    }</code></pre>
-<p>それとコア間レイテンシを測定するツールも作ったがこれは、Github に <a href="https://github.com/rigtorp/c2clat" rel="nofollow noreferrer" target="_blank">rigtorp/c2clat</a> という C++ で 140行程で書かれたシンプルで素晴らしいプログラムのソースコードが MITライセンスで公開されていたため、それを Rust にポーティングしたもの。<br />
-コア間レイテンシは Ryzenプロセッサではよく注目される要素で、個人的にも興味があった。<br />
-自分用として結果を Markdown形式で出力するオプションや、gnuplot 用のオプションをわずかに修正したりもしたが、自分が加えたのはそれだけだ。<br />
-知識の実践というよりは、Rust におけるスレッド処理の書き方を学ぶことができた。<br />
+    }
+</code></pre><p>それとコア間レイテンシを測定するツールも作ったがこれは、Github に <a href="https://github.com/rigtorp/c2clat">rigtorp/c2clat</a> という C++ で 140行程で書かれたシンプルで素晴らしいプログラムのソースコードが MITライセンスで公開されていたため、それを Rust にポーティングしたもの。<br>
+コア間レイテンシは Ryzenプロセッサではよく注目される要素で、個人的にも興味があった。<br>
+自分用として結果を Markdown形式で出力するオプションや、gnuplot 用のオプションをわずかに修正したりもしたが、自分が加えたのはそれだけだ。<br>
+知識の実践というよりは、Rust におけるスレッド処理の書き方を学ぶことができた。<br>
 ただ Rust版には少し問題があり、オリジナルでは <code>alignas (64)</code> をアトミック変数の前に書くことでキャッシュラインに収まるようにしている。Rust版でもそれと近いことをしようとしたがうまくいかず、結果オリジナル版よりも若干大きいレイテンシが測定される。</p>
-
 <p>今後そういった部分の修正もやっていきたいが、色んな CPU のマイクロベンチマークを Rust で実装することも目標にしていきたい。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:wiki-cpuid"><a href="https://en.wikipedia.org/wiki/CPUID" rel="nofollow noreferrer" target="_blank">CPUID - Wikipedia</a>
- <a class="footnote-return" href="#fnref:wiki-cpuid"><sup>[return]</sup></a></li>
-<li id="fn:rs-asm"><a href="https://doc.rust-lang.org/beta/unstable-book/library-features/asm.html" rel="nofollow noreferrer" target="_blank">asm - The Rust Unstable Book</a>
- <a class="footnote-return" href="#fnref:rs-asm"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://en.wikipedia.org/wiki/CPUID">CPUID - Wikipedia</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://doc.rust-lang.org/beta/unstable-book/library-features/asm.html">asm - The Rust Unstable Book</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

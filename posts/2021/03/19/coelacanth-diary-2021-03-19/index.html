@@ -14,9 +14,9 @@
   <meta name="twitter:title" content="【雑記】 VanGogh APU のメモリインターフェイスは (恐らく) LPDDR5 64-bit | Coelacanth&#39;s Dream">
 
   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/03/19/coelacanth-diary-2021-03-19/">
-  <meta name="description" content="僕はジャックの苦悩を生み続ける親切心です。 Source code 前回 VanGogh APU のブートログを元に記事を書いたが、その補足的な雑記。 AMD VanGogh APU ブートログ | Coelacanth&#39;s Dream 結論から、DDR">
-  <meta property="og:description" content="僕はジャックの苦悩を生み続ける親切心です。 Source code 前回 VanGogh APU のブートログを元に記事を書いたが、その補足的な雑記。 AMD VanGogh APU ブートログ | Coelacanth&#39;s Dream 結論から、DDR">
-  <meta name="twitter:description" content="僕はジャックの苦悩を生み続ける親切心です。 Source code 前回 VanGogh APU のブートログを元に記事を書いたが、その補足的な雑記。 AMD VanGogh APU ブートログ | Coelacanth&#39;s Dream 結論から、DDR">
+  <meta name="description" content="僕はジャックの苦悩を生み続ける親切心です。 Source code 前回 VanGogh APU のブートログを元に記事を書いたが、その補足的な雑記。 AMD VanGogh APU ブートログ | Coelacanth&rsquo;s Dream 結論から、DDR">
+  <meta property="og:description" content="僕はジャックの苦悩を生み続ける親切心です。 Source code 前回 VanGogh APU のブートログを元に記事を書いたが、その補足的な雑記。 AMD VanGogh APU ブートログ | Coelacanth&rsquo;s Dream 結論から、DDR">
+  <meta name="twitter:description" content="僕はジャックの苦悩を生み続ける親切心です。 Source code 前回 VanGogh APU のブートログを元に記事を書いたが、その補足的な雑記。 AMD VanGogh APU ブートログ | Coelacanth&rsquo;s Dream 結論から、DDR">
   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/03/19/coelacanth-diary-2021-03-19/">
@@ -70,153 +70,141 @@
 <div class="article-time">
     <time datetime="2021-03-19 00:49 &#43;0900" class="time-b">Post: 2021/03/19 00:49 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/14 15:51 &#43;0900</div>
-  </div>
-
-<p>僕はジャックの苦悩を生み続ける親切心です。</p>
-
+  </div><p>僕はジャックの苦悩を生み続ける親切心です。</p>
 <h2 id="src">Source code</h2>
-
-<p>前回 <em>VanGogh APU</em> のブートログを元に記事を書いたが、その補足的な雑記。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/">AMD VanGogh APU ブートログ | Coelacanth's Dream</a></span>
+<p>前回 <em>VanGogh APU</em> のブートログを元に記事を書いたが、その補足的な雑記。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/">AMD VanGogh APU ブートログ | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <p>結論から、DDR5 256-bit というのは誤った情報が出力されたもので、実際には LPDDR5 64-bit と考えられる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   [   99.984978] [drm] Detected VRAM RAM=1024M, BAR=1024M
+<pre><code>   [   99.984978] [drm] Detected VRAM RAM=1024M, BAR=1024M
    [   99.984981] [drm] RAM width 256bits DDR5
    [   99.985223] [drm] amdgpu: 1024M of VRAM memory ready
-   [   99.985233] [drm] amdgpu: 3072M of GTT memory ready.</code></pre>
+   [   99.985233] [drm] amdgpu: 3072M of GTT memory ready.
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html" rel="nofollow noreferrer" target="_blank">slow boot with 7fef431be9c9 (&quot;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html">slow boot with 7fef431be9c9 (&ldquo;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
 </div>
 
 </blockquote>
-
-<p>まず、元々は Linux Kernel のブートログ (<code>dmesg</code>) で、Linux Kernel はオープンソースで開発、公開されているのだから、当然どこかにそのメッセージを出力するコードが記述されている。<br />
-それがどこかと言えば <a href="https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c" rel="nofollow noreferrer" target="_blank">linux/amdgpu_object.c</a> で、メモリ情報自体は <a href="https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c" rel="nofollow noreferrer" target="_blank">linux/amdgpu_atomfirmware.c</a> にてソースコードの外にあるファームウェアバイナリから読み取っている。<br />
-<a href="https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c" rel="nofollow noreferrer" target="_blank">linux/amdgpu_atomfirmware.c</a> のメモリ情報を取得する部分のコードが以下。APU の場合はファームウェアにある <code>mem_channel_number</code> に 64 を掛けてメモリバス幅としている。</p>
-
+<p>まず、元々は Linux Kernel のブートログ (<code>dmesg</code>) で、Linux Kernel はオープンソースで開発、公開されているのだから、当然どこかにそのメッセージを出力するコードが記述されている。<br>
+それがどこかと言えば <a href="https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c">linux/amdgpu_object.c</a> で、メモリ情報自体は <a href="https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c">linux/amdgpu_atomfirmware.c</a> にてソースコードの外にあるファームウェアバイナリから読み取っている。<br>
+<a href="https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c">linux/amdgpu_atomfirmware.c</a> のメモリ情報を取得する部分のコードが以下。APU の場合はファームウェアにある <code>mem_channel_number</code> に 64 を掛けてメモリバス幅としている。</p>
 <blockquote>
-<pre tabindex="0"><code>     if (amdgpu_atom_parse_data_header(mode_info-&gt;atom_context,
-                       index, &amp;size,
-                       &amp;frev, &amp;crev, &amp;data_offset)) {
-         if (adev-&gt;flags &amp; AMD_IS_APU) {
-             igp_info = (union igp_info *)
-                 (mode_info-&gt;atom_context-&gt;bios + data_offset);
-             switch (frev) {
-             case 1:
-                 switch (crev) {
-                 case 11:
-                 case 12:
-                     mem_channel_number = igp_info-&gt;v11.umachannelnumber;
-                     if (!mem_channel_number)
-                         mem_channel_number = 1;
-                     /* channel width is 64 */
-                     if (vram_width)
-                         *vram_width = mem_channel_number * 64;
-                     mem_type = igp_info-&gt;v11.memorytype;
-                     if (vram_type)
-                         *vram_type = convert_atom_mem_type_to_vram_type(adev, mem_type);
-                     break;
-                 default:
-                     return -EINVAL;
-                 }
-                 break;
-             case 2:</code></pre>
+<pre><code>   	if (amdgpu_atom_parse_data_header(mode_info-&gt;atom_context,
+   					  index, &amp;size,
+   					  &amp;frev, &amp;crev, &amp;data_offset)) {
+   		if (adev-&gt;flags &amp; AMD_IS_APU) {
+   			igp_info = (union igp_info *)
+   				(mode_info-&gt;atom_context-&gt;bios + data_offset);
+   			switch (frev) {
+   			case 1:
+   				switch (crev) {
+   				case 11:
+   				case 12:
+   					mem_channel_number = igp_info-&gt;v11.umachannelnumber;
+   					if (!mem_channel_number)
+   						mem_channel_number = 1;
+   					/* channel width is 64 */
+   					if (vram_width)
+   						*vram_width = mem_channel_number * 64;
+   					mem_type = igp_info-&gt;v11.memorytype;
+   					if (vram_type)
+   						*vram_type = convert_atom_mem_type_to_vram_type(adev, mem_type);
+   					break;
+   				default:
+   					return -EINVAL;
+   				}
+   				break;
+   			case 2:
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/5ee88057889bbca5f5bb96031b62b3756b33e164/drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c#L207" rel="nofollow noreferrer" target="_blank">linux/amdgpu_atomfirmware.c at 5ee88057889bbca5f5bb96031b62b3756b33e164 · torvalds/linux</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/5ee88057889bbca5f5bb96031b62b3756b33e164/drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c#L207">linux/amdgpu_atomfirmware.c at 5ee88057889bbca5f5bb96031b62b3756b33e164 · torvalds/linux</a></cite>
 </div>
 
 </blockquote>
-
 <p>そして、メモリタイプ (<code>vram_type</code>) もここで取得されるが、メモリとしてのアーキテクチャに違いがあろうと、LPDDR4 は DDR4 と、LPDDR5 は DDR5 と認識される。</p>
-
 <blockquote>
-<pre tabindex="0"><code>     if (adev-&gt;flags &amp; AMD_IS_APU) {
-         switch (atom_mem_type) {
-         case Ddr2MemType:
-         case LpDdr2MemType:
-             vram_type = AMDGPU_VRAM_TYPE_DDR2;
-             break;
-         case Ddr3MemType:
-         case LpDdr3MemType:
-             vram_type = AMDGPU_VRAM_TYPE_DDR3;
-             break;
-         case Ddr4MemType:
-         case LpDdr4MemType:
-             vram_type = AMDGPU_VRAM_TYPE_DDR4;
-             break;
-         case Ddr5MemType:
-         case LpDdr5MemType:
-             vram_type = AMDGPU_VRAM_TYPE_DDR5;
-             break;
-         default:
-             vram_type = AMDGPU_VRAM_TYPE_UNKNOWN;
-             break;
-         }</code></pre>
+<pre><code>   	if (adev-&gt;flags &amp; AMD_IS_APU) {
+   		switch (atom_mem_type) {
+   		case Ddr2MemType:
+   		case LpDdr2MemType:
+   			vram_type = AMDGPU_VRAM_TYPE_DDR2;
+   			break;
+   		case Ddr3MemType:
+   		case LpDdr3MemType:
+   			vram_type = AMDGPU_VRAM_TYPE_DDR3;
+   			break;
+   		case Ddr4MemType:
+   		case LpDdr4MemType:
+   			vram_type = AMDGPU_VRAM_TYPE_DDR4;
+   			break;
+   		case Ddr5MemType:
+   		case LpDdr5MemType:
+   			vram_type = AMDGPU_VRAM_TYPE_DDR5;
+   			break;
+   		default:
+   			vram_type = AMDGPU_VRAM_TYPE_UNKNOWN;
+   			break;
+   		}
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/5ee88057889bbca5f5bb96031b62b3756b33e164/drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c#L139:" rel="nofollow noreferrer" target="_blank">linux/amdgpu_atomfirmware.c at 5ee88057889bbca5f5bb96031b62b3756b33e164 · torvalds/linux</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/5ee88057889bbca5f5bb96031b62b3756b33e164/drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c#L139:">linux/amdgpu_atomfirmware.c at 5ee88057889bbca5f5bb96031b62b3756b33e164 · torvalds/linux</a></cite>
 </div>
 
 </blockquote>
-
-<p>LPDDR4/LPDDR5 は内部的には 4-Channel のインターフェイスを持つ。<sup class="footnote-ref" id="fnref:lpddr4-5"><a href="#fn:lpddr4-5">1</a></sup><br />
+<p>LPDDR4/LPDDR5 は内部的には 4-Channel のインターフェイスを持つ。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 そのため、ファームウェアが LPDDR5 のメモリチャネル数を正しく理解し、正直に 4-Channel だということを告げても、Linux Kenrel の GPUドライバーは今の所それに 64 を掛けてメモリバス幅としてしまう。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  +-------------+--------+---------+
+<pre><code>  +-------------+--------+---------+
   | Memory Type | Max Ch | Max DPC |
   +-------------+--------+---------+
   | DDR4        |      1 |       2 |
   | LPDDR4(X)   |      4 |       1 |
   | LPDDR5      |      4 |       1 |
   | DDR5        |      2 |       1 |
-  +-------------+--------+---------+</code></pre>
+  +-------------+--------+---------+
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109">https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109</a></cite>
 </div>
 
 </blockquote>
-
 <p>以上のことと合わせ、前回も書いたが、ブートログから搭載されているメモリサイズは 7200304K <span class="complement">約 8 GB/7.45 GiB、予約分等があるため若干少なく表示される</span>
- と読み取れるため、LPDDR5 64-bit というのが正しいメモリ構成だと考えられる。<br />
-それならば <code>[drm] RAM width 256bits DDR5</code> と出力されたことにも、約 8GB というメモリサイズにも説明が付く。<br />
-DDR5 128-bit (2x2ch) という可能性もあるが、<em>VanGogh</em> のディスプレイ部関連のソースファイルに、DDR4 と LPDDR5 用のパラメーターはあるのに対し、DDR5 は無いため、LPDDR5 の可能性のが高いように思う。<sup class="footnote-ref" id="fnref:vg-clk-mgr"><a href="#fn:vg-clk-mgr">2</a></sup><br />
-ただこれが最大構成ではなく最小構成で、それ以上のメモリインターフェイスを持っている可能性もあるため、タイトルに (恐らく) を付けている。<br />
+ と読み取れるため、LPDDR5 64-bit というのが正しいメモリ構成だと考えられる。<br>
+それならば <code>[drm] RAM width 256bits DDR5</code> と出力されたことにも、約 8GB というメモリサイズにも説明が付く。<br>
+DDR5 128-bit (2x2ch) という可能性もあるが、<em>VanGogh</em> のディスプレイ部関連のソースファイルに、DDR4 と LPDDR5 用のパラメーターはあるのに対し、DDR5 は無いため、LPDDR5 の可能性のが高いように思う。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+ただこれが最大構成ではなく最小構成で、それ以上のメモリインターフェイスを持っている可能性もあるため、タイトルに (恐らく) を付けている。<br>
 それでも、ブートログから読み取れるのは DDR5 128-bit か LPDDR5 64-bit というメモリ構成である。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   [    0.044181] Memory: 6858688K/7200304K available (14345K kernel code, 9659K rwdata, 4980K rodata, 2484K init, 12292K bss, 341360K reserved, 0K cma-reserved)</code></pre>
+<pre><code>   [    0.044181] Memory: 6858688K/7200304K available (14345K kernel code, 9659K rwdata, 4980K rodata, 2484K init, 12292K bss, 341360K reserved, 0K cma-reserved)
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html" rel="nofollow noreferrer" target="_blank">slow boot with 7fef431be9c9 (&quot;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/060563.html">slow boot with 7fef431be9c9 (&ldquo;mm/page_alloc: place pages to tail in __free_pages_core()&quot;)</a></cite>
 </div>
 
 </blockquote>
-
-<p>Linux Kernel はオープンソースであり、自分が普段記事のネタにしてるのも OSS へのパッチであり、インターネットに接続されていれば誰でもソースを確認できる。<br />
+<p>Linux Kernel はオープンソースであり、自分が普段記事のネタにしてるのも OSS へのパッチであり、インターネットに接続されていれば誰でもソースを確認できる。<br>
 そういう点で、自分は Leaker とは無縁で、パッチとコードを眺めるだけの存在だ。</p>
-
 <p>誰も興味がないということを知っている。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://media-www.micron.com/-/media/client/global/documents/products/product-flyer/flyer_lpdram_mobile_embedded.pdf?rev=2c45263239f84c7c84981870a06bb8b2" rel="nofollow noreferrer" target="_blank">LPDRAM for Mobile and Embedded Applications - flyer_lpdram_mobile_embedded.pdf</a></li>
+<li><a href="https://media-www.micron.com/-/media/client/global/documents/products/product-flyer/flyer_lpdram_mobile_embedded.pdf?rev=2c45263239f84c7c84981870a06bb8b2">LPDRAM for Mobile and Embedded Applications - flyer_lpdram_mobile_embedded.pdf</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:lpddr4-5"><a href="https://media-www.micron.com/-/media/client/global/documents/products/product-flyer/flyer_lpdram_mobile_embedded.pdf?rev=2c45263239f84c7c84981870a06bb8b2" rel="nofollow noreferrer" target="_blank">LPDRAM for Mobile and Embedded Applications - flyer_lpdram_mobile_embedded.pdf</a>
- <a class="footnote-return" href="#fnref:lpddr4-5"><sup>[return]</sup></a></li>
-<li id="fn:vg-clk-mgr"><a href="https://github.com/torvalds/linux/blob/7e60e389053e59c2efc4a9a0f2da3b2c528a0d19/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn301/vg_clk_mgr.c" rel="nofollow noreferrer" target="_blank">linux/vg_clk_mgr.c at 7e60e389053e59c2efc4a9a0f2da3b2c528a0d19 · torvalds/linux</a>
- <a class="footnote-return" href="#fnref:vg-clk-mgr"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://media-www.micron.com/-/media/client/global/documents/products/product-flyer/flyer_lpdram_mobile_embedded.pdf?rev=2c45263239f84c7c84981870a06bb8b2">LPDRAM for Mobile and Embedded Applications - flyer_lpdram_mobile_embedded.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/blob/7e60e389053e59c2efc4a9a0f2da3b2c528a0d19/drivers/gpu/drm/amd/display/dc/clk_mgr/dcn301/vg_clk_mgr.c">linux/vg_clk_mgr.c at 7e60e389053e59c2efc4a9a0f2da3b2c528a0d19 · torvalds/linux</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

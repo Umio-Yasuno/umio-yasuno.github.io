@@ -70,40 +70,33 @@
 <div class="article-time">
     <time datetime="2021-09-16 05:43 &#43;0900" class="time-b">Post: 2021/09/16 05:43 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/10/30 14:30 &#43;0900</div>
-  </div>
-
-<p>Intel oneAPI の深層学習ライブラリ、<a href="https://github.com/oneapi-src/oneDNN" rel="nofollow noreferrer" target="_blank">oneAPI Deep Neural Network Library (oneDNN)</a> に <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span>
-</em> をサポートするコミットが取り込まれた。<br />
+  </div><p>Intel oneAPI の深層学習ライブラリ、<a href="https://github.com/oneapi-src/oneDNN">oneAPI Deep Neural Network Library (oneDNN)</a> に <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span>
+</em> をサポートするコミットが取り込まれた。<br>
 そこには <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span>
-</em> のアーキテクチャの一部を示す記述が含まれている。<br />
+</em> のアーキテクチャの一部を示す記述が含まれている。<br>
 <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> については Intel Architecture Day 2021 で詳細が語られたが、まだ正式リリースがまだということもありそれは一部で、語られていない部分はまだまだある。<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
- アーキテクチャ</em> を採用する最初の GPU/SoC <em>DG2/Alchemist</em> は 2021Q1 でのリリースが予定されている。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/08/26/intel-arch-day-2021-xe-gpu/">Intel Architecture Day 2021 個人的まとめ　―― 用語が整理された Xe GPU | Coelacanth's Dream</a></span>
+ アーキテクチャ</em> を採用する最初の GPU/SoC <em>DG2/Alchemist</em> は 2021Q1 でのリリースが予定されている。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/08/26/intel-arch-day-2021-xe-gpu/">Intel Architecture Day 2021 個人的まとめ　―― 用語が整理された Xe GPU | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <ul>
-<li><a href="https://github.com/oneapi-src/oneDNN/commit/e6d288ef1943f93a782a644e3aac8b2a500c9299#diff-83f47fe7c7dcf480d6939a5b6af7df4082a26ee534ac014ca9873ae12d852c96" rel="nofollow noreferrer" target="_blank">src: gpu: backport xe_hp+ gpu support · oneapi-src/oneDNN@e6d288e</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/commit/e6d288ef1943f93a782a644e3aac8b2a500c9299#diff-83f47fe7c7dcf480d6939a5b6af7df4082a26ee534ac014ca9873ae12d852c96">src: gpu: backport xe_hp+ gpu support · oneapi-src/oneDNN@e6d288e</a></li>
 </ul>
-
 <h2 id="l1i-cache"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 -Core の L1命令キャッシュサイズ</h2>
-
 <p><em><span class="xe-gpu-arch">X<sup>e</sup></span>
  アーキテクチャ</em> では複数の EU (Vector Engine, Matrix Engine) やロード/ストアユニットをまとめた <span class="xe-gpu-arch">X<sup>e</sup></span>
--Core ごとに L1命令キャッシュを持つ。<br />
+-Core ごとに L1命令キャッシュを持つ。<br>
 <span class="xe-gpu-arch">X<sup>e</sup></span>
--Core は、以前は Sub-Slice(s) と呼ばれており、Intel GPU 向けのオープンソースソフトウェア、ドライバーではそのまま Sub-Slice(s) を使っている。<br />
+-Core は、以前は Sub-Slice(s) と呼ばれており、Intel GPU 向けのオープンソースソフトウェア、ドライバーではそのまま Sub-Slice(s) を使っている。<br>
 <em>Tiger/Rocket/Alder Lake</em> 、<em>DG1</em> が採用する <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
- アーキテクチャ</em> では L1命令キャッシュのサイズは 48 KiB となっていた。<br />
+ アーキテクチャ</em> では L1命令キャッシュのサイズは 48 KiB となっていた。<br>
 今回追加されたコードによれば、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
 </em> は同じ 48 KiB、そして <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> はその倍のサイズとなる 96 KiB を L1命令キャッシュに持つとしている。</p>
-
 <p>L1命令キャッシュサイズは Sub-Slice あたりの EU数等に変化はあったものの、<em>Gen9 アーキテクチャ</em> から 48 KiB で通してきたためアーキテクチャの変更でも注目される点と言える。</p>
-
 <blockquote>
-<pre tabindex="0"><code> static size_t icache_size(ngen::HW arch) {
+<pre><code> static size_t icache_size(ngen::HW arch) {
      switch (arch) {
          case gpu_gen9: return 48 * 1024;
          case gpu_xe_lp: return 48 * 1024;
@@ -111,40 +104,35 @@
          case gpu_xe_hpg: return 96 * 1024;
          default: return 0;
      }
- }</code></pre>
+ }
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/conv/gen_convolution.cpp" rel="nofollow noreferrer" target="_blank">oneDNN/gen_convolution.cpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/conv/gen_convolution.cpp">oneDNN/gen_convolution.cpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></cite>
 </div>
 
 </blockquote>
-
 <p>自分は GPUアーキテクトでも無いため確かなことは言えないが、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> で L1命令キャッシュを倍にした意図を個人的に考えていく。</p>
-
-<p>まず、上記コードの各アーキテクチャにおける L1命令キャッシュサイズは、実行するカーネルのサイズと比較し、カーネルが L1命令キャッシュより大きかった場合にメッセージを出力する部分に使われている。<br />
+<p>まず、上記コードの各アーキテクチャにおける L1命令キャッシュサイズは、実行するカーネルのサイズと比較し、カーネルが L1命令キャッシュより大きかった場合にメッセージを出力する部分に使われている。<br>
 その点で考えると深層学習、推論処理においてより巨大なカーネルを実行する際の性能改善のため、L1命令キャッシュサイズを倍増させたとも考えられるが、ゲーミング向けの <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> で増やし、コンピューティング向けである <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
 </em> は 48 KiB で据え置きというのは少し違和感を覚える。一応 <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> の表記キャッシュサイズは今後変更される可能性もあるが。<br />
+</em> の表記キャッシュサイズは今後変更される可能性もあるが。<br>
 ただ開発時期や製造プロセスが影響している可能性もある。</p>
-
 <p>L1命令キャッシュの倍増がグラフィクス、ゲーミング性能にどう影響を与えるかを考えれば、Intel は Architecture Day 2021 でアップスケーリング技術 <span class="xe-gpu-arch">X<sup>e</sup></span>
- SS (Super Sampling) を発表しており、画質向上のため複雑な処理を行う上で有効だと思われる。<br />
+ SS (Super Sampling) を発表しており、画質向上のため複雑な処理を行う上で有効だと思われる。<br>
 それ以外にも、多数のシェーダーを処理するゲームにおいても効果的なのかもしれない。</p>
-
 <h2 id="hp-hpg"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
  と <span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
  の共通点</h2>
-
 <p>以前、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> では EU (Vector Engine) あたりのスレッド数が 1つ増えて 8スレッドとなり、また 4スレッドと設定することでスレッドあたりのレジスタファイルを 256エントリに増やす Large GRFモード をサポートすることが <a href="https://github.com/intel/intel-graphics-compiler" rel="nofollow noreferrer" target="_blank">intel/intel-graphics-compiler</a> への新たなコミットで明かされた。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/">Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth's Dream</a></span>
+</em> では EU (Vector Engine) あたりのスレッド数が 1つ増えて 8スレッドとなり、また 4スレッドと設定することでスレッドあたりのレジスタファイルを 256エントリに増やす Large GRFモード をサポートすることが <a href="https://github.com/intel/intel-graphics-compiler">intel/intel-graphics-compiler</a> への新たなコミットで明かされた。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/">Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth&rsquo;s Dream</a></span>
 
 今回 <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> も Large GRFモードをサポートすることが明かされた。</p>
-
 <blockquote>
-<pre tabindex="0"><code>     // Assume 7 threads by default
+<pre><code>     // Assume 7 threads by default
      int32_t threads_per_eu[2] = {7, 7};
      switch (gpu_arch_) {
          case gpu::compute::gpu_arch_t::gen9:
@@ -156,162 +144,157 @@
          case gpu::compute::gpu_arch_t::xe_hpg:
              threads_per_eu[0] = 8; // 128 regs/thread
              threads_per_eu[1] = 4; // 256 regs/thread
-             break;</code></pre>
+             break;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/oneapi-src/oneDNN/blob/e6d288ef1943f93a782a644e3aac8b2a500c9299/src/gpu/compute/device_info.cpp#L107" rel="nofollow noreferrer" target="_blank">oneDNN/device_info.cpp at e6d288ef1943f93a782a644e3aac8b2a500c9299 · oneapi-src/oneDNN</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/oneapi-src/oneDNN/blob/e6d288ef1943f93a782a644e3aac8b2a500c9299/src/gpu/compute/device_info.cpp#L107">oneDNN/device_info.cpp at e6d288ef1943f93a782a644e3aac8b2a500c9299 · oneapi-src/oneDNN</a></cite>
 </div>
 
 </blockquote>
-
 <p>ここは <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span>
-</em> で共通する部分となる。<br />
+</em> で共通する部分となる。<br>
 だが <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> は 64-bit 精度のデータ型にはエミュレートで対応、対し <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> は FP64/Int64 を処理する専用パイプラインを持つとしている。<br />
+</em> は FP64/Int64 を処理する専用パイプラインを持つとしている。<br>
 そのため EU部において一部共通するが、パイプライン構成についてはそれぞれのターゲットに向けて最適化された別物となる。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left"><span class="xe-gpu-arch">X<sup>e</sup></span>
+<th style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span>
  EU</th>
-<th align="center"></th>
-<th align="center"></th>
-<th align="center">Issue Port 0</th>
-<th align="center">IP 1</th>
-<th align="center">IP 2</th>
-<th align="center">IP 3</th>
-<th align="center">IP 4?</th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center">Issue Port 0</th>
+<th style="text-align:center">IP 1</th>
+<th style="text-align:center">IP 2</th>
+<th style="text-align:center">IP 3</th>
+<th style="text-align:center">IP 4?</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
+<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
 </td>
-<td align="center">Branch<br>(Control Flow)</td>
-<td align="center">Send</td>
-<td align="center">Short<br>(INT /FP)</td>
-<td align="center">Math</td>
-<td align="center">-</td>
-<td align="center">-</td>
-<td align="center">-</td>
+<td style="text-align:center">Branch<br>(Control Flow)</td>
+<td style="text-align:center">Send</td>
+<td style="text-align:center">Short<br>(INT /FP)</td>
+<td style="text-align:center">Math</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
 </td>
-<td align="center">?</td>
-<td align="center">Send</td>
-<td align="center">INT? (int8/16/32)<br> /Branch?</td>
-<td align="center">Math?</td>
-<td align="center">DPAS?</td>
-<td align="center">Long?<br>(Int64 /FP64)</td>
-<td align="center">FP?<br>(FP16/32, BF16)</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">Send</td>
+<td style="text-align:center">INT? (int8/16/32)<br> /Branch?</td>
+<td style="text-align:center">Math?</td>
+<td style="text-align:center">DPAS?</td>
+<td style="text-align:center">Long?<br>(Int64 /FP64)</td>
+<td style="text-align:center">FP?<br>(FP16/32, BF16)</td>
 </tr>
-
 <tr>
-<td align="left"></td>
-<td align="center">In-Order</td>
-<td align="center">Out-of-Order</td>
-<td align="center">In-Order</td>
-<td align="center">Out-of-Order</td>
-<td align="center">Out-of-Order</td>
-<td align="center">In-Order</td>
-<td align="center">In-Order</td>
+<td style="text-align:left"></td>
+<td style="text-align:center">In-Order</td>
+<td style="text-align:center">Out-of-Order</td>
+<td style="text-align:center">In-Order</td>
+<td style="text-align:center">Out-of-Order</td>
+<td style="text-align:center">Out-of-Order</td>
+<td style="text-align:center">In-Order</td>
+<td style="text-align:center">In-Order</td>
+</tr>
+<tr>
+<td style="text-align:left"><span class="thread-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/f5e9e3dcda319339b82f1171c7e55add46884036/visa/iga/IGALibrary/IR/RegDeps.cpp#L100">intel-graphics-compiler/RegDeps.cpp at f5e9e3dcda319339b82f1171c7e55add46884036 · intel/intel-graphics-compiler</a></span>
+</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
-
-<span class="thread-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/f5e9e3dcda319339b82f1171c7e55add46884036/visa/iga/IGALibrary/IR/RegDeps.cpp#L100" rel="nofollow noreferrer" target="_blank">intel-graphics-compiler/RegDeps.cpp at f5e9e3dcda319339b82f1171c7e55add46884036 · intel/intel-graphics-compiler</a></span>
-
-
 <table>
 <thead>
 <tr>
-<th align="left"><span class="xe-gpu-arch">X<sup>e</sup></span>
+<th style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span>
  GPU</th>
-<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
+<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
 </th>
-<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </th>
-<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
+<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
 </th>
-<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
+<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
 </th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Vector Engine</td>
-<td align="center">256-bit?</td>
-<td align="center">256-bit</td>
-<td align="center">?</td>
-<td align="center">512-bit</td>
+<td style="text-align:left">Vector Engine</td>
+<td style="text-align:center">256-bit?</td>
+<td style="text-align:center">256-bit</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">512-bit</td>
 </tr>
-
 <tr>
-<td align="left">VE per SS (Sub-Slice)</td>
-<td align="center">16</td>
-<td align="center">16</td>
-<td align="center">?</td>
-<td align="center">8</td>
+<td style="text-align:left">VE per SS (Sub-Slice)</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">8</td>
 </tr>
-
 <tr>
-<td align="left">L1I$ per SS</td>
-<td align="center">48 KB</td>
-<td align="center">96 KB</td>
-<td align="center">48 KB</td>
-<td align="center">?</td>
+<td style="text-align:left">L1I$ per SS</td>
+<td style="text-align:center">48 KB</td>
+<td style="text-align:center">96 KB</td>
+<td style="text-align:center">48 KB</td>
+<td style="text-align:center">?</td>
 </tr>
-
 <tr>
-<td align="left">Matrix Engine</td>
-<td align="center">N/A</td>
-<td align="center">1024-bit</td>
-<td align="center">?</td>
-<td align="center">4096-bit</td>
+<td style="text-align:left">Matrix Engine</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">1024-bit</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">4096-bit</td>
 </tr>
-
 <tr>
-<td align="left">Load/Store (SLM)</td>
-<td align="center">128B?</td>
-<td align="center">?</td>
-<td align="center">?</td>
-<td align="center">512B</td>
+<td style="text-align:left">Load/Store (SLM)</td>
+<td style="text-align:center">128B?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">512B</td>
 </tr>
-
 <tr>
-<td align="left">L1D$/SLM per SS</td>
-<td align="center">128 KB</td>
-<td align="center">?</td>
-<td align="center">?</td>
-<td align="center">512 KB</td>
+<td style="text-align:left">L1D$/SLM per SS</td>
+<td style="text-align:center">128 KB</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">512 KB</td>
 </tr>
-
 <tr>
-<td align="left">Native FP64</td>
-<td align="center">N/A</td>
-<td align="center">N/A</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
+<td style="text-align:left">Native FP64</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
 </tr>
 </tbody>
 </table>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://developer.arm.com/documentation/101897/0200/shader-code/instruction-caches" rel="nofollow noreferrer" target="_blank">Arm Mali GPU Best Practices Developer Guide</a></li>
-<li><a href="https://gpuopen.com/wp-content/uploads/2017/03/GDC2017-Advanced-Shader-Programming-On-GCN.pdf" rel="nofollow noreferrer" target="_blank">PowerPoint Presentation - GDC2017-Advanced-Shader-Programming-On-GCN.pdf</a></li>
-<li><a href="https://developer.apple.com/documentation/metal/optimizing_performance_with_the_gpu_counters_instrument/reducing_shader_bottlenecks" rel="nofollow noreferrer" target="_blank">Reducing Shader Bottlenecks | Apple Developer Documentation</a></li>
-<li><a href="https://developer.nvidia.com/blog/rtx-best-practices/" rel="nofollow noreferrer" target="_blank">Tips and Tricks: Ray Tracing Best Practices | NVIDIA Developer Blog</a></li>
-<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/gemm/emulation.hpp" rel="nofollow noreferrer" target="_blank">oneDNN/emulation.hpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
-<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/conv/gen_convolution.cpp" rel="nofollow noreferrer" target="_blank">oneDNN/gen_convolution.cpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
-<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/ocl/xe_lp_x8s8x_convolution.hpp" rel="nofollow noreferrer" target="_blank">oneDNN/xe_lp_x8s8x_convolution.hpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
-<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/ngen/npack/neo_structs.hpp" rel="nofollow noreferrer" target="_blank">oneDNN/neo_structs.hpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
-<li><a href="https://github.com/oneapi-src/oneDNN/blob/e6d288ef1943f93a782a644e3aac8b2a500c9299/src/gpu/compute/device_info.cpp" rel="nofollow noreferrer" target="_blank">oneDNN/device_info.cpp at e6d288ef1943f93a782a644e3aac8b2a500c9299 · oneapi-src/oneDNN</a></li>
+<li><a href="https://developer.arm.com/documentation/101897/0200/shader-code/instruction-caches">Arm Mali GPU Best Practices Developer Guide</a></li>
+<li><a href="https://gpuopen.com/wp-content/uploads/2017/03/GDC2017-Advanced-Shader-Programming-On-GCN.pdf">PowerPoint Presentation - GDC2017-Advanced-Shader-Programming-On-GCN.pdf</a></li>
+<li><a href="https://developer.apple.com/documentation/metal/optimizing_performance_with_the_gpu_counters_instrument/reducing_shader_bottlenecks">Reducing Shader Bottlenecks | Apple Developer Documentation</a></li>
+<li><a href="https://developer.nvidia.com/blog/rtx-best-practices/">Tips and Tricks: Ray Tracing Best Practices | NVIDIA Developer Blog</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/gemm/emulation.hpp">oneDNN/emulation.hpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/conv/gen_convolution.cpp">oneDNN/gen_convolution.cpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/ocl/xe_lp_x8s8x_convolution.hpp">oneDNN/xe_lp_x8s8x_convolution.hpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/blob/c7e18067cc5353f5ccbd63129dd7eb64fa4275c4/src/gpu/jit/ngen/npack/neo_structs.hpp">oneDNN/neo_structs.hpp at c7e18067cc5353f5ccbd63129dd7eb64fa4275c4 · oneapi-src/oneDNN</a></li>
+<li><a href="https://github.com/oneapi-src/oneDNN/blob/e6d288ef1943f93a782a644e3aac8b2a500c9299/src/gpu/compute/device_info.cpp">oneDNN/device_info.cpp at e6d288ef1943f93a782a644e3aac8b2a500c9299 · oneapi-src/oneDNN</a></li>
 </ul>
 
 </div>

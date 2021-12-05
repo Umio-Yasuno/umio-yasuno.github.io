@@ -70,54 +70,43 @@
 <div class="article-time">
     <time datetime="2020-08-06 19:21 &#43;0900" class="time-b">Post: 2020/08/06 19:21 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/12/04 20:50 &#43;0900</div>
-  </div>
-
-<p>今回、Linux Kernel における AMDGPUドライバーのある機能を使って、<strong>RX 560</strong> の一部有効 Compute Unit を無効化し、CU数がどれだけ GPU性能に影響を与えるのかを調査してみた。</p>
-
+  </div><p>今回、Linux Kernel における AMDGPUドライバーのある機能を使って、<strong>RX 560</strong> の一部有効 Compute Unit を無効化し、CU数がどれだけ GPU性能に影響を与えるのかを調査してみた。</p>
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#motive">動機</a></li>
-<li><a href="#disable_cu">disable_cu=0.0.0,0.0.1,1.0.0,1.0.1.........</a></li>
+<li><a href="#disable_cu">disable_cu=0.0.0,0.0.1,1.0.0,1.0.1&hellip;&hellip;&hellip;</a></li>
 <li><a href="#env">調査環境</a>
-
 <ul class="page-index">
 <li><a href="#use-software">使用ソフトウェア</a></li>
 <li><a href="#system">システム環境</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#result">結果</a>
-
 <ul class="page-index">
 <li><a href="#perf">性能</a>
-
 <ul class="page-index">
 <li><a href="#ncnn">ncnn  ( Vulkan Compute )</a></li>
 <li><a href="#vkmark">vkmark  ( Vulkan Graphics )</a></li>
 <li><a href="#clpeak-compute">clpeak  ( OpenCL Compute )</a></li>
 <li><a href="#clpeak-mbw">clpeak  ( Global memory bandwidth )</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#consider">考察</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#general">総論</a></li>
 </ul>
 
-
 <h2 id="motive">動機</h2>
-
-<p>今回の調査を行なったきっかけは、<a href="https://www.coelacanth-dream.com/tags/renoir">Renoir</a>が最大 8CUと、前世代の <a href="https://www.coelacanth-dream.com/tags/picasso">Picasso</a>の最大 11CUより少なく、また、<em>Renoir</em> ベースのモデルが持つ CU数がそれぞれ 1CU差と、CU数だけで見ればそう差はなかったことだったように思う。<br />
+<p>今回の調査を行なったきっかけは、<a href="https://www.coelacanth-dream.com/tags/renoir">Renoir</a>が最大 8CUと、前世代の <a href="https://www.coelacanth-dream.com/tags/picasso">Picasso</a>の最大 11CUより少なく、また、<em>Renoir</em> ベースのモデルが持つ CU数がそれぞれ 1CU差と、CU数だけで見ればそう差はなかったことだったように思う。<br>
 それが GPU性能において CU数はどれだけ影響を与えるかを調べる動機となった。</p>
-
 <p>より本音を言えば、AMDGPUドライバーに面白そうな機能があり、それを意義あることに使えないかという方が強いきっかけ、動機である。</p>
-
-<p>しかし、真面目に考えれば、同じ GPU ASIC をベースにした製品、モデルであっても、基本 CU数の変更だけでなく、クロックの調整やメモリバス幅、L2cacheサイズの削減によって製品間の差別化が為されるため、CU数が性能にどれだけ影響を与えるかは測れない。<br />
+<p>しかし、真面目に考えれば、同じ GPU ASIC をベースにした製品、モデルであっても、基本 CU数の変更だけでなく、クロックの調整やメモリバス幅、L2cacheサイズの削減によって製品間の差別化が為されるため、CU数が性能にどれだけ影響を与えるかは測れない。<br>
 また、同種の GPU ASIC であっても、それぞれ異なる電圧特性を持つ。</p>
-
 <p>そのため、同じ GPU で CU数だけを変えるということでしか性能への影響を測ることは難しく、その調査を実施することに意義があるのではないかと考える。</p>
-
-<h2 id="disable_cu">disable_cu=0.0.0,0.0.1,1.0.0,1.0.1.........</h2>
-
-<p>一部 CU の無効化は、AMDGPUドライバーの <code>disable_cu</code> というモジュールパラメーターに値をセットすることで可能となる。<sup class="footnote-ref" id="fnref:amd-kmd-parameter"><a href="#fn:amd-kmd-parameter">1</a></sup><br />
-値には、無効化したい CU を <code>se(ShaderEngine).sh(ShaderArray).cu(Compute Unit)</code> のフォーマットで指定する。<br />
+<h2 id="disable_cu">disable_cu=0.0.0,0.0.1,1.0.0,1.0.1&hellip;&hellip;&hellip;</h2>
+<p>一部 CU の無効化は、AMDGPUドライバーの <code>disable_cu</code> というモジュールパラメーターに値をセットすることで可能となる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+値には、無効化したい CU を <code>se(ShaderEngine).sh(ShaderArray).cu(Compute Unit)</code> のフォーマットで指定する。<br>
 これが最初わかりづらく、試した結果、自分が調査に使う <em>RX 560 (Polaris11)</em> の場合は以下の画像のように対応しているとわかった。</p>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/08/06/polaris11-se_sh_cu.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/08/06/polaris11-se_sh_cu.webp"
@@ -127,88 +116,69 @@
   </figcaption>
 </figure>
 
-
-<p><code>disable_cu=0.0.0</code> と値をセットすると、画像内の上側にある ShaderEngine に含まれる一番左の CU が無効化される。<sup class="footnote-ref" id="fnref:how-disable-cu"><a href="#fn:how-disable-cu">2</a></sup><br />
-このパラメーターでは無効化する CU を 1つ1つ指定するため、各ShaderEngineのバランスを保ちながら 8CU を無効化したい時は、<code>disable_cu=0.0.0,0.0.1,0.0.7,0.0.6,1.0.0,1.0.1,1.0.7,1.0.6</code> と長ったらしいパラメーターをセットする必要がある。左側 2CU、右側 2CU という風に無効化しているのは、4CU で共有する L1命令キャッシュ、L1スカラキャッシュのバランスも考慮したためである。<br />
-いちいち再起動前に <code>/etc/default/grub</code> を編集するのも手間であるため、起動時にその時限りのブートパラメーターに記述したが、それもそれで手間であった。<br />
+<p><code>disable_cu=0.0.0</code> と値をセットすると、画像内の上側にある ShaderEngine に含まれる一番左の CU が無効化される。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+このパラメーターでは無効化する CU を 1つ1つ指定するため、各ShaderEngineのバランスを保ちながら 8CU を無効化したい時は、<code>disable_cu=0.0.0,0.0.1,0.0.7,0.0.6,1.0.0,1.0.1,1.0.7,1.0.6</code> と長ったらしいパラメーターをセットする必要がある。左側 2CU、右側 2CU という風に無効化しているのは、4CU で共有する L1命令キャッシュ、L1スカラキャッシュのバランスも考慮したためである。<br>
+いちいち再起動前に <code>/etc/default/grub</code> を編集するのも手間であるため、起動時にその時限りのブートパラメーターに記述したが、それもそれで手間であった。<br>
 最大 16CU である <em>RX 560 (Polaris11)</em> で良かった。</p>
-
-<p>それと、この機能には面白い点があり、ロードバランサーやスケジュールの観点などから、AMDGPU の ShaderEngine は通常それぞれ対称となるように設定されるが、<code>disable_cu</code> ではそれを無視して非対称な構成が可能となる。<br />
-使い道があるかと聞かれれば返答に窮するが、GPU情報を表示させると滅多に見られない <code>Max compute units: 15</code> なんて文字列が出てきたりする。<br />
+<p>それと、この機能には面白い点があり、ロードバランサーやスケジュールの観点などから、AMDGPU の ShaderEngine は通常それぞれ対称となるように設定されるが、<code>disable_cu</code> ではそれを無視して非対称な構成が可能となる。<br>
+使い道があるかと聞かれれば返答に窮するが、GPU情報を表示させると滅多に見られない <code>Max compute units: 15</code> なんて文字列が出てきたりする。<br>
 この状態で、結果が配布元のサーバーに送信されるようなベンチマークを実行すれば、さぞ存在感を放つ奇妙な AMDGPU を登録できるだろう。有意義とは言いにくいが。</p>
-
 <p>実際、これまでにそのような結果は見たことがないし、話題にもなっていない。<code>disable_cu</code> 自体は、実性能では単に性能を下げるだけであり、試したという人も見つからなかった。元から開発者向けのデバッグ機能であるため当然かもしれないが。</p>
-
-<p>また、1CU での動作が可能か試したが、もれなく画面に現代美術的な絵が描かれた。<br />
+<p>また、1CU での動作が可能か試したが、もれなく画面に現代美術的な絵が描かれた。<br>
 しかし、2CU での起動、動作が可能であったことから、各ShaderEngineに最低でも 1CU は有効であることが必須と思われる。</p>
-
 <p><code>disable_cu</code> は <a href="https://www.coelacanth-dream.com/tags/gfx9">GFX9</a> までのサポートであり、<a href="https://www.coelacanth-dream.com/tags/gfx10">RDNA世代 /GFX10</a> はサポートされていない。WGP(2CU)構成では片方の CU を無効化した際に問題が出るのだろうか。</p>
-
 <h2 id="env">調査環境</h2>
-
 <h3 id="use-software">使用ソフトウェア</h3>
-
-<p>調査の際に実行するソフトウェアには 3つ選んだ。<br />
-<a href="https://www.coelacanth-dream.com/tags/aco">RADV/ACO</a> 検証の時にも用いた Vulkan API をサポートするコンピュート系の <a href="https://github.com/Tencent/ncnn" rel="nofollow noreferrer" target="_blank">ncnn</a>、<br />
-グラフィクス系 Vulkan ベンチマーク <a href="https://github.com/vkmark/vkmark" rel="nofollow noreferrer" target="_blank">vkmark</a>、<br />
-OpenCL で実行され、メモリ帯域と各精度の浮動小数点演算を測定可能な <a href="https://github.com/krrishnarraj/clpeak/" rel="nofollow noreferrer" target="_blank">clpeak</a>。</p>
-
-<p><code>ncnn</code> は Vulkan Computeオンリーであり、ベンチマーク機能も整備され、また深層学習における推論に用いられるネットワーク実行するため実際の使用状況に近い。<br />
-GPU の検証、調査にはうってつけと言えるだろう。<br />
-<code>vkmark</code> は、読み込むテクスチャやモデル数は少なく、3Dゲーム等の環境とは少し離れているが、オープンソースで開発され、プロプライエタリなベンチマークソフトのように結果の出力が制限されることもない。解像度は 1920x1080 に設定した。<br />
+<p>調査の際に実行するソフトウェアには 3つ選んだ。<br>
+<a href="https://www.coelacanth-dream.com/tags/aco">RADV/ACO</a> 検証の時にも用いた Vulkan API をサポートするコンピュート系の <a href="https://github.com/Tencent/ncnn">ncnn</a>、<br>
+グラフィクス系 Vulkan ベンチマーク <a href="https://github.com/vkmark/vkmark">vkmark</a>、<br>
+OpenCL で実行され、メモリ帯域と各精度の浮動小数点演算を測定可能な <a href="https://github.com/krrishnarraj/clpeak/">clpeak</a>。</p>
+<p><code>ncnn</code> は Vulkan Computeオンリーであり、ベンチマーク機能も整備され、また深層学習における推論に用いられるネットワーク実行するため実際の使用状況に近い。<br>
+GPU の検証、調査にはうってつけと言えるだろう。<br>
+<code>vkmark</code> は、読み込むテクスチャやモデル数は少なく、3Dゲーム等の環境とは少し離れているが、オープンソースで開発され、プロプライエタリなベンチマークソフトのように結果の出力が制限されることもない。解像度は 1920x1080 に設定した。<br>
 <code>clpeak</code> は、GPU のメモリ帯域を測定できるオープンソースなベンチマークが <code>clpeak</code> くらいしか見つからなかったということと、ほぼ純粋な浮動小数点演算という CU数でスケールしやすいものが調査においては必要と思い、選択した。</p>
-
 <h3 id="system">システム環境</h3>
-
 <table>
 <thead>
 <tr>
-<th align="left">System</th>
-<th align="center"></th>
+<th style="text-align:left">System</th>
+<th style="text-align:center"></th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">CPU</td>
-<td align="center">Ryzen 5 2600<br>6-Core/12-Thread<br>(Boost 1T: 3.9GHz, Boost 12T: 3.7GHz)</td>
+<td style="text-align:left">CPU</td>
+<td style="text-align:center">Ryzen 5 2600<br>6-Core/12-Thread<br>(Boost 1T: 3.9GHz, Boost 12T: 3.7GHz)</td>
 </tr>
-
 <tr>
-<td align="left">RAM</td>
-<td align="center">DDR4 16GB (2993MHz)</td>
+<td style="text-align:left">RAM</td>
+<td style="text-align:center">DDR4 16GB (2993MHz)</td>
 </tr>
-
 <tr>
-<td align="left">GPU</td>
-<td align="center">RX 560 (Polaris11)<br>16CU, 128-bit 4GB<br>Peak GFX: 1196MHz, Peak Mem: 1750GHz(7Gbps)</td>
+<td style="text-align:left">GPU</td>
+<td style="text-align:center">RX 560 (Polaris11)<br>16CU, 128-bit 4GB<br>Peak GFX: 1196MHz, Peak Mem: 1750GHz(7Gbps)</td>
 </tr>
-
 <tr>
-<td align="left">Linux Kernel</td>
-<td align="center">v5.7.8</td>
+<td style="text-align:left">Linux Kernel</td>
+<td style="text-align:center">v5.7.8</td>
 </tr>
-
 <tr>
-<td align="left">GPU UMD</td>
-<td align="center">Mesa 20.2.0-devel (git-a4c4e0103a)<br>(RADV/ACO)</td>
+<td style="text-align:left">GPU UMD</td>
+<td style="text-align:center">Mesa 20.2.0-devel (git-a4c4e0103a)<br>(RADV/ACO)</td>
 </tr>
-
 <tr>
-<td align="left">OpenCL</td>
-<td align="center">OpenCL 2.0 AMD-APP (3137.0)</td>
+<td style="text-align:left">OpenCL</td>
+<td style="text-align:center">OpenCL 2.0 AMD-APP (3137.0)</td>
 </tr>
 </tbody>
 </table>
-
-<p>調査は <em>2CU /4CU /8CU /12CU /16CU</em> の 5パターンで行なった。<br />
-GPUクロックに関しては、固定はせず、デフォルトの PowerTable 、プロファイルで実行した。<br />
-自分が所持する <strong>RX 560</strong> は最大消費電力が 48W に設定されており、ベンチマークの中にはこれにギリギリまで近づいたものがあるため、固定してしまうと CU数の違いによる消費電力と発熱、そこからの GPUクロック選択が正常に行なわれない可能性がある。<br />
+<p>調査は <em>2CU /4CU /8CU /12CU /16CU</em> の 5パターンで行なった。<br>
+GPUクロックに関しては、固定はせず、デフォルトの PowerTable 、プロファイルで実行した。<br>
+自分が所持する <strong>RX 560</strong> は最大消費電力が 48W に設定されており、ベンチマークの中にはこれにギリギリまで近づいたものがあるため、固定してしまうと CU数の違いによる消費電力と発熱、そこからの GPUクロック選択が正常に行なわれない可能性がある。<br>
 デフォルトの PowerTable は以下。</p>
-
 <blockquote>
 <h4 id="rx-560">RX 560</h4>
-<pre tabindex="0"><code> OD_SCLK:
+<pre><code> OD_SCLK:
  0:        214MHz        715mV
  1:        387MHz        721mV
  2:        843MHz        737mV
@@ -224,14 +194,12 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
  OD_RANGE:
  SCLK:     214MHz       1800MHz
  MCLK:     300MHz       2000MHz
- VDDC:     700mV        1150mV</code></pre></blockquote>
-
+ VDDC:     700mV        1150mV
+</code></pre>
+</blockquote>
 <h2 id="result">結果</h2>
-
 <h3 id="perf">性能</h3>
-
 <h4 id="ncnn">ncnn  ( Vulkan Compute )</h4>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/08/06/ncnn-result.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/08/06/ncnn-result.webp"
@@ -241,417 +209,371 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
   </figcaption>
 </figure>
 
-
 <table>
 <thead>
 <tr>
-<th align="left">ncnn (.avg)<br>(lower is better) \ Enable CU</th>
-<th align="center">2 CU</th>
-<th align="center">4 CU</th>
-<th align="center">8 CU</th>
-<th align="center">12 CU</th>
-<th align="center">16 CU</th>
+<th style="text-align:left">ncnn (.avg)<br>(lower is better) \ Enable CU</th>
+<th style="text-align:center">2 CU</th>
+<th style="text-align:center">4 CU</th>
+<th style="text-align:center">8 CU</th>
+<th style="text-align:center">12 CU</th>
+<th style="text-align:center">16 CU</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">squeezenet</td>
-<td align="center">10.33</td>
-<td align="center">5.86</td>
-<td align="center">4.23</td>
-<td align="center">3.07</td>
-<td align="center">2.72</td>
+<td style="text-align:left">squeezenet</td>
+<td style="text-align:center">10.33</td>
+<td style="text-align:center">5.86</td>
+<td style="text-align:center">4.23</td>
+<td style="text-align:center">3.07</td>
+<td style="text-align:center">2.72</td>
 </tr>
-
 <tr>
-<td align="left">mobilenet</td>
-<td align="center">16.40</td>
-<td align="center">8.71</td>
-<td align="center">5.63</td>
-<td align="center">3.85</td>
-<td align="center">3.32</td>
+<td style="text-align:left">mobilenet</td>
+<td style="text-align:center">16.40</td>
+<td style="text-align:center">8.71</td>
+<td style="text-align:center">5.63</td>
+<td style="text-align:center">3.85</td>
+<td style="text-align:center">3.32</td>
 </tr>
-
 <tr>
-<td align="left">mobilenet_v2</td>
-<td align="center">11.75</td>
-<td align="center">6.90</td>
-<td align="center">5.68</td>
-<td align="center">4.24</td>
-<td align="center">3.98</td>
+<td style="text-align:left">mobilenet_v2</td>
+<td style="text-align:center">11.75</td>
+<td style="text-align:center">6.90</td>
+<td style="text-align:center">5.68</td>
+<td style="text-align:center">4.24</td>
+<td style="text-align:center">3.98</td>
 </tr>
-
 <tr>
-<td align="left">mobilenet_v3</td>
-<td align="center">12.30</td>
-<td align="center">7.97</td>
-<td align="center">7.01</td>
-<td align="center">5.60</td>
-<td align="center">5.79</td>
+<td style="text-align:left">mobilenet_v3</td>
+<td style="text-align:center">12.30</td>
+<td style="text-align:center">7.97</td>
+<td style="text-align:center">7.01</td>
+<td style="text-align:center">5.60</td>
+<td style="text-align:center">5.79</td>
 </tr>
-
 <tr>
-<td align="left">shufflenet</td>
-<td align="center">9.51</td>
-<td align="center">5.55</td>
-<td align="center">3.77</td>
-<td align="center">3.00</td>
-<td align="center">2.78</td>
+<td style="text-align:left">shufflenet</td>
+<td style="text-align:center">9.51</td>
+<td style="text-align:center">5.55</td>
+<td style="text-align:center">3.77</td>
+<td style="text-align:center">3.00</td>
+<td style="text-align:center">2.78</td>
 </tr>
-
 <tr>
-<td align="left">shufflenet_v2</td>
-<td align="center">8.53</td>
-<td align="center">5.13</td>
-<td align="center">4.06</td>
-<td align="center">3.49</td>
-<td align="center">3.21</td>
+<td style="text-align:left">shufflenet_v2</td>
+<td style="text-align:center">8.53</td>
+<td style="text-align:center">5.13</td>
+<td style="text-align:center">4.06</td>
+<td style="text-align:center">3.49</td>
+<td style="text-align:center">3.21</td>
 </tr>
-
 <tr>
-<td align="left">mnasnet</td>
-<td align="center">12.42</td>
-<td align="center">7.39</td>
-<td align="center">5.82</td>
-<td align="center">4.43</td>
-<td align="center">4.19</td>
+<td style="text-align:left">mnasnet</td>
+<td style="text-align:center">12.42</td>
+<td style="text-align:center">7.39</td>
+<td style="text-align:center">5.82</td>
+<td style="text-align:center">4.43</td>
+<td style="text-align:center">4.19</td>
 </tr>
-
 <tr>
-<td align="left">proxylessnasnet</td>
-<td align="center">13.56</td>
-<td align="center">7.87</td>
-<td align="center">6.02</td>
-<td align="center">4.65</td>
-<td align="center">4.27</td>
+<td style="text-align:left">proxylessnasnet</td>
+<td style="text-align:center">13.56</td>
+<td style="text-align:center">7.87</td>
+<td style="text-align:center">6.02</td>
+<td style="text-align:center">4.65</td>
+<td style="text-align:center">4.27</td>
 </tr>
-
 <tr>
-<td align="left">efficientnet_b0</td>
-<td align="center">23.61</td>
-<td align="center">16.82</td>
-<td align="center">15.89</td>
-<td align="center">13.17</td>
-<td align="center">12.86</td>
+<td style="text-align:left">efficientnet_b0</td>
+<td style="text-align:center">23.61</td>
+<td style="text-align:center">16.82</td>
+<td style="text-align:center">15.89</td>
+<td style="text-align:center">13.17</td>
+<td style="text-align:center">12.86</td>
 </tr>
-
 <tr>
-<td align="left">regnety_400m</td>
-<td align="center">18.26</td>
-<td align="center">11.24</td>
-<td align="center">10.03</td>
-<td align="center">7.47</td>
-<td align="center">7.35</td>
+<td style="text-align:left">regnety_400m</td>
+<td style="text-align:center">18.26</td>
+<td style="text-align:center">11.24</td>
+<td style="text-align:center">10.03</td>
+<td style="text-align:center">7.47</td>
+<td style="text-align:center">7.35</td>
 </tr>
-
 <tr>
-<td align="left">blazeface</td>
-<td align="center">2.78</td>
-<td align="center">2.02</td>
-<td align="center">1.61</td>
-<td align="center">1.42</td>
-<td align="center">1.33</td>
+<td style="text-align:left">blazeface</td>
+<td style="text-align:center">2.78</td>
+<td style="text-align:center">2.02</td>
+<td style="text-align:center">1.61</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">1.33</td>
 </tr>
-
 <tr>
-<td align="left">googlenet</td>
-<td align="center">38.83</td>
-<td align="center">21.30</td>
-<td align="center">15.01</td>
-<td align="center">11.18</td>
-<td align="center">10.02</td>
+<td style="text-align:left">googlenet</td>
+<td style="text-align:center">38.83</td>
+<td style="text-align:center">21.30</td>
+<td style="text-align:center">15.01</td>
+<td style="text-align:center">11.18</td>
+<td style="text-align:center">10.02</td>
 </tr>
-
 <tr>
-<td align="left">resnet18</td>
-<td align="center">37.34</td>
-<td align="center">19.52</td>
-<td align="center">11.18</td>
-<td align="center">7.95</td>
-<td align="center">6.36</td>
+<td style="text-align:left">resnet18</td>
+<td style="text-align:center">37.34</td>
+<td style="text-align:center">19.52</td>
+<td style="text-align:center">11.18</td>
+<td style="text-align:center">7.95</td>
+<td style="text-align:center">6.36</td>
 </tr>
-
 <tr>
-<td align="left">alexnet</td>
-<td align="center">64.04</td>
-<td align="center">34.15</td>
-<td align="center">20.16</td>
-<td align="center">29.74</td>
-<td align="center">11.10</td>
+<td style="text-align:left">alexnet</td>
+<td style="text-align:center">64.04</td>
+<td style="text-align:center">34.15</td>
+<td style="text-align:center">20.16</td>
+<td style="text-align:center">29.74</td>
+<td style="text-align:center">11.10</td>
 </tr>
-
 <tr>
-<td align="left">vgg16</td>
-<td align="center">217.13</td>
-<td align="center">110.01</td>
-<td align="center">59.50</td>
-<td align="center">44.95</td>
-<td align="center">57.42</td>
+<td style="text-align:left">vgg16</td>
+<td style="text-align:center">217.13</td>
+<td style="text-align:center">110.01</td>
+<td style="text-align:center">59.50</td>
+<td style="text-align:center">44.95</td>
+<td style="text-align:center">57.42</td>
 </tr>
-
 <tr>
-<td align="left">resnet50</td>
-<td align="center">88.95</td>
-<td align="center">46.11</td>
-<td align="center">26.32</td>
-<td align="center">18.80</td>
-<td align="center">15.64</td>
+<td style="text-align:left">resnet50</td>
+<td style="text-align:center">88.95</td>
+<td style="text-align:center">46.11</td>
+<td style="text-align:center">26.32</td>
+<td style="text-align:center">18.80</td>
+<td style="text-align:center">15.64</td>
 </tr>
-
 <tr>
-<td align="left">squeezenet_ssd</td>
-<td align="center">58.60</td>
-<td align="center">31.07</td>
-<td align="center">19.03</td>
-<td align="center">13.81</td>
-<td align="center">11.63</td>
+<td style="text-align:left">squeezenet_ssd</td>
+<td style="text-align:center">58.60</td>
+<td style="text-align:center">31.07</td>
+<td style="text-align:center">19.03</td>
+<td style="text-align:center">13.81</td>
+<td style="text-align:center">11.63</td>
 </tr>
-
 <tr>
-<td align="left">mobilenet_ssd</td>
-<td align="center">36.89</td>
-<td align="center">19.57</td>
-<td align="center">12.79</td>
-<td align="center">8.56</td>
-<td align="center">7.45</td>
+<td style="text-align:left">mobilenet_ssd</td>
+<td style="text-align:center">36.89</td>
+<td style="text-align:center">19.57</td>
+<td style="text-align:center">12.79</td>
+<td style="text-align:center">8.56</td>
+<td style="text-align:center">7.45</td>
 </tr>
-
 <tr>
-<td align="left">mobilenet_yolo</td>
-<td align="center">77.89</td>
-<td align="center">39.85</td>
-<td align="center">22.12</td>
-<td align="center">15.31</td>
-<td align="center">12.42</td>
+<td style="text-align:left">mobilenet_yolo</td>
+<td style="text-align:center">77.89</td>
+<td style="text-align:center">39.85</td>
+<td style="text-align:center">22.12</td>
+<td style="text-align:center">15.31</td>
+<td style="text-align:center">12.42</td>
 </tr>
-
 <tr>
-<td align="left">mobilenetv2_yolov3</td>
-<td align="center">36.89</td>
-<td align="center">19.14</td>
-<td align="center">11.79</td>
-<td align="center">8.59</td>
-<td align="center">7.30</td>
+<td style="text-align:left">mobilenetv2_yolov3</td>
+<td style="text-align:center">36.89</td>
+<td style="text-align:center">19.14</td>
+<td style="text-align:center">11.79</td>
+<td style="text-align:center">8.59</td>
+<td style="text-align:center">7.30</td>
 </tr>
-
 <tr>
-<td align="left">yolov4-tiny</td>
-<td align="center">58.92</td>
-<td align="center">30.29</td>
-<td align="center">17.77</td>
-<td align="center">12.49</td>
-<td align="center">10.46</td>
+<td style="text-align:left">yolov4-tiny</td>
+<td style="text-align:center">58.92</td>
+<td style="text-align:center">30.29</td>
+<td style="text-align:center">17.77</td>
+<td style="text-align:center">12.49</td>
+<td style="text-align:center">10.46</td>
 </tr>
 </tbody>
 </table>
-
 <table>
 <thead>
 <tr>
-<th align="left">(x)</th>
-<th align="center">2CU → 4CU</th>
-<th align="center">4CU → 8CU</th>
-<th align="center">8CU → 12CU</th>
-<th align="center">12CU → 16CU</th>
-<th align="center">8CU → 16CU</th>
+<th style="text-align:left">(x)</th>
+<th style="text-align:center">2CU → 4CU</th>
+<th style="text-align:center">4CU → 8CU</th>
+<th style="text-align:center">8CU → 12CU</th>
+<th style="text-align:center">12CU → 16CU</th>
+<th style="text-align:center">8CU → 16CU</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">squeezenet</td>
-<td align="center">1.76</td>
-<td align="center">1.39</td>
-<td align="center">1.38</td>
-<td align="center">1.13</td>
-<td align="center">1.56</td>
+<td style="text-align:left">squeezenet</td>
+<td style="text-align:center">1.76</td>
+<td style="text-align:center">1.39</td>
+<td style="text-align:center">1.38</td>
+<td style="text-align:center">1.13</td>
+<td style="text-align:center">1.56</td>
 </tr>
-
 <tr>
-<td align="left">mobilenet</td>
-<td align="center">1.88</td>
-<td align="center">1.55</td>
-<td align="center">1.46</td>
-<td align="center">1.16</td>
-<td align="center">1.70</td>
+<td style="text-align:left">mobilenet</td>
+<td style="text-align:center">1.88</td>
+<td style="text-align:center">1.55</td>
+<td style="text-align:center">1.46</td>
+<td style="text-align:center">1.16</td>
+<td style="text-align:center">1.70</td>
 </tr>
-
 <tr>
-<td align="left">mobilenet_v2</td>
-<td align="center">1.70</td>
-<td align="center">1.21</td>
-<td align="center">1.34</td>
-<td align="center">1.07</td>
-<td align="center">1.43</td>
+<td style="text-align:left">mobilenet_v2</td>
+<td style="text-align:center">1.70</td>
+<td style="text-align:center">1.21</td>
+<td style="text-align:center">1.34</td>
+<td style="text-align:center">1.07</td>
+<td style="text-align:center">1.43</td>
 </tr>
-
 <tr>
-<td align="left">mobilenet_v3</td>
-<td align="center">1.54</td>
-<td align="center">1.14</td>
-<td align="center">1.25</td>
-<td align="center">0.97</td>
-<td align="center">1.21</td>
+<td style="text-align:left">mobilenet_v3</td>
+<td style="text-align:center">1.54</td>
+<td style="text-align:center">1.14</td>
+<td style="text-align:center">1.25</td>
+<td style="text-align:center">0.97</td>
+<td style="text-align:center">1.21</td>
 </tr>
-
 <tr>
-<td align="left">shufflenet</td>
-<td align="center">1.71</td>
-<td align="center">1.47</td>
-<td align="center">1.26</td>
-<td align="center">1.08</td>
-<td align="center">1.36</td>
+<td style="text-align:left">shufflenet</td>
+<td style="text-align:center">1.71</td>
+<td style="text-align:center">1.47</td>
+<td style="text-align:center">1.26</td>
+<td style="text-align:center">1.08</td>
+<td style="text-align:center">1.36</td>
 </tr>
-
 <tr>
-<td align="left">shufflenet_v2</td>
-<td align="center">1.66</td>
-<td align="center">1.26</td>
-<td align="center">1.16</td>
-<td align="center">1.09</td>
-<td align="center">1.26</td>
+<td style="text-align:left">shufflenet_v2</td>
+<td style="text-align:center">1.66</td>
+<td style="text-align:center">1.26</td>
+<td style="text-align:center">1.16</td>
+<td style="text-align:center">1.09</td>
+<td style="text-align:center">1.26</td>
 </tr>
-
 <tr>
-<td align="left">mnasnet</td>
-<td align="center">1.68</td>
-<td align="center">1.27</td>
-<td align="center">1.31</td>
-<td align="center">1.06</td>
-<td align="center">1.39</td>
+<td style="text-align:left">mnasnet</td>
+<td style="text-align:center">1.68</td>
+<td style="text-align:center">1.27</td>
+<td style="text-align:center">1.31</td>
+<td style="text-align:center">1.06</td>
+<td style="text-align:center">1.39</td>
 </tr>
-
 <tr>
-<td align="left">proxylessnasnet</td>
-<td align="center">1.72</td>
-<td align="center">1.31</td>
-<td align="center">1.29</td>
-<td align="center">1.09</td>
-<td align="center">1.41</td>
+<td style="text-align:left">proxylessnasnet</td>
+<td style="text-align:center">1.72</td>
+<td style="text-align:center">1.31</td>
+<td style="text-align:center">1.29</td>
+<td style="text-align:center">1.09</td>
+<td style="text-align:center">1.41</td>
 </tr>
-
 <tr>
-<td align="left">efficientnet_b0</td>
-<td align="center">1.40</td>
-<td align="center">1.06</td>
-<td align="center">1.21</td>
-<td align="center">1.02</td>
-<td align="center">1.24</td>
+<td style="text-align:left">efficientnet_b0</td>
+<td style="text-align:center">1.40</td>
+<td style="text-align:center">1.06</td>
+<td style="text-align:center">1.21</td>
+<td style="text-align:center">1.02</td>
+<td style="text-align:center">1.24</td>
 </tr>
-
 <tr>
-<td align="left">regnety_400m</td>
-<td align="center">1.62</td>
-<td align="center">1.12</td>
-<td align="center">1.34</td>
-<td align="center">1.02</td>
-<td align="center">1.36</td>
+<td style="text-align:left">regnety_400m</td>
+<td style="text-align:center">1.62</td>
+<td style="text-align:center">1.12</td>
+<td style="text-align:center">1.34</td>
+<td style="text-align:center">1.02</td>
+<td style="text-align:center">1.36</td>
 </tr>
-
 <tr>
-<td align="left">blazeface</td>
-<td align="center">1.38</td>
-<td align="center">1.25</td>
-<td align="center">1.13</td>
-<td align="center">1.07</td>
-<td align="center">1.21</td>
+<td style="text-align:left">blazeface</td>
+<td style="text-align:center">1.38</td>
+<td style="text-align:center">1.25</td>
+<td style="text-align:center">1.13</td>
+<td style="text-align:center">1.07</td>
+<td style="text-align:center">1.21</td>
 </tr>
-
 <tr>
-<td align="left">googlenet</td>
-<td align="center">1.82</td>
-<td align="center">1.42</td>
-<td align="center">1.34</td>
-<td align="center">1.12</td>
-<td align="center">1.50</td>
+<td style="text-align:left">googlenet</td>
+<td style="text-align:center">1.82</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">1.34</td>
+<td style="text-align:center">1.12</td>
+<td style="text-align:center">1.50</td>
 </tr>
-
 <tr>
-<td align="left">resnet18</td>
-<td align="center">1.91</td>
-<td align="center">1.75</td>
-<td align="center">1.41</td>
-<td align="center">1.25</td>
-<td align="center">1.76</td>
+<td style="text-align:left">resnet18</td>
+<td style="text-align:center">1.91</td>
+<td style="text-align:center">1.75</td>
+<td style="text-align:center">1.41</td>
+<td style="text-align:center">1.25</td>
+<td style="text-align:center">1.76</td>
 </tr>
-
 <tr>
-<td align="left">alexnet</td>
-<td align="center">1.88</td>
-<td align="center">1.69</td>
-<td align="center">0.68</td>
-<td align="center">2.68</td>
-<td align="center">1.82</td>
+<td style="text-align:left">alexnet</td>
+<td style="text-align:center">1.88</td>
+<td style="text-align:center">1.69</td>
+<td style="text-align:center">0.68</td>
+<td style="text-align:center">2.68</td>
+<td style="text-align:center">1.82</td>
 </tr>
-
 <tr>
-<td align="left">vgg16</td>
-<td align="center">1.97</td>
-<td align="center">1.85</td>
-<td align="center">1.32</td>
-<td align="center">0.78</td>
-<td align="center">1.04</td>
+<td style="text-align:left">vgg16</td>
+<td style="text-align:center">1.97</td>
+<td style="text-align:center">1.85</td>
+<td style="text-align:center">1.32</td>
+<td style="text-align:center">0.78</td>
+<td style="text-align:center">1.04</td>
 </tr>
-
 <tr>
-<td align="left">resnet50</td>
-<td align="center">1.93</td>
-<td align="center">1.75</td>
-<td align="center">1.40</td>
-<td align="center">1.20</td>
-<td align="center">1.68</td>
+<td style="text-align:left">resnet50</td>
+<td style="text-align:center">1.93</td>
+<td style="text-align:center">1.75</td>
+<td style="text-align:center">1.40</td>
+<td style="text-align:center">1.20</td>
+<td style="text-align:center">1.68</td>
 </tr>
-
 <tr>
-<td align="left">squeezenet_ssd</td>
-<td align="center">1.89</td>
-<td align="center">1.63</td>
-<td align="center">1.38</td>
-<td align="center">1.19</td>
-<td align="center">1.64</td>
+<td style="text-align:left">squeezenet_ssd</td>
+<td style="text-align:center">1.89</td>
+<td style="text-align:center">1.63</td>
+<td style="text-align:center">1.38</td>
+<td style="text-align:center">1.19</td>
+<td style="text-align:center">1.64</td>
 </tr>
-
 <tr>
-<td align="left">mobilenet_ssd</td>
-<td align="center">1.89</td>
-<td align="center">1.53</td>
-<td align="center">1.49</td>
-<td align="center">1.15</td>
-<td align="center">1.72</td>
+<td style="text-align:left">mobilenet_ssd</td>
+<td style="text-align:center">1.89</td>
+<td style="text-align:center">1.53</td>
+<td style="text-align:center">1.49</td>
+<td style="text-align:center">1.15</td>
+<td style="text-align:center">1.72</td>
 </tr>
-
 <tr>
-<td align="left">mobilenet_yolo</td>
-<td align="center">1.95</td>
-<td align="center">1.80</td>
-<td align="center">1.44</td>
-<td align="center">1.23</td>
-<td align="center">1.78</td>
+<td style="text-align:left">mobilenet_yolo</td>
+<td style="text-align:center">1.95</td>
+<td style="text-align:center">1.80</td>
+<td style="text-align:center">1.44</td>
+<td style="text-align:center">1.23</td>
+<td style="text-align:center">1.78</td>
 </tr>
-
 <tr>
-<td align="left">mobilenetv2_yolov3</td>
-<td align="center">1.93</td>
-<td align="center">1.62</td>
-<td align="center">1.37</td>
-<td align="center">1.18</td>
-<td align="center">1.62</td>
+<td style="text-align:left">mobilenetv2_yolov3</td>
+<td style="text-align:center">1.93</td>
+<td style="text-align:center">1.62</td>
+<td style="text-align:center">1.37</td>
+<td style="text-align:center">1.18</td>
+<td style="text-align:center">1.62</td>
 </tr>
-
 <tr>
-<td align="left">yolov4-tiny</td>
-<td align="center">1.95</td>
-<td align="center">1.70</td>
-<td align="center">1.42</td>
-<td align="center">1.19</td>
-<td align="center">1.70</td>
+<td style="text-align:left">yolov4-tiny</td>
+<td style="text-align:center">1.95</td>
+<td style="text-align:center">1.70</td>
+<td style="text-align:center">1.42</td>
+<td style="text-align:center">1.19</td>
+<td style="text-align:center">1.70</td>
 </tr>
 </tbody>
 </table>
-
 <h4 id="vkmark">vkmark  ( Vulkan Graphics )</h4>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/08/06/vkmark-result.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/08/06/vkmark-result.webp"
@@ -660,7 +582,6 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
       <h4 class="fig-title">vkmark (1920x1080)</h4>
   </figcaption>
 </figure>
-
 
 <!--
 
@@ -673,9 +594,7 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
 | 16 CU | 4908 |
 
 -->
-
 <h4 id="clpeak-compute">clpeak  ( OpenCL Compute )</h4>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/08/06/clpeak-compute-result.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/08/06/clpeak-compute-result.webp"
@@ -683,51 +602,45 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
 </a>
 </figure>
 
-
 <table>
 <thead>
 <tr>
-<th align="left">clpeak<br>(higher is better) \ Enable CU</th>
-<th align="center">2 CU</th>
-<th align="center">4 CU</th>
-<th align="center">8 CU</th>
-<th align="center">12 CU</th>
-<th align="center">16 CU</th>
+<th style="text-align:left">clpeak<br>(higher is better) \ Enable CU</th>
+<th style="text-align:center">2 CU</th>
+<th style="text-align:center">4 CU</th>
+<th style="text-align:center">8 CU</th>
+<th style="text-align:center">12 CU</th>
+<th style="text-align:center">16 CU</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Single-precision (float16)</td>
-<td align="center">279.14</td>
-<td align="center">554.13</td>
-<td align="center">1108.97</td>
-<td align="center">1688.56</td>
-<td align="center">2207.62</td>
+<td style="text-align:left">Single-precision (float16)</td>
+<td style="text-align:center">279.14</td>
+<td style="text-align:center">554.13</td>
+<td style="text-align:center">1108.97</td>
+<td style="text-align:center">1688.56</td>
+<td style="text-align:center">2207.62</td>
 </tr>
-
 <tr>
-<td align="left">Half-precision    (half16)</td>
-<td align="center">263.76</td>
-<td align="center">525.95</td>
-<td align="center">1052.29</td>
-<td align="center">1552.16</td>
-<td align="center">2101.80</td>
+<td style="text-align:left">Half-precision    (half16)</td>
+<td style="text-align:center">263.76</td>
+<td style="text-align:center">525.95</td>
+<td style="text-align:center">1052.29</td>
+<td style="text-align:center">1552.16</td>
+<td style="text-align:center">2101.80</td>
 </tr>
-
 <tr>
-<td align="left">Double-precision    (double16)</td>
-<td align="center">18.48</td>
-<td align="center">36.91</td>
-<td align="center">73.78</td>
-<td align="center">110.77</td>
-<td align="center">140.85</td>
+<td style="text-align:left">Double-precision    (double16)</td>
+<td style="text-align:center">18.48</td>
+<td style="text-align:center">36.91</td>
+<td style="text-align:center">73.78</td>
+<td style="text-align:center">110.77</td>
+<td style="text-align:center">140.85</td>
 </tr>
 </tbody>
 </table>
-
 <h4 id="clpeak-mbw">clpeak  ( Global memory bandwidth )</h4>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/08/06/clpeak-mbw-result.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/08/06/clpeak-mbw-result.webp"
@@ -735,114 +648,97 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
 </a>
 </figure>
 
-
 <table>
 <thead>
 <tr>
-<th align="left">clpeak (Global memory bandwidth)<br>(higher is better) \ Enable CU</th>
-<th align="center">2 CU</th>
-<th align="center">4 CU</th>
-<th align="center">8 CU</th>
-<th align="center">12 CU</th>
-<th align="center">16 CU</th>
+<th style="text-align:left">clpeak (Global memory bandwidth)<br>(higher is better) \ Enable CU</th>
+<th style="text-align:center">2 CU</th>
+<th style="text-align:center">4 CU</th>
+<th style="text-align:center">8 CU</th>
+<th style="text-align:center">12 CU</th>
+<th style="text-align:center">16 CU</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">float</td>
-<td align="center">43.29</td>
-<td align="center">85.19</td>
-<td align="center">89.82</td>
-<td align="center">88.92</td>
-<td align="center">88.17</td>
+<td style="text-align:left">float</td>
+<td style="text-align:center">43.29</td>
+<td style="text-align:center">85.19</td>
+<td style="text-align:center">89.82</td>
+<td style="text-align:center">88.92</td>
+<td style="text-align:center">88.17</td>
 </tr>
-
 <tr>
-<td align="left">float2</td>
-<td align="center">64.50</td>
-<td align="center">89.71</td>
-<td align="center">93.25</td>
-<td align="center">91.67</td>
-<td align="center">90.17</td>
+<td style="text-align:left">float2</td>
+<td style="text-align:center">64.50</td>
+<td style="text-align:center">89.71</td>
+<td style="text-align:center">93.25</td>
+<td style="text-align:center">91.67</td>
+<td style="text-align:center">90.17</td>
 </tr>
-
 <tr>
-<td align="left">float4</td>
-<td align="center">88.77</td>
-<td align="center">93.47</td>
-<td align="center">95.18</td>
-<td align="center">93.51</td>
-<td align="center">90.76</td>
+<td style="text-align:left">float4</td>
+<td style="text-align:center">88.77</td>
+<td style="text-align:center">93.47</td>
+<td style="text-align:center">95.18</td>
+<td style="text-align:center">93.51</td>
+<td style="text-align:center">90.76</td>
 </tr>
-
 <tr>
-<td align="left">float8</td>
-<td align="center">71.42</td>
-<td align="center">95.32</td>
-<td align="center">97.51</td>
-<td align="center">81.57</td>
-<td align="center">63.71</td>
+<td style="text-align:left">float8</td>
+<td style="text-align:center">71.42</td>
+<td style="text-align:center">95.32</td>
+<td style="text-align:center">97.51</td>
+<td style="text-align:center">81.57</td>
+<td style="text-align:center">63.71</td>
 </tr>
-
 <tr>
-<td align="left">float16</td>
-<td align="center">31.40</td>
-<td align="center">54.32</td>
-<td align="center">51.36</td>
-<td align="center">42.93</td>
-<td align="center">39.68</td>
+<td style="text-align:left">float16</td>
+<td style="text-align:center">31.40</td>
+<td style="text-align:center">54.32</td>
+<td style="text-align:center">51.36</td>
+<td style="text-align:center">42.93</td>
+<td style="text-align:center">39.68</td>
 </tr>
 </tbody>
 </table>
-
 <h3 id="consider">考察</h3>
-
-<p><code>clpeek (OpenCL Compute)</code> の結果から考えるが、まず half(半精度)、float(単精度)、double(倍精度)の後に続く数字は要素数を表す。<br />
-そして、<em>2CU</em> と <em>16CU</em> の結果を比較すると、<code>half16</code> で 7.96倍、<code>float16</code> で 7.90倍、<code>double16</code> で 7.62倍と、目論見通り? に CU数に従って綺麗に結果がスケールしている。<br />
+<p><code>clpeek (OpenCL Compute)</code> の結果から考えるが、まず half(半精度)、float(単精度)、double(倍精度)の後に続く数字は要素数を表す。<br>
+そして、<em>2CU</em> と <em>16CU</em> の結果を比較すると、<code>half16</code> で 7.96倍、<code>float16</code> で 7.90倍、<code>double16</code> で 7.62倍と、目論見通り? に CU数に従って綺麗に結果がスケールしている。<br>
 これは、<code>clpeak (OpenCL Compute)</code> はモニタした限りではメモリアクセスの頻度が小さく、演算自体は小規模であったためと思われる。</p>
-
-<p><code>clpeak (Global memory bandwidth)</code> においては、<code>2CU</code> の結果が全体的に低いが、これは VRAM が 4x GDDR5 32-bit であるのに対し、<code>2CU</code> ではそれを十分に満たすだけのロード/ストア命令を発行できなかったのではないかと思う。またはメモリレイテンシを隠蔽するのに十分なスレッド数を発行できなかったか。<br />
-ただ、<code>2CU</code> の結果が <code>float</code> では半分近くであるのに対し、そこから要素数を増やした <code>float2</code> 、<code>float4</code> 、<code>float8</code> ではメモリ帯域が伸び、<code>float4</code> では他の CU数設定と変わらないものとなっている。要素数が増えたことで、生成される Wave数もまた増えたのかもしれないが、自信は無い。<br />
+<p><code>clpeak (Global memory bandwidth)</code> においては、<code>2CU</code> の結果が全体的に低いが、これは VRAM が 4x GDDR5 32-bit であるのに対し、<code>2CU</code> ではそれを十分に満たすだけのロード/ストア命令を発行できなかったのではないかと思う。またはメモリレイテンシを隠蔽するのに十分なスレッド数を発行できなかったか。<br>
+ただ、<code>2CU</code> の結果が <code>float</code> では半分近くであるのに対し、そこから要素数を増やした <code>float2</code> 、<code>float4</code> 、<code>float8</code> ではメモリ帯域が伸び、<code>float4</code> では他の CU数設定と変わらないものとなっている。要素数が増えたことで、生成される Wave数もまた増えたのかもしれないが、自信は無い。<br>
 <code>4CU</code> 、<code>8CU</code> の結果が全体的に優れており、<code>12CU</code> 、<code>16CU</code> ではそれよりも落ち込む場合が見られる。うまい理由が思いつかないが、OpenCLドライバーによる影響があるのかもしれない。<code>float16</code> では全体的に低い結果となったが、これも同様。</p>
-
-<p><code>vkmark (Vulkan Graphics)</code> では、<em>4CU</em> ずつ増やした結果を見ると、<em>4CU -&gt; 8CU</em> では約1.09倍(+416スコア)、<em>8CU -&gt; 12CU</em> では約1.04倍(+201スコア)、<em>12CU -&gt; 16CU</em> では約1.02倍(+107スコア) となっており、性能向上の具合が鈍化している。<br />
-グラフィクス処理では、レンダリング結果をメモリ(フレームバッファ)に書き込んだり、テクスチャ等を格納する関係上、メモリ性能が重要とされることが多い。<br />
-今回の調査では CU数だけを減らし、メモリバス幅、L2cache、RenderBackend、最高GFXクロック等は変わらないため、それが <code>vkmark</code> の結果において支配的であり、CU数の増加があまり性能向上に影響しなかったものと思われる。<br />
+<p><code>vkmark (Vulkan Graphics)</code> では、<em>4CU</em> ずつ増やした結果を見ると、<em>4CU -&gt; 8CU</em> では約1.09倍(+416スコア)、<em>8CU -&gt; 12CU</em> では約1.04倍(+201スコア)、<em>12CU -&gt; 16CU</em> では約1.02倍(+107スコア) となっており、性能向上の具合が鈍化している。<br>
+グラフィクス処理では、レンダリング結果をメモリ(フレームバッファ)に書き込んだり、テクスチャ等を格納する関係上、メモリ性能が重要とされることが多い。<br>
+今回の調査では CU数だけを減らし、メモリバス幅、L2cache、RenderBackend、最高GFXクロック等は変わらないため、それが <code>vkmark</code> の結果において支配的であり、CU数の増加があまり性能向上に影響しなかったものと思われる。<br>
 <em>2CU -&gt; 4CU</em> では約1.19倍と大きな性能向上が見られるが、これは上記 <code>clpeak (Global memory bandwidth)</code> と同様にロード/ストア命令の発行レートがメモリ性能に影響している可能性がある。</p>
-
-<p><code>ncnn</code> では、コンピュート性能(CU数)とメモリ性能のどちらが重要となるかは、21個の各ネットワークモデルで異なる。<br />
-<code>4CU</code> ずつ増やした結果では、<em>4CU -&gt; 8CU</em> と同等(±0.05)、またはそれよりも大きい性能向上を <em>8CU -&gt; 12CU</em> で得ているネットワークモデルは 6個程確認できる。これらはまだメモリ性能がボトルネックにはなっておらず、コンピュート性能(CU数)が結果に反映されているものと思われる。<br />
-しかし、<em>12CU -&gt; 16CU</em> からは <em>8CU -&gt; 12CU</em> と同等以上の性能向上を得られているネットワークモデルはない。ここはコンピュート性能に対し、メモリ性能が追い付かなくなったものと推察される。<br />
+<p><code>ncnn</code> では、コンピュート性能(CU数)とメモリ性能のどちらが重要となるかは、21個の各ネットワークモデルで異なる。<br>
+<code>4CU</code> ずつ増やした結果では、<em>4CU -&gt; 8CU</em> と同等(±0.05)、またはそれよりも大きい性能向上を <em>8CU -&gt; 12CU</em> で得ているネットワークモデルは 6個程確認できる。これらはまだメモリ性能がボトルネックにはなっておらず、コンピュート性能(CU数)が結果に反映されているものと思われる。<br>
+しかし、<em>12CU -&gt; 16CU</em> からは <em>8CU -&gt; 12CU</em> と同等以上の性能向上を得られているネットワークモデルはない。ここはコンピュート性能に対し、メモリ性能が追い付かなくなったものと推察される。<br>
 <code>alexnet</code> に関しては、<em>12CU -&gt; 16CU</em> で劇的に性能向上しているように見えるが、<em>8CU</em> から <em>12CU</em> で見るとかえって性能が悪化しているため、何らかの理由で <em>12CU</em> での結果が特別悪化したものと思われる。</p>
-
 <h2 id="general">総論</h2>
-
-<p>実際の使用感に近い <code>ncnn (Vulkan Compute)</code> と <code>vkmark (Vulkan Graphics)</code> の結果から、ある程度の CU数からさらに CU数を増やしても単純に性能は向上せず、メモリ性能がボトルネックになっているものと考えられる。<br />
-GPU において、帯域あたりの電力効率に優れる HBM2 への取り組みがどれだけ重要か窺える。<br />
+<p>実際の使用感に近い <code>ncnn (Vulkan Compute)</code> と <code>vkmark (Vulkan Graphics)</code> の結果から、ある程度の CU数からさらに CU数を増やしても単純に性能は向上せず、メモリ性能がボトルネックになっているものと考えられる。<br>
+GPU において、帯域あたりの電力効率に優れる HBM2 への取り組みがどれだけ重要か窺える。<br>
 Zen 2 APU <em>Renoir</em> にて LPDDR4x-4266 に対応したことは AMD において必須だったのだろう。</p>
-
 <p>結論として、ただ CU数を増やしても GPU性能はそれに応じた性能向上幅を見せ続けてはくれず、どこかでメモリ性能がボトルネックとなってくる。</p>
-
-<p><em>Renoir</em> ベースの製品モデルは、モデル間で CU数だけでなく、クロックでも差別化を行なっている。<br />
+<p><em>Renoir</em> ベースの製品モデルは、モデル間で CU数だけでなく、クロックでも差別化を行なっている。<br>
 グラフィクス性能という点では、RenderBackend 等にも反映されるクロックの方が影響を持つだろう。</p>
-
-<p>また、性能向上幅と <code>clpeak (Global memory bandwidth)</code> の結果から、<code>Polaris11</code> におけるコンピュート性能(CU数)とメモリ性能のバランスは、<em>8CU</em> または <em>8CU</em> と <em>12CU</em> の間あたりが最も取れているのではないだろうか。<br />
-AMD が <em>Polaris11</em> の下位 ASIC として、CU数のみを 6基減らした <em>Polaris12</em> を設計した理由が自分の中で疑問としてあったが、より CU数とメモリ性能のバランスが取れ、<br />
+<p>また、性能向上幅と <code>clpeak (Global memory bandwidth)</code> の結果から、<code>Polaris11</code> におけるコンピュート性能(CU数)とメモリ性能のバランスは、<em>8CU</em> または <em>8CU</em> と <em>12CU</em> の間あたりが最も取れているのではないだろうか。<br>
+AMD が <em>Polaris11</em> の下位 ASIC として、CU数のみを 6基減らした <em>Polaris12</em> を設計した理由が自分の中で疑問としてあったが、より CU数とメモリ性能のバランスが取れ、<br>
 CU数を減らしたことでダイサイズが抑えられ、コストと電力効率に優れる GPU ASIC を必要としたのかもしれない。</p>
-
 <p>実行中の消費電力も計測したけど【消費電力編】はまたいつか。メモリクロックを <code>300 /625 /1750 MHz</code> のどれかに固定してメモリ性能の影響を測るのもまたいつか。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:amd-kmd-parameter"><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html" rel="nofollow noreferrer" target="_blank">drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a>
- <a class="footnote-return" href="#fnref:amd-kmd-parameter"><sup>[return]</sup></a></li>
-<li id="fn:how-disable-cu"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=6f8941a2308811626edc083c70584837d54e0382" rel="nofollow noreferrer" target="_blank">drm/amdgpu: add disable_cu parameter</a>
- <a class="footnote-return" href="#fnref:how-disable-cu"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html">drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=6f8941a2308811626edc083c70584837d54e0382">drm/amdgpu: add disable_cu parameter</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

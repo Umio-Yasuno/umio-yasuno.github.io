@@ -70,48 +70,46 @@
 <div class="article-time">
     <time datetime="2020-11-28 04:03 &#43;0900" class="time-b">Post: 2020/11/28 04:03 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/11/28 04:06 &#43;0900</div>
-  </div><p>DriConf は OpenGL に実装された、性能向上や描画品質の変更を目的としたオプションであり、ドライバー/スクリーン/アプリ―ケーションごとに設定できる。<br />
+  </div><p>DriConf は OpenGL に実装された、性能向上や描画品質の変更を目的としたオプションであり、ドライバー/スクリーン/アプリ―ケーションごとに設定できる。<br>
 OpenGL API を用いるゲーム/アプリケーションで何らかの問題があった場合、その回避策がオプションとして実装、そのアプリケーションに対してはデフォルトで有効とすることがある。性能が明らかに向上する場合でもデフォルトで有効とされることも。</p>
-
 <p>デフォルトの設定がどうなっているかは、以下のファイルから確認できる。</p>
-
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/util/00-mesa-defaults.conf" rel="nofollow noreferrer" target="_blank">src/util/00-mesa-defaults.conf · master · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/util/00-mesa-defaults.conf">src/util/00-mesa-defaults.conf · master · Mesa / mesa · GitLab</a></li>
 </ul>
-
 <p>可変リフレッシュレート (Adaptive Sync) 有効無効の設定もドライバー/スクリーン/アプリケーションごとに設定が可能。</p>
-
-<p>以前はオプションの切り替えに使うツールとして <a href="https://dri.freedesktop.org/wiki/DriConf/" rel="nofollow noreferrer" target="_blank">DriConf</a> が標準だったが、今は <a href="https://gitlab.freedesktop.org/mesa/adriconf" rel="nofollow noreferrer" target="_blank">adriconf</a> がそのポジションにいる。</p>
-
-<p>AMD GPU向けに実装されているオプションには以下のようなものがある。<br />
-また、特に性能に影響するものとしてディスパッチをマルチスレッド化する <code>mesa_glthread</code> オプションがある。<br />
+<p>以前はオプションの切り替えに使うツールとして <a href="https://dri.freedesktop.org/wiki/DriConf/">DriConf</a> が標準だったが、今は <a href="https://gitlab.freedesktop.org/mesa/adriconf">adriconf</a> がそのポジションにいる。</p>
+<p>AMD GPU向けに実装されているオプションには以下のようなものがある。<br>
+また、特に性能に影響するものとしてディスパッチをマルチスレッド化する <code>mesa_glthread</code> オプションがある。<br>
 これらを試しに有効化し、性能をチューニングすることはユーザーとして 1つの楽しみとも言える。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   #define DRI_CONF_ALLOW_DRAW_OUT_OF_ORDER(def) \
+<pre><code>   #define DRI_CONF_ALLOW_DRAW_OUT_OF_ORDER(def) \
       DRI_CONF_OPT_B(allow_draw_out_of_order, def, \
-                     &#34;Allow out-of-order draw optimizations. Set when Z fighting doesn&#39;t have to be accurate.&#34;)</code></pre>
+                     &quot;Allow out-of-order draw optimizations. Set when Z fighting doesn't have to be accurate.&quot;)
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/util/driconf.h" rel="nofollow noreferrer" target="_blank">src/util/driconf.h · master · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/util/driconf.h">src/util/driconf.h · master · Mesa / mesa · GitLab</a></cite>
 </div>
 
-<pre tabindex="0"><code>   /**
+</blockquote>
+<blockquote>
+<pre><code>   /**
     * \brief radeonsi specific configuration options
     */
-
+   
    #define DRI_CONF_RADEONSI_ASSUME_NO_Z_FIGHTS(def) \
       DRI_CONF_OPT_B(radeonsi_assume_no_z_fights, def, \
-                     &#34;Assume no Z fights (enables aggressive out-of-order rasterization to improve performance; may cause rendering errors)&#34;)
-
+                     &quot;Assume no Z fights (enables aggressive out-of-order rasterization to improve performance; may cause rendering errors)&quot;)
+   
    #define DRI_CONF_RADEONSI_COMMUTATIVE_BLEND_ADD(def) \
       DRI_CONF_OPT_B(radeonsi_commutative_blend_add, def, \
-                     &#34;Commutative additive blending optimizations (may cause rendering errors)&#34;)
-
+                     &quot;Commutative additive blending optimizations (may cause rendering errors)&quot;)
+   
    #define DRI_CONF_RADEONSI_ZERO_ALL_VRAM_ALLOCS(def) \
       DRI_CONF_OPT_B(radeonsi_zerovram, def, \
-                     &#34;Zero all vram allocations&#34;)</code></pre>
+                     &quot;Zero all vram allocations&quot;)
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/util/driconf.h" rel="nofollow noreferrer" target="_blank">src/util/driconf.h · master · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/master/src/util/driconf.h">src/util/driconf.h · master · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>

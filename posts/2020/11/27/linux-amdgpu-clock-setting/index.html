@@ -70,62 +70,49 @@
 <div class="article-time">
     <time datetime="2020-11-27 23:34 &#43;0900" class="time-b">Post: 2020/11/27 23:34 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/12/01 04:29 &#43;0900</div>
-  </div>
-
-<p>Linux Kenrel 部に含まれる AMDGPUドライバーには AMD GPUハードウェアのクロック、電圧を調節する機能があり、今記事はその機能の使い方の紹介。<br />
+  </div><p>Linux Kenrel 部に含まれる AMDGPUドライバーには AMD GPUハードウェアのクロック、電圧を調節する機能があり、今記事はその機能の使い方の紹介。<br>
 普段は新しい情報ばかり取り扱ってるけど、こういった布教?活動的なものも大事だと感じた次第。</p>
-
-<p><br>
-<strong>GPU のクロック、電圧をデフォルトから変更することは故障する危険が伴うものであり、完全自己責任の元で行なってください。</strong></p>
-
+<br>
+**GPU のクロック、電圧をデフォルトから変更することは故障する危険が伴うものであり、完全自己責任の元で行なってください。**
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#ppfeaturemask">amdgpu.ppfeaturemsk</a></li>
 <li><a href="#clk-volt-od">クロック、電圧の調節、上書き</a>
-
 <ul class="page-index">
 <li><a href="#vega10-and-pre">Vega10 とそれ以前の AMD GPU の場合</a></li>
 <li><a href="#vega20-and-next">Vega20 とそれ以降の AMD GPU の場合</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#end">終わりに</a></li>
 </ul>
 
-
 <h2 id="ppfeaturemask">amdgpu.ppfeaturemask</h2>
-
-<p>クロック、電圧を手動で調節する機能を有効にするにはまず、Kernelパラメーターに <code>amdgpu.ppfeaturemask=0xffffffff</code> を渡す必要がある。<br />
+<p>クロック、電圧を手動で調節する機能を有効にするにはまず、Kernelパラメーターに <code>amdgpu.ppfeaturemask=0xffffffff</code> を渡す必要がある。<br>
 具体的な方法としては、適当なテキストエディアで <code>/etc/default/grub</code> を開き、<code>GRUB_CMDLINE_LINUX_DEFAULT</code> にその値を追加する。下記では <code>amdgpu.ppfeaturemask</code> の値しかないが、実際には起動時のログメッセージ表示を抑制する <code>quiet</code> パラメーター等が他にあると思う。あっても AMD GPU の機能を有効とする上で問題となるものは殆ど無いので気にしなくていい。</p>
-<pre tabindex="0"><code>  GRUB_CMDLINE_LINUX_DEFAULT=&#34;amdgpu.ppfeaturemask=0xffffffff&#34;</code></pre>
-<p><code>amdgpu.ppfeaturemask</code> パラメーターの意味としては、AMD GPU の電力管理機能 (Power Play, PP) 各種をとりあえず全て有効にするというもの。<sup class="footnote-ref" id="fnref:ppfeaturemask"><a href="#fn:ppfeaturemask">1</a></sup><br />
-デフォルトの状態でも機能のほとんどが有効にされているが、ただクロック、電圧の上書き (OverDrive, OD) だけは無効化されているため、特別 Kernelパラメーターを渡す必要がある。<sup class="footnote-ref" id="fnref:pp-parameter"><a href="#fn:pp-parameter">2</a></sup></p>
-
-<p><code>/etc/default/grub</code> の内容を変更しても、<code>update-grub</code> コマンドを実行しないと反映されないため注意。<br />
+<pre><code>  GRUB_CMDLINE_LINUX_DEFAULT=&quot;amdgpu.ppfeaturemask=0xffffffff&quot;
+</code></pre>
+<p><code>amdgpu.ppfeaturemask</code> パラメーターの意味としては、AMD GPU の電力管理機能 (Power Play, PP) 各種をとりあえず全て有効にするというもの。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+デフォルトの状態でも機能のほとんどが有効にされているが、ただクロック、電圧の上書き (OverDrive, OD) だけは無効化されているため、特別 Kernelパラメーターを渡す必要がある。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p><code>/etc/default/grub</code> の内容を変更しても、<code>update-grub</code> コマンドを実行しないと反映されないため注意。<br>
 また、ここまでの GRUB 関連の設定変更、コマンド実行にはスーパーユーザー権限が必要となる。</p>
-
 <h2 id="clk-volt-od">クロック、電圧の調節、上書き</h2>
-
 <p>上記設定を適用した状態でシステムを起動させた後は、sysfs API を介した操作で調節、上書きが可能となる。</p>
-
 <p>まず、以下のコマンドを実行し、クロック、電圧を変更できる状態にする。これもスーパーユーザー権限が必要となる。</p>
-<pre tabindex="0"><code>  # echo &#34;manual&#34; &gt; /sys/class/drm/card0/device/power_dpm_force_performance_level</code></pre>
+<pre><code>  # echo &quot;manual&quot; &gt; /sys/class/drm/card0/device/power_dpm_force_performance_level
+</code></pre>
 <p>これ以後の操作も <code>/sys/class/drm/card0/device</code> 下にある特定の sysfsインターフェイスに <code>echo</code> コマンドで値を渡して行なう。長いパスを打つのが面倒なため、カレントディレクトリを <code>/sys/class/drm/card0/device</code> へ移動しておくと楽。</p>
-
-<p>パス内 card の後の数字は GPUインスタンスに割り当てられた数字となり、GPUカード 1枚だけを搭載しているなら基本 0 となる。複数の GPU を搭載している際は注意。<br />
-統合 GPU と混在する環境については、検証できるシステムを持ってないため、申し訳ないことに注意してとしか言えない。<br />
-一応、<code>/sys/class/drm/card0/device</code> 下にある <code>device</code> 、<code>revision</code> の値を、それぞれ AMD GPU の DeviceID (PCI ID) 、RevisionID と照らし合わせることで知ることはできる。<br />
+<p>パス内 card の後の数字は GPUインスタンスに割り当てられた数字となり、GPUカード 1枚だけを搭載しているなら基本 0 となる。複数の GPU を搭載している際は注意。<br>
+統合 GPU と混在する環境については、検証できるシステムを持ってないため、申し訳ないことに注意してとしか言えない。<br>
+一応、<code>/sys/class/drm/card0/device</code> 下にある <code>device</code> 、<code>revision</code> の値を、それぞれ AMD GPU の DeviceID (PCI ID) 、RevisionID と照らし合わせることで知ることはできる。<br>
 PCIバスでもそれは可能で、その場合、<code>/sys/class/drm/card0/device</code> 下にある <code>comsumer:</code> に続く数値と、<code>lspci | grep VGA</code> や <code>lshw -c display</code> を照らし合わせる。</p>
-
 <p>クロック、電圧の操作に関しては、<a href="https://www.coelacanth-dream.com/tags/vega10">Vega10</a> <span class="complement">Vega56、Vega64 等のベースとなる GPU のコードネーム</span>
-、それ以前の GPU と、<br />
+、それ以前の GPU と、<br>
 <a href="https://www.coelacanth-dream.com/tags/vega20">Vega20</a> <span class="complement">こちらは Radeon VII 等のベース</span>
  とそれ以降 (<a href="https://www.coelacanth-dream.com/tags/navi10">Navi10</a>, <a href="https://www.coelacanth-dream.com/tags/navi14">Navi14</a>等) とで異なる。</p>
-
 <h3 id="vega10-and-pre">Vega10 とそれ以前の AMD GPU の場合</h3>
-
-<p><code>pp_od_clk_voltage</code> に値を渡すことでクロック、電圧を調節が行なえる。<br />
+<p><code>pp_od_clk_voltage</code> に値を渡すことでクロック、電圧を調節が行なえる。<br>
 <em>Vega10</em> とそれ以前の AMD GPU の場合、<code>pp_od_clk_voltage</code> の中身は以下のようになっている。以下の例は、自分が使ってるシステム内でずっと働いてくれている <strong>RX 560 (Polaris11)</strong> 場合。</p>
-
 <blockquote>
-<pre tabindex="0"><code> OD_SCLK:
+<pre><code> OD_SCLK:
  0:        214MHz        715mV
  1:        387MHz        721mV
  2:        843MHz        737mV
@@ -141,53 +128,49 @@ PCIバスでもそれは可能で、その場合、<code>/sys/class/drm/card0/de
  OD_RANGE:
  SCLK:     214MHz       1800MHz
  MCLK:     300MHz       2000MHz
- VDDC:     700mV        1150mV</code></pre></blockquote>
-
+ VDDC:     700mV        1150mV
+</code></pre>
+</blockquote>
 <p>AMD GPU では P-state と呼ぶ各レベルをポイントとしてクロック、電圧が、動作状況に合わせて動的に変更される。</p>
-
 <p>例えば、最大 SCLK (System Clock)/コアクロックとその電圧を変更したい時は以下のようなコマンドを実行する。</p>
-<pre tabindex="0"><code>  # echo &#34;s 7 &lt;設定したいクロック&gt; &lt;設定したい電圧&gt;&#34; &gt; pp_od_clk_voltage</code></pre>
+<pre><code>  # echo &quot;s 7 &lt;設定したいクロック&gt; &lt;設定したい電圧&gt;&quot; &gt; pp_od_clk_voltage
+</code></pre>
 <p>そうすると <code>pp_od_clk_voltage</code> の P-State 7 が書き換わるが、まだ反映はされておらず、<code>c (commit)</code> を渡すことで反映される。</p>
-<pre tabindex="0"><code>  # echo &#34;c&#34; &gt; pp_od_clk_voltage</code></pre>
+<pre><code>  # echo &quot;c&quot; &gt; pp_od_clk_voltage
+</code></pre>
 <p>デフォルトに戻したい時は、<code>r (reset)</code> を渡し、その後で <code>c</code> を渡せばいい。</p>
-<pre tabindex="0"><code>  # echo &#34;r&#34; &gt; pp_od_clk_voltage</code></pre>
+<pre><code>  # echo &quot;r&quot; &gt; pp_od_clk_voltage
+</code></pre>
 <p>MCLK (Memory Clock) も変更することは可能だが、変更には厳しいものがあり、少し変更しただけでディスプレイに現代アートが描かれる、ということがよくあるためオススメはしない。</p>
-
 <p><code>OD_RANGE</code> はそのままの意味で、クロック、電圧 (VDDC) をそこから外れた値に設定することはできない。</p>
-
 <h3 id="vega20-and-next">Vega20 とそれ以降の AMD GPU の場合</h3>
-
-<p><em>Vega10</em> とそれ以前の場合と操作は特に変わらないが、<code>pp_od_clk_voltage</code> の内容が異なる。<br />
-SCLK は最低/最高クロックの 2つのみが設定でき、MCLK はデフォルトでは最高クロックのみだが、最低クロックを追加することができる。<br />
-電圧については、<code>OD_VDDC_CURVE</code> が追加され、そこで 3つのクロック、電圧のポイントを設定することとなる。 (最低 - 中間 - 最高)<br />
+<p><em>Vega10</em> とそれ以前の場合と操作は特に変わらないが、<code>pp_od_clk_voltage</code> の内容が異なる。<br>
+SCLK は最低/最高クロックの 2つのみが設定でき、MCLK はデフォルトでは最高クロックのみだが、最低クロックを追加することができる。<br>
+電圧については、<code>OD_VDDC_CURVE</code> が追加され、そこで 3つのクロック、電圧のポイントを設定することとなる。 (最低 - 中間 - 最高)<br>
 ユーザー側から弄ることのできる範囲は減ったが、ハードウェア側のクロック、電圧の調節機能がそれだけ優秀になったということだろう。</p>
-
 <h2 id="end">終わりに</h2>
-
 <p>思ってたよりも長ったらしいものになったが、各操作は単純であるため、一度設定を詰めてしまえば、後は適当なシェルスクリプトを書いて、それを自動で実行するようにしておくだけでいい。</p>
-
-<p>上で自環境の <strong>RX 560</strong> のデフォルト設定を載せたが、クロック、電圧を調整し、最高で 1080MHz 850mV となるように設定した省電力運用となっている。<br />
+<p>上で自環境の <strong>RX 560</strong> のデフォルト設定を載せたが、クロック、電圧を調整し、最高で 1080MHz 850mV となるように設定した省電力運用となっている。<br>
 GPU性能を必要とする場面が多くないため、消費電力、発熱が小さい方が自分としては嬉しいものがある。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html" rel="nofollow noreferrer" target="_blank">drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a></li>
-<li><a href="https://wiki.archlinux.org/index.php/AMDGPU#Overclocking" rel="nofollow noreferrer" target="_blank">AMDGPU - ArchWiki</a></li>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html">drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/AMDGPU#Overclocking">AMDGPU - ArchWiki</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:ppfeaturemask"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=549750a383bf1c6a4a8ba3634c85e00e7f4585da" rel="nofollow noreferrer" target="_blank">drm/include: add PP_FEATURE_MASK comments (v3)</a>
- <a class="footnote-return" href="#fnref:ppfeaturemask"><sup>[return]</sup></a></li>
-<li id="fn:pp-parameter"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=3d2fc0813f91a908f5c61ac0d08d89f802030d03" rel="nofollow noreferrer" target="_blank">drm/amdgpu: Change default value of module parameter amdgpu_pp_feature_mask</a>
- <a class="footnote-return" href="#fnref:pp-parameter"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=549750a383bf1c6a4a8ba3634c85e00e7f4585da">drm/include: add PP_FEATURE_MASK comments (v3)</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=3d2fc0813f91a908f5c61ac0d08d89f802030d03">drm/amdgpu: Change default value of module parameter amdgpu_pp_feature_mask</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

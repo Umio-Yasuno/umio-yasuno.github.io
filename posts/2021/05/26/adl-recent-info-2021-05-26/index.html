@@ -70,69 +70,56 @@
 <div class="article-time">
     <time datetime="2021-05-26 17:46 &#43;0900" class="time-b">Post: 2021/05/26 17:46 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/08/12 03:45 &#43;0900</div>
-  </div>
-
-<p>最近 Coreboot に投稿された <em>Alder Lake-P/M</em> サポートに向けたパッチから得られる情報をまとめた記事。</p>
-
+  </div><p>最近 Coreboot に投稿された <em>Alder Lake-P/M</em> サポートに向けたパッチから得られる情報をまとめた記事。</p>
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#adl-step">Alder Lake-P/M は Stepping で区別されるか</a></li>
 <li><a href="#adl-power">Alder Lake-P/M Power Limit</a>
-
 <ul class="page-index">
 <li><a href="#adl_p-pl">Alder Lake-P PL1/PL2</a></li>
 <li><a href="#adl_m-pl">Alder Lake-M PL1/PL2</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#table">TGL/JSL/ADL</a></li>
 </ul>
 
-
 <h2 id="adl-step">Alder Lake-P/M は Stepping で区別されるか</h2>
-
 <ul>
-<li><a href="https://review.coreboot.org/c/coreboot/+/54211/3/" rel="nofollow noreferrer" target="_blank">soc/intel/alderlake: Update CPU and IGD Device IDs (I2759a41a) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/54211/3/">soc/intel/alderlake: Update CPU and IGD Device IDs (I2759a41a) · Gerrit Code Review</a></li>
 </ul>
-
-<p>Coreboot に <em>Alder Lake-P B0</em> の <code>Family/Model/Stepping</code> による判定に使われる CPUID を追加するパッチが Maulik V Vaghela 氏により投稿された。<br />
-だが、 <em>A0 ステッピング</em> (<code>0x90670</code>) から値を 1 追加した <code>0x90671</code> ではなく、<code>0x90672</code> が <em>B0 ステッピング</em> に割り当てられている。<br />
+<p>Coreboot に <em>Alder Lake-P B0</em> の <code>Family/Model/Stepping</code> による判定に使われる CPUID を追加するパッチが Maulik V Vaghela 氏により投稿された。<br>
+だが、 <em>A0 ステッピング</em> (<code>0x90670</code>) から値を 1 追加した <code>0x90671</code> ではなく、<code>0x90672</code> が <em>B0 ステッピング</em> に割り当てられている。<br>
 CPUID の末尾 1桁、正確に言えば 4-bit 分の領域はその CPU のステッピング/リビジョンを表現するのに使われている。</p>
-
 <blockquote>
-<pre tabindex="0"><code> #define CPUID_ALDERLAKE_S_A0    0x90670
- #define CPUID_ALDERLAKE_P_A0    0x906a0
- #define CPUID_ALDERLAKE_P_B0    0x906a2
- #define CPUID_ALDERLAKE_M_A0    0x906a1</code></pre>
+<pre><code> #define CPUID_ALDERLAKE_S_A0	0x90670
+ #define CPUID_ALDERLAKE_P_A0	0x906a0
+ #define CPUID_ALDERLAKE_P_B0	0x906a2
+ #define CPUID_ALDERLAKE_M_A0	0x906a1
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/54211/3/src/soc/intel/common/block/include/intelblocks/mp_init.h" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/54211/3/src/soc/intel/common/block/include/intelblocks/mp_init.h</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/54211/3/src/soc/intel/common/block/include/intelblocks/mp_init.h">https://review.coreboot.org/c/coreboot/+/54211/3/src/soc/intel/common/block/include/intelblocks/mp_init.h</a></cite>
 </div>
 
 </blockquote>
+<p><code>0x90672</code> を割り当てたのは <code>0x90671</code> が既に <em>Alder Lake-M A0</em> に使われているからだと思われるが、同時にマーケットセグメント上では同じ <code>ALDERLAKE_L (Family: 0x6, Model: 0x9A [154])</code> に属す <em>Alder Lake-P/M</em> だが、ステッピングで区別されることを意味する。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/02/09/alderlake_l/">ALDERLAKE_L と Alder Lake-P/M | Coelacanth&rsquo;s Dream</a></span>
 
-<p><code>0x90672</code> を割り当てたのは <code>0x90671</code> が既に <em>Alder Lake-M A0</em> に使われているからだと思われるが、同時にマーケットセグメント上では同じ <code>ALDERLAKE_L (Family: 0x6, Model: 0x9A [154])</code> に属す <em>Alder Lake-P/M</em> だが、ステッピングで区別されることを意味する。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/09/alderlake_l/">ALDERLAKE_L と Alder Lake-P/M | Coelacanth's Dream</a></span>
-
-ステッピングで区別すること自体は過去にも行われており、 <em>Kaby Lake(-U)</em> に対する <em>Amber Lake(-Y) / Coffee Lake(-U) / Whiskey Lake(-U)</em> 、<em>Skylake server</em> に対する <em>Cascade Lake / Cooper Lake</em> 等がそうだ。最近になってそれらをきちんと整理するためのコメントを追加するパッチが投稿されている。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/04/09/intel-kbl-complex/">Intel Kaby Lake 周りの CPU Stepping を整理するパッチ | Coelacanth's Dream</a></span>
+ステッピングで区別すること自体は過去にも行われており、 <em>Kaby Lake(-U)</em> に対する <em>Amber Lake(-Y) / Coffee Lake(-U) / Whiskey Lake(-U)</em> 、<em>Skylake server</em> に対する <em>Cascade Lake / Cooper Lake</em> 等がそうだ。最近になってそれらをきちんと整理するためのコメントを追加するパッチが投稿されている。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/04/09/intel-kbl-complex/">Intel Kaby Lake 周りの CPU Stepping を整理するパッチ | Coelacanth&rsquo;s Dream</a></span>
 
 前例から考えれば、 <em>xxxx Lake</em> のような名前を無闇に増やすのではなく、基本を <em>Alder Lake</em> で統一し、誰にとっても関係性をわかりやすくしたと取れなくもない。</p>
-
 <h2 id="adl-power">Alder Lake-P/M Power Limit</h2>
-
-<p>あくまでも <strong>Alder Lake RVP (Reference Validation Platform)</strong> と、<em>Alder Lake-P</em> を搭載する Chromebookボード <strong>Brya</strong> での例とされるが、Coreboot の <em>Alder Lake</em> に関連した部分にその PL1/PL2 の値が追加された。<br />
-例ではあるが、分離された別のパッチでは SKU ごとに異なる PCI ID を持つ、System Agent の部分で適用する Power Limit 設定を変えているため、実質 SKU のデフォルト設定だと言える。<sup class="footnote-ref" id="fnref:sa-pci-id"><a href="#fn:sa-pci-id">1</a></sup>製品としては異なる設定も適用可能だろう。</p>
-
+<p>あくまでも <strong>Alder Lake RVP (Reference Validation Platform)</strong> と、<em>Alder Lake-P</em> を搭載する Chromebookボード <strong>Brya</strong> での例とされるが、Coreboot の <em>Alder Lake</em> に関連した部分にその PL1/PL2 の値が追加された。<br>
+例ではあるが、分離された別のパッチでは SKU ごとに異なる PCI ID を持つ、System Agent の部分で適用する Power Limit 設定を変えているため、実質 SKU のデフォルト設定だと言える。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>製品としては異なる設定も適用可能だろう。</p>
 <ul>
-<li><a href="https://review.coreboot.org/c/coreboot/+/54926/1/" rel="nofollow noreferrer" target="_blank">mb/adlrvp: Override power limits with SKU specific values (I80ac9512) · Gerrit Code Review</a></li>
-<li><a href="https://review.coreboot.org/c/coreboot/+/54676/4" rel="nofollow noreferrer" target="_blank">soc/intel/adl: Add SKU specific power limits support (Ic1676e2b) · Gerrit Code Review</a></li>
-<li><a href="https://review.coreboot.org/c/coreboot/+/54491/4" rel="nofollow noreferrer" target="_blank">[WIP] mb/intel/adlrvp: Enable DPTF functionality for ADL-M RVP (If7763ee2) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/54926/1/">mb/adlrvp: Override power limits with SKU specific values (I80ac9512) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/54676/4">soc/intel/adl: Add SKU specific power limits support (Ic1676e2b) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/54491/4">[WIP] mb/intel/adlrvp: Enable DPTF functionality for ADL-M RVP (If7763ee2) · Gerrit Code Review</a></li>
 </ul>
-
-<p>パッチは <a href="https://in.linkedin.com/in/sumeet-pawnikar" rel="nofollow noreferrer" target="_blank">Sumeet R Pawnikar</a> 氏、Anil Kumar K 氏によって作成、投稿されている。</p>
-
+<p>パッチは <a href="https://in.linkedin.com/in/sumeet-pawnikar">Sumeet R Pawnikar</a> 氏、Anil Kumar K 氏によって作成、投稿されている。</p>
 <h3 id="adl_p-pl">Alder Lake-P PL1/PL2</h3>
-
 <blockquote>
-<h5 id="alder-lake-p-pl1-pl2-adlrvp">Alder Lake-P PL1/PL2 (adlrvp)</h5>
-<pre tabindex="0"><code> On adlrvp (482):
+<h5 id="alder-lake-p-pl1pl2-adlrvp">Alder Lake-P PL1/PL2 (adlrvp)</h5>
+<pre><code> On adlrvp (482):
   CPU PL1 = 28 Watts
   CPU PL2 = 64 Watts
  On adlrvp (682):
@@ -140,40 +127,39 @@ CPUID の末尾 1桁、正確に言えば 4-bit 分の領域はその CPU のス
   CPU PL2 = 115 Watts
  On brya (282):
   CPU PL1 = 15 Watts
-  CPU PL2 = 55 Watts</code></pre>
+  CPU PL2 = 55 Watts
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/54926/1/" rel="nofollow noreferrer" target="_blank">mb/adlrvp: Override power limits with SKU specific values (I80ac9512) · Gerrit Code Review</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/54926/1/">mb/adlrvp: Override power limits with SKU specific values (I80ac9512) · Gerrit Code Review</a></cite>
 </div>
 
-<pre tabindex="0"><code>     register &#34;power_limits_config[ADL_P_POWER_LIMITS_282_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 15,
-         .tdp_pl2_override = 55,
-     }&#34;
-     register &#34;power_limits_config[ADL_P_POWER_LIMITS_482_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 28,
-         .tdp_pl2_override = 64,
-     }&#34;
-     register &#34;power_limits_config[ADL_P_POWER_LIMITS_682_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 45,
-         .tdp_pl2_override = 115,
-     }&#34;</code></pre>
+<pre><code> 	register &quot;power_limits_config[ADL_P_POWER_LIMITS_282_CORE]&quot; = &quot;{
+ 		.tdp_pl1_override = 15,
+ 		.tdp_pl2_override = 55,
+ 	}&quot;
+ 	register &quot;power_limits_config[ADL_P_POWER_LIMITS_482_CORE]&quot; = &quot;{
+ 		.tdp_pl1_override = 28,
+ 		.tdp_pl2_override = 64,
+ 	}&quot;
+ 	register &quot;power_limits_config[ADL_P_POWER_LIMITS_682_CORE]&quot; = &quot;{
+ 		.tdp_pl1_override = 45,
+ 		.tdp_pl2_override = 115,
+ 	}&quot;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/54926/1/src/mainboard/intel/adlrvp/devicetree.cb" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/54926/1/src/mainboard/intel/adlrvp/devicetree.cb</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/54926/1/src/mainboard/intel/adlrvp/devicetree.cb">https://review.coreboot.org/c/coreboot/+/54926/1/src/mainboard/intel/adlrvp/devicetree.cb</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>Alder Lake-P</em> においては恐らく <em>Golden Cove (Big/Core)</em> コア数で分かれており、2 (Big) + 8 (Small) + GT2 は PL1: 15W/PL2: 55W、4 + 8 + GT2 は PL1: 28W/PL2: 64W、4 + 8 + GT2 は PL1: 45W/PL2: 115W となっている。<br />
-この値をどう見るかはそれぞれだが、 <em>Tiger Lake UP3</em> では 2-Core が PL1: 15W/PL2: 38W、 4-Core が PL1: 15W/PL2: 60W となっており<sup class="footnote-ref" id="fnref:tgl-up3-pl"><a href="#fn:tgl-up3-pl">2</a></sup>、<em>Alder Lake-P (2+8+2)</em> の PL2: 55W というのは <em>Golden Cove</em> 2-Core に加え <em>Gracemont (Small/Atom)</em> 8-Core も搭載していることを考えれば <em>Tiger Lake UP3</em> とそう変わらないように思える。<br />
-<em>Alder Lake-P (4+8+2)</em> の PL1: 28W/PL2: 64W については、Coreboot に PL1: 28W 時の PL2 は記述されていないが、<em>Tiger Lake UP3 28W</em> と同じ設定となり、ここでは設定と Bigコアの数が <em>Tiger Lake</em> と一致する。<sup class="footnote-ref" id="fnref:tgl-28w"><a href="#fn:tgl-28w">3</a></sup></p>
-
+<p><em>Alder Lake-P</em> においては恐らく <em>Golden Cove (Big/Core)</em> コア数で分かれており、2 (Big) + 8 (Small) + GT2 は PL1: 15W/PL2: 55W、4 + 8 + GT2 は PL1: 28W/PL2: 64W、4 + 8 + GT2 は PL1: 45W/PL2: 115W となっている。<br>
+この値をどう見るかはそれぞれだが、 <em>Tiger Lake UP3</em> では 2-Core が PL1: 15W/PL2: 38W、 4-Core が PL1: 15W/PL2: 60W となっており<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、<em>Alder Lake-P (2+8+2)</em> の PL2: 55W というのは <em>Golden Cove</em> 2-Core に加え <em>Gracemont (Small/Atom)</em> 8-Core も搭載していることを考えれば <em>Tiger Lake UP3</em> とそう変わらないように思える。<br>
+<em>Alder Lake-P (4+8+2)</em> の PL1: 28W/PL2: 64W については、Coreboot に PL1: 28W 時の PL2 は記述されていないが、<em>Tiger Lake UP3 28W</em> と同じ設定となり、ここでは設定と Bigコアの数が <em>Tiger Lake</em> と一致する。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
 <ins >
   <span class="insbegin">（追記）</span>
   <div class="ins-content">
     <p>新たなパッチにより、<em>Alder Lake-P (2+8+2)</em> の PL1 が 20W に変更された。</p>
-
 <ul>
-<li><a href="https://review.coreboot.org/c/coreboot/+/55345" rel="nofollow noreferrer" target="_blank">soc/intel/alderlake: update pl1 to 20W (Ie297017e) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/55345">soc/intel/alderlake: update pl1 to 20W (Ie297017e) · Gerrit Code Review</a></li>
 </ul>
 
   </div>
@@ -181,199 +167,191 @@ CPUID の末尾 1桁、正確に言えば 4-bit 分の領域はその CPU のス
 </ins>
 <br>
 
-
 <blockquote>
-<h5 id="tiger-lake-up3-pl1-pl2">Tiger Lake UP3 PL1/PL2</h5>
-<pre tabindex="0"><code>     # Add PL1 and PL2 values
-     register &#34;power_limits_config[POWER_LIMITS_U_2_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 15,
-         .tdp_pl2_override = 38,
-         .tdp_pl4 = 71,
-     }&#34;
-     register &#34;power_limits_config[POWER_LIMITS_U_4_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 15,
-         .tdp_pl2_override = 60,
-         .tdp_pl4 = 105,
-     }&#34;</code></pre>
+<h5 id="tiger-lake-up3-pl1pl2">Tiger Lake UP3 PL1/PL2</h5>
+<pre><code> 	# Add PL1 and PL2 values
+ 	register &quot;power_limits_config[POWER_LIMITS_U_2_CORE]&quot; = &quot;{
+ 		.tdp_pl1_override = 15,
+ 		.tdp_pl2_override = 38,
+ 		.tdp_pl4 = 71,
+ 	}&quot;
+ 	register &quot;power_limits_config[POWER_LIMITS_U_4_CORE]&quot; = &quot;{
+ 		.tdp_pl1_override = 15,
+ 		.tdp_pl2_override = 60,
+ 		.tdp_pl4 = 105,
+ 	}&quot;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up3/devicetree.cb#L130" rel="nofollow noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up3/devicetree.cb#L130</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up3/devicetree.cb#L130">https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up3/devicetree.cb#L130</a></cite>
 </div>
 
 </blockquote>
+<p><em>Alder Lake-P (6+8+2)</em> では PL1: 45W/PL2: 115W と特別高く、H-Series の一部、あるいは全体をもモバイル向けである <em>Alder Lake-P</em> で構成しようとしていることが予想できる。<br>
+<em>Alder Lake-P</em> は CPU側だけで PCIe Gen5 8-Lane、PCIe Gen4 2x4-Lane を持つことが判明しており、PCIe Gen5 をサポートするような将来の Dicrete GPU とも組み合わせることが可能である。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/01/01/adl_p-gen5-tgl_h-gen4-x20/">Alder Lake は PCIe Gen5 に対応、Tiger Lake-H は Gen4 20-Lane を備える | Coelacanth&rsquo;s Dream</a></span>
 
-<p><em>Alder Lake-P (6+8+2)</em> では PL1: 45W/PL2: 115W と特別高く、H-Series の一部、あるいは全体をもモバイル向けである <em>Alder Lake-P</em> で構成しようとしていることが予想できる。<br />
-<em>Alder Lake-P</em> は CPU側だけで PCIe Gen5 8-Lane、PCIe Gen4 2x4-Lane を持つことが判明しており、PCIe Gen5 をサポートするような将来の Dicrete GPU とも組み合わせることが可能である。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/01/adl_p-gen5-tgl_h-gen4-x20/">Alder Lake は PCIe Gen5 に対応、Tiger Lake-H は Gen4 20-Lane を備える | Coelacanth's Dream</a></span>
-
-また、PL1/PL2 の値は <em>Tiger Lake-H</em> と変わらない。<em>Tiger Lake-H</em> では PL1: 45W/PL2: 107-135W となっており、PL2 は製品ごとに異なる。<sup class="footnote-ref" id="fnref:tgl-h"><a href="#fn:tgl-h">4</a></sup></p>
-
+また、PL1/PL2 の値は <em>Tiger Lake-H</em> と変わらない。<em>Tiger Lake-H</em> では PL1: 45W/PL2: 107-135W となっており、PL2 は製品ごとに異なる。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
 <h3 id="adl_m-pl">Alder Lake-M PL1/PL2</h3>
-
 <p><em>Alder Lake-M</em> は 2+8+2 の構成の PL1/PL2 設定のみが追加されている。<em>Alder Lake-M</em> は <em>Alder Lake-P</em> と同じくモバイル向けだが、それよりも I/O の規模を縮小した SKU となる。</p>
-
 <blockquote>
-<h5 id="alder-lake-m-pl1-pl2-adlrvp">Alder Lake-M PL1/PL2 (adlrvp)</h5>
-<pre tabindex="0"><code>     # DPTF
-     register &#34;dptf_enable&#34; = &#34;1&#34;
-     register &#34;power_limits_config&#34; = &#34;{
-         .tdp_pl1_override = 9,
-         .tdp_pl2_override = 30,
-     }&#34;</code></pre>
+<h5 id="alder-lake-m-pl1pl2-adlrvp">Alder Lake-M PL1/PL2 (adlrvp)</h5>
+<pre><code> 	# DPTF
+ 	register &quot;dptf_enable&quot; = &quot;1&quot;
+ 	register &quot;power_limits_config&quot; = &quot;{
+ 		.tdp_pl1_override = 9,
+ 		.tdp_pl2_override = 30,
+ 	}&quot;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/54491/4/src/mainboard/intel/adlrvp/devicetree_m.cb" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/54491/4/src/mainboard/intel/adlrvp/devicetree_m.cb</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/54491/4/src/mainboard/intel/adlrvp/devicetree_m.cb">https://review.coreboot.org/c/coreboot/+/54491/4/src/mainboard/intel/adlrvp/devicetree_m.cb</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>Alder Lake-M (2+8+2)</em> には PL1: 9W/PL2: 30W の値が設定されている。<br />
-小型なパッケージを採用する <em>Tiger Lake UP4</em> も同様に PL1: 9W だが、PL2 は 2-Core が 35W、4-Core は 40W となっており<sup class="footnote-ref" id="fnref:tgl-up4-pl"><a href="#fn:tgl-up4-pl">5</a></sup>、<em>Alder Lake-M (2+8+2)</em> のそれは <em>Tiger Lake UP4</em> よりもわずかに低い値だ。</p>
-
+<p><em>Alder Lake-M (2+8+2)</em> には PL1: 9W/PL2: 30W の値が設定されている。<br>
+小型なパッケージを採用する <em>Tiger Lake UP4</em> も同様に PL1: 9W だが、PL2 は 2-Core が 35W、4-Core は 40W となっており<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup>、<em>Alder Lake-M (2+8+2)</em> のそれは <em>Tiger Lake UP4</em> よりもわずかに低い値だ。</p>
 <blockquote>
-<h5 id="tiger-lake-up4-pl1-pl2">Tiger Lake UP4 PL1/PL2</h5>
-<pre tabindex="0"><code>     # Add PL1 and PL2 values
-     register &#34;power_limits_config[POWER_LIMITS_U_2_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 9,
-         .tdp_pl2_override = 35,
-         .tdp_pl4 = 66,
-     }&#34;
-     register &#34;power_limits_config[POWER_LIMITS_U_4_CORE]&#34; = &#34;{
-         .tdp_pl1_override = 9,
-         .tdp_pl2_override = 40,
-         .tdp_pl4 = 83,
-     }&#34;</code></pre>
+<h5 id="tiger-lake-up4-pl1pl2">Tiger Lake UP4 PL1/PL2</h5>
+<pre><code> 	# Add PL1 and PL2 values
+ 	register &quot;power_limits_config[POWER_LIMITS_U_2_CORE]&quot; = &quot;{
+ 		.tdp_pl1_override = 9,
+ 		.tdp_pl2_override = 35,
+ 		.tdp_pl4 = 66,
+ 	}&quot;
+ 	register &quot;power_limits_config[POWER_LIMITS_U_4_CORE]&quot; = &quot;{
+ 		.tdp_pl1_override = 9,
+ 		.tdp_pl2_override = 40,
+ 		.tdp_pl4 = 83,
+ 	}&quot;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up4/devicetree.cb#L134" rel="nofollow noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up4/devicetree.cb#L134</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up4/devicetree.cb#L134">https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up4/devicetree.cb#L134</a></cite>
 </div>
 
 </blockquote>
-
 <p>PL1 からは <em>Tiger Lake UP4</em> の後継が <em>Alder Lake-M</em> になると考えられるが、<em>Alder Lake-M</em> の PL1 は 3-9W の範囲で設定可能であるらしく、9W より低い TDP/PL1 の製品帯も <em>Alder Lake-M</em> でカバーできる。</p>
-
 <blockquote>
-<h5 id="alder-lake-m-pl1-pl2-range-adlrvp">Alder Lake-M PL1/PL2 range (adlrvp)</h5>
-<pre tabindex="0"><code>                 ## Power Limits Control
-                 register &#34;controls.power_limits&#34; = &#34;{
-                     .pl1 = {
-                             .min_power = 3000,
-                             .max_power = 9000,
-                             .time_window_min = 28 * MSECS_PER_SEC,
-                             .time_window_max = 32 * MSECS_PER_SEC,
-                             .granularity = 200,
-                     },
-                     .pl2 = {
-                             .min_power = 30000,
-                             .max_power = 30000,
-                             .time_window_min = 28 * MSECS_PER_SEC,
-                             .time_window_max = 32 * MSECS_PER_SEC,
-                             .granularity = 1000,
-                     }
-                 }&#34;</code></pre>
+<h5 id="alder-lake-m-pl1pl2-range-adlrvp">Alder Lake-M PL1/PL2 range (adlrvp)</h5>
+<pre><code> 				## Power Limits Control
+ 				register &quot;controls.power_limits&quot; = &quot;{
+ 					.pl1 = {
+ 							.min_power = 3000,
+ 							.max_power = 9000,
+ 							.time_window_min = 28 * MSECS_PER_SEC,
+ 							.time_window_max = 32 * MSECS_PER_SEC,
+ 							.granularity = 200,
+ 					},
+ 					.pl2 = {
+ 							.min_power = 30000,
+ 							.max_power = 30000,
+ 							.time_window_min = 28 * MSECS_PER_SEC,
+ 							.time_window_max = 32 * MSECS_PER_SEC,
+ 							.granularity = 1000,
+ 					}
+ 				}&quot;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/54491/4/src/mainboard/intel/adlrvp/devicetree_m.cb" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/54491/4/src/mainboard/intel/adlrvp/devicetree_m.cb</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/54491/4/src/mainboard/intel/adlrvp/devicetree_m.cb">https://review.coreboot.org/c/coreboot/+/54491/4/src/mainboard/intel/adlrvp/devicetree_m.cb</a></cite>
 </div>
 
 </blockquote>
+<p>以前にも書いたが、Atom系コアのみで構成されたプロセッサは <em>Elkhart/Jasper Lake</em> が最後となり、今後は Core系 (Big) と組み合わせる形となる。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/01/21/adl_m-coreboot/#adl_m-atom">Alder Lake-M 関連のパッチが Coreboot に投稿される　―― ADL-M は ADL-P の I/O 縮小版か | Coelacanth&rsquo;s Dream</a></span>
 
-<p>以前にも書いたが、Atom系コアのみで構成されたプロセッサは <em>Elkhart/Jasper Lake</em> が最後となり、今後は Core系 (Big) と組み合わせる形となる。<sup class="footnote-ref" id="fnref:ascii"><a href="#fn:ascii">6</a></sup><br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/21/adl_m-coreboot/#adl_m-atom">Alder Lake-M 関連のパッチが Coreboot に投稿される　―― ADL-M は ADL-P の I/O 縮小版か | Coelacanth's Dream</a></span>
-
-<em>Alder Lake-M</em> がその後継をも担うと思われるが、PL2: 30W というのは <em>Jasper Lake</em> よりも 10W 高い設定だ。<sup class="footnote-ref" id="fnref:jsl-pl"><a href="#fn:jsl-pl">7</a></sup><br />
-<em>Jasper Lake</em> の前世代、<em>Gemini Lake</em> が PL2: 15W であったから、TDP/PL1: 6W 付近の省電力 Intel プロセッサの PL2 は世代ごとに上げられていることになる<sup class="footnote-ref" id="fnref:glk-pl"><a href="#fn:glk-pl">8</a></sup>。<br />
+<em>Alder Lake-M</em> がその後継をも担うと思われるが、PL2: 30W というのは <em>Jasper Lake</em> よりも 10W 高い設定だ。<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup><br>
+<em>Jasper Lake</em> の前世代、<em>Gemini Lake</em> が PL2: 15W であったから、TDP/PL1: 6W 付近の省電力 Intel プロセッサの PL2 は世代ごとに上げられていることになる<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup>。<br>
 性能向上のため、特に <em>Alder Lake-M (2+8+2)</em> は Atom/Smallコアだけでも 8-Core 搭載しているため、<em>Jasper Lake</em> から PL2 +10W は仕方ないとも思うが、省電力プロセッサを求める用途、ユーザーにとってブースト時の最大消費電力はどこまで許容されるものなのだろうか。</p>
-
 <h2 id="table">TGL/JSL/ADL</h2>
-
 <table>
 <thead>
 <tr>
-<th align="left"></th>
-<th align="center">Tiger Lake-U</th>
-<th align="center">Tiger Lake-H</th>
-<th align="center">Jasper Lake</th>
-<th align="center">Alder Lake-P</th>
-<th align="center">Alder Lake-M</th>
-<th align="center">Alder Lake-S</th>
+<th style="text-align:left"></th>
+<th style="text-align:center">Tiger Lake-U</th>
+<th style="text-align:center">Tiger Lake-H</th>
+<th style="text-align:center">Jasper Lake</th>
+<th style="text-align:center">Alder Lake-P</th>
+<th style="text-align:center">Alder Lake-M</th>
+<th style="text-align:center">Alder Lake-S</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">GPU</td>
-<td align="center">Gen12 96EU</td>
-<td align="center">Gen12 32EU</td>
-<td align="center">Gen11 32EU</td>
-<td align="center">Gen12 96EU</td>
-<td align="center">Gen12 96EU?</td>
-<td align="center">Gen12 32EU</td>
+<td style="text-align:left">GPU</td>
+<td style="text-align:center">Gen12 96EU</td>
+<td style="text-align:center">Gen12 32EU</td>
+<td style="text-align:center">Gen11 32EU</td>
+<td style="text-align:center">Gen12 96EU</td>
+<td style="text-align:center">Gen12 96EU?</td>
+<td style="text-align:center">Gen12 32EU</td>
 </tr>
-
 <tr>
-<td align="left">CPU side PCIe</td>
-<td align="center">Gen4<br>4-Lane x2</td>
-<td align="center">Gen4<br> 16-Lane + 4-Lane</td>
-<td align="center"></td>
-<td align="center">Gen5 8-Lane,<br>Gen4 4-Lane x2</td>
-<td align="center">Gen5 8-Lane? or<br>Gen4 4-Lane?</td>
-<td align="center">Gen5 8-Lane x2,<br>Gen4 4-Lane x2</td>
+<td style="text-align:left">CPU side PCIe</td>
+<td style="text-align:center">Gen4<br>4-Lane x2</td>
+<td style="text-align:center">Gen4<br> 16-Lane + 4-Lane</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Gen5 8-Lane,<br>Gen4 4-Lane x2</td>
+<td style="text-align:center">Gen5 8-Lane? or<br>Gen4 4-Lane?</td>
+<td style="text-align:center">Gen5 8-Lane x2,<br>Gen4 4-Lane x2</td>
 </tr>
-
 <tr>
-<td align="left">PCH</td>
-<td align="center">TGP_LP</td>
-<td align="center">TGP_H</td>
-<td align="center">JSP</td>
-<td align="center">ADP_P</td>
-<td align="center">ADP_M</td>
-<td align="center">ADP_S</td>
+<td style="text-align:left">PCH</td>
+<td style="text-align:center">TGP_LP</td>
+<td style="text-align:center">TGP_H</td>
+<td style="text-align:center">JSP</td>
+<td style="text-align:center">ADP_P</td>
+<td style="text-align:center">ADP_M</td>
+<td style="text-align:center">ADP_S</td>
 </tr>
-
 <tr>
-<td align="left">PCH PCIe Ports</td>
-<td align="center">16</td>
-<td align="center">?</td>
-<td align="center">8</td>
-<td align="center">12</td>
-<td align="center">10</td>
-<td align="center">28</td>
+<td style="text-align:left">PCH PCIe Ports</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">28</td>
 </tr>
-
 <tr>
-<td align="left">Power Limit</td>
-<td align="center">PL1: 15W<br>/PL2: 38W(2C), 60W(4C)<br>PL1: 9W<br>PL2: 35W(2C), 40W(4C)</td>
-<td align="center">PL1: 45W<br>/PL2: 107-135W</td>
-<td align="center">PL1: 6W<br>/PL2: 20W</td>
-<td align="center">PL1: <del>15W</del> 20W<br>/PL2: 55W (2+8+2)<br>PL1: 28W<br>/PL2: 64W (4+8+2)<br>PL1: 45W<br>/PL2: 115W (6+8+2)</td>
-<td align="center">PL1: 9W<br>/PL2: 30W (2+8+2)</td>
-<td align="center">?</td>
+<td style="text-align:left">Power Limit</td>
+<td style="text-align:center">PL1: 15W<br>/PL2: 38W(2C), 60W(4C)<br>PL1: 9W<br>PL2: 35W(2C), 40W(4C)</td>
+<td style="text-align:center">PL1: 45W<br>/PL2: 107-135W</td>
+<td style="text-align:center">PL1: 6W<br>/PL2: 20W</td>
+<td style="text-align:center">PL1: <del>15W</del> 20W<br>/PL2: 55W (2+8+2)<br>PL1: 28W<br>/PL2: 64W (4+8+2)<br>PL1: 45W<br>/PL2: 115W (6+8+2)</td>
+<td style="text-align:center">PL1: 9W<br>/PL2: 30W (2+8+2)</td>
+<td style="text-align:center">?</td>
 </tr>
 </tbody>
 </table>
-
-<p>最近、Intel は TDP として使われる PL1 の値は公開するが、ブースト機能 (Intel® Turbo Boost Technology) の維持時間等の基準に使われる PL2 の値についてはデータシート中にも記載しなくなった。PL1 * 1.25 がハードウェアのデフォルトだとはしているが、それは上記 Coreboot に記述された設定を見てもわかるが実際の設定とはかけ離れている。<br />
+<p>最近、Intel は TDP として使われる PL1 の値は公開するが、ブースト機能 (Intel® Turbo Boost Technology) の維持時間等の基準に使われる PL2 の値についてはデータシート中にも記載しなくなった。PL1 * 1.25 がハードウェアのデフォルトだとはしているが、それは上記 Coreboot に記述された設定を見てもわかるが実際の設定とはかけ離れている。<br>
 そういう訳で、Coreboot のコードに記述され、公開されている PL1/PL2 の情報はそれなりに貴重なものだと考えている。そのままデータシートに記載するのではダメなのかと思わなくもないが。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:sa-pci-id"><a href="https://review.coreboot.org/c/coreboot/+/54676/4" rel="nofollow noreferrer" target="_blank">soc/intel/adl: Add SKU specific power limits support (Ic1676e2b) · Gerrit Code Review</a>
- <a class="footnote-return" href="#fnref:sa-pci-id"><sup>[return]</sup></a></li>
-<li id="fn:tgl-up3-pl"><a href="https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up3/devicetree.cb#L130" rel="nofollow noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up3/devicetree.cb#L130</a>
- <a class="footnote-return" href="#fnref:tgl-up3-pl"><sup>[return]</sup></a></li>
-<li id="fn:tgl-28w"><a href="https://forum-en.msi.com/index.php?threads/initial-msi-stealth-15m-review-with-thermal-performance.356516/" rel="nofollow noreferrer" target="_blank">Initial MSI Stealth 15m Review With Thermal Performance | MSI Global English Forum - Index</a>
- <a class="footnote-return" href="#fnref:tgl-28w"><sup>[return]</sup></a></li>
-<li id="fn:tgl-h"><a href="https://ascii.jp/elem/000/004/054/4054425/" rel="nofollow noreferrer" target="_blank">ASCII.jp：Core i9-11980HKやXeon W-11955Mなど、6コア/8コア版のTiger Lake-Hが正式発表 (1/3)</a>
- <a class="footnote-return" href="#fnref:tgl-h"><sup>[return]</sup></a></li>
-<li id="fn:tgl-up4-pl"><a href="https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up4/devicetree.cb#L134" rel="nofollow noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up4/devicetree.cb#L134</a>
- <a class="footnote-return" href="#fnref:tgl-up4-pl"><sup>[return]</sup></a></li>
-<li id="fn:ascii"><a href="https://ascii.jp/elem/000/004/040/4040489/3/" rel="nofollow noreferrer" target="_blank">ASCII.jp：最後のAtomとなるChromebook向けプロセッサーのJasper Lake　インテル CPUロードマップ (3/3)</a>
- <a class="footnote-return" href="#fnref:ascii"><sup>[return]</sup></a></li>
-<li id="fn:jsl-pl"><a href="https://github.com/coreboot/coreboot/blob/8e57299a0da5dc9928b97d94b0265cf6883de005/src/mainboard/intel/jasperlake_rvp/variants/jslrvp/devicetree.cb#L128" rel="nofollow noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/8e57299a0da5dc9928b97d94b0265cf6883de005/src/mainboard/intel/jasperlake_rvp/variants/jslrvp/devicetree.cb#L128</a>
- <a class="footnote-return" href="#fnref:jsl-pl"><sup>[return]</sup></a></li>
-<li id="fn:glk-pl"><a href="https://github.com/coreboot/coreboot/blob/2adb50d32e8cd9c61773b1d60de545255c6a4049/src/mainboard/intel/glkrvp/variants/baseboard/devicetree.cb#L58" rel="nofollow noreferrer" target="_blank">https://github.com/coreboot/coreboot/blob/2adb50d32e8cd9c61773b1d60de545255c6a4049/src/mainboard/intel/glkrvp/variants/baseboard/devicetree.cb#L58</a>
- <a class="footnote-return" href="#fnref:glk-pl"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://review.coreboot.org/c/coreboot/+/54676/4">soc/intel/adl: Add SKU specific power limits support (Ic1676e2b) · Gerrit Code Review</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up3/devicetree.cb#L130">https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up3/devicetree.cb#L130</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://forum-en.msi.com/index.php?threads/initial-msi-stealth-15m-review-with-thermal-performance.356516/">Initial MSI Stealth 15m Review With Thermal Performance | MSI Global English Forum - Index</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://ascii.jp/elem/000/004/054/4054425/">ASCII.jp：Core i9-11980HKやXeon W-11955Mなど、6コア/8コア版のTiger Lake-Hが正式発表 (1/3)</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up4/devicetree.cb#L134">https://github.com/coreboot/coreboot/blob/9d4d2d014c91e041cf7fb8ea593364c6644dd644/src/mainboard/intel/tglrvp/variants/tglrvp_up4/devicetree.cb#L134</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://ascii.jp/elem/000/004/040/4040489/3/">ASCII.jp：最後のAtomとなるChromebook向けプロセッサーのJasper Lake　インテル CPUロードマップ (3/3)</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/blob/8e57299a0da5dc9928b97d94b0265cf6883de005/src/mainboard/intel/jasperlake_rvp/variants/jslrvp/devicetree.cb#L128">https://github.com/coreboot/coreboot/blob/8e57299a0da5dc9928b97d94b0265cf6883de005/src/mainboard/intel/jasperlake_rvp/variants/jslrvp/devicetree.cb#L128</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/blob/2adb50d32e8cd9c61773b1d60de545255c6a4049/src/mainboard/intel/glkrvp/variants/baseboard/devicetree.cb#L58">https://github.com/coreboot/coreboot/blob/2adb50d32e8cd9c61773b1d60de545255c6a4049/src/mainboard/intel/glkrvp/variants/baseboard/devicetree.cb#L58</a>&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

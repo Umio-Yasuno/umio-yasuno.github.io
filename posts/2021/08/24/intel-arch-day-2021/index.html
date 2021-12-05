@@ -66,169 +66,150 @@
   <h1>Intel Architecture Day 2021 個人的まとめ　―― Gracemont, Golden Cove, Alder Lake</h1><div class="article-time">
     <time datetime="2021-08-24 02:56 &#43;0900" class="time-b">Post: 2021/08/24 02:56 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/09/19 06:52 &#43;0900</div>
-  </div>
-
-<p>時間と体力の関係で遅れた上に一部だけを取り上げた、個人的な Intel Architecture Day 2021 のまとめ。<br />
+  </div><p>時間と体力の関係で遅れた上に一部だけを取り上げた、個人的な Intel Architecture Day 2021 のまとめ。<br>
 <span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 、<span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
  はその内に、たぶん。</p>
-
 <ul>
-<li><a href="https://www.intel.com/content/www/us/en/newsroom/resources/press-kit-architecture-day-2021.html" rel="nofollow noreferrer" target="_blank">Intel Architecture Day 2021</a>
-
+<li><a href="https://www.intel.com/content/www/us/en/newsroom/resources/press-kit-architecture-day-2021.html">Intel Architecture Day 2021</a>
 <ul>
-<li><a href="https://download.intel.com/newsroom/2021/client-computing/intel-architecture-day-2021-presentation.pdf" rel="nofollow noreferrer" target="_blank">Presentation Deck: Intel Architecture Day 2021</a></li>
-</ul></li>
+<li><a href="https://download.intel.com/newsroom/2021/client-computing/intel-architecture-day-2021-presentation.pdf">Presentation Deck: Intel Architecture Day 2021</a></li>
 </ul>
-
+</li>
+</ul>
 <h2 id="alder-lake">Alder Lake</h2>
-
 <h3 id="gracemont">Gracemont (Efficient-core)</h3>
-
-<p><em>Gramont</em> はスループット、マルチスレッドにおけるスケーリング性能を重視して設計された高効率マイクロアーキテクチャ (Atom/Small)。<br />
-前世代の <em>Tremontアーキテクチャ</em> から大きく進化した点には、L1命令キャッシュの倍増 (32KiB -&gt; 64KiB)、実行ポート数が 8ポートから 17ポートに、AVX2 と AVX-VNNI命令への対応等が挙げられる。ロード/ストアユニットも倍に増やされており、L1データキャッシュの帯域も向上していると思われる。<br />
-デコーダーが 3-wide デコードのクラスタを 2基持つという構成は <em>Tremont</em> から引き継がれている。  従来の方法でデコード幅を増やそうとすると、必要なリソース量が指数関数的に増えて効率が悪化するが、デコーダーのクラスタリングを用いることでリソース量は線形となり、効率の低下を防げる。<sup class="footnote-ref" id="fnref:decode-cluster"><a href="#fn:decode-cluster">1</a></sup><br />
-<em>Tremont</em> では。デコーダーのクラスタリングによって発生する負荷分散は分岐予測に依存していたため、分岐の存在しない長いコード (浮動小数点演算等) では片方のデコードクラスタしか使用できず、ボトルネックとなる可能性があった。<br />
-<a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="nofollow noreferrer" target="_blank">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a> では、次世代の Atomプロセッサではそうしたケースを検出し、ボトルネックを軽減するハードウェアを含む予定だとしている。<br />
+<p><em>Gramont</em> はスループット、マルチスレッドにおけるスケーリング性能を重視して設計された高効率マイクロアーキテクチャ (Atom/Small)。<br>
+前世代の <em>Tremontアーキテクチャ</em> から大きく進化した点には、L1命令キャッシュの倍増 (32KiB -&gt; 64KiB)、実行ポート数が 8ポートから 17ポートに、AVX2 と AVX-VNNI命令への対応等が挙げられる。ロード/ストアユニットも倍に増やされており、L1データキャッシュの帯域も向上していると思われる。<br>
+デコーダーが 3-wide デコードのクラスタを 2基持つという構成は <em>Tremont</em> から引き継がれている。  従来の方法でデコード幅を増やそうとすると、必要なリソース量が指数関数的に増えて効率が悪化するが、デコーダーのクラスタリングを用いることでリソース量は線形となり、効率の低下を防げる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+<em>Tremont</em> では。デコーダーのクラスタリングによって発生する負荷分散は分岐予測に依存していたため、分岐の存在しない長いコード (浮動小数点演算等) では片方のデコードクラスタしか使用できず、ボトルネックとなる可能性があった。<br>
+<a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a> では、次世代の Atomプロセッサではそうしたケースを検出し、ボトルネックを軽減するハードウェアを含む予定だとしている。<br>
 その次世代の Atomプロセッサが <em>Gracemont</em> を指し、かつ実際にそうしたハードウェアが導入されているならば、クラスタリングによるリソース量の節約という恩恵を受けながら、性能と電力効率がさらに向上していることとなる。</p>
-
 <h3 id="golden_cove">Golden Cove (Performance-core)</h3>
-
-<p><em>Golden Cove</em> はシングルスレッド性能、低レイテンシを重視して設計された高性能なマイクロアーキテクチャ (Core/Big) となる。<br />
-<em>Golden Cove</em> は、キャッシュ構成は前世代の <em>Willow Cove</em> をほとんど踏襲したものとなっているが、フロントエンド部、アウト・オブ・オーダーエンジン、実行ユニット数を大幅に増強している。<br />
-特にデコード幅は従来の 4-wide から 6-wide に増やされ、命令のデコードウィンドウサイズも 16B から 32B となった。<br />
-ただ、<em>Skylake, Sunny Cove</em> では 1x Complex decoder + 4x Simple decoder という構成であったため (<em>Willow Cove</em> に構成は公開されていない)、<em>Golden Cove</em> で増やされたのがどれで、具体的な構成については不明だが、従来から増やされたことは確かなのだろう。<br />
-6-wide という点だけ見れば、<em>Tremont, Gracemont</em> と同じデコード幅だが、<em>Golden Cove</em> はデコーダーのクラスタリングを採用していない。クラスタリングの利点から考えれば、<em>Golden Cove</em> のデコーダーにはかなりのリソースが割かれていることになる。<br />
-Intel が示す <em>Alder Lake</em> の CGイメージでは、<em>1x Golden Cove = 4x Gracemont</em> というサイズで描かれているが、これは <em>Gracemont</em> が小さいというよりは、<em>Golden Cove</em> が巨大なコアであることを示しているような気がしなくもない。<br />
-<em>Golden Cove</em> は AVX512 に対応している。スライド内の CGイメージから、2x FMA (256-bit?) + 1x FMA (512-bit) という構成で、<em>Skylake (Server), Sunny Cove (Server)</em> と同様に、2x FMA (256-bit) を束ねるポートフージョンと FMA (512-bit) 1ポートそれぞれで AVX-512 が処理可能になっていると思われる。<br />
-また、<em>Golden Cove</em> では新たな AVX-512系命令、<code>AVX512_FP16</code> に対応している。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth's Dream</a></span>
+<p><em>Golden Cove</em> はシングルスレッド性能、低レイテンシを重視して設計された高性能なマイクロアーキテクチャ (Core/Big) となる。<br>
+<em>Golden Cove</em> は、キャッシュ構成は前世代の <em>Willow Cove</em> をほとんど踏襲したものとなっているが、フロントエンド部、アウト・オブ・オーダーエンジン、実行ユニット数を大幅に増強している。<br>
+特にデコード幅は従来の 4-wide から 6-wide に増やされ、命令のデコードウィンドウサイズも 16B から 32B となった。<br>
+ただ、<em>Skylake, Sunny Cove</em> では 1x Complex decoder + 4x Simple decoder という構成であったため (<em>Willow Cove</em> に構成は公開されていない)、<em>Golden Cove</em> で増やされたのがどれで、具体的な構成については不明だが、従来から増やされたことは確かなのだろう。<br>
+6-wide という点だけ見れば、<em>Tremont, Gracemont</em> と同じデコード幅だが、<em>Golden Cove</em> はデコーダーのクラスタリングを採用していない。クラスタリングの利点から考えれば、<em>Golden Cove</em> のデコーダーにはかなりのリソースが割かれていることになる。<br>
+Intel が示す <em>Alder Lake</em> の CGイメージでは、<em>1x Golden Cove = 4x Gracemont</em> というサイズで描かれているが、これは <em>Gracemont</em> が小さいというよりは、<em>Golden Cove</em> が巨大なコアであることを示しているような気がしなくもない。<br>
+<em>Golden Cove</em> は AVX512 に対応している。スライド内の CGイメージから、2x FMA (256-bit?) + 1x FMA (512-bit) という構成で、<em>Skylake (Server), Sunny Cove (Server)</em> と同様に、2x FMA (256-bit) を束ねるポートフージョンと FMA (512-bit) 1ポートそれぞれで AVX-512 が処理可能になっていると思われる。<br>
+また、<em>Golden Cove</em> では新たな AVX-512系命令、<code>AVX512_FP16</code> に対応している。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p><em>Sunny Cove (Client)</em> ではポートフージョンには対応せず、FMA (512-bit) で AVX-512 を処理する形を採っていた。<br />
-<em>Golden Cove (Client)</em> も同様の構成を採るかどうかは気になる所だが、それ以前に <em>Golden Cove (Client)</em> を採用する <em>Alder Lake</em> では AVX-512 が有効化されないことが複数のメディア、ライターから語られている。<sup class="footnote-ref" id="fnref:pcwatch"><a href="#fn:pcwatch">2</a></sup><sup class="footnote-ref" id="fnref:anand-ian-cutress"><a href="#fn:anand-ian-cutress">3</a></sup><br />
-Intel のハイブリッドアーキテクチャでは、<em>Lakefield</em> の例から Core (Big) / Atom (Small) 両方が有効な場合はどちらも対応している命令のみが有効化されることが分かっていたが、<a href="https://www.anandtech.com" rel="nofollow noreferrer" target="_blank">AnandTech</a> の <a href="https://www.anandtech.com/Author/140" rel="nofollow noreferrer" target="_blank">Dr. Ian Cutress</a> 氏によれば、Atom (Small) 側を無効化しても、Core (Big) 側のみが対応する AVX-512 命令等は無効化されたままだとしている。</p>
-
+<p><em>Sunny Cove (Client)</em> ではポートフージョンには対応せず、FMA (512-bit) で AVX-512 を処理する形を採っていた。<br>
+<em>Golden Cove (Client)</em> も同様の構成を採るかどうかは気になる所だが、それ以前に <em>Golden Cove (Client)</em> を採用する <em>Alder Lake</em> では AVX-512 が有効化されないことが複数のメディア、ライターから語られている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
+Intel のハイブリッドアーキテクチャでは、<em>Lakefield</em> の例から Core (Big) / Atom (Small) 両方が有効な場合はどちらも対応している命令のみが有効化されることが分かっていたが、<a href="https://www.anandtech.com">AnandTech</a> の <a href="https://www.anandtech.com/Author/140">Dr. Ian Cutress</a> 氏によれば、Atom (Small) 側を無効化しても、Core (Big) 側のみが対応する AVX-512 命令等は無効化されたままだとしている。</p>
 <ul>
-<li><a href="https://www.anandtech.com/show/16881/a-deep-dive-into-intels-alder-lake-microarchitectures/5" rel="nofollow noreferrer" target="_blank">Instruction Sets: Alder Lake Dumps AVX-512 in a BIG Way - Intel Architecture Day 2021: Alder Lake, Golden Cove, and Gracemont Detailed</a></li>
+<li><a href="https://www.anandtech.com/show/16881/a-deep-dive-into-intels-alder-lake-microarchitectures/5">Instruction Sets: Alder Lake Dumps AVX-512 in a BIG Way - Intel Architecture Day 2021: Alder Lake, Golden Cove, and Gracemont Detailed</a></li>
 </ul>
+<p>以前、Linux Kernel へのあるパッチ内で Intel のソフトウェアエンジニアより、<em>Alder Lake</em> では UEFI/BIOS、またはカーネルパラメーターから一方の CPUタイプを無効化するオプションが提供されることが語られていた。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/04/29/adl-cpu-type/">Alder Lake では BIOS から一方の CPUタイプを無効化可能 | Coelacanth&rsquo;s Dream</a></span>
 
-<p>以前、Linux Kernel へのあるパッチ内で Intel のソフトウェアエンジニアより、<em>Alder Lake</em> では UEFI/BIOS、またはカーネルパラメーターから一方の CPUタイプを無効化するオプションが提供されることが語られていた。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/04/29/adl-cpu-type/">Alder Lake では BIOS から一方の CPUタイプを無効化可能 | Coelacanth's Dream</a></span>
-
-その時は Atom (Small) 側の無効化により、AVX-512 命令の対応が有効化されるのではないかと自分は考えたが、その推測は外れてしまった。<br />
-技術的な問題か、それとも性能に関係するマーケティング的な問題か。理由が明かされる望みは薄いが、多くの人が惜しいと思う部分になるのではないだろうか。<br />
-最近リリースされた Intel のクライアント向け新型プロセッサでは、<em>Ice Lake, Tiger Lake, Rocket Lake</em> と AVX-512 命令に対応した CPU が続き、同時にそのことをアピールしてきた。中でも <code>AVX512_VNNI</code> 命令を活用した高速な推論処理、マーケティング的には Intel DL (Deep Learning) Boost と呼ばれ、目玉機能として扱われてきた。<br />
-その流れが <em>Alder Lake</em> で途切れてしまうことになるが、<em>Alder Lake</em> に採用される <em>Golden Cove</em> と <em>Gracemont</em> は新たな <code>AVX_VNNI (128/256-bit)</code> 命令に対応しており、これが Intel DL Boost として含まれることになると思われる。<br />
-ベクタ幅が異なるため、性能に影響が出ると考えられるが、AVX-512 に対応したクライアント向けプロセッサは最大 8-Core (<em>Tiger Lake-H, Rocket Lake-S</em>) だったのに対し、<em>Alder Lake</em> では両方のアーキテクチャが <code>AVX_VNNI (128/256-bit)</code> に対応しているため、デスクトップ向けでは最大 16-Core で処理可能となる。<br />
-それでもやはりスケーリング性能、スケジューリング、Atom (Small) 側の最大動作周波数等が性能に悪影響をもたらす懸念は出てくる。<br />
+その時は Atom (Small) 側の無効化により、AVX-512 命令の対応が有効化されるのではないかと自分は考えたが、その推測は外れてしまった。<br>
+技術的な問題か、それとも性能に関係するマーケティング的な問題か。理由が明かされる望みは薄いが、多くの人が惜しいと思う部分になるのではないだろうか。<br>
+最近リリースされた Intel のクライアント向け新型プロセッサでは、<em>Ice Lake, Tiger Lake, Rocket Lake</em> と AVX-512 命令に対応した CPU が続き、同時にそのことをアピールしてきた。中でも <code>AVX512_VNNI</code> 命令を活用した高速な推論処理、マーケティング的には Intel DL (Deep Learning) Boost と呼ばれ、目玉機能として扱われてきた。<br>
+その流れが <em>Alder Lake</em> で途切れてしまうことになるが、<em>Alder Lake</em> に採用される <em>Golden Cove</em> と <em>Gracemont</em> は新たな <code>AVX_VNNI (128/256-bit)</code> 命令に対応しており、これが Intel DL Boost として含まれることになると思われる。<br>
+ベクタ幅が異なるため、性能に影響が出ると考えられるが、AVX-512 に対応したクライアント向けプロセッサは最大 8-Core (<em>Tiger Lake-H, Rocket Lake-S</em>) だったのに対し、<em>Alder Lake</em> では両方のアーキテクチャが <code>AVX_VNNI (128/256-bit)</code> に対応しているため、デスクトップ向けでは最大 16-Core で処理可能となる。<br>
+それでもやはりスケーリング性能、スケジューリング、Atom (Small) 側の最大動作周波数等が性能に悪影響をもたらす懸念は出てくる。<br>
 その影響がどれ程のものになるかは、実際に <em>Alder Lake</em> が登場してくるまでは分からない。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">uArch</th>
-<th align="center">Golden Cove</th>
-<th align="center">Willow Cove</th>
-<th align="center">Sunny Cove</th>
-<th align="center">Gracemont</th>
-<th align="center">Tremont</th>
+<th style="text-align:left">uArch</th>
+<th style="text-align:center">Golden Cove</th>
+<th style="text-align:center">Willow Cove</th>
+<th style="text-align:center">Sunny Cove</th>
+<th style="text-align:center">Gracemont</th>
+<th style="text-align:center">Tremont</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">L1 Data size</td>
-<td align="center">48 KiB<br>/12-way</td>
-<td align="center">48 KiB<br>/12-way</td>
-<td align="center">48 KiB<br>/12-way</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
+<td style="text-align:left">L1 Data size</td>
+<td style="text-align:center">48 KiB<br>/12-way</td>
+<td style="text-align:center">48 KiB<br>/12-way</td>
+<td style="text-align:center">48 KiB<br>/12-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
 </tr>
-
 <tr>
-<td align="left">L1D BW<br>(L: Load, S: Store)</td>
-<td align="center">256B?<br>(L: 3x32B? or 2x64B?)<br>(S: 2x64B?)</td>
-<td align="center">?</td>
-<td align="center">192B<br>(L: 2x64B)<br>(S: 1x64B or 2x32B)</td>
-<td align="center">128B???<br>(L: 2x32B? + S: 2x32B?)</td>
-<td align="center">64B???<br>(L: 1x32B + S: 1x32B)<br>(L: 2x32B or S: 2x32B)</td>
+<td style="text-align:left">L1D BW<br>(L: Load, S: Store)</td>
+<td style="text-align:center">256B?<br>(L: 3x32B? or 2x64B?)<br>(S: 2x64B?)</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">192B<br>(L: 2x64B)<br>(S: 1x64B or 2x32B)</td>
+<td style="text-align:center">128B???<br>(L: 2x32B? + S: 2x32B?)</td>
+<td style="text-align:center">64B???<br>(L: 1x32B + S: 1x32B)<br>(L: 2x32B or S: 2x32B)</td>
 </tr>
-
 <tr>
-<td align="left">L1 Inst. size</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">64 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
+<td style="text-align:left">L1 Inst. size</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">64 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
 </tr>
-
 <tr>
-<td align="left">L1I BW</td>
-<td align="center">?</td>
-<td align="center">?</td>
-<td align="center">?</td>
-<td align="center">32B?<br>(2x 16B)</td>
-<td align="center">32B<br>(2x 16B)</td>
+<td style="text-align:left">L1I BW</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">32B?<br>(2x 16B)</td>
+<td style="text-align:center">32B<br>(2x 16B)</td>
 </tr>
-
 <tr>
-<td align="left">L2 size</td>
-<td align="center">1.25 MiB/10-way (Client)<br>2 MiB (Data Center)</td>
-<td align="center">1.25 MiB<br>/20-way</td>
-<td align="center">512 KiB<br>/8-way</td>
-<td align="center">2 MiB<br>/16-way<br>(per Module)</td>
-<td align="center">1.5-4.5 MiB<br>/12-way<br>(per Cluster/Tile)</td>
+<td style="text-align:left">L2 size</td>
+<td style="text-align:center">1.25 MiB/10-way (Client)<br>2 MiB (Data Center)</td>
+<td style="text-align:center">1.25 MiB<br>/20-way</td>
+<td style="text-align:center">512 KiB<br>/8-way</td>
+<td style="text-align:center">2 MiB<br>/16-way<br>(per Module)</td>
+<td style="text-align:center">1.5-4.5 MiB<br>/12-way<br>(per Cluster/Tile)</td>
 </tr>
-
 <tr>
-<td align="left">L2 BW Peak/Sustained</td>
-<td align="center">?</td>
-<td align="center">?</td>
-<td align="center">64B/48B</td>
-<td align="center">64B/?</td>
-<td align="center"></td>
+<td style="text-align:left">L2 BW Peak/Sustained</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">64B/48B</td>
+<td style="text-align:center">64B/?</td>
+<td></td>
 </tr>
-
 <tr>
-<td align="left">L3 size</td>
-<td align="center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
-<td align="center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
-<td align="center">2 MiB<br>/12-way</td>
-<td align="center">12 MiB<br>/12-way<br>(3 MiB per Cluster/Tile)</td>
-<td align="center">4 MiB<br>/16-way</td>
+<td style="text-align:left">L3 size</td>
+<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
+<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
+<td style="text-align:center">2 MiB<br>/12-way</td>
+<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Cluster/Tile)</td>
+<td style="text-align:center">4 MiB<br>/16-way</td>
 </tr>
 </tbody>
 </table>
-
 <ul>
 <li>表参考リンク
-
 <ul>
-<li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="nofollow noreferrer" target="_blank">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></li>
-<li>Tremont - <a href="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2" rel="nofollow noreferrer" target="_blank">Tremont: A Wider Front End and Caches - Intel's new Atom Microarchitecture: The Tremont Core in Lakefield</a></li>
-<li>Willow Cove/Sunny Cove - <a href="https://www.anandtech.com/show/16084/intel-tiger-lake-review-deep-dive-core-11th-gen/4" rel="nofollow noreferrer" target="_blank">Cache Architecture: The Effect of Increasing L2 and L3 - Intel’s Tiger Lake 11th Gen Core i7-1185G7 Review and Deep Dive: Baskin’ for the Exotic</a></li>
-<li><a href="https://github.com/projectacrn/acrn-hypervisor/commit/918ec7aaf316b49aba5f58ffed6513f84cc1f96f" rel="nofollow noreferrer" target="_blank">Config_tools: Update board xml for acrn 2.5 · projectacrn/acrn-hypervisor@918ec7a</a>
-
+<li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></li>
+<li>Tremont - <a href="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2">Tremont: A Wider Front End and Caches - Intel&rsquo;s new Atom Microarchitecture: The Tremont Core in Lakefield</a></li>
+<li>Willow Cove/Sunny Cove - <a href="https://www.anandtech.com/show/16084/intel-tiger-lake-review-deep-dive-core-11th-gen/4">Cache Architecture: The Effect of Increasing L2 and L3 - Intel’s Tiger Lake 11th Gen Core i7-1185G7 Review and Deep Dive: Baskin’ for the Exotic</a></li>
+<li><a href="https://github.com/projectacrn/acrn-hypervisor/commit/918ec7aaf316b49aba5f58ffed6513f84cc1f96f">Config_tools: Update board xml for acrn 2.5 · projectacrn/acrn-hypervisor@918ec7a</a>
 <ul>
-<li><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/adl-rvp/adl-rvp.xml" rel="nofollow noreferrer" target="_blank">acrn-hypervisor/adl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a></li>
-</ul></li>
-</ul></li>
+<li><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/adl-rvp/adl-rvp.xml">acrn-hypervisor/adl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a></li>
 </ul>
-<div class="footnotes">
-
-<hr />
-
+</li>
+</ul>
+</li>
+</ul>
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:decode-cluster"><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="nofollow noreferrer" target="_blank">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a>
- <a class="footnote-return" href="#fnref:decode-cluster"><sup>[return]</sup></a></li>
-<li id="fn:pcwatch"><a href="https://pc.watch.impress.co.jp/docs/news/1344898.html" rel="nofollow noreferrer" target="_blank">Intel次期CPU「Alder Lake」はWindows 11に最適化されたスレッド割り当て機能を搭載 - PC Watch</a>
- <a class="footnote-return" href="#fnref:pcwatch"><sup>[return]</sup></a></li>
-<li id="fn:anand-ian-cutress"><a href="https://www.anandtech.com/show/16881/a-deep-dive-into-intels-alder-lake-microarchitectures/5" rel="nofollow noreferrer" target="_blank">Instruction Sets: Alder Lake Dumps AVX-512 in a BIG Way - Intel Architecture Day 2021: Alder Lake, Golden Cove, and Gracemont Detailed</a>
- <a class="footnote-return" href="#fnref:anand-ian-cutress"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://pc.watch.impress.co.jp/docs/news/1344898.html">Intel次期CPU「Alder Lake」はWindows 11に最適化されたスレッド割り当て機能を搭載 - PC Watch</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.anandtech.com/show/16881/a-deep-dive-into-intels-alder-lake-microarchitectures/5">Instruction Sets: Alder Lake Dumps AVX-512 in a BIG Way - Intel Architecture Day 2021: Alder Lake, Golden Cove, and Gracemont Detailed</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

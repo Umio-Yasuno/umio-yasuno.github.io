@@ -70,77 +70,58 @@
 <div class="article-time">
     <time datetime="2020-09-19 09:51 &#43;0900" class="time-b">Post: 2020/09/19 09:51 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/12/12 04:35 &#43;0900</div>
-  </div>
-
-<p>先日より <strong>XDC 2020</strong> が開催され、オープンソース・グラフィックに関する発表が数々行なわれている。<br />
+  </div><p>先日より <strong>XDC 2020</strong> が開催され、オープンソース・グラフィックに関する発表が数々行なわれている。<br>
 今回は <strong>A year of ACO: from prototype to deafault</strong> と題された発表の中で語られた、<a href="https://www.coelacanth-dream.com/tags/aco">ACOバックエンド</a> の今後の計画とサポートする機能について紹介したい。</p>
-
 <ul>
-<li><a href="https://www.youtube.com/watch?v=FxFPFsT1wDw&amp;t=1736s" rel="nofollow noreferrer" target="_blank">XDC 2020 - Day 2 - September 17, 2020 - YouTube</a></li>
-<li><a href="https://xdc2020.x.org/event/9/contributions/612/" rel="nofollow noreferrer" target="_blank">X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico</a></li>
+<li><a href="https://www.youtube.com/watch?v=FxFPFsT1wDw&amp;t=1736s">XDC 2020 - Day 2 - September 17, 2020 - YouTube</a></li>
+<li><a href="https://xdc2020.x.org/event/9/contributions/612/">X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico</a></li>
 </ul>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#future-plan">今後の計画と機能</a>
-
 <ul class="page-index">
 <li><a href="#rdna_2-support">RDNA 2/GFX10.3 サポート</a></li>
 <li><a href="#radeonsi-aco">RadeonSI(OpenGL) でも ACOバックエンドをサポート</a></li>
 <li><a href="#rt">レイトレーシング</a></li>
 <li><a href="#ms-on-ngg">Mesh Shader は NGG で実行可能か</a></li>
 <li><a href="#more-optim">さらなる最適化</a></li>
-</ul></li>
+</ul>
+</li>
 </ul>
 
-
 <h2 id="future-plan">今後の計画と機能</h2>
-
 <h3 id="rdna_2-support">RDNA 2/GFX10.3 サポート</h3>
-
 <p><em>RDNA 2 /GFX10.3</em> のサポートは進行中だが、次世代 GPU であるためまだ公式のISAドキュメントがリリースされておらず、AMD の開発者が公式にパッチを投稿する <em>RadeonSI (OpenGL)</em> ドライバーや LLVM の変更に追従する形を取っているとのこと。(Page51)</p>
-
 <h3 id="radeonsi-aco">RadeonSI(OpenGL) でも ACOバックエンドをサポート</h3>
-
-<p>現在 <em>ACOバックエンド</em> は <em>RADV(Vulkan)</em> ドライバーのみをサポートしているが、<em>RadeonSI(OpenGL)</em> のサポートも計画されている。(Page52)<br />
+<p>現在 <em>ACOバックエンド</em> は <em>RADV(Vulkan)</em> ドライバーのみをサポートしているが、<em>RadeonSI(OpenGL)</em> のサポートも計画されている。(Page52)<br>
 それに向けたコードのシェーダーの引数部の統合、I/O操作部の統合作業は始まっているが、元は <em>RADV(Vulkan)</em> への実装だったこともあり、サポートまで長い道のりであると述べている。</p>
-
 <h3 id="rt">レイトレーシング</h3>
-
 <p>Vulkan API でレイトレーシングをサポートする拡張仕様はドラフト(草稿)の段階にあり、<a href="https://www.coelacanth-dream.com/posts/2020/09/17/llvm-amd-gfx1030-rt-inst/">先日</a>には、<em>RDNA 2 /GFX10.3</em> がサポートするレイトレーシング関連の命令が LLVM に追加されているため、<em>ACO</em> でもサポートされる日はそう遠くない……が肝心のハードウェア、<em>RDNA 2 /GFX10.3</em> GPU そのものがまだリリースされていない。</p>
-
 <h3 id="ms-on-ngg">Mesh Shader は NGG で実行可能か</h3>
-
-<p>NVIDIA が Turing 世代で新設したプログラムシェーダー、Mesh Shader だが、スライド内にて <em>RDNA /GFX10</em> からハードウェア側でサポートされている NGG(Next Generation Geometry) で実行できる <em>可能性</em> があると述べている。(Page54)<br />
-まだ Vulkan API での拡張機能がリリースされていないため実装、テストは行なわれていないが、<br />
+<p>NVIDIA が Turing 世代で新設したプログラムシェーダー、Mesh Shader だが、スライド内にて <em>RDNA /GFX10</em> からハードウェア側でサポートされている NGG(Next Generation Geometry) で実行できる <em>可能性</em> があると述べている。(Page54)<br>
+まだ Vulkan API での拡張機能がリリースされていないため実装、テストは行なわれていないが、<br>
 もし実行可能であるならば、次世代コンソール機でサポートが分かれていた、PS5 のプリミティブシェーダー、Xbox Series X/S でサポートされている Mesh Shader が、ハードウェア側としてはどちらも NGG によって実行されている可能性が考えられる。</p>
-
-<p>NGG 自体は <em>Vega /GFX9</em> から始まったものだが、<em>RDNA /GFX10</em> で設計が変更され、<em>Vega /GFX9</em> でのサポートは廃止された<sup class="footnote-ref" id="fnref:remove-gfx9-ngg"><a href="#fn:remove-gfx9-ngg">1</a></sup>という背景がある。<br />
+<p>NGG 自体は <em>Vega /GFX9</em> から始まったものだが、<em>RDNA /GFX10</em> で設計が変更され、<em>Vega /GFX9</em> でのサポートは廃止された<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>という背景がある。<br>
 これはあくまでも個人の推測であるが、<em>RDNA /GFX10</em> で NGG の設計変更を行なった理由の1つに、Mesh Shader のサポートが含まれていたのかもしれない。</p>
-
 <h3 id="more-optim">さらなる最適化</h3>
-
 <p><em>ACOバックエンド</em> のさらなる性能向上を実現する手立てに、Rapid-packed math(FP16をFP32の倍のレートで実行する機能、GFX9からサポートされている)、NGG GS への最適化、さらに進んだレジスタ割り付けスケジューラーの実装をあげている。</p>
-
 <!--
    [WIP aco: rapid packed math (!6680) · Merge Requests · Mesa / mesa · GitLab](https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6680)
 -->
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://www.4gamer.net/games/990/G999027/20200319173/" rel="nofollow noreferrer" target="_blank">西川善司の3DGE：Mark Cerny氏のPS5技術解説プレゼンテーションを読み解く(前編)。ここまで分かったPS5のSSDとGPUの詳細</a></li>
+<li><a href="https://www.4gamer.net/games/990/G999027/20200319173/">西川善司の3DGE：Mark Cerny氏のPS5技術解説プレゼンテーションを読み解く(前編)。ここまで分かったPS5のSSDとGPUの詳細</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:remove-gfx9-ngg"><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040258.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: remove gfx9 NGG</a>
- <a class="footnote-return" href="#fnref:remove-gfx9-ngg"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040258.html">[PATCH] drm/amdgpu: remove gfx9 NGG</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

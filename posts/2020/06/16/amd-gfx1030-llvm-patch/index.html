@@ -70,50 +70,47 @@
 <div class="article-time">
     <time datetime="2020-06-16 22:55 &#43;0900" class="time-b">Post: 2020/06/16 22:55 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/06/07 08:32 &#43;0900</div>
-  </div><p>AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、<em>Navi21/gfx1030</em> のサポートに向けたパッチが投稿された。<br />
-<span class="thread-link"><a href="https://github.com/llvm/llvm-project/commit/9ee272f13d88f090817235ef4f91e56bb2a153d6" rel="nofollow noreferrer" target="_blank">[AMDGPU] Add gfx1030 target · llvm/llvm-project@9ee272f</a></span>
+  </div><p>AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、<em>Navi21/gfx1030</em> のサポートに向けたパッチが投稿された。<br>
+<span class="thread-link"><a href="https://github.com/llvm/llvm-project/commit/9ee272f13d88f090817235ef4f91e56bb2a153d6">[AMDGPU] Add gfx1030 target · llvm/llvm-project@9ee272f</a></span>
 </p>
-
-<p>今回追加されたコードは LLVM 11 に取り込まれるとされ<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>、その LLVM 11 はリリースサイクルから 2020/09 頃に来るはずだ。</p>
-
-<p><em>Navi21/gfx1030</em> が対応する機能には、<em>Navi12/gfx1011</em> 、<em>Navi14/gfx1012</em> の範囲に加えて、<code>FeatureGFX10_3Insts</code>、<code>FeatureGFX10_BEncoding</code> が追加される。<br />
-後者は新たな命令エンコードのフォーマットとされるが、前者の概要はまだ明らかになっていない。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup><br />
-また、<em>Navi1x</em> であったバグ等が修正されている。<br />
-<em>Arcturus</em> で追加された一部ドット積の混合演算には対応しなかった。 (<code>FeatureDot3Insts</code>、<code>FeatureDot4Insts</code>)<br />
+<p>今回追加されたコードは LLVM 11 に取り込まれるとされ<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、その LLVM 11 はリリースサイクルから 2020/09 頃に来るはずだ。</p>
+<p><em>Navi21/gfx1030</em> が対応する機能には、<em>Navi12/gfx1011</em> 、<em>Navi14/gfx1012</em> の範囲に加えて、<code>FeatureGFX10_3Insts</code>、<code>FeatureGFX10_BEncoding</code> が追加される。<br>
+後者は新たな命令エンコードのフォーマットとされるが、前者の概要はまだ明らかになっていない。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+また、<em>Navi1x</em> であったバグ等が修正されている。<br>
+<em>Arcturus</em> で追加された一部ドット積の混合演算には対応しなかった。 (<code>FeatureDot3Insts</code>、<code>FeatureDot4Insts</code>)<br>
 そして、<code>HalfRate64Ops</code>、<code>FeatureSRAMECC</code> にも対応していないことから、大方察しが付いているように <em>Navi21</em> は <em>Navi1x</em> 同様にゲーミング向けのGPUだろう。<span class="complement">今後それらに対応した RDNAアーキテクチャ GPUが出てくることはあるのだろうか？ 完全に GCNアーキテクチャが担当することに？</span>
 </p>
-
-<p>他には、<code>image_msaa_load</code> 命令が追加されている。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">3</a></sup><br />
+<p>他には、<code>image_msaa_load</code> 命令が追加されている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 グラフィクス系の命令と考えられ、うまく読め解けないため推測となるが、MSAA処理を施したデータをどのレベルでコヒーレントを取るか指定できるようになっている？ (SLC = System Level Coherent, GLC = Globally Coherent)</p>
+<p>以前、OpenGL/Vulkan ドライバーに追加されたコードと同様に、SIMD32ユニットあたりの Wave数が 16エントリとなることを示すコードも追加されている。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/06/09/amd-sienna-cichlid-oss-umd/">AMD Sienna Cichlid をサポートするパッチが OpenGL、Vulkanドライバーに投稿される | Coelacanth&rsquo;s Dream</a></span>
 
-<p>以前、OpenGL/Vulkan ドライバーに追加されたコードと同様に、SIMD32ユニットあたりの Wave数が 16エントリとなることを示すコードも追加されている。<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup><br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/06/09/amd-sienna-cichlid-oss-umd/">AMD Sienna Cichlid をサポートするパッチが OpenGL、Vulkanドライバーに投稿される | Coelacanth's Dream</a></span>
-
-その時に、<em>AMD Polaris系</em> も SIMD16ユニットあたり 8エントリとなっていると書いたが、LLVM のコードにはそういった記述は見つけられなかった。<br />
+その時に、<em>AMD Polaris系</em> も SIMD16ユニットあたり 8エントリとなっていると書いたが、LLVM のコードにはそういった記述は見つけられなかった。<br>
 グラフィクス系処理のみに向けた最適化の一環だったりするのだろうか？</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://developer.amd.com/wp-content/resources/RDNA_Shader_ISA.pdf" rel="nofollow noreferrer" target="_blank">https://developer.amd.com/wp-content/resources/RDNA_Shader_ISA.pdf</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA_Shader_ISA.pdf">https://developer.amd.com/wp-content/resources/RDNA_Shader_ISA.pdf</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=7366021e3854532837dc5c569bc8a24bb023c11b" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=7366021e3854532837dc5c569bc8a24bb023c11b</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2"><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td" rel="nofollow noreferrer" target="_blank">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:3"><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/test/CodeGen/AMDGPU/llvm.amdgcn.image.msaa.load.ll" rel="nofollow noreferrer" target="_blank">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/test/CodeGen/AMDGPU/llvm.amdgcn.image.msaa.load.ll</a>
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:4"><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/Utils/AMDGPUBaseInfo.cpp" rel="nofollow noreferrer" target="_blank">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/Utils/AMDGPUBaseInfo.cpp</a>
- <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=7366021e3854532837dc5c569bc8a24bb023c11b">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=7366021e3854532837dc5c569bc8a24bb023c11b</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/AMDGPU.td</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/test/CodeGen/AMDGPU/llvm.amdgcn.image.msaa.load.ll">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/test/CodeGen/AMDGPU/llvm.amdgcn.image.msaa.load.ll</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/Utils/AMDGPUBaseInfo.cpp">https://github.com/llvm/llvm-project/blob/9ee272f13d88f090817235ef4f91e56bb2a153d6/llvm/lib/Target/AMDGPU/Utils/AMDGPUBaseInfo.cpp</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

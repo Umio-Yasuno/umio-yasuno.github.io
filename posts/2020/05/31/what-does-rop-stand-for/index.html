@@ -69,91 +69,83 @@
 <div class="article-time">
     <time datetime="2020-05-31 20:12 &#43;0900" class="time-b">Post: 2020/05/31 20:12 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/09/16 05:03 &#43;0900</div>
-  </div>
-
-<p>GPU のグラフィック性能を推し量る際の指標として用いられる <em>ROP</em> 。<br />
+  </div><p>GPU のグラフィック性能を推し量る際の指標として用いられる <em>ROP</em> 。<br>
 その役割はともかく、何の略称かはあんまり気にされなかったりする。</p>
-
 <h2 id="rop-の役割">ROP の役割</h2>
-
-<p><em>ROP</em> は GPU のレンダリングパイプライン最終段に位置し、結果をピクセルに対応させ、メモリ(フレームバッファ) に書き出す役割を持つ。<br />
+<p><em>ROP</em> は GPU のレンダリングパイプライン最終段に位置し、結果をピクセルに対応させ、メモリ(フレームバッファ) に書き出す役割を持つ。<br>
 他にも、MSAAやEQAAといったアンチエイリアス処理を行なうための処理ユニットも ROP に含まれる。</p>
-
-<p><em>AMD GCNアーキテクチャ GPU</em> では効率を良くするために ROP 相当のユニットを L2cache経由でメモリコントローラにアクセス、書き出しを行なう。<br />
+<p><em>AMD GCNアーキテクチャ GPU</em> では効率を良くするために ROP 相当のユニットを L2cache経由でメモリコントローラにアクセス、書き出しを行なう。<br>
 <em>NVIDIA GPU</em> も似た構成を取っている。</p>
-
-<p>この構成によって、製品の差別化のため搭載メモリチップ数を減らす(=一部メモリコントローラを無効化)と、合わせて L2cache、ROP も一部無効化される。<br />
-それだけではないとも思うが、このことが性能に関係する印象を強め、指標に用いられやすくなったのかもしれない。<br />
-しかし、<em>AMD RDNAアーキテクチャ GPU</em> からは新たに増設された L1cache に ROP を直接接続するようになったため、メモリコントローラを一部無効化しても ROP をそれに応じて無効化しなくてもいいようになった。<br />
-実際に、メモリコントローラを一部無効化し、フル構成となる <strong>AMD Radeon RX 5700シリーズ</strong> の 256-bit から 192-bit に減った <strong>RX 5600シリーズ</strong> の ROP数は変わらず 64基となっている。<br />
-そのため、<em>AMD RDNAアーキテクチャ GPU</em> においては、ROP数を指標に使うにはズレが生じることを考慮しなければいけない。<br />
+<p>この構成によって、製品の差別化のため搭載メモリチップ数を減らす(=一部メモリコントローラを無効化)と、合わせて L2cache、ROP も一部無効化される。<br>
+それだけではないとも思うが、このことが性能に関係する印象を強め、指標に用いられやすくなったのかもしれない。<br>
+しかし、<em>AMD RDNAアーキテクチャ GPU</em> からは新たに増設された L1cache に ROP を直接接続するようになったため、メモリコントローラを一部無効化しても ROP をそれに応じて無効化しなくてもいいようになった。<br>
+実際に、メモリコントローラを一部無効化し、フル構成となる <strong>AMD Radeon RX 5700シリーズ</strong> の 256-bit から 192-bit に減った <strong>RX 5600シリーズ</strong> の ROP数は変わらず 64基となっている。<br>
+そのため、<em>AMD RDNAアーキテクチャ GPU</em> においては、ROP数を指標に使うにはズレが生じることを考慮しなければいけない。<br>
 (ただ L2cache は無効化される。また、する必要がなくとも今後製品差別化のため ROP を無効化することがあり得るかもしれない。)</p>
-
 <h2 id="rop-のフルネーム">ROP のフルネーム</h2>
-
-<p>ROP のフルネームはあやふやだ。<br />
+<p>ROP のフルネームはあやふやだ。<br>
 <em>Render OutPut</em> または <em>Render OutPut Unit</em> とされたり、<em>Raster OPeration</em> の略だったり、少し変わって <em>Raster Operations Pipeline</em> だったり、またさらに少し変えた <em>Raster Operation Processor</em> だったりする。</p>
-
-<p>NVIDIA の各資料から見るに、2004年時点では <em>Raster OPeration</em> <sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup><sup class="footnote-ref" id="fnref:3"><a href="#fn:3">2</a></sup> と <em>Raster OPeration Unit</em> <sup class="footnote-ref" id="fnref:2"><a href="#fn:2">3</a></sup>の両方を使っていた。</p>
-
-<p>2007年の NVIDIA Teslaブランドの立ち上げ後<sup class="footnote-ref" id="fnref:4"><a href="#fn:4">4</a></sup>に、2008年の HotChips19 に合わせて発表したと思われる資料では <em>Raster Operation Processor</em> の略としている。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup></p>
-
-<p>2007年の <strong>NVIDIA GeForce 8800</strong> の資料では先の <em>Raster Operation Processor</em> と <em>Raster Operation Pipeline</em> の両方を使っている。<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">6</a></sup><br />
-何だかややこしいが、<em>Raster Operation Processor</em> は ROPのユニット全体を示し、<em>Raster Operation Pipeline</em> は ROP内部のパイプラインを示しているのだろうか？<br />
+<p>NVIDIA の各資料から見るに、2004年時点では <em>Raster OPeration</em> <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> と <em>Raster OPeration Unit</em> <sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>の両方を使っていた。</p>
+<p>2007年の NVIDIA Teslaブランドの立ち上げ後<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>に、2008年の HotChips19 に合わせて発表したと思われる資料では <em>Raster Operation Processor</em> の略としている。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<p>2007年の <strong>NVIDIA GeForce 8800</strong> の資料では先の <em>Raster Operation Processor</em> と <em>Raster Operation Pipeline</em> の両方を使っている。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
+何だかややこしいが、<em>Raster Operation Processor</em> は ROPのユニット全体を示し、<em>Raster Operation Pipeline</em> は ROP内部のパイプラインを示しているのだろうか？<br>
 この2つは ROP の名称としてはしっくり来るためか、公式以外のメディアやユーザーコミュニティ内で ROP を解説する際はどちらかが名称に使われることが多い。</p>
-
-<p>2015年には <em>Render Output Unit</em> の略としている。<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">7</a></sup><br />
+<p>2015年には <em>Render Output Unit</em> の略としている。<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup><br>
 Raster から離れたのは、ROP とは別に、それより前のレンダリングパイプライン段でラスタライザ処理を行なう <em>Raster Unit /Raster Engine</em> があるため混同を避けたかったのだろう。</p>
-
-<p>そして、今日では ROP は記号と化している。<br />
-<a href="https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/technologies/turing-architecture/NVIDIA-Turing-Architecture-Whitepaper.pdf" rel="nofollow noreferrer" target="_blank">NVIDIA-Turing-Architecture-Whitepaper.pdf</a> を見ても、わざわざ ROP が何の略かは説明していない。<br />
-2015年時点でも、<em>Render Output Unit</em> としているのに、ROP Unit と書いていたりと、既に記号化が進んでいた。<br />
-これは AMD もそうで、そも <em>AMD GPU</em> は ROP 4基相当の RB(Render Backend)を単位としているのに、<br />
+<p>そして、今日では ROP は記号と化している。<br>
+<a href="https://www.nvidia.com/content/dam/en-zz/Solutions/design-visualization/technologies/turing-architecture/NVIDIA-Turing-Architecture-Whitepaper.pdf">NVIDIA-Turing-Architecture-Whitepaper.pdf</a> を見ても、わざわざ ROP が何の略かは説明していない。<br>
+2015年時点でも、<em>Render Output Unit</em> としているのに、ROP Unit と書いていたりと、既に記号化が進んでいた。<br>
+これは AMD もそうで、そも <em>AMD GPU</em> は ROP 4基相当の RB(Render Backend)を単位としているのに、<br>
 公式のスペックで相当ROP数を出すのは、競合との比較のためという意味合いがあるのではないかと思う。</p>
-
-<p>Intel はどうなのかというと、 Slice Common が ROP としての機能を含んでおり、その中で結果をメモリ出力するユニットを PBE(Picel Back-End) と呼んでいる。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">8</a></sup><br />
-関連して、わかりやすさを重視してか、NVIDIA、AMDも ROP を <em>Pixel Engine /Pixel Unit</em> としている資料もある。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">9</a></sup><sup class="footnote-ref" id="fnref:9"><a href="#fn:9">10</a></sup></p>
-
-<p>個人的にもその方がまだ直感的にわかりやすいと思うが、今後 Intel が本格的に ハイパフォーマンスGPU へ進出すれば、<br />
+<p>Intel はどうなのかというと、 Slice Common が ROP としての機能を含んでおり、その中で結果をメモリ出力するユニットを PBE(Picel Back-End) と呼んでいる。<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup><br>
+関連して、わかりやすさを重視してか、NVIDIA、AMDも ROP を <em>Pixel Engine /Pixel Unit</em> としている資料もある。<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup><sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></p>
+<p>個人的にもその方がまだ直感的にわかりやすいと思うが、今後 Intel が本格的に ハイパフォーマンスGPU へ進出すれば、<br>
 その時は競合 NVIDIA、AMD を意識し、Intel もまた記号として ROP を使い始めるかもしれない。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://en.wikipedia.org/wiki/Render_output_unit" rel="nofollow noreferrer" target="_blank">Render output unit - Wikipedia</a></li>
-<li><a href="https://ascii.jp/elem/000/001/877/1877938/2/" rel="nofollow noreferrer" target="_blank">ASCII.jp：詳細が判明したRDNAの内部構造　AMD GPUロードマップ (2/4)</a></li>
-<li><a href="https://www.4gamer.net/games/274/G027467/20150130109/" rel="nofollow noreferrer" target="_blank">NVIDIAのGPU開発部門責任者に聞く「GeForce GTX 970のVRAM 3.5GB問題」 - 4Gamer.net</a></li>
-<li><a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-5600-xt#product-specs" rel="nofollow noreferrer" target="_blank">AMD Radeon™ RX 5600 XT Graphics | AMD</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Render_output_unit">Render output unit - Wikipedia</a></li>
+<li><a href="https://ascii.jp/elem/000/001/877/1877938/2/">ASCII.jp：詳細が判明したRDNAの内部構造　AMD GPUロードマップ (2/4)</a></li>
+<li><a href="https://www.4gamer.net/games/274/G027467/20150130109/">NVIDIAのGPU開発部門責任者に聞く「GeForce GTX 970のVRAM 3.5GB問題」 - 4Gamer.net</a></li>
+<li><a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-5600-xt#product-specs">AMD Radeon™ RX 5600 XT Graphics | AMD</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1"><a href="https://download.nvidia.com/developer/Handheld_SDK/PO_GoForce_3D.pdf" rel="nofollow noreferrer" target="_blank">ar10_po_v01c bjs1.fm - PO_GoForce_3D.pdf</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:3"><a href="https://developer.nvidia.com/gpugems/gpugems/part-v-performance-and-practicalities/chapter-28-graphics-pipeline-performance" rel="nofollow noreferrer" target="_blank">Chapter 28. Graphics Pipeline Performance | NVIDIA Developer</a>
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:2"><a href="https://download.nvidia.com/developer/presentations/2004/Perfect_Kitchen_Art/English_Evolution_of_GPUs.pdf#page=8" rel="nofollow noreferrer" target="_blank">Evolution_of_GPUs.ppt - English_Evolution_of_GPUs.pdf</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:4"><a href="https://pc.watch.impress.co.jp/docs/2007/0621/nvidia.htm" rel="nofollow noreferrer" target="_blank">NVIDIA、G80ベースのHPC向けGPU「Tesla」</a>
- <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
-<li id="fn:5"><a href="https://people.cs.umass.edu/~emery/classes/cmpsci691st/readings/Arch/gpu.pdf" rel="nofollow noreferrer" target="_blank">micr-28-02-lind 39..55 - gpu.pdf</a>
- <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
-<li id="fn:10"><a href="https://www.hotchips.org/wp-content/uploads/hc_archives/hc19/2_Mon/HC19.02/HC19.02.01.pdf" rel="nofollow noreferrer" target="_blank">HC19.20.210.The NVIDIA GeForce 8800 GPU.v3.ppt - HC19.02.01.pdf</a>
- <a class="footnote-return" href="#fnref:10"><sup>[return]</sup></a></li>
-<li id="fn:6"><a href="https://developer.nvidia.com/content/life-triangle-nvidias-logical-pipeline" rel="nofollow noreferrer" target="_blank">Life of a triangle - NVIDIA's logical pipeline | NVIDIA Developer</a>
- <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
-<li id="fn:7"><a href="https://software.intel.com/content/dam/develop/public/us/en/documents/the-architecture-of-intel-processor-graphics-gen11-r1new.pdf#page=17" rel="nofollow noreferrer" target="_blank">the-architecture-of-intel-processor-graphics-gen11-r1new.pdf</a>
- <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
-<li id="fn:8"><a href="http://developer.download.nvidia.com/assets/gamedev/docs/Windowing_System_on_a_3D_Pipeline_Slides.pdf" rel="nofollow noreferrer" target="_blank"> Windowing System on a 3D Pipeline - Windowing_System_on_a_3D_Pipeline_Slides.pdf</a>
- <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
-<li id="fn:9"><a href="https://www.hotchips.org/wp-content/uploads/hc_archives/hc29/HC29.21-Monday-Pub/HC29.21.10-GPU-Gaming-Pub/HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf" rel="nofollow noreferrer" target="_blank">M&amp;E GBGH - HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf</a>
- <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://download.nvidia.com/developer/Handheld_SDK/PO_GoForce_3D.pdf">ar10_po_v01c bjs1.fm - PO_GoForce_3D.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://developer.nvidia.com/gpugems/gpugems/part-v-performance-and-practicalities/chapter-28-graphics-pipeline-performance">Chapter 28. Graphics Pipeline Performance | NVIDIA Developer</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://download.nvidia.com/developer/presentations/2004/Perfect_Kitchen_Art/English_Evolution_of_GPUs.pdf#page=8">Evolution_of_GPUs.ppt - English_Evolution_of_GPUs.pdf</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://pc.watch.impress.co.jp/docs/2007/0621/nvidia.htm">NVIDIA、G80ベースのHPC向けGPU「Tesla」</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://people.cs.umass.edu/~emery/classes/cmpsci691st/readings/Arch/gpu.pdf">micr-28-02-lind 39..55 - gpu.pdf</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://www.hotchips.org/wp-content/uploads/hc_archives/hc19/2_Mon/HC19.02/HC19.02.01.pdf">HC19.20.210.The NVIDIA GeForce 8800 GPU.v3.ppt - HC19.02.01.pdf</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p><a href="https://developer.nvidia.com/content/life-triangle-nvidias-logical-pipeline">Life of a triangle - NVIDIA&rsquo;s logical pipeline | NVIDIA Developer</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p><a href="https://software.intel.com/content/dam/develop/public/us/en/documents/the-architecture-of-intel-processor-graphics-gen11-r1new.pdf#page=17">the-architecture-of-intel-processor-graphics-gen11-r1new.pdf</a>&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9" role="doc-endnote">
+<p><a href="http://developer.download.nvidia.com/assets/gamedev/docs/Windowing_System_on_a_3D_Pipeline_Slides.pdf"> Windowing System on a 3D Pipeline - Windowing_System_on_a_3D_Pipeline_Slides.pdf</a>&#160;<a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10" role="doc-endnote">
+<p><a href="https://www.hotchips.org/wp-content/uploads/hc_archives/hc29/HC29.21-Monday-Pub/HC29.21.10-GPU-Gaming-Pub/HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf">M&amp;E GBGH - HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf</a>&#160;<a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

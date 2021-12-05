@@ -70,37 +70,34 @@
 <div class="article-time">
     <time datetime="2020-07-21 19:58 &#43;0900" class="time-b">Post: 2020/07/21 19:58 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/07/21 20:48 &#43;0900</div>
-  </div><p>Linux Kernel 内の、各 Intelプロセッサのモデルナンバー(<code>x86_Model</code>) をまとめた <a href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h" rel="nofollow noreferrer" target="_blank">linux/intel-family.h</a> に次世代 Intelプロセッサのモデルナンバーを追加するパッチが投稿され、<br />
-その中で、<a href="https://www.coelacanth-dream.com/tags/alder_lake">Alder Lake</a> が <a href="https://www.coelacanth-dream.com/tags/lakefield">Lakefield</a> 同様にハイブリッドコア構成を取ることが確かとなった。<br />
-<span class="thread-link"><a href="https://lkml.org/lkml/2020/7/21/17" rel="nofollow noreferrer" target="_blank">LKML: Tony Luck: [PATCH] x86/cpu: Add Lakefield, Alder Lake and Rocket Lake to Intel family</a></span>
+  </div><p>Linux Kernel 内の、各 Intelプロセッサのモデルナンバー(<code>x86_Model</code>) をまとめた <a href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h">linux/intel-family.h</a> に次世代 Intelプロセッサのモデルナンバーを追加するパッチが投稿され、<br>
+その中で、<a href="https://www.coelacanth-dream.com/tags/alder_lake">Alder Lake</a> が <a href="https://www.coelacanth-dream.com/tags/lakefield">Lakefield</a> 同様にハイブリッドコア構成を取ることが確かとなった。<br>
+<span class="thread-link"><a href="https://lkml.org/lkml/2020/7/21/17">LKML: Tony Luck: [PATCH] x86/cpu: Add Lakefield, Alder Lake and Rocket Lake to Intel family</a></span>
 </p>
-
 <blockquote>
-<pre tabindex="0"><code>+#define INTEL_FAM6_ROCKETLAKE     0xA7
+<pre><code>+#define INTEL_FAM6_ROCKETLAKE		0xA7
 +
-#define INTEL_FAM6_SAPPHIRERAPIDS_X    0x8F
+#define INTEL_FAM6_SAPPHIRERAPIDS_X	0x8F
 
 +/* Hybrid Core/Atom Processors */
 +
-+#define   INTEL_FAM6_LAKEFIELD        0x8A
-+#define INTEL_FAM6_ALDERLAKE      0x97
-+</code></pre>
-<p>引用元: <cite><a href="https://lkml.org/lkml/2020/7/21/17" rel="nofollow noreferrer" target="_blank">LKML: Tony Luck: [PATCH] x86/cpu: Add Lakefield, Alder Lake and Rocket Lake to Intel family</a></cite></p>
++#define	INTEL_FAM6_LAKEFIELD		0x8A
++#define INTEL_FAM6_ALDERLAKE		0x97
++
+</code></pre>
+<p>引用元: <cite><a href="https://lkml.org/lkml/2020/7/21/17">LKML: Tony Luck: [PATCH] x86/cpu: Add Lakefield, Alder Lake and Rocket Lake to Intel family</a></cite></p>
 </blockquote>
-
 <p>同時に <a href="https://www.coelacanth-dream.com/tags/rocket_lake">Rocket Lake</a>、そしてようやく <em>Lakefield</em> のモデルナンバーも追加されている。</p>
+<p><em>Alder Lake</em> には <strong>Alder Lake-S</strong> と <strong>Alder Lake-P</strong> の 2種類存在することが確認されており、<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/05/01/vboot-code-add-alderlake/">ChromiumOSへのパッチから Alderlake-S / Alderlake-P を確認 | Coelacanth&rsquo;s Dream</a></span>
 
-<p><em>Alder Lake</em> には <strong>Alder Lake-S</strong> と <strong>Alder Lake-P</strong> の 2種類存在することが確認されており、<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/05/01/vboot-code-add-alderlake/">ChromiumOSへのパッチから Alderlake-S / Alderlake-P を確認 | Coelacanth's Dream</a></span>
+そして、<a href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h">linux/intel-family.h</a> の命名方式に従えば、末尾に <code>_L</code> や <code>_X</code> が付いてないものはクライアント向けとされているため、今回追加されたモデルナンバーは <strong>Alder Lake-S</strong> にあたるのではないかと思う。</p>
+<p><em>Alder Lake</em> がハイブリッド構成を取るとなると、やはり <em>Lakefield</em> に先駆けて GCC に拡張命令セット周りがサポートされたことになるが、<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/07/10/intel-gcc-patch-spr-adl/">Intel、GCC に Sapphire Rapids と Alder Lake をサポートするパッチを投稿 | Coelacanth&rsquo;s Dream</a></span>
 
-そして、<a href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h" rel="nofollow noreferrer" target="_blank">linux/intel-family.h</a> の命名方式に従えば、末尾に <code>_L</code> や <code>_X</code> が付いてないものはクライアント向けとされているため、今回追加されたモデルナンバーは <strong>Alder Lake-S</strong> にあたるのではないかと思う。</p>
-
-<p><em>Alder Lake</em> がハイブリッド構成を取るとなると、やはり <em>Lakefield</em> に先駆けて GCC に拡張命令セット周りがサポートされたことになるが、<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/07/10/intel-gcc-patch-spr-adl/">Intel、GCC に Sapphire Rapids と Alder Lake をサポートするパッチを投稿 | Coelacanth's Dream</a></span>
-
-その時示された、<em>Skylake</em> の対応範囲に <code>CLDEMOTE /PTWRITE /WAITPK /SERIALIZE</code> 追加した対応命令が Big Core / small core 両方が対応したものかどうかは気になる所だ。<br />
-<em>Lakefield</em> では AVX といった 2種類の内、片方のコアはサポートしているが、片方のコアが対応していない命令のサポートが外されていた。<br />
-示されたのが両方のコアが対応した命令であれば、次世代の Atom系コア(small core) は AVX/2命令をサポートすることとなる。<br />
+その時示された、<em>Skylake</em> の対応範囲に <code>CLDEMOTE /PTWRITE /WAITPK /SERIALIZE</code> 追加した対応命令が Big Core / small core 両方が対応したものかどうかは気になる所だ。<br>
+<em>Lakefield</em> では AVX といった 2種類の内、片方のコアはサポートしているが、片方のコアが対応していない命令のサポートが外されていた。<br>
+示されたのが両方のコアが対応した命令であれば、次世代の Atom系コア(small core) は AVX/2命令をサポートすることとなる。<br>
 これまでの Atom系コアは AVX系命令をサポートしてこなかったため、大きな変化と言えるだろう。</p>
 <div class="article-bottom-misc">
   <div class="rss-block">

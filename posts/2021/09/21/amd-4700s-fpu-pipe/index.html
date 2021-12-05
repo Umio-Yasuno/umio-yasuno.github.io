@@ -70,279 +70,237 @@
 <div class="article-time">
     <time datetime="2021-09-21 22:51 &#43;0900" class="time-b">Post: 2021/09/21 22:51 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/09/28 20:35 &#43;0900</div>
-  </div><p>チップに関する解説や情報発信といった活動を行っている <a href="https://twitter.com/GPUsAreMagic" rel="nofollow noreferrer" target="_blank">Nemez (@GPUsAreMagic)</a> 氏 (<a href="https://www.patreon.com/nemezor" rel="nofollow noreferrer" target="_blank">Nemez | Patreon</a>) と、<br />
-<a href="https://www.hardwareluxx.de/" rel="nofollow noreferrer" target="_blank">Hardwareluxx</a> のエディターである <a href="https://twitter.com/aschilling" rel="nofollow noreferrer" target="_blank">Andreas Schilling (@aschilling)</a> 氏により、<em>Zen 2 アーキテクチャ</em> を採用するとしている <strong>AMD 4700S</strong> と同アーキテクチャの <strong>Ryzen Threadripper 3960X</strong> の IPC 計測結果を比較したものが公開された。</p>
-
+  </div><p>チップに関する解説や情報発信といった活動を行っている <a href="https://twitter.com/GPUsAreMagic">Nemez (@GPUsAreMagic)</a> 氏 (<a href="https://www.patreon.com/nemezor">Nemez | Patreon</a>) と、<br>
+<a href="https://www.hardwareluxx.de/">Hardwareluxx</a> のエディターである <a href="https://twitter.com/aschilling">Andreas Schilling (@aschilling)</a> 氏により、<em>Zen 2 アーキテクチャ</em> を採用するとしている <strong>AMD 4700S</strong> と同アーキテクチャの <strong>Ryzen Threadripper 3960X</strong> の IPC 計測結果を比較したものが公開された。</p>
 <ul>
-<li><a href="https://twitter.com/GPUsAreMagic/status/1439205765559066627" rel="nofollow noreferrer" target="_blank">https://twitter.com/GPUsAreMagic/status/1439205765559066627</a></li>
-<li><a href="https://www.hardwareluxx.de/index.php/artikel/hardware/prozessoren/57076-ps5-custom-chip-mit-einschraenkungen-das-ryzen-4700s-desktop-kit-im-test.html" rel="nofollow noreferrer" target="_blank">PS5-Custom-Chip mit Einschränkungen: Das Ryzen 4700S Desktop Kit im Test - Hardwareluxx</a></li>
+<li><a href="https://twitter.com/GPUsAreMagic/status/1439205765559066627">https://twitter.com/GPUsAreMagic/status/1439205765559066627</a></li>
+<li><a href="https://www.hardwareluxx.de/index.php/artikel/hardware/prozessoren/57076-ps5-custom-chip-mit-einschraenkungen-das-ryzen-4700s-desktop-kit-im-test.html">PS5-Custom-Chip mit Einschränkungen: Das Ryzen 4700S Desktop Kit im Test - Hardwareluxx</a></li>
 </ul>
-
-<p>IPC の計測には Nemez 氏が開発した <a href="https://git.nemez.net/nemes/ipc-tests" rel="nofollow noreferrer" target="_blank">Nemes / IPC Tests · GitLab</a> が用いられている。テストの中身としては同じ命令をレジスタ依存が発生しないように複数並べることで IPC を計測している。</p>
-
+<p>IPC の計測には Nemez 氏が開発した <a href="https://git.nemez.net/nemes/ipc-tests">Nemes / IPC Tests · GitLab</a> が用いられている。テストの中身としては同じ命令をレジスタ依存が発生しないように複数並べることで IPC を計測している。</p>
 <ul>
-<li>参考: <a href="http://nano.flop.jp/txt/instruction/index.html" rel="nofollow noreferrer" target="_blank">命令単体の性能を計測する</a></li>
+<li>参考: <a href="http://nano.flop.jp/txt/instruction/index.html">命令単体の性能を計測する</a></li>
 </ul>
-
 <p>計測結果から <strong>AMD 4700S</strong> では FPU部に通常の <em>Zen 2 アーキテクチャ</em> から変更、削減された部分があると考えられるため、FPU部を中心に書いていく。</p>
-
-<p><em>Zen/+/2 アーキテクチャ</em> では、FPU部に 4本の実行パイプラインを持ち、2x MUL + 2x ADD で構成されている。<br />
-<a href="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h" rel="nofollow noreferrer" target="_blank">Software Optimization Guide for AMD Family 17h Models 30h and Greater Processors</a> によれば、<em>Zen 2 アーキテクチャ</em> の 各実行パイプと実行ユニットの対応関係は以下のようになっている。</p>
-
+<p><em>Zen/+/2 アーキテクチャ</em> では、FPU部に 4本の実行パイプラインを持ち、2x MUL + 2x ADD で構成されている。<br>
+<a href="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h">Software Optimization Guide for AMD Family 17h Models 30h and Greater Processors</a> によれば、<em>Zen 2 アーキテクチャ</em> の 各実行パイプと実行ユニットの対応関係は以下のようになっている。</p>
 <table>
 <thead>
 <tr>
-<th align="left">Unit</th>
-<th align="center">Pipe 0 <br> (MUL)</th>
-<th align="center">Pipe 1 <br> (MUL)</th>
-<th align="center">Pipe 2 <br> (ADD)</th>
-<th align="center">Pipe 3 <br> (ADD)</th>
+<th style="text-align:left">Unit</th>
+<th style="text-align:center">Pipe 0 <br> (MUL)</th>
+<th style="text-align:center">Pipe 1 <br> (MUL)</th>
+<th style="text-align:center">Pipe 2 <br> (ADD)</th>
+<th style="text-align:center">Pipe 3 <br> (ADD)</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">FMUL</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"></td>
-<td align="center"></td>
+<td style="text-align:left">FMUL</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">FADD</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">X</td>
-<td align="center">X</td>
+<td style="text-align:left">FADD</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">FCVT</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">X</td>
+<td style="text-align:left">FCVT</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">FDIV</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">X</td>
+<td style="text-align:left">FDIV</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">FMISC</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
+<td style="text-align:left">FMISC</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">STORE</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">X</td>
-<td align="center"></td>
+<td style="text-align:left">STORE</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">VADD</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"></td>
-<td align="center">X</td>
+<td style="text-align:left">VADD</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">VMUL</td>
-<td align="center">X</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td style="text-align:left">VMUL</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">VSHUF</td>
-<td align="center"></td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"></td>
+<td style="text-align:left">VSHUF</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">VSHIFT</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">X</td>
-<td align="center"></td>
+<td style="text-align:left">VSHIFT</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">VMISC</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center">X</td>
+<td style="text-align:left">VMISC</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">AES</td>
-<td align="center">X</td>
-<td align="center">X</td>
-<td align="center"></td>
-<td align="center"></td>
+<td style="text-align:left">AES</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">CLM<sup class="footnote-ref" id="fnref:clm"><a href="#fn:clm">1</a></sup></td>
-<td align="center"></td>
-<td align="center">S</td>
-<td align="center"></td>
-<td align="center"></td>
+<td style="text-align:left">CLM<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">S</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
 </tr>
 </tbody>
 </table>
+<span class="thread-link"><a href="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h">Software Optimization Guide for AMD Family 17h Models 30h and Greater Processors</a></span>
 
-<span class="thread-link"><a href="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h" rel="nofollow noreferrer" target="_blank">Software Optimization Guide for AMD Family 17h Models 30h and Greater Processors</a></span>
-
-
-<p>Nemez 氏は結果から、<strong>AMD 4700S</strong> では通常の <em>Zen 2 アーキテクチャ</em> から FPUパイプ/ポート が 2本に削減されていると述べている。<br />
+<p>Nemez 氏は結果から、<strong>AMD 4700S</strong> では通常の <em>Zen 2 アーキテクチャ</em> から FPUパイプ/ポート が 2本に削減されていると述べている。<br>
 自分も 2本の FPUパイプ、MUL, ADD が 1本ずつ減らされていると考えている。</p>
-
-<p>そう考えた理由をつらつらと書いていく。<br />
-まず <code>{add, sub, mul, madd, div}_{avx256, sse128}_float</code> の性能が <strong>AMD 4700S</strong> ではほぼ半減している。<br />
-<code>avx256, sse128</code> での性能が変わらないことから、<strong>AMD 4700S</strong> の FPU はデータ幅 256-bit であり、この点は通常の <em>Zen 2 アーキテクチャ</em> と同じである。<br />
-<code>mul_{avx256, sse128}_int</code> の性能は変わらないが、これは通常の <em>Zen 2 アーキテクチャ</em> でも VMUL (<code>VPMULLD/PMULLD</code>) を実行可能なのは Pipe 0 のみとなっているためと思われる。<br />
-<code>{add, sub}_{avx256, sse128}_int</code> の性能は 2/3 (-33%) となっているが、VADD (<code>VPADDD/PADDD</code>) は <em>Zen 2 アーキテクチャ</em> では Pipe0/1/3 で実行可能となっている。MUL と ADD のパイプを 1本ずつ減らし、残った 2本のどちらも VADD が実行可能とした場合 2/3 となり計測結果と一致する。<br />
+<p>そう考えた理由をつらつらと書いていく。<br>
+まず <code>{add, sub, mul, madd, div}_{avx256, sse128}_float</code> の性能が <strong>AMD 4700S</strong> ではほぼ半減している。<br>
+<code>avx256, sse128</code> での性能が変わらないことから、<strong>AMD 4700S</strong> の FPU はデータ幅 256-bit であり、この点は通常の <em>Zen 2 アーキテクチャ</em> と同じである。<br>
+<code>mul_{avx256, sse128}_int</code> の性能は変わらないが、これは通常の <em>Zen 2 アーキテクチャ</em> でも VMUL (<code>VPMULLD/PMULLD</code>) を実行可能なのは Pipe 0 のみとなっているためと思われる。<br>
+<code>{add, sub}_{avx256, sse128}_int</code> の性能は 2/3 (-33%) となっているが、VADD (<code>VPADDD/PADDD</code>) は <em>Zen 2 アーキテクチャ</em> では Pipe0/1/3 で実行可能となっている。MUL と ADD のパイプを 1本ずつ減らし、残った 2本のどちらも VADD が実行可能とした場合 2/3 となり計測結果と一致する。<br>
 また、MUL パイプを 1本減らしているとすると、AES の性能も半減しているものと思われる。</p>
-
-<p><code>div_{avx256, sse128}_float</code> も元から Pipe 3 のみで実行可能となっているが、<strong>AMD 4700S</strong> ではこの FDIV (<code>VDIVPS/DIVPS</code>) 性能もほぼ半減している。<br />
-これについては正直自分では分からない。<br />
-「Family 17h Models 30h and Greater Instruction Latencies version_1.00」では IPC (Throughput) が 0.20 とされているのに、<strong>3960X</strong> の計測結果では 0.284-0.287 となっていることについては、<br />
-FDIVユニットはパイプが占有中でも 2つのオペレーションを同時に行える点が関係しているのかもしれないが、これは <em>Zen アーキテクチャ</em> にも共通し、手元の <strong>Ryzen 5 2600</strong> で試した所、「Family 17h Instruction Latencies version_1.00」に記載されているのと近い値が出た。<br />
-今回調べるにあたって参考とした <a href="https://github.com/tanakamura" rel="nofollow noreferrer" target="_blank">tanakamura (Takashi Nakamura)</a> 氏が開発している <a href="https://github.com/tanakamura/instruction-bench" rel="nofollow noreferrer" target="_blank">instruction-bench</a> でも、<em>Zen 2 アーキテクチャ</em> の <code>VDIVPS/DIVPS</code> は IPC= 0.29 となっている。<sup class="footnote-ref" id="fnref:inst-bench"><a href="#fn:inst-bench">2</a></sup><br />
+<p><code>div_{avx256, sse128}_float</code> も元から Pipe 3 のみで実行可能となっているが、<strong>AMD 4700S</strong> ではこの FDIV (<code>VDIVPS/DIVPS</code>) 性能もほぼ半減している。<br>
+これについては正直自分では分からない。<br>
+「Family 17h Models 30h and Greater Instruction Latencies version_1.00」では IPC (Throughput) が 0.20 とされているのに、<strong>3960X</strong> の計測結果では 0.284-0.287 となっていることについては、<br>
+FDIVユニットはパイプが占有中でも 2つのオペレーションを同時に行える点が関係しているのかもしれないが、これは <em>Zen アーキテクチャ</em> にも共通し、手元の <strong>Ryzen 5 2600</strong> で試した所、「Family 17h Instruction Latencies version_1.00」に記載されているのと近い値が出た。<br>
+今回調べるにあたって参考とした <a href="https://github.com/tanakamura">tanakamura (Takashi Nakamura)</a> 氏が開発している <a href="https://github.com/tanakamura/instruction-bench">instruction-bench</a> でも、<em>Zen 2 アーキテクチャ</em> の <code>VDIVPS/DIVPS</code> は IPC= 0.29 となっている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 それとして、<strong>AMD 4700S</strong> の FDIV 性能が半減していることについて、FDIVユニットが 1つのオペレーションのみをサポートするよう変更された可能性があるが、はっきりとしない。</p>
-
-<p><code>zen_fpu_mix_{21, 22}</code> は <em>Zen/+/2 アーキテクチャ</em> のレジスタポートにある特有の仕様をテストするもので、各 FPUパイプにはレジスタポートが 2本備えられているが、FMA のような 3 ソースオペランドを必要とする命令を実行する際、Pipe 0/1 (MUL) は Pipe 3 (ADD) のレジスタポートを 1つ使う。<br />
-そのため、FMA と ADD が混ざった命令群を実行するとき Pipe 3 (ADD) の実行が止まる可能性出てくる。<em>Zen 2 アーキテクチャ</em> の場合はピーク IPC が FPUパイプ数の 4 ではなく、3 に近くなる。<br />
+<p><code>zen_fpu_mix_{21, 22}</code> は <em>Zen/+/2 アーキテクチャ</em> のレジスタポートにある特有の仕様をテストするもので、各 FPUパイプにはレジスタポートが 2本備えられているが、FMA のような 3 ソースオペランドを必要とする命令を実行する際、Pipe 0/1 (MUL) は Pipe 3 (ADD) のレジスタポートを 1つ使う。<br>
+そのため、FMA と ADD が混ざった命令群を実行するとき Pipe 3 (ADD) の実行が止まる可能性出てくる。<em>Zen 2 アーキテクチャ</em> の場合はピーク IPC が FPUパイプ数の 4 ではなく、3 に近くなる。<br>
 それをテストするのが <code>zen_fpu_mix_{21, 22}</code> であり、<code>zen_fpu_mix_21</code> は 2x FMA (<code>VFMADD132PS</code>) + 1x FADD (<code>VADDPS</code>)、<code>zen_fpu_mix_22</code> は 2x FMA + 2x FADD の塊となっている。</p>
-
 <p>だが <strong>AMD 4700S</strong> では 2 に近く、FADD をブロックすることなく FMA が実行できるよう Pipe 0 にレジスタポートが 3本備えられている <em>可能性</em> があるが、単にうまいこと命令を並び替えて実行している可能性もある。</p>
-
 <p>また、<code>STORE</code> や <code>FCVT</code> 等、ここで計測されなかったものを処理するためのパイプが、演算メインのパイプとは別に持っている可能性もある。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">[AMD 4700S]<br>Unit</th>
-<th align="center">Pipe 0 <br> (MUL ?)</th>
-<th align="center">Pipe 1 <br> (ADD ?)</th>
+<th style="text-align:left">[AMD 4700S]<br>Unit</th>
+<th style="text-align:center">Pipe 0 <br> (MUL ?)</th>
+<th style="text-align:center">Pipe 1 <br> (ADD ?)</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">FMUL</td>
-<td align="center">X</td>
-<td align="center"></td>
+<td style="text-align:left">FMUL</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">FADD</td>
-<td align="center"></td>
-<td align="center">X</td>
+<td style="text-align:left">FADD</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">FCVT</td>
-<td align="center"></td>
-<td align="center">X ?</td>
+<td style="text-align:left">FCVT</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X ?</td>
 </tr>
-
 <tr>
-<td align="left">FDIV</td>
-<td align="center"></td>
-<td align="center">X ?</td>
+<td style="text-align:left">FDIV</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X ?</td>
 </tr>
-
 <tr>
-<td align="left">FMISC</td>
-<td align="center">X</td>
-<td align="center">X</td>
+<td style="text-align:left">FMISC</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">STORE</td>
-<td align="center"></td>
-<td align="center">X ?</td>
+<td style="text-align:left">STORE</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X ?</td>
 </tr>
-
 <tr>
-<td align="left">VADD</td>
-<td align="center">X</td>
-<td align="center">X</td>
+<td style="text-align:left">VADD</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">VMUL</td>
-<td align="center">X</td>
-<td align="center">X</td>
+<td style="text-align:left">VMUL</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">VSHUF</td>
-<td align="center">X ?</td>
-<td align="center">X ?</td>
+<td style="text-align:left">VSHUF</td>
+<td style="text-align:center">X ?</td>
+<td style="text-align:center">X ?</td>
 </tr>
-
 <tr>
-<td align="left">VSHIFT</td>
-<td align="center"></td>
-<td align="center">X ?</td>
+<td style="text-align:left">VSHIFT</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">X ?</td>
 </tr>
-
 <tr>
-<td align="left">VMISC</td>
-<td align="center">X</td>
-<td align="center">X</td>
+<td style="text-align:left">VMISC</td>
+<td style="text-align:center">X</td>
+<td style="text-align:center">X</td>
 </tr>
-
 <tr>
-<td align="left">AES</td>
-<td align="center">X</td>
-<td align="center"></td>
+<td style="text-align:left">AES</td>
+<td style="text-align:center">X</td>
+<td></td>
 </tr>
-
 <tr>
-<td align="left">CLM</td>
-<td align="center">S ?</td>
-<td align="center"></td>
+<td style="text-align:left">CLM</td>
+<td style="text-align:center">S ?</td>
+<td style="text-align:center"></td>
 </tr>
 </tbody>
 </table>
-
-<p><em>Zen/+/2 アーキテクチャ</em> の FPU実行パイプは 2x MUL + 2x ADD という構成だが、細かい部分で実行できる命令はそれぞれ異なり実際には非対称構成となる。<br />
-<strong>AMD 4700S</strong> では FPU実行パイプを 2本に減らしたという推測が当たっているとすると、そうした部分で再設計が必要になると思われる。<br />
-それによって CPU 全体のクロックを下げずに、FPU部に掛かる負荷とそれによる熱の発生を抑えられる等はあるかもしれないが、手間を掛けて FPU部のさらに一部とはいえ再設計、再構成をするに見合うのだろうか。<br />
-FPU のデータ幅を 256-bit から 128-bit にするのであれば <em>Zen/+ アーキテクチャ (znver1)</em> のコンパイラにおける最適化を流用できそうだが、パイプ構成を変えたのであればコードを修正する範囲が広がる。<br />
+<p><em>Zen/+/2 アーキテクチャ</em> の FPU実行パイプは 2x MUL + 2x ADD という構成だが、細かい部分で実行できる命令はそれぞれ異なり実際には非対称構成となる。<br>
+<strong>AMD 4700S</strong> では FPU実行パイプを 2本に減らしたという推測が当たっているとすると、そうした部分で再設計が必要になると思われる。<br>
+それによって CPU 全体のクロックを下げずに、FPU部に掛かる負荷とそれによる熱の発生を抑えられる等はあるかもしれないが、手間を掛けて FPU部のさらに一部とはいえ再設計、再構成をするに見合うのだろうか。<br>
+FPU のデータ幅を 256-bit から 128-bit にするのであれば <em>Zen/+ アーキテクチャ (znver1)</em> のコンパイラにおける最適化を流用できそうだが、パイプ構成を変えたのであればコードを修正する範囲が広がる。<br>
 謎の <strong>AMD 4700S</strong> が製品として出回るようになってもまだ謎は多く残っている。</p>
-
 <p>それと、やはりただの一オタクの推測であるため、ツッコミ、指摘がある場合は <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a> から連絡してくれると自分が喜ぶ。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:clm">Carry-less Multiply, Zen 2 supported by ucode.
- <a class="footnote-return" href="#fnref:clm"><sup>[return]</sup></a></li>
-<li id="fn:inst-bench"><a href="https://github.com/tanakamura/instruction-bench/blob/master/znver2.log#L98" rel="nofollow noreferrer" target="_blank">instruction-bench/znver2.log at master · tanakamura/instruction-bench</a>
- <a class="footnote-return" href="#fnref:inst-bench"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p>Carry-less Multiply, Zen 2 supported by ucode.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/tanakamura/instruction-bench/blob/master/znver2.log#L98">instruction-bench/znver2.log at master · tanakamura/instruction-bench</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

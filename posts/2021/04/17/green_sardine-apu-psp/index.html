@@ -70,58 +70,51 @@
 <div class="article-time">
     <time datetime="2021-04-17 00:19 &#43;0900" class="time-b">Post: 2021/04/17 00:19 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/14 15:52 &#43;0900</div>
-  </div><p>AMDプロセッサには、メモリ暗号化等の機能を担当する PSP (Platform Security Processor)、あるいは CCP (Cryptographic Coprocessor) と呼ばれる内部デバイスが存在する。<br />
+  </div><p>AMDプロセッサには、メモリ暗号化等の機能を担当する PSP (Platform Security Processor)、あるいは CCP (Cryptographic Coprocessor) と呼ばれる内部デバイスが存在する。<br>
 そして、Linux Kernel に <em>Green Sardine APU</em> に搭載された PSP/CCP の DeviceID を追加するパッチが投稿された。</p>
-
 <ul>
-<li><a href="https://lkml.org/lkml/2021/4/16/273" rel="nofollow noreferrer" target="_blank">LKML: Rijo Thomas: [PATCH] ccp: ccp - add support for Green Sardine</a></li>
+<li><a href="https://lkml.org/lkml/2021/4/16/273">LKML: Rijo Thomas: [PATCH] ccp: ccp - add support for Green Sardine</a></li>
 </ul>
-
-<p><em>Green Sardine</em> は Linux Kernel の AMD GPUドライバーで用いられているコードネームであり、内部 GPU の DeviceID から <em>Cezanne APU</em> と同一の APU と考えられる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/14/green_sardine-pciid/">Green Sardine APU の PCI ID が追加、正体は Cezanne APU だったか | Coelacanth's Dream</a></span>
+<p><em>Green Sardine</em> は Linux Kernel の AMD GPUドライバーで用いられているコードネームであり、内部 GPU の DeviceID から <em>Cezanne APU</em> と同一の APU と考えられる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/01/14/green_sardine-pciid/">Green Sardine APU の PCI ID が追加、正体は Cezanne APU だったか | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <blockquote>
-<pre tabindex="0"><code> diff --git a/drivers/crypto/ccp/sp-pci.c b/drivers/crypto/ccp/sp-pci.c
+<pre><code> diff --git a/drivers/crypto/ccp/sp-pci.c b/drivers/crypto/ccp/sp-pci.c
  index f471dbaef1fb..f468594ef8af 100644
  --- a/drivers/crypto/ccp/sp-pci.c
  +++ b/drivers/crypto/ccp/sp-pci.c
  @@ -356,6 +356,7 @@ static const struct pci_device_id sp_pci_table[] = {
-     { PCI_VDEVICE(AMD, 0x1468), (kernel_ulong_t)&amp;dev_vdata[2] },
-     { PCI_VDEVICE(AMD, 0x1486), (kernel_ulong_t)&amp;dev_vdata[3] },
-     { PCI_VDEVICE(AMD, 0x15DF), (kernel_ulong_t)&amp;dev_vdata[4] },
- +   { PCI_VDEVICE(AMD, 0x1649), (kernel_ulong_t)&amp;dev_vdata[4] },</code></pre>
+  	{ PCI_VDEVICE(AMD, 0x1468), (kernel_ulong_t)&amp;dev_vdata[2] },
+  	{ PCI_VDEVICE(AMD, 0x1486), (kernel_ulong_t)&amp;dev_vdata[3] },
+  	{ PCI_VDEVICE(AMD, 0x15DF), (kernel_ulong_t)&amp;dev_vdata[4] },
+ +	{ PCI_VDEVICE(AMD, 0x1649), (kernel_ulong_t)&amp;dev_vdata[4] },
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2021/4/16/273" rel="nofollow noreferrer" target="_blank">LKML: Rijo Thomas: [PATCH] ccp: ccp - add support for Green Sardine</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2021/4/16/273">LKML: Rijo Thomas: [PATCH] ccp: ccp - add support for Green Sardine</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>Green Sardine/Cezanne APU</em> の PSP/CCP DeviceID は <code>0x1649</code> となる。<br />
+<p><em>Green Sardine/Cezanne APU</em> の PSP/CCP DeviceID は <code>0x1649</code> となる。<br>
 興味が惹かれるのは、<em>Green Sardine/Cezanne APU</em> が PSP/CCP では近い世代の APU <span class="complement">Raven/Picasso/Raven2/Renoir</span>
  とは異なる DeviceID (恐らく内部的にわずかでも違いが存在するのだろう) であり、そして <em>VanGogh APU</em> とは同じ DeviceID であることだ。</p>
-
-<p>OpenBenchmarking から拝借しているが、lspci の実行結果を見るに <em>Raven APU</em> と <em>Renoir APU</em> は同じ PSP/CCP (DeviceID: <code>0x15DF</code>) を搭載している。<sup class="footnote-ref" id="fnref:obm"><a href="#fn:obm">1</a></sup><br />
-<em>Cezanne APU</em> は、Coreboot に追加された DeviceID情報や OpenBenchmarking の実行結果から、<em>Renoir APU</em> と I/O部 (Root Complex)、オーディオコントローラー、GBE (Gigabit Ethernet) を共通にするとされる。機能的にも、PCIe Gen3 までといった点は同じだ。<br />
-<em>Renoir</em> と <em>Cezanne</em> で異なる DeviceID には、データファブリックと内部 GPU がある。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/11/19/rn-lcn-czn-coreboot-did/">Coreboot に Renoir と Lucienne/Cezanne らしき DeviceID が追加される | Coelacanth's Dream</a></span>
+<p>OpenBenchmarking から拝借しているが、lspci の実行結果を見るに <em>Raven APU</em> と <em>Renoir APU</em> は同じ PSP/CCP (DeviceID: <code>0x15DF</code>) を搭載している。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+<em>Cezanne APU</em> は、Coreboot に追加された DeviceID情報や OpenBenchmarking の実行結果から、<em>Renoir APU</em> と I/O部 (Root Complex)、オーディオコントローラー、GBE (Gigabit Ethernet) を共通にするとされる。機能的にも、PCIe Gen3 までといった点は同じだ。<br>
+<em>Renoir</em> と <em>Cezanne</em> で異なる DeviceID には、データファブリックと内部 GPU がある。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/11/19/rn-lcn-czn-coreboot-did/">Coreboot に Renoir と Lucienne/Cezanne らしき DeviceID が追加される | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p>そして、以前 <em>VanGogh APU</em> のブートログが投稿されたが、その中で <em>VanGogh</em> の PSP/CCP が DeviceID: <code>0x1649</code> であることが分かった。<em>Green Sardine/Cezanne APU</em> と同じ DeviceID だ。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/#pci_id">AMD VanGogh APU ブートログ | Coelacanth's Dream</a></span>
+<p>そして、以前 <em>VanGogh APU</em> のブートログが投稿されたが、その中で <em>VanGogh</em> の PSP/CCP が DeviceID: <code>0x1649</code> であることが分かった。<em>Green Sardine/Cezanne APU</em> と同じ DeviceID だ。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/17/vgh-bootlog/#pci_id">AMD VanGogh APU ブートログ | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p><em>Green Sardine/Cezanne APU</em> が I/O部等を <em>Renoir APU</em> と同じ IP を採用する中、PSP/CCP は <em>Raven APU</em> から続き <em>Renoir APU</em> にも搭載されたものではなく、<em>VanGogh APU</em> と同じものを搭載するということからは、<br />
+<p><em>Green Sardine/Cezanne APU</em> が I/O部等を <em>Renoir APU</em> と同じ IP を採用する中、PSP/CCP は <em>Raven APU</em> から続き <em>Renoir APU</em> にも搭載されたものではなく、<em>VanGogh APU</em> と同じものを搭載するということからは、<br>
 プロセスや CPUアーキテクチャ、I/O部で部分的に同一となることがある Zen系 APU、それぞれの開発時期の違いが覗かせている。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:obm"><a href="https://openbenchmarking.org/system/2007148-NI-ALEX6767474/AMD%20Ryzen%205%202400G%20@%203.60GHz/lspci" rel="nofollow noreferrer" target="_blank">AMD Ryzen 5 2400G @ 3.60GHz - lspci - OpenBenchmarking.org</a>, <a href="https://openbenchmarking.org/system/2104156-HA-TEST6314648/AMD%20Renoir/lspci" rel="nofollow noreferrer" target="_blank">AMD Renoir - lspci - OpenBenchmarking.org</a>
- <a class="footnote-return" href="#fnref:obm"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://openbenchmarking.org/system/2007148-NI-ALEX6767474/AMD%20Ryzen%205%202400G%20@%203.60GHz/lspci">AMD Ryzen 5 2400G @ 3.60GHz - lspci - OpenBenchmarking.org</a>, <a href="https://openbenchmarking.org/system/2104156-HA-TEST6314648/AMD%20Renoir/lspci">AMD Renoir - lspci - OpenBenchmarking.org</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

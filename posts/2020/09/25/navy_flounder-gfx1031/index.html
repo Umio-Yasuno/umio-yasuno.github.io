@@ -71,41 +71,37 @@
     <time datetime="2020-09-25 15:27 &#43;0900" class="time-b">Post: 2020/09/25 15:27 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/09/25 19:23 &#43;0900</div>
   </div><p>それだけの話なんだけど、ヒラメとカレイとを間違えるようなうっかりではない方向に話が行ったりする。</p>
+<p>ROCm のデバッグツール <a href="https://github.com/ROCm-Developer-Tools/ROCgdb">ROCm-Developer-Tools/ROCgdb</a>、デバッガーAPI <a href="https://github.com/ROCm-Developer-Tools/ROCdbgapi">ROCm-Developer-Tools/ROCdbgapi</a> に GPU(GFX) ID に <code>gfx1030</code>, <code>gfx1031</code> のサポートが追加された。<br>
+<span class="thread-link"><a href="https://github.com/ROCm-Developer-Tools/ROCdbgapi/commit/deb6d8ab8d62072bdc6707d157fd226da3a95691">Add support for gfx1030/gfx1031 · ROCm-Developer-Tools/ROCdbgapi@deb6d8a</a></span>
 
-<p>ROCm のデバッグツール <a href="https://github.com/ROCm-Developer-Tools/ROCgdb" rel="nofollow noreferrer" target="_blank">ROCm-Developer-Tools/ROCgdb</a>、デバッガーAPI <a href="https://github.com/ROCm-Developer-Tools/ROCdbgapi" rel="nofollow noreferrer" target="_blank">ROCm-Developer-Tools/ROCdbgapi</a> に GPU(GFX) ID に <code>gfx1030</code>, <code>gfx1031</code> のサポートが追加された。<br />
-<span class="thread-link"><a href="https://github.com/ROCm-Developer-Tools/ROCdbgapi/commit/deb6d8ab8d62072bdc6707d157fd226da3a95691" rel="nofollow noreferrer" target="_blank">Add support for gfx1030/gfx1031 · ROCm-Developer-Tools/ROCdbgapi@deb6d8a</a></span>
-
-<span class="thread-link"><a href="https://github.com/ROCm-Developer-Tools/ROCgdb/commit/0f5f27ac6622e2ff6a71a6245644f704f50d85b7" rel="nofollow noreferrer" target="_blank">Add support for gfx1030/gfx1031 · ROCm-Developer-Tools/ROCgdb@0f5f27a</a></span>
+<span class="thread-link"><a href="https://github.com/ROCm-Developer-Tools/ROCgdb/commit/0f5f27ac6622e2ff6a71a6245644f704f50d85b7">Add support for gfx1030/gfx1031 · ROCm-Developer-Tools/ROCgdb@0f5f27a</a></span>
 </p>
-
 <p>その中に <em>Sienna Cichlid</em> は <code>gfx1030</code> 、<em>Navy Flounder</em> は <code>gfx1031</code> とする記述がある。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   { &#34;sienna_cichlid&#34;, EF_AMDGPU_MACH_AMDGCN_GFX1030, 0 },
-   { &#34;navy_flounder&#34;, EF_AMDGPU_MACH_AMDGCN_GFX1031, 0 } };</code></pre>
+<pre><code>   { &quot;sienna_cichlid&quot;, EF_AMDGPU_MACH_AMDGCN_GFX1030, 0 },
+   { &quot;navy_flounder&quot;, EF_AMDGPU_MACH_AMDGCN_GFX1031, 0 } };
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/ROCm-Developer-Tools/ROCdbgapi/blob/deb6d8ab8d62072bdc6707d157fd226da3a95691/src/os_driver.cpp" rel="nofollow noreferrer" target="_blank">ROCdbgapi/os_driver.cpp at deb6d8ab8d62072bdc6707d157fd226da3a95691 · ROCm-Developer-Tools/ROCdbgapi</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/ROCm-Developer-Tools/ROCdbgapi/blob/deb6d8ab8d62072bdc6707d157fd226da3a95691/src/os_driver.cpp">ROCdbgapi/os_driver.cpp at deb6d8ab8d62072bdc6707d157fd226da3a95691 · ROCm-Developer-Tools/ROCdbgapi</a></cite>
 </div>
 
 </blockquote>
-
-<p>また、<em>Sienna Cichlid</em> は <em>Navi21</em> で <code>gfx1030</code> 、<em>Navy Flounder</em> は <em>Navi22</em> で <code>gfx1031</code> という記述もあったが、OSS においては <em>Navi2x</em> ではなく 色+魚 なコードネームを使う方向性でいるのだからそれで統一してほしい、とは思う。<br />
-それはともかくとして、<code>Sienna Cichlid == Navi21 == gfx1030</code> 、<code>Navy Flounder == Navi22 == gfx1031</code> とされている。<br />
+<p>また、<em>Sienna Cichlid</em> は <em>Navi21</em> で <code>gfx1030</code> 、<em>Navy Flounder</em> は <em>Navi22</em> で <code>gfx1031</code> という記述もあったが、OSS においては <em>Navi2x</em> ではなく 色+魚 なコードネームを使う方向性でいるのだからそれで統一してほしい、とは思う。<br>
+それはともかくとして、<code>Sienna Cichlid == Navi21 == gfx1030</code> 、<code>Navy Flounder == Navi22 == gfx1031</code> とされている。<br>
 GPU(GFX) ID は AMD GPU ISA(命令セットアーキテクチャ) を示すから、最後の部分は将来的にそうと言えなくなるかもしれないが、少なくとも今は合っている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  @c ``Navi 21&#39;&#39; which is displayed as @samp{sienna_cichlid} by @value{GDBN} and
+<pre><code>  @c ``Navi 21'' which is displayed as @samp{sienna_cichlid} by @value{GDBN} and
   @c denoted as @samp{gfx1030} by the compiler.
   @c
   @c @item
-  @c ``Navi 22&#39;&#39; which is displayed as @samp{navy_flounder} by @value{GDBN} and
-  @c denoted as @samp{gfx1031} by the compiler.</code></pre>
+  @c ``Navi 22'' which is displayed as @samp{navy_flounder} by @value{GDBN} and
+  @c denoted as @samp{gfx1031} by the compiler.
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/ROCm-Developer-Tools/ROCgdb/commit/0f5f27ac6622e2ff6a71a6245644f704f50d85b7#diff-ddd44f7e2bba0c3ed8b4c9be4feda726" rel="nofollow noreferrer" target="_blank">Add support for gfx1030/gfx1031 · ROCm-Developer-Tools/ROCgdb@0f5f27a</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/ROCm-Developer-Tools/ROCgdb/commit/0f5f27ac6622e2ff6a71a6245644f704f50d85b7#diff-ddd44f7e2bba0c3ed8b4c9be4feda726">Add support for gfx1030/gfx1031 · ROCm-Developer-Tools/ROCgdb@0f5f27a</a></cite>
 </div>
 
 </blockquote>
-
 <p>それだけのお話。</p>
 <div class="article-bottom-misc">
   <div class="rss-block">

@@ -70,169 +70,143 @@
 <div class="article-time">
     <time datetime="2020-11-17 00:20 &#43;0900" class="time-b">Post: 2020/11/17 00:20 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/11/18 16:56 &#43;0900</div>
-  </div>
-
-<p>AMD は SC20 の開催に合わせ、現地時間 2020/11/16 付で、初の <em>CDNAアーキテクチャ</em> 採用製品となる <strong>AMD Instinct™ MI100</strong> 、開発コードネーム <em>Arcturus</em> を発表した。</p>
-
+  </div><p>AMD は SC20 の開催に合わせ、現地時間 2020/11/16 付で、初の <em>CDNAアーキテクチャ</em> 採用製品となる <strong>AMD Instinct™ MI100</strong> 、開発コードネーム <em>Arcturus</em> を発表した。</p>
 <ul>
-<li><a href="https://ir.amd.com/news-events/press-releases/detail/980/amd-epyc-processors-and-new-amd-instinct-mi100" rel="nofollow noreferrer" target="_blank">AMD EPYC™ Processors and New AMD Instinct™ MI100 Accelerator Redefine Performance for HPC and Scientific Research :: Advanced Micro Devices, Inc. (AMD)</a></li>
-<li><a href="https://www.amd.com/en/technologies/cdna" rel="nofollow noreferrer" target="_blank">AMD CDNA Architecture | AMD</a>
-
+<li><a href="https://ir.amd.com/news-events/press-releases/detail/980/amd-epyc-processors-and-new-amd-instinct-mi100">AMD EPYC™ Processors and New AMD Instinct™ MI100 Accelerator Redefine Performance for HPC and Scientific Research :: Advanced Micro Devices, Inc. (AMD)</a></li>
+<li><a href="https://www.amd.com/en/technologies/cdna">AMD CDNA Architecture | AMD</a>
 <ul>
-<li><a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">amd-cdna-whitepaper.pdf</a></li>
-</ul></li>
-<li><a href="https://www.amd.com/en/products/server-accelerators/instinct-mi100" rel="nofollow noreferrer" target="_blank">AMD Instinct™ MI100 Accelerator | AMD</a></li>
+<li><a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf">amd-cdna-whitepaper.pdf</a></li>
 </ul>
-
-<p>Linux Kernel (amd-gfx) には丁度 <em>Arcturus</em> の実験的サポートのフラグを外すパッチが投稿されている。<sup class="footnote-ref" id="fnref:arcturus-stable"><a href="#fn:arcturus-stable">1</a></sup></p>
-
+</li>
+<li><a href="https://www.amd.com/en/products/server-accelerators/instinct-mi100">AMD Instinct™ MI100 Accelerator | AMD</a></li>
+</ul>
+<p>Linux Kernel (amd-gfx) には丁度 <em>Arcturus</em> の実験的サポートのフラグを外すパッチが投稿されている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#mi100-spec">MI100 スペック</a></li>
 <li><a href="#cdna">CDNAアーキテクチャ</a>
-
 <ul class="page-index">
 <li><a href="#cu">各アーキテクチャの CU 比較</a>
-
 <ul class="page-index">
 <li><a href="#simd">RDNAアーキテクチャとの SIMDユニット比較</a></li>
-</ul></li>
-</ul></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
-
 <h2 id="mi100-spec">MI100 スペック</h2>
-
 <p><em>Arcturus</em> は ShaderEngine 8基、最大総 CU 数 128基という構成だが、<strong>MI100</strong> では各 ShaderEngine 内の CU を 1基無効化し、総 CU 数 120基という仕様になっている。</p>
-
 <p>動作クロックは最大 1502MHz。ピークFP64演算性能は 11.5TFLOPs に達し、10TFLOPs の壁を突破した初の GPU を謳う。</p>
-
-<p><em>Vega20/MI50</em> では、3基以上を <em>Infinity Fabric/XGMI</em> を用いて接続する場合、リングバス構成となり、GPU 間でのデータ転送に幾許かの遅延が発生していた。<sup class="footnote-ref" id="fnref:if-xgmi"><a href="#fn:if-xgmi">2</a></sup><br />
-だが <em>Arcturus/MI100</em> では最大 4基での相互接続に対応し、より高性能な GPU トポロジを構成可能となる。<br />
+<p><em>Vega20/MI50</em> では、3基以上を <em>Infinity Fabric/XGMI</em> を用いて接続する場合、リングバス構成となり、GPU 間でのデータ転送に幾許かの遅延が発生していた。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+だが <em>Arcturus/MI100</em> では最大 4基での相互接続に対応し、より高性能な GPU トポロジを構成可能となる。<br>
 <em>Arcturus</em> は <span class="complement">ネットワーク構造こそ変わるが</span>
-最大 8基のトポロジ構成に対応しているはずだが、<strong>MI100</strong> では <em>Infinity Fabric Link</em> が 3本となっている。<sup class="footnote-ref" id="fnref:exa"><a href="#fn:exa">3</a></sup></p>
-
-<p>メモリバス幅は HBM2 4スタック (4096-bit)、容量は最大 32GB、ECCサポート、という点は <em>Vega20/MI50</em> と変わらないが、メモリクロックは 0.2GHz 向上した 1.2GHz となり、ピークメモリ帯域は 1228.8GB/s となる。<br />
+最大 8基のトポロジ構成に対応しているはずだが、<strong>MI100</strong> では <em>Infinity Fabric Link</em> が 3本となっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>メモリバス幅は HBM2 4スタック (4096-bit)、容量は最大 32GB、ECCサポート、という点は <em>Vega20/MI50</em> と変わらないが、メモリクロックは 0.2GHz 向上した 1.2GHz となり、ピークメモリ帯域は 1228.8GB/s となる。<br>
 また、HBM2メモリのメモリ階層 1つ上、L2キャッシュは <em>Vega20/MI50</em> から倍の数に増やされ 32スライスとなり、L2キャッシュ容量は計 8MB。</p>
-
 <p>製造プロセスは <em>Vega20/MI50</em> と同じ TSMC 7nm FinFet とされ、大きく性能を向上させながらも TBP 300W を維持している。</p>
-
 <h2 id="cdna">CDNAアーキテクチャ</h2>
-
 <p><em>Arcturus/MI100</em> はグラフィクス処理を行なうための固定機能ユニット <span class="complement">ジオメトリプロセッサ、ラスタライザ、RB (Render Backend)、ディスプレイエンジンさえも</span>
- を持たず、空いた分を利用して、CU の改良、強化、実装密度の大きな引き上げと、電力効率の向上を実現している。<br />
+ を持たず、空いた分を利用して、CU の改良、強化、実装密度の大きな引き上げと、電力効率の向上を実現している。<br>
 そのため、<span class="complement">GPU とそのアーキテクチャを活用したアクセラレータの境目は曖昧で、うまい言い方が思いつかないが</span>
- 一般的な GPU への転用はできないものとなっている。<br />
+ 一般的な GPU への転用はできないものとなっている。<br>
 AMD も <em>Arcturus/MI100</em> を GPU と呼びつつも、アクセラレータとしての見方が強いのか、ブランドを <strong>Radeon Instinct</strong> ではなく <strong>AMD Instinct</strong> としており、<strong>Radeon</strong> の名は使っていない。ニュースリリース内を <em>Radeon</em> で検索しても見つからなかった。</p>
-
-<p>グラフィクス用の固定機能ユニットは持たないが、マルチメディアエンジンは搭載しており、用途としては機械学習のオブジェクト検出の際などを想定している。<br />
-また、Linux Kernel (amd-gfx) に記述されているコードによると、VCN (Video Core Next) のバージョンは 2.5 となり、それを 2基搭載している。<sup class="footnote-ref" id="fnref:arcturus-vcn2-5"><a href="#fn:arcturus-vcn2-5">4</a></sup> HEVC、H.264、VP9 のデコードに対応。</p>
-
+<p>グラフィクス用の固定機能ユニットは持たないが、マルチメディアエンジンは搭載しており、用途としては機械学習のオブジェクト検出の際などを想定している。<br>
+また、Linux Kernel (amd-gfx) に記述されているコードによると、VCN (Video Core Next) のバージョンは 2.5 となり、それを 2基搭載している。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> HEVC、H.264、VP9 のデコードに対応。</p>
 <h3 id="cu">各アーキテクチャの CU 比較</h3>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-gcn-cu.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-gcn-cu.webp"
-      alt="画像出典: amd-cdna-whitepaper.pdf (Page 6), &amp;emsp; Introduction - rdna-whitepaper.pdf (Page 5), &amp;emsp; M&amp;amp;E GBGH - HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf (Page 21)"/>
+      alt="画像出典: amd-cdna-whitepaper.pdf (Page 6), Introduction - rdna-whitepaper.pdf (Page 5), M&amp;amp;E GBGH - HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf (Page 21)"/>
 </a><figcaption>
-      <h4 class="fig-title">CDNA/RDNA/GCN CU</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">amd-cdna-whitepaper.pdf</a> (Page 6), <br>&emsp; <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">Introduction - rdna-whitepaper.pdf</a> (Page 5), <br>&emsp; <a href="https://www.hotchips.org/wp-content/uploads/hc_archives/hc29/HC29.21-Monday-Pub/HC29.21.10-GPU-Gaming-Pub/HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf" rel="nofollow noreferrer" target="_blank">M&amp;E GBGH - HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf</a> (Page 21)</p>
+      <h4 class="fig-title">CDNA/RDNA/GCN CU</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf">amd-cdna-whitepaper.pdf</a> (Page 6), <br>  <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf">Introduction - rdna-whitepaper.pdf</a> (Page 5), <br>  <a href="https://www.hotchips.org/wp-content/uploads/hc_archives/hc29/HC29.21-Monday-Pub/HC29.21.10-GPU-Gaming-Pub/HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf">M&amp;E GBGH - HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf</a> (Page 21)</p>
   </figcaption>
 </figure>
 
-
-<p>丁度良い画像が見つからなかったため、少し不格好となってしまったが、上が <em>CDNA/RDNA/GCN CU</em> の各構造をまとめたものである。<br />
-<em>CDNAアーキテクチャ</em> の CU 全体は <em>GCNアーキテクチャ</em> のそれに似通っているが、SIMDユニットあたりのベクタレジスタ (VGPR) は、CU あたり 256KB (GCN) から 512KB (CDNA) と、倍の容量に増量されている。<br />
-その反面、スカラレジスタ (SGPR) は CU あたり 32KB (GCN) から 12.8KB (CDNA) と、半分の容量に減らされている。<br />
+<p>丁度良い画像が見つからなかったため、少し不格好となってしまったが、上が <em>CDNA/RDNA/GCN CU</em> の各構造をまとめたものである。<br>
+<em>CDNAアーキテクチャ</em> の CU 全体は <em>GCNアーキテクチャ</em> のそれに似通っているが、SIMDユニットあたりのベクタレジスタ (VGPR) は、CU あたり 256KB (GCN) から 512KB (CDNA) と、倍の容量に増量されている。<br>
+その反面、スカラレジスタ (SGPR) は CU あたり 32KB (GCN) から 12.8KB (CDNA) と、半分の容量に減らされている。<br>
 <em>RDNAアーキテクチャ</em> はと言うと、CU あたりの総ベクタレジスタは <em>GCNアーキテクチャ</em> と変わらないが、スカラレジスタは 20KB となっている。</p>
-
 <p><em>CDNAアーキテクチャ</em> では CU内の各SRAM <span class="complement">ベクタレジスタ、スカラレジスタ、LDS (Local Data Share)、L1キャッシュ</span>
- が ECC に対応しており、HBM2メモリと合わせてフルチップで ECC に対応している。<br />
-AMD GPU のコンパイラバックエンドとしても採用されている LLVM には、既に SRAM ECC への対応が行なわれている。<em>Vega20/MI50</em> にもオプション自体は存在するが、デフォルトでは無効に設定されている。<sup class="footnote-ref" id="fnref:llvm-sram-ecc"><a href="#fn:llvm-sram-ecc">5</a></sup></p>
-
+ が ECC に対応しており、HBM2メモリと合わせてフルチップで ECC に対応している。<br>
+AMD GPU のコンパイラバックエンドとしても採用されている LLVM には、既に SRAM ECC への対応が行なわれている。<em>Vega20/MI50</em> にもオプション自体は存在するが、デフォルトでは無効に設定されている。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
 <p><em>CDNAアーキテクチャ</em> ではテクスチャフィルタユニットが省かれていることが分かる。 グラフィクス用の固定機能ユニットを省いたというのは CU 内部にも渡っている。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">Register Size <br> per CU</th>
-<th align="center">Vector</th>
-<th align="center">Scalar</th>
+<th style="text-align:left">Register Size <br> per CU</th>
+<th style="text-align:center">Vector</th>
+<th style="text-align:center">Scalar</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">GCN</td>
-<td align="center">256KB</td>
-<td align="center">32KB</td>
+<td style="text-align:left">GCN</td>
+<td style="text-align:center">256KB</td>
+<td style="text-align:center">32KB</td>
 </tr>
-
 <tr>
-<td align="left">RDNA</td>
-<td align="center">256KB</td>
-<td align="center">20KB</td>
+<td style="text-align:left">RDNA</td>
+<td style="text-align:center">256KB</td>
+<td style="text-align:center">20KB</td>
 </tr>
-
 <tr>
-<td align="left">CDNA</td>
-<td align="center">512KB</td>
-<td align="center">12.8KB</td>
+<td style="text-align:left">CDNA</td>
+<td style="text-align:center">512KB</td>
+<td style="text-align:center">12.8KB</td>
 </tr>
 </tbody>
 </table>
-
 <h4 id="simd">RDNAアーキテクチャとの SIMDユニット比較</h4>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-simd.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-simd.webp"
-      alt="画像出典: amd-cdna-whitepaper.pdf (Page 6), &amp;emsp; Introduction - rdna-whitepaper.pdf (Page 9)"/>
+      alt="画像出典: amd-cdna-whitepaper.pdf (Page 6), Introduction - rdna-whitepaper.pdf (Page 9)"/>
 </a><figcaption>
-      <h4 class="fig-title">CDNA/RDNA SIMD</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">amd-cdna-whitepaper.pdf</a> (Page 6), <br>&emsp; <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">Introduction - rdna-whitepaper.pdf</a> (Page 9)</p>
+      <h4 class="fig-title">CDNA/RDNA SIMD</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf">amd-cdna-whitepaper.pdf</a> (Page 6), <br>  <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf">Introduction - rdna-whitepaper.pdf</a> (Page 9)</p>
   </figcaption>
 </figure>
 
-
 <p>上画像は <em>CDNAアーキテクチャ</em> と <em>RDNAアーキテクチャ</em> の SIMDユニットダイアグラムを比較したもの。<em>GCNアーキテクチャ</em> でも同様の画像を探したが見つからなかった。</p>
-
-<p>SIMDユニットは 512-bit幅であり、ベクタパイプラインとしては 16-wide (SIMD16)。<br />
-Wave64 (64スレッド) を SIMD16ユニットで 4サイクル掛けて処理というのも <em>GCNアーキテクチャ</em> から変わらないものと思われる。<br />
+<p>SIMDユニットは 512-bit幅であり、ベクタパイプラインとしては 16-wide (SIMD16)。<br>
+Wave64 (64スレッド) を SIMD16ユニットで 4サイクル掛けて処理というのも <em>GCNアーキテクチャ</em> から変わらないものと思われる。<br>
 データセンタ、計算向けとしては、メモリレイテンシを隠蔽しやすいこの方式のが有利なのだろう。</p>
-
-<p>SFU (Special Function Unit) は、<em>CDNAアーキテクチャ</em> では 4基と、ここも <em>GCNアーキテクチャ</em> と変わらない。<em>RDNAアーキテクチャ</em> では 8基となっているが、SIMD32ユニットあたりであるため、SIMD幅に対するバランスは同じである。<br />
-CU あたりの Wave Controller が保持する Wave数も <em>GCN/RDNAアーキテクチャ</em> と変わらず 40 Wave (10 Wave x4) となる。ただ、<em>RDNA 2アーキテクチャ</em> からは SIMDユニットあたり 16 Wave、CU あたりでは 32 Wave になると見られている。<sup class="footnote-ref" id="fnref:rdna-2-wave"><a href="#fn:rdna-2-wave">6</a></sup><br />
+<p>SFU (Special Function Unit) は、<em>CDNAアーキテクチャ</em> では 4基と、ここも <em>GCNアーキテクチャ</em> と変わらない。<em>RDNAアーキテクチャ</em> では 8基となっているが、SIMD32ユニットあたりであるため、SIMD幅に対するバランスは同じである。<br>
+CU あたりの Wave Controller が保持する Wave数も <em>GCN/RDNAアーキテクチャ</em> と変わらず 40 Wave (10 Wave x4) となる。ただ、<em>RDNA 2アーキテクチャ</em> からは SIMDユニットあたり 16 Wave、CU あたりでは 32 Wave になると見られている。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
 <em>GCNアーキテクチャ</em> から <em>RDNA/CDNAアーキテクチャ</em> への分化が始まってからというもの、AMD は CU、SIMDユニットの構造を大きく見直しているという印象を受ける。</p>
-
-<p><em>CDNAアーキテクチャ</em> では SPユニット (single-precision, FP32, 単精度) 16基に対し、DPユニット (double-precision, FP64, 倍精度) 8基を持つため、FP32演算の半分のレートでFP64演算を行なえる。<em>RDNAアーキテクチャ</em> では DPユニットが 2基であるため、1/16のレートとなる。<br />
-また、HPユニット (half-precision, FP16, 半精度) を別に 32基持つ。恐らくは SPユニットでの Packed実行と合わせて、FP32演算性能の 4倍となる 184.6TFLOPS というピークFP16演算性能が可能になっていると思われるが、どのような処理フローになっているかは不明。<br />
-LLVM のソースコードを見ると、<em>Arcturus/MI100 (gfx908)</em> に向けた <code>v_pk_fmac_f16</code> 命令の対応が追加されているが、これと関係しているのだろうか。<sup class="footnote-ref" id="fnref:llvm-pk-fmac-f16"><a href="#fn:llvm-pk-fmac-f16">7</a></sup></p>
-
-<p>新たに行列演算を高速に処理するための MFMA (Matrix Fused Multiply-Add) 命令に対応し、それを実行する Matrixユニットが増設された。データ精度は FP32、FP16、BF16 に対応する。<br />
+<p><em>CDNAアーキテクチャ</em> では SPユニット (single-precision, FP32, 単精度) 16基に対し、DPユニット (double-precision, FP64, 倍精度) 8基を持つため、FP32演算の半分のレートでFP64演算を行なえる。<em>RDNAアーキテクチャ</em> では DPユニットが 2基であるため、1/16のレートとなる。<br>
+また、HPユニット (half-precision, FP16, 半精度) を別に 32基持つ。恐らくは SPユニットでの Packed実行と合わせて、FP32演算性能の 4倍となる 184.6TFLOPS というピークFP16演算性能が可能になっていると思われるが、どのような処理フローになっているかは不明。<br>
+LLVM のソースコードを見ると、<em>Arcturus/MI100 (gfx908)</em> に向けた <code>v_pk_fmac_f16</code> 命令の対応が追加されているが、これと関係しているのだろうか。<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></p>
+<p>新たに行列演算を高速に処理するための MFMA (Matrix Fused Multiply-Add) 命令に対応し、それを実行する Matrixユニットが増設された。データ精度は FP32、FP16、BF16 に対応する。<br>
 ベクタパイプラインを用いるよりも高速に処理が可能となり、行列演算では入力値の多くを再利用するためレジスタから読み出す回数が減り、これによって優れた電力効率で行列演算の処理が可能となっている。</p>
-
-<p><br>
-<em>Arcturus</em> の情報はこのサイトを開設した以前から Linux Kernel 等へのサポートが追加されており、個人としても少しずつ情報を追ってきた。<br />
-<em>Arcturus/MI100</em> が正式発表されたことをオタクとして (勝手だが) 本当に嬉しく思う。ニュースリリースを見た時はとても興奮し、心の底から <em>Arcturus/MI100</em> の登場を祝福していた。</p>
-<div class="footnotes">
-
-<hr />
-
+<br>
+*Arcturus* の情報はこのサイトを開設した以前から Linux Kernel 等へのサポートが追加されており、個人としても少しずつ情報を追ってきた。  
+*Arcturus/MI100* が正式発表されたことをオタクとして (勝手だが) 本当に嬉しく思う。ニュースリリースを見た時はとても興奮し、心の底から *Arcturus/MI100* の登場を祝福していた。  
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:arcturus-stable"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-November/056158.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: remove experimental flag from arcturus</a>
- <a class="footnote-return" href="#fnref:arcturus-stable"><sup>[return]</sup></a></li>
-<li id="fn:if-xgmi"><a href="https://www.coelacanth-dream.com/posts/2020/07/17/navi21-sienna_cichlid-support-xgmi/">Navi21 /Sienna Cichlid は高速なGPU間通信 XGMI をサポート | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:if-xgmi"><sup>[return]</sup></a></li>
-<li id="fn:exa"><a href="https://www.coelacanth-dream.com/posts/2020/03/06/amd-financial-analyst-day-2020/#3rd-gen-infinity-architecturue">AMD Financial Analyst Day 2020 個人的まとめ | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:exa"><sup>[return]</sup></a></li>
-<li id="fn:arcturus-vcn2-5"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=ab5999dea06945f1f7b00bc20c23ab045afa74af" rel="nofollow noreferrer" target="_blank">drm/amdgpu: enable VCN0 and VCN1 sriov instances support for Arcturus</a>
- <a class="footnote-return" href="#fnref:arcturus-vcn2-5"><sup>[return]</sup></a></li>
-<li id="fn:llvm-sram-ecc"><a href="https://github.com/llvm/llvm-project/blob/master/llvm/docs/AMDGPUUsage.rst" rel="nofollow noreferrer" target="_blank">llvm-project/AMDGPUUsage.rst at master · llvm/llvm-project</a>
- <a class="footnote-return" href="#fnref:llvm-sram-ecc"><sup>[return]</sup></a></li>
-<li id="fn:rdna-2-wave"><a href="https://www.coelacanth-dream.com/posts/2020/06/09/amd-sienna-cichlid-oss-umd/#wavefront-16">AMD Sienna Cichlid をサポートするパッチが OpenGL、Vulkanドライバーに投稿される | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:rdna-2-wave"><sup>[return]</sup></a></li>
-<li id="fn:llvm-pk-fmac-f16"><a href="https://github.com/llvm/llvm-project/commit/1e9eae95afab696c7eefa04b102ca4422612c96b" rel="nofollow noreferrer" target="_blank">[AMDGPU] gfx908 v_pk_fmac_f16 support · llvm/llvm-project@1e9eae9</a>
- <a class="footnote-return" href="#fnref:llvm-pk-fmac-f16"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-November/056158.html">[PATCH] drm/amdgpu: remove experimental flag from arcturus</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/07/17/navi21-sienna_cichlid-support-xgmi/">Navi21 /Sienna Cichlid は高速なGPU間通信 XGMI をサポート | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/03/06/amd-financial-analyst-day-2020/#3rd-gen-infinity-architecturue">AMD Financial Analyst Day 2020 個人的まとめ | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=ab5999dea06945f1f7b00bc20c23ab045afa74af">drm/amdgpu: enable VCN0 and VCN1 sriov instances support for Arcturus</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://github.com/llvm/llvm-project/blob/master/llvm/docs/AMDGPUUsage.rst">llvm-project/AMDGPUUsage.rst at master · llvm/llvm-project</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/06/09/amd-sienna-cichlid-oss-umd/#wavefront-16">AMD Sienna Cichlid をサポートするパッチが OpenGL、Vulkanドライバーに投稿される | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p><a href="https://github.com/llvm/llvm-project/commit/1e9eae95afab696c7eefa04b102ca4422612c96b">[AMDGPU] gfx908 v_pk_fmac_f16 support · llvm/llvm-project@1e9eae9</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

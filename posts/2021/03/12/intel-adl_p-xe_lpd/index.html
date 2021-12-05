@@ -70,56 +70,47 @@
 <div class="article-time">
     <time datetime="2021-03-12 07:46 &#43;0900" class="time-b">Post: 2021/03/12 07:46 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/06/04 23:13 &#43;0900</div>
-  </div>
-
-<p><em>Alder Lake-P</em> GPU をサポートするパッチが Linux Kernel (intel-gfx) メーリングリストに投稿された。<br />
-その前の <em>XE_LPD</em> 関連のパッチにて予告めいて語られていた、GPUコア部は <em>Gen12 アーキテクチャ</em> を採用し、ディスプレイエンジンには <em>Display13/XE_LPD</em> を採用するハードウェアプラットフォームとは <em>Alder Lake-P</em> のことだった。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/12/intel-xe_lpd-display13/">Intel、Display13 改め &quot;XE_LPD&quot; をサポートするパッチを投稿　―― 今後は独立して各 IP が更新されるように | Coelacanth's Dream</a></span>
+  </div><p><em>Alder Lake-P</em> GPU をサポートするパッチが Linux Kernel (intel-gfx) メーリングリストに投稿された。<br>
+その前の <em>XE_LPD</em> 関連のパッチにて予告めいて語られていた、GPUコア部は <em>Gen12 アーキテクチャ</em> を採用し、ディスプレイエンジンには <em>Display13/XE_LPD</em> を採用するハードウェアプラットフォームとは <em>Alder Lake-P</em> のことだった。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/12/intel-xe_lpd-display13/">Intel、Display13 改め &ldquo;XE_LPD&rdquo; をサポートするパッチを投稿　―― 今後は独立して各 IP が更新されるように | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-March/262168.html" rel="nofollow noreferrer" target="_blank">[Intel-gfx] [PATCH 00/56] Introduce Alder Lake-P</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-March/262168.html">[Intel-gfx] [PATCH 00/56] Introduce Alder Lake-P</a></li>
 </ul>
-
-<p>サポートするメモリについては <em>Alder Lake-S</em> と同じとされる。<sup class="footnote-ref" id="fnref:adl-p-memory"><a href="#fn:adl-p-memory">1</a></sup><br />
+<p>サポートするメモリについては <em>Alder Lake-S</em> と同じとされる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 <em>Alder Lake-S/P</em> では Coreboot へのパッチとそれへのコメントから、DDR4/LPDDR4(X)/DDR5/LPDDR5 に対応することが分かっている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  +-------------+--------+---------+
+<pre><code>  +-------------+--------+---------+
   | Memory Type | Max Ch | Max DPC |
   +-------------+--------+---------+
   | DDR4        |      1 |       2 |
   | LPDDR4(X)   |      4 |       1 |
   | LPDDR5      |      4 |       1 |
   | DDR5        |      2 |       1 |
-  +-------------+--------+---------+</code></pre>
-<p>These numbers are for a single memory controller. Since ADL has two memory controllers, there's twice as many channels in total. DPC stays the same.</p>
+  +-------------+--------+---------+
+</code></pre>
+<p>These numbers are for a single memory controller. Since ADL has two memory controllers, there&rsquo;s twice as many channels in total. DPC stays the same.</p>
 
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109">https://review.coreboot.org/c/coreboot/+/45192/7/src/soc/intel/alderlake/meminit.c#109</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="alder-lake-p-gpu">Alder Lake-P GPU</h2>
-
 <p><em>Alder Lake-P</em> は GPUコア、メディアエンジンは <em>Tiger Lake, Rocket Lake, Alder Lake-S, DG1</em> 同様に <em>Gen12</em> を採用するが、ディスプレイエンジンはそれらより1つ進んだ <em>Display13/XE_LPD</em> となる。</p>
-
-<p>GPUコア、メディアエンジンと世代がずれることになっても、ディスプレイエンジンに1世代進んだものを採用したことについては、<br />
+<p>GPUコア、メディアエンジンと世代がずれることになっても、ディスプレイエンジンに1世代進んだものを採用したことについては、<br>
 <em>Display13/XE_LPD</em> には、パワードメインの関係性を従来のものから変更したことでパワーゲーティングの適用をシンプルにしたことや、Watermark <span class="complement">ディスプレイの解像度等に応じて決定されるメモリのタイミング</span>
- の数を従来の 32個から 256個へと大幅に増やしたこと等、電力効率を向上される改良が施されており、<br />
-モバイル向けである <em>Alder Lake-P</em> に <em>Display13/XE_LPD</em> を採用することの効果が大きいと判断したのではないかと考えられる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/12/intel-adl_p-xe_lpd/">Linux Kernel に Intel Alder Lake-P をサポートするパッチが投稿される　―― ディスプレイエンジンに &quot;XE_LPD&quot; | Coelacanth's Dream</a></span>
+ の数を従来の 32個から 256個へと大幅に増やしたこと等、電力効率を向上される改良が施されており、<br>
+モバイル向けである <em>Alder Lake-P</em> に <em>Display13/XE_LPD</em> を採用することの効果が大きいと判断したのではないかと考えられる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/12/intel-adl_p-xe_lpd/">Linux Kernel に Intel Alder Lake-P をサポートするパッチが投稿される　―― ディスプレイエンジンに &ldquo;XE_LPD&rdquo; | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:adl-p-memory"><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-March/262184.html" rel="nofollow noreferrer" target="_blank">[Intel-gfx] [PATCH 51/56] drm/i915/adl_p: Update memory bandwidth parameters</a>
- <a class="footnote-return" href="#fnref:adl-p-memory"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-March/262184.html">[Intel-gfx] [PATCH 51/56] drm/i915/adl_p: Update memory bandwidth parameters</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

@@ -70,77 +70,67 @@
 <div class="article-time">
     <time datetime="2021-07-01 15:22 &#43;0900" class="time-b">Post: 2021/07/01 15:22 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/07/01 19:55 &#43;0900</div>
-  </div>
-
-<p>Linux Kernel における、ハードウェアのエラーを検出、収集して報告する EDAC (Error Detection And Correction) ドライバーに <em>Aldebaran/MI200</em> GPU のサポートを追加するパッチが投稿された。<br />
+  </div><p>Linux Kernel における、ハードウェアのエラーを検出、収集して報告する EDAC (Error Detection And Correction) ドライバーに <em>Aldebaran/MI200</em> GPU のサポートを追加するパッチが投稿された。<br>
 <em>CDNA 2 アーキテクチャ</em> を採用する <em>Aldebaran</em> GPU は <em>3rd Gen Infinity Architecture</em> 、CPU との <em>XGMI/Infinity Fabric</em> 接続に対応し、<em>3rd Gen Infinity Architecture</em> では CPU と GPU のメモリ空間が統合される。</p>
-
 <ul>
-<li><a href="https://lore.kernel.org/linux-edac/20210630152828.162659-1-nchatrad@amd.com/T/#t" rel="nofollow noreferrer" target="_blank">[PATCH 0/7] x86/edac/amd64: Add support for noncpu nodes</a></li>
+<li><a href="https://lore.kernel.org/linux-edac/20210630152828.162659-1-nchatrad@amd.com/T/#t">[PATCH 0/7] x86/edac/amd64: Add support for noncpu nodes</a></li>
 </ul>
-
 <p>パッチの主目的としては EDACドライバーに GPUノード (noncpu node) のサポートを追加することであり、CPU+GPU でノードを構成するのではなく、CPUノードと GPUノードを <em>XGMI/Infinity Fabric</em> で接続するシステム構成に <em>Aldebaran</em> GPU で新たに対応したのではないかと思われる。</p>
-
 <blockquote>
-<pre tabindex="0"><code> +/*
+<pre><code> +/*
  + * On Newer heterogeneous systems from AMD with CPU and GPU nodes connected
  + * via xGMI links, the NON CPU Nodes are enumerated from index 8
  + */
- +#define NONCPU_NODE_INDEX  8
- +</code></pre>
+ +#define NONCPU_NODE_INDEX	8
+ +
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-edac/20210630152828.162659-1-nchatrad@amd.com/T/" rel="nofollow noreferrer" target="_blank">[PATCH 0/7] x86/edac/amd64: Add support for noncpu nodes</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-edac/20210630152828.162659-1-nchatrad@amd.com/T/">[PATCH 0/7] x86/edac/amd64: Add support for noncpu nodes</a></cite>
 </div>
 
 </blockquote>
-
 <p>先日 Intel は ISC2021 にて <a href="https://www.coelacanth-dream.com/tags/sapphire_rapids">Sapphire Rapids CPU</a> と <a href="https://www.coelacanth-dream.com/tags/xe-hpc"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
- GPU</a> に関する新たな発表を行い、<em>Intel Ponte Vecchio</em> GPU が OCP Accelerator Module (OAM) フォームファクと、それを 4基組み合わせて構成するサブシステムに対応することを明らかにしたが、 <em>AMD Aldebaran</em> の GPUノード (noncpu node) も同様の構成を採るのかもしれない。<sup class="footnote-ref" id="fnref:intel-isc2021"><a href="#fn:intel-isc2021">1</a></sup>
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/26/intel-pvc-47-tiles/">47個のタイルで構成される Intel Ponte Vecchio | Coelacanth's Dream</a></span>
+ GPU</a> に関する新たな発表を行い、<em>Intel Ponte Vecchio</em> GPU が OCP Accelerator Module (OAM) フォームファクと、それを 4基組み合わせて構成するサブシステムに対応することを明らかにしたが、 <em>AMD Aldebaran</em> の GPUノード (noncpu node) も同様の構成を採るのかもしれない。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/26/intel-pvc-47-tiles/">47個のタイルで構成される Intel Ponte Vecchio | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <h2 id="umc">ダイあたり 4基の UMC</h2>
-
-<p>パッチのコメント部にて <em>Aldebaran</em> メモリコントローラーについて触れられている。<br />
-<em>Aldebaran</em> は 2個のダイによる MCM (Multi-chip Module)構成を採るが、ダイはそれぞれ 4基の Unified Memory Controller (UMC) を持ち、UMC は 8チャネルを処理可能、そしてメモリチャネルにはそれぞれ 2GB の HBM2(e)メモリが接続されるという。HBM系メモリでは 1024-bit のインターフェイスを持ち、128-bit のメモリチャネル 8本を束ねる形で構成される。<br />
-UMC に接続される HBM2メモリスタックあたりの容量は 16GB となり、ダイあたりでは 64GB、<em>Aldebaran</em> GPU 全体では 128GB の GPUメモリが搭載されると考えられる。<br />
+<p>パッチのコメント部にて <em>Aldebaran</em> メモリコントローラーについて触れられている。<br>
+<em>Aldebaran</em> は 2個のダイによる MCM (Multi-chip Module)構成を採るが、ダイはそれぞれ 4基の Unified Memory Controller (UMC) を持ち、UMC は 8チャネルを処理可能、そしてメモリチャネルにはそれぞれ 2GB の HBM2(e)メモリが接続されるという。HBM系メモリでは 1024-bit のインターフェイスを持ち、128-bit のメモリチャネル 8本を束ねる形で構成される。<br>
+UMC に接続される HBM2メモリスタックあたりの容量は 16GB となり、ダイあたりでは 64GB、<em>Aldebaran</em> GPU 全体では 128GB の GPUメモリが搭載されると考えられる。<br>
 HBM2メモリではスタックあたり最大 8GB までだったが、HBM2e では 16GB の構成が可能になっている。</p>
-
 <blockquote>
-<pre tabindex="0"><code> Aldebaran has 2 Dies (enumerated as a MCx, x= 8 ~ 15) 
+<pre><code> Aldebaran has 2 Dies (enumerated as a MCx, x= 8 ~ 15) 
    Each Die has 4 UMCs (enumerated as csrowx, x=0~3)
    Each die has 2 root ports, with 4 misc port for each root.
-   Each UMC manages 8 UMC channels each connected to 2GB of HBM memory.</code></pre>
+   Each UMC manages 8 UMC channels each connected to 2GB of HBM memory.
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-edac/20210630152828.162659-1-nchatrad@amd.com/T/#m556d6870ba567a24c2677b6e5d81739fcd12f312" rel="nofollow noreferrer" target="_blank">[PATCH 0/7] x86/edac/amd64: Add support for noncpu nodes</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-edac/20210630152828.162659-1-nchatrad@amd.com/T/#m556d6870ba567a24c2677b6e5d81739fcd12f312">[PATCH 0/7] x86/edac/amd64: Add support for noncpu nodes</a></cite>
 </div>
 
 </blockquote>
-
-<p>TSMC 7nmプロセス (N7) で製造される <em>NVIDIA GA100</em> はチップ的には 6144-bit (6x HBM2/eスタック)のメモリインターフェイスが実装されていたが、製品である <strong>NVIDIA A100 GPU</strong> では 1スタック分を無効化し、5120-bit (5x HBM2/eスタック) の構成となっていた。 <em>NVIDIA GA100</em> は 826 mm2 という巨大なダイサイズであり、メモリインターフェイスを一部無効化したのは歩留まり向上のためと考えられる。<br />
-対し、<em>AMD Aldebaran</em> GPU ではダイあたりのメモリインターフェイスは 4096-bit (4x HBM2eスタック) になると見られ、ダイレベルでは <a href="https://www.coelacanth-dream.com/tags/cdna">CDNA アーキテクチャ</a> を採用する <em>Arcturus/MI100</em> と同じ規模のメモリインターフェイスを保つことができ、歩留まり悪化の緩和が期待できる。こうした点は MCM構成の明らかな利点だろう。<br />
-また、 <em>Aldebaran</em> GPU は 2個のダイで構成され、それぞれプライマリーダイとセカンダリーダイという役割の異なるダイに分かれるが、そこは設定可能な部分で、ダイ自体は同一になると思われる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/09/aldebaran-primary-secondary/">プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth's Dream</a></span>
+<p>TSMC 7nmプロセス (N7) で製造される <em>NVIDIA GA100</em> はチップ的には 6144-bit (6x HBM2/eスタック)のメモリインターフェイスが実装されていたが、製品である <strong>NVIDIA A100 GPU</strong> では 1スタック分を無効化し、5120-bit (5x HBM2/eスタック) の構成となっていた。 <em>NVIDIA GA100</em> は 826 mm2 という巨大なダイサイズであり、メモリインターフェイスを一部無効化したのは歩留まり向上のためと考えられる。<br>
+対し、<em>AMD Aldebaran</em> GPU ではダイあたりのメモリインターフェイスは 4096-bit (4x HBM2eスタック) になると見られ、ダイレベルでは <a href="https://www.coelacanth-dream.com/tags/cdna">CDNA アーキテクチャ</a> を採用する <em>Arcturus/MI100</em> と同じ規模のメモリインターフェイスを保つことができ、歩留まり悪化の緩和が期待できる。こうした点は MCM構成の明らかな利点だろう。<br>
+また、 <em>Aldebaran</em> GPU は 2個のダイで構成され、それぞれプライマリーダイとセカンダリーダイという役割の異なるダイに分かれるが、そこは設定可能な部分で、ダイ自体は同一になると思われる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/06/09/aldebaran-primary-secondary/">プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://media-www.micron.com/-/media/client/global/documents/products/data-sheet/dram/hbm2e/8gb_and_16gb_hbm2e_dram.pdf?rev=dbfcf653271041a497e5f1bef1a169ca" rel="nofollow noreferrer" target="_blank">8GB/16GB HBM2E with ECC - 8gb_and_16gb_hbm2e_dram.pdf</a></li>
-<li><a href="https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">nvidia-ampere-architecture-whitepaper.pdf</a></li>
-<li><a href="https://www.4gamer.net/games/121/G012181/20200527061/" rel="nofollow noreferrer" target="_blank">西川善司の3DGE：NVIDIAが投入する20 TFLOPS級の新GPU「A100」とはいったいどのようなGPUなのか？</a></li>
+<li><a href="https://media-www.micron.com/-/media/client/global/documents/products/data-sheet/dram/hbm2e/8gb_and_16gb_hbm2e_dram.pdf?rev=dbfcf653271041a497e5f1bef1a169ca">8GB/16GB HBM2E with ECC - 8gb_and_16gb_hbm2e_dram.pdf</a></li>
+<li><a href="https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/nvidia-ampere-architecture-whitepaper.pdf">nvidia-ampere-architecture-whitepaper.pdf</a></li>
+<li><a href="https://www.4gamer.net/games/121/G012181/20200527061/">西川善司の3DGE：NVIDIAが投入する20 TFLOPS級の新GPU「A100」とはいったいどのようなGPUなのか？</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:intel-isc2021"><a href="https://www.intel.com/content/www/us/en/newsroom/news/new-intel-xpu-innovations-target-hpc-ai.html" rel="nofollow noreferrer" target="_blank">New Intel XPU Innovations Target HPC and AI</a>
- <a class="footnote-return" href="#fnref:intel-isc2021"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.intel.com/content/www/us/en/newsroom/news/new-intel-xpu-innovations-target-hpc-ai.html">New Intel XPU Innovations Target HPC and AI</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

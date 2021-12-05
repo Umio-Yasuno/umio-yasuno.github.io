@@ -70,94 +70,81 @@
 <div class="article-time">
     <time datetime="2020-11-10 20:09 &#43;0900" class="time-b">Post: 2020/11/10 20:09 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/02/13 15:43 &#43;0900</div>
-  </div>
-
-<p>解説記事というよりはメモ、ノート的な記事。</p>
-
-<p>まず、AMD GPU には RB (Render Backend) というユニットがあり、RB は MSAA や EQAA 等のアンチエイリアス処理、深度テストを行ない、各ピクセルが最終的にフレームに表示されるかの判定を処理し、結果をメモリに書き出す役割を持つ。<br />
-RB はクロックあたり 4ピクセルを処理することができ (4 pixel/cycle)、ROP で言えば 4基相当となる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/05/31/what-does-rop-stand-for/">ROP は何の略 | Coelacanth's Dream</a></span>
+  </div><p>解説記事というよりはメモ、ノート的な記事。</p>
+<p>まず、AMD GPU には RB (Render Backend) というユニットがあり、RB は MSAA や EQAA 等のアンチエイリアス処理、深度テストを行ない、各ピクセルが最終的にフレームに表示されるかの判定を処理し、結果をメモリに書き出す役割を持つ。<br>
+RB はクロックあたり 4ピクセルを処理することができ (4 pixel/cycle)、ROP で言えば 4基相当となる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/05/31/what-does-rop-stand-for/">ROP は何の略 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p>そして、AMD GPU ドライバーのコードを読むに <em>RB+</em> というものが存在し、一部のチップに実装、有効化されている。<br />
+<p>そして、AMD GPU ドライバーのコードを読むに <em>RB+</em> というものが存在し、一部のチップに実装、有効化されている。<br>
 <em>RB+</em> の何が + なのかを調べたのがこの記事。</p>
-
 <h2 id="some-gpu">一部の APU/GPU に実装、有効化</h2>
-
-<p><em>RB+ / RB Plus</em> は、オープンソースドライバーの <a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/src/amd/common/ac_gpu_info.c" rel="nofollow noreferrer" target="_blank">src/amd/common/ac_gpu_info.c</a> によると、<em>Stoney APU (gfx810)</em> と GFX9 とそれ以降世代の APU/GPU に実装されているが、すべてが有効にできるのではなく、一部のみとなっている。<br />
-有効可能なものには、APU だと <em>Stoney</em> 、<a href="https://www.coelacanth-dream.com/tags/raven">Raven/Picasso (gfx902)</a>、<a href="https://www.coelacanth-dream.com/tags/raven2">Raven2 (gfx909)</a>、<a href="https://www.coelacanth-dream.com/tags/renoir">Renoir (gfx90c)</a>、<a href="https://www.coelacanth-dream.com/tags/vangogh">VanGogh</a> が、<br />
+<p><em>RB+ / RB Plus</em> は、オープンソースドライバーの <a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/src/amd/common/ac_gpu_info.c">src/amd/common/ac_gpu_info.c</a> によると、<em>Stoney APU (gfx810)</em> と GFX9 とそれ以降世代の APU/GPU に実装されているが、すべてが有効にできるのではなく、一部のみとなっている。<br>
+有効可能なものには、APU だと <em>Stoney</em> 、<a href="https://www.coelacanth-dream.com/tags/raven">Raven/Picasso (gfx902)</a>、<a href="https://www.coelacanth-dream.com/tags/raven2">Raven2 (gfx909)</a>、<a href="https://www.coelacanth-dream.com/tags/renoir">Renoir (gfx90c)</a>、<a href="https://www.coelacanth-dream.com/tags/vangogh">VanGogh</a> が、<br>
 dGPU では <em>Vega12 (gfx904)</em> 、<em>RDNA 2 / GFX10.3</em> 世代である <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid">Sienna Cichlid</a> 、<a href="https://www.coelacanth-dream.com/tags/navy_flounder">Navy Flounder</a> 、<a href="https://www.coelacanth-dream.com/tags/dimgrey_cavefish">Dimgrey Cavefish</a> が該当する。</p>
-
-<p>機能的には持っているはずだが、無効化されている GPU には、<em>Vega10 (gfx900)</em> 、 <em>Vega20 (gfx906)</em> 、<em>Navi10 (gfx1010)</em> 、<em>Navi12 (gfx1011)</em> 、 <em>Navi14 (gfx1012)</em> がある。<br />
-これらの GPU で無効化されている理由は不明。<br />
-APU では基本有効化されていることから、メモリ帯域が関係していると考えられる。<br />
-ただ <em>GFX9 / Vega</em> 世代以上の dGPU では、HBM2 2048-bit を備える <em>Vega10</em> 、HBM2 4096-bit の <em>Vega20</em> では無効化され、HBM2 1024-bit である <em>Vega12</em> では有効化され、<br />
+<p>機能的には持っているはずだが、無効化されている GPU には、<em>Vega10 (gfx900)</em> 、 <em>Vega20 (gfx906)</em> 、<em>Navi10 (gfx1010)</em> 、<em>Navi12 (gfx1011)</em> 、 <em>Navi14 (gfx1012)</em> がある。<br>
+これらの GPU で無効化されている理由は不明。<br>
+APU では基本有効化されていることから、メモリ帯域が関係していると考えられる。<br>
+ただ <em>GFX9 / Vega</em> 世代以上の dGPU では、HBM2 2048-bit を備える <em>Vega10</em> 、HBM2 4096-bit の <em>Vega20</em> では無効化され、HBM2 1024-bit である <em>Vega12</em> では有効化され、<br>
 <em>RDNA / GFX10</em> 世代の <em>Navi10</em> GDDR6 256-bit、<em>Navi14</em> GDDR6 128-bit では無効化されているあたり、単純にメモリ帯域で決めているようにも思えない。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  info-&gt;has_rbplus = info-&gt;family == CHIP_STONEY || info-&gt;chip_class &gt;= GFX9;
+<pre><code>  info-&gt;has_rbplus = info-&gt;family == CHIP_STONEY || info-&gt;chip_class &gt;= GFX9;
 
-  /* Some chips have RB+ registers, but don&#39;t support RB+. Those must
+  /* Some chips have RB+ registers, but don't support RB+. Those must
    * always disable it.
    */
   info-&gt;rbplus_allowed =
      info-&gt;has_rbplus &amp;&amp;
      (info-&gt;family == CHIP_STONEY || info-&gt;family == CHIP_VEGA12 || info-&gt;family == CHIP_RAVEN ||
-      info-&gt;family == CHIP_RAVEN2 || info-&gt;family == CHIP_RENOIR || info-&gt;chip_class &gt;= GFX10_3);</code></pre>
+      info-&gt;family == CHIP_RAVEN2 || info-&gt;family == CHIP_RENOIR || info-&gt;chip_class &gt;= GFX10_3);
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/3c2489d2e45b3013361c7284ed9de14fe40554cc/src/amd/common/ac_gpu_info.c" rel="nofollow noreferrer" target="_blank">src/amd/common/ac_gpu_info.c · 3c2489d2e45b3013361c7284ed9de14fe40554cc · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/3c2489d2e45b3013361c7284ed9de14fe40554cc/src/amd/common/ac_gpu_info.c">src/amd/common/ac_gpu_info.c · 3c2489d2e45b3013361c7284ed9de14fe40554cc · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="rbplus">RB+ の機能</h2>
-
 <p><em>RB+</em> がどういった機能を持つかは、結論からさっさと言えば、クロックあたりに処理可能な最大ピクセル数を 8ピクセルに拡張したものと思われる。</p>
-
-<p>以下は GPUOpen Driver を構成する一つである <a href="https://github.com/GPUOpen-Drivers/pal" rel="nofollow noreferrer" target="_blank">PAL (Platform Abstraction Library)</a> の一部コードだが、<br />
+<p>以下は GPUOpen Driver を構成する一つである <a href="https://github.com/GPUOpen-Drivers/pal">PAL (Platform Abstraction Library)</a> の一部コードだが、<br>
 クロックあたりに処理可能なピクセル数を、<em>Shader Engine数 * SEあたりの RB数 * (RB+ が有効なら 8pixel、そうでないなら 4pixel)</em> で求めている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  // Pixels per clock follows the following calculation:
+<pre><code>  // Pixels per clock follows the following calculation:
   // GPU__GC__NUM_SE * GPU__GC__NUM_RB_PER_SE * (RBPlus ? 8 : 4)
-  pInfo-&gt;pixelsPerClock = (pInfo-&gt;gfx6.numShaderEngines * pInfo-&gt;gfx6.maxNumRbPerSe * (pInfo-&gt;gfx6.rbPlus ? 8 : 4));</code></pre>
+  pInfo-&gt;pixelsPerClock = (pInfo-&gt;gfx6.numShaderEngines * pInfo-&gt;gfx6.maxNumRbPerSe * (pInfo-&gt;gfx6.rbPlus ? 8 : 4));
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/007816f4bd2fd3ace30f8af9629cff7ec1dcb998/src/core/hw/gfxip/gfx6/gfx6Device.cpp#L3260" rel="nofollow noreferrer" target="_blank">pal/gfx6Device.cpp at 007816f4bd2fd3ace30f8af9629cff7ec1dcb998 · GPUOpen-Drivers/pal</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/007816f4bd2fd3ace30f8af9629cff7ec1dcb998/src/core/hw/gfxip/gfx6/gfx6Device.cpp#L3260">pal/gfx6Device.cpp at 007816f4bd2fd3ace30f8af9629cff7ec1dcb998 · GPUOpen-Drivers/pal</a></cite>
 </div>
 
 </blockquote>
-
-<p>また、<em>Raven APU</em> は RB を 2基 (8ROP相当) 持つが、AMD公式のスライドでは <em>16 Pixels Units</em> となっている。<sup class="footnote-ref" id="fnref:raven-slide"><a href="#fn:raven-slide">1</a></sup></p>
-
-<p>ただ RB の規模を倍に拡張した訳ではないようで、<em>RB+</em> が有効な場合、通常の倍の性能を得るため、入力するシェーダーのピクセルフォーマットを特定のものに指定する必要があるとされている。<sup class="footnote-ref" id="fnref:rbplus-format"><a href="#fn:rbplus-format">2</a></sup></p>
-
+<p>また、<em>Raven APU</em> は RB を 2基 (8ROP相当) 持つが、AMD公式のスライドでは <em>16 Pixels Units</em> となっている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>ただ RB の規模を倍に拡張した訳ではないようで、<em>RB+</em> が有効な場合、通常の倍の性能を得るため、入力するシェーダーのピクセルフォーマットを特定のものに指定する必要があるとされている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p>そして、<span class="complement">調べるきっかけともなった</span>
- 気になる点は、<em>RDNA 2 / GFX10.3</em> 世代の GPU、<strong>Radeon RX 6000シリーズ</strong> ではどうなっているかである。<br />
-<strong>Radeon RX 6000シリーズ</strong> は ROP数が AMD公式の製品ページに記載されており、<strong>RX 6900 XT</strong> は 128ROP となっている。<sup class="footnote-ref" id="fnref:rx-6900-xt"><a href="#fn:rx-6900-xt">3</a></sup><br />
-この 128ROP という規模を、<em>RB+</em> を 16基搭載することで実現しているのか、それとも <em>RB</em> を 32基搭載しているのか。<br />
-上述したように、<em>RDNA 2 / GFX10.3</em> 世代の APU/GPU は <em>RB+</em> が実装、有効化されているため、前者の可能性が高いように思われる。<br />
+ 気になる点は、<em>RDNA 2 / GFX10.3</em> 世代の GPU、<strong>Radeon RX 6000シリーズ</strong> ではどうなっているかである。<br>
+<strong>Radeon RX 6000シリーズ</strong> は ROP数が AMD公式の製品ページに記載されており、<strong>RX 6900 XT</strong> は 128ROP となっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
+この 128ROP という規模を、<em>RB+</em> を 16基搭載することで実現しているのか、それとも <em>RB</em> を 32基搭載しているのか。<br>
+上述したように、<em>RDNA 2 / GFX10.3</em> 世代の APU/GPU は <em>RB+</em> が実装、有効化されているため、前者の可能性が高いように思われる。<br>
 また、AMD が公開している <strong>Radeon RX 6000シリーズ</strong> のダイショット <span class="complement">に近い CG</span>
- を見るに、RB と思われるユニットは 16基確認でき、<em>RB+</em> として相当する ROP数をカウントしていると考えれば辻褄が合う。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/01/22/navi10-dieshot-and-guess/">AMD Navi10のダイ観察 &amp; 推測 | Coelacanth's Dream</a></span>
+ を見るに、RB と思われるユニットは 16基確認でき、<em>RB+</em> として相当する ROP数をカウントしていると考えれば辻褄が合う。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/01/22/navi10-dieshot-and-guess/">AMD Navi10のダイ観察 &amp; 推測 | Coelacanth&rsquo;s Dream</a></span>
 
-<span class="thread-link"><a href="https://www.globenewswire.com/NewsRoom/AttachmentNg/56b9f51f-b313-41a3-9fc1-0f1bf766c3d4/en" rel="nofollow noreferrer" target="_blank">AMD Radeon™ RX 6000 Series die shot</a></span>
+<span class="thread-link"><a href="https://www.globenewswire.com/NewsRoom/AttachmentNg/56b9f51f-b313-41a3-9fc1-0f1bf766c3d4/en">AMD Radeon™ RX 6000 Series die shot</a></span>
 </p>
-
-<p>以前はオープンソースドライバー ( <em>RadeonSI (OpenGL), RADV (Vulkan)</em> ) に<em>RB+</em> の機能を無効化するオプションが存在していたが、現在では削除されている。<br />
-そして、判定部に <em>&quot;RDNA 2 / GFX10.3 以上の世代&quot;</em> とあることから、これからの AMD GPU は <em>RB+</em> がデフォルトとなるのではないかと思われる。</p>
-<div class="footnotes">
-
-<hr />
-
+<p>以前はオープンソースドライバー ( <em>RadeonSI (OpenGL), RADV (Vulkan)</em> ) に<em>RB+</em> の機能を無効化するオプションが存在していたが、現在では削除されている。<br>
+そして、判定部に <em>&ldquo;RDNA 2 / GFX10.3 以上の世代&rdquo;</em> とあることから、これからの AMD GPU は <em>RB+</em> がデフォルトとなるのではないかと思われる。</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:raven-slide"><a href="https://www.slideshare.net/AMD/delivering-a-new-level-of-visual-performance-in-an-soc-amd-raven-rdige-apu" rel="nofollow noreferrer" target="_blank">Delivering a new level of visual performance in an SoC AMD &quot;Raven Rid…</a>
- <a class="footnote-return" href="#fnref:raven-slide"><sup>[return]</sup></a></li>
-<li id="fn:rbplus-format"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7512/diffs" rel="nofollow noreferrer" target="_blank">ac,radv: use better export formats for 8-bit when RB+ isn't allowed (!7512) · Merge Requests · Mesa / mesa · GitLab</a> <br> <a href="https://github.com/GPUOpen-Drivers/pal/blob/4ae736bdbc5d5dee59851ac564c5e21d807b44b0/src/core/hw/gfxip/rpm/gfx9/gfx9RsrcProcMgr.cpp#L276" rel="nofollow noreferrer" target="_blank">pal/gfx9RsrcProcMgr.cpp at 4ae736bdbc5d5dee59851ac564c5e21d807b44b0 · GPUOpen-Drivers/pal</a>
- <a class="footnote-return" href="#fnref:rbplus-format"><sup>[return]</sup></a></li>
-<li id="fn:rx-6900-xt"><a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-6900-xt#product-specs" rel="nofollow noreferrer" target="_blank">AMD Radeon RX 6900 XT Graphics | AMD</a>
- <a class="footnote-return" href="#fnref:rx-6900-xt"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.slideshare.net/AMD/delivering-a-new-level-of-visual-performance-in-an-soc-amd-raven-rdige-apu">Delivering a new level of visual performance in an SoC AMD &ldquo;Raven Rid…</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7512/diffs">ac,radv: use better export formats for 8-bit when RB+ isn&rsquo;t allowed (!7512) · Merge Requests · Mesa / mesa · GitLab</a> <br> <a href="https://github.com/GPUOpen-Drivers/pal/blob/4ae736bdbc5d5dee59851ac564c5e21d807b44b0/src/core/hw/gfxip/rpm/gfx9/gfx9RsrcProcMgr.cpp#L276">pal/gfx9RsrcProcMgr.cpp at 4ae736bdbc5d5dee59851ac564c5e21d807b44b0 · GPUOpen-Drivers/pal</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-6900-xt#product-specs">AMD Radeon RX 6900 XT Graphics | AMD</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

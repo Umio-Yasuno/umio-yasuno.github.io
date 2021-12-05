@@ -70,33 +70,29 @@
 <div class="article-time">
     <time datetime="2021-02-11 20:29 &#43;0900" class="time-b">Post: 2021/02/11 20:29 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/02/13 16:08 &#43;0900</div>
-  </div>
-
-<p>オープンソースで開発されるユーザーモードドライバー <strong>Mesa3D</strong> に投稿されたパッチから、<em>Raven2 (Dali/Pollock) APU</em> が持つ GPU L2キャッシュのサイズが 128KB であることが明かされた。<br />
+  </div><p>オープンソースで開発されるユーザーモードドライバー <strong>Mesa3D</strong> に投稿されたパッチから、<em>Raven2 (Dali/Pollock) APU</em> が持つ GPU L2キャッシュのサイズが 128KB であることが明かされた。<br>
 <em>Raven2 (Dali/Pollock) APU</em> は CPUに <em>Zenアーキテクチャ</em> 2-Core/4-Thread、GPU に <em>Vega/GFX9 (gfx909)</em> 3CU を持つ、小型な省電力 SoC。GF 14nmプロセスで製造される。</p>
-
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/29ca71e10e58077fb847a914b5051e69a4add352" rel="nofollow noreferrer" target="_blank">ac/gpu_info: conceal L2 cache sizes (29ca71e1) · Commits · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/29ca71e10e58077fb847a914b5051e69a4add352">ac/gpu_info: conceal L2 cache sizes (29ca71e1) · Commits · Mesa / mesa · GitLab</a></li>
 </ul>
-
 <h2 id="raven2-gpu-l2">Raven2 GPU L2$</h2>
-
-<p>今回のパッチで、<em>Raven2</em> の GPU L2キャッシュはブロックあたり 64KB とされ、<br />
-別のオープンソースで開発される AMDVLK の一部を構成する <a href="https://github.com/GPUOpen-Drivers/pal" rel="nofollow noreferrer" target="_blank">PAL (Platform Abstraction Library)</a> のコードには、2ブロックあると記述されている。<br />
+<p>今回のパッチで、<em>Raven2</em> の GPU L2キャッシュはブロックあたり 64KB とされ、<br>
+別のオープンソースで開発される AMDVLK の一部を構成する <a href="https://github.com/GPUOpen-Drivers/pal">PAL (Platform Abstraction Library)</a> のコードには、2ブロックあると記述されている。<br>
 そして、<em>Raven2</em> の GPU L2キャッシュは計 128KB となる。</p>
-
-<p>ちなみに、コード中に使われている <em>TCC</em> は <em>Texture Channel Cache</em> の略とされている。<sup class="footnote-ref" id="fnref:tcc"><a href="#fn:tcc">1</a></sup><br />
+<p>ちなみに、コード中に使われている <em>TCC</em> は <em>Texture Channel Cache</em> の略とされている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 そのフルネームが記述されることは最近ではなくなり、また資料中で解説されることもほとんどなく、半ば記号と化している。</p>
-
 <blockquote>
-<pre tabindex="0"><code>      case CHIP_RAVEN2:
+<pre><code>      case CHIP_RAVEN2:
          info-&gt;l2_cache_size = info-&gt;num_tcc_blocks * 64 * 1024;
-         break;</code></pre>
+         break;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/29ca71e10e58077fb847a914b5051e69a4add352" rel="nofollow noreferrer" target="_blank">ac/gpu_info: conceal L2 cache sizes (29ca71e1) · Commits · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/29ca71e10e58077fb847a914b5051e69a4add352">ac/gpu_info: conceal L2 cache sizes (29ca71e1) · Commits · Mesa / mesa · GitLab</a></cite>
 </div>
 
-<pre tabindex="0"><code>        else if (AMDGPU_IS_RAVEN2(m_nullIdLookup.familyId, m_nullIdLookup.eRevId))
+</blockquote>
+<blockquote>
+<pre><code>        else if (AMDGPU_IS_RAVEN2(m_nullIdLookup.familyId, m_nullIdLookup.eRevId))
        {
            pChipInfo-&gt;doubleOffchipLdsBuffers = 1;
            pChipInfo-&gt;gbAddrConfig            = 0x26010001; // GB_ADDR_CONFIG_DEFAULT;
@@ -108,30 +104,26 @@
            pChipInfo-&gt;maxWavefrontSize        =   64;
            pChipInfo-&gt;numPhysicalVgprsPerSimd =  256; // GPU__GC__NUM_GPRS;
            pChipInfo-&gt;maxNumCuPerSh           =    3; // GPU__GC__NUM_CU_PER_SH;
-           pChipInfo-&gt;numTccBlocks            =    2; // GPU__TC__NUM_TCCS;</code></pre>
+           pChipInfo-&gt;numTccBlocks            =    2; // GPU__TC__NUM_TCCS;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/57cd977c79e4321c28dcb1a18a4aa23880aa48f4/src/core/os/nullDevice/ndDevice.cpp#L921" rel="nofollow noreferrer" target="_blank">pal/ndDevice.cpp at 57cd977c79e4321c28dcb1a18a4aa23880aa48f4 · GPUOpen-Drivers/pal</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/57cd977c79e4321c28dcb1a18a4aa23880aa48f4/src/core/os/nullDevice/ndDevice.cpp#L921">pal/ndDevice.cpp at 57cd977c79e4321c28dcb1a18a4aa23880aa48f4 · GPUOpen-Drivers/pal</a></cite>
 </div>
 
 </blockquote>
-
-<p>L2キャッシュサイズが何故今更分かったか、明かされたかと言えば、オープンソースドライバー等で最適化に使われるのは、基本、メモリ帯域や RB (Render Backend) に対応する L2キャッシュブロックの数であり、サイズ自体はあまり使われていないからだ。<br />
-今回 L2キャッシュサイズの情報が追加されたのは、ドライバーのトレース機能から出力された情報を解析する <a href="https://github.com/GPUOpen-Tools/radeon_gpu_analyzer" rel="nofollow noreferrer" target="_blank">Radeon GPU Analyzer (RGA)</a> に使われるためで、オープンソースドライバーでも RGA への対応を強化する考えがあるものと思われる。</p>
-
+<p>L2キャッシュサイズが何故今更分かったか、明かされたかと言えば、オープンソースドライバー等で最適化に使われるのは、基本、メモリ帯域や RB (Render Backend) に対応する L2キャッシュブロックの数であり、サイズ自体はあまり使われていないからだ。<br>
+今回 L2キャッシュサイズの情報が追加されたのは、ドライバーのトレース機能から出力された情報を解析する <a href="https://github.com/GPUOpen-Tools/radeon_gpu_analyzer">Radeon GPU Analyzer (RGA)</a> に使われるためで、オープンソースドライバーでも RGA への対応を強化する考えがあるものと思われる。</p>
 <p><em>Raven/Picasso APU</em> 等は資料中で GPU L2キャッシュに 1MB 持つことが触れられていたが、<em>Raven2</em> は省電力低コストという特徴のためか、個人的には他の APU よりもひっそりしているという印象を受ける。</p>
-
-<p>以前に、<a href="https://www.flickr.com/photos/130561288@N04/" rel="nofollow noreferrer" target="_blank">Fritzchens Fritz | Flickr</a> 氏が撮影したダイショットを元に各ブロックを推測したことがあったが、その時には気が付けなかった。<br />
+<p>以前に、<a href="https://www.flickr.com/photos/130561288@N04/">Fritzchens Fritz | Flickr</a> 氏が撮影したダイショットを元に各ブロックを推測したことがあったが、その時には気が付けなかった。<br>
 言い訳をすると、SoC として多くの機能を持つプロセッサは、各ブロックが入り組んだ構造をしており <span class="complement">CPUコアや GPU CU 等の分かりやすいもの以外</span>
- 2つを並べて見比べても、あるブロックが何のユニットで、片方のどれと対応するかを推測することは難しい。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/07/24/raven2-dieshot-and-compare-zen-apu/">AMD Raven2 のダイ観察 &amp; Zen系 APU を比較 | Coelacanth's Dream</a></span>
+ 2つを並べて見比べても、あるブロックが何のユニットで、片方のどれと対応するかを推測することは難しい。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/07/24/raven2-dieshot-and-compare-zen-apu/">AMD Raven2 のダイ観察 &amp; Zen系 APU を比較 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p><em>Raven2</em> の GPU部は <em>Raven/Picasso</em> のそれから規模を大きく減らしており、CU数は約1/4、RB は 2基から 1基に、そして L2キャッシュは 1/8 の規模となる。<br />
-AMD GPU は <em>Vega/GFX9</em> 世代から、L2キャッシュのブロックあたりのサイズは 256KB を基本としており、<em>RDNA/GFX10</em> 世代もそのようになっている。( Polaris10/11 等、GFX8 世代でもブロックあたり 256KB の GPU は存在する)<br />
-L2キャッシュのサイズは選択でき、<a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">rdna-whitepaper.pdf</a> には 64KB から 512KB の構成を取ることができるとある。<br />
-それでも <em>RDNA/GFX10</em> 世代では 256KB の構成を取り続けていることから、性能や効率、必要とされる面積という点で 256KB が最適だという判断があったはずで、<br />
+<p><em>Raven2</em> の GPU部は <em>Raven/Picasso</em> のそれから規模を大きく減らしており、CU数は約1/4、RB は 2基から 1基に、そして L2キャッシュは 1/8 の規模となる。<br>
+AMD GPU は <em>Vega/GFX9</em> 世代から、L2キャッシュのブロックあたりのサイズは 256KB を基本としており、<em>RDNA/GFX10</em> 世代もそのようになっている。( Polaris10/11 等、GFX8 世代でもブロックあたり 256KB の GPU は存在する)<br>
+L2キャッシュのサイズは選択でき、<a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf">rdna-whitepaper.pdf</a> には 64KB から 512KB の構成を取ることができるとある。<br>
+それでも <em>RDNA/GFX10</em> 世代では 256KB の構成を取り続けていることから、性能や効率、必要とされる面積という点で 256KB が最適だという判断があったはずで、<br>
 比較的最近の APU でありながらブロックあたり 64KB の構成を取ったことは、<em>Raven2</em> が省電力低コストという特徴を強める要素だと言える。</p>
-
 <pre tabindex="0"><code>## Raven2 Diagram
 
  +- ShaderEngine(00) -----------------+
@@ -144,7 +136,8 @@ L2キャッシュのサイズは選択でき、<a href="https://www.amd.com/syst
  | +--------------------------------+ |
  |      [- Geometry Processor -]      |
  +------------------------------------+
- [L2$  64K] [L2$  64K]</code></pre><pre tabindex="0"><code>## Raven/Picasso Diagram
+ [L2$  64K] [L2$  64K]
+</code></pre><pre tabindex="0"><code>## Raven/Picasso Diagram
 
  +- ShaderEngine(00) -----------------+
  | +- ShaderArray(00) --------------+ |
@@ -164,60 +157,55 @@ L2キャッシュのサイズは選択でき、<a href="https://www.amd.com/syst
  | +--------------------------------+ |
  |      [- Geometry Processor -]      |
  +------------------------------------+
- [L2$ 256K] [L2$ 256K] [L2$ 256K] [L2$ 256K]</code></pre>
-
+ [L2$ 256K] [L2$ 256K] [L2$ 256K] [L2$ 256K]
+</code></pre>
 <table>
 <thead>
 <tr>
-<th align="left"></th>
-<th align="center">Raven2</th>
-<th align="center">Raven/Picasso</th>
+<th style="text-align:left"></th>
+<th style="text-align:center">Raven2</th>
+<th style="text-align:center">Raven/Picasso</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">CPU Core/Thread</td>
-<td align="center">2/4</td>
-<td align="center">4/8</td>
+<td style="text-align:left">CPU Core/Thread</td>
+<td style="text-align:center">2/4</td>
+<td style="text-align:center">4/8</td>
 </tr>
-
 <tr>
-<td align="left">GPU</td>
-<td align="center">gfx909</td>
-<td align="center">gfx902</td>
+<td style="text-align:left">GPU</td>
+<td style="text-align:center">gfx909</td>
+<td style="text-align:center">gfx902</td>
 </tr>
-
 <tr>
-<td align="left">GPU CU</td>
-<td align="center">3CU</td>
-<td align="center">11CU</td>
+<td style="text-align:left">GPU CU</td>
+<td style="text-align:center">3CU</td>
+<td style="text-align:center">11CU</td>
 </tr>
-
 <tr>
-<td align="left">GPU L2$</td>
-<td align="center">128KB</td>
-<td align="center">1024KB</td>
+<td style="text-align:left">GPU L2$</td>
+<td style="text-align:center">128KB</td>
+<td style="text-align:center">1024KB</td>
 </tr>
-
 <tr>
-<td align="left">GPU RB+<sup class="footnote-ref" id="fnref:rbplus"><a href="#fn:rbplus">2</a></sup></td>
-<td align="center">1 RB+<br>(8-ROP)</td>
-<td align="center">2 RB+<br>(16-ROP)</td>
+<td style="text-align:left">GPU RB+<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
+<td style="text-align:center">1 RB+<br>(8-ROP)</td>
+<td style="text-align:center">2 RB+<br>(16-ROP)</td>
 </tr>
 </tbody>
 </table>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:tcc"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/issues/1208#note_240161" rel="nofollow noreferrer" target="_blank">[radeonsi] Tahiti LE: GFX block is not functional, CP is okay (#1208) · Issues · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:tcc"><sup>[return]</sup></a></li>
-<li id="fn:rbplus"><a href="https://www.coelacanth-dream.com/posts/2020/11/10/what-is-rbplus/">一部の AMD GPU で実装、有効化されている RB+ とは何か | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:rbplus"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/issues/1208#note_240161">[radeonsi] Tahiti LE: GFX block is not functional, CP is okay (#1208) · Issues · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/11/10/what-is-rbplus/">一部の AMD GPU で実装、有効化されている RB+ とは何か | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

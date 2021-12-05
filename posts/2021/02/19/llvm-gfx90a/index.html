@@ -70,25 +70,19 @@
 <div class="article-time">
     <time datetime="2021-02-19 13:48 &#43;0900" class="time-b">Post: 2021/02/19 13:48 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/06/06 06:53 &#43;0900</div>
-  </div>
-
-<p>AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、GPUID <em>gfx90a</em> のサポートを追加するパッチが投稿された。<br />
-<span class="thread-link"><a href="https://github.com/llvm/llvm-project/commit/a8d9d50762c42d726274d3f1126ec97ff96e2a22" rel="nofollow noreferrer" target="_blank">[AMDGPU] gfx90a support · llvm/llvm-project@a8d9d50</a></span>
+  </div><p>AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、GPUID <em>gfx90a</em> のサポートを追加するパッチが投稿された。<br>
+<span class="thread-link"><a href="https://github.com/llvm/llvm-project/commit/a8d9d50762c42d726274d3f1126ec97ff96e2a22">[AMDGPU] gfx90a support · llvm/llvm-project@a8d9d50</a></span>
 
 <em>Vega/GFX9</em> 世代であること、<em>Arcturus/MI100/gfx908</em> と同様に SRAM ECC、MFMA命令等をサポートしていることから、 <em>CDNA 2</em> (次世代 <em>CDNA</em> )  GPU、<strong>MI200</strong> の GPUID ではないかと思われる。</p>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#pkfp32-fullfp64">Packed FP32 / FullRate FP64</a></li>
 <li><a href="#tgsplit">TgSplit</a></li>
 </ul>
 
-
 <h2 id="pkfp32-fullfp64">Packed FP32 / FullRate FP64</h2>
-
 <p>以下は <em>gfx90a</em> がサポートする ISA と機能の範囲だが、<code>FeaturePackedFP32Ops</code> と <code>FullRate64Ops</code> が存在する。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   def FeatureISAVersion9_0_A : FeatureSet&lt;
+<pre><code>   def FeatureISAVersion9_0_A : FeatureSet&lt;
      [FeatureGFX9,
       FeatureGFX90AInsts,
       FeatureFmaMixInsts,
@@ -108,153 +102,128 @@
       FeatureMadMacF32Insts,
       FeatureSupportsSRAMECC,
       FeaturePackedTID,
-      FullRate64Ops]&gt;;</code></pre>
+      FullRate64Ops]&gt;;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/0db938312a06b8aa3b6c6c0272e7f28167bbd16a/llvm/lib/Target/AMDGPU/AMDGPU.td" rel="nofollow noreferrer" target="_blank">llvm-project/AMDGPU.td at 0db938312a06b8aa3b6c6c0272e7f28167bbd16a · llvm/llvm-project</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/0db938312a06b8aa3b6c6c0272e7f28167bbd16a/llvm/lib/Target/AMDGPU/AMDGPU.td">llvm-project/AMDGPU.td at 0db938312a06b8aa3b6c6c0272e7f28167bbd16a · llvm/llvm-project</a></cite>
 </div>
 
 </blockquote>
-
-<p>名前から推測するに、前者は FP32演算を 2つ束ねて (Packed) 実行することで 2倍のレートで処理する機能、後者はフルレートで FP64演算を行う機能と思われる。<br />
-そう言ってしまうとあっさりしているが実際は凄まじい演算部の強化であり、これまでの AMD GPU における FP64演算は、FP32演算のレートの半分というのが通常だった。<br />
-ピークFP64演算性能 11.5 TFLOPS を持ち、10 TFLOPS の壁を突破した初の GPU である <em>Arcturus/MI100</em> でも FP32演算の半分のレートであり、GPU内部のクラスタとなる ShaderEngine 8基、総 CU 120基という、それまでの AMD GPUアーキテクチャを踏襲しつつ、規模を増やすことでその性能を達成している。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/11/17/amd-cdna-arch-mi100-arcturus/">AMD、初の CDNAアーキテクチャ GPU 「MI100」 を発表 | Coelacanth's Dream</a></span>
+<p>名前から推測するに、前者は FP32演算を 2つ束ねて (Packed) 実行することで 2倍のレートで処理する機能、後者はフルレートで FP64演算を行う機能と思われる。<br>
+そう言ってしまうとあっさりしているが実際は凄まじい演算部の強化であり、これまでの AMD GPU における FP64演算は、FP32演算のレートの半分というのが通常だった。<br>
+ピークFP64演算性能 11.5 TFLOPS を持ち、10 TFLOPS の壁を突破した初の GPU である <em>Arcturus/MI100</em> でも FP32演算の半分のレートであり、GPU内部のクラスタとなる ShaderEngine 8基、総 CU 120基という、それまでの AMD GPUアーキテクチャを踏襲しつつ、規模を増やすことでその性能を達成している。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/11/17/amd-cdna-arch-mi100-arcturus/">AMD、初の CDNAアーキテクチャ GPU 「MI100」 を発表 | Coelacanth&rsquo;s Dream</a></span>
 
 合わせて FP32演算のパックド実行もサポートしたことから、演算ユニット、ベクタレジスタは FP64 が基本単位となっていると思われ、 <em>Arcturus/MI100</em> から倍のリソースとなる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   unsigned GCNTTIImpl::getRegisterBitWidth(bool Vector) const {
+<pre><code>   unsigned GCNTTIImpl::getRegisterBitWidth(bool Vector) const {
      return (Vector &amp;&amp; ST-&gt;hasPackedFP32Ops()) ? 64 : 32;
-   }</code></pre>
+   }
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/a8d9d50762c42d726274d3f1126ec97ff96e2a22/llvm/lib/Target/AMDGPU/AMDGPUTargetTransformInfo.cpp" rel="nofollow noreferrer" target="_blank">llvm-project/AMDGPUTargetTransformInfo.cpp at a8d9d50762c42d726274d3f1126ec97ff96e2a22 · llvm/llvm-project</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/a8d9d50762c42d726274d3f1126ec97ff96e2a22/llvm/lib/Target/AMDGPU/AMDGPUTargetTransformInfo.cpp">llvm-project/AMDGPUTargetTransformInfo.cpp at a8d9d50762c42d726274d3f1126ec97ff96e2a22 · llvm/llvm-project</a></cite>
 </div>
 
 </blockquote>
-
 <p>MFMA (Matrix Fused Multiply-Add) 命令も拡張され、強化された演算ユニットに向けた命令がいくつか追加されている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   def : SourceOfDivergence&lt;int_amdgcn_mfma_f32_32x32x4bf16_1k&gt;;
+<pre><code>   def : SourceOfDivergence&lt;int_amdgcn_mfma_f32_32x32x4bf16_1k&gt;;
    def : SourceOfDivergence&lt;int_amdgcn_mfma_f32_16x16x4bf16_1k&gt;;
    def : SourceOfDivergence&lt;int_amdgcn_mfma_f32_4x4x4bf16_1k&gt;;
    def : SourceOfDivergence&lt;int_amdgcn_mfma_f32_32x32x8bf16_1k&gt;;
    def : SourceOfDivergence&lt;int_amdgcn_mfma_f32_16x16x16bf16_1k&gt;;
    def : SourceOfDivergence&lt;int_amdgcn_mfma_f64_16x16x4f64&gt;;
-   def : SourceOfDivergence&lt;int_amdgcn_mfma_f64_4x4x4f64&gt;;</code></pre>
+   def : SourceOfDivergence&lt;int_amdgcn_mfma_f64_4x4x4f64&gt;;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/a8d9d50762c42d726274d3f1126ec97ff96e2a22/llvm/lib/Target/AMDGPU/AMDGPUSearchableTables.td" rel="nofollow noreferrer" target="_blank">llvm-project/AMDGPUSearchableTables.td at a8d9d50762c42d726274d3f1126ec97ff96e2a22 · llvm/llvm-project</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/a8d9d50762c42d726274d3f1126ec97ff96e2a22/llvm/lib/Target/AMDGPU/AMDGPUSearchableTables.td">llvm-project/AMDGPUSearchableTables.td at a8d9d50762c42d726274d3f1126ec97ff96e2a22 · llvm/llvm-project</a></cite>
 </div>
 
 </blockquote>
-
 <p><strong>MI200</strong> の CU数等は当然まだ不明だが、CUあたりの演算性能は向上しており、<em>Arcturus/MI100</em> と変わらないか多少少ない CU数だとしても、全体的なピーク演算性能は大きく向上すると考えられ、 <strong>CDNA 2/MI200</strong> はよりコンピュート性能に重きを置いた GPU となることが予想される。</p>
-
 <h2 id="tgsplit">TgSplit</h2>
-
 <p><em>gfx90a</em> ではフロントエンド部の新たな機能として <em>TgSplit</em> モードがサポートされている。</p>
-
 <ul>
-<li><a href="https://github.com/llvm/llvm-project/blob/a8d9d50762c42d726274d3f1126ec97ff96e2a22/llvm/docs/AMDGPUUsage.rst#memory-model-gfx90a" rel="nofollow noreferrer" target="_blank">llvm-project/AMDGPUUsage.rst at a8d9d50762c42d726274d3f1126ec97ff96e2a22 · llvm/llvm-project</a></li>
+<li><a href="https://github.com/llvm/llvm-project/blob/a8d9d50762c42d726274d3f1126ec97ff96e2a22/llvm/docs/AMDGPUUsage.rst#memory-model-gfx90a">llvm-project/AMDGPUUsage.rst at a8d9d50762c42d726274d3f1126ec97ff96e2a22 · llvm/llvm-project</a></li>
 </ul>
-
-<p><em>TgSplit</em> は <em>Thread group Split</em> の略とされる。<br />
-1つの Workgroup は通常同じ CU に割り振られ、CU内の異なる SIMDユニットで実行されるが、<br />
-<em>TgSplit</em> では Workgroup を分割、異なる CU での実行を可能とする。<br />
-(CU内の SIMDユニット数は、GCNアーキテクチャでは CUあたり 4 SIMDユニット、RDNA では 2 SIMDユニット。<br />
+<p><em>TgSplit</em> は <em>Thread group Split</em> の略とされる。<br>
+1つの Workgroup は通常同じ CU に割り振られ、CU内の異なる SIMDユニットで実行されるが、<br>
+<em>TgSplit</em> では Workgroup を分割、異なる CU での実行を可能とする。<br>
+(CU内の SIMDユニット数は、GCNアーキテクチャでは CUあたり 4 SIMDユニット、RDNA では 2 SIMDユニット。<br>
 Workgroup は GPU が処理するカーネル内のブロックであり、スレッドの塊である Wavefront が最大 16個格納されている。Wavefront の単位は GCN では 64スレッド、RDNA では 32スレッド。RDNA は 64スレッドにも対応している。)</p>
-
-<p><em>TgSplit</em> モードは少ない Workgroup 数であっても CU の稼働率を引き上げられる機能に見えるが、CU内の高速なローカルメモリ、LDS (Local Data Share) は 1つの Workgroup内のスレッド間で共有するため、Workgroup を分割し、異なる CU で実行する <em>TgSplit</em> モードでは LDS が割り当てられない場合があるとしている。<br />
+<p><em>TgSplit</em> モードは少ない Workgroup 数であっても CU の稼働率を引き上げられる機能に見えるが、CU内の高速なローカルメモリ、LDS (Local Data Share) は 1つの Workgroup内のスレッド間で共有するため、Workgroup を分割し、異なる CU で実行する <em>TgSplit</em> モードでは LDS が割り当てられない場合があるとしている。<br>
 そのため、<em>TgSplit</em> モードを活用し、性能を引き出すにはソフトウェア側の新たな最適化が必要と考えられるが、そこは ROCmソフトウェアが担当するのだろう。</p>
-
-<p>実行フローにおける新たな <em>TgSplit</em> モードの追加は、AMD GPUアーキテクチャとして大きな変更点だと言える。<br />
-<em>gfx90a</em> では演算部が大きく強化されているが、それはユニット面積、GPUチップの製造コストにも響く。<em>gfx90a</em> の CU はこれまでの AMD GPU より大きくなるだろう。<em>Arcturus/gfx908</em> から増設された miSIMDユニット (Machine Intelligence SIMD) と AccVGPR (Accumulation VGPR) の存在もある。<br />
+<p>実行フローにおける新たな <em>TgSplit</em> モードの追加は、AMD GPUアーキテクチャとして大きな変更点だと言える。<br>
+<em>gfx90a</em> では演算部が大きく強化されているが、それはユニット面積、GPUチップの製造コストにも響く。<em>gfx90a</em> の CU はこれまでの AMD GPU より大きくなるだろう。<em>Arcturus/gfx908</em> から増設された miSIMDユニット (Machine Intelligence SIMD) と AccVGPR (Accumulation VGPR) の存在もある。<br>
 そういった点では、<em>TgSplit</em> モードは増強された CU の稼働率を上げ、ダイに掛かるコストパフォーマンスを高めるために必要だったのではないか、という見方もできる。</p>
-
 <p>また、 <em>XGMI/Infinity Fabric Link</em> によるメモリ共有が可能なマルチGPU構成時のメモリモデルも改良され、仮想アドレスが割り当てられている L2キャッシュを、必要以上に無効化することを減らす工夫が採り入れられている。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">AMDGPU</th>
-<th align="center">GPU ID</th>
+<th style="text-align:left">AMDGPU</th>
+<th style="text-align:center">GPU ID</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Vega10</td>
-<td align="center">gfx900</td>
+<td style="text-align:left">Vega10</td>
+<td style="text-align:center">gfx900</td>
 </tr>
-
 <tr>
-<td align="left">Raven/Picasso</td>
-<td align="center">gfx902</td>
+<td style="text-align:left">Raven/Picasso</td>
+<td style="text-align:center">gfx902</td>
 </tr>
-
 <tr>
-<td align="left">Vega12</td>
-<td align="center">gfx904</td>
+<td style="text-align:left">Vega12</td>
+<td style="text-align:center">gfx904</td>
 </tr>
-
 <tr>
-<td align="left">Vega20</td>
-<td align="center">gfx906</td>
+<td style="text-align:left">Vega20</td>
+<td style="text-align:center">gfx906</td>
 </tr>
-
 <tr>
-<td align="left">Arcturus</td>
-<td align="center">gfx908</td>
+<td style="text-align:left">Arcturus</td>
+<td style="text-align:center">gfx908</td>
 </tr>
-
 <tr>
-<td align="left">Raven2</td>
-<td align="center">gfx909</td>
+<td style="text-align:left">Raven2</td>
+<td style="text-align:center">gfx909</td>
 </tr>
-
 <tr>
-<td align="left"><em>MI200?</em></td>
-<td align="center"><em>gfx90a?</em></td>
+<td style="text-align:left"><em>MI200?</em></td>
+<td style="text-align:center"><em>gfx90a?</em></td>
 </tr>
-
 <tr>
-<td align="left">Renoir/Lucienne<br>/Green Sardine (Cezanne)</td>
-<td align="center">gfx90c</td>
+<td style="text-align:left">Renoir/Lucienne<br>/Green Sardine (Cezanne)</td>
+<td style="text-align:center">gfx90c</td>
 </tr>
-
 <tr>
-<td align="left">Navi10</td>
-<td align="center">gfx1010</td>
+<td style="text-align:left">Navi10</td>
+<td style="text-align:center">gfx1010</td>
 </tr>
-
 <tr>
-<td align="left">Navi12</td>
-<td align="center">gfx1011</td>
+<td style="text-align:left">Navi12</td>
+<td style="text-align:center">gfx1011</td>
 </tr>
-
 <tr>
-<td align="left">Navi14</td>
-<td align="center">gfx1012</td>
+<td style="text-align:left">Navi14</td>
+<td style="text-align:center">gfx1012</td>
 </tr>
-
 <tr>
-<td align="left">Sienna Cichlid (Navi21)</td>
-<td align="center">gfx1030</td>
+<td style="text-align:left">Sienna Cichlid (Navi21)</td>
+<td style="text-align:center">gfx1030</td>
 </tr>
-
 <tr>
-<td align="left">Navy Flounder (Navi22)</td>
-<td align="center">gfx1031</td>
+<td style="text-align:left">Navy Flounder (Navi22)</td>
+<td style="text-align:center">gfx1031</td>
 </tr>
-
 <tr>
-<td align="left">Dimgrey Cavefish (Navi23)</td>
-<td align="center">gfx1032</td>
+<td style="text-align:left">Dimgrey Cavefish (Navi23)</td>
+<td style="text-align:center">gfx1032</td>
 </tr>
-
 <tr>
-<td align="left">VanGogh</td>
-<td align="center">gfx1033?</td>
+<td style="text-align:left">VanGogh</td>
+<td style="text-align:center">gfx1033?</td>
 </tr>
 </tbody>
 </table>

@@ -70,181 +70,156 @@
 <div class="article-time">
     <time datetime="2021-04-15 21:15 &#43;0900" class="time-b">Post: 2021/04/15 21:15 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/06/06 06:53 &#43;0900</div>
-  </div>
-
-<p>コードネーム <em>Aldebaran (GPUID: gfx90a)</em> は <em>CDNA 2 アーキテクチャ</em> を GPUアーキテクチャに採り、スーパーコンピューター <em>Frontier</em> や <em>LUMI</em> に採用されると見られ、<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/22/mi200-hpc-system/">MI200 は Frontier、LUMI に採用され、LUMI は 2021年半ばから運用開始予定 | Coelacanth's Dream</a></span>
+  </div><p>コードネーム <em>Aldebaran (GPUID: gfx90a)</em> は <em>CDNA 2 アーキテクチャ</em> を GPUアーキテクチャに採り、スーパーコンピューター <em>Frontier</em> や <em>LUMI</em> に採用されると見られ、<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/02/22/mi200-hpc-system/">MI200 は Frontier、LUMI に採用され、LUMI は 2021年半ばから運用開始予定 | Coelacanth&rsquo;s Dream</a></span>
 
 AMD GPU のオープンソースソフトウェアスタック <strong>ROCm</strong> では既に <em>Aldebaran/gfx90a</em> への対応、最適化作業が進められている。</p>
-
 <ul>
-<li><a href="https://github.com/ROCmSoftwarePlatform/Tensile/pull/1300" rel="nofollow noreferrer" target="_blank">Initial implementation support for aldebaran by yoichiyoshida · Pull Request #1300 · ROCmSoftwarePlatform/Tensile</a></li>
-<li><a href="https://github.com/ROCmSoftwarePlatform/rocSOLVER/pull/240" rel="nofollow noreferrer" target="_blank">Add gfx90a to AMDGPU_TARGETS if supported by cgmb · Pull Request #240 · ROCmSoftwarePlatform/rocSOLVER</a></li>
-<li><a href="https://github.com/ROCmSoftwarePlatform/MIOpen/pull/836" rel="nofollow noreferrer" target="_blank">Enable xldops igmmm on gfx90a by zjing14 · Pull Request #836 · ROCmSoftwarePlatform/MIOpen</a></li>
-<li><a href="https://github.com/ROCmSoftwarePlatform/rocSPARSE/commit/7e91c24f3decb314b0fdf13d4dd3ec7fd7ec7bd6" rel="nofollow noreferrer" target="_blank">Add gfx90a targets (#203) · ROCmSoftwarePlatform/rocSPARSE@7e91c24</a></li>
-<li><a href="https://github.com/ROCmSoftwarePlatform/rocFFT/commit/c00598360d340ea85b52ae3fe6c9b4228964f651" rel="nofollow noreferrer" target="_blank">Add gfx90a target (#404) · ROCmSoftwarePlatform/rocFFT@c005983</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/Tensile/pull/1300">Initial implementation support for aldebaran by yoichiyoshida · Pull Request #1300 · ROCmSoftwarePlatform/Tensile</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/rocSOLVER/pull/240">Add gfx90a to AMDGPU_TARGETS if supported by cgmb · Pull Request #240 · ROCmSoftwarePlatform/rocSOLVER</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/MIOpen/pull/836">Enable xldops igmmm on gfx90a by zjing14 · Pull Request #836 · ROCmSoftwarePlatform/MIOpen</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/rocSPARSE/commit/7e91c24f3decb314b0fdf13d4dd3ec7fd7ec7bd6">Add gfx90a targets (#203) · ROCmSoftwarePlatform/rocSPARSE@7e91c24</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/rocFFT/commit/c00598360d340ea85b52ae3fe6c9b4228964f651">Add gfx90a target (#404) · ROCmSoftwarePlatform/rocFFT@c005983</a></li>
 </ul>
-
 <h2 id="memory-model">Aldebaran/gfx90a のメモリモデル</h2>
-
 <p>コンパイラバックエンドである LLVM に <em>Aldebaran/gfx90a</em> のメモリモデルについても解説が一部追加された。</p>
-
 <ul>
-<li><a href="https://github.com/ROCm-Developer-Tools/llvm-project/commit/4658cd4c18ba73257a8642fd757c2124ad840204" rel="nofollow noreferrer" target="_blank">[AMDGPU] Update gfx90a memory model support · ROCm-Developer-Tools/llvm-project@4658cd4</a></li>
+<li><a href="https://github.com/ROCm-Developer-Tools/llvm-project/commit/4658cd4c18ba73257a8642fd757c2124ad840204">[AMDGPU] Update gfx90a memory model support · ROCm-Developer-Tools/llvm-project@4658cd4</a></li>
 </ul>
-
-<p>これまでの AMD GPU は基本的に CPU から独立したメモリを持つ dGPU と、CPU とメモリを共用する APU に分かれていた。<br />
-しかし <em>Aldebaran/gfx90a</em> では CPU との <em>XGMI/Infinity Fabric</em> 接続に対応し、メモリ空間の統合が実現するとされ、そうした枠組みからは外れる。<br />
-さらにはマルチダイ構成を取るとも考えられ、ある GPUダイから見て、近い (ローカル) メモリと片方の GPUダイに接続された遠い (リモート) メモリが存在することになる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/05/amd-aldebaran-2die-mcm/">Aldebaran GPU は 2-Die 構成か | Coelacanth's Dream</a></span>
+<p>これまでの AMD GPU は基本的に CPU から独立したメモリを持つ dGPU と、CPU とメモリを共用する APU に分かれていた。<br>
+しかし <em>Aldebaran/gfx90a</em> では CPU との <em>XGMI/Infinity Fabric</em> 接続に対応し、メモリ空間の統合が実現するとされ、そうした枠組みからは外れる。<br>
+さらにはマルチダイ構成を取るとも考えられ、ある GPUダイから見て、近い (ローカル) メモリと片方の GPUダイに接続された遠い (リモート) メモリが存在することになる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/05/amd-aldebaran-2die-mcm/">Aldebaran GPU は 2-Die 構成か | Coelacanth&rsquo;s Dream</a></span>
 
 追加された部分では、そうした <em>Aldebaran/gfx90a</em> におけるコヒーレント保つため、メモリサイドキャッシュである L2キャッシュの使用、あるいは無効化についてどのように制御されるかが解説されている。</p>
-
-<p>ある GPU から近いメモリに対してのメモリアクセスはキャッシュされ、一貫性を保つためにキャッシュの無効化やライトバックを行う必要はない。遠いメモリに対してはキャッシュせずに直接メモリアクセスするため、同様に特別な操作は行わない。<br />
+<p>ある GPU から近いメモリに対してのメモリアクセスはキャッシュされ、一貫性を保つためにキャッシュの無効化やライトバックを行う必要はない。遠いメモリに対してはキャッシュせずに直接メモリアクセスするため、同様に特別な操作は行わない。<br>
 CPU から GPU への XGMIリンクを用いたメモリアクセスは CPU側にはキャッシュされる場合があるが、GPU から CPU へのアクセスはキャッシュしないことで一貫性を保つとしている。</p>
-
 <h2 id="8x-aldebaran-のトポロジ構成">8x Aldebaran のトポロジ構成?</h2>
-
-<p>マルチGPU環境におけるコミュニケーションライブラリ <a href="https://github.com/ROCmSoftwarePlatform/rccl" rel="nofollow noreferrer" target="_blank">RCCL (ROCm Communication Collectives Library)</a> に <em>Aldebaran/gfx90a</em> 8基のトポロジ構成一例が追加された。</p>
-
+<p>マルチGPU環境におけるコミュニケーションライブラリ <a href="https://github.com/ROCmSoftwarePlatform/rccl">RCCL (ROCm Communication Collectives Library)</a> に <em>Aldebaran/gfx90a</em> 8基のトポロジ構成一例が追加された。</p>
 <ul>
-<li><a href="https://github.com/ROCmSoftwarePlatform/rccl/commit/1fe031402a044e3cc4652d11d512015b5c426810" rel="nofollow noreferrer" target="_blank">Add gfx90a target (#344) · ROCmSoftwarePlatform/rccl@1fe0314</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/rccl/commit/1fe031402a044e3cc4652d11d512015b5c426810">Add gfx90a target (#344) · ROCmSoftwarePlatform/rccl@1fe0314</a></li>
 </ul>
-
-<p>そのトポロジ構成では、<em>AMD Milan</em> に <em>Aldebaran/gfx90a</em> 8基を PCIe Gen4x16 で接続するシングルノードの構成を採っている。<br />
-一応補足すると、RCCL では CPU を、<em>AMD Rome</em> を familyID: 143、modelID: 49 以上、<em>AMD Milan</em> は familyID: 175 と表現している。familyID については元の CPU Family を 0xX0 + 0xF としているものと思われ、<em>AMD Rome</em> は Family: 0x17 (23) であるから、0x8 と 0xF に分解、オフセットを追加し 0x80 (128) + 0xF (15) で familyID: 143 となる。<br />
-GPUID についても、<em>gfx90a</em> ではなく <em>gcn=&quot;910&quot;</em> となっているが、GPUID は Major, Minor, Stepping の 3つで表現されており、省略せずに 10進数で記述すると <em>{9, 0, 10}</em> という形になる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">AMD GPU の GPU ID は何を意味するか | Coelacanth's Dream</a></span>
+<p>そのトポロジ構成では、<em>AMD Milan</em> に <em>Aldebaran/gfx90a</em> 8基を PCIe Gen4x16 で接続するシングルノードの構成を採っている。<br>
+一応補足すると、RCCL では CPU を、<em>AMD Rome</em> を familyID: 143、modelID: 49 以上、<em>AMD Milan</em> は familyID: 175 と表現している。familyID については元の CPU Family を 0xX0 + 0xF としているものと思われ、<em>AMD Rome</em> は Family: 0x17 (23) であるから、0x8 と 0xF に分解、オフセットを追加し 0x80 (128) + 0xF (15) で familyID: 143 となる。<br>
+GPUID についても、<em>gfx90a</em> ではなく <em>gcn=&ldquo;910&rdquo;</em> となっているが、GPUID は Major, Minor, Stepping の 3つで表現されており、省略せずに 10進数で記述すると <em>{9, 0, 10}</em> という形になる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">AMD GPU の GPU ID は何を意味するか | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <p>そして GPU同士リンク <em>XGMI/Infinity Fabric</em> は例では以下の表のようになっている。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">XGMI<br>topo</th>
-<th align="center">c1</th>
-<th align="center">c5</th>
-<th align="center">c9</th>
-<th align="center">cd</th>
-<th align="center">d1</th>
-<th align="center">d5</th>
-<th align="center">d9</th>
-<th align="center">dd</th>
+<th style="text-align:left">XGMI<br>topo</th>
+<th style="text-align:center">c1</th>
+<th style="text-align:center">c5</th>
+<th style="text-align:center">c9</th>
+<th style="text-align:center">cd</th>
+<th style="text-align:center">d1</th>
+<th style="text-align:center">d5</th>
+<th style="text-align:center">d9</th>
+<th style="text-align:center">dd</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">c1</td>
-<td align="center">-</td>
-<td align="center">+</td>
-<td align="center">+</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">+</td>
-<td align="center"></td>
+<td style="text-align:left">c1</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">c5</td>
-<td align="center">+</td>
-<td align="center">-</td>
-<td align="center"></td>
-<td align="center">+</td>
-<td align="center"></td>
-<td align="center">+</td>
-<td align="center"></td>
-<td align="center"></td>
+<td style="text-align:left">c5</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">c9</td>
-<td align="center">+</td>
-<td align="center"></td>
-<td align="center">-</td>
-<td align="center">+</td>
-<td align="center">+</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
+<td style="text-align:left">c9</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">cd</td>
-<td align="center"></td>
-<td align="center">+</td>
-<td align="center">+</td>
-<td align="center">-</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">+</td>
+<td style="text-align:left">cd</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
 </tr>
-
 <tr>
-<td align="left">d1</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">+</td>
-<td align="center"></td>
-<td align="center">-</td>
-<td align="center">+</td>
-<td align="center">+</td>
-<td align="center"></td>
+<td style="text-align:left">d1</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
 </tr>
-
 <tr>
-<td align="left">d5</td>
-<td align="center"></td>
-<td align="center">+</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">+</td>
-<td align="center">-</td>
-<td align="center"></td>
-<td align="center">+</td>
+<td style="text-align:left">d5</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
 </tr>
-
 <tr>
-<td align="left">d9</td>
-<td align="center">+</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">+</td>
-<td align="center"></td>
-<td align="center">-</td>
-<td align="center">+</td>
+<td style="text-align:left">d9</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">+</td>
 </tr>
-
 <tr>
-<td align="left">dd</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">+</td>
-<td align="center"></td>
-<td align="center">+</td>
-<td align="center">+</td>
-<td align="center">-</td>
+<td style="text-align:left">dd</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">+</td>
+<td style="text-align:center">-</td>
 </tr>
 </tbody>
 </table>
+<p>表形式ではわかりにくいため図式したのが以下。GPU 1基あたり XGMI 3-リンク持っている。<br>
+Linux Kernel への <em>Aldebaran</em> 関連パッチから XGMI に最適化された SDMAエンジン数は 3基であることがわかっており、リンク数はそれと一致する。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/02/25/amd-aldebaran-gpu/#sdma">Linux Kernel に 「Aldebaran」 GPU をサポートするパッチが投稿される　―― CDNA 2/MI200 のコードネーム? | Coelacanth&rsquo;s Dream</a></span>
 
-<p>表形式ではわかりにくいため図式したのが以下。GPU 1基あたり XGMI 3-リンク持っている。<br />
-Linux Kernel への <em>Aldebaran</em> 関連パッチから XGMI に最適化された SDMAエンジン数は 3基であることがわかっており、リンク数はそれと一致する。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/25/amd-aldebaran-gpu/#sdma">Linux Kernel に 「Aldebaran」 GPU をサポートするパッチが投稿される　―― CDNA 2/MI200 のコードネーム? | Coelacanth's Dream</a></span>
-
-<em>Arcturus/MI100/gfx908</em> では XGMI に最適化された SDMAエンジン数は 6基であったから、8-GPU でもほとんどの GPU とは直接繋がり、他 GPU を経由しなければならない GPU が 1基だけ存在する、というネットワーク構成が可能だった。<br />
-<em>Aldebaran</em> は 3基であるから、一番遠い GPU には GPU 3基を経由する必要が出てしまう。<br />
-だが同時に <em>Aldebaran</em> は 2-ダイで構成されるMCMと考えられており、それぞれが独立していると仮定すると下側のようなネットワークになる。<br />
+<em>Arcturus/MI100/gfx908</em> では XGMI に最適化された SDMAエンジン数は 6基であったから、8-GPU でもほとんどの GPU とは直接繋がり、他 GPU を経由しなければならない GPU が 1基だけ存在する、というネットワーク構成が可能だった。<br>
+<em>Aldebaran</em> は 3基であるから、一番遠い GPU には GPU 3基を経由する必要が出てしまう。<br>
+だが同時に <em>Aldebaran</em> は 2-ダイで構成されるMCMと考えられており、それぞれが独立していると仮定すると下側のようなネットワークになる。<br>
 これならダイ間の経由であれば高速に通信を行うことができ、上側よりは通信による性能への影響を減らせると考えられる。</p>
-
-<p>しかし <em>Aldebaran</em> 8基がそれぞれ <em>AMD Milan</em> と PCIe Gen4x16 で接続されているように記述されている点は気になる。<br />
+<p>しかし <em>Aldebaran</em> 8基がそれぞれ <em>AMD Milan</em> と PCIe Gen4x16 で接続されているように記述されている点は気になる。<br>
 <em>AMD Milan</em> は 1基では最大 PCIe Gen4 128-Lane を持つため、NIC との接続にも一部レーンを使用している今回の例では数が合わないように思える。よって、実際どうかは当然不明だが、下側のような構成を取っている <em>可能性</em> は考えられる。</p>
-
 <pre tabindex="0"><code>   +----+   +----+  
   /| c1 |===| c5 |\ 
  / +----+   +----+ \ 
@@ -269,7 +244,8 @@ Linux Kernel への <em>Aldebaran</em> 関連パッチから XGMI に最適化�
     | |         | |
  +-------+___+-------+
  | c5/cd |___| d5/dd |
- +-------+   +-------+</code></pre>
+ +-------+   +-------+
+</code></pre>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

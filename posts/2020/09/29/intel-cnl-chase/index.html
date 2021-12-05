@@ -70,213 +70,183 @@
 <div class="article-time">
     <time datetime="2020-09-29 18:02 &#43;0900" class="time-b">Post: 2020/09/29 18:02 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/14 15:51 &#43;0900</div>
-  </div>
-
-<p>「<em>Cannon Lake</em> はキャンセルされた」というのが共通認識としてあるが、具体的にいつ頃キャンセルされたかはすぐには浮かばない。自分がそうだ。<br />
-調べてみたが明確な答えは無いし、Intel 内部での決定がいつ下されたかは知りようがない。<br />
-思うに、せめてものと 2018/08 に Core i3-8121U(Cannon Lake) を搭載した NUC が発表され<sup class="footnote-ref" id="fnref:cnl-nuc"><a href="#fn:cnl-nuc">1</a></sup>、そして 2019/01 の CES で <em>Ice Lake</em> が発表され<sup class="footnote-ref" id="fnref:ces-icl"><a href="#fn:ces-icl">2</a></sup>、世間の興味がそちらに移った頃、そのあたりが個人的な感覚で 「<em>Cannon Lake</em> がキャンセルされた」と言うにふさわしい時期なのではだろうか。</p>
-
-<p>そして、オープンソースドライバーの Mesa3D には <em>Cannon Lake</em> のみを対象としたコードを取り除くマージリクエストが投稿され<sup class="footnote-ref" id="fnref:remove-cnl-only-code"><a href="#fn:remove-cnl-only-code">3</a></sup>、<a href="https://github.com/intel/intel-graphics-compiler" rel="nofollow noreferrer" target="_blank">intel-graphics-compiler</a> では、<em>Cannon Lake</em> プラットフォームはもう死んだものとしている。<sup class="footnote-ref" id="fnref:dead-cnl-platform"><a href="#fn:dead-cnl-platform">4</a></sup></p>
-
+  </div><p>「<em>Cannon Lake</em> はキャンセルされた」というのが共通認識としてあるが、具体的にいつ頃キャンセルされたかはすぐには浮かばない。自分がそうだ。<br>
+調べてみたが明確な答えは無いし、Intel 内部での決定がいつ下されたかは知りようがない。<br>
+思うに、せめてものと 2018/08 に Core i3-8121U(Cannon Lake) を搭載した NUC が発表され<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、そして 2019/01 の CES で <em>Ice Lake</em> が発表され<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、世間の興味がそちらに移った頃、そのあたりが個人的な感覚で 「<em>Cannon Lake</em> がキャンセルされた」と言うにふさわしい時期なのではだろうか。</p>
+<p>そして、オープンソースドライバーの Mesa3D には <em>Cannon Lake</em> のみを対象としたコードを取り除くマージリクエストが投稿され<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、<a href="https://github.com/intel/intel-graphics-compiler">intel-graphics-compiler</a> では、<em>Cannon Lake</em> プラットフォームはもう死んだものとしている。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
 <p>そうして <em>Cannon Lake</em> が埋められ、最新の CPU/GPU の情報を追う中で忘れる前に、一度 <em>Cannon Lake</em> がどんなプロセッサであったかをまとめて記しておきたい。</p>
-
 <h2 id="cnl">Cannon Lake</h2>
-
 <h3 id="cpu">CPU</h3>
-
-<p>CPU のキャッシュ構成は <em>Skylake</em> 同様に、コアあたり L1D/Iキャッシュは 32KB、L2キャッシュは 256KB、L3キャッシュは 2MB。<br />
-<em>Skylakeアーキテクチャ</em> から対応命令が追加されており、AVX512系、SHA-NI に対応している。<br />
-だが CPUアーキテクチャの詳細に関してはほとんど明かされておらず、AVX512 をどのように実行しているかは不明。512-bit ベクタユニットを持つ 1つのポートで実行するのか、命令を分解し、256-bit ベクタユニットを持つ 2つのポートで実行するのか。<br />
-<em>Ice Lake (Client)</em> は前者の方式でサポートし、<em>Skylake (Server)</em> と <em>Ice Lake (Server)</em> は両方の方式を併せ持つ。<br />
-<a href="https://www.anandtech.com" rel="nofollow noreferrer" target="_blank">AnandTech</a> の Ian Cutress 氏が検証を行なった所では、シングルスレッドで y-Cruncher を実行した時の性能が <em>Kaby Lake</em> から大きく向上しているため、<em>Ice Lake (Client)</em> 同様の実装になっている可能性が考えられる。<sup class="footnote-ref" id="fnref:anandtech-cnl"><a href="#fn:anandtech-cnl">5</a></sup><br />
+<p>CPU のキャッシュ構成は <em>Skylake</em> 同様に、コアあたり L1D/Iキャッシュは 32KB、L2キャッシュは 256KB、L3キャッシュは 2MB。<br>
+<em>Skylakeアーキテクチャ</em> から対応命令が追加されており、AVX512系、SHA-NI に対応している。<br>
+だが CPUアーキテクチャの詳細に関してはほとんど明かされておらず、AVX512 をどのように実行しているかは不明。512-bit ベクタユニットを持つ 1つのポートで実行するのか、命令を分解し、256-bit ベクタユニットを持つ 2つのポートで実行するのか。<br>
+<em>Ice Lake (Client)</em> は前者の方式でサポートし、<em>Skylake (Server)</em> と <em>Ice Lake (Server)</em> は両方の方式を併せ持つ。<br>
+<a href="https://www.anandtech.com">AnandTech</a> の Ian Cutress 氏が検証を行なった所では、シングルスレッドで y-Cruncher を実行した時の性能が <em>Kaby Lake</em> から大きく向上しているため、<em>Ice Lake (Client)</em> 同様の実装になっている可能性が考えられる。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
 しかし、それは 2.2GHz に揃えた検証の結果であり、AVX使用時のクロックでは <em>Kaby Lake</em> が 1GHz 近く高いこともあり、デフォルトの TDP 15W で実行した際の性能はそう変わらないものとなっている。</p>
-
-<p>このあたり、初期の 10nmプロセスとそれを採用する <em>Cannon Lake</em> がキャンセルされた理由として、動作クロックの低さが大きかったように思える。<br />
+<p>このあたり、初期の 10nmプロセスとそれを採用する <em>Cannon Lake</em> がキャンセルされた理由として、動作クロックの低さが大きかったように思える。<br>
 <em>Ice Lake</em> で採用された 10nm(+) では歩留まりと動作クロックの改善が施され、CPUアーキテクチャも IPC向上に力を入れたものとなった。</p>
-
 <h3 id="gpu">GPU</h3>
-
 <p>GPU は <em>Skylake</em> や <em>Gemini Lake</em> 等より世代が進んだ <em>Gen10アーキテクチャ</em> となるが、採用は <em>Cannon Lake</em> のみとなった。</p>
-
-<p>各バリアントでの GPU 規模は一部ソースコードに記述されているが、微妙に仕様が異なっている。<br />
+<p>各バリアントでの GPU 規模は一部ソースコードに記述されているが、微妙に仕様が異なっている。<br>
 恐らく、Mesa3D は <em>Cannon Lake-U/Y (2+2)</em> で想定されていたバリアントが記述され、media-driver ではそれよりも上位の SKU、例えば <em>Cannon Lake-H(仮)</em> 等も想定したものなのだろう。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">Gen10 GPU<br>(Mesa3D)</th>
-<th align="center">GT0.5</th>
-<th align="center">GT1</th>
-<th align="center">GT1.5</th>
-<th align="center">GT2</th>
+<th style="text-align:left">Gen10 GPU<br>(Mesa3D)</th>
+<th style="text-align:center">GT0.5</th>
+<th style="text-align:center">GT1</th>
+<th style="text-align:center">GT1.5</th>
+<th style="text-align:center">GT2</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Slice</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">2</td>
-<td align="center">2</td>
+<td style="text-align:left">Slice</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
 </tr>
-
 <tr>
-<td align="left">Sub-Slice</td>
-<td align="center">2</td>
-<td align="center">3</td>
-<td align="center">4(2+2)</td>
-<td align="center">5(2+3)</td>
+<td style="text-align:left">Sub-Slice</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4(2+2)</td>
+<td style="text-align:center">5(2+3)</td>
 </tr>
-
 <tr>
-<td align="left">L3cache Bank</td>
-<td align="center">2</td>
-<td align="center">3</td>
-<td align="center">6</td>
-<td align="center">6</td>
+<td style="text-align:left">L3cache Bank</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">6</td>
 </tr>
-
 <tr>
-<td align="left">Total EU</td>
-<td align="center">16</td>
-<td align="center">24</td>
-<td align="center">32</td>
-<td align="center">40</td>
+<td style="text-align:left">Total EU</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">24</td>
+<td style="text-align:center">32</td>
+<td style="text-align:center">40</td>
 </tr>
 </tbody>
 </table>
-
-<p>出典: <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/559b26b7ee093c2cbe446bf8023876642deadcee/src/intel/dev/gen_device_info.c" rel="nofollow noreferrer" target="_blank">src/intel/dev/gen_device_info.c · 559b26b7ee093c2cbe446bf8023876642deadcee · Mesa / mesa · GitLab</a></p>
-
+<p>出典: <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/559b26b7ee093c2cbe446bf8023876642deadcee/src/intel/dev/gen_device_info.c">src/intel/dev/gen_device_info.c · 559b26b7ee093c2cbe446bf8023876642deadcee · Mesa / mesa · GitLab</a></p>
 <table>
 <thead>
 <tr>
-<th align="left">Gen10 GPU<br>(media-driver)</th>
-<th align="center">GT1</th>
-<th align="center">GT1.5</th>
-<th align="center">GT2</th>
-<th align="center">GT3</th>
-<th align="center">GT3e</th>
+<th style="text-align:left">Gen10 GPU<br>(media-driver)</th>
+<th style="text-align:center">GT1</th>
+<th style="text-align:center">GT1.5</th>
+<th style="text-align:center">GT2</th>
+<th style="text-align:center">GT3</th>
+<th style="text-align:center">GT3e</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Slice</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">2</td>
-<td align="center">4</td>
-<td align="center">4</td>
+<td style="text-align:left">Slice</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
 </tr>
-
 <tr>
-<td align="left">Sub-Slice</td>
-<td align="center">2</td>
-<td align="center">3</td>
-<td align="center">4</td>
-<td align="center">9</td>
-<td align="center">9</td>
+<td style="text-align:left">Sub-Slice</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">9</td>
+<td style="text-align:center">9</td>
 </tr>
-
 <tr>
-<td align="left">L3cache Bank</td>
-<td align="center">2</td>
-<td align="center">3</td>
-<td align="center">6</td>
-<td align="center">12</td>
-<td align="center">12</td>
+<td style="text-align:left">L3cache Bank</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">12</td>
 </tr>
-
 <tr>
-<td align="left">L3cache Size</td>
-<td align="center">512KB</td>
-<td align="center">768KB</td>
-<td align="center">1536KB</td>
-<td align="center">3072KB</td>
-<td align="center">3072KB</td>
+<td style="text-align:left">L3cache Size</td>
+<td style="text-align:center">512KB</td>
+<td style="text-align:center">768KB</td>
+<td style="text-align:center">1536KB</td>
+<td style="text-align:center">3072KB</td>
+<td style="text-align:center">3072KB</td>
 </tr>
-
 <tr>
-<td align="left">Total EU</td>
-<td align="center">16</td>
-<td align="center">24</td>
-<td align="center">32</td>
-<td align="center">72</td>
-<td align="center">72</td>
+<td style="text-align:left">Total EU</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">24</td>
+<td style="text-align:center">32</td>
+<td style="text-align:center">72</td>
+<td style="text-align:center">72</td>
 </tr>
 </tbody>
 </table>
-
-<p>出典: <a href="https://github.com/intel/media-driver/blob/bdbce9ce524e1aaa2a5c9770899d4762f443e0b4/media_driver/linux/gen10/ddi/media_sysinfo_g10.cpp" rel="nofollow noreferrer" target="_blank">media-driver/media_sysinfo_g10.cpp at bdbce9ce524e1aaa2a5c9770899d4762f443e0b4 · intel/media-driver</a></p>
-
-<p><em>Cannon Lake GT3/e</em> の 9Sub-Slice、72EU、eDRAM対応という点は <em>Skylake GT4/e</em> と同じだが、<em>Skylake GT4/e</em> が 3Slice、L3キャッシュサイズ 2304KB、バンクあたり 192KB だったのに対し、<br />
+<p>出典: <a href="https://github.com/intel/media-driver/blob/bdbce9ce524e1aaa2a5c9770899d4762f443e0b4/media_driver/linux/gen10/ddi/media_sysinfo_g10.cpp">media-driver/media_sysinfo_g10.cpp at bdbce9ce524e1aaa2a5c9770899d4762f443e0b4 · intel/media-driver</a></p>
+<p><em>Cannon Lake GT3/e</em> の 9Sub-Slice、72EU、eDRAM対応という点は <em>Skylake GT4/e</em> と同じだが、<em>Skylake GT4/e</em> が 3Slice、L3キャッシュサイズ 2304KB、バンクあたり 192KB だったのに対し、<br>
 <em>Cannon Lake GT3/e</em> では 4Slice、L3キャッシュサイズ 3072KB、バンクあたり 256KB という構成になっている。</p>
-
 <p><em>Gen10アーキテクチャ</em> の詳細もまた明かされていないが、その構成から、<em>Gen9アーキテクチャ</em> よりも Slice数、バンクあたりの L3キャッシュサイズを増やし、グラフィクス性能の向上を図ったものと思われる。</p>
-
-<p>ディスプレイ部に関しては、AMD GPU では <em>RDNA /GFX10</em> 世代から対応した DSC(Display Stream Compression) に <em>Gen10アーキテクチャ</em> から対応していたことが窺える記述がある。<sup class="footnote-ref" id="fnref:gen10-dsc"><a href="#fn:gen10-dsc">6</a></sup></p>
-
-<p>しかし、結局 <em>Cannon Lake</em> の GPU が有効化されることはなく、唯一製品に搭載、出荷されている <strong>Core i3-8121U</strong> では無効化されている。<br />
+<p>ディスプレイ部に関しては、AMD GPU では <em>RDNA /GFX10</em> 世代から対応した DSC(Display Stream Compression) に <em>Gen10アーキテクチャ</em> から対応していたことが窺える記述がある。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></p>
+<p>しかし、結局 <em>Cannon Lake</em> の GPU が有効化されることはなく、唯一製品に搭載、出荷されている <strong>Core i3-8121U</strong> では無効化されている。<br>
 そのため、<em>Cannon Lake</em> が死んだというよりも、その GPU部、<em>Gen10アーキテクチャ</em> が埋められようとしていると言った方が正確だろう。</p>
-
 <h3 id="gna">GNA</h3>
-
-<p><em>Ice Lake</em> に搭載された推論アクセラレーター、GNA(Gaussian mixture model and Neural network Acceleration unit) だが、<em>Cannon Lake</em> にも搭載されており、GNA の世代は <em>Ice Lake</em> とは変わらず、Gen1 となっている。<sup class="footnote-ref" id="fnref:cnl-gna"><a href="#fn:cnl-gna">7</a></sup><br />
+<p><em>Ice Lake</em> に搭載された推論アクセラレーター、GNA(Gaussian mixture model and Neural network Acceleration unit) だが、<em>Cannon Lake</em> にも搭載されており、GNA の世代は <em>Ice Lake</em> とは変わらず、Gen1 となっている。<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup><br>
 さらに言えば、GNA は <em>Cannon Lake</em> から搭載されたという訳でもなく、Atom系の <em>Gemini Lake</em> から搭載されているらしい。こちらも Gen1 となる。</p>
-
-<p>そして、調査(ソースコード漁り)の過程で知ったのだが、Atom系である <em>Tremontコア</em> を採用する <a href="https://www.coelacanth-dream.com/tags/elkhart_lake">Elkhart Lake</a> と <a href="https://www.coelacanth-dream.com/tags/jasper_lake">Jasper Lake</a> にも GNA が搭載されているものの、両者で世代が異なり、<br />
-<em>Elkhart Lake</em> は <em>Ice Lake</em> 等と同じ GNA Gen1 を搭載するのに対し、<em>Jasper Lake</em> は <em>Tiger Lake</em> と同じ GNA Gen2 を搭載する。<br />
-CPUアーキテクチャや GPU部等、共通点のある両者のプロセッサ間で、GNA の世代を異にした理由は不明。<br />
-GNA Gen2 で何が変わったかは GNA で扱える最大レイヤー数が増えたということくらいしか分からない。<sup class="footnote-ref" id="fnref:gna-gen2"><a href="#fn:gna-gen2">8</a></sup></p>
-
-<p>GNA は GPU とは違い、<strong>Core i3-8121U</strong> でも有効化されている。<sup class="footnote-ref" id="fnref:gna-enable-i3-8121u"><a href="#fn:gna-enable-i3-8121u">9</a></sup></p>
-
+<p>そして、調査(ソースコード漁り)の過程で知ったのだが、Atom系である <em>Tremontコア</em> を採用する <a href="https://www.coelacanth-dream.com/tags/elkhart_lake">Elkhart Lake</a> と <a href="https://www.coelacanth-dream.com/tags/jasper_lake">Jasper Lake</a> にも GNA が搭載されているものの、両者で世代が異なり、<br>
+<em>Elkhart Lake</em> は <em>Ice Lake</em> 等と同じ GNA Gen1 を搭載するのに対し、<em>Jasper Lake</em> は <em>Tiger Lake</em> と同じ GNA Gen2 を搭載する。<br>
+CPUアーキテクチャや GPU部等、共通点のある両者のプロセッサ間で、GNA の世代を異にした理由は不明。<br>
+GNA Gen2 で何が変わったかは GNA で扱える最大レイヤー数が増えたということくらいしか分からない。<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></p>
+<p>GNA は GPU とは違い、<strong>Core i3-8121U</strong> でも有効化されている。<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup></p>
 <h2 id="終わりに">終わりに</h2>
-
-<p><em>Cannon Lake</em> は <em>Skylake</em> 系プロセッサから正統に拡張、強化が施され、メモリインターフェイスでは <em>Ice Lake</em> よりも先に LPDDR4 をサポートしていた。<br />
-Intel 10nmプロセス開発難航の影響を受け、歩留まり、動作クロックに恵まれなかったが、アーキテクチャは CPU/GPU 共に進んでいた。<br />
+<p><em>Cannon Lake</em> は <em>Skylake</em> 系プロセッサから正統に拡張、強化が施され、メモリインターフェイスでは <em>Ice Lake</em> よりも先に LPDDR4 をサポートしていた。<br>
+Intel 10nmプロセス開発難航の影響を受け、歩留まり、動作クロックに恵まれなかったが、アーキテクチャは CPU/GPU 共に進んでいた。<br>
 <em>Cannon Lake</em> は確かに <em>Skylake</em> と <em>Ice Lake</em> とを繋ぐプロセッサであったと言えるだろう。</p>
-
 <h3 id="余談">余談</h3>
-
 <p>以前、<em>Cannon Lake-H</em> の名がベンチマーク結果から現れ、少し話題となったが、プラットフォーム名とコア/スレッド数しか分からず、調べても特に見つからなかったため、ここでは取り扱わなかった。</p>
-
-<p>また、Coreboot に <em>Coffee Lake RVP</em> ボード関連のファイルが追加された時、<em>Cannon Lake RVP</em> 関連のファイル名と変数名をリネームし、他はコピーといった感じであった。<sup class="footnote-ref" id="fnref:cfl-rvp"><a href="#fn:cfl-rvp">10</a></sup>そのため、実際には <em>Cannon Lake-H</em> ではなく初期の <em>Coffee Lake-H</em> が動作していた可能性も否定できない。<br />
+<p>また、Coreboot に <em>Coffee Lake RVP</em> ボード関連のファイルが追加された時、<em>Cannon Lake RVP</em> 関連のファイル名と変数名をリネームし、他はコピーといった感じであった。<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup>そのため、実際には <em>Cannon Lake-H</em> ではなく初期の <em>Coffee Lake-H</em> が動作していた可能性も否定できない。<br>
 半ば <em>Cannon Lake-H</em> が都市伝説とも思える中で惜しまれるのは、やはり情報の少なさである。</p>
-
-<p>Intel は <em>Cannon Lake</em> に関する資料をまだ公開しておらず、ark.intel.com の <em>Core i3-8121U</em> ページの Technical Documentation には何も置かれていない。<br />
-<span class="thread-link"><a href="https://ark.intel.com/content/www/us/en/ark/products/136863/intel-core-i3-8121u-processor-4m-cache-up-to-3-20-ghz.html?wapkw=cannon%20lake" rel="nofollow noreferrer" target="_blank">Intel® Core™ i3-8121U Processor (4M Cache, up to 3.20 GHz) Product Specifications</a></span>
+<p>Intel は <em>Cannon Lake</em> に関する資料をまだ公開しておらず、ark.intel.com の <em>Core i3-8121U</em> ページの Technical Documentation には何も置かれていない。<br>
+<span class="thread-link"><a href="https://ark.intel.com/content/www/us/en/ark/products/136863/intel-core-i3-8121u-processor-4m-cache-up-to-3-20-ghz.html?wapkw=cannon%20lake">Intel® Core™ i3-8121U Processor (4M Cache, up to 3.20 GHz) Product Specifications</a></span>
 
 いつか資料が公開され、Intel の方から再び <em>Cannon Lake</em> を語ってくれる日を期待している。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:cnl-nuc"><a href="https://newsroom.intel.com/news/intel-introduces-new-nuc-kits-nuc-mini-pcs-intel-nuc-family/" rel="nofollow noreferrer" target="_blank">Intel Introduces New NUC Kits and NUC Mini PCs to the Intel NUC Family | Intel Newsroom</a>
- <a class="footnote-return" href="#fnref:cnl-nuc"><sup>[return]</sup></a></li>
-<li id="fn:ces-icl"><a href="https://newsroom.intel.com/news/2019-ces-intel-showcases-new-technology-next-era-computing/" rel="nofollow noreferrer" target="_blank">2019 CES: Intel Showcases New Technology for Next Era of Computing | Intel Newsroom</a>
- <a class="footnote-return" href="#fnref:ces-icl"><sup>[return]</sup></a></li>
-<li id="fn:remove-cnl-only-code"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6899" rel="nofollow noreferrer" target="_blank">intel: Remove Gen10 specific code (!6899) · Merge Requests · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:remove-cnl-only-code"><sup>[return]</sup></a></li>
-<li id="fn:dead-cnl-platform"><a href="https://github.com/intel/intel-graphics-compiler/commit/6e9f0af19184cdc3f94c32c23692eaccd3b0ef20#diff-a814fa78344f64350e2584d78c11ae0eR145" rel="nofollow noreferrer" target="_blank">Remove the dead CNL platform. · intel/intel-graphics-compiler@6e9f0af</a>
- <a class="footnote-return" href="#fnref:dead-cnl-platform"><sup>[return]</sup></a></li>
-<li id="fn:anandtech-cnl"><a href="https://www.anandtech.com/show/13405/intel-10nm-cannon-lake-and-core-i3-8121u-deep-dive-review/9" rel="nofollow noreferrer" target="_blank">Stock CPU Performance: System Tests - Intel's 10nm Cannon Lake and Core i3-8121U Deep Dive Review</a>
- <a class="footnote-return" href="#fnref:anandtech-cnl"><sup>[return]</sup></a></li>
-<li id="fn:gen10-dsc"><a href="https://github.com/torvalds/linux/blob/8186749621ed6b8fc42644c399e8c755a2b6f630/drivers/gpu/drm/i915/i915_pci.c#L786" rel="nofollow noreferrer" target="_blank">linux/i915_pci.c at 8186749621ed6b8fc42644c399e8c755a2b6f630 · torvalds/linux</a>
- <a class="footnote-return" href="#fnref:gen10-dsc"><sup>[return]</sup></a></li>
-<li id="fn:cnl-gna"><a href="https://github.com/projectacrn/acrn-kernel/blob/30000faef6e05a0e2430ff2a7f61539f86970d70/drivers/misc/gna/gna_pci.c#L39" rel="nofollow noreferrer" target="_blank">acrn-kernel/gna_pci.c at 30000faef6e05a0e2430ff2a7f61539f86970d70 · projectacrn/acrn-kernel</a>
- <a class="footnote-return" href="#fnref:cnl-gna"><sup>[return]</sup></a></li>
-<li id="fn:gna-gen2"><a href="https://github.com/projectacrn/acrn-kernel/blob/30000faef6e05a0e2430ff2a7f61539f86970d70/drivers/misc/gna/gna_pci.c#L35" rel="nofollow noreferrer" target="_blank">https://github.com/projectacrn/acrn-kernel/blob/30000faef6e05a0e2430ff2a7f61539f86970d70/drivers/misc/gna/gna_pci.c#L35</a>
- <a class="footnote-return" href="#fnref:gna-gen2"><sup>[return]</sup></a></li>
-<li id="fn:gna-enable-i3-8121u"><a href="https://docs.openvinotoolkit.org/latest/openvino_docs_IE_DG_supported_plugins_GNA.html" rel="nofollow noreferrer" target="_blank">GNA Plugin - OpenVINO™ Toolkit</a>
- <a class="footnote-return" href="#fnref:gna-enable-i3-8121u"><sup>[return]</sup></a></li>
-<li id="fn:cfl-rvp"><a href="https://review.coreboot.org/c/coreboot/+/25122" rel="nofollow noreferrer" target="_blank">mb/intel/coffeelake_rvp: Add new mainboard coffeelake RVP (If9a5a53e) · Gerrit Code Review</a>
- <a class="footnote-return" href="#fnref:cfl-rvp"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://newsroom.intel.com/news/intel-introduces-new-nuc-kits-nuc-mini-pcs-intel-nuc-family/">Intel Introduces New NUC Kits and NUC Mini PCs to the Intel NUC Family | Intel Newsroom</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://newsroom.intel.com/news/2019-ces-intel-showcases-new-technology-next-era-computing/">2019 CES: Intel Showcases New Technology for Next Era of Computing | Intel Newsroom</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6899">intel: Remove Gen10 specific code (!6899) · Merge Requests · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://github.com/intel/intel-graphics-compiler/commit/6e9f0af19184cdc3f94c32c23692eaccd3b0ef20#diff-a814fa78344f64350e2584d78c11ae0eR145">Remove the dead CNL platform. · intel/intel-graphics-compiler@6e9f0af</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://www.anandtech.com/show/13405/intel-10nm-cannon-lake-and-core-i3-8121u-deep-dive-review/9">Stock CPU Performance: System Tests - Intel&rsquo;s 10nm Cannon Lake and Core i3-8121U Deep Dive Review</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/blob/8186749621ed6b8fc42644c399e8c755a2b6f630/drivers/gpu/drm/i915/i915_pci.c#L786">linux/i915_pci.c at 8186749621ed6b8fc42644c399e8c755a2b6f630 · torvalds/linux</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p><a href="https://github.com/projectacrn/acrn-kernel/blob/30000faef6e05a0e2430ff2a7f61539f86970d70/drivers/misc/gna/gna_pci.c#L39">acrn-kernel/gna_pci.c at 30000faef6e05a0e2430ff2a7f61539f86970d70 · projectacrn/acrn-kernel</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p><a href="https://github.com/projectacrn/acrn-kernel/blob/30000faef6e05a0e2430ff2a7f61539f86970d70/drivers/misc/gna/gna_pci.c#L35">https://github.com/projectacrn/acrn-kernel/blob/30000faef6e05a0e2430ff2a7f61539f86970d70/drivers/misc/gna/gna_pci.c#L35</a>&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9" role="doc-endnote">
+<p><a href="https://docs.openvinotoolkit.org/latest/openvino_docs_IE_DG_supported_plugins_GNA.html">GNA Plugin - OpenVINO™ Toolkit</a>&#160;<a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10" role="doc-endnote">
+<p><a href="https://review.coreboot.org/c/coreboot/+/25122">mb/intel/coffeelake_rvp: Add new mainboard coffeelake RVP (If9a5a53e) · Gerrit Code Review</a>&#160;<a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

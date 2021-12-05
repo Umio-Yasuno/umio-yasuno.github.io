@@ -70,86 +70,75 @@
 <div class="article-time">
     <time datetime="2021-04-14 17:05 &#43;0900" class="time-b">Post: 2021/04/14 17:05 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/14 15:52 &#43;0900</div>
-  </div>
-
-<p>気付けばサイトのタグ数が 100個近くになり、自分でもタグから記事を辿るのが面倒くさくなってきたため、HTML5で追加された <code>&lt;input type=&quot;text&quot; autocomple=&quot;on&quot;&gt;</code> <code>&lt;datalist&gt;</code> を活用してタグの選択補完機能を実装してみたのでそのメモ。</p>
-
+  </div><p>気付けばサイトのタグ数が 100個近くになり、自分でもタグから記事を辿るのが面倒くさくなってきたため、HTML5で追加された <code>&lt;input type=&quot;text&quot; autocomple=&quot;on&quot;&gt;</code> <code>&lt;datalist&gt;</code> を活用してタグの選択補完機能を実装してみたのでそのメモ。</p>
 <p>該当部分のソースコードを Github Gist にも置いておく。</p>
-
 <ul>
-<li><a href="https://gist.github.com/Umio-Yasuno/0a3885bcfa5233084b59dd1e649ded0a" rel="nofollow noreferrer" target="_blank">hugo-tag-autocomplete</a></li>
+<li><a href="https://gist.github.com/Umio-Yasuno/0a3885bcfa5233084b59dd1e649ded0a">hugo-tag-autocomplete</a></li>
 </ul>
-
 <h2 id="html">HTML/テンプレート部</h2>
-
 <p><code>&lt;input type=&quot;text&quot; autocomple=&quot;on&quot;&gt;</code>、<code>&lt;datalist&gt;</code> を使うことで、<code>&lt;input&gt;</code> への入力の選択肢に <code>&lt;datalist&gt;</code> 内の <code>&lt;option&gt;</code> 要素を示すと同時に、ブラウザの自動補完機能に対するヒントとして提供することができる。</p>
-
 <ul>
-<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Element/Input#htmlattrdefautocomplete" rel="nofollow noreferrer" target="_blank">&lt;input&gt;: 入力欄 (フォーム入力) 要素 - HTML: HyperText Markup Language | MDN</a></li>
-<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Attributes/autocomplete" rel="nofollow noreferrer" target="_blank">HTML の autocomplete 属性 - HTML: HyperText Markup Language | MDN</a></li>
-<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Element/datalist" rel="nofollow noreferrer" target="_blank">&lt;datalist&gt; - HTML: HyperText Markup Language | MDN</a></li>
+<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Element/Input#htmlattrdefautocomplete">&lt;input&gt;: 入力欄 (フォーム入力) 要素 - HTML: HyperText Markup Language | MDN</a></li>
+<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Attributes/autocomplete">HTML の autocomplete 属性 - HTML: HyperText Markup Language | MDN</a></li>
+<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Element/datalist">&lt;datalist&gt; - HTML: HyperText Markup Language | MDN</a></li>
 </ul>
-
 <p>それを Hugoテンプレートで活用しようとすると以下のようになる。対象のテンプレートファイルはタグ一覧を表示する <code>&lt;theme&gt;/layout/tags/taxonomy.html</code>。</p>
-
 <blockquote>
-<pre tabindex="0"><code> &lt;!-- &lt;theme&gt;/layout/tags/taxonomy.html --&gt;
+<pre><code> &lt;!-- &lt;theme&gt;/layout/tags/taxonomy.html --&gt;
  ~~~
-   &lt;div class=&#34;tag-comple&#34;&gt;
-     &lt;input type=&#34;text&#34; list=&#34;tags-list&#34; size=&#34;20&#34; id=&#34;input-tag-comple&#34; autocomplete=&#34;on&#34; onkeydown=&#34;jump_tag(event)&#34;&gt;
-     &lt;datalist id=&#34;tags-list&#34;&gt;
+   &lt;div class=&quot;tag-comple&quot;&gt;
+     &lt;input type=&quot;text&quot; list=&quot;tags-list&quot; size=&quot;20&quot; id=&quot;input-tag-comple&quot; autocomplete=&quot;on&quot; onkeydown=&quot;jump_tag(event)&quot;&gt;
+     &lt;datalist id=&quot;tags-list&quot;&gt;
      {{- range .Pages.ByTitle -}}
-       &lt;option value=&#34;{{ .Title }}&#34; data-url=&#34;{{- path.Base .RelPermalink -}}&#34; /&gt;
+       &lt;option value=&quot;{{ .Title }}&quot; data-url=&quot;{{- path.Base .RelPermalink -}}&quot; /&gt;
      {{- end -}}
      &lt;/datalist&gt;
-     &lt;div id=&#34;tag-comple-error&#34;&gt;&lt;/div&gt;
-     &lt;button type=&#34;button&#34; class=&#34;sb jmp_b&#34; onclick=&#34;jump_tag(event)&#34;&gt;Enter&lt;/button&gt;
-     &lt;button type=&#34;button&#34; class=&#34;sb clr_b&#34; onclick=&#34;clear_value()&#34;&gt;Clear&lt;/button&gt;
+     &lt;div id=&quot;tag-comple-error&quot;&gt;&lt;/div&gt;
+     &lt;button type=&quot;button&quot; class=&quot;sb jmp_b&quot; onclick=&quot;jump_tag(event)&quot;&gt;Enter&lt;/button&gt;
+     &lt;button type=&quot;button&quot; class=&quot;sb clr_b&quot; onclick=&quot;clear_value()&quot;&gt;Clear&lt;/button&gt;
    &lt;/div&gt;
- ~~~</code></pre></blockquote>
-
-<p><code>&lt;input list=&quot;&lt;name&gt;&quot;&gt;</code> と <code>&lt;datalit id=&quot;&lt;name&gt;&quot;&gt;</code> の &lt;name&gt; を同じものにすることでそれらを関連付けられる。<br />
-<code>{{ range .Pages.ByTitle }}...{{ end }}</code> で自動補完に使う要素をずらっと出力できるのでテンプレート部はかなり楽。 .Pages に .ByTitle を付けることでタグタイトルを昇順にソートしている。<br />
-<code>&lt;option&gt;</code> の value にタグタイトルを、拡張属性の data-url に実際のタグページに使われている URLのパス末尾を置いている。拡張属性は後述のページ偏移で使う。<br />
-パス末尾部分は <code>{{ path.Base ... }}</code> で取り出している。(<code>/tags/&lt;tag name&gt;/ -&gt; &lt;tag name&gt;</code>) <sup class="footnote-ref" id="fnref:path-base"><a href="#fn:path-base">1</a></sup><br />
-<code>&lt;option&gt;</code> の終了タグは省略可能であり、ここではそのようにしている。サイトにもよるが、使われているタグすべてを出力するため、出来るだけ短くした方がいいだろう。<br />
+ ~~~
+</code></pre>
+</blockquote>
+<p><code>&lt;input list=&quot;&lt;name&gt;&quot;&gt;</code> と <code>&lt;datalit id=&quot;&lt;name&gt;&quot;&gt;</code> の &lt;name&gt; を同じものにすることでそれらを関連付けられる。<br>
+<code>{{ range .Pages.ByTitle }}...{{ end }}</code> で自動補完に使う要素をずらっと出力できるのでテンプレート部はかなり楽。 .Pages に .ByTitle を付けることでタグタイトルを昇順にソートしている。<br>
+<code>&lt;option&gt;</code> の value にタグタイトルを、拡張属性の data-url に実際のタグページに使われている URLのパス末尾を置いている。拡張属性は後述のページ偏移で使う。<br>
+パス末尾部分は <code>{{ path.Base ... }}</code> で取り出している。(<code>/tags/&lt;tag name&gt;/ -&gt; &lt;tag name&gt;</code>) <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+<code>&lt;option&gt;</code> の終了タグは省略可能であり、ここではそのようにしている。サイトにもよるが、使われているタグすべてを出力するため、出来るだけ短くした方がいいだろう。<br>
 下 2つの <code>&lt;button&gt;</code> はページ偏移と入力欄をクリアするスクリプトを実行するためのもの。</p>
-
 <h2 id="js">Javascript部</h2>
-
-<p>あくまでも HTML とブラウザの機能で行えるのは選択肢の表示と自動補完だけであり、そこからページを偏移させるには Javascript で機能を実装する必要がある。<br />
+<p>あくまでも HTML とブラウザの機能で行えるのは選択肢の表示と自動補完だけであり、そこからページを偏移させるには Javascript で機能を実装する必要がある。<br>
 以下がこのサイトで使っている Javascript のページ偏移のための部分を抜き出したコードだが、Javascript は最近になって勉強を始めたため、冗長だったり間違っている部分があるかもしれない。</p>
-
 <blockquote>
-<pre tabindex="0"><code> function jump_tag(e) {
+<pre><code> function jump_tag(e) {
    if (e.key != `Enter` &amp;&amp; e.type != `click`)
      return;
-
+	
    const tag_val  = document.getElementById(`input-tag-comple`).value
                      .trim().replace(/\s+/, ` `);
-
+	
    if (tag_val == ``)
      return;
-
+	
    const list     = document.getElementById(`tags-list`);
-   const selector = list.querySelector(`[value=&#34;${tag_val}&#34;]`);
-
-
+   const selector = list.querySelector(`[value=&quot;${tag_val}&quot;]`);
+	
+	
    if(!selector) {
      const err_msg = document.getElementById(`tag-comple-error`);
-
-     err_msg.innerHTML = `&#34;${tag_val}&#34; not found`;
+	
+     err_msg.innerHTML = `&quot;${tag_val}&quot; not found`;
      err_msg.classList.add(`toast-err`);
-
+	
      setTimeout( () =&gt; {
        err_msg.classList.remove(`toast-err`);
      }, 2000);
-
+	
      return;
    }
-
+	
    const url      = `/tags/${selector.dataset.url}/`;
-
+	
    fetch(url, { method:         `HEAD` ,
                 referrerPolicy: `no-referrer` }
      ).then( (response) =&gt; {
@@ -157,52 +146,49 @@
          location.href = url;
      });
  }
-
+	
  function clear_value() {
    return document.getElementById(`input-tag-comple`).value = ``;
- }</code></pre></blockquote>
-
-<p>それでも自分が書いたコードを解説すると、まず最初の部分で Enterキー、ボタンクリック以外のイベントを早期リターンで弾いている。<br />
-変数 tags_val に <code>document.getElementById('input-tag-comple').value</code> で入力欄の値を取得、その後の <code>.trim()</code> で主要な文字列前後の空白を削除、 <code>.replace(...)</code> で文字間の複数の空白を 1つの空白に置き換えている。<br />
-<code>document.getElementById('tags-list')</code> で <code>datalit#tags-list</code> のオブジェクトを取得し変数 list に代入、<code>list.querySelector('[value=&quot;' + tags_val + '&quot;]\')</code> で value に入力された値と一致する <code>&lt;option&gt;</code> 要素を取得している。<br />
-そして変数 url に、拡張属性 data-url に入れたタグページのパス末尾を用いて作った URL を入れる。末尾の &quot;/&quot; は、無いと <code>/tags/&lt;tag name&gt;</code> のリダイレクトで <code>/tags/&lt;tag name&gt;/</code> を読み込む形になってしまうため入れている。<br />
-その後、一応 fetch API で実際に URL先が存在するかをチェックしてから <code>location.href</code> に URL を入れてページ偏移を実行しているが、必要ないかもしれない。存在しないページはそもそも生成されない。<br />
-下の <code>clear_value</code> は入力欄を空にするだけの関数。入力欄をクリックすれば選択肢が表示されるため、選択、ページ偏移、リセットもクリックだけで行える方が便利だと考えた。<br />
+ }
+</code></pre>
+</blockquote>
+<p>それでも自分が書いたコードを解説すると、まず最初の部分で Enterキー、ボタンクリック以外のイベントを早期リターンで弾いている。<br>
+変数 tags_val に <code>document.getElementById('input-tag-comple').value</code> で入力欄の値を取得、その後の <code>.trim()</code> で主要な文字列前後の空白を削除、 <code>.replace(...)</code> で文字間の複数の空白を 1つの空白に置き換えている。<br>
+<code>document.getElementById('tags-list')</code> で <code>datalit#tags-list</code> のオブジェクトを取得し変数 list に代入、<code>list.querySelector('[value=&quot;' + tags_val + '&quot;]\')</code> で value に入力された値と一致する <code>&lt;option&gt;</code> 要素を取得している。<br>
+そして変数 url に、拡張属性 data-url に入れたタグページのパス末尾を用いて作った URL を入れる。末尾の &ldquo;/&rdquo; は、無いと <code>/tags/&lt;tag name&gt;</code> のリダイレクトで <code>/tags/&lt;tag name&gt;/</code> を読み込む形になってしまうため入れている。<br>
+その後、一応 fetch API で実際に URL先が存在するかをチェックしてから <code>location.href</code> に URL を入れてページ偏移を実行しているが、必要ないかもしれない。存在しないページはそもそも生成されない。<br>
+下の <code>clear_value</code> は入力欄を空にするだけの関数。入力欄をクリックすれば選択肢が表示されるため、選択、ページ偏移、リセットもクリックだけで行える方が便利だと考えた。<br>
 まあ主に使うのは自分だし、実際便利。</p>
-
-<p>機能の感想としては、今までタグ一覧ページでいちいちタグを探したり、直近の記事から特定のタグページに飛んでいたが、補完機能によってタグページまでの手間を大きく減らすことができた。<br />
-タグ一覧で後ろの方のページに置かれているタグまでは辿り着くのに通常数ページを経由し、どこに目的のタグがあるか目を動かして探す必要があったが、それが無くなる。<br />
-補完に用いるタグ一覧は Hugoテンプレートの機能を使えば楽に生成できるため、実装に掛かるコストも小さい。<br />
-欠点をあげるならば、<code>&lt;datalist&gt;</code> は HTMLファイルに直接出力されるため、ファイルサイズはどうしたって増加する。このサイトの場合、6KB 程サイズが増えた。<br />
-だがこれも経由するページ数が減ったと考えれば大した問題にならない。<br />
-それと、機能自体の問題ではないが、新しいAndroid版Firefox では何故かまだこの <code>&lt;datalist&gt;</code> による自動補完機能をサポートしていないことはとても残念。<sup class="footnote-ref" id="fnref:fenix-datalist"><a href="#fn:fenix-datalist">2</a></sup>以前のAndroid版Firefox やパソコン向け Firefox、Microsoft Edge や Chomium系では期待通り動作してくれる。</p>
-
+<p>機能の感想としては、今までタグ一覧ページでいちいちタグを探したり、直近の記事から特定のタグページに飛んでいたが、補完機能によってタグページまでの手間を大きく減らすことができた。<br>
+タグ一覧で後ろの方のページに置かれているタグまでは辿り着くのに通常数ページを経由し、どこに目的のタグがあるか目を動かして探す必要があったが、それが無くなる。<br>
+補完に用いるタグ一覧は Hugoテンプレートの機能を使えば楽に生成できるため、実装に掛かるコストも小さい。<br>
+欠点をあげるならば、<code>&lt;datalist&gt;</code> は HTMLファイルに直接出力されるため、ファイルサイズはどうしたって増加する。このサイトの場合、6KB 程サイズが増えた。<br>
+だがこれも経由するページ数が減ったと考えれば大した問題にならない。<br>
+それと、機能自体の問題ではないが、新しいAndroid版Firefox では何故かまだこの <code>&lt;datalist&gt;</code> による自動補完機能をサポートしていないことはとても残念。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>以前のAndroid版Firefox やパソコン向け Firefox、Microsoft Edge や Chomium系では期待通り動作してくれる。</p>
 <p>どのように動作するかはこのサイトのタグ一覧ページから試すことができる。</p>
-
 <ul>
-<li><a href="https://www.coelacanth-dream.com/tags/">Tag | Coelacanth's Dream</a></li>
+<li><a href="https://www.coelacanth-dream.com/tags/">Tag | Coelacanth&rsquo;s Dream</a></li>
 </ul>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Element/Input#htmlattrdefautocomplete" rel="nofollow noreferrer" target="_blank">&lt;input&gt;: 入力欄 (フォーム入力) 要素 - HTML: HyperText Markup Language | MDN</a></li>
-<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Attributes/autocomplete" rel="nofollow noreferrer" target="_blank">HTML の autocomplete 属性 - HTML: HyperText Markup Language | MDN</a></li>
-<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Element/datalist" rel="nofollow noreferrer" target="_blank">&lt;datalist&gt; - HTML: HyperText Markup Language | MDN</a></li>
+<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Element/Input#htmlattrdefautocomplete">&lt;input&gt;: 入力欄 (フォーム入力) 要素 - HTML: HyperText Markup Language | MDN</a></li>
+<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Attributes/autocomplete">HTML の autocomplete 属性 - HTML: HyperText Markup Language | MDN</a></li>
+<li><a href="https://developer.mozilla.org/ja/docs/Web/HTML/Element/datalist">&lt;datalist&gt; - HTML: HyperText Markup Language | MDN</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:path-base"><a href="https://gohugo.io/functions/path.base/" rel="nofollow noreferrer" target="_blank">path.Base | Hugo</a>
- <a class="footnote-return" href="#fnref:path-base"><sup>[return]</sup></a></li>
-<li id="fn:fenix-datalist"><a href="https://github.com/mozilla-mobile/fenix/issues/11088" rel="nofollow noreferrer" target="_blank">[Bug] datalist not supported · Issue #11088 · mozilla-mobile/fenix</a>
- <a class="footnote-return" href="#fnref:fenix-datalist"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://gohugo.io/functions/path.base/">path.Base | Hugo</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/mozilla-mobile/fenix/issues/11088">[Bug] datalist not supported · Issue #11088 · mozilla-mobile/fenix</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

@@ -70,195 +70,175 @@
 <div class="article-time">
     <time datetime="2020-12-21 13:49 &#43;0900" class="time-b">Post: 2020/12/21 13:49 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/12/22 17:29 &#43;0900</div>
-  </div>
-
-<p>以前 Intel CPU の CPUID から <code>Family, Model, Stepping</code> を読み取る方法に触れたが、AMD CPU はまだ自分自身理解していない部分があったため、整理も兼ねて書く。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/02/adl-p-chromebook-board-adl-m/">Alder Lake-P を搭載する Chromebookボード 「Brya」、そして Alder Lake-M | Coelacanth's Dream</a></span>
+  </div><p>以前 Intel CPU の CPUID から <code>Family, Model, Stepping</code> を読み取る方法に触れたが、AMD CPU はまだ自分自身理解していない部分があったため、整理も兼ねて書く。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/12/02/adl-p-chromebook-board-adl-m/">Alder Lake-P を搭載する Chromebookボード 「Brya」、そして Alder Lake-M | Coelacanth&rsquo;s Dream</a></span>
 
 そして、過去の主張を訂正するための記事。</p>
-
 <h2 id="cpuid">CPUID</h2>
-
-<p>CPUID とひと括りにしているが、CPUID にも色々ある。そもそも CPUID は CPU の各種情報を出力する命令である。<br />
-CPUID命令は EAXレジスタに特定の値をセットしてから実行することで、ある情報が取得、出力される。<br />
+<p>CPUID とひと括りにしているが、CPUID にも色々ある。そもそも CPUID は CPU の各種情報を出力する命令である。<br>
+CPUID命令は EAXレジスタに特定の値をセットしてから実行することで、ある情報が取得、出力される。<br>
 そうして得られる情報の中で、<code>Family, Model, Stepping</code> の識別情報が、ベンチマーク結果から得られる CPU情報と照らし合わせたりと活用しやすいから注目されやすい、収集されやすいという話。</p>
-
-<p>CPUID から <code>Family, Model, Stepping</code> を読み取る方法に関しては当然 AMD からドキュメントが出されているし<sup class="footnote-ref" id="fnref:amd-cpuid-doc"><a href="#fn:amd-cpuid-doc">1</a></sup>、Coreboot のコードにも分かりやすく記述されている。<sup class="footnote-ref" id="fnref:coreboot-cpuid"><a href="#fn:coreboot-cpuid">2</a></sup><br />
-そのため CPUID から読み取ることは難しくない。<br />
+<p>CPUID から <code>Family, Model, Stepping</code> を読み取る方法に関しては当然 AMD からドキュメントが出されているし<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、Coreboot のコードにも分かりやすく記述されている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+そのため CPUID から読み取ることは難しくない。<br>
 例えば <em>Zen+ CPU / Pinacle Ridge</em> の CPUID は <code>0x00800f82</code> だが、その文字列を <code>Family, Model, Stepping</code> に対応させると以下の表のようになる。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">CPUID</th>
-<th align="center">(Reserved)</th>
-<th align="center">Ext.Family</th>
-<th align="center">Ext.Model</th>
-<th align="center">(Reserved)</th>
-<th align="center">Base.Family</th>
-<th align="center">Base.Model</th>
-<th align="center">Stepping</th>
+<th style="text-align:left">CPUID</th>
+<th style="text-align:center">(Reserved)</th>
+<th style="text-align:center">Ext.Family</th>
+<th style="text-align:center">Ext.Model</th>
+<th style="text-align:center">(Reserved)</th>
+<th style="text-align:center">Base.Family</th>
+<th style="text-align:center">Base.Model</th>
+<th style="text-align:center">Stepping</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Pinaccle Ridge</td>
-<td align="center">0x0</td>
-<td align="center">0x08</td>
-<td align="center">0x0</td>
-<td align="center">0x0</td>
-<td align="center">0xF</td>
-<td align="center">0x8</td>
-<td align="center">0x2</td>
+<td style="text-align:left">Pinaccle Ridge</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x08</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0xF</td>
+<td style="text-align:center">0x8</td>
+<td style="text-align:center">0x2</td>
 </tr>
 </tbody>
 </table>
-
 <p>それをさらによく見る形式に変換すると、<code>Family: 0x17 (23), Model: 0x8 (8), Stepping: 0x2</code> のようになる。</p>
-
 <h2 id="microcode">Microcode</h2>
-
-<p>CPUID については、あまり見掛ける機会は無いが、マイクロコードはそれなりにある。<br />
-というのもベンチマーキングプラットフォームである <a href="https://www.phoronix-test-suite.com/" rel="nofollow noreferrer" target="_blank">Phoronix Test Suite</a> は、マイクロコードのバージョンを取得し、CPU情報の 1つとして記録するからだ。<br />
-今回調べるきっかけとなったのも、<a href="https://www.coelacanth-dream.com/tags/cezanne">Cezanne APU</a> の Model について、Coreboot には <code>Model: 0x51 (81)</code> であるように記述されているが、Geekbench の結果等では <code>Model: 0x50 (80)</code> となっていたことだ。この 1 違いにもっとまともな答えを見出したかった。<sup class="footnote-ref" id="fnref:czn-model"><a href="#fn:czn-model">3</a></sup></p>
-
-<p>以下はとりあえず <a href="https://openbenchmarking.org/" rel="nofollow noreferrer" target="_blank">OpenBenchmarking.org</a> から集めた Zen系 CPU のマイクロコードバージョンだが、<code>Family: 0x17(23)</code> である <em>Zen+/2</em> CPU は先頭が同じ <code>0x8</code> になっていることから、マイクロコードバージョンは <code>Family, Model, Stepping</code> に対応していると推測できる。</p>
-
+<p>CPUID については、あまり見掛ける機会は無いが、マイクロコードはそれなりにある。<br>
+というのもベンチマーキングプラットフォームである <a href="https://www.phoronix-test-suite.com/">Phoronix Test Suite</a> は、マイクロコードのバージョンを取得し、CPU情報の 1つとして記録するからだ。<br>
+今回調べるきっかけとなったのも、<a href="https://www.coelacanth-dream.com/tags/cezanne">Cezanne APU</a> の Model について、Coreboot には <code>Model: 0x51 (81)</code> であるように記述されているが、Geekbench の結果等では <code>Model: 0x50 (80)</code> となっていたことだ。この 1 違いにもっとまともな答えを見出したかった。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>以下はとりあえず <a href="https://openbenchmarking.org/">OpenBenchmarking.org</a> から集めた Zen系 CPU のマイクロコードバージョンだが、<code>Family: 0x17(23)</code> である <em>Zen+/2</em> CPU は先頭が同じ <code>0x8</code> になっていることから、マイクロコードバージョンは <code>Family, Model, Stepping</code> に対応していると推測できる。</p>
 <table>
 <thead>
 <tr>
-<th align="left">Microcode Patch Level</th>
-<th align="center"></th>
+<th style="text-align:left">Microcode Patch Level</th>
+<th style="text-align:center"></th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Zen+ Ryzen</td>
-<td align="center">0x800820d</td>
+<td style="text-align:left">Zen+ Ryzen</td>
+<td style="text-align:center">0x800820d</td>
 </tr>
-
 <tr>
-<td align="left">Zen+ APU<sup class="footnote-ref" id="fnref:3400g"><a href="#fn:3400g">4</a></sup></td>
-<td align="center">0x8108109</td>
+<td style="text-align:left">Zen+ APU<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></td>
+<td style="text-align:center">0x8108109</td>
 </tr>
-
 <tr>
-<td align="left">Zen2 EPYC<sup class="footnote-ref" id="fnref:77f2"><a href="#fn:77f2">5</a></sup></td>
-<td align="center">0x830101c</td>
+<td style="text-align:left">Zen2 EPYC<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></td>
+<td style="text-align:center">0x830101c</td>
 </tr>
-
 <tr>
-<td align="left">Zen2 Ryzen<sup class="footnote-ref" id="fnref:3800xt"><a href="#fn:3800xt">6</a></sup></td>
-<td align="center">0x8701021</td>
+<td style="text-align:left">Zen2 Ryzen<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></td>
+<td style="text-align:center">0x8701021</td>
 </tr>
-
 <tr>
-<td align="left">Zen3 APU<sup class="footnote-ref" id="fnref:czn-sample"><a href="#fn:czn-sample">7</a></sup></td>
-<td align="center">0xa500009</td>
+<td style="text-align:left">Zen3 APU<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></td>
+<td style="text-align:center">0xa500009</td>
 </tr>
 </tbody>
 </table>
-
-<p>そして、それぞれを比較、CPUID の各値と照らし合わせた結果、以下のように対応していると考えられる。<br />
+<p>そして、それぞれを比較、CPUID の各値と照らし合わせた結果、以下のように対応していると考えられる。<br>
 Base と Ext を合わせることで、Family と Model が求められる。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">Microcode</th>
-<th align="center">Ext.Family</th>
-<th align="center">Ext.Model</th>
-<th align="center">(Reserved?)</th>
-<th align="center">Base.Model</th>
-<th align="center">Stepping</th>
-<th align="center">Version?</th>
+<th style="text-align:left">Microcode</th>
+<th style="text-align:center">Ext.Family</th>
+<th style="text-align:center">Ext.Model</th>
+<th style="text-align:center">(Reserved?)</th>
+<th style="text-align:center">Base.Model</th>
+<th style="text-align:center">Stepping</th>
+<th style="text-align:center">Version?</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Zen+ Ryzen</td>
-<td align="center">0x8</td>
-<td align="center">0x0</td>
-<td align="center">0x0</td>
-<td align="center">0x8</td>
-<td align="center">0x2</td>
-<td align="center">0x0d</td>
+<td style="text-align:left">Zen+ Ryzen</td>
+<td style="text-align:center">0x8</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x8</td>
+<td style="text-align:center">0x2</td>
+<td style="text-align:center">0x0d</td>
 </tr>
-
 <tr>
-<td align="left">Zen+ APU</td>
-<td align="center">0x8</td>
-<td align="center">0x1</td>
-<td align="center">0x0</td>
-<td align="center">0x8</td>
-<td align="center">0x1</td>
-<td align="center">0x09</td>
+<td style="text-align:left">Zen+ APU</td>
+<td style="text-align:center">0x8</td>
+<td style="text-align:center">0x1</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x8</td>
+<td style="text-align:center">0x1</td>
+<td style="text-align:center">0x09</td>
 </tr>
-
 <tr>
-<td align="left">Zen2 EPYC</td>
-<td align="center">0x8</td>
-<td align="center">0x3</td>
-<td align="center">0x0</td>
-<td align="center">0x1</td>
-<td align="center">0x1</td>
-<td align="center">0x1c</td>
+<td style="text-align:left">Zen2 EPYC</td>
+<td style="text-align:center">0x8</td>
+<td style="text-align:center">0x3</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x1</td>
+<td style="text-align:center">0x1</td>
+<td style="text-align:center">0x1c</td>
 </tr>
-
 <tr>
-<td align="left">Zen2 Ryzen</td>
-<td align="center">0x8</td>
-<td align="center">0x7</td>
-<td align="center">0x0</td>
-<td align="center">0x1</td>
-<td align="center">0x0</td>
-<td align="center">0x21</td>
+<td style="text-align:left">Zen2 Ryzen</td>
+<td style="text-align:center">0x8</td>
+<td style="text-align:center">0x7</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x1</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x21</td>
 </tr>
-
 <tr>
-<td align="left">Zen3 APU</td>
-<td align="center">0xA</td>
-<td align="center">0x5</td>
-<td align="center">0x0</td>
-<td align="center">0x0</td>
-<td align="center">0x0</td>
-<td align="center">0x09</td>
+<td style="text-align:left">Zen3 APU</td>
+<td style="text-align:center">0xA</td>
+<td style="text-align:center">0x5</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x0</td>
+<td style="text-align:center">0x09</td>
 </tr>
 </tbody>
 </table>
-
-<p>ここでも <em>Cezanne</em> は <code>Model: 0x50 (80)</code> となった。<br />
+<p>ここでも <em>Cezanne</em> は <code>Model: 0x50 (80)</code> となった。<br>
 訂正といのはこのことで、<em>Cezanne</em> は <code>Model: 0x51 (81)</code> ではなく、<code>Model: 0x50 (80)</code> 可能性のが高く、Coreboot のは誤字かもしれない。<span class="complement">あるいは <em>Cezanne</em> とは別の APU に向けたものである可能性もあるが、それは GPU部に <em>Cezanne</em> と同じ DeviceIDを用い 、Model は 1 違いというややこしいものとなる。</span>
- <sup class="footnote-ref" id="fnref:czn-vbios"><a href="#fn:czn-vbios">8</a></sup></p>
-
-<p><code>Stepping 0</code> であるから <code>Model: 0x51 (81)</code> となっていないのではないか、とも書いたが、<em>Zen 2 EPYC (Rome)</em> も <em>Zen 2 Ryzen (Matisse)</em> も <code>Stepping 0</code> であるため根拠にはなり得ず、思い切り外した推測であった。<br />
+ <sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></p>
+<p><code>Stepping 0</code> であるから <code>Model: 0x51 (81)</code> となっていないのではないか、とも書いたが、<em>Zen 2 EPYC (Rome)</em> も <em>Zen 2 Ryzen (Matisse)</em> も <code>Stepping 0</code> であるため根拠にはなり得ず、思い切り外した推測であった。<br>
 マイクロコードバージョンの読み方を知っていたら、少しはまともな見方が出来ただろう、という後悔。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:amd-cpuid-doc"><a href="https://developer.amd.com/resources/25481-2/" rel="nofollow noreferrer" target="_blank">CPUID Specification - AMD</a>
- <a class="footnote-return" href="#fnref:amd-cpuid-doc"><sup>[return]</sup></a></li>
-<li id="fn:coreboot-cpuid"><a href="https://github.com/coreboot/coreboot/blob/master/src/vendorcode/intel/edk2/edk2-stable202005/MdePkg/Include/Register/Amd/Cpuid.h" rel="nofollow noreferrer" target="_blank">coreboot/Cpuid.h at master · coreboot/coreboot</a>
- <a class="footnote-return" href="#fnref:coreboot-cpuid"><sup>[return]</sup></a></li>
-<li id="fn:czn-model"><a href="https://www.coelacanth-dream.com/posts/2020/11/19/rn-lcn-czn-coreboot-did/">Coreboot に Renoir と Lucienne/Cezanne らしき DeviceID が追加される | Coelacanth's Dream</a> <a href="https://www.coelacanth-dream.com/posts/2020/11/26/r7-5800u-czn/">Cezanne APU、Ryzen 7 5800U が Geekbench に現る | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:czn-model"><sup>[return]</sup></a></li>
-<li id="fn:3400g"><a href="https://openbenchmarking.org/result/2012204-HA-OPUS3400G69" rel="nofollow noreferrer" target="_blank">Opus 3400g Benchmarks - OpenBenchmarking.org</a>
- <a class="footnote-return" href="#fnref:3400g"><sup>[return]</sup></a></li>
-<li id="fn:77f2"><a href="https://openbenchmarking.org/result/2008249-NE-EXTRATEST01" rel="nofollow noreferrer" target="_blank">Extra Tests Performance - OpenBenchmarking.org</a>
- <a class="footnote-return" href="#fnref:77f2"><sup>[return]</sup></a></li>
-<li id="fn:3800xt"><a href="https://openbenchmarking.org/result/2012146-HA-3800XTMON29" rel="nofollow noreferrer" target="_blank">3800xt Monday Benchmarks - OpenBenchmarking.org</a>
- <a class="footnote-return" href="#fnref:3800xt"><sup>[return]</sup></a></li>
-<li id="fn:czn-sample"><a href="https://www.coelacanth-dream.com/posts/2020/08/31/amd-cezanne-benchmark/">AMD Cezanne APU ベンチマーク結果　―― 8-Core/16-Thread, 3.6GHz、構成は Zen 3 + Vega か | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:czn-sample"><sup>[return]</sup></a></li>
-<li id="fn:czn-vbios"><a href="https://www.coelacanth-dream.com/posts/2020/12/16/czn-coreboot-mi200-mero-rmb/">Cezanne の Coreboot 対応が進行中　―― MI200, Mero, Rembrandt のネームプレート | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:czn-vbios"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://developer.amd.com/resources/25481-2/">CPUID Specification - AMD</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/blob/master/src/vendorcode/intel/edk2/edk2-stable202005/MdePkg/Include/Register/Amd/Cpuid.h">coreboot/Cpuid.h at master · coreboot/coreboot</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/11/19/rn-lcn-czn-coreboot-did/">Coreboot に Renoir と Lucienne/Cezanne らしき DeviceID が追加される | Coelacanth&rsquo;s Dream</a> <a href="https://www.coelacanth-dream.com/posts/2020/11/26/r7-5800u-czn/">Cezanne APU、Ryzen 7 5800U が Geekbench に現る | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://openbenchmarking.org/result/2012204-HA-OPUS3400G69">Opus 3400g Benchmarks - OpenBenchmarking.org</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://openbenchmarking.org/result/2008249-NE-EXTRATEST01">Extra Tests Performance - OpenBenchmarking.org</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://openbenchmarking.org/result/2012146-HA-3800XTMON29">3800xt Monday Benchmarks - OpenBenchmarking.org</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/08/31/amd-cezanne-benchmark/">AMD Cezanne APU ベンチマーク結果　―― 8-Core/16-Thread, 3.6GHz、構成は Zen 3 + Vega か | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/12/16/czn-coreboot-mi200-mero-rmb/">Cezanne の Coreboot 対応が進行中　―― MI200, Mero, Rembrandt のネームプレート | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

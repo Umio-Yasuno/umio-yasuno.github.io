@@ -70,214 +70,189 @@
 <div class="article-time">
     <time datetime="2021-04-09 01:56 &#43;0900" class="time-b">Post: 2021/04/09 01:56 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/26 20:52 &#43;0900</div>
-  </div>
-
-<p>Linux Kernel には Intel CPU (<code>Family: 0x6</code>) の判別をするため、<code>Model</code> をまとめたヘッダファイル <a href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h" rel="nofollow noreferrer" target="_blank">intel-family.h</a> があるが、Intel の Peter Zijlstra 氏により、そこに複雑な <em>Kaby Lake</em> 周りを整理するためのコメントを追加するパッチが投稿された。</p>
-
+  </div><p>Linux Kernel には Intel CPU (<code>Family: 0x6</code>) の判別をするため、<code>Model</code> をまとめたヘッダファイル <a href="https://github.com/torvalds/linux/blob/master/arch/x86/include/asm/intel-family.h">intel-family.h</a> があるが、Intel の Peter Zijlstra 氏により、そこに複雑な <em>Kaby Lake</em> 周りを整理するためのコメントを追加するパッチが投稿された。</p>
 <ul>
-<li><a href="https://lkml.org/lkml/2021/3/15/2071" rel="nofollow noreferrer" target="_blank">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></li>
-<li><a href="https://lore.kernel.org/lkml/YE+HhS8i0gshHD3W@hirez.programming.kicks-ass.net/T/" rel="nofollow noreferrer" target="_blank">[PATCH] x86/cpu: Resort and comment Intel models</a></li>
+<li><a href="https://lkml.org/lkml/2021/3/15/2071">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></li>
+<li><a href="https://lore.kernel.org/lkml/YE+HhS8i0gshHD3W@hirez.programming.kicks-ass.net/T/">[PATCH] x86/cpu: Resort and comment Intel models</a></li>
 </ul>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#kbl">Kaby Lake</a></li>
 <li><a href="#cnl">Palm Cove</a></li>
 <li><a href="#spr">Sapphire Rapids == Golden Cove? / Willow Cove?</a></li>
 </ul>
 
-
 <h2 id="kbl">Kaby Lake</h2>
-
-<p>CPUマイクロアーキテクチャに <em>Sky Lake アーキテクチャ</em> を採用し、Intel 14nmプロセスで製造されるプロセッサにはモバイル向け、デスクトップ向けといった括りを無視すれば、<em>Sky Lake / Kaby Lake / Amber Lake / Whiskey Lake / Coffee Lake / Comet Lake</em> の 6種類が存在する。<br />
-<code>Family, Model</code> による CPU の判別において、<em>Sky Lake (_L/X)</em> 、<em>Comet Lake (_L)</em> は <code>Model</code> がそれぞれ違っているため判別することは容易だが、<em>Kaby Lake</em> についてはそうはいかない。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/">【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点 | Coelacanth's Dream</a></span>
+<p>CPUマイクロアーキテクチャに <em>Sky Lake アーキテクチャ</em> を採用し、Intel 14nmプロセスで製造されるプロセッサにはモバイル向け、デスクトップ向けといった括りを無視すれば、<em>Sky Lake / Kaby Lake / Amber Lake / Whiskey Lake / Coffee Lake / Comet Lake</em> の 6種類が存在する。<br>
+<code>Family, Model</code> による CPU の判別において、<em>Sky Lake (_L/X)</em> 、<em>Comet Lake (_L)</em> は <code>Model</code> がそれぞれ違っているため判別することは容易だが、<em>Kaby Lake</em> についてはそうはいかない。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/">【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p>モバイル向け <em>Kaby Lake (KABYLAKE_L)</em> は <code>Model: 0x8E (142)</code> が与えられているが、同じ Model が <em>Amber Lake(-Y) / Coffee Lake(-U) / Whiskey Lake(-U)</em> が使われている。<br />
-<code>intel-family.h</code> では、末尾 <code>_L</code> がモバイル向け、<code>_X</code> がサーバー向け、<code>_D</code> がマイクロサーバー向け、無印がデスクトップ向けと区別されている。<br />
-デスクトップ向け <em>Kaby Lake</em> は <code>Model: 0x9E (158)</code> が与えられており、同様に <em>Coffee Lake(-S)</em> が同じ Model となる。モバイル向けよりはマシだが、ややこしいことに変わりはない。<br />
+<p>モバイル向け <em>Kaby Lake (KABYLAKE_L)</em> は <code>Model: 0x8E (142)</code> が与えられているが、同じ Model が <em>Amber Lake(-Y) / Coffee Lake(-U) / Whiskey Lake(-U)</em> が使われている。<br>
+<code>intel-family.h</code> では、末尾 <code>_L</code> がモバイル向け、<code>_X</code> がサーバー向け、<code>_D</code> がマイクロサーバー向け、無印がデスクトップ向けと区別されている。<br>
+デスクトップ向け <em>Kaby Lake</em> は <code>Model: 0x9E (158)</code> が与えられており、同様に <em>Coffee Lake(-S)</em> が同じ Model となる。モバイル向けよりはマシだが、ややこしいことに変わりはない。<br>
 同じ Model を使う <em>Kaby Lake</em> 群は代わりに Stepping で区別され、それをコメントではっきりと示したのが今回のパッチ内容となる。</p>
-
-<p>コメントによれば、<em>Amber Lake(-Y) (AMBERLAKE_L)</em> が <code>Stepping: 9</code> 、<em>Coffee Lake(-U) (COFFEELAKE_L)</em> が <code>Stepping: 0xA (10)</code>、<em>Whiskey Lake(-U) (WHISKEYLAKE_L)</em> が <code>Stepping 0xB/0xC (11/12)</code> を、<br />
+<p>コメントによれば、<em>Amber Lake(-Y) (AMBERLAKE_L)</em> が <code>Stepping: 9</code> 、<em>Coffee Lake(-U) (COFFEELAKE_L)</em> が <code>Stepping: 0xA (10)</code>、<em>Whiskey Lake(-U) (WHISKEYLAKE_L)</em> が <code>Stepping 0xB/0xC (11/12)</code> を、<br>
 <em>Coffee Lake(-S)</em> が <code>Stepping: 0xA/0xB/0xC/0xD (10/11/12/13)</code> を用いる。</p>
-
 <blockquote>
-<pre tabindex="0"><code> +#define INTEL_FAM6_SKYLAKE_L       0x4E    /* Sky Lake             */
- +#define INTEL_FAM6_SKYLAKE     0x5E    /* Sky Lake             */
- +#define INTEL_FAM6_SKYLAKE_X       0x55    /* Sky Lake             */
+<pre><code> +#define INTEL_FAM6_SKYLAKE_L		0x4E	/* Sky Lake             */
+ +#define INTEL_FAM6_SKYLAKE		0x5E	/* Sky Lake             */
+ +#define INTEL_FAM6_SKYLAKE_X		0x55	/* Sky Lake             */
+	 
+ -#define INTEL_FAM6_CANNONLAKE_L		0x66
+ +#define INTEL_FAM6_KABYLAKE_L		0x8E	/* Sky Lake             */
+ +/*                 AMBERLAKE_L		0x8E	   Sky Lake -- s: 9     */
+ +/*                 COFFEELAKE_L		0x8E	   Sky Lake -- s: 10    */
+ +/*                 WHISKEYLAKE_L	0x8E       Sky Lake -- s: 11,12 */
+	 
+ -#define INTEL_FAM6_ICELAKE_X		0x6A
+ -#define INTEL_FAM6_ICELAKE_D		0x6C
+ -#define INTEL_FAM6_ICELAKE		0x7D
+ -#define INTEL_FAM6_ICELAKE_L		0x7E
+ -#define INTEL_FAM6_ICELAKE_NNPI		0x9D
+ +#define INTEL_FAM6_KABYLAKE		0x9E	/* Sky Lake             */
+ +/*                 COFFEELAKE		0x9E	   Sky Lake -- s: 10-13 */
+	 
+ -#define INTEL_FAM6_TIGERLAKE_L		0x8C
+ -#define INTEL_FAM6_TIGERLAKE		0x8D
+ +#define INTEL_FAM6_COMETLAKE		0xA5	/* Sky Lake             */
+ +#define INTEL_FAM6_COMETLAKE_L		0xA6	/* Sky Lake             */
+</code></pre>
 
- -#define INTEL_FAM6_CANNONLAKE_L        0x66
- +#define INTEL_FAM6_KABYLAKE_L      0x8E    /* Sky Lake             */
- +/*                 AMBERLAKE_L     0x8E       Sky Lake -- s: 9     */
- +/*                 COFFEELAKE_L        0x8E       Sky Lake -- s: 10    */
- +/*                 WHISKEYLAKE_L   0x8E       Sky Lake -- s: 11,12 */
-
- -#define INTEL_FAM6_ICELAKE_X       0x6A
- -#define INTEL_FAM6_ICELAKE_D       0x6C
- -#define INTEL_FAM6_ICELAKE     0x7D
- -#define INTEL_FAM6_ICELAKE_L       0x7E
- -#define INTEL_FAM6_ICELAKE_NNPI        0x9D
- +#define INTEL_FAM6_KABYLAKE        0x9E    /* Sky Lake             */
- +/*                 COFFEELAKE      0x9E       Sky Lake -- s: 10-13 */
-
- -#define INTEL_FAM6_TIGERLAKE_L     0x8C
- -#define INTEL_FAM6_TIGERLAKE       0x8D
- +#define INTEL_FAM6_COMETLAKE       0xA5    /* Sky Lake             */
- +#define INTEL_FAM6_COMETLAKE_L     0xA6    /* Sky Lake             */</code></pre>
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2021/3/15/2071" rel="nofollow noreferrer" target="_blank">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2021/3/15/2071">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></cite>
 </div>
 
 </blockquote>
-
-<p>Stepping は基本大きい程進んだものとなっており、以前の Stepping に存在したエラッタの修正や脆弱性への対応が盛り込まれている。<br />
-<em>Coffee Lake(-S)</em> の Stepping 数が多いのは脆弱性への対策が理由として大きく、Intel が公開している情報によれば、<code>B0 (0xB) -&gt; P0 (0xC)</code> で、Spectre v2/v4、Meltdown、L1TF、MDS への策がハードウェア側に追加されている。 (Spectre v2/v4 はソフトウェアと合わせての対策) <sup class="footnote-ref" id="fnref:intel-step"><a href="#fn:intel-step">1</a></sup></p>
-
+<p>Stepping は基本大きい程進んだものとなっており、以前の Stepping に存在したエラッタの修正や脆弱性への対応が盛り込まれている。<br>
+<em>Coffee Lake(-S)</em> の Stepping 数が多いのは脆弱性への対策が理由として大きく、Intel が公開している情報によれば、<code>B0 (0xB) -&gt; P0 (0xC)</code> で、Spectre v2/v4、Meltdown、L1TF、MDS への策がハードウェア側に追加されている。 (Spectre v2/v4 はソフトウェアと合わせての対策) <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <table>
 <thead>
 <tr>
-<th align="left">Coffee Lake(-S)<sup class="footnote-ref" id="fnref:8th-9th-doc"><a href="#fn:8th-9th-doc">2</a></sup></th>
-<th align="center">Stepping</th>
+<th style="text-align:left">Coffee Lake(-S)<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></th>
+<th style="text-align:center">Stepping</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">S (U0)</td>
-<td align="center">0xA (10)</td>
+<td style="text-align:left">S (U0)</td>
+<td style="text-align:center">0xA (10)</td>
 </tr>
-
 <tr>
-<td align="left">S (B0)</td>
-<td align="center">0xB (11)</td>
+<td style="text-align:left">S (B0)</td>
+<td style="text-align:center">0xB (11)</td>
 </tr>
-
 <tr>
-<td align="left">S (P0)</td>
-<td align="center">0xC (12)</td>
+<td style="text-align:left">S (P0)</td>
+<td style="text-align:center">0xC (12)</td>
 </tr>
-
 <tr>
-<td align="left">H (U0)</td>
-<td align="center">0xA (10)</td>
+<td style="text-align:left">H (U0)</td>
+<td style="text-align:center">0xA (10)</td>
 </tr>
-
 <tr>
-<td align="left">H (R0)</td>
-<td align="center">0xD (13)</td>
+<td style="text-align:left">H (R0)</td>
+<td style="text-align:center">0xD (13)</td>
 </tr>
 </tbody>
 </table>
-
 <!--
 | U (D0) | 0xA (10) |
 -->
-
 <p>しかし今回追加されたコメントでもややこしいでも <em>Kaby Lake</em> 周りをすべてカバーできているとは言えず、<em>Kaby Lake</em> にはまだ AMD GPU とコラボした <em>Kaby Lake-G</em> 、LGA2066ソケットに対応したエンスージアスト向けの <em>Kaby Lake-X</em> が存在するからだ。それらは <code>Stepping: 9</code> となっている。</p>
-
-<p>さらには <em>Comet Lake-U</em> に <em>Whiskey Lake-U</em> が紛れ込んでいる。<br />
-<em>Comet Lake-U</em> の 1つに <strong>Core i3-10110U</strong> が存在するが、<a href="https://github.com/InstLatx64" rel="nofollow noreferrer" target="_blank">InstLatx64</a> 氏が収集、公開しているデータによれば <code>Family: 0x6, Model: 0x8E, Stepping: 0xC</code> となっており <sup class="footnote-ref" id="fnref:i3-10110u"><a href="#fn:i3-10110u">3</a></sup>、これは <em>Comet Lake-U</em> ではなく <em>Whiskey Lake-U</em> のものと一致する。<br />
-また ark.intel.com では <em>Comet Lake</em> としており <sup class="footnote-ref" id="fnref:ark-10110u"><a href="#fn:ark-10110u">4</a></sup>、iGPU の DeviceID (<code>0x9B41/0x9BCA/0x9BCC</code>) も <em>Comet Lake</em> とされている。<sup class="footnote-ref" id="fnref:cml-did"><a href="#fn:cml-did">5</a></sup><br />
-マーケティング、GPU的には <em>Comet Lake</em> とされるが、CPUID (<code>Family, Model, Stepping</code>) 的には <em>Whiskey Lake-U</em> という、曖昧で複雑な CPU だ。<br />
+<p>さらには <em>Comet Lake-U</em> に <em>Whiskey Lake-U</em> が紛れ込んでいる。<br>
+<em>Comet Lake-U</em> の 1つに <strong>Core i3-10110U</strong> が存在するが、<a href="https://github.com/InstLatx64">InstLatx64</a> 氏が収集、公開しているデータによれば <code>Family: 0x6, Model: 0x8E, Stepping: 0xC</code> となっており <sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、これは <em>Comet Lake-U</em> ではなく <em>Whiskey Lake-U</em> のものと一致する。<br>
+また ark.intel.com では <em>Comet Lake</em> としており <sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>、iGPU の DeviceID (<code>0x9B41/0x9BCA/0x9BCC</code>) も <em>Comet Lake</em> とされている。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
+マーケティング、GPU的には <em>Comet Lake</em> とされるが、CPUID (<code>Family, Model, Stepping</code>) 的には <em>Whiskey Lake-U</em> という、曖昧で複雑な CPU だ。<br>
 <em>Coffee Lake(-S)</em> は脆弱性対策で、<em>Kaby Lake-U</em> と <em>Amber Lake-Y / Coffee Lake-U / Whiskey Lake-U</em> は Intel 10nmプロセスの遅延で複雑化した CPU 達とも言えるかもしれない。</p>
-
 <h3 id="skx">Skylake server</h3>
-
 <p><em>Skylake Server</em> とその派生 CPU に関するコメントを追加するパッチも投稿されている。</p>
-
 <ul>
-<li><a href="https://lore.kernel.org/lkml/20210409121027.16437-1-andrew.cooper3@citrix.com/" rel="nofollow noreferrer" target="_blank">[PATCH] x86/cpu: Comment Skylake server stepping too - Andrew Cooper</a></li>
+<li><a href="https://lore.kernel.org/lkml/20210409121027.16437-1-andrew.cooper3@citrix.com/">[PATCH] x86/cpu: Comment Skylake server stepping too - Andrew Cooper</a></li>
 </ul>
-
 <blockquote>
-<pre tabindex="0"><code>  #define INTEL_FAM6_SKYLAKE     0x5E    /* Sky Lake             */
-  #define INTEL_FAM6_SKYLAKE_X       0x55    /* Sky Lake             */
- +/*                 CASCADELAKE_X   0x55       Sky Lake -- s: 7     */
- +/*                 COOPERLAKE_X        0x55       Sky Lake -- s: 11    */</code></pre>
+<pre><code>  #define INTEL_FAM6_SKYLAKE		0x5E	/* Sky Lake             */
+  #define INTEL_FAM6_SKYLAKE_X		0x55	/* Sky Lake             */
+ +/*                 CASCADELAKE_X	0x55	   Sky Lake -- s: 7     */
+ +/*                 COOPERLAKE_X		0x55	   Sky Lake -- s: 11    */
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/lkml/20210409121027.16437-1-andrew.cooper3@citrix.com/" rel="nofollow noreferrer" target="_blank">[PATCH] x86/cpu: Comment Skylake server stepping too - Andrew Cooper</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/lkml/20210409121027.16437-1-andrew.cooper3@citrix.com/">[PATCH] x86/cpu: Comment Skylake server stepping too - Andrew Cooper</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>Cascade Lake</em> は <em>Skylake server</em> に推論処理に向く <code>AVX512_VNNI</code> 命令の対応を追加し、<em>Cooper Lake</em> はそこにさらに <code>AVX512_BF16</code> 命令を追加した CPU となる。<br />
+<p><em>Cascade Lake</em> は <em>Skylake server</em> に推論処理に向く <code>AVX512_VNNI</code> 命令の対応を追加し、<em>Cooper Lake</em> はそこにさらに <code>AVX512_BF16</code> 命令を追加した CPU となる。<br>
 それと <strong>3rd Gen Xeon Scalable Processor</strong> には <em>Cooper Lake</em> と <em>Ice Lake server</em> の 2種類が該当するが、前者は 4-8ソケットシステム向け、後者が 1-2ソケット向けと棲み分けがなされている。</p>
-
 <h2 id="cnl">Palm Cove</h2>
-
-<p>パッチでは <em>Cannon Lake</em> についても触れており、CPUマイクロアーキテクチャ名 <em>Palm Cove</em> をコメントに記している。<br />
+<p>パッチでは <em>Cannon Lake</em> についても触れており、CPUマイクロアーキテクチャ名 <em>Palm Cove</em> をコメントに記している。<br>
 <em>Palm Cove</em> というのは以前からネット上では知られていたが、OSS へのパッチ、それも補足コメントという形とはいえ、Intel が公式的に <em>Palm Cove</em> の名を出したのは初めてな気がする。</p>
-
 <blockquote>
-<pre tabindex="0"><code> +#define INTEL_FAM6_CANNONLAKE_L        0x66    /* Palm Cove */</code></pre>
+<pre><code> +#define INTEL_FAM6_CANNONLAKE_L		0x66	/* Palm Cove */
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2021/3/15/2071" rel="nofollow noreferrer" target="_blank">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2021/3/15/2071">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></cite>
 </div>
 
 </blockquote>
-
-<p>ただ、パッチ内で Peter Zijlstra 氏は、<em>Cannon Lake (Palm Cove)</em> は Linux Kernel の CPU性能解析ツール <code>perf</code> コマンドのサポートがされていない、とコメントしており、それは <code>intel-family.h</code> に <em>Cannon Lake</em> のためのマクロを残す必要性が薄いことを意味する。<br />
+<p>ただ、パッチ内で Peter Zijlstra 氏は、<em>Cannon Lake (Palm Cove)</em> は Linux Kernel の CPU性能解析ツール <code>perf</code> コマンドのサポートがされていない、とコメントしており、それは <code>intel-family.h</code> に <em>Cannon Lake</em> のためのマクロを残す必要性が薄いことを意味する。<br>
 <em>Palm Cove</em> の名がようやく? Intel より出されたが、将来的には GPUドライバーのように、コードから <em>Cannon Lake</em> のための部分が <span class="complement">わずかだとは思うが</span>
- 削除される可能性も出てきた。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/09/29/intel-cnl-chase/">Cannon Lake を追う | Coelacanth's Dream</a></span>
+ 削除される可能性も出てきた。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/09/29/intel-cnl-chase/">Cannon Lake を追う | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <h2 id="spr">Sapphire Rapids == Golden Cove? / Willow Cove?</h2>
-
-<p>パッチでは他に、<em>Tiger Lake</em> 、<em>Sapphire Rapids</em> 、<em>Alder Lake</em> の CPUマイクロアーキテクチャも補完しているが、<em>Sapphire Rapids</em> が <em>Alder Lake</em> と同じ <em>Golden Cove</em> ではなく、<em>Tiger Lake</em> と同じ <em>Willow Cove</em> とされている。<br />
+<p>パッチでは他に、<em>Tiger Lake</em> 、<em>Sapphire Rapids</em> 、<em>Alder Lake</em> の CPUマイクロアーキテクチャも補完しているが、<em>Sapphire Rapids</em> が <em>Alder Lake</em> と同じ <em>Golden Cove</em> ではなく、<em>Tiger Lake</em> と同じ <em>Willow Cove</em> とされている。<br>
 しかし、個人的には Peter Zijlstra 氏の間違いではないかと考えている。</p>
-
 <blockquote>
-<pre tabindex="0"><code> +#define INTEL_FAM6_TIGERLAKE_L     0x8C    /* Willow Cove */
- +#define INTEL_FAM6_TIGERLAKE       0x8D    /* Willow Cove */
- +#define INTEL_FAM6_SAPPHIRERAPIDS_X    0x8F    /* Willow Cove */
+<pre><code> +#define INTEL_FAM6_TIGERLAKE_L		0x8C	/* Willow Cove */
+ +#define INTEL_FAM6_TIGERLAKE		0x8D	/* Willow Cove */
+ +#define INTEL_FAM6_SAPPHIRERAPIDS_X	0x8F	/* Willow Cove */
  +
- +#define INTEL_FAM6_ALDERLAKE       0x97    /* Golden Cove / Gracemont */
- +#define INTEL_FAM6_ALDERLAKE_L     0x9A    /* Golden Cove / Gracemont */</code></pre>
+ +#define INTEL_FAM6_ALDERLAKE		0x97	/* Golden Cove / Gracemont */
+ +#define INTEL_FAM6_ALDERLAKE_L		0x9A	/* Golden Cove / Gracemont */
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2021/3/15/2071" rel="nofollow noreferrer" target="_blank">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2021/3/15/2071">LKML: Peter Zijlstra: [PATCH] x86/cpu: Resort and comment Intel models</a></cite>
 </div>
 
 </blockquote>
+<p>まず、<em>Alder Lake</em> は Core (Big) 側に <em>Golden Cove アーキテクチャ</em> を採用することが明言されている。<br>
+そして、<em>Alder Lake</em> も <em>Sapphire Rapids</em> も 128-bit/256-bit幅の <code>AVX_VNNI</code> 命令に対応しており、他にも <code>CLDEMOTE / PTWRITE / Architectural LBRs / HLAT / SERIALIZE</code> 等の最新の命令における対応も共通している。<br>
+また、<em>Sapphire Rapids</em> は、用途に 5G基地局等を想定した <code>AVX512_FP16/HFNI</code> 命令に対応しており、それは <em>Golden Cove</em> の特徴として挙げられた Network/5G Perf の文言と一致する。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth&rsquo;s Dream</a></span>
 
-<p>まず、<em>Alder Lake</em> は Core (Big) 側に <em>Golden Cove アーキテクチャ</em> を採用することが明言されている。<br />
-そして、<em>Alder Lake</em> も <em>Sapphire Rapids</em> も 128-bit/256-bit幅の <code>AVX_VNNI</code> 命令に対応しており、他にも <code>CLDEMOTE / PTWRITE / Architectural LBRs / HLAT / SERIALIZE</code> 等の最新の命令における対応も共通している。<br />
-また、<em>Sapphire Rapids</em> は、用途に 5G基地局等を想定した <code>AVX512_FP16/HFNI</code> 命令に対応しており、それは <em>Golden Cove</em> の特徴として挙げられた Network/5G Perf の文言と一致する。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth's Dream</a></span>
-
-さらには、上で少し触れた <code>perf</code> コマンドの対応に関して、<em>Alder Lake (Golden Cove)</em> の PMU (Performance Monitoring Unit) は <em>Sapphire Rapids</em> のそれと近いというコメントがされている。<sup class="footnote-ref" id="fnref:perf-golden-cove"><a href="#fn:perf-golden-cove">6</a></sup><br />
+さらには、上で少し触れた <code>perf</code> コマンドの対応に関して、<em>Alder Lake (Golden Cove)</em> の PMU (Performance Monitoring Unit) は <em>Sapphire Rapids</em> のそれと近いというコメントがされている。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
 そういう訳で <em>Sapphire Rapids</em> の CPUマイクロアーキテクチャは <em>Golden Cove</em> だと考えているが、果たして。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://pc.watch.impress.co.jp/docs/news/1158093.html" rel="nofollow noreferrer" target="_blank">Intel、次世代CPUアーキテクチャ「Sunny Cove」の概要を明らかに ～Willow Cove、Golden Coveと進化予定、Atomのロードマップも更新 - PC Watch</a>
-
+<li><a href="https://pc.watch.impress.co.jp/docs/news/1158093.html">Intel、次世代CPUアーキテクチャ「Sunny Cove」の概要を明らかに ～Willow Cove、Golden Coveと進化予定、Atomのロードマップも更新 - PC Watch</a>
 <ul>
-<li><a href="https://pc.watch.impress.co.jp/img/pcw/docs/1158/093/html/003.jpg.html" rel="nofollow noreferrer" target="_blank">[画像] Intel、次世代CPUアーキテクチャ「Sunny Cove」の概要を明らかに ～Willow Cove、Golden Coveと進化予定、Atomのロードマップも更新(3/15) - PC Watch</a></li>
-</ul></li>
+<li><a href="https://pc.watch.impress.co.jp/img/pcw/docs/1158/093/html/003.jpg.html">[画像] Intel、次世代CPUアーキテクチャ「Sunny Cove」の概要を明らかに ～Willow Cove、Golden Coveと進化予定、Atomのロードマップも更新(3/15) - PC Watch</a></li>
+</ul>
+</li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:intel-step"><a href="https://software.intel.com/security-software-guidance/processors-affected-transient-execution-attack-mitigation-product-cpu-model" rel="nofollow noreferrer" target="_blank">Affected Processors: Transient Execution Attacks &amp; Related Security Issues by CPU</a>
- <a class="footnote-return" href="#fnref:intel-step"><sup>[return]</sup></a></li>
-<li id="fn:8th-9th-doc"><a href="https://cdrdv2.intel.com/v1/dl/getContent/338025" rel="nofollow noreferrer" target="_blank">8th and 9th Generation Intel® Core™ Processor Family Specification Update</a>
- <a class="footnote-return" href="#fnref:8th-9th-doc"><sup>[return]</sup></a></li>
-<li id="fn:i3-10110u"><a href="https://github.com/InstLatx64/InstLatx64/blob/17ee800ec643319215d0b9cb0c59c578ca805e7d/index.htm#L548" rel="nofollow noreferrer" target="_blank">InstLatx64/index.htm at 17ee800ec643319215d0b9cb0c59c578ca805e7d · InstLatx64/InstLatx64</a>
- <a class="footnote-return" href="#fnref:i3-10110u"><sup>[return]</sup></a></li>
-<li id="fn:ark-10110u"><a href="https://ark.intel.com/content/www/us/en/ark/products/196451/intel-core-i3-10110u-processor-4m-cache-up-to-4-10-ghz.html" rel="nofollow noreferrer" target="_blank">Intel® Core™ i3-10110U Processor (4M Cache, up to 4.10 GHz) Product Specifications</a>
- <a class="footnote-return" href="#fnref:ark-10110u"><sup>[return]</sup></a></li>
-<li id="fn:cml-did"><a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/include/pci_ids/i965_pci_ids.h#L210" rel="nofollow noreferrer" target="_blank">include/pci_ids/i965_pci_ids.h · master · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:cml-did"><sup>[return]</sup></a></li>
-<li id="fn:perf-golden-cove"><a href="https://github.com/kliang2/perf/commit/83afcae9c7081c8d64a1343262c3e659bf8262c0" rel="nofollow noreferrer" target="_blank">perf/x86/intel: Add Alder Lake Hybrid support · kliang2/perf@83afcae</a>
- <a class="footnote-return" href="#fnref:perf-golden-cove"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://software.intel.com/security-software-guidance/processors-affected-transient-execution-attack-mitigation-product-cpu-model">Affected Processors: Transient Execution Attacks &amp; Related Security Issues by CPU</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://cdrdv2.intel.com/v1/dl/getContent/338025">8th and 9th Generation Intel® Core™ Processor Family Specification Update</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://github.com/InstLatx64/InstLatx64/blob/17ee800ec643319215d0b9cb0c59c578ca805e7d/index.htm#L548">InstLatx64/index.htm at 17ee800ec643319215d0b9cb0c59c578ca805e7d · InstLatx64/InstLatx64</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://ark.intel.com/content/www/us/en/ark/products/196451/intel-core-i3-10110u-processor-4m-cache-up-to-4-10-ghz.html">Intel® Core™ i3-10110U Processor (4M Cache, up to 4.10 GHz) Product Specifications</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/blob/master/include/pci_ids/i965_pci_ids.h#L210">include/pci_ids/i965_pci_ids.h · master · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://github.com/kliang2/perf/commit/83afcae9c7081c8d64a1343262c3e659bf8262c0">perf/x86/intel: Add Alder Lake Hybrid support · kliang2/perf@83afcae</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

@@ -70,192 +70,170 @@
 <div class="article-time">
     <time datetime="2021-01-11 10:24 &#43;0900" class="time-b">Post: 2021/01/11 10:24 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/14 15:51 &#43;0900</div>
-  </div>
-
-<p>モバイル向けでは <em>Ice Lake (client)</em> から、デスクトップ向けでは 2021年第一四半期での登場が予告されている <em>Rocket Lake</em> からついにサポートされる AVX512命令。<br />
+  </div><p>モバイル向けでは <em>Ice Lake (client)</em> から、デスクトップ向けでは 2021年第一四半期での登場が予告されている <em>Rocket Lake</em> からついにサポートされる AVX512命令。<br>
 これまでに何度も拡張を繰り返して来たが、<em>Sapphire Rapids</em> ではさらに拡張された <code>AVX512_FP16</code> がサポートされる。</p>
-
 <p>Linux Kernel に投稿されたパッチのコメントによれば、<code>AVX512_FP16</code> は <em>Sapphire Rapids</em> 等の Intelプロセッサでサポートされ、精度や大きさを確保しつつ、FP32 よりも高速で優れた性能を得られる、としている。</p>
-
 <blockquote>
-<p>AVX512_FP16 is supported by Intel processors, like Sapphire Rapids.<br />
-It could gain better performance for it's faster compared to FP32<br />
-while meets the precision or magnitude requirement. It's availability<br />
+<p>AVX512_FP16 is supported by Intel processors, like Sapphire Rapids.<br>
+It could gain better performance for it&rsquo;s faster compared to FP32<br>
+while meets the precision or magnitude requirement. It&rsquo;s availability<br>
 is indicated by CPUID.(EAX=7,ECX=0):EDX[bit 23]</p>
 
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2020/12/7/1443" rel="nofollow noreferrer" target="_blank">LKML: Kyung Min Park: [PATCH 2/2] x86: Expose AVX512_FP16 for supported CPUID</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2020/12/7/1443">LKML: Kyung Min Park: [PATCH 2/2] x86: Expose AVX512_FP16 for supported CPUID</a></cite>
 </div>
 
 </blockquote>
-
-<p>AVX512系命令では、<code>AVX512_VNNI</code> にて精度を下げて複数の要素を扱うことで処理性能を向上させることができ、データ精度 FP32 の場合に対してピーク理論性能が、 Int8 では 4倍、Int16 では 2倍となる。(ただし、メモリ性能がボトルネックとなるため、実際の性能はそれより低くなる可能性がある。)<br />
+<p>AVX512系命令では、<code>AVX512_VNNI</code> にて精度を下げて複数の要素を扱うことで処理性能を向上させることができ、データ精度 FP32 の場合に対してピーク理論性能が、 Int8 では 4倍、Int16 では 2倍となる。(ただし、メモリ性能がボトルネックとなるため、実際の性能はそれより低くなる可能性がある。)<br>
 <code>AVX512_FP16</code> はこれを拡張したものと思われ、ピーク理論性能は Int16 と同じとなるが、FP16 であれば Int16 よりも数値が広い範囲で保持される。</p>
+<p>AVX512、FP16 というキーワードで、過去にバグ報告プラットフォームである <a href="https://launchpad.net/intel">intel in Launchpad</a> にちらと出てきた <code>HFNI</code> 命令が思い出される。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/05/26/intel-adl-spr-new-inst/">Intel Alder Lake、Sapphire Rapids にて追加される2つの命令 ――AVX2 VNNI /HFNI | Coelacanth&rsquo;s Dream</a></span>
 
-<p>AVX512、FP16 というキーワードで、過去にバグ報告プラットフォームである <a href="https://launchpad.net/intel" rel="nofollow noreferrer" target="_blank">intel in Launchpad</a> にちらと出てきた <code>HFNI</code> 命令が思い出される。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/05/26/intel-adl-spr-new-inst/">Intel Alder Lake、Sapphire Rapids にて追加される2つの命令 ――AVX2 VNNI /HFNI | Coelacanth's Dream</a></span>
-
-その時のリンク先は消されてしまったが、メールアーカイブには残っていた。<sup class="footnote-ref" id="fnref:hfni"><a href="#fn:hfni">1</a></sup><br />
-<code>HFNI</code> は AVX512命令において、FP32 の代わりに FP16 を使用し、性能を最大 2倍に引き上げるものと説明されている。<br />
-<em>SPR (Sapphire Rapids)</em> で新しくサポートされる命令としているが、タイトルには <em>ADL (Alder Lake)</em> があることから、<em>Sapphire Rapids</em> と言うより <em>Golden Cove アーキテクチャ</em> で新たにサポートする命令と考えられる。<br />
+その時のリンク先は消されてしまったが、メールアーカイブには残っていた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+<code>HFNI</code> は AVX512命令において、FP32 の代わりに FP16 を使用し、性能を最大 2倍に引き上げるものと説明されている。<br>
+<em>SPR (Sapphire Rapids)</em> で新しくサポートされる命令としているが、タイトルには <em>ADL (Alder Lake)</em> があることから、<em>Sapphire Rapids</em> と言うより <em>Golden Cove アーキテクチャ</em> で新たにサポートする命令と考えられる。<br>
 用途として 5G基地局等が想定されており、Intel が過去に CPUマイクロアーキテクチャのロードマップを発表した時、<em>Golden Cove</em> の特徴に Network/5G Perf があったことも上と一致する。</p>
-
 <p><code>AVX512_FP16</code> と <code>HFNI</code> の関係については、<code>HFNI</code> が未だに Intel の <span class="complement">一般にも公開されている限りだが</span>
- 公式ドキュメントに現れていないことから (<code>AVX512_FP16</code> はある)、違うのは名前だけで、命令の中身は一緒ではないかと思われる。<br />
+ 公式ドキュメントに現れていないことから (<code>AVX512_FP16</code> はある)、違うのは名前だけで、命令の中身は一緒ではないかと思われる。<br>
 かなり似ていながら僅かに違いが存在するとかだと、ただでさえややこしい AVX512命令群がさらにややこしくなってしまう。</p>
-
 <h2 id="intel-avx-サポート表">Intel AVX サポート表</h2>
-
-<p>CPUマイクロアーキテクチャの違いと併せて、対応範囲が混沌としている AVX512命令群だが、GCC 等コンパイラのドキュメントを頼りに頑張って整理したのが下の表となる。<br />
-プロセッサのコードネームを略称で記載しているが、一応書いておくと、<em>SKX (Skylake server)</em> 、<em>CNL (Cannon Lake)</em> 、<em>CLX (Cascade Lake)</em> 、<em>CPX (Cooper Lake)</em> 、<em>ICL (Ice Lake client)</em> 、<em>ICX (Ice Lake server)</em> 、<em>TGL (Tiger Lake)</em> 、<em>SPR (Sapphire Rapids)</em> 、<em>ADL (Alder Lake)</em> と対応している。<br />
-また、<em>Alder Lake</em> に関しては、<a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html" rel="nofollow noreferrer" target="_blank">Intel® Architecture Instruction Set Extensions Programming Reference</a> に 「Intel Hybrid Technology は AVX512 をサポートしない」とあり、そのためアーキテクチャ自体がサポートしていない場合と区別してある。</p>
-
-<p>AVX512命令は <strong>Xeon Phi シリーズ</strong> 、<em>Knight’s Landing</em> 、<em>Knights Mill</em> でも一部サポートされているが、それも含めるとさらに表が肥大化してしまうため省いた。5つの命令をまとめている 2行目を細かく分ける必要が出てしまう。<br />
+<p>CPUマイクロアーキテクチャの違いと併せて、対応範囲が混沌としている AVX512命令群だが、GCC 等コンパイラのドキュメントを頼りに頑張って整理したのが下の表となる。<br>
+プロセッサのコードネームを略称で記載しているが、一応書いておくと、<em>SKX (Skylake server)</em> 、<em>CNL (Cannon Lake)</em> 、<em>CLX (Cascade Lake)</em> 、<em>CPX (Cooper Lake)</em> 、<em>ICL (Ice Lake client)</em> 、<em>ICX (Ice Lake server)</em> 、<em>TGL (Tiger Lake)</em> 、<em>SPR (Sapphire Rapids)</em> 、<em>ADL (Alder Lake)</em> と対応している。<br>
+また、<em>Alder Lake</em> に関しては、<a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html">Intel® Architecture Instruction Set Extensions Programming Reference</a> に 「Intel Hybrid Technology は AVX512 をサポートしない」とあり、そのためアーキテクチャ自体がサポートしていない場合と区別してある。</p>
+<p>AVX512命令は <strong>Xeon Phi シリーズ</strong> 、<em>Knight’s Landing</em> 、<em>Knights Mill</em> でも一部サポートされているが、それも含めるとさらに表が肥大化してしまうため省いた。5つの命令をまとめている 2行目を細かく分ける必要が出てしまう。<br>
 それと <em>Rocket Lake</em> も省いているが、その <em>Crypress Cove アーキテクチャ</em> は <em>Ice Lake (client)</em> と同じ機能を備えることから、AVX512命令の範囲も同様と思われる。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">Intel AVX</th>
-<th align="center">SKX</th>
-<th align="center">CNL</th>
-<th align="center">CLX</th>
-<th align="center">CPX</th>
-<th align="center">ICL</th>
-<th align="center">ICX</th>
-<th align="center">TGL</th>
-<th align="center">SPR</th>
-<th align="center">ADL</th>
+<th style="text-align:left">Intel AVX</th>
+<th style="text-align:center">SKX</th>
+<th style="text-align:center">CNL</th>
+<th style="text-align:center">CLX</th>
+<th style="text-align:center">CPX</th>
+<th style="text-align:center">ICL</th>
+<th style="text-align:center">ICX</th>
+<th style="text-align:center">TGL</th>
+<th style="text-align:center">SPR</th>
+<th style="text-align:center">ADL</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">AVX512F (Foundation),<br>AVX512CD (Conflict Detection),<br>AVX512BW (Byte and Word),<br>AVX512DQ (Doubleword and Quadword),<br>AVX512VL (Vector Length)</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">-</td>
+<td style="text-align:left">AVX512F (Foundation),<br>AVX512CD (Conflict Detection),<br>AVX512BW (Byte and Word),<br>AVX512DQ (Doubleword and Quadword),<br>AVX512VL (Vector Length)</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">AVX512_IFMA (Integer Fused Multiply-Add),<br>AVX512_VBMI (Vector Byte Manipulation Instructions)</td>
-<td align="center"></td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">-</td>
+<td style="text-align:left">AVX512_IFMA (Integer Fused Multiply-Add),<br>AVX512_VBMI (Vector Byte Manipulation Instructions)</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">AVX512_VNNI</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">-</td>
+<td style="text-align:left">AVX512_VNNI</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">AVX512_VBMI2 (Vector Byte Manipulation Instructions 2),<br>AVX512_VPOPCNTDQ,<br>AVX512_BITALG (Bit Algorithms),<br>GFNI 512-bit (Galois Field New Instructions),<br>VAES 512-bit (Vector AES instructions)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">-</td>
+<td style="text-align:left">AVX512_VBMI2 (Vector Byte Manipulation Instructions 2),<br>AVX512_VPOPCNTDQ,<br>AVX512_BITALG (Bit Algorithms),<br>GFNI 512-bit (Galois Field New Instructions),<br>VAES 512-bit (Vector AES instructions)</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">AVX512_BF16</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">Y</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">Y</td>
-<td align="center">-</td>
+<td style="text-align:left">AVX512_BF16</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">AVX512_VP2INTERSECT</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">Y</td>
-<td align="center">Y</td>
-<td align="center">-</td>
+<td style="text-align:left">AVX512_VP2INTERSECT</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">AVX512_FP16</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">Y</td>
-<td align="center">-</td>
+<td style="text-align:left">AVX512_FP16</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">AVX_VNNI (128/256-bit)</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">Y</td>
-<td align="center">Y</td>
+<td style="text-align:left">AVX_VNNI (128/256-bit)</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Y</td>
+<td style="text-align:center">Y</td>
 </tr>
 </tbody>
 </table>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html" rel="nofollow noreferrer" target="_blank">Intel® Architecture Instruction Set Extensions Programming Reference</a></li>
-<li><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/avx-512-overview.html" rel="nofollow noreferrer" target="_blank">Intel® Advanced Vector Extensions 512 (Intel® AVX-512) Overview</a></li>
-<li><a href="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/lowering-numerical-precision-increase-deep-learning-performance.html" rel="nofollow noreferrer" target="_blank">Lowering Numerical Precision to Increase Deep Learning Performance</a></li>
-<li><a href="https://github.com/llvm/llvm-project/commit/756f5978410809530150f5e1cd425e85ad94d1cd" rel="nofollow noreferrer" target="_blank">[X86] Support Intel avxvnni · llvm/llvm-project@756f597</a></li>
-<li><a href="https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html" rel="nofollow noreferrer" target="_blank">x86 Options (Using the GNU Compiler Collection (GCC))</a></li>
+<li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html">Intel® Architecture Instruction Set Extensions Programming Reference</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/avx-512-overview.html">Intel® Advanced Vector Extensions 512 (Intel® AVX-512) Overview</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/lowering-numerical-precision-increase-deep-learning-performance.html">Lowering Numerical Precision to Increase Deep Learning Performance</a></li>
+<li><a href="https://github.com/llvm/llvm-project/commit/756f5978410809530150f5e1cd425e85ad94d1cd">[X86] Support Intel avxvnni · llvm/llvm-project@756f597</a></li>
+<li><a href="https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html">x86 Options (Using the GNU Compiler Collection (GCC))</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:hfni"><a href="https://www.mail-archive.com/ubuntu-bugs@lists.ubuntu.com/msg5786181.html" rel="nofollow noreferrer" target="_blank">[Bug 1879865] Re: [ADL] Enable 5G ISA (FP16) / HFNI</a>
- <a class="footnote-return" href="#fnref:hfni"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.mail-archive.com/ubuntu-bugs@lists.ubuntu.com/msg5786181.html">[Bug 1879865] Re: [ADL] Enable 5G ISA (FP16) / HFNI</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

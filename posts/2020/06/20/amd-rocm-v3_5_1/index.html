@@ -70,55 +70,48 @@
 <div class="article-time">
     <time datetime="2020-06-20 18:27 &#43;0900" class="time-b">Post: 2020/06/20 18:27 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/07/20 11:51 &#43;0900</div>
-  </div>
-
-<p>AMD は一部問題の修正と機能追加を施した <strong>ROCm v3.5.1</strong> をリリースした。<br />
-<span class="thread-link"><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-3.5.1" rel="nofollow noreferrer" target="_blank">RadeonOpenCompute/ROCm at roc-3.5.1</a></span>
+  </div><p>AMD は一部問題の修正と機能追加を施した <strong>ROCm v3.5.1</strong> をリリースした。<br>
+<span class="thread-link"><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-3.5.1">RadeonOpenCompute/ROCm at roc-3.5.1</a></span>
 </p>
-
-<p>自環境でも早速アップデートしてみたが、OpenCLの実行で新たに問題が発生した。<br />
+<p>自環境でも早速アップデートしてみたが、OpenCLの実行で新たに問題が発生した。<br>
 その対処法は後述。</p>
-
-<h2 id="rocm-3-5-1-の変更点">ROCm 3.5.1 の変更点</h2>
-
+<h2 id="rocm-351-の変更点">ROCm 3.5.1 の変更点</h2>
 <ul>
-<li>HIP-ROCclr(Radeon Open Compute Common Language Runtime) にストリームの優先度を問い合わせるAPI、<code>hipStreamGetPriority</code> の公開<br /></li>
-<li>マルチGPU環境において長期稼働させた場合に発生するメモリアクセスエラーの修正<br /></li>
+<li>HIP-ROCclr(Radeon Open Compute Common Language Runtime) にストリームの優先度を問い合わせるAPI、<code>hipStreamGetPriority</code> の公開</li>
+<li>マルチGPU環境において長期稼働させた場合に発生するメモリアクセスエラーの修正</li>
 <li>NCCL(NVIDIA Collective Communication Library) 2.7 のサポート</li>
 <li>RCCL(ROCm Collective Communication Library) のアップデート
-
 <ul>
 <li>Gater, Scatter, All-To-All の一括操作をサポート</li>
 <li>ネットワークプロキシのプロファイリングをサポート</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <h2 id="問題の対処法">問題の対処法</h2>
-
-<p>ROCm v3.5.1 というマイナーアップデートだからなのか、ライブラリやバイナリを置くディレクトリを <code>/opt/rocm-3.5.1</code> にまとめるのではなく、更新があったのだろう一部を <code>/opt/rocm-3.5.1</code> に、<br />
-そうでないものは <code>/opt/rocm-3.5.0</code> に残されている。<br />
-それにより、AMD GPUが対応する中間命令を収めたビットコードが <code>/opt/rocm-3.5.1/lib</code> に移ったため、追加で環境変数を指定する必要があった。<br />
+<p>ROCm v3.5.1 というマイナーアップデートだからなのか、ライブラリやバイナリを置くディレクトリを <code>/opt/rocm-3.5.1</code> にまとめるのではなく、更新があったのだろう一部を <code>/opt/rocm-3.5.1</code> に、<br>
+そうでないものは <code>/opt/rocm-3.5.0</code> に残されている。<br>
+それにより、AMD GPUが対応する中間命令を収めたビットコードが <code>/opt/rocm-3.5.1/lib</code> に移ったため、追加で環境変数を指定する必要があった。<br>
 自環境では以下のようなコマンドを <code>.bashrc</code> に記述している。</p>
-<pre tabindex="0"><code>export ROCM_PATH=&#34;/opt/rocm-3.5.0&#34;
-export ROCM_PATH_3_5_1=&#34;/opt/rocm-3.5.1&#34;
+<pre tabindex="0"><code>export ROCM_PATH=&quot;/opt/rocm-3.5.0&quot;
+export ROCM_PATH_3_5_1=&quot;/opt/rocm-3.5.1&quot;
 
 export PATH=$HCC_HOME/bin:$HIP_PATH/bin:$PATH
-export OPENCL_LIBS=&#34;${ROCM_PATH}/opencl/lib&#34;
-export LIBOPENCL=&#34;${ROCM_PATH}/opencl/lib&#34;
+export OPENCL_LIBS=&quot;${ROCM_PATH}/opencl/lib&quot;
+export LIBOPENCL=&quot;${ROCM_PATH}/opencl/lib&quot;
 
-export LD_LIBRARY_PATH=&#34;${ROCM_PATH}/opencl/lib&#34;:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=&#34;${ROCM_PATH_3_5_1}/lib&#34;:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=&quot;${ROCM_PATH}/opencl/lib&quot;:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=&quot;${ROCM_PATH_3_5_1}/lib&quot;:$LD_LIBRARY_PATH
 
-export OPENCL_HEADERS=&#34;${ROCM_PATH}/opencl/include&#34;
-export OPENCL_INCLUDES=&#34;${ROCM_PATH}/opencl/include&#34;
+export OPENCL_HEADERS=&quot;${ROCM_PATH}/opencl/include&quot;
+export OPENCL_INCLUDES=&quot;${ROCM_PATH}/opencl/include&quot;
 export PATH=${ROCM_PATH}/bin:$PATH
-export PATH=${ROCM_PATH}/opencl/bin:$PATH</code></pre>
-<p>ROCm v3.3.0 から最新版へのシンボリックリンクを作成するようになったのに、複数ディレクトリに分けるというのはどうなのだろう。<br />
-自分の環境、やり方が悪かっただけ？</p>
+export PATH=${ROCM_PATH}/opencl/bin:$PATH
 
+</code></pre><p>ROCm v3.3.0 から最新版へのシンボリックリンクを作成するようになったのに、複数ディレクトリに分けるというのはどうなのだろう。<br>
+自分の環境、やり方が悪かっただけ？</p>
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://news.mynavi.jp/article/architecture-313/" rel="nofollow noreferrer" target="_blank">コンピュータアーキテクチャの話(313) 1つの命令で複数の演算器を動かす「SIMD」 | マイナビニュース</a></li>
+<li><a href="https://news.mynavi.jp/article/architecture-313/">コンピュータアーキテクチャの話(313) 1つの命令で複数の演算器を動かす「SIMD」 | マイナビニュース</a></li>
 </ul>
 
 </div>

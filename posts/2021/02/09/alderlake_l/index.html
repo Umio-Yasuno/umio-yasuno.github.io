@@ -70,104 +70,94 @@
 <div class="article-time">
     <time datetime="2021-02-09 19:49 &#43;0900" class="time-b">Post: 2021/02/09 19:49 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/02/09 20:44 &#43;0900</div>
-  </div>
-
-<p>先日 2021/01/21、Linux Kernel に <em>ALDERLAEK_L / Alder Lake mobile</em> の x86_model を追加するパッチが投稿された。<br />
+  </div><p>先日 2021/01/21、Linux Kernel に <em>ALDERLAEK_L / Alder Lake mobile</em> の x86_model を追加するパッチが投稿された。<br>
 このことで自分が言いたいのは、<em>Alder Lake-L</em> なるものが存在し、<em>Alder Lake-S/P/M</em> に並ぶバリアントとなる、訳ではないだろうということだ。</p>
-
 <ul>
-<li><a href="https://github.com/torvalds/linux/commit/6e1239c13953f3c2a76e70031f74ddca9ae57cd3#diff-7bf85b32beb96091abd89790e701cd01fb13bafbbbca17433ad47830820c1391" rel="nofollow noreferrer" target="_blank">x86/cpu: Add another Alder Lake CPU to the Intel family · torvalds/linux@6e1239c</a></li>
-<li><a href="https://lore.kernel.org/lkml/20210121215004.11618-1-tony.luck@intel.com/" rel="nofollow noreferrer" target="_blank">[PATCH] x86/cpu: Add another Alder Lake CPU to the Intel family - Tony Luck</a></li>
+<li><a href="https://github.com/torvalds/linux/commit/6e1239c13953f3c2a76e70031f74ddca9ae57cd3#diff-7bf85b32beb96091abd89790e701cd01fb13bafbbbca17433ad47830820c1391">x86/cpu: Add another Alder Lake CPU to the Intel family · torvalds/linux@6e1239c</a></li>
+<li><a href="https://lore.kernel.org/lkml/20210121215004.11618-1-tony.luck@intel.com/">[PATCH] x86/cpu: Add another Alder Lake CPU to the Intel family - Tony Luck</a></li>
 </ul>
-
 <blockquote>
-<pre tabindex="0"><code>    #define  INTEL_FAM6_LAKEFIELD        0x8A
-    #define INTEL_FAM6_ALDERLAKE     0x97
-   +#define INTEL_FAM6_ALDERLAKE_L       0x9A
+<pre><code>    #define	INTEL_FAM6_LAKEFIELD		0x8A
+    #define INTEL_FAM6_ALDERLAKE		0x97
+   +#define INTEL_FAM6_ALDERLAKE_L		0x9A
+   
+    /* &quot;Small Core&quot; Processors (Atom) */
+</code></pre>
 
-    /* &#34;Small Core&#34; Processors (Atom) */</code></pre>
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/lkml/20210121215004.11618-1-tony.luck@intel.com/" rel="nofollow noreferrer" target="_blank">[PATCH] x86/cpu: Add another Alder Lake CPU to the Intel family - Tony Luck</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/lkml/20210121215004.11618-1-tony.luck@intel.com/">[PATCH] x86/cpu: Add another Alder Lake CPU to the Intel family - Tony Luck</a></cite>
 </div>
 
 </blockquote>
-
-<h2 id="alderlake-l-と-alder-lake-p-m">ALDERLAKE_L と Alder Lake-P/M</h2>
-
-<h3 id="intel-family-h">intel-family.h</h3>
-
-<p>まず今回、パッチの投稿先であるファイル <a href="https://github.com/torvalds/linux/blob/6e1239c13953f3c2a76e70031f74ddca9ae57cd3/arch/x86/include/asm/intel-family.h" rel="nofollow noreferrer" target="_blank">intel-family.h</a> は、Intelプロセッサの x86_model をまとめたヘッダファイルであり、<br />
+<h2 id="alderlake_l-と-alder-lake-pm">ALDERLAKE_L と Alder Lake-P/M</h2>
+<h3 id="intel-familyh">intel-family.h</h3>
+<p>まず今回、パッチの投稿先であるファイル <a href="https://github.com/torvalds/linux/blob/6e1239c13953f3c2a76e70031f74ddca9ae57cd3/arch/x86/include/asm/intel-family.h">intel-family.h</a> は、Intelプロセッサの x86_model をまとめたヘッダファイルであり、<br>
 そのファイルを先頭部分に記述されたコメントによると、末尾の <code>_L, _X, _D</code> 等はマーケットセグメントにおける担当を示すものであることが分かる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>    * OPTDIFF    If needed, a short string to differentiate by market segment.
+<pre><code>    * OPTDIFF	If needed, a short string to differentiate by market segment.
     *
-    *        Common OPTDIFFs:
+    *		Common OPTDIFFs:
     *
-    *            - regular client parts
-    *        _L  - regular mobile parts
-    *        _G  - parts with extra graphics on
-    *        _X  - regular server parts
-    *        _D  - micro server parts
+    *			- regular client parts
+    *		_L	- regular mobile parts
+    *		_G	- parts with extra graphics on
+    *		_X	- regular server parts
+    *		_D	- micro server parts
     *
-    *        Historical OPTDIFFs:
+    *		Historical OPTDIFFs:
     *
-    *        _EP - 2 socket server parts
-    *        _EX - 4+ socket server parts
+    *		_EP	- 2 socket server parts
+    *		_EX	- 4+ socket server parts
     *
     * The #define line may optionally include a comment including platform names.
-    */</code></pre></blockquote>
-
+    */
+</code></pre>
+</blockquote>
 <p>そのため、<span class="complement">そもそもパッチのコメントにも書かれているが</span>
  追加された <code>ALDERLAKE_L</code> はモバイル向け <em>Alder Lake</em> となり、その x86_model は <code>0x9A (154)</code> ということになる。</p>
-
-<p>そして、<em>Alder Lake-S/P/M</em> の x86_model については、Coreboot へのパッチから既に判明しており、<br />
-<em>Alder Lake-S</em> は <code>Family: 0x6, Model: 0x97</code> 、<em>Alder Lake-P/M</em> は <code>Family: 0x6, Model: 0x9A</code> とされる。<br />
-それらは Coreboot のファイルに記述された CPUID が読み取れ、以下の場合は左から 16進数であることを示す <code>0x</code> の後に続いて、<code>Extended Model</code>、<code>Extended Family</code>、<code>Family</code>、<code>Model</code> といった風に並び、そして末尾が <code>Stepping</code> を意味する。<sup class="footnote-ref" id="fnref:coreboot-cpuid"><a href="#fn:coreboot-cpuid">1</a></sup><br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/02/adl-p-chromebook-board-adl-m/">Alder Lake-P を搭載する Chromebookボード 「Brya」、そして Alder Lake-M | Coelacanth's Dream</a></span>
+<p>そして、<em>Alder Lake-S/P/M</em> の x86_model については、Coreboot へのパッチから既に判明しており、<br>
+<em>Alder Lake-S</em> は <code>Family: 0x6, Model: 0x97</code> 、<em>Alder Lake-P/M</em> は <code>Family: 0x6, Model: 0x9A</code> とされる。<br>
+それらは Coreboot のファイルに記述された CPUID が読み取れ、以下の場合は左から 16進数であることを示す <code>0x</code> の後に続いて、<code>Extended Model</code>、<code>Extended Family</code>、<code>Family</code>、<code>Model</code> といった風に並び、そして末尾が <code>Stepping</code> を意味する。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/12/02/adl-p-chromebook-board-adl-m/">Alder Lake-P を搭載する Chromebookボード 「Brya」、そして Alder Lake-M | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <blockquote>
-<pre tabindex="0"><code>   #define CPUID_ALDERLAKE_S_A0  0x90670
-   #define CPUID_ALDERLAKE_P_A0  0x906a0
-   #define CPUID_ALDERLAKE_M_A0  0x906a1</code></pre>
+<pre><code>   #define CPUID_ALDERLAKE_S_A0	0x90670
+   #define CPUID_ALDERLAKE_P_A0	0x906a0
+   #define CPUID_ALDERLAKE_M_A0	0x906a1
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/include/intelblocks/mp_init.h" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/include/intelblocks/mp_init.h</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/include/intelblocks/mp_init.h">https://review.coreboot.org/c/coreboot/+/49629/3/src/soc/intel/common/block/include/intelblocks/mp_init.h</a></cite>
 </div>
 
 </blockquote>
-
-<p><code>ALDERLAKE_L</code> と <em>Alder Lake-P/M</em> の x86_model は一致する。<br />
+<p><code>ALDERLAKE_L</code> と <em>Alder Lake-P/M</em> の x86_model は一致する。<br>
 まとめると、マーケットセグメントとして <code>ALDERLAKE_L [Model: 0x9A (154)]</code> があり、それに <em>Alder Lake-P/M</em> 2種があたる、という解釈が最も自然と思われる。</p>
-
 <ul>
 <li>ALDERLAKE (Model: 0x97 {151})
-
 <ul>
 <li><em>Alder Lake-S</em></li>
-</ul></li>
+</ul>
+</li>
 <li>ALDERLAKE_L (Model: 0x9A {154})
-
 <ul>
 <li><em>Alder Lake-P</em></li>
 <li><em>Alder Lake-M</em></li>
-</ul></li>
 </ul>
-
-<p>それだけのお話。<br />
-それとついでに言えば、モバイル向け <em>Alder Lake</em> の x86_model が <code>0x9A (154)</code> であることは、2020/11/25 に Linux向け電力管理ツールである <a href="https://github.com/fenrus75/powertop" rel="nofollow noreferrer" target="_blank">PowerTOP</a> に投稿されたパッチ、プルリクエストから確認されていた。<sup class="footnote-ref" id="fnref:powertop"><a href="#fn:powertop">2</a></sup><br />
-それを投稿した <a href="https://github.com/gkammela" rel="nofollow noreferrer" target="_blank">Gayatri Kammela (ユーザー名: gkammela)</a> 氏は Intel のソフトウェアエンジニアであり、Linux Kernel 周りを担当している。</p>
-<div class="footnotes">
-
-<hr />
-
+</li>
+</ul>
+<p>それだけのお話。<br>
+それとついでに言えば、モバイル向け <em>Alder Lake</em> の x86_model が <code>0x9A (154)</code> であることは、2020/11/25 に Linux向け電力管理ツールである <a href="https://github.com/fenrus75/powertop">PowerTOP</a> に投稿されたパッチ、プルリクエストから確認されていた。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+それを投稿した <a href="https://github.com/gkammela">Gayatri Kammela (ユーザー名: gkammela)</a> 氏は Intel のソフトウェアエンジニアであり、Linux Kernel 周りを担当している。</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:coreboot-cpuid"><a href="https://github.com/coreboot/coreboot/commit/dcea700762bc97bd7fcabf2e960d47805129aeb1?branch=dcea700762bc97bd7fcabf2e960d47805129aeb1&amp;diff=unified" rel="nofollow noreferrer" target="_blank">inteltool: Print raw CPUID and make hexadecimal values unambiguous · coreboot/coreboot@dcea700</a>
- <a class="footnote-return" href="#fnref:coreboot-cpuid"><sup>[return]</sup></a></li>
-<li id="fn:powertop"><a href="https://github.com/fenrus75/powertop/pull/77/commits/b4026d1996a6e091aef313c0b2ad4851b1dee56f" rel="nofollow noreferrer" target="_blank">Add Sapphire rapids, Alder Lake mobile and desktop support in Powertop by gkammela · Pull Request #77 · fenrus75/powertop</a>
- <a class="footnote-return" href="#fnref:powertop"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/commit/dcea700762bc97bd7fcabf2e960d47805129aeb1?branch=dcea700762bc97bd7fcabf2e960d47805129aeb1&amp;diff=unified">inteltool: Print raw CPUID and make hexadecimal values unambiguous · coreboot/coreboot@dcea700</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/fenrus75/powertop/pull/77/commits/b4026d1996a6e091aef313c0b2ad4851b1dee56f">Add Sapphire rapids, Alder Lake mobile and desktop support in Powertop by gkammela · Pull Request #77 · fenrus75/powertop</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

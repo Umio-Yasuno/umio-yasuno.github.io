@@ -70,59 +70,52 @@
 <div class="article-time">
     <time datetime="2021-01-29 23:33 &#43;0900" class="time-b">Post: 2021/01/29 23:33 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/06/04 23:13 &#43;0900</div>
-  </div><p>Linux Kernel (intel-gfx) に、<em>Display13</em> をサポートするパッチが投稿された。<br />
+  </div><p>Linux Kernel (intel-gfx) に、<em>Display13</em> をサポートするパッチが投稿された。<br>
 <em>Display13</em> は今後の Intelプラットフォームに採用されるディスプレイIP となり、現バージョンである <em>Display12</em> <span class="complement">Tiger Lake, Rocket Lake, DG1, Alder Lake に採用されている</span>
- から自然に進化したものと説明されている。<br />
+ から自然に進化したものと説明されている。<br>
 また、<em>Display13</em> は便宜的な名前であり、今後のパッチで Gen13 といったものに変わるのではないかと思われる。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-January/259621.html" rel="nofollow noreferrer" target="_blank">[Intel-gfx] [PATCH 00/18] Preliminary Display13 support</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-January/259621.html">[Intel-gfx] [PATCH 00/18] Preliminary Display13 support</a></li>
 </ul>
-
 <p><em>Display13</em> ではプレーンあたりの容量がこれまでの 32KB から 128KB に拡張され、これにより 16K解像度に対応するようになった。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   + int max_horizontal_pixels = 8192;
-   + int max_stride_bytes;
+<pre><code>   +	int max_horizontal_pixels = 8192;
+   +	int max_stride_bytes;
    +
-   + if (HAS_DISPLAY13(i915)) {
-   +     /*
-   +      * The stride in bytes must not exceed of the size
-   +      * of 128K bytes. For pixel formats of 64bpp will allow
-   +      * for a 16K pixel surface.
-   +      */
-   +     max_stride_bytes = 131072;
-   +     if (cpp == 8)
-   +         max_horizontal_pixels = 16384;
-   + } else {
-   +     /*
-   +      * &#34;The stride in bytes must not exceed the
-   +      * of the size of 8K pixels and 32K bytes.&#34;
-   +      */
-   +     max_stride_bytes = 32768;
-   + }</code></pre>
+   +	if (HAS_DISPLAY13(i915)) {
+   +		/*
+   +		 * The stride in bytes must not exceed of the size
+   +		 * of 128K bytes. For pixel formats of 64bpp will allow
+   +		 * for a 16K pixel surface.
+   +		 */
+   +		max_stride_bytes = 131072;
+   +		if (cpp == 8)
+   +			max_horizontal_pixels = 16384;
+   +	} else {
+   +		/*
+   +		 * &quot;The stride in bytes must not exceed the
+   +		 * of the size of 8K pixels and 32K bytes.&quot;
+   +		 */
+   +		max_stride_bytes = 32768;
+   +	}
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-January/259627.html" rel="nofollow noreferrer" target="_blank">[Intel-gfx] [PATCH 05/18] drm/i915/display13: Support 128k plane stride</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-January/259627.html">[Intel-gfx] [PATCH 05/18] drm/i915/display13: Support 128k plane stride</a></cite>
 </div>
 
 </blockquote>
-
 <p>Intel VT-d (Virtualization Technology for Directed I/O ) が有効な場合、ディスプレイに必要なメモリ帯域が 5% 増加するため、それに対応するパッチも含まれている。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-January/259629.html" rel="nofollow noreferrer" target="_blank">[Intel-gfx] [PATCH 11/18] drm/i915/display13: Required bandwidth increases when VT-d is active</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-January/259629.html">[Intel-gfx] [PATCH 11/18] drm/i915/display13: Required bandwidth increases when VT-d is active</a></li>
 </ul>
-
-<p>これは最初のパッチで触れられていた、<em>Display13</em> の機能としてあるが、今回の一連のパッチには含まれていない、<br />
-<em>Tiled Surfaces</em> を GGTT (Global graphics translation table) にマッピングするようになったことによるものではないかと思われる。<em>Tiled Surfaces</em> は、フレームバッファーの各ピクセルをメモリにマッピングする際に用いられる方式のこと。<br />
+<p>これは最初のパッチで触れられていた、<em>Display13</em> の機能としてあるが、今回の一連のパッチには含まれていない、<br>
+<em>Tiled Surfaces</em> を GGTT (Global graphics translation table) にマッピングするようになったことによるものではないかと思われる。<em>Tiled Surfaces</em> は、フレームバッファーの各ピクセルをメモリにマッピングする際に用いられる方式のこと。<br>
 そのように変更した理由としては、GPU 仮想技術やそれによる仮想デスクトップに活用するためではないかということが考えられる。</p>
-
-<p>パワードメインの関係性が以下のように変更された。<br />
-映像出力ポートに対応する Display Pipe (A-D) が A と B-D のグループに分けられている。<br />
+<p>パワードメインの関係性が以下のように変更された。<br>
+映像出力ポートに対応する Display Pipe (A-D) が A と B-D のグループに分けられている。<br>
 これは、最低限必要な Pipe A とそれ以外に分けることで、パワーゲーディングの適用を簡易にする目的があるのではないかと思われる。また、パイプごとに適用することも可能としている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   +/*
+<pre><code>   +/*
    + * Display13 Power Domains
    + *
    + * Previous platforms required that PG(n-1) be enabled before PG(n).  That
@@ -139,23 +132,21 @@
    + * Power wells must be enabled from top to bottom and disabled from bottom
    + * to top.  This allows pipes to be power gated independently.
    + */
-   +</code></pre>
+   +
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-January/259628.html" rel="nofollow noreferrer" target="_blank">[Intel-gfx] [PATCH 07/18] drm/i915/display13: Add Display13 power wells</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-January/259628.html">[Intel-gfx] [PATCH 07/18] drm/i915/display13: Add Display13 power wells</a></cite>
 </div>
 
 </blockquote>
-
 <p>また、Watermark <span class="complement">ディスプレイの解像度等に応じて決定されるメモリのタイミング</span>
- の数が、従来の 32個から 256個へと大幅に増やされた。<br />
+ の数が、従来の 32個から 256個へと大幅に増やされた。<br>
 より最適なタイミングを設定することができ、電力効率を向上させられる。</p>
-
 <p>パッチのコメントにあったように、<em>Display13</em> での変更点はそう巨大なものではなく、自然な進化と言えるが、その分着実にディスプレイ部の性能と省電力機能を強化しているとも表せられる。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-skl-vol05-memory_views.pdf" rel="nofollow noreferrer" target="_blank">Volume 5: Memory Views - intel-gfx-prm-osrc-skl-vol05-memory_views.pdf</a></li>
-<li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol12-displayengine_0.pdf" rel="nofollow noreferrer" target="_blank">Cover_Sheet - intel-gfx-prm-osrc-icllp-vol12-displayengine_0.pdf</a></li>
+<li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-skl-vol05-memory_views.pdf">Volume 5: Memory Views - intel-gfx-prm-osrc-skl-vol05-memory_views.pdf</a></li>
+<li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-icllp-vol12-displayengine_0.pdf">Cover_Sheet - intel-gfx-prm-osrc-icllp-vol12-displayengine_0.pdf</a></li>
 </ul>
 
 </div>

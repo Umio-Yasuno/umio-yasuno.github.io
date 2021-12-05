@@ -70,18 +70,13 @@
 <div class="article-time">
     <time datetime="2020-11-07 15:25 &#43;0900" class="time-b">Post: 2020/11/07 15:25 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/11/12 19:15 &#43;0900</div>
-  </div>
-
-<p>2020/11/05 には <em>Zen 3アーキテクチャ</em> を採用する <strong>Ryzen 5000シリーズ</strong> のレビューが各メディアより公開され、2020/11/06 には発売が開始された。<br />
-同時に <em>Zen 3アーキテクチャ</em> の詳細も公開され、「Software Optimization Guide for the AMD Family 19h Processors」 も AMD より公開されている。<br />
-<span class="thread-link"><a href="https://www.amd.com/en/support/tech-docs" rel="nofollow noreferrer" target="_blank">Tech Docs | AMD</a></span>
+  </div><p>2020/11/05 には <em>Zen 3アーキテクチャ</em> を採用する <strong>Ryzen 5000シリーズ</strong> のレビューが各メディアより公開され、2020/11/06 には発売が開始された。<br>
+同時に <em>Zen 3アーキテクチャ</em> の詳細も公開され、「Software Optimization Guide for the AMD Family 19h Processors」 も AMD より公開されている。<br>
+<span class="thread-link"><a href="https://www.amd.com/en/support/tech-docs">Tech Docs | AMD</a></span>
 </p>
-
 <p>ただ <em>Family 19h / Zen 3アーキテクチャ</em> 単体の詳細であり、<em>Zen 2アーキテクチャ</em> との比較や、各改良点にどれだけ効果があるのか等は資料中では触れられていない。</p>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#zen_3">Zen 3アーキテクチャ</a>
-
 <ul class="page-index">
 <li><a href="#ccd-iod">ダイ構成</a></li>
 <li><a href="#cache">キャッシュ構成</a></li>
@@ -89,144 +84,115 @@
 <li><a href="#int">整数/Integer</a></li>
 <li><a href="#ls">Load/Store</a></li>
 <li><a href="#fp">浮動小数点/Floating-Point</a></li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/11/07/zen_3-arch-diagram.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/11/07/zen_3-arch-diagram.webp"
       alt="画像出典: Software Optimization Guide for the AMD Family 19h Processors"/>
 </a><figcaption>
-      <h4 class="fig-title">Family 19h Block Diagram</h4><p>画像出典: <cite><a href="https://www.amd.com/en/support/tech-docs" rel="nofollow noreferrer" target="_blank">Software Optimization Guide for the AMD Family 19h Processors</a></cite></p>
+      <h4 class="fig-title">Family 19h Block Diagram</h4><p>画像出典: <cite><a href="https://www.amd.com/en/support/tech-docs">Software Optimization Guide for the AMD Family 19h Processors</a></cite></p>
   </figcaption>
 </figure>
 
-
 <h2 id="zen_3">Zen 3アーキテクチャ</h2>
-
 <h3 id="ccd-iod">ダイ構成</h3>
-
 <p>メモリコントローラーや PCIe、SATA等の各 I/O のコントローラーや PHY (物理層) が搭載されている IOD は <strong>Ryzen 3000シリーズ</strong> から変わらず、CPUコアが搭載されている CCD との接続幅も、Write: 16-Byte/Cycle、Read: 32-Byte/Cycle と変わらない。</p>
-
 <p>しかし、CCX のレイアウトが変更され、CPU 8-Core と L3キャッシュ 32MB で構成されるようになったため、CCX 間で通信するために IOD を経由することは減ったと思われる。同時に、レイテンシも大きく削減された。</p>
-
 <h3 id="cache">キャッシュ構成</h3>
-
-<p>コアごとに持つ、L1データ/命令キャッシュ、L2キャッシュは <em>Zen 2アーキテクチャ</em> から変わらず、<br />
+<p>コアごとに持つ、L1データ/命令キャッシュ、L2キャッシュは <em>Zen 2アーキテクチャ</em> から変わらず、<br>
 L1データ/命令キャッシュは 32KB 8-way構成、L2キャッシュは 512KB 8-way 構成となっている。</p>
-
 <p>L3キャッシュは <em>Vermeer /Ryzen 5000シリーズ</em> では CCX あたり <span class="complement">実質 CCD あたり</span>
- 32MB を搭載し、これが最大容量となるが、16MB の構成も可能となっている。<br />
-16MB構成は、CPU に <em>Zen 3アーキテクチャ</em> を採用する <a href="https://www.coelacanth-dream.com/tags/cezanne">Cezanne APU</a> あたりが選択するではないかと思われる。<br />
+ 32MB を搭載し、これが最大容量となるが、16MB の構成も可能となっている。<br>
+16MB構成は、CPU に <em>Zen 3アーキテクチャ</em> を採用する <a href="https://www.coelacanth-dream.com/tags/cezanne">Cezanne APU</a> あたりが選択するではないかと思われる。<br>
 L3キャッシュ自体の構成は 16-wayセットアソシアティブとなっており、ここは <em>Zen/2 アーキテクチャ</em> から変わらない。</p>
-
 <h3 id="front-end">フロントエンド</h3>
-
-<p>フロントエンド部では、公式発表された時はデコード幅や Opキャッシュ容量、Opキャッシュから送り込む命令数、各スケジューラー (Int/FP) にディスパッチするマイクロOp数を増やしているのではないかと推測したが、<sup class="footnote-ref" id="fnref:zen-3-guess"><a href="#fn:zen-3-guess">1</a></sup><br />
-実際はこれらの部分は <em>Zen 2アーキテクチャ</em> から拡張されておらず、サイクルあたりの x86デコード幅は 4命令、Opキャッシュからは 8命令、ディスパッチ可能なマイクロOp数は 6命令となり、Opキャッシュ容量は 4K となる。<br />
+<p>フロントエンド部では、公式発表された時はデコード幅や Opキャッシュ容量、Opキャッシュから送り込む命令数、各スケジューラー (Int/FP) にディスパッチするマイクロOp数を増やしているのではないかと推測したが、<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+実際はこれらの部分は <em>Zen 2アーキテクチャ</em> から拡張されておらず、サイクルあたりの x86デコード幅は 4命令、Opキャッシュからは 8命令、ディスパッチ可能なマイクロOp数は 6命令となり、Opキャッシュ容量は 4K となる。<br>
 これらを <em>Zen 2アーキテクチャ</em> から増やすのは、製造プロセスが同じままではトランジスタ効率、または電力効率の面でデメリットがあったのだろうか。</p>
-
-<p>L1 BTB (Branch Target Buffer) のエントリ数は <em>Zen 2アーキテクチャ</em> から倍の 1024エントリとなる。<br />
-<em>Zen アーキテクチャ</em> では 256エントリ、<em>Zen 2アーキテクチャ</em> では 512エントリであったから、L1 BTB はアーキテクチャの世代を経るごとに倍に増やされていることになる。<br />
+<p>L1 BTB (Branch Target Buffer) のエントリ数は <em>Zen 2アーキテクチャ</em> から倍の 1024エントリとなる。<br>
+<em>Zen アーキテクチャ</em> では 256エントリ、<em>Zen 2アーキテクチャ</em> では 512エントリであったから、L1 BTB はアーキテクチャの世代を経るごとに倍に増やされていることになる。<br>
 ただ L2 BTB は 6656エントリと、<em>Zen 2アーキテクチャ</em> の 7168エントリから若干減っている。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">BTB (entries)</th>
-<th align="center">Zen</th>
-<th align="center">Zen 2</th>
-<th align="center">Zen 3</th>
+<th style="text-align:left">BTB (entries)</th>
+<th style="text-align:center">Zen</th>
+<th style="text-align:center">Zen 2</th>
+<th style="text-align:center">Zen 3</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">L0 BTB</td>
-<td align="center">8</td>
-<td align="center">16</td>
-<td align="center">16?</td>
+<td style="text-align:left">L0 BTB</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">16?</td>
 </tr>
-
 <tr>
-<td align="left">L1 BTB</td>
-<td align="center">256</td>
-<td align="center">512</td>
-<td align="center">1024</td>
+<td style="text-align:left">L1 BTB</td>
+<td style="text-align:center">256</td>
+<td style="text-align:center">512</td>
+<td style="text-align:center">1024</td>
 </tr>
-
 <tr>
-<td align="left">L2 BTB</td>
-<td align="center">4096</td>
-<td align="center">7168</td>
-<td align="center">6656</td>
+<td style="text-align:left">L2 BTB</td>
+<td style="text-align:center">4096</td>
+<td style="text-align:center">7168</td>
+<td style="text-align:center">6656</td>
 </tr>
 </tbody>
 </table>
-
 <p>また、Opキャッシュのフェッチ高速化、きめ細かい 命令キャッシュとOpキャッシュパイプとの切り替え、Zero Bubble 分岐予測の導入などがあるが、それ以上の詳細は不明。</p>
-
 <h3 id="int">整数/Integer</h3>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/11/07/zen_3-int-diagram.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/11/07/zen_3-int-diagram.webp"
       alt="画像出典: Software Optimization Guide for the AMD Family 19h Processors"/>
 </a><figcaption>
-      <h4 class="fig-title">Family 19h, Integer Unit Block Diagram</h4><p>画像出典: <cite><a href="https://www.amd.com/en/support/tech-docs" rel="nofollow noreferrer" target="_blank">Software Optimization Guide for the AMD Family 19h Processors</a></cite></p>
+      <h4 class="fig-title">Family 19h, Integer Unit Block Diagram</h4><p>画像出典: <cite><a href="https://www.amd.com/en/support/tech-docs">Software Optimization Guide for the AMD Family 19h Processors</a></cite></p>
   </figcaption>
 </figure>
 
-
-<p><em>Zen アーキテクチャ</em> では、各整数演算ユニット (ALU)、AGU にスケジューラーが存在し、<em>Zen 2アーキテクチャ</em> では AGU が 3基に増えたことを受け、2つのマイクロOp を受け取ることが可能なスケジューラーを 3基で共有していた。<br />
-<em>Zen 3アーキテクチャ</em> ではスケジューラーが 4基となり、それぞれに ALU、AGU、独立した BRU (Brach Execution Unit) らが配置されるようになった。<br />
+<p><em>Zen アーキテクチャ</em> では、各整数演算ユニット (ALU)、AGU にスケジューラーが存在し、<em>Zen 2アーキテクチャ</em> では AGU が 3基に増えたことを受け、2つのマイクロOp を受け取ることが可能なスケジューラーを 3基で共有していた。<br>
+<em>Zen 3アーキテクチャ</em> ではスケジューラーが 4基となり、それぞれに ALU、AGU、独立した BRU (Brach Execution Unit) らが配置されるようになった。<br>
 各スケジューラーは最大 2つのマイクロOp を受け取ることができる。</p>
-
 <p>4x ALU、3x AGU という数自体は <em>Zen 2アーキテクチャ</em> から変わらないが、BRU が独立したことで 8-way 構成となる。</p>
-
 <p>また、<em>Zen/2アーキテクチャ</em> ではマイクロコード実装されていたがために遅く、処理に膨大サイクル数が掛かっていた <code>PDEP/PEXT</code> 命令に、<em>Zen 3アーキテクチャ</em> では ALU がネイティブで対応したため、3サイクルで処理できるようになった。</p>
-
 <h3 id="ls">Load/Store</h3>
-
-<p>Load/Store を発行する AGU (Address Generation Unit) は <em>Zen 2アーキテクチャ</em> から変わらず 3基のままだが、サイクルあたりの Load/Store幅は拡張された。<br />
-<em>Zen 2アーキテクチャ</em> ではサイクルあたり 256-bit幅の 2x Loads、1x Store となっていたのが、<br />
-<em>Zen 3アーキテクチャ</em> ではサイクルあたり 最大で 3x Loads、または 2x Store となった。また、2x 128-bit か 1x 256-bit を個別にロードすることが可能となった。また、3基の AGU は対称で、全てが Load/Store キュー、L1/L2 TLB にアクセス可能。<br />
-最大で 2x Store を発行することが可能だが、データ幅が 128-bit または 256-bit の場合は最大 1つまでとなる。<br />
+<p>Load/Store を発行する AGU (Address Generation Unit) は <em>Zen 2アーキテクチャ</em> から変わらず 3基のままだが、サイクルあたりの Load/Store幅は拡張された。<br>
+<em>Zen 2アーキテクチャ</em> ではサイクルあたり 256-bit幅の 2x Loads、1x Store となっていたのが、<br>
+<em>Zen 3アーキテクチャ</em> ではサイクルあたり 最大で 3x Loads、または 2x Store となった。また、2x 128-bit か 1x 256-bit を個別にロードすることが可能となった。また、3基の AGU は対称で、全てが Load/Store キュー、L1/L2 TLB にアクセス可能。<br>
+最大で 2x Store を発行することが可能だが、データ幅が 128-bit または 256-bit の場合は最大 1つまでとなる。<br>
 Load/Store は <em>Zen 2アーキテクチャ</em> から、より柔軟に扱えるよう拡張したと言える。</p>
-
 <h3 id="fp">浮動小数点/Floating-Point</h3>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/11/07/zen_3-fp-diagram.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/11/07/zen_3-fp-diagram.webp"
       alt="画像出典: Software Optimization Guide for the AMD Family 19h Processors"/>
 </a><figcaption>
-      <h4 class="fig-title">Family 19h, Floating-Point Unit Block Diagram</h4><p>画像出典: <cite><a href="https://www.amd.com/en/support/tech-docs" rel="nofollow noreferrer" target="_blank">Software Optimization Guide for the AMD Family 19h Processors</a></cite></p>
+      <h4 class="fig-title">Family 19h, Floating-Point Unit Block Diagram</h4><p>画像出典: <cite><a href="https://www.amd.com/en/support/tech-docs">Software Optimization Guide for the AMD Family 19h Processors</a></cite></p>
   </figcaption>
 </figure>
 
-
-<p>FP側はスケジューラーを 2基持ち、それぞれ SQ (Scheduler Queue) を 32エントリを保持する。<em>Zen/2アーキテクチャ</em> では 1基のスケジューラーに SQ を 36エントリ保持する構成であった。<br />
+<p>FP側はスケジューラーを 2基持ち、それぞれ SQ (Scheduler Queue) を 32エントリを保持する。<em>Zen/2アーキテクチャ</em> では 1基のスケジューラーに SQ を 36エントリ保持する構成であった。<br>
 そして各パイプ/実行ユニットは、2基のスケジューラーが対称となるように配置されている。</p>
-
-<p>FPユニットは Load/Storeユニットからサイクルあたり最大 256-bit のロードを受け取ることができる。<br />
+<p>FPユニットは Load/Storeユニットからサイクルあたり最大 256-bit のロードを受け取ることができる。<br>
 Store処理と、FPレジスタから汎用レジスタへのデータ転送を行なう専用のパイプが 2本用意されているが (Pipe 4,5) 、スループットとしてはサイクルあたり 1つに制限されている。</p>
-
 <p><em>Zen 3アーキテクチャ</em> では FMA命令の処理の掛かるサイクルが <em>Zen 2アーキテクチャ</em> から 1サイクル短縮され、4サイクルで処理が可能となった。</p>
-
-<p>また、新規に <code>VAES (Vector AES)</code> 命令に対応した。<br />
+<p>また、新規に <code>VAES (Vector AES)</code> 命令に対応した。<br>
 <code>VAES (Vector AES)</code> は AES暗号化のエンコード/デコードをベクトルで実行する命令であり、Intel CPU では <em>Sunny Cove (Ice Lake Client/Server)</em> からサポートされている。
 <code>VAES</code> に対応するソフトウェアには、オープンソースで開発される圧縮/展開ソフト、7-zip があり、<em>Zen 3アーキテクチャ</em> ではこのソフトの実行性能が向上しているものと思われる。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:zen-3-guess"><a href="https://www.coelacanth-dream.com/posts/2020/10/10/amd-zen_3/">AMD Zen 3 アーキテクチャで分かってること、いないこと | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:zen-3-guess"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/10/10/amd-zen_3/">AMD Zen 3 アーキテクチャで分かってること、いないこと | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

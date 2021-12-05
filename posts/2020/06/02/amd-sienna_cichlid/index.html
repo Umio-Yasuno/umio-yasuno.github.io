@@ -70,27 +70,22 @@
 <div class="article-time">
     <time datetime="2020-06-02 15:39 &#43;0900" class="time-b">Post: 2020/06/02 15:39 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/06/07 09:14 &#43;0900</div>
-  </div>
-
-<p>AMD の次世代GPU、<em>Sienna Cichlid</em> をサポートする一連の Linux Kernel パッチが投稿された。<br />
-<em>Sienna Cichlid</em> GPU のメジャーバージョン(世代)は <a href="https://www.coelacanth-dream.com/tags/gfx10">GFX10</a>、マイナーバージョンは 3 であり、<br />
-gfx103x となる <a href="https://www.coelacanth-dream.com/tags/rdna_2">RDNA 2</a> GPU に関連すると見られる。<br />
-<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049968.html" rel="nofollow noreferrer" target="_blank">[PATCH 000/207] Add Support for Sienna Cichlid</a></span>
+  </div><p>AMD の次世代GPU、<em>Sienna Cichlid</em> をサポートする一連の Linux Kernel パッチが投稿された。<br>
+<em>Sienna Cichlid</em> GPU のメジャーバージョン(世代)は <a href="https://www.coelacanth-dream.com/tags/gfx10">GFX10</a>、マイナーバージョンは 3 であり、<br>
+gfx103x となる <a href="https://www.coelacanth-dream.com/tags/rdna_2">RDNA 2</a> GPU に関連すると見られる。<br>
+<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049968.html">[PATCH 000/207] Add Support for Sienna Cichlid</a></span>
 </p>
-
-<p>ディスプレイコントローラの eChipRev は <code>40</code> であり、過去に投稿されたパッチと照らし合わせると、<em>Navi21</em> のものと一致する。<sup class="footnote-ref" id="fnref:3"><a href="#fn:3">1</a></sup> <code>Sienna Cichlid == Navi21?</code></p>
-
-<p>VRAMには Navi1x から続いて GDDR6 を採用すると見られる。<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">2</a></sup></p>
-
+<p>ディスプレイコントローラの eChipRev は <code>40</code> であり、過去に投稿されたパッチと照らし合わせると、<em>Navi21</em> のものと一致する。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> <code>Sienna Cichlid == Navi21?</code></p>
+<p>VRAMには Navi1x から続いて GDDR6 を採用すると見られる。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <ins >
   <span class="insbegin">（追記）</span>
   <div class="ins-content">
-    <p><a href="https://www.guru3d.com" rel="nofollow noreferrer" target="_blank">Guru3D</a> は <em>Sienna Cichlid</em> が VRAMバス幅 128-bit なんて書いているが、<br />
-<span class="thread-link"><a href="https://www.guru3d.com/news-story/amd-sienna-cichlid-spotted-in-linux-kernel-patchesbig-navi.html" rel="nofollow noreferrer" target="_blank">AMD Sienna Cichlid spotted in Linux Kernel patches, Big Navi?</a></span></p>
-
-<p>その根拠としている部分を見ると、まず判定部分に <code>amdgpu_emu_mode == 1</code> があることからエミュレータで実行している場合を対象としていることがわかる。<br />
-<span class="thread-link"><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html" rel="nofollow noreferrer" target="_blank">drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a></span></p>
-<pre tabindex="0"><code>-	if (!amdgpu_emu_mode)
+    <p><a href="https://www.guru3d.com">Guru3D</a> は <em>Sienna Cichlid</em> が VRAMバス幅 128-bit なんて書いているが、<br>
+<span class="thread-link"><a href="https://www.guru3d.com/news-story/amd-sienna-cichlid-spotted-in-linux-kernel-patchesbig-navi.html">AMD Sienna Cichlid spotted in Linux Kernel patches, Big Navi?</a></span></p>
+<p>その根拠としている部分を見ると、まず判定部分に <code>amdgpu_emu_mode == 1</code> があることからエミュレータで実行している場合を対象としていることがわかる。<br>
+<span class="thread-link"><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html">drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a></span></p>
+<pre tabindex="0"><code>
+-	if (!amdgpu_emu_mode)
 -		adev-&gt;gmc.vram_width = vram_width;
 -	else
 +	if (adev-&gt;asic_type == CHIP_SIENNA_CICHLID &amp;&amp; amdgpu_emu_mode == 1) {
@@ -103,15 +98,13 @@ gfx103x となる <a href="https://www.coelacanth-dream.com/tags/rdna_2">RDNA 2<
 +
 +		adev-&gt;gmc.vram_type = vram_type;
 +		adev-&gt;gmc.vram_vendor = vram_vendor;
-+	}</code></pre>
-<p>引用元: <cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049981.html" rel="nofollow noreferrer" target="_blank">[PATCH 017/207] drm/amdgpu: add gmc ip block for sienna_cichlid</a></cite></p>
++	}
 
-<p>128-bit の根拠としている行に + マークが付いていないことから、追加されたコードではなく元々あったものだということもわかる。<br />
+</code></pre><p>引用元: <cite><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049981.html">[PATCH 017/207] drm/amdgpu: add gmc ip block for sienna_cichlid</a></cite></p>
+<p>128-bit の根拠としている行に + マークが付いていないことから、追加されたコードではなく元々あったものだということもわかる。<br>
 そして、 - マークの付いている部分を見るに、元々 Navi1x系をエミュレータで実行した時は VRAM 128-bit としていたらしい。</p>
-
 <p>だから <em>Sienna Cichlid</em> が VRAM 128-bit だという根拠にはなり得ない。</p>
-
-<p>本来なら影響力のあるメディアや個人が指摘すべきなんだろうけど、嘘と誤解釈ばかりで真実がどこにも無いよりはマシなはず。<br />
+<p>本来なら影響力のあるメディアや個人が指摘すべきなんだろうけど、嘘と誤解釈ばかりで真実がどこにも無いよりはマシなはず。<br>
 <span class="hide">そう、だよね？</span></p>
 
   </div>
@@ -119,9 +112,7 @@ gfx103x となる <a href="https://www.coelacanth-dream.com/tags/rdna_2">RDNA 2<
 </ins>
 <br>
 
-
 <h2 id="インデックス">インデックス</h2>
-
 <ul>
 <li><a href="#gfx">Async Ring のサポートが追加された GFX</a></li>
 <li><a href="#sdma">従来から倍に増やされている SDMAコントローラ</a></li>
@@ -129,84 +120,79 @@ gfx103x となる <a href="https://www.coelacanth-dream.com/tags/rdna_2">RDNA 2<
 <li><a href="#dcn3">詳細は不明なDCN3</a></li>
 <li><a href="#aside">余談</a></li>
 </ul>
-
 <h2 id="gfx">Async Ring のサポートが追加された GFX</h2>
-
-<p>Navi1x では無効化されていた 3D pipe、Async ring が <em>Sienna Cichlid</em> ではサポートされている。<sup class="footnote-ref" id="fnref:8"><a href="#fn:8">3</a></sup><br />
+<p>Navi1x では無効化されていた 3D pipe、Async ring が <em>Sienna Cichlid</em> ではサポートされている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 ring とは CP(Command Processor) が各ユニットへコマンドを発行する単位。</p>
-
-<p>Navi1x で無効化したのはユースケースがないため、という理由だったが<sup class="footnote-ref" id="fnref:9"><a href="#fn:9">4</a></sup>、<em>Sienna Cichlid /RDNA 2</em> ではあるということだろうか？<br />
+<p>Navi1x で無効化したのはユースケースがないため、という理由だったが<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>、<em>Sienna Cichlid /RDNA 2</em> ではあるということだろうか？<br>
 <em>RDNA 2</em> で追加される新機能にはコンソール機から、レイトレーシング、メッシュシェーダーへの対応が確認されているが、それらに関係しているのかもしれない。</p>
-
 <h2 id="sdma">従来から倍に増やされている SDMAコントローラ</h2>
-
-<p><em>Sienna Cichlid</em> は SDMAコントローラを 4基持ち、これは従来の一般向けGPUの倍の数だ。<sup class="footnote-ref" id="fnref:5"><a href="#fn:5">5</a></sup>(HPC向けの <em>Arcturus</em> は 8基)<br />
-コントローラあたりのキュー数が減らされていないため、純粋に倍となる。<sup class="footnote-ref" id="fnref:7"><a href="#fn:7">6</a></sup><br />
-増やした意図ははっきりせず、<em>Arctturus</em> のように XGMI/マルチGPU に最適化された SDMAコントローラという訳でもないようだ。<br />
-追加された <code>atom_smc_dpm_info_v4_9</code> には XGMIに関するコードがあるが<sup class="footnote-ref" id="fnref:6"><a href="#fn:6">7</a></sup>、<em>Arcturus</em> の v4_6 と同一であることから流用したものと思われ、<em>Sienna Cichlid</em> が実際にサポートしているかは定かでない。<sup class="footnote-ref" id="fnref:11"><a href="#fn:11">2</a></sup></p>
-
-<p>SMU(System Management Unit) のバージョンが <em>Sienna Cichlid</em> と <em>Arcturus</em> とで同じであるため、コードの流用は普通だ。<br />
-しかし、<code>arcturus_ppt.c</code> と <code>sienna_cichlid_ppt.c</code> を見比べると、(ppt = PPTable)<br />
-後者は <code>SMC_DPM_FEATURE</code> に <code>FEATURE_DPM_XGMI_MASK</code> が無い、message_map に SetXgmiMode が無いといった違いがある。<sup class="footnote-ref" id="fnref:12"><a href="#fn:12">8</a></sup><sup class="footnote-ref" id="fnref:13"><a href="#fn:13">9</a></sup><br />
+<p><em>Sienna Cichlid</em> は SDMAコントローラを 4基持ち、これは従来の一般向けGPUの倍の数だ。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup>(HPC向けの <em>Arcturus</em> は 8基)<br>
+コントローラあたりのキュー数が減らされていないため、純粋に倍となる。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
+増やした意図ははっきりせず、<em>Arctturus</em> のように XGMI/マルチGPU に最適化された SDMAコントローラという訳でもないようだ。<br>
+追加された <code>atom_smc_dpm_info_v4_9</code> には XGMIに関するコードがあるが<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup>、<em>Arcturus</em> の v4_6 と同一であることから流用したものと思われ、<em>Sienna Cichlid</em> が実際にサポートしているかは定かでない。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>SMU(System Management Unit) のバージョンが <em>Sienna Cichlid</em> と <em>Arcturus</em> とで同じであるため、コードの流用は普通だ。<br>
+しかし、<code>arcturus_ppt.c</code> と <code>sienna_cichlid_ppt.c</code> を見比べると、(ppt = PPTable)<br>
+後者は <code>SMC_DPM_FEATURE</code> に <code>FEATURE_DPM_XGMI_MASK</code> が無い、message_map に SetXgmiMode が無いといった違いがある。<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup><sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup><br>
 そのため、やはり <em>Sienna Cichlid</em> が XGMI /Inifnity Fabric を介したマルチGPUをサポートするかは微妙、というのが現在の個人的姿勢だ。</p>
-
-<p>また、これまでは SDMAコントローラそれぞれのファームウェアイメージが用意され、それぞれロードするという形だったが、この部分が改良され、1つのファームウェアイメージを共有するようになった。<br />
+<p>また、これまでは SDMAコントローラそれぞれのファームウェアイメージが用意され、それぞれロードするという形だったが、この部分が改良され、1つのファームウェアイメージを共有するようになった。<br>
 <em>Arcturus</em> は末尾の番号が違う 8つのファームウェアイメージを用意することになったため、さすがに面倒、冗長だと感じたのだろうか。</p>
-
 <h2 id="vcn3">非対称構成な 2つの VCN 3.0</h2>
-
-<p>動画のデコード/エンコードを担当するマルチメディア部の VCN も更新されている。<br />
-<em>Sienna Cichlid</em> は 2つの VCN3インスタンスを持つが、それらは非対称であり、片方がデコードのみ、もう片方がエンコードのみを担当する。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">10</a></sup></p>
-
-<p>Unified Video Decoder という名前ながらエンコードも担当していた UVD と VCE(Video Compression Engine) が VCN(Video Core Next) に統合され、<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">11</a></sup><br />
+<p>動画のデコード/エンコードを担当するマルチメディア部の VCN も更新されている。<br>
+<em>Sienna Cichlid</em> は 2つの VCN3インスタンスを持つが、それらは非対称であり、片方がデコードのみ、もう片方がエンコードのみを担当する。<sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></p>
+<p>Unified Video Decoder という名前ながらエンコードも担当していた UVD と VCE(Video Compression Engine) が VCN(Video Core Next) に統合され、<sup id="fnref:11"><a href="#fn:11" class="footnote-ref" role="doc-noteref">11</a></sup><br>
 VCN3 ではデコード担当とエンコード担当がはっきり分かれる訳だ。</p>
-
 <h2 id="dcn3">詳細は不明なDCN3</h2>
-
-<p>DCN も更新され、DCN3 となった。<br />
+<p>DCN も更新され、DCN3 となった。<br>
 どういった新機能があるかはまだ不明。(読み取れていない)</p>
-
-<p>一応、リソースから最大6画面出力ということは読み取れる。<sup class="footnote-ref" id="fnref:10"><a href="#fn:10">12</a></sup>一般向けでミドル帯以上のGPUとして普通の規模だろう。</p>
-
+<p>一応、リソースから最大6画面出力ということは読み取れる。<sup id="fnref:12"><a href="#fn:12" class="footnote-ref" role="doc-noteref">12</a></sup>一般向けでミドル帯以上のGPUとして普通の規模だろう。</p>
 <h2 id="aside">余談</h2>
-
-<p>最後に余談を。<br />
-<em>Arcturus</em> ではそのコードネームの長さから略称が安定しない印象があるが、<em>Sienna Cichlid</em> はどうなるのか。<br />
-それと、コードネームの <em>Cichlid (シクリッド)</em> は調べるまで知らなかったが、カワスズメ科の硬骨魚の総称らしい。<br />
-分布は主にアフリカと中南米、一部が熱帯アジアであり、観賞用、食用とされている。<br />
-<em>Sienna (シエナ)</em> には黄褐色または赤褐色の意味があり、イタリア中部の都市 Siena(シエーナ) が由来らしい。<br />
+<p>最後に余談を。<br>
+<em>Arcturus</em> ではそのコードネームの長さから略称が安定しない印象があるが、<em>Sienna Cichlid</em> はどうなるのか。<br>
+それと、コードネームの <em>Cichlid (シクリッド)</em> は調べるまで知らなかったが、カワスズメ科の硬骨魚の総称らしい。<br>
+分布は主にアフリカと中南米、一部が熱帯アジアであり、観賞用、食用とされている。<br>
+<em>Sienna (シエナ)</em> には黄褐色または赤褐色の意味があり、イタリア中部の都市 Siena(シエーナ) が由来らしい。<br>
 AMD が EPYC CPU のコードネームにイタリアの都市を用いていたことを考えると、<em>Sienna Cichlid</em> が突拍子もないコードネームという感じはしない。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:3"><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-June/035497.html" rel="nofollow noreferrer" target="_blank">[PATCH 316/459] drm/amd/display: Add DCN2 and NV ASIC ID</a>
- <a class="footnote-return" href="#fnref:3"><sup>[return]</sup></a></li>
-<li id="fn:11"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/include/atomfirmware.h?h=amd-staging-drm-next-sienna_cichlid&amp;id=4c35e77865a9037c32b0354663d23c33b08ae188" rel="nofollow noreferrer" target="_blank">https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/include/atomfirmware.h?h=amd-staging-drm-next-sienna_cichlid&amp;id=4c35e77865a9037c32b0354663d23c33b08ae188</a>
- <a class="footnote-return" href="#fnref:11"><sup>[return]</sup></a></li>
-<li id="fn:8"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050077.html" rel="nofollow noreferrer" target="_blank">[PATCH 113/207] drm/amdgpu: enable 3D pipe 1 on Sienna_Cichlid</a>
- <a class="footnote-return" href="#fnref:8"><sup>[return]</sup></a></li>
-<li id="fn:9"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c?h=amd-staging-drm-next&amp;id=f091c1c70e89adca93c4f4f35dfa0abf90611453" rel="nofollow noreferrer" target="_blank">https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c?h=amd-staging-drm-next&amp;id=f091c1c70e89adca93c4f4f35dfa0abf90611453</a>
- <a class="footnote-return" href="#fnref:9"><sup>[return]</sup></a></li>
-<li id="fn:5"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049985.html" rel="nofollow noreferrer" target="_blank">[PATCH 021/207] drm/amdgpu: add sdma ip block for sienna_cichlid (v5)</a>
- <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
-<li id="fn:7"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050080.html" rel="nofollow noreferrer" target="_blank">[PATCH 116/207] drm/amdkfd: Support Sienna_Cichlid KFD v4</a>
- <a class="footnote-return" href="#fnref:7"><sup>[return]</sup></a></li>
-<li id="fn:6"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050119.html" rel="nofollow noreferrer" target="_blank">[PATCH 155/207] drm/amd/powerplay: and smc dpm info struct for sienna_cichlid</a>
- <a class="footnote-return" href="#fnref:6"><sup>[return]</sup></a></li>
-<li id="fn:12"><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=43349491dae7284a195abfa8ff9044f7a20222a2#n128" rel="nofollow noreferrer" target="_blank">https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=43349491dae7284a195abfa8ff9044f7a20222a2#n128</a>
- <a class="footnote-return" href="#fnref:12"><sup>[return]</sup></a></li>
-<li id="fn:13"><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/sienna_cichlid_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=f6f084fdbb462e29dbf7258a99730cdd5fc51093" rel="nofollow noreferrer" target="_blank">https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/sienna_cichlid_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=f6f084fdbb462e29dbf7258a99730cdd5fc51093</a>
- <a class="footnote-return" href="#fnref:13"><sup>[return]</sup></a></li>
-<li id="fn:1"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050116.html" rel="nofollow noreferrer" target="_blank">[PATCH 152/207] drm/amdgpu/vcn3.0: schedule instance 0 for decode and 1 for encode</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:2"><a href="https://www.x.org/wiki/RadeonFeature/#radeonuvdunifiedvideodecoderhardware" rel="nofollow noreferrer" target="_blank">https://www.x.org/wiki/RadeonFeature/#radeonuvdunifiedvideodecoderhardware</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:10"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050165.html" rel="nofollow noreferrer" target="_blank">[PATCH 197/207] drm/amd/display: Add DCN3 Resource</a>
- <a class="footnote-return" href="#fnref:10"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-June/035497.html">[PATCH 316/459] drm/amd/display: Add DCN2 and NV ASIC ID</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050059.html">[PATCH 095/207] drm/amdgpu: add vram_info v2_5 in atomfirmware header</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050077.html">[PATCH 113/207] drm/amdgpu: enable 3D pipe 1 on Sienna_Cichlid</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c?h=amd-staging-drm-next&amp;id=f091c1c70e89adca93c4f4f35dfa0abf90611453">https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c?h=amd-staging-drm-next&amp;id=f091c1c70e89adca93c4f4f35dfa0abf90611453</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049985.html">[PATCH 021/207] drm/amdgpu: add sdma ip block for sienna_cichlid (v5)</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050080.html">[PATCH 116/207] drm/amdkfd: Support Sienna_Cichlid KFD v4</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050119.html">[PATCH 155/207] drm/amd/powerplay: and smc dpm info struct for sienna_cichlid</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=43349491dae7284a195abfa8ff9044f7a20222a2#n128">https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/arcturus_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=43349491dae7284a195abfa8ff9044f7a20222a2#n128</a>&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9" role="doc-endnote">
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/sienna_cichlid_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=f6f084fdbb462e29dbf7258a99730cdd5fc51093">https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/powerplay/sienna_cichlid_ppt.c?h=amd-staging-drm-next-sienna_cichlid&amp;id=f6f084fdbb462e29dbf7258a99730cdd5fc51093</a>&#160;<a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050116.html">[PATCH 152/207] drm/amdgpu/vcn3.0: schedule instance 0 for decode and 1 for encode</a>&#160;<a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:11" role="doc-endnote">
+<p><a href="https://www.x.org/wiki/RadeonFeature/#radeonuvdunifiedvideodecoderhardware">https://www.x.org/wiki/RadeonFeature/#radeonuvdunifiedvideodecoderhardware</a>&#160;<a href="#fnref:11" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:12" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050165.html">[PATCH 197/207] drm/amd/display: Add DCN3 Resource</a>&#160;<a href="#fnref:12" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

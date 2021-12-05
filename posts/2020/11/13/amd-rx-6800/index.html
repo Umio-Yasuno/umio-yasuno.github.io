@@ -70,64 +70,53 @@
 <div class="article-time">
     <time datetime="2020-11-13 22:33 &#43;0900" class="time-b">Post: 2020/11/13 22:33 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/11/14 14:11 &#43;0900</div>
-  </div>
-
-<p>先日、AMD の <a href="https://gitlab.freedesktop.org/mareko" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏により <a href="https://gitlab.freedesktop.org/mesa/mesa" rel="nofollow noreferrer" target="_blank">Mesa3D</a> に投稿されたマージリクエストの中に、以下のようなものがあった。</p>
-
+  </div><p>先日、AMD の <a href="https://gitlab.freedesktop.org/mareko">Marek Olšák</a> 氏により <a href="https://gitlab.freedesktop.org/mesa/mesa">Mesa3D</a> に投稿されたマージリクエストの中に、以下のようなものがあった。</p>
 <blockquote>
-<pre tabindex="0"><code>  uint32_t max_se;             /* number of shader engines incl. disabled ones */
-  uint32_t num_se;             /* number of enabled shader engines */</code></pre>
+<pre><code>  uint32_t max_se;             /* number of shader engines incl. disabled ones */
+  uint32_t num_se;             /* number of enabled shader engines */
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7542/diffs?commit_id=1aef37c44a47720f74cf36af5543f884d096606a" rel="nofollow noreferrer" target="_blank">ac,radeonsi: many NGG improvements and fixes, etc. (!7542) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7542/diffs?commit_id=1aef37c44a47720f74cf36af5543f884d096606a">ac,radeonsi: many NGG improvements and fixes, etc. (!7542) · Merge Requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
-<pre tabindex="0"><code>    /* Guess the number of enabled SEs because the kernel doesn&#39;t tell us. */
+<pre><code>	   /* Guess the number of enabled SEs because the kernel doesn't tell us. */
     if (info-&gt;chip_class &gt;= GFX10_3 &amp;&amp; info-&gt;max_se &gt; 1) {
        unsigned num_rbs_per_se = info-&gt;num_render_backends / info-&gt;max_se;
        info-&gt;num_se = util_bitcount(amdinfo-&gt;enabled_rb_pipes_mask) / num_rbs_per_se;
     } else {
        info-&gt;num_se = info-&gt;max_se;
-    }</code></pre>
+    }
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7542/diffs?commit_id=1aef37c44a47720f74cf36af5543f884d096606a" rel="nofollow noreferrer" target="_blank">ac,radeonsi: many NGG improvements and fixes, etc. (!7542) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7542/diffs?commit_id=1aef37c44a47720f74cf36af5543f884d096606a">ac,radeonsi: many NGG improvements and fixes, etc. (!7542) · Merge Requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
-
-<p>ドライバーが検出し、表示する GPU の情報一覧に、有効にされている ShaderEngine数が追加された。これまで ShaderEngine数については、その GPU が持つ最大数、<code>max_se</code> のみを検出していた。<br />
-そして引用したコード部は、<em>RDNA 2 / GFX10.3</em> 世代の GPU で、最大 ShaderEngine 数が 1基より多い場合、ShaderEngineあたりの RB (Render Backend) と有効にされている RB数から、有効な ShaderEngine数を求める処理を行なっている。<br />
+<p>ドライバーが検出し、表示する GPU の情報一覧に、有効にされている ShaderEngine数が追加された。これまで ShaderEngine数については、その GPU が持つ最大数、<code>max_se</code> のみを検出していた。<br>
+そして引用したコード部は、<em>RDNA 2 / GFX10.3</em> 世代の GPU で、最大 ShaderEngine 数が 1基より多い場合、ShaderEngineあたりの RB (Render Backend) と有効にされている RB数から、有効な ShaderEngine数を求める処理を行なっている。<br>
 <span class="complement">それとこれはついでだが、ShaderArray の略称がこれまで SH か SA かで分かれていて、ソースファイル上にどちらも存在することもあったが、ようやく SA で統一されそうな向きを見せている。</span>
 </p>
-
-<p>これまでは <code>max_se</code> だけで十分だったのに、何故今になって有効 ShaderEngine数を検出し、その処理を <em>RDNA 2 / GFX10.3</em> 世代の GPU を対象に絞っているのか。<br />
+<p>これまでは <code>max_se</code> だけで十分だったのに、何故今になって有効 ShaderEngine数を検出し、その処理を <em>RDNA 2 / GFX10.3</em> 世代の GPU を対象に絞っているのか。<br>
 それは恐らく <span class="complement">だがほぼ確実に</span>
  <strong>Radeon RX 6800</strong> が AMD GPU としては珍しい、いや唯一と言えるかもしれない構成を取っているからだ。</p>
-
 <h2 id="dis-1se">ShaderEngine を 1基無効化</h2>
+<p><em>Radeon RX 6000シリーズ</em> が正式発表された際にも書いたが、<strong>RX 6800</strong> は 30WGP (60CU) という仕様から、ShaderEngine 4基中 1基を無効化しているものと思われる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/10/29/amd-rdna_2/#spec">AMD RDNA 2 GPU 正式発表　―― 各スペック、Infinity Cache、プロセス | Coelacanth&rsquo;s Dream</a></span>
 
-<p><em>Radeon RX 6000シリーズ</em> が正式発表された際にも書いたが、<strong>RX 6800</strong> は 30WGP (60CU) という仕様から、ShaderEngine 4基中 1基を無効化しているものと思われる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/29/amd-rdna_2/#spec">AMD RDNA 2 GPU 正式発表　―― 各スペック、Infinity Cache、プロセス | Coelacanth's Dream</a></span>
-
-AMD GPU はスケジューリング等の観点から、複数の ShaderEngine が対称となるように設定される。<br />
-同じ GPUダイを採用する他の <strong>Radeon RX 6000シリーズ</strong> 、<strong>RX 6900 XT</strong> は ShaderEngine すべてをフルスペックで有効にすることで総 40WGP を、<strong>RX 6800 XT</strong> は各 ShaderEngine 内の WGP を 1基無効化することで総 36WGP というスペックを実現している。<br />
+AMD GPU はスケジューリング等の観点から、複数の ShaderEngine が対称となるように設定される。<br>
+同じ GPUダイを採用する他の <strong>Radeon RX 6000シリーズ</strong> 、<strong>RX 6900 XT</strong> は ShaderEngine すべてをフルスペックで有効にすることで総 40WGP を、<strong>RX 6800 XT</strong> は各 ShaderEngine 内の WGP を 1基無効化することで総 36WGP というスペックを実現している。<br>
 だが、<strong>RX 6800</strong> の総 30WGP というのは、ShaderEngine 4基の対称性を維持したままでは実現できないため、ShaderEngine を 1基無効化、他 ShaderEngine 3基はフルスペック (各 10WGP) で有効にしていると考えられる。</p>
-
 <p>この ShaderEngine 1基を無効化というのが、<strong>RX 6800</strong> を唯一たらしめている。</p>
-
-<p>これまでの AMD GPU は製品化において、WGP/CU といったユニットを一部無効化することで性能を下げ、代わりにその上位モデルより安い価格で提供する下位モデルを用意してきた。WGP/CU の一部無効化は、欠陥のあるダイの救済、歩留まり向上という意味もある。<br />
-<em>RDNA / GFX10</em> からは、RB がメモリコントローラーに接続される L2キャッシュではなく、L1キャッシュに接続されるようになったため、そうグラフィクス性能を下げることなく、メモリバス幅を狭めた製品構成も可能になった。<br />
+<p>これまでの AMD GPU は製品化において、WGP/CU といったユニットを一部無効化することで性能を下げ、代わりにその上位モデルより安い価格で提供する下位モデルを用意してきた。WGP/CU の一部無効化は、欠陥のあるダイの救済、歩留まり向上という意味もある。<br>
+<em>RDNA / GFX10</em> からは、RB がメモリコントローラーに接続される L2キャッシュではなく、L1キャッシュに接続されるようになったため、そうグラフィクス性能を下げることなく、メモリバス幅を狭めた製品構成も可能になった。<br>
 <strong>RX 5500 XT</strong> 等のベースとなる <a href="https://www.coelacanth-dream.com/tags/navi14">Navi14</a> は ShaderEngine 1基の構成であり、ShaderEngine 内の ShaderArray 2基については非対称構成が許容されているため、11WGP (22CU) といった仕様が可能となっている。</p>
-
-<p>ShaderEngine を丸々 1基無効化することはなく、対称性を維持するため、各 ShaderEngine 内の WGP/CU を 1、2基程度無効化するというのが通常だった。<br />
+<p>ShaderEngine を丸々 1基無効化することはなく、対称性を維持するため、各 ShaderEngine 内の WGP/CU を 1、2基程度無効化するというのが通常だった。<br>
 だからこれまでは <code>max_se</code> の値その情報で事足りていた。</p>
-
-<p><strong>RX 6800</strong> はそこから外れ、ShaderEngine 1基を無効化する。<br />
+<p><strong>RX 6800</strong> はそこから外れ、ShaderEngine 1基を無効化する。<br>
 従来の方法 <span class="complement">例えば、ShaderEngine 4基の WGP を 2基ずつ、RB+ を 1基ずつ無効化することで 32WGP (64CU)、12RB+ (96ROP) とするような構成</span>
- を取らなかった理由としては、<br />
+ を取らなかった理由としては、<br>
 ShaderEngine には、ジオメトリプロセッサ、ラスタライザ/プリミティブユニット、RDNA L1キャッシュ 128KB が含まれるため (ジオメトリプロセッサ以外は ShaderArray ごとに存在する)、これらも無効化する方がグラフィクス性能で上位モデルと差別化するのに都合が良かったのではないか、等が考えられる。</p>
-
 <p>性能という点では他の <strong>Radeon RX 6000シリーズ</strong> より抑えられているが、<strong>RX 6800</strong> は、AMD GPU として初の内部構成/設定というオリジナリティを持つ。</p>
-
 <p>また、GPU消費電力 <span class="complement">GPUチップ単体かボード全体かは明言されていないが、USB-C PD の分を引くため、GPUチップ単体の消費電力を記載しているのかもしれない</span>
  は他モデルより 50W 低い 250W であり、カード厚も 2スロットであるから扱いやすいモデルとも言えるだろう。</p>
 <div class="article-bottom-misc">

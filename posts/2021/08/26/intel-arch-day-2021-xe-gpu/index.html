@@ -70,192 +70,164 @@
 <div class="article-time">
     <time datetime="2021-08-26 18:53 &#43;0900" class="time-b">Post: 2021/08/26 18:53 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/10/30 14:30 &#43;0900</div>
-  </div>
-
-<p>相変わらず地味な話を取り上げていく。</p>
-
+  </div><p>相変わらず地味な話を取り上げていく。</p>
 <p>Intel Architecture Day 2021 にて、ゲーミング向け Intel GPU アーキテクチャ <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> と、コンピュート性能に特化した <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
 </em> の一部概要と新たなブロック図が公開された。</p>
-
 <ul>
-<li><a href="https://www.intel.com/content/www/us/en/newsroom/resources/press-kit-architecture-day-2021.html" rel="nofollow noreferrer" target="_blank">Intel Architecture Day 2021</a>
-
+<li><a href="https://www.intel.com/content/www/us/en/newsroom/resources/press-kit-architecture-day-2021.html">Intel Architecture Day 2021</a>
 <ul>
-<li><a href="https://download.intel.com/newsroom/2021/client-computing/intel-architecture-day-2021-presentation.pdf" rel="nofollow noreferrer" target="_blank">Presentation Deck: Intel Architecture Day 2021</a></li>
-</ul></li>
+<li><a href="https://download.intel.com/newsroom/2021/client-computing/intel-architecture-day-2021-presentation.pdf">Presentation Deck: Intel Architecture Day 2021</a></li>
 </ul>
-
+</li>
+</ul>
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#cleanup">用語の再整理</a>
-
 <ul class="page-index">
 <li><a href="#xe-hpg"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </a></li>
 <li><a href="#xe-hpc"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
 </a>
-
 <ul class="page-index">
 <li><a href="#rambo">Rambo Cache = L2キャッシュ?</a></li>
-</ul></li>
-</ul></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
-
 <h2 id="cleanup">用語の再整理</h2>
-
 <h3 id="xe-hpg"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </h3>
-
 <p>まず <span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
  GPU の単位となる <span class="xe-gpu-arch">X<sup>e</sup></span>
--Core には、Vector Engine (256-bit) 16基、Matrix Engine (1024-bit) 16基、ロード/ストアユニット、L1キャッシュと命令キャッシュ、SLM (Shared Local Memory) が搭載される。<br />
+-Core には、Vector Engine (256-bit) 16基、Matrix Engine (1024-bit) 16基、ロード/ストアユニット、L1キャッシュと命令キャッシュ、SLM (Shared Local Memory) が搭載される。<br>
 今回新たに出てきた Vector Engine と Matrix Engine (XMX, <span class="xe-gpu-arch">X<sup>e</sup></span>
 Matrix eXtensions) だが、その 2つを統合したものが従来の Intel GPU における EU (Execution Unit) に相当すると考えられる。</p>
-
 <figure>
   <a href="../xe-hpg-core.webp" target="_blank"  >
   <img src="../xe-hpg-core.webp"
       alt="画像出典: Presentation Deck: Intel Architecture Day 2021"/>
 </a><figcaption>
-      <h4 class="fig-title">Intel Xe-Core</h4><p>画像出典: <a href="https://download.intel.com/newsroom/2021/client-computing/intel-architecture-day-2021-presentation.pdf" rel="nofollow noreferrer" target="_blank">Presentation Deck: Intel Architecture Day 2021</a></p>
+      <h4 class="fig-title">Intel Xe-Core</h4><p>画像出典: <a href="https://download.intel.com/newsroom/2021/client-computing/intel-architecture-day-2021-presentation.pdf">Presentation Deck: Intel Architecture Day 2021</a></p>
   </figcaption>
 </figure>
 
-
-<p>EU は Thread control と演算ユニット、レジスタファイルで構成される。<br />
+<p>EU は Thread control と演算ユニット、レジスタファイルで構成される。<br>
 <em>Tiger Lake</em> や <em>Rocket Lake</em> 、<em>DG1</em> 等で採用されている <em>Gen12LP/<span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
- アーキテクチャ</em> では、8-wide の FP32/INT32 を処理する演算パイプラインを 1つ搭載していた。<br />
+ アーキテクチャ</em> では、8-wide の FP32/INT32 を処理する演算パイプラインを 1つ搭載していた。<br>
 つまり <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
 </em> では EU あたり 256-bit のスループットを持っていたと言え、同時に <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> の EU あたりの FP32/INT32 演算性能は <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-</em> と変わらないと考えられる。<br />
+</em> と変わらないと考えられる。<br>
 また、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
 </em> では、Thread Control が EU 2基をペアとして扱う機能を持っていたが、<span class="xe-gpu-arch">X<sup>e</sup></span>
 -Core のイメージ図を見ると それぞれ 2基の Vector Engine と Matrix Engine が密接しており、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> でも同機能が採用されているのだろう。</p>
-
 <p>L1データキャッシュは <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-</em> から追加されたものだが、帯域、サイズ等は公開されてこなかった。<br />
-それが今回、ソフトウェアから L1キャッシュかローカルメモリ (SLM) のどちらかに設定可能なものだということが明かされた。<br />
+</em> から追加されたものだが、帯域、サイズ等は公開されてこなかった。<br>
+それが今回、ソフトウェアから L1キャッシュかローカルメモリ (SLM) のどちらかに設定可能なものだということが明かされた。<br>
 ただ、このことは <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
 </em> の発表のタイミングで説明されていたことで、最近の NVIDIA GPU のように L1データキャッシュとローカルメモリとで分割可能なのか、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP/HPG</span>
 </em> も同様か、といった点は不明。</p>
-
 <p>以前 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-</em> の L1データキャッシュを有効化するパッチが Intel GPU のオープンソースドライバーに投稿されており、パッチのコメントによれば Unreal Engine 4 Shooter Demo で 11.84% 、Doom (2016) で 11.40% の性能向上が確認されたとしている。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/13/tgl-gen12-l1cache/">Intel Gen12 GPU で増設された L1データキャッシュの効果 | Coelacanth's Dream</a></span>
+</em> の L1データキャッシュを有効化するパッチが Intel GPU のオープンソースドライバーに投稿されており、パッチのコメントによれば Unreal Engine 4 Shooter Demo で 11.84% 、Doom (2016) で 11.40% の性能向上が確認されたとしている。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/10/13/tgl-gen12-l1cache/">Intel Gen12 GPU で増設された L1データキャッシュの効果 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> では <span class="xe-gpu-arch">X<sup>e</sup></span>
--Core と同数のレイトレーシングユニットとテクスチャサンプラーを持ち、以前はそれら 3つを合わせて Sub-slice(s) と呼称していた。<br />
-全体で共有するキャッシュについても、以前は L3キャッシュと呼んでいたが、今回で L2キャッシュと再定義された。<br />
-以前の Intel GPU で L2キャッシュがどこに位置していたのかというと、サンプラーが持つリードオンリーキャッシュであり、AMD/NVIDIA GPU アーキテクチャと比較した時に、キャッシュ階層とその意味が異なっていた。<br />
+-Core と同数のレイトレーシングユニットとテクスチャサンプラーを持ち、以前はそれら 3つを合わせて Sub-slice(s) と呼称していた。<br>
+全体で共有するキャッシュについても、以前は L3キャッシュと呼んでいたが、今回で L2キャッシュと再定義された。<br>
+以前の Intel GPU で L2キャッシュがどこに位置していたのかというと、サンプラーが持つリードオンリーキャッシュであり、AMD/NVIDIA GPU アーキテクチャと比較した時に、キャッシュ階層とその意味が異なっていた。<br>
 今回それが整理されたことで他の GPU アーキテクチャとの比較がしやすくなったが、今後 Intel GPU を広くに展開し、推しだしていく上では必要なことだったのかもしれない。</p>
-
 <h3 id="xe-hpc"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
 </h3>
-
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
 </em> の <span class="xe-gpu-arch">X<sup>e</sup></span>
--Core は、Vector Engine (512-bit) 8基、Matrix Engine (4096-bit) 8基、ロード/ストアの帯域はクロックあたり 512B、L1キャッシュ/SLM は 512KB 搭載している。<br />
+-Core は、Vector Engine (512-bit) 8基、Matrix Engine (4096-bit) 8基、ロード/ストアの帯域はクロックあたり 512B、L1キャッシュ/SLM は 512KB 搭載している。<br>
 <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> と比較すると、Vector/Matrix Engine はどちらもスループットが増やされているが、<span class="xe-gpu-arch">X<sup>e</sup></span>
--Core あたりのエンジン数は減っており、また Matrix Engine の比率が大きくなっている。<br />
+-Core あたりのエンジン数は減っており、また Matrix Engine の比率が大きくなっている。<br>
 ロード/ストア性能、L1キャッシュ/SLM のサイズは、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </em> では公開されていなかったため比較できないが、参考までに <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-</em> の場合を書くと、<br />
+</em> の場合を書くと、<br>
 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
 </em> では Subslice あたりのロード/ストアは 128B/clk、SLM は 128KB となっていた。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left"></th>
-<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
+<th style="text-align:left"></th>
+<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
 </th>
-<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
+<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
 </th>
-<th align="center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
+<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
 </th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Vector Engine</td>
-<td align="center">256-bit?</td>
-<td align="center">256-bit</td>
-<td align="center">512-bit</td>
+<td style="text-align:left">Vector Engine</td>
+<td style="text-align:center">256-bit?</td>
+<td style="text-align:center">256-bit</td>
+<td style="text-align:center">512-bit</td>
 </tr>
-
 <tr>
-<td align="left">VE per (Subslice or <span class="xe-gpu-arch">X<sup>e</sup></span>
+<td style="text-align:left">VE per (Subslice or <span class="xe-gpu-arch">X<sup>e</sup></span>
 -Core)</td>
-<td align="center">16</td>
-<td align="center">16</td>
-<td align="center">8</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">8</td>
 </tr>
-
 <tr>
-<td align="left">Matrix Engine</td>
-<td align="center">N/A</td>
-<td align="center">1024-bit</td>
-<td align="center">4096-bit</td>
+<td style="text-align:left">Matrix Engine</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">1024-bit</td>
+<td style="text-align:center">4096-bit</td>
 </tr>
-
 <tr>
-<td align="left">Load/Store (SLM)</td>
-<td align="center">128B?</td>
-<td align="center">?</td>
-<td align="center">512B</td>
+<td style="text-align:left">Load/Store (SLM)</td>
+<td style="text-align:center">128B?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">512B</td>
 </tr>
 </tbody>
 </table>
-
 <p>複数の Subslice (<span class="xe-gpu-arch">X<sup>e</sup></span>
 -Core + Fixed function) で構成される Slice は、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
-</em> では Subslice 16基の仕様となっている。<br />
+</em> では Subslice 16基の仕様となっている。<br>
 <strong>Ponte Vecchio</strong> では <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
-</em> を採用し、実装される Compute Tile は 8基搭載する訳だが、<br />
+</em> を採用し、実装される Compute Tile は 8基搭載する訳だが、<br>
 Compute Tile あたりの <span class="xe-gpu-arch">X<sup>e</sup></span>
 -Core は 4基と説明されており、Compute Tile 2基で <span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
  Slice を構成、1つの Hardware Context を持つこととなる。</p>
-
-<p>Compute Tile は TSMC N5プロセスで製造される。以前より製造プロセスは Intel Next Gen &amp; External になると説明されてきたが、TSMC版が先行することとなる。<br />
+<p>Compute Tile は TSMC N5プロセスで製造される。以前より製造プロセスは Intel Next Gen &amp; External になると説明されてきたが、TSMC版が先行することとなる。<br>
 ただ今回は Intel Next Gen の部分には触れておらず、提供開始時期の問題もあるのだろうが、本当に Intel Next Genプロセス版が出てくるのかが怪しくなってきた。</p>
-
 <h4 id="rambo">Rambo Cache = L2キャッシュ?</h4>
-
 <p><strong>Ponte Vecchio</strong> 、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
 </em> では Rambo Cache なるものが採用されることが、初出から発表されていたが、明言は避けられているが今回、144MB という L2キャッシュであるような話が出てきた。</p>
-
 <figure>
   <a href="../xe-hpc-base-tile.webp" target="_blank"  >
   <img src="../xe-hpc-base-tile.webp"
       alt="画像出典: Presentation Deck: Intel Architecture Day 2021"/>
 </a><figcaption>
-      <h4 class="fig-title">Intel Ponte Vecchio Base Tile</h4><p>画像出典: <a href="https://download.intel.com/newsroom/2021/client-computing/intel-architecture-day-2021-presentation.pdf" rel="nofollow noreferrer" target="_blank">Presentation Deck: Intel Architecture Day 2021</a></p>
+      <h4 class="fig-title">Intel Ponte Vecchio Base Tile</h4><p>画像出典: <a href="https://download.intel.com/newsroom/2021/client-computing/intel-architecture-day-2021-presentation.pdf">Presentation Deck: Intel Architecture Day 2021</a></p>
   </figcaption>
 </figure>
 
-
 <p>Rambo Cache Tile は Intel 7 (Intel 10nm eSF) プロセスで製造され、<strong>Ponte Vecchio</strong> では Base Tile あたりに 3D積層技術 Foveros を用いて 4基搭載される。4基というのは <span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
  Slice (Compute Tile 2基) の数と一致する。</p>
-
-<p>Rambo Cache = L2キャッシュ とは明言されていないが、Compute Tile には L1キャッシュ/SLM 4MB までしか搭載しておらず、全体で共有するキャッシュは搭載していないため、Rambo Cache が L2キャッシュだと考えられる。<br />
-144MB というサイズはキャッシュとして巨大であり、NVIDIA A100 GPU が持つ 40MB の 3.6倍にもなる。Rambo Cache という独自の名前をつけるのも不自然ではないように思う。<br />
+<p>Rambo Cache = L2キャッシュ とは明言されていないが、Compute Tile には L1キャッシュ/SLM 4MB までしか搭載しておらず、全体で共有するキャッシュは搭載していないため、Rambo Cache が L2キャッシュだと考えられる。<br>
+144MB というサイズはキャッシュとして巨大であり、NVIDIA A100 GPU が持つ 40MB の 3.6倍にもなる。Rambo Cache という独自の名前をつけるのも不自然ではないように思う。<br>
 AMD の RDNA 2 GPU、<em>Sienna Cichlid (Navi21)</em> も 128MB という巨大な L3キャッシュを持つが、そちらも Infinity Cache といったマーケティングネームがつけられている。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://hc32.hotchips.org/" rel="nofollow noreferrer" target="_blank">HC32 Archive -</a>
-
+<li><a href="https://hc32.hotchips.org/">HC32 Archive -</a>
 <ul>
-<li><a href="https://hc32.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Intel_Xe_David_Blythe.pdf" rel="nofollow noreferrer" target="_blank">HotChips2020_GPU_Intel_Xe_David_Blythe.pdf</a></li>
-</ul></li>
-<li><a href="https://download.intel.com/newsroom/2021/client-computing/intel-architecture-day-2021-fact-sheet.pdf" rel="nofollow noreferrer" target="_blank">Fact Sheet: Intel Unveils Biggest Architectural Shifts in a Generation - intel-architecture-day-2021-fact-sheet.pdf</a></li>
+<li><a href="https://hc32.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Intel_Xe_David_Blythe.pdf">HotChips2020_GPU_Intel_Xe_David_Blythe.pdf</a></li>
+</ul>
+</li>
+<li><a href="https://download.intel.com/newsroom/2021/client-computing/intel-architecture-day-2021-fact-sheet.pdf">Fact Sheet: Intel Unveils Biggest Architectural Shifts in a Generation - intel-architecture-day-2021-fact-sheet.pdf</a></li>
 </ul>
 
 </div>

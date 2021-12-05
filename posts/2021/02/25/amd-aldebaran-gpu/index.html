@@ -70,34 +70,28 @@
 <div class="article-time">
     <time datetime="2021-02-25 13:40 &#43;0900" class="time-b">Post: 2021/02/25 13:40 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/06/07 09:10 &#43;0900</div>
-  </div>
-
-<p>新たな AMD GPU、<em>Aldebaran</em> をサポートするためのパッチ 159個が Linux Kernel (amd-gfx) に投稿された。</p>
-
+  </div><p>新たな AMD GPU、<em>Aldebaran</em> をサポートするためのパッチ 159個が Linux Kernel (amd-gfx) に投稿された。</p>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059694.html" rel="nofollow noreferrer" target="_blank">[PATCH 000/159] Aldebaran support</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059694.html">[PATCH 000/159] Aldebaran support</a></li>
 </ul>
-
-<p><em>Aldebaran</em> は <em>Arcturus/MI100/CDNA 1</em> 同様に GFX Ring を持たない。グラフィクス処理を行うための固定機能 <span class="complement">Rasterizer, RenderBackend, Geometry Engine ...</span>
+<p><em>Aldebaran</em> は <em>Arcturus/MI100/CDNA 1</em> 同様に GFX Ring を持たない。グラフィクス処理を行うための固定機能 <span class="complement">Rasterizer, RenderBackend, Geometry Engine &hellip;</span>
  も搭載していないと思われる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   - if (adev-&gt;asic_type == CHIP_ARCTURUS)
-   + if (adev-&gt;asic_type == CHIP_ARCTURUS ||
-   +     adev-&gt;asic_type == CHIP_ALDEBARAN)
-         adev-&gt;gfx.num_gfx_rings = 0;
-     else</code></pre>
+<pre><code>   -	if (adev-&gt;asic_type == CHIP_ARCTURUS)
+   +	if (adev-&gt;asic_type == CHIP_ARCTURUS ||
+   +	    adev-&gt;asic_type == CHIP_ALDEBARAN)
+    		adev-&gt;gfx.num_gfx_rings = 0;
+    	else
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059701.html" rel="nofollow noreferrer" target="_blank">[PATCH 017/159] drm/amdgpu: add gfx v9 block support for aldebaran</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059701.html">[PATCH 017/159] drm/amdgpu: add gfx v9 block support for aldebaran</a></cite>
 </div>
 
 </blockquote>
-
-<p>そしてその特徴等から、<em>CDNA 2アーキテクチャ</em> を採用する <strong>MI200</strong> のコードネームではないかと考えられる。<br />
-<strong>MI200</strong> に関連するパッチは最近になって投稿され始め、先日には対応すると思われる GPUID <em>gfx90a</em> のサポートが LLVM に追加されている。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth's Dream</a></span>
+<p>そしてその特徴等から、<em>CDNA 2アーキテクチャ</em> を採用する <strong>MI200</strong> のコードネームではないかと考えられる。<br>
+<strong>MI200</strong> に関連するパッチは最近になって投稿され始め、先日には対応すると思われる GPUID <em>gfx90a</em> のサポートが LLVM に追加されている。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#hbm2e">HBM2Eメモリをサポート</a></li>
 <li><a href="#sdma">少ない SDMAエンジン</a></li>
@@ -108,170 +102,147 @@
 <li><a href="#codename">コードネーム: Aldebaran</a></li>
 </ul>
 
-
 <h2 id="hbm2e">HBM2Eメモリをサポート</h2>
-
 <p>同時に HBM2Eメモリのサポートが追加されており、<em>Aldebaran/MI200</em> は HBM2Eメモリを採用すると見られる。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059756.html" rel="nofollow noreferrer" target="_blank">[PATCH 070/159] drm/amdgpu: support get_vram_info atomfirmware i/f for aldebaran</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059757.html" rel="nofollow noreferrer" target="_blank">[PATCH 071/159] drm/amdgpu: correct vram_info for HBM2E</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059783.html" rel="nofollow noreferrer" target="_blank">[PATCH 097/159] drm/amdpgu: add ATOM_DGPU_VRAM_TYPE_HBM2E vram type</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059756.html">[PATCH 070/159] drm/amdgpu: support get_vram_info atomfirmware i/f for aldebaran</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059757.html">[PATCH 071/159] drm/amdgpu: correct vram_info for HBM2E</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059783.html">[PATCH 097/159] drm/amdpgu: add ATOM_DGPU_VRAM_TYPE_HBM2E vram type</a></li>
 </ul>
-
-<p>HBM2メモリではスタックあたり最大 8GB までだったが、HBM2Eメモリではスタックあたり 16GB という容量をサポートしており、<em>LUMI</em> システムの開発者の発言から、少なくとも 40GB以上のメモリを持つ <em>Aldebaran/MI200</em> においては HBM2Eメモリの採用は必定だった。<sup class="footnote-ref" id="fnref:lumi-vram"><a href="#fn:lumi-vram">1</a></sup></p>
-
+<p>HBM2メモリではスタックあたり最大 8GB までだったが、HBM2Eメモリではスタックあたり 16GB という容量をサポートしており、<em>LUMI</em> システムの開発者の発言から、少なくとも 40GB以上のメモリを持つ <em>Aldebaran/MI200</em> においては HBM2Eメモリの採用は必定だった。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <h2 id="sdma">少ない SDMAエンジン</h2>
-
-<p><em>Aldebaran</em> は次世代 <em>CDNA GPU</em> と考えているが、PCIe や <em>XGMI/Infinity Fabric</em> 等のバスを経由してデータをコピー、転送する際に用いられる SDMAエンジン/コントローラーの数は <em>Arcturus</em> よりも少なくなっている。<br />
-<em>Arcturus</em> は SDMAエンジン 8基を持ち、内 2基は CPU とのデータのやり取りに使われ、残り 6基は <em>XGMI/Infinity Fabric</em> に最適化された GPU間通信用のものとなる。<br />
+<p><em>Aldebaran</em> は次世代 <em>CDNA GPU</em> と考えているが、PCIe や <em>XGMI/Infinity Fabric</em> 等のバスを経由してデータをコピー、転送する際に用いられる SDMAエンジン/コントローラーの数は <em>Arcturus</em> よりも少なくなっている。<br>
+<em>Arcturus</em> は SDMAエンジン 8基を持ち、内 2基は CPU とのデータのやり取りに使われ、残り 6基は <em>XGMI/Infinity Fabric</em> に最適化された GPU間通信用のものとなる。<br>
 対し <em>Aldebaran</em> は、CPU用に 2基というのは変わらないが、GPU間用の SDMAエンジンは 3基に減っている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   static const struct kfd_device_info arcturus_device_info = {
-     .asic_family = CHIP_ARCTURUS,
-     .asic_name = &#34;arcturus&#34;,
-     .max_pasid_bits = 16,
-     .max_no_of_hqd  = 24,
-     .doorbell_size  = 8,
-     .ih_ring_entry_size = 8 * sizeof(uint32_t),
-     .event_interrupt_class = &amp;event_interrupt_class_v9,
-     .num_of_watch_points = 4,
-     .mqd_size_aligned = MQD_SIZE_ALIGNED,
-     .supports_cwsr = true,
-     .needs_iommu_device = false,
-     .needs_pci_atomics = false,
-     .num_sdma_engines = 2,
-     .num_xgmi_sdma_engines = 6,
-     .num_sdma_queues_per_engine = 8,
+<pre><code>   static const struct kfd_device_info arcturus_device_info = {
+   	.asic_family = CHIP_ARCTURUS,
+   	.asic_name = &quot;arcturus&quot;,
+   	.max_pasid_bits = 16,
+   	.max_no_of_hqd	= 24,
+   	.doorbell_size	= 8,
+   	.ih_ring_entry_size = 8 * sizeof(uint32_t),
+   	.event_interrupt_class = &amp;event_interrupt_class_v9,
+   	.num_of_watch_points = 4,
+   	.mqd_size_aligned = MQD_SIZE_ALIGNED,
+   	.supports_cwsr = true,
+   	.needs_iommu_device = false,
+   	.needs_pci_atomics = false,
+   	.num_sdma_engines = 2,
+   	.num_xgmi_sdma_engines = 6,
+   	.num_sdma_queues_per_engine = 8,
    };
-
+   
    static const struct kfd_device_info aldebaran_device_info = {
-     .asic_family = CHIP_ALDEBARAN,
-     .asic_name = &#34;aldebaran&#34;,
-     .max_pasid_bits = 16,
-     .max_no_of_hqd  = 24,
-     .doorbell_size  = 8,
-     .ih_ring_entry_size = 8 * sizeof(uint32_t),
-     .event_interrupt_class = &amp;event_interrupt_class_v9,
-     .num_of_watch_points = 4,
-     .mqd_size_aligned = MQD_SIZE_ALIGNED,
-     .supports_cwsr = true,
-     .needs_iommu_device = false,
-     .needs_pci_atomics = false,
-     .num_sdma_engines = 2,
-     .num_xgmi_sdma_engines = 3,
-     .num_sdma_queues_per_engine = 8,
-   };</code></pre>
+   	.asic_family = CHIP_ALDEBARAN,
+   	.asic_name = &quot;aldebaran&quot;,
+   	.max_pasid_bits = 16,
+   	.max_no_of_hqd	= 24,
+   	.doorbell_size	= 8,
+   	.ih_ring_entry_size = 8 * sizeof(uint32_t),
+   	.event_interrupt_class = &amp;event_interrupt_class_v9,
+   	.num_of_watch_points = 4,
+   	.mqd_size_aligned = MQD_SIZE_ALIGNED,
+   	.supports_cwsr = true,
+   	.needs_iommu_device = false,
+   	.needs_pci_atomics = false,
+   	.num_sdma_engines = 2,
+   	.num_xgmi_sdma_engines = 3,
+   	.num_sdma_queues_per_engine = 8,
+   };
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/agd5f/linux/-/blob/1b1515513cdcc6cfa86d7f4f8c1db899695f25f6/drivers/gpu/drm/amd/amdkfd/kfd_device.c#L379" rel="nofollow noreferrer" target="_blank">drivers/gpu/drm/amd/amdkfd/kfd_device.c · 1b1515513cdcc6cfa86d7f4f8c1db899695f25f6 · Alex Deucher / linux · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/agd5f/linux/-/blob/1b1515513cdcc6cfa86d7f4f8c1db899695f25f6/drivers/gpu/drm/amd/amdkfd/kfd_device.c#L379">drivers/gpu/drm/amd/amdkfd/kfd_device.c · 1b1515513cdcc6cfa86d7f4f8c1db899695f25f6 · Alex Deucher / linux · GitLab</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>Arcturus</em> は GPU用の SDMAエンジンを 6基持っていたことで最大 8-GPU との接続が可能だったが<sup class="footnote-ref" id="fnref:arcturus-sdma"><a href="#fn:arcturus-sdma">2</a></sup>、<em>Aldebaran</em> は不可能か、出来たとしても遠くの GPU とやり取りする際に経由しなければならない GPU が多く、性能を出すことが難しいと考えられる。<br />
-だが、<em>Arcturus/MI100</em> は製品としては最大 4-GPU での相互接続に対応し、8-GPU のトポロジ構成には対応しなかったことや、<br />
-<em>Aldebaran/MI200</em> を採用することが決まっているスパコンは、現状どれもノード構成が 1-CPU:4-GPU となっていることを考えると、そこまで SDMAエンジン数を必要としないから減らしたとも考えられる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/22/mi200-hpc-system/">MI200 は Frontier、LUMI に採用され、LUMI は 2021年半ばから運用開始予定 | Coelacanth's Dream</a></span>
+<p><em>Arcturus</em> は GPU用の SDMAエンジンを 6基持っていたことで最大 8-GPU との接続が可能だったが<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、<em>Aldebaran</em> は不可能か、出来たとしても遠くの GPU とやり取りする際に経由しなければならない GPU が多く、性能を出すことが難しいと考えられる。<br>
+だが、<em>Arcturus/MI100</em> は製品としては最大 4-GPU での相互接続に対応し、8-GPU のトポロジ構成には対応しなかったことや、<br>
+<em>Aldebaran/MI200</em> を採用することが決まっているスパコンは、現状どれもノード構成が 1-CPU:4-GPU となっていることを考えると、そこまで SDMAエンジン数を必要としないから減らしたとも考えられる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/02/22/mi200-hpc-system/">MI200 は Frontier、LUMI に採用され、LUMI は 2021年半ばから運用開始予定 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <p>コード中には <em>Aldebaran</em> が最大 8-GPU に対応するように記述されているが、今の所はサポートのため (<em>Arcturus</em> の) 設定を使い回しているだけで、後で書き直す必要があるとしている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>     switch (adev-&gt;asic_type) {
-     case CHIP_VEGA20:
-         max_num_physical_nodes   = 4;
-         max_physical_node_id     = 3;
-         break;
-     case CHIP_ARCTURUS:
-         max_num_physical_nodes   = 8;
-         max_physical_node_id     = 7;
-         break;
-     case CHIP_ALDEBARAN:
-         /* just using duplicates for Aldebaran support, revisit later */
-         max_num_physical_nodes   = 8;
-         max_physical_node_id     = 7;
-         break;</code></pre>
+<pre><code>   	switch (adev-&gt;asic_type) {
+   	case CHIP_VEGA20:
+   		max_num_physical_nodes   = 4;
+   		max_physical_node_id     = 3;
+   		break;
+   	case CHIP_ARCTURUS:
+   		max_num_physical_nodes   = 8;
+   		max_physical_node_id     = 7;
+   		break;
+   	case CHIP_ALDEBARAN:
+   		/* just using duplicates for Aldebaran support, revisit later */
+   		max_num_physical_nodes   = 8;
+   		max_physical_node_id     = 7;
+   		break;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/agd5f/linux/-/blob/amd-staging-drm-next-aldebaran/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_1.c" rel="nofollow noreferrer" target="_blank">drivers/gpu/drm/amd/amdgpu/gfxhub_v1_1.c · amd-staging-drm-next-aldebaran · Alex Deucher / linux · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/agd5f/linux/-/blob/amd-staging-drm-next-aldebaran/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_1.c">drivers/gpu/drm/amd/amdgpu/gfxhub_v1_1.c · amd-staging-drm-next-aldebaran · Alex Deucher / linux · GitLab</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="removed-gds">Aldebaran では GDS が削除</h2>
-
-<p>AMD GPUアーキテクチャでは、全ての CU がアクセス可能なオンチップメモリ、GDS (Global Data Share) を持っているが、<em>Aldebaran</em> では GDS が削除されている。<br />
+<p>AMD GPUアーキテクチャでは、全ての CU がアクセス可能なオンチップメモリ、GDS (Global Data Share) を持っているが、<em>Aldebaran</em> では GDS が削除されている。<br>
 GDS はスレッド間でのデータ共有やソフトウェアが用いるキャッシュ等の用途がある。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059758.html" rel="nofollow noreferrer" target="_blank">[PATCH 072/159] drm/amdgpu: init gds for aldebaran</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059758.html">[PATCH 072/159] drm/amdgpu: init gds for aldebaran</a></li>
 </ul>
-
-<p>GDS を削除した理由としてはアトミック操作/使用のためとしている。<br />
-これだけではよく分からないが、1-GPU に搭載される CU が増えるにつれ、GDS ではなく増やした L2キャッシュを利用した方が良い、となったのかもしれない。<br />
+<p>GDS を削除した理由としてはアトミック操作/使用のためとしている。<br>
+これだけではよく分からないが、1-GPU に搭載される CU が増えるにつれ、GDS ではなく増やした L2キャッシュを利用した方が良い、となったのかもしれない。<br>
 それと、追加された実行フローにおける新モード <em>TgSplit</em> の存在が関係している可能性もある。</p>
-
-<p>そして今になって調べて気付いたが、GDS の変更は <em>Arcturus/MI100</em> の時点で行われていた。<br />
-<em>Vega10/Vega20</em> は GDS 64KB (32バンク) を持っていたが、<em>Arcturus/MI100</em> では 4KB (4バンク) に減らされている。<sup class="footnote-ref" id="fnref:arct-gds"><a href="#fn:arct-gds">3</a></sup>帯域やバンク数は資料に記述されなくなった。<sup class="footnote-ref" id="fnref:gds-size"><a href="#fn:gds-size">4</a></sup>
+<p>そして今になって調べて気付いたが、GDS の変更は <em>Arcturus/MI100</em> の時点で行われていた。<br>
+<em>Vega10/Vega20</em> は GDS 64KB (32バンク) を持っていたが、<em>Arcturus/MI100</em> では 4KB (4バンク) に減らされている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>帯域やバンク数は資料に記述されなくなった。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>
 一応、<em>RDNA 2/GFX10.3</em> も確認したが、そちらは 64KB のままであり、<em>CDNA アーキテクチャ</em> 特有の変更点と言える。</p>
-
 <h2 id="xgmi-to-cpu">CPU との XGMI/Infinity Fabric Link 接続に対応</h2>
-
-<p><em>Aldebaran</em> には CPU との <em>XGMI/Infinity Fabric Link</em> 接続に対応し、これは以前 <em>3rd Gen Infinity Architecture</em> として発表されていたものと一致する。<br />
-<em>3rd Gen Infinity Arcitecture</em> では、GPU メモリを CPU側のシステムアドレスにマッピングすることで CPU と GPU のコヒーレントを保ち、GPGPUプログラムを複雑にしていたメモリ空間の違いとそれによるデータ転送の手間を無くし、より広い用途での GPU の活用を可能とする。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/07/add-svm-to-amdgpu-kfd/">Linux Kernel に CPU + GPU の統合メモリ空間をサポートする最初のパッチが投稿される | Coelacanth's Dream</a></span>
+<p><em>Aldebaran</em> には CPU との <em>XGMI/Infinity Fabric Link</em> 接続に対応し、これは以前 <em>3rd Gen Infinity Architecture</em> として発表されていたものと一致する。<br>
+<em>3rd Gen Infinity Arcitecture</em> では、GPU メモリを CPU側のシステムアドレスにマッピングすることで CPU と GPU のコヒーレントを保ち、GPGPUプログラムを複雑にしていたメモリ空間の違いとそれによるデータ転送の手間を無くし、より広い用途での GPU の活用を可能とする。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/01/07/add-svm-to-amdgpu-kfd/">Linux Kernel に CPU + GPU の統合メモリ空間をサポートする最初のパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059726.html" rel="nofollow noreferrer" target="_blank">[PATCH 040/159] drm/amdgpu: define address map for host xgmi link (v3)</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059728.html" rel="nofollow noreferrer" target="_blank">[PATCH 042/159] drm/amdkfd: expose host gpu link via sysfs (v2)</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059733.html" rel="nofollow noreferrer" target="_blank">[PATCH 048/159] drm/amdgpu: new cache coherence change for Aldebaran</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059726.html">[PATCH 040/159] drm/amdgpu: define address map for host xgmi link (v3)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059728.html">[PATCH 042/159] drm/amdkfd: expose host gpu link via sysfs (v2)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059733.html">[PATCH 048/159] drm/amdgpu: new cache coherence change for Aldebaran</a></li>
 </ul>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/03/06/amd-financial-analyst-day-2020_10.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/03/06/amd-financial-analyst-day-2020_10.webp"
       alt="画像元: FINANCIAL ANALYST DAY 2020 - Mark Papermaster: Future of High Performance"/>
 </a><figcaption>
-      <h4 class="fig-title">AMD 3rd Gen Infinity Architecture Enables Accelerated Computing</h4><p>画像元: <a href="https://ir.amd.com/static-files/ccef22f0-f641-4fc5-861f-cb3d7d125a68" rel="nofollow noreferrer" target="_blank">FINANCIAL ANALYST DAY 2020 - Mark Papermaster: Future of High Performance</a></p>
+      <h4 class="fig-title">AMD 3rd Gen Infinity Architecture Enables Accelerated Computing</h4><p>画像元: <a href="https://ir.amd.com/static-files/ccef22f0-f641-4fc5-861f-cb3d7d125a68">FINANCIAL ANALYST DAY 2020 - Mark Papermaster: Future of High Performance</a></p>
   </figcaption>
 </figure>
 
-
 <h2 id="multi-die">Aldebaran は複数ダイ構成 (MCM) か</h2>
-
-<p>先日、HPE の資料に、製品名 <strong>AMD Instinct MI200 OAM x1 MCM Special FIO Accelerator for HPE Cray EX</strong> があったことが話題となり、<strong>MI200</strong> は MCM 構成ではないかとされたが、それを裏付けるようなパッチとコメントがあった。<br />
-<span class="thread-link"><a href="https://assets.ext.hpe.com/is/content/hpedam/a50002555enw" rel="nofollow noreferrer" target="_blank">Intel OneAPI - a50002555enw</a></span>
+<p>先日、HPE の資料に、製品名 <strong>AMD Instinct MI200 OAM x1 MCM Special FIO Accelerator for HPE Cray EX</strong> があったことが話題となり、<strong>MI200</strong> は MCM 構成ではないかとされたが、それを裏付けるようなパッチとコメントがあった。<br>
+<span class="thread-link"><a href="https://assets.ext.hpe.com/is/content/hpedam/a50002555enw">Intel OneAPI - a50002555enw</a></span>
 </p>
-
 <p><em>Aldebaran</em> はに複数の die ID が割り振られ、GPU と CPU (ホスト) とのリンクタイプを得るのに使われ、</p>
-
 <blockquote>
-<pre tabindex="0"><code>   is_host_gpu_xgmi_supported is used to query gpu and
+<pre><code>   is_host_gpu_xgmi_supported is used to query gpu and
    cpu/host link type. get_die_id is used to query die
-   ids.</code></pre>
+   ids.
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059719.html" rel="nofollow noreferrer" target="_blank">[PATCH 036/159] drm/amdgpu: add new smuio callbacks for aldebaran</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059719.html">[PATCH 036/159] drm/amdgpu: add new smuio callbacks for aldebaran</a></cite>
 </div>
 
 </blockquote>
-
-<p>新たなクロック調節機能である &quot;Performance Determinism&quot; はダイごとに有効可能だとしている。</p>
-
+<p>新たなクロック調節機能である &ldquo;Performance Determinism&rdquo; はダイごとに有効可能だとしている。</p>
 <blockquote>
-<pre tabindex="0"><code>   Performance Determinism is a new mode in Aldebaran where PMFW tries to
+<pre><code>   Performance Determinism is a new mode in Aldebaran where PMFW tries to
    maintain sustained performance level. It can be enabled on a per-die
-   basis on aldebaran.</code></pre>
+   basis on aldebaran.
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059807.html" rel="nofollow noreferrer" target="_blank">[PATCH 124/159] drm/amd/pm: Enable performance determinism on aldebaran</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059807.html">[PATCH 124/159] drm/amd/pm: Enable performance determinism on aldebaran</a></cite>
 </div>
 
 </blockquote>
-
 <p>また、<em>Aldebran</em> の SMUv13 (System Management Unit) のファイルにはマクロ名に <code>MCM</code> が付くものがあり、それはダイ、パッケージ、ソケット、トポロジ等に関係している。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   //SMUIO_MCM_CONFIG
+<pre><code>   //SMUIO_MCM_CONFIG
    #define SMUIO_MCM_CONFIG__DIE_ID__SHIFT                                                                       0x0
    #define SMUIO_MCM_CONFIG__PKG_TYPE__SHIFT                                                                     0x1
    #define SMUIO_MCM_CONFIG__SOCKET_ID__SHIFT                                                                    0x4
@@ -281,73 +252,67 @@ GDS はスレッド間でのデータ共有やソフトウェアが用いるキ�
    #define SMUIO_MCM_CONFIG__PKG_TYPE_MASK                                                                       0x0000000EL
    #define SMUIO_MCM_CONFIG__SOCKET_ID_MASK                                                                      0x000000F0L
    #define SMUIO_MCM_CONFIG__PKG_SUBTYPE_MASK                                                                    0x00000300L
-   #define SMUIO_MCM_CONFIG__TOPOLOGY_ID_MASK                                                                    0x00007C00L</code></pre>
+   #define SMUIO_MCM_CONFIG__TOPOLOGY_ID_MASK                                                                    0x00007C00L
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/agd5f/linux/-/blob/amd-staging-drm-next-aldebaran/drivers/gpu/drm/amd/include/asic_reg/smuio/smuio_13_0_2_offset.h" rel="nofollow noreferrer" target="_blank">drivers/gpu/drm/amd/include/asic_reg/smuio/smuio_13_0_2_offset.h · amd-staging-drm-next-aldebaran · Alex Deucher / linux · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/agd5f/linux/-/blob/amd-staging-drm-next-aldebaran/drivers/gpu/drm/amd/include/asic_reg/smuio/smuio_13_0_2_offset.h">drivers/gpu/drm/amd/include/asic_reg/smuio/smuio_13_0_2_offset.h · amd-staging-drm-next-aldebaran · Alex Deucher / linux · GitLab</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>Aldebaran/MI200</em> が MCM構成だとして、そこで出てくるのは、上述した SDMAエンジンの数がダイごとのものなのか、GPU全体なのか、ダイ同士の接続は SDMAエンジンを用いる <em>XGMI</em> 接続なのかそうでないか、それぞれが I/O やメディアエンジンを持つ独立可能な複数のダイで構成されるのか、といった疑問が出てくるが、<br />
+<p><em>Aldebaran/MI200</em> が MCM構成だとして、そこで出てくるのは、上述した SDMAエンジンの数がダイごとのものなのか、GPU全体なのか、ダイ同士の接続は SDMAエンジンを用いる <em>XGMI</em> 接続なのかそうでないか、それぞれが I/O やメディアエンジンを持つ独立可能な複数のダイで構成されるのか、といった疑問が出てくるが、<br>
 まあそれは今後パッチという形か、あるいは正式発表時に明かされるだろうから、それを待つこととする。</p>
-
 <h2 id="other">SMUv13、VCN 2.6、DeviceID</h2>
+<p>既に触れたが、<em>Aldebran</em> の SMU は Version13 となり、これは以前ひょっこりと出てきてそれきりな <a href="https://www.coelacanth-dream.com/tags/yellow_carp">Yellow Carp APU</a> と同じ世代となる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/12/08/amd-yellow-carp-apu/">新たな AMD APU、&ldquo;Yellow Carp&rdquo;　―― SMU は v13 に | Coelacanth&rsquo;s Dream</a></span>
 
-<p>既に触れたが、<em>Aldebran</em> の SMU は Version13 となり、これは以前ひょっこりと出てきてそれきりな <a href="https://www.coelacanth-dream.com/tags/yellow_carp">Yellow Carp APU</a> と同じ世代となる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/08/amd-yellow-carp-apu/">新たな AMD APU、&quot;Yellow Carp&quot;　―― SMU は v13 に | Coelacanth's Dream</a></span>
-
-さらに言えば、<em>MI200</em> が SMUv13 となるのは、以前ファームウェアバイナリに混じってアップロードされた更新履歴にあった情報だ。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/16/czn-coreboot-mi200-mero-rmb/">Cezanne の Coreboot 対応が進行中　―― MI200, Mero, Rembrandt のネームプレート | Coelacanth's Dream</a></span>
+さらに言えば、<em>MI200</em> が SMUv13 となるのは、以前ファームウェアバイナリに混じってアップロードされた更新履歴にあった情報だ。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/12/16/czn-coreboot-mi200-mero-rmb/">Cezanne の Coreboot 対応が進行中　―― MI200, Mero, Rembrandt のネームプレート | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <p>しかし、対応するプラットフォームや時期の違いから、それぞれの SMUv13 は全く同じではなく、<em>Yellow Carp</em> は SMU v13.0.1、<em>Aldebaran</em> は SMU v13.0.2 となっている。</p>
-
-<p>デコード/エンコードを処理する VCN は <em>Arcturus</em> からわずかにバージョンが進んだ VCN 2.6 を搭載しているが、VCN 2.5 との違いは不明。<br />
-また、<em>Arcturus</em> 同様に VCN を 2基搭載するが、片方は VCN 2.6、もう片方は VCN 2.5 としている。配置される MMHUB (MultiMedia Hub) は異なるが、やはりこちらも違いは不明。<sup class="footnote-ref" id="fnref:vcn-2-6"><a href="#fn:vcn-2-6">5</a></sup><br />
+<p>デコード/エンコードを処理する VCN は <em>Arcturus</em> からわずかにバージョンが進んだ VCN 2.6 を搭載しているが、VCN 2.5 との違いは不明。<br>
+また、<em>Arcturus</em> 同様に VCN を 2基搭載するが、片方は VCN 2.6、もう片方は VCN 2.5 としている。配置される MMHUB (MultiMedia Hub) は異なるが、やはりこちらも違いは不明。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
 <em>Navi21/Sienna Cichlid</em> のようにエンコードとデコードで役割を分けているようでもない。</p>
-
 <p><em>Aldebaran</em> の DeviceID (PCI ID) には現在 3種リストされているが、<em>Arcturus</em> の例から、2種はエンジニアサンプリングか予約用と思われる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   + /* Aldebaran */
-   + {0x1002, 0x7408, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_ALDEBARAN},
-   + {0x1002, 0x740C, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_ALDEBARAN},
-   + {0x1002, 0x740F, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_ALDEBARAN},
-   +</code></pre>
+<pre><code>   +	/* Aldebaran */
+   +	{0x1002, 0x7408, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_ALDEBARAN},
+   +	{0x1002, 0x740C, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_ALDEBARAN},
+   +	{0x1002, 0x740F, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_ALDEBARAN},
+   +
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059750.html" rel="nofollow noreferrer" target="_blank">[PATCH 067/159] drm/amdgpu: Add DID for aldebaran</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059750.html">[PATCH 067/159] drm/amdgpu: Add DID for aldebaran</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="codename">コードネーム: Aldebaran</h2>
-
-<p><em>Aldebaran (アルデバラン)</em> はおうし座で最も明るい恒星 (首星)、α星の固有名である。<br />
+<p><em>Aldebaran (アルデバラン)</em> はおうし座で最も明るい恒星 (首星)、α星の固有名である。<br>
 <em>RDNA 2 アーキテクチャ</em> からは <strong>色+魚</strong> をコードネームにするようになったが、<em>CDNA アーキテクチャ</em> では引き続き恒星をコードネームに採用するようだ。</p>
-
-<p><em>Vega (ベガ)</em> 、<em>Arcturus (アークトゥルス)</em> もまた α星の固有名で、<em>Vega</em> はこと座、<em>Arcturus</em> はうしかい座に位置する。<br />
+<p><em>Vega (ベガ)</em> 、<em>Arcturus (アークトゥルス)</em> もまた α星の固有名で、<em>Vega</em> はこと座、<em>Arcturus</em> はうしかい座に位置する。<br>
 星には詳しくない上、参考資料によって異なったりであやふやだが、地球から <em>Vega</em> は 25光年、<em>Arcturus</em> は 36光年、<em>Aldebaran</em> は 65光年離れており、最新の世代ほど地球から遠くなっている。</p>
-
-<p>ランダムで選ばれている可能性もあるが、<em>Arcturus</em> は大きな固有運動を示す高速度星でもあり、<em>GCNアーキテクチャ</em> から <em>CDNA アーキテクチャ</em> への転換を象徴する GPU のコードネームとしてはぴったりと言える。<br />
-そして、<em>Aldebaran</em> はアラビア語で「後に続くもの」の意で、同じおうし座に位置するプレアデス (和名: すばる) よりも遅れて昇ってくることからその名が付けられている。<br />
+<p>ランダムで選ばれている可能性もあるが、<em>Arcturus</em> は大きな固有運動を示す高速度星でもあり、<em>GCNアーキテクチャ</em> から <em>CDNA アーキテクチャ</em> への転換を象徴する GPU のコードネームとしてはぴったりと言える。<br>
+そして、<em>Aldebaran</em> はアラビア語で「後に続くもの」の意で、同じおうし座に位置するプレアデス (和名: すばる) よりも遅れて昇ってくることからその名が付けられている。<br>
 こちらも、<em>Arcturus/CDNA 1</em> から続く第2世代 <em>CDNA アーキテクチャ</em> 、<em>CDNA 2</em> GPU に付けられたコードネームとして合っている。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:lumi-vram"><a href="https://www.csc.fi/en/-/the-aftermath-of-the-lumi-end-user-webinar" rel="nofollow noreferrer" target="_blank">The aftermath of the LUMI end user webinar - The aftermath of the LUMI end user webinar - CSC Company Site</a>
- <a class="footnote-return" href="#fnref:lumi-vram"><sup>[return]</sup></a></li>
-<li id="fn:arcturus-sdma"><a href="https://www.coelacanth-dream.com/posts/2020/07/17/navi21-sienna_cichlid-support-xgmi/">Navi21 /Sienna Cichlid は高速なGPU間通信 XGMI をサポート | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:arcturus-sdma"><sup>[return]</sup></a></li>
-<li id="fn:arct-gds"><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-July/036836.html" rel="nofollow noreferrer" target="_blank">[PATCH 089/102] drm/amdgpu: init gds config for arct</a>
- <a class="footnote-return" href="#fnref:arct-gds"><sup>[return]</sup></a></li>
-<li id="fn:gds-size"><a href="https://gpuopen.com/wp-content/uploads/2019/11/Vega_7nm_Shader_ISA_26November2019.pdf" rel="nofollow noreferrer" target="_blank">Vega_7nm_Shader_ISA_26November2019.pdf</a> <a href="https://developer.amd.com/wp-content/resources/CDNA1_Shader_ISA_14December2020.pdf" rel="nofollow noreferrer" target="_blank">&quot;AMD Instinct MI100&quot; Instruction Set Architecture: Reference Guide - CDNA1_Shader_ISA_14December2020.pdf</a>
- <a class="footnote-return" href="#fnref:gds-size"><sup>[return]</sup></a></li>
-<li id="fn:vcn-2-6"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059730.html" rel="nofollow noreferrer" target="_blank">[PATCH 044/159] drm/amdgpu/vcn2.6: Add vcn2.6 support</a>
- <a class="footnote-return" href="#fnref:vcn-2-6"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.csc.fi/en/-/the-aftermath-of-the-lumi-end-user-webinar">The aftermath of the LUMI end user webinar - The aftermath of the LUMI end user webinar - CSC Company Site</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/07/17/navi21-sienna_cichlid-support-xgmi/">Navi21 /Sienna Cichlid は高速なGPU間通信 XGMI をサポート | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-July/036836.html">[PATCH 089/102] drm/amdgpu: init gds config for arct</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://gpuopen.com/wp-content/uploads/2019/11/Vega_7nm_Shader_ISA_26November2019.pdf">Vega_7nm_Shader_ISA_26November2019.pdf</a> <a href="https://developer.amd.com/wp-content/resources/CDNA1_Shader_ISA_14December2020.pdf">&ldquo;AMD Instinct MI100&rdquo; Instruction Set Architecture: Reference Guide - CDNA1_Shader_ISA_14December2020.pdf</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059730.html">[PATCH 044/159] drm/amdgpu/vcn2.6: Add vcn2.6 support</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

@@ -70,131 +70,107 @@
 <div class="article-time">
     <time datetime="2020-09-23 13:52 &#43;0900" class="time-b">Post: 2020/09/23 13:52 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/01/07 13:58 &#43;0900</div>
-  </div>
-
-<h2 id="page-index">Index</h2><ul class="page-index">
+  </div><h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#shader-array">非対称な Shader Array 構成の効率を向上させる</a></li>
 <li><a href="#not-need-gpu_info-fw">gpu_info ファームウェアは必要無し</a></li>
 <li><a href="#xss">Xbox Series S</a></li>
 </ul>
 
-
 <h2 id="shader-array">非対称な Shader Array 構成の効率を向上させる</h2>
-
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6822/diffs?commit_id=c4281375e63ce4e1cecab4382b5124e3a6ee941c" rel="nofollow noreferrer" target="_blank">radeonsi: miscellaneous changes for gfx10 (!6822) · Merge Requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6822/diffs?commit_id=c4281375e63ce4e1cecab4382b5124e3a6ee941c">radeonsi: miscellaneous changes for gfx10 (!6822) · Merge Requests · Mesa / mesa · GitLab</a></li>
 </ul>
-
-<p>まず AMD GPU のアーキテクチャでは、GPU のコア部と言える、シェーダーを処理する CU、Rastrizerユニット、Primitiveユニット、RenderBackendユニット等を、Shader Engine としてまとめて管理している。<br />
-そして、<em>RDNAアーキテクチャ</em> では Shader Engine 内部が、それぞれ L1メモリキャッシュ (128KB) を持つ Shader Array 2基にコア部を分け、構成されている。<br />
+<p>まず AMD GPU のアーキテクチャでは、GPU のコア部と言える、シェーダーを処理する CU、Rastrizerユニット、Primitiveユニット、RenderBackendユニット等を、Shader Engine としてまとめて管理している。<br>
+そして、<em>RDNAアーキテクチャ</em> では Shader Engine 内部が、それぞれ L1メモリキャッシュ (128KB) を持つ Shader Array 2基にコア部を分け、構成されている。<br>
 また、CU は 2基をまとめた Dual Compute Unit / WGP(Work Group Processor) 単位となる。</p>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/09/23/navi10-diagram.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/09/23/navi10-diagram.webp"
       alt="画像出典: https://www.amd.com/system/files/documents/rdna-whitepaper.pdf"/>
 </a><figcaption>
-      <h4 class="fig-title">Navi10 Diagram</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">https://www.amd.com/system/files/documents/rdna-whitepaper.pdf</a></p>
+      <h4 class="fig-title">Navi10 Diagram</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf">https://www.amd.com/system/files/documents/rdna-whitepaper.pdf</a></p>
   </figcaption>
 </figure>
 
-
-<p>AMD GPU は Shader Engine ごとに Workload Manager を持ち、各 Shader Engine の規模は対称となるように設定されるが、Shader Engine 内部の Shader Array については規模が異なる場合がある。<br />
-例えば、<em>RDNAアーキテクチャ</em> である <strong>RX 5700</strong> は Compute Unit を 36基持つ。<br />
-<strong>RX 5700</strong> のベースとなる GPU ASIC <em>Navi10</em> は Shader Engine 2基、その内部の Shader Array 2基で構成されており、Shader Array は 5WGP(10CU) の規模となる。<br />
+<p>AMD GPU は Shader Engine ごとに Workload Manager を持ち、各 Shader Engine の規模は対称となるように設定されるが、Shader Engine 内部の Shader Array については規模が異なる場合がある。<br>
+例えば、<em>RDNAアーキテクチャ</em> である <strong>RX 5700</strong> は Compute Unit を 36基持つ。<br>
+<strong>RX 5700</strong> のベースとなる GPU ASIC <em>Navi10</em> は Shader Engine 2基、その内部の Shader Array 2基で構成されており、Shader Array は 5WGP(10CU) の規模となる。<br>
 Shader Engine 2基は規模が対称となるため、それぞれ CU を 9基持つことになるが、その場合内部の Shader Array の構成は 4基と 5基のものに分かれ、非対称となる。</p>
-
-<p>上記パッチはこの Shader Array が非対称の場合に向けたもので、Pixel Shader を処理する際の無駄を減らす目的がある。<br />
-ハードウェアは Pixel Shader を処理する Wave(スレッドの塊) を各 Shader Array に同じ数発行するが、Shader Array あたりの CU数が非対称だと、規模が小さい方に処理速度が引っ張られて効率が悪化する。<br />
-そこで、小さい方の CU数に合わせて Wave を発行することで効率の悪化を防ぐ。<br />
-大きい方の Shader Array では処理に関係しない、余分な CU が出てくるが、その分消費電力を減らすことができ、稼働させる CU のクロックの引き上げに回すこともできる。<br />
+<p>上記パッチはこの Shader Array が非対称の場合に向けたもので、Pixel Shader を処理する際の無駄を減らす目的がある。<br>
+ハードウェアは Pixel Shader を処理する Wave(スレッドの塊) を各 Shader Array に同じ数発行するが、Shader Array あたりの CU数が非対称だと、規模が小さい方に処理速度が引っ張られて効率が悪化する。<br>
+そこで、小さい方の CU数に合わせて Wave を発行することで効率の悪化を防ぐ。<br>
+大きい方の Shader Array では処理に関係しない、余分な CU が出てくるが、その分消費電力を減らすことができ、稼働させる CU のクロックの引き上げに回すこともできる。<br>
 効率がそこまで向上しない場合もあるのか、将来的には特定のアプリケーション向けに有効無効を設定するかもしれない、とされている。</p>
-
-<p>例に上げたように、<strong>RX 5700</strong> 等 <em>RDNA /GFX10</em> 世代でも Shader Array が非対称となる GPU があるが、機能は現状 <em>RDNA 2 /GFX10.3</em> 世代にのみ有効可能となっている。<br />
+<p>例に上げたように、<strong>RX 5700</strong> 等 <em>RDNA /GFX10</em> 世代でも Shader Array が非対称となる GPU があるが、機能は現状 <em>RDNA 2 /GFX10.3</em> 世代にのみ有効可能となっている。<br>
 <em>RDNA 2 /GFX10.3</em> で、電力管理またはハードウェアスケジューラの改良が行なわれたのかもしれない。</p>
-
 <h2 id="not-need-gpu_info-fw">gpu_info ファームウェアは必要無し</h2>
-
-<p><em>Vega /GFX9</em> 世代から導入された<sup class="footnote-ref" id="fnref:gfx9-gpu-info-fw"><a href="#fn:gfx9-gpu-info-fw">1</a></sup>、GPU ASIC の情報を保存する gpu_info ファームウェアだが、<em>RDNA 2/GFX10.3</em> 世代の GPU <em>Sienna Cichlid</em> 、<em>Navy Flounder</em> では必要無いという。<br />
-<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-September/054110.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: remove gpu_info fw support for sienna_cichlid etc.</a></span>
+<p><em>Vega /GFX9</em> 世代から導入された<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、GPU ASIC の情報を保存する gpu_info ファームウェアだが、<em>RDNA 2/GFX10.3</em> 世代の GPU <em>Sienna Cichlid</em> 、<em>Navy Flounder</em> では必要無いという。<br>
+<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-September/054110.html">[PATCH] drm/amdgpu: remove gpu_info fw support for sienna_cichlid etc.</a></span>
 
 discovery binary からの情報で十分というのが理由らしいが、discovery binary が何を指すのかは不明。VBIOS あたりだとは思うが。</p>
-
 <p><em>Sienna Cichlid</em> 、<em>Navy Flounder</em> の gpu_info ファームウェアは既に ROCm のパッケージや Linux向けProドライバー等に含まれていたが、これらはどれだけ実物の GPU ASIC を反映していたのだろうか。</p>
-
 <h2 id="xss">Xbox Series S</h2>
-
 <p>Microsoft より <strong>Xbox Series X</strong> と同世代かつ小型な <strong>Xbox Series S</strong> が発表された。</p>
-
 <ul>
-<li><a href="https://www.xbox.com/en-US/consoles/xbox-series-s#target-specs" rel="nofollow noreferrer" target="_blank">The all-new Xbox Series S | Xbox</a></li>
-<li><a href="https://www.xbox.com/en-US/consoles/xbox-series-x#specs" rel="nofollow noreferrer" target="_blank">The all-new Xbox Series X | Xbox</a><br /></li>
+<li><a href="https://www.xbox.com/en-US/consoles/xbox-series-s#target-specs">The all-new Xbox Series S | Xbox</a></li>
+<li><a href="https://www.xbox.com/en-US/consoles/xbox-series-x#specs">The all-new Xbox Series X | Xbox</a></li>
 </ul>
-
-<p>CPU は <strong>XSX</strong> と同じ <em>Zen 2コア</em> を 8基搭載しているが、クロックが 0.2GHz程低くなっている。<br />
-GPU は大きく規模を削られ、<strong>XSX</strong> の 52CU@1.825GH に対し <strong>XSS</strong> は 20CU@1.565GHz となり、ピーク演算性能では 4TFLOPS と 1/3 である。メモリも GDDR6 16GB 320-bit に対し GDDR6 10GB 128-bit。<br />
+<p>CPU は <strong>XSX</strong> と同じ <em>Zen 2コア</em> を 8基搭載しているが、クロックが 0.2GHz程低くなっている。<br>
+GPU は大きく規模を削られ、<strong>XSX</strong> の 52CU@1.825GH に対し <strong>XSS</strong> は 20CU@1.565GHz となり、ピーク演算性能では 4TFLOPS と 1/3 である。メモリも GDDR6 16GB 320-bit に対し GDDR6 10GB 128-bit。<br>
 メモリバス幅が 128-bit、メモリ容量は 10GB というのは、単純に 16Gb(2GB) * 4 で考えても一致しないが、1* 32-bit を 2* 16-bit に分け、そこに 16Gb(2Gb) * 2 を接続しているのかもしれない。</p>
-
 <p>SoC のダイサイズは、<strong>XSX</strong> が 360.45mm<sup>2</sup>、<strong>XSS</strong> は 197.05mm<sup>2</sup>と、半分より少し大きいサイズとなっている。</p>
-
 <p><span class="complement">今は削除されてしまっているが</span>
-あるニュース系サイトで <strong>XSS Soc</strong> のチップ写真が掲載されたスライドが公開されており、見た限り、<strong>XSS SoC</strong> は 24CU 持つが、<strong>XSX</strong> 同様に 4CU を冗長ユニットとし、20CU を製品仕様にしているようだ。<br />
+あるニュース系サイトで <strong>XSS Soc</strong> のチップ写真が掲載されたスライドが公開されており、見た限り、<strong>XSS SoC</strong> は 24CU 持つが、<strong>XSX</strong> 同様に 4CU を冗長ユニットとし、20CU を製品仕様にしているようだ。<br>
 また、<strong>XSX</strong> は 2-ShaderEngine の構成だったが、<strong>XSS</strong> では 1-ShaderEngine であるように見えた。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left"></th>
-<th align="center">Xbox Series X</th>
-<th align="center">Xbox Series S</th>
-<th align="center">Navi10</th>
-<th align="center">Navi14</th>
+<th style="text-align:left"></th>
+<th style="text-align:center">Xbox Series X</th>
+<th style="text-align:center">Xbox Series S</th>
+<th style="text-align:center">Navi10</th>
+<th style="text-align:center">Navi14</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">SE<br>(Shader Engine)</td>
-<td align="center">2</td>
-<td align="center">1?</td>
-<td align="center">2</td>
-<td align="center">1</td>
+<td style="text-align:left">SE<br>(Shader Engine)</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">1?</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">1</td>
 </tr>
-
 <tr>
-<td align="left">SH per SE</td>
-<td align="center">2</td>
-<td align="center">2</td>
-<td align="center">2</td>
-<td align="center">2</td>
+<td style="text-align:left">SH per SE</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
 </tr>
-
 <tr>
-<td align="left">WGP(CU) per SH</td>
-<td align="center">7(14)</td>
-<td align="center">6?(12?)</td>
-<td align="center">5(10)</td>
-<td align="center">6(12)</td>
+<td style="text-align:left">WGP(CU) per SH</td>
+<td style="text-align:center">7(14)</td>
+<td style="text-align:center">6?(12?)</td>
+<td style="text-align:center">5(10)</td>
+<td style="text-align:center">6(12)</td>
 </tr>
-
 <tr>
-<td align="left">Total WGP(CU)</td>
-<td align="center">28(56)</td>
-<td align="center">12?(24?)</td>
-<td align="center">20(40)</td>
-<td align="center">12(24)</td>
+<td style="text-align:left">Total WGP(CU)</td>
+<td style="text-align:center">28(56)</td>
+<td style="text-align:center">12?(24?)</td>
+<td style="text-align:center">20(40)</td>
+<td style="text-align:center">12(24)</td>
 </tr>
 </tbody>
 </table>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:gfx9-gpu-info-fw"><a href="https://lists.freedesktop.org/archives/amd-gfx/2017-May/008929.html" rel="nofollow noreferrer" target="_blank">[PATCH 014/117] drm/amdgpu: add gpu_info firmware (v3)</a>
- <a class="footnote-return" href="#fnref:gfx9-gpu-info-fw"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2017-May/008929.html">[PATCH 014/117] drm/amdgpu: add gpu_info firmware (v3)</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

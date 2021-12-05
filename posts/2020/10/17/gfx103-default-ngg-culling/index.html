@@ -70,64 +70,60 @@
 <div class="article-time">
     <time datetime="2020-10-17 11:34 &#43;0900" class="time-b">Post: 2020/10/17 11:34 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/10/01 06:15 &#43;0900</div>
-  </div>
-
-<p>AMD GPU のオープンソースドライバー <strong>RadeonSI (OpenGL)</strong> に、<em>RDNA 2 /GFX10.3</em> 世代の dGPU にて NGGカリングをデフォルトで有効にするパッチが投稿、メインラインに組み込まれた。<br />
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/7648060dc03775979e3fa8904c4948c084e82b6a" rel="nofollow noreferrer" target="_blank">radeonsi: enable NGG culling by default on gfx10.3 dGPUs (7648060d) · Commits · Mesa / mesa · GitLab</a></span>
+  </div><p>AMD GPU のオープンソースドライバー <strong>RadeonSI (OpenGL)</strong> に、<em>RDNA 2 /GFX10.3</em> 世代の dGPU にて NGGカリングをデフォルトで有効にするパッチが投稿、メインラインに組み込まれた。<br>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/7648060dc03775979e3fa8904c4948c084e82b6a">radeonsi: enable NGG culling by default on gfx10.3 dGPUs (7648060d) · Commits · Mesa / mesa · GitLab</a></span>
 
 他にも性能最適化のため、LDS のバンクコンフリクト (同一バンクにアクセスが集中してしまうこと) を解消するパッチも組み込まれている。</p>
-
-<p>また、<em>Navi1x</em> ベースの <strong>Radeon Pro</strong> カードでもデフォルトで NGGカリングが有効化されるようになった。<sup class="footnote-ref" id="fnref:navi1x-pro-nggc"><a href="#fn:navi1x-pro-nggc">1</a></sup><br />
-Proカードのみの理由は恐らく、非同期コンピュートでのカリング処理が実装された時もそうだったが<sup class="footnote-ref" id="fnref:pd-cs"><a href="#fn:pd-cs">2</a></sup>、ゲーム等ではまだ効果が小さく、<strong>Radeon Pro</strong> がターゲットとするワークステーション用途におけるソフトウェアでは効果が大きいからと思われる。</p>
-
+<p>また、<em>Navi1x</em> ベースの <strong>Radeon Pro</strong> カードでもデフォルトで NGGカリングが有効化されるようになった。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+Proカードのみの理由は恐らく、非同期コンピュートでのカリング処理が実装された時もそうだったが<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、ゲーム等ではまだ効果が小さく、<strong>Radeon Pro</strong> がターゲットとするワークステーション用途におけるソフトウェアでは効果が大きいからと思われる。</p>
 <h2 id="nggc">NGGカリング / プリミティブシェーダー</h2>
-
 <p><a href="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/">以前</a> NGG(Next Genaration Geometry) の機能を紹介した時に、ハードウェア側のシェーダーステージ統合とそれによる効率化が NGG の全てではないと断ったが、その時触れなかった NGG の目玉機能がこの NGGカリングである。</p>
-
 <p>NGGカリングは、<span class="complement">結局その世代で有効化されることは無かったが</span>
- <em>Vega /GFX9</em> の新機能として実装され、PS5 でも採用が発表された プリミティブシェーダー/Primitive Shader の名でも呼べるだろう。<br />
-<a href="https://github.com/GPUOpen-Drivers" rel="nofollow noreferrer" target="_blank">GPUOpen Drivers</a> を構成するソフトウェアにはそのように記述されている。</p>
-
+ <em>Vega /GFX9</em> の新機能として実装され、PS5 でも採用が発表された プリミティブシェーダー/Primitive Shader の名でも呼べるだろう。<br>
+<a href="https://github.com/GPUOpen-Drivers">GPUOpen Drivers</a> を構成するソフトウェアにはそのように記述されている。</p>
 <blockquote>
-<pre tabindex="0"><code>  &#34;Description&#34;: &#34;Enable NGG mode, use an implicit primitive shader on a per-pipeline type basis. Use this instead of PAL setting, NggEnableMode.&#34;,</code></pre>
+<pre><code>  &quot;Description&quot;: &quot;Enable NGG mode, use an implicit primitive shader on a per-pipeline type basis. Use this instead of PAL setting, NggEnableMode.&quot;,
+</code></pre>
+</blockquote>
+<blockquote>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/xgl/blob/c6c90450fb1abf5f414acf1e38a0f51a72c426c1/icd/settings/settings_xgl.json#L1152" rel="nofollow noreferrer" target="_blank">xgl/settings_xgl.json at c6c90450fb1abf5f414acf1e38a0f51a72c426c1 · GPUOpen-Drivers/xgl</a></cite>
-</div>
-
-<pre tabindex="0"><code>  // Represents configuration of static registers relevant to hardware primitive shader (NGG).</code></pre>
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/llpc/blob/93e40124f5067c8e932398204077843fb8445594/lgc/patch/Gfx9Chip.h#L316" rel="nofollow noreferrer" target="_blank">llpc/Gfx9Chip.h at 93e40124f5067c8e932398204077843fb8445594 · GPUOpen-Drivers/llpc</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/xgl/blob/c6c90450fb1abf5f414acf1e38a0f51a72c426c1/icd/settings/settings_xgl.json#L1152">xgl/settings_xgl.json at c6c90450fb1abf5f414acf1e38a0f51a72c426c1 · GPUOpen-Drivers/xgl</a></cite>
 </div>
 
 </blockquote>
+<blockquote>
+<pre><code>  // Represents configuration of static registers relevant to hardware primitive shader (NGG).
+</code></pre>
 
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/llpc/blob/93e40124f5067c8e932398204077843fb8445594/lgc/patch/Gfx9Chip.h#L316">llpc/Gfx9Chip.h at 93e40124f5067c8e932398204077843fb8445594 · GPUOpen-Drivers/llpc</a></cite>
+</div>
+
+</blockquote>
 <p>NGGカリング/プリミティブシェーダーは、レンダリングパイプラインにおいて、後に描画されずに破棄される対象を、計算する前に破棄する早期カリング機能の 1つ。従来のレンダリングパイプラインでは、頂点処理を行なった後に破棄するため、演算リソースが無駄となりやすい。</p>
-
-<p>今回のパッチでは <em>「for better performance」</em> とあるだけで具体的な性能向上の度合いには触れられていないが、<br />
-<em>Vega /GFX9</em> の資料には、従来のパイプラインと比較して、カリング処理の速度をサイクルあたり 4倍以上に引き上げられたとある。<sup class="footnote-ref" id="fnref:vega-whitepaper"><a href="#fn:vega-whitepaper">3</a></sup></p>
-
+<p>今回のパッチでは <em>「for better performance」</em> とあるだけで具体的な性能向上の度合いには触れられていないが、<br>
+<em>Vega /GFX9</em> の資料には、従来のパイプラインと比較して、カリング処理の速度をサイクルあたり 4倍以上に引き上げられたとある。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
 <p>最終的な性能への影響、ゲームにおける効果等はまだ不明だが、<em>Vega /GFX9</em> から約 3年越しで <em>RDNA /GFX10</em> 、<em>RDNA 2 /GFX10.3</em> 世代でついにデフォルトで有効化されるというのは感慨深いものがある。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://www.4gamer.net/games/337/G033714/20170804085/" rel="nofollow noreferrer" target="_blank">西川善司の3DGE：新設の「プリミティブシェーダ」を搭載し，Radeon RX Vegaはどこへ行く？</a></li>
+<li><a href="https://www.4gamer.net/games/337/G033714/20170804085/">西川善司の3DGE：新設の「プリミティブシェーダ」を搭載し，Radeon RX Vegaはどこへ行く？</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:navi1x-pro-nggc"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/57d317865e7bee02a17efcde8beeb6a220f900f1" rel="nofollow noreferrer" target="_blank">radeonsi: enable NGG culling by default on Navi1x PRO cards (57d31786) · Commits · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:navi1x-pro-nggc"><sup>[return]</sup></a></li>
-<li id="fn:pd-cs"><a href="https://lists.freedesktop.org/archives/mesa-dev/2019-February/215085.html" rel="nofollow noreferrer" target="_blank">[Mesa-dev] [PATCH 00/26] RadeonSI: Primitive culling with async compute</a> <br> <a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=RadeonSI-Prim-Culling-Async-Com" rel="nofollow noreferrer" target="_blank">RadeonSI Picks Up Primitive Culling With Async Compute For Performance Wins - Phoronix</a>
- <a class="footnote-return" href="#fnref:pd-cs"><sup>[return]</sup></a></li>
-<li id="fn:vega-whitepaper"><a href="https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf</a> (Page7)
- <a class="footnote-return" href="#fnref:vega-whitepaper"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/57d317865e7bee02a17efcde8beeb6a220f900f1">radeonsi: enable NGG culling by default on Navi1x PRO cards (57d31786) · Commits · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/mesa-dev/2019-February/215085.html">[Mesa-dev] [PATCH 00/26] RadeonSI: Primitive culling with async compute</a> <br> <a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=RadeonSI-Prim-Culling-Async-Com">RadeonSI Picks Up Primitive Culling With Async Compute For Performance Wins - Phoronix</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf">https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf</a> (Page7)&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

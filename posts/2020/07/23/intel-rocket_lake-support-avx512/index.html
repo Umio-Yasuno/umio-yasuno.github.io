@@ -70,126 +70,106 @@
 <div class="article-time">
     <time datetime="2020-07-23 09:06 &#43;0900" class="time-b">Post: 2020/07/23 09:06 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/08/19 09:51 &#43;0900</div>
-  </div>
-
-<p><a href="https://www.coelacanth-dream.com/posts/2020/06/28/intel-rocketlake-cache-guess/">以前</a>の Geekbench実行結果から、キャッシュ構成は <em>Ice Lake (Client)</em> 同様と判明していた <em>Rocket Lake</em> だが、エンジニアサンプリングであろうプロセッサの Linux Kernel が表示するメッセージ <code>dmesg</code> から、AVX-512 命令に対応することが判明した。</p>
-
+  </div><p><a href="https://www.coelacanth-dream.com/posts/2020/06/28/intel-rocketlake-cache-guess/">以前</a>の Geekbench実行結果から、キャッシュ構成は <em>Ice Lake (Client)</em> 同様と判明していた <em>Rocket Lake</em> だが、エンジニアサンプリングであろうプロセッサの Linux Kernel が表示するメッセージ <code>dmesg</code> から、AVX-512 命令に対応することが判明した。</p>
 <blockquote>
-<pre tabindex="0"><code>  [    0.000000] x86/fpu: Supporting XSAVE feature 0x020: &#39;AVX-512 opmask&#39;
-  [    0.000000] x86/fpu: Supporting XSAVE feature 0x040: &#39;AVX-512 Hi256&#39;
-  [    0.000000] x86/fpu: Supporting XSAVE feature 0x080: &#39;AVX-512 ZMM_Hi256&#39;
+<pre><code>  [    0.000000] x86/fpu: Supporting XSAVE feature 0x020: 'AVX-512 opmask'
+  [    0.000000] x86/fpu: Supporting XSAVE feature 0x040: 'AVX-512 Hi256'
+  [    0.000000] x86/fpu: Supporting XSAVE feature 0x080: 'AVX-512 ZMM_Hi256'
   ~~~
   [    0.000000] DMI: Intel Corporation Rocket Lake Client Platform/RocketLake S UDIMM 6L RVP, BIOS RKLSFWI1.R00.1205.A00.2005152058 05/15/2020
   ~~~
   [    0.080759] smpboot: CPU0: Genuine Intel(R) 0000 @ 3.20GHz (family: 0x6, model: 0xa7, stepping: 0x0)
   ~~~
-  [    0.097075] smpboot: Total of 16 processors activated (102144.00 BogoMIPS)</code></pre>
-<p>引用元: <cite><a href="https://github.com/thesofproject/sof/issues/3173" rel="nofollow noreferrer" target="_blank">[Bug][RKL]FW load failed · Issue #3173 · thesofproject/sofL</a></cite><br />
-&emsp;&emsp;&emsp;&emsp;&gt; <a href="https://github.com/thesofproject/sof/files/4917659/dmesg.txt" rel="nofollow noreferrer" target="_blank">https://github.com/thesofproject/sof/files/4917659/dmesg.txt</a></p>
+  [    0.097075] smpboot: Total of 16 processors activated (102144.00 BogoMIPS)
+</code></pre>
+<p>引用元: <cite><a href="https://github.com/thesofproject/sof/issues/3173">[Bug][RKL]FW load failed · Issue #3173 · thesofproject/sofL</a></cite><br>
+    &gt; <a href="https://github.com/thesofproject/sof/files/4917659/dmesg.txt">https://github.com/thesofproject/sof/files/4917659/dmesg.txt</a></p>
 </blockquote>
-
-<p>情報元は <a href="https://github.com/thesofproject/sof" rel="nofollow noreferrer" target="_blank">thesofproject/sof: Sound Open Firmware</a> であり、<em>Sound Open Firmware</em> は Intelプロセッサやそれとペアになる PCH に内蔵される音声処理用のDSPのサポートを提供するため、Intel がオープンソースで開発しているプロジェクトである。<sup class="footnote-ref" id="fnref:intel-sof"><a href="#fn:intel-sof">1</a></sup><br />
+<p>情報元は <a href="https://github.com/thesofproject/sof">thesofproject/sof: Sound Open Firmware</a> であり、<em>Sound Open Firmware</em> は Intelプロセッサやそれとペアになる PCH に内蔵される音声処理用のDSPのサポートを提供するため、Intel がオープンソースで開発しているプロジェクトである。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 上記 <code>dmesg</code> のログもバグ報告のためアップロードされたもの。</p>
-
-<p>今回の <em>Rocket Lake</em> プロセッサの仕様は、16-Thread、Base Clock 3.2GHz、ステッピングは <code>0x0</code> と、前回上げた Geekbench実行結果のものと一致する。<br />
-<span class="thread-link"><a href="https://browser.geekbench.com/v5/compute/1124595" rel="nofollow noreferrer" target="_blank">Intel Corporation Rocket Lake Client Platform - Geekbench Browser</a></span>
+<p>今回の <em>Rocket Lake</em> プロセッサの仕様は、16-Thread、Base Clock 3.2GHz、ステッピングは <code>0x0</code> と、前回上げた Geekbench実行結果のものと一致する。<br>
+<span class="thread-link"><a href="https://browser.geekbench.com/v5/compute/1124595">Intel Corporation Rocket Lake Client Platform - Geekbench Browser</a></span>
 
 しかし、<code>dmesg</code> ではベンチマーク実行結果よりも詳細な情報が表示されるため、前回ではわからなかった AVX-512 命令のサポートが判明した。</p>
-
 <h2 id="implement">実装はどうなるか</h2>
-
-<p>前回行なった推測では、端的に言って、<em>Skylake-SP</em> の例から消費電力比性能が悪化してしまうため、<em>Rocket Lake</em> では AVX-512 をサポートしないのではないか、としたが、<br />
-今回明らかになった情報でそれは破れた。<br />
+<p>前回行なった推測では、端的に言って、<em>Skylake-SP</em> の例から消費電力比性能が悪化してしまうため、<em>Rocket Lake</em> では AVX-512 をサポートしないのではないか、としたが、<br>
+今回明らかになった情報でそれは破れた。<br>
 しかし、実装が <em>Ice Lake (Client)</em> とまったく同じかはまだわからず、異なる可能性がある。</p>
-
-<p>異なる実装方式で考えられるのは、SIMD演算器自体は 256-bit であり、AVX-512 を 2回に分けて実行するというものだ。<br />
-これはそれなりに見かける実装方法であり、例えば、AMD <em>Zen アーキテクチャ</em> は AVX2(256-bit) をサポートしていたが、SIMD演算器は 128-bit までであったし、Centaur <em>CNS アーキテクチャ</em> (CHA SoC) も AVX-512 をサポートするが SIMD演算器は 256-bit だった。<br />
+<p>異なる実装方式で考えられるのは、SIMD演算器自体は 256-bit であり、AVX-512 を 2回に分けて実行するというものだ。<br>
+これはそれなりに見かける実装方法であり、例えば、AMD <em>Zen アーキテクチャ</em> は AVX2(256-bit) をサポートしていたが、SIMD演算器は 128-bit までであったし、Centaur <em>CNS アーキテクチャ</em> (CHA SoC) も AVX-512 をサポートするが SIMD演算器は 256-bit だった。<br>
 前2つの例とは少し異なるが、Intel <em>Skylake-SP</em> も <code>Port 5</code> では AVX-512 を 1回で処理することができ、<code>Port 0</code> と <code>Port 1</code> はそれぞれ 256-bit だが束ねることで全体のスループット的には 2個の AVX-512 実行が可能なものとなっていた。</p>
-
 <p>同様に、<em>Rocket Lake</em> も AVX-512 をサポートするが、演算器は 256-bit の実装に留め、2回に分けて実行、もしくはそれぞれ 256-bit の演算器を持つ 2つの実行ポートを束ねて実行する方式が考えられる。</p>
-
-<p>この実装方式の利点としては、AVX-512 をサポートでき、それに必要とされる変更は主にベクトルレジスタの増量とアクセスポート部であるため、演算器も対応させる方式と比べて、割かなければならないリソース、ダイエリアはずっと小さくて済む。<br />
+<p>この実装方式の利点としては、AVX-512 をサポートでき、それに必要とされる変更は主にベクトルレジスタの増量とアクセスポート部であるため、演算器も対応させる方式と比べて、割かなければならないリソース、ダイエリアはずっと小さくて済む。<br>
 欠点としては、若干でも必要とするリソースは増えるのに、ピーク性能は変わらないことがあげられるが、これに関してはサポートすることの意味が Intel にとっては大きいだろうから、あまり気にならないように思う。</p>
-
 <p><em>Ice Lake (Client)</em> のマイクロアーキテクチャは以下の画像の様になっており、AVX-512 を処理できるのは <code>Port 0</code> のみである。</p>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/07/23/ice_lake-client-arch.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/07/23/ice_lake-client-arch.webp"
       alt="画像出典: Intel® 64 and IA-32 Architectures Optimization Reference Manual"/>
 </a><figcaption>
-      <h4 class="fig-title">Ice Lake (Client) Microarchitecture</h4><p>画像出典: <cite><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="nofollow noreferrer" target="_blank">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></cite></p>
+      <h4 class="fig-title">Ice Lake (Client) Microarchitecture</h4><p>画像出典: <cite><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></cite></p>
   </figcaption>
 </figure>
 
-
 <p><em>Rocket Lake</em> ではこの <code>Port 0</code> と <code>Port 1</code> を束ねて AVX-512 を実行する方式を取る <em>かもしれない</em> 。</p>
-
-<p>そして気になるのは、2回に分ける、もしくは 2ポートを束ねる方式の場合、L1 Data Cache の帯域がどうなるかだが、<em>Skylake (Server)</em> アーキテクチャから、消費電力を抑えるため 96Byte/Cycle とすることが考えられる。<br />
+<p>そして気になるのは、2回に分ける、もしくは 2ポートを束ねる方式の場合、L1 Data Cache の帯域がどうなるかだが、<em>Skylake (Server)</em> アーキテクチャから、消費電力を抑えるため 96Byte/Cycle とすることが考えられる。<br>
 ただ、まあこれは推測よりも、自分の願望と言った方が近い気がする。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">Data Cache</th>
-<th align="center">Skylake (Client)</th>
-<th align="center">Skylake (Server)</th>
-<th align="center">Ice Lake (Client)</th>
-<th align="center">Rocket Lake</th>
+<th style="text-align:left">Data Cache</th>
+<th style="text-align:center">Skylake (Client)</th>
+<th style="text-align:center">Skylake (Server)</th>
+<th style="text-align:center">Ice Lake (Client)</th>
+<th style="text-align:center">Rocket Lake</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">L1D$ Size</td>
-<td align="center">32KB</td>
-<td align="center">32KB</td>
-<td align="center">48KB</td>
-<td align="center">48KB</td>
+<td style="text-align:left">L1D$ Size</td>
+<td style="text-align:center">32KB</td>
+<td style="text-align:center">32KB</td>
+<td style="text-align:center">48KB</td>
+<td style="text-align:center">48KB</td>
 </tr>
-
 <tr>
-<td align="left">L1D$ Bandwidth<br>(byte/cycle)</td>
-<td align="center">96B<br>(Load:2x32B)<br>(Store:1x32B)</td>
-<td align="center">192B<br>(Load:2x64B?)<br>(Store:1x64B?)</td>
-<td align="center">192B<br>(Load:2x64B)<br>(Store:1x64B or 2x32B)</td>
-<td align="center">96B??(guess)<br>(Load:2x32B??)<br>(Store:1x32B??)</td>
+<td style="text-align:left">L1D$ Bandwidth<br>(byte/cycle)</td>
+<td style="text-align:center">96B<br>(Load:2x32B)<br>(Store:1x32B)</td>
+<td style="text-align:center">192B<br>(Load:2x64B?)<br>(Store:1x64B?)</td>
+<td style="text-align:center">192B<br>(Load:2x64B)<br>(Store:1x64B or 2x32B)</td>
+<td style="text-align:center">96B??(guess)<br>(Load:2x32B??)<br>(Store:1x32B??)</td>
 </tr>
-
 <tr>
-<td align="left">L2$ Size</td>
-<td align="center">256KB</td>
-<td align="center">1024KB</td>
-<td align="center">512KB</td>
-<td align="center">512KB</td>
+<td style="text-align:left">L2$ Size</td>
+<td style="text-align:center">256KB</td>
+<td style="text-align:center">1024KB</td>
+<td style="text-align:center">512KB</td>
+<td style="text-align:center">512KB</td>
 </tr>
-
 <tr>
-<td align="left">L2$ Peak Bandwidth (byte/cycle)</td>
-<td align="center">64B</td>
-<td align="center">64B</td>
-<td align="center">64B</td>
-<td align="center">64B?</td>
+<td style="text-align:left">L2$ Peak Bandwidth (byte/cycle)</td>
+<td style="text-align:center">64B</td>
+<td style="text-align:center">64B</td>
+<td style="text-align:center">64B</td>
+<td style="text-align:center">64B?</td>
 </tr>
-
 <tr>
-<td align="left">L3$ Size (per Core)</td>
-<td align="center">2MB</td>
-<td align="center">1.375MB</td>
-<td align="center">2MB</td>
-<td align="center">2MB</td>
+<td style="text-align:left">L3$ Size (per Core)</td>
+<td style="text-align:center">2MB</td>
+<td style="text-align:center">1.375MB</td>
+<td style="text-align:center">2MB</td>
+<td style="text-align:center">2MB</td>
 </tr>
 </tbody>
 </table>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:intel-sof"><a href="https://software.intel.com/content/www/us/en/develop/articles/designing-firmware-for-an-open-world.html" rel="nofollow noreferrer" target="_blank">Designing Firmware for an Open World</a>
- <a class="footnote-return" href="#fnref:intel-sof"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://software.intel.com/content/www/us/en/develop/articles/designing-firmware-for-an-open-world.html">Designing Firmware for an Open World</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

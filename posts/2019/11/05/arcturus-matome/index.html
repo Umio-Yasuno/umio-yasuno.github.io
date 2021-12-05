@@ -70,55 +70,43 @@
 <div class="article-time">
     <time datetime="2019-11-05 19:02 &#43;0900" class="time-b">Post: 2019/11/05 19:02 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/07/20 11:51 &#43;0900</div>
-  </div>
-
-<p>GPGPU特化な次世代GPU、Arcturusについてのまとめ。</p>
-
-<p>AMDはRDNAの発表時、GPGPU用途ではGCNを、グラフィックやゲーミング用途にはRDNAを主軸に置くと言っていた。<br />
-Arcturusは方向性がはっきり分かれてから初めてのGCN製品となる。<br />
+  </div><p>GPGPU特化な次世代GPU、Arcturusについてのまとめ。</p>
+<p>AMDはRDNAの発表時、GPGPU用途ではGCNを、グラフィックやゲーミング用途にはRDNAを主軸に置くと言っていた。<br>
+Arcturusは方向性がはっきり分かれてから初めてのGCN製品となる。<br>
 だとしても吹っ切れすぎてる部分があるように思うが。</p>
-
 <h3 id="性能面">性能面</h3>
-
-<p>まず登場時のパッチから、最大128CU構成であることが予想される。<br />
-<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-July/036848.html" rel="nofollow noreferrer" target="_blank">drm/amdkfd: Increase vcrat size for GPU</a><br />
-そしてまた別のパッチから、最大 8ShaderEngine となることもわかっている。<br />
-<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/include/v9_structs.h?h=amd-staging-drm-next&amp;id=5145d57ec5f5cf7dadaa6ccd9c9f1e4dae82570b" rel="nofollow noreferrer" target="_blank">drm/amdkfd: Extend CU mask to 8 SEs (v3)</a><br />
-これまで最大64CU、4SEだったことを考えると、AMDがArcturusという名前を使ったのにも納得がいく。<br />
-<a href="https://www.youtube-nocookie.com/embed/i93Z7zljQ7I?start=134" rel="nofollow noreferrer" target="_blank">Universe Size Comparison 3D</a></p>
-
+<p>まず登場時のパッチから、最大128CU構成であることが予想される。<br>
+<a href="https://lists.freedesktop.org/archives/amd-gfx/2019-July/036848.html">drm/amdkfd: Increase vcrat size for GPU</a><br>
+そしてまた別のパッチから、最大 8ShaderEngine となることもわかっている。<br>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/include/v9_structs.h?h=amd-staging-drm-next&amp;id=5145d57ec5f5cf7dadaa6ccd9c9f1e4dae82570b">drm/amdkfd: Extend CU mask to 8 SEs (v3)</a><br>
+これまで最大64CU、4SEだったことを考えると、AMDがArcturusという名前を使ったのにも納得がいく。<br>
+<a href="https://www.youtube-nocookie.com/embed/i93Z7zljQ7I?start=134">Universe Size Comparison 3D</a></p>
 <p>当然Infinity FabricでのマルチGPUに対応していると思われ、EPYC Romeに合わせてCCIXでの接続にも対応してるかもしれないがまだわからない。</p>
-
-<p>GPGPU特化ということで映像出力がない、どころか3D Engineも持ってない。<br />
-RadeonSIの方にはグラフィック機能がなくても、マルチメディアとコンピュートには使えるようコードが追加された。（まだフラグだけだが）<br />
-<a href="https://gitlab.freedesktop.org/mesa/mesa/commit/417ab8ef6b82c868d7df16630c9a52bb71949b7b" rel="nofollow noreferrer" target="_blank"> radeonsi: add AMD_DEBUG=nogfx for testing </a><br />
-後はbfloat16に対応した。<br />
-bfloat16にはARMも対応するため、トレンドを考えると当然かもしれない。<br />
-<a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1211845.html" rel="nofollow noreferrer" target="_blank">Armが次々世代CPUコア「Matterhorn」の技術を発表-PC Watch</a></p>
-
-<p>完全にGPGPUとして吹っ切れたアーキテクチャとなっている。<br />
-NVIDIAの方はVoltaでGPGPU向けのアーキテクチャに振ったが、グラフィック部分はそのままで、TITAN VやQuadro GV100といった製品を出していたのに対し、<br />
+<p>GPGPU特化ということで映像出力がない、どころか3D Engineも持ってない。<br>
+RadeonSIの方にはグラフィック機能がなくても、マルチメディアとコンピュートには使えるようコードが追加された。（まだフラグだけだが）<br>
+<a href="https://gitlab.freedesktop.org/mesa/mesa/commit/417ab8ef6b82c868d7df16630c9a52bb71949b7b"> radeonsi: add AMD_DEBUG=nogfx for testing </a><br>
+後はbfloat16に対応した。<br>
+bfloat16にはARMも対応するため、トレンドを考えると当然かもしれない。<br>
+<a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1211845.html">Armが次々世代CPUコア「Matterhorn」の技術を発表-PC Watch</a></p>
+<p>完全にGPGPUとして吹っ切れたアーキテクチャとなっている。<br>
+NVIDIAの方はVoltaでGPGPU向けのアーキテクチャに振ったが、グラフィック部分はそのままで、TITAN VやQuadro GV100といった製品を出していたのに対し、<br>
 グラフィックはRDNAで行く、という気概が感じられる。</p>
-
 <h3 id="その他">その他</h3>
-
-<p>製品名はとりあえず MI100 だけがわかっている。<br />
-<a href="https://github.com/ROCmSoftwarePlatform/MIOpen/commit/bc7d47bd0d65b331667da74ba3cdb04893a77998" rel="nofollow noreferrer" target="_blank">MI100 merge (#1951)</a></p>
-
-<p>ArcturusにはVF<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>用のDeviceIDがあり、
-その関係かVCNを2つ搭載している。<br />
-VCN2.0では4ストリームのエンコードに対応していたため、Arcutusでは最大8ストリームとなるはずだ。<br />
-<a href="https://news.mynavi.jp/article/20190707-855531/7" rel="nofollow noreferrer" target="_blank">「Radeon RX 5700」と「Radeon RX 5700XT」を試す - 第3世代Ryzen+NAVI徹底攻略-マイナビニュース</a><br />
+<p>製品名はとりあえず MI100 だけがわかっている。<br>
+<a href="https://github.com/ROCmSoftwarePlatform/MIOpen/commit/bc7d47bd0d65b331667da74ba3cdb04893a77998">MI100 merge (#1951)</a></p>
+<p>ArcturusにはVF<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>用のDeviceIDがあり、</p>
+<p>その関係かVCNを2つ搭載している。<br>
+VCN2.0では4ストリームのエンコードに対応していたため、Arcutusでは最大8ストリームとなるはずだ。<br>
+<a href="https://news.mynavi.jp/article/20190707-855531/7">「Radeon RX 5700」と「Radeon RX 5700XT」を試す - 第3世代Ryzen+NAVI徹底攻略-マイナビニュース</a><br>
 一応、ArcturusではVCNのバージョンが2.5となっているが、2.0との違いは（まだ私が）わかっていない。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:1">Virual Function、<a href="https://www.amd.com/en/graphics/workstation-virtual-graphics" rel="nofollow noreferrer" target="_blank">https://www.amd.com/en/graphics/workstation-virtual-graphics</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p>Virual Function、<a href="https://www.amd.com/en/graphics/workstation-virtual-graphics">https://www.amd.com/en/graphics/workstation-virtual-graphics</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

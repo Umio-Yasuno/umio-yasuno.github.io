@@ -70,281 +70,267 @@
 <div class="article-time">
     <time datetime="2021-07-21 01:39 &#43;0900" class="time-b">Post: 2021/07/21 01:39 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/07/23 06:50 &#43;0900</div>
-  </div>
-
-<p>amd-gfxメーリングリストにて、Linux Kernel における AMD GPUドライバーに新たな RDNA APU <em>Cyan Skilfish</em> をサポートするパッチが公開された。一連のパッチの数は 29個で構成されている。</p>
-
+  </div><p>amd-gfxメーリングリストにて、Linux Kernel における AMD GPUドライバーに新たな RDNA APU <em>Cyan Skilfish</em> をサポートするパッチが公開された。一連のパッチの数は 29個で構成されている。</p>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066803.html" rel="nofollow noreferrer" target="_blank">[PATCH 00/29] Cyan Skillfish support</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066803.html">[PATCH 00/29] Cyan Skillfish support</a></li>
 </ul>
-
 <p>最初に書いておくと、一連のパッチの中でも <em>SKILFISH</em> と <em>SKILLFISH</em> で表記が揺れており、とりあえず辞書を引いたところ、海水魚 アブラボウズの英名として <em>SKILFISH</em> が出てきたため、前者が正しいと考えここでは <em>SKILFISH</em> で統一する。</p>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
-<li><a href="#rdna-apu">&quot;RDNA&quot; APU</a>
-
+<li><a href="#rdna-apu">&ldquo;RDNA&rdquo; APU</a>
 <ul class="page-index">
 <li><a href="#display-output">ディスプレイ出力はサポートせず?</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#v2">Cyan Skilfish と Cyan Skilfish2</a></li>
 <li><a href="#8-core">8-Core APU</a></li>
 </ul>
 
-
-<h2 id="rdna-apu">&quot;RDNA&quot; APU</h2>
-
-<p><em>Cyan Skilfish</em> は APU であり、パッチでは PCI (Device) ID に <code>0x13FE</code> 1つが追加されている。<br />
-一応 <a href="https://pci-ids.ucw.cz/read/PC/1002" rel="nofollow noreferrer" target="_blank">The PCI ID Repository</a> を確認したが、<code>0x13FE</code> はまだ登録されていなかった。</p>
-
+<h2 id="rdna-apu">&ldquo;RDNA&rdquo; APU</h2>
+<p><em>Cyan Skilfish</em> は APU であり、パッチでは PCI (Device) ID に <code>0x13FE</code> 1つが追加されている。<br>
+一応 <a href="https://pci-ids.ucw.cz/read/PC/1002">The PCI ID Repository</a> を確認したが、<code>0x13FE</code> はまだ登録されていなかった。</p>
 <blockquote>
-<pre tabindex="0"><code> +   /* CYAN_SKILLFISH */
- +   {0x1002, 0x13FE, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_CYAN_SKILLFISH|AMD_IS_APU},
- +</code></pre>
+<pre><code> +	/* CYAN_SKILLFISH */
+ +	{0x1002, 0x13FE, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_CYAN_SKILLFISH|AMD_IS_APU},
+ +
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066832.html" rel="nofollow noreferrer" target="_blank">[PATCH 29/29] drm/amdgpu: add pci device id for cyan_skillfish</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066832.html">[PATCH 29/29] drm/amdgpu: add pci device id for cyan_skillfish</a></cite>
 </div>
 
 </blockquote>
-
 <p><em>Cyan Skilfish</em> は Navi10 (Navi12) と同じキャッシュ構成を採っているとしている。
-<em>Navi10/Navi12/Cyan Skilfish</em> のキャッシュ構成は、CU ごとの L1ベクタキャッシュは 16KiB、WGP 1基 (CU 2基) で共有する L1命令キャッシュは 32KiB、同様の L1データキャッシュは 16KiB、<br />
-ShaderArray ごとに持つ RDNA L1キャッシュ、オープンソースドライバー上では GL1データキャッシュとも呼ばれるものは 128KiB、そしてメモリサイドキャッシュである L2データキャッシュは 4096KiB (4MiB)、というものになる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/30/amdgpu_cache_info/#vgh">AMD GPU のキャッシュ構成情報　―― Dimgrey Cavefish / Aldebaran / VanGogh | Coelacanth's Dream</a></span>
+<em>Navi10/Navi12/Cyan Skilfish</em> のキャッシュ構成は、CU ごとの L1ベクタキャッシュは 16KiB、WGP 1基 (CU 2基) で共有する L1命令キャッシュは 32KiB、同様の L1データキャッシュは 16KiB、<br>
+ShaderArray ごとに持つ RDNA L1キャッシュ、オープンソースドライバー上では GL1データキャッシュとも呼ばれるものは 128KiB、そしてメモリサイドキャッシュである L2データキャッシュは 4096KiB (4MiB)、というものになる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/30/amdgpu_cache_info/#vgh">AMD GPU のキャッシュ構成情報　―― Dimgrey Cavefish / Aldebaran / VanGogh | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <blockquote>
-<pre tabindex="0"><code>     case CHIP_NAVI10:
-     case CHIP_NAVI12:
- +   case CHIP_CYAN_SKILLFISH:
-         pcache_info = navi10_cache_info;
-         num_of_cache_types = ARRAY_SIZE(navi10_cache_info);
-         break;</code></pre>
+<pre><code>  	case CHIP_NAVI10:
+  	case CHIP_NAVI12:
+ +	case CHIP_CYAN_SKILLFISH:
+  		pcache_info = navi10_cache_info;
+  		num_of_cache_types = ARRAY_SIZE(navi10_cache_info);
+  		break;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066817.html" rel="nofollow noreferrer" target="_blank">[PATCH 14/29] drm/amdkfd: enable cyan_skillfish KFD</a></cite>
-</div>
-
-<pre tabindex="0"><code>     static struct kfd_gpu_cache_info navi10_cache_info[] = {
-     {
-         /* TCP L1 Cache per CU */
-         .cache_size = 16,
-         .cache_level = 1,
-         .flags = (CRAT_CACHE_FLAGS_ENABLED |
-                 CRAT_CACHE_FLAGS_DATA_CACHE |
-                 CRAT_CACHE_FLAGS_SIMD_CACHE),
-         .num_cu_shared = 1,
-     },
-     {
-         /* Scalar L1 Instruction Cache per SQC */
-         .cache_size = 32,
-         .cache_level = 1,
-         .flags = (CRAT_CACHE_FLAGS_ENABLED |
-                 CRAT_CACHE_FLAGS_INST_CACHE |
-                 CRAT_CACHE_FLAGS_SIMD_CACHE),
-         .num_cu_shared = 2,
-     },
-     {
-         /* Scalar L1 Data Cache per SQC */
-         .cache_size = 16,
-         .cache_level = 1,
-         .flags = (CRAT_CACHE_FLAGS_ENABLED |
-                 CRAT_CACHE_FLAGS_DATA_CACHE |
-                 CRAT_CACHE_FLAGS_SIMD_CACHE),
-         .num_cu_shared = 2,
-     },
-     {
-         /* GL1 Data Cache per SA */
-         .cache_size = 128,
-         .cache_level = 1,
-         .flags = (CRAT_CACHE_FLAGS_ENABLED |
-                 CRAT_CACHE_FLAGS_DATA_CACHE |
-                 CRAT_CACHE_FLAGS_SIMD_CACHE),
-         .num_cu_shared = 10,
-     },
-     {
-         /* L2 Data Cache per GPU (Total Tex Cache) */
-         .cache_size = 4096,
-         .cache_level = 2,
-         .flags = (CRAT_CACHE_FLAGS_ENABLED |
-                 CRAT_CACHE_FLAGS_DATA_CACHE |
-                 CRAT_CACHE_FLAGS_SIMD_CACHE),
-         .num_cu_shared = 10,
-     },
- };</code></pre>
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/bf9d4e88c28b397ec6ec289c592ed41b552b8929/drivers/gpu/drm/amd/amdkfd/kfd_crat.c#L377" rel="nofollow noreferrer" target="_blank">linux/kfd_crat.c at bf9d4e88c28b397ec6ec289c592ed41b552b8929 · torvalds/linux</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066817.html">[PATCH 14/29] drm/amdkfd: enable cyan_skillfish KFD</a></cite>
 </div>
 
 </blockquote>
+<blockquote>
+<pre><code>  	static struct kfd_gpu_cache_info navi10_cache_info[] = {
+ 	{
+ 		/* TCP L1 Cache per CU */
+ 		.cache_size = 16,
+ 		.cache_level = 1,
+ 		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+ 				CRAT_CACHE_FLAGS_DATA_CACHE |
+ 				CRAT_CACHE_FLAGS_SIMD_CACHE),
+ 		.num_cu_shared = 1,
+ 	},
+ 	{
+ 		/* Scalar L1 Instruction Cache per SQC */
+ 		.cache_size = 32,
+ 		.cache_level = 1,
+ 		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+ 				CRAT_CACHE_FLAGS_INST_CACHE |
+ 				CRAT_CACHE_FLAGS_SIMD_CACHE),
+ 		.num_cu_shared = 2,
+ 	},
+ 	{
+ 		/* Scalar L1 Data Cache per SQC */
+ 		.cache_size = 16,
+ 		.cache_level = 1,
+ 		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+ 				CRAT_CACHE_FLAGS_DATA_CACHE |
+ 				CRAT_CACHE_FLAGS_SIMD_CACHE),
+ 		.num_cu_shared = 2,
+ 	},
+ 	{
+ 		/* GL1 Data Cache per SA */
+ 		.cache_size = 128,
+ 		.cache_level = 1,
+ 		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+ 				CRAT_CACHE_FLAGS_DATA_CACHE |
+ 				CRAT_CACHE_FLAGS_SIMD_CACHE),
+ 		.num_cu_shared = 10,
+ 	},
+ 	{
+ 		/* L2 Data Cache per GPU (Total Tex Cache) */
+ 		.cache_size = 4096,
+ 		.cache_level = 2,
+ 		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+ 				CRAT_CACHE_FLAGS_DATA_CACHE |
+ 				CRAT_CACHE_FLAGS_SIMD_CACHE),
+ 		.num_cu_shared = 10,
+ 	},
+ };
+</code></pre>
 
-<p>ソースコード中では、<em>RDNA 2/GFX10.3 GPU</em> も一部は <em>RDNA/GFX10.1 GPU</em> と同じレジスタ設定等を用いていることもあり、<em>RDNA</em> か <em>RDNA 2</em> かという判断が曖昧になる部分が出てくるが、<br />
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/bf9d4e88c28b397ec6ec289c592ed41b552b8929/drivers/gpu/drm/amd/amdkfd/kfd_crat.c#L377">linux/kfd_crat.c at bf9d4e88c28b397ec6ec289c592ed41b552b8929 · torvalds/linux</a></cite>
+</div>
+
+</blockquote>
+<p>ソースコード中では、<em>RDNA 2/GFX10.3 GPU</em> も一部は <em>RDNA/GFX10.1 GPU</em> と同じレジスタ設定等を用いていることもあり、<em>RDNA</em> か <em>RDNA 2</em> かという判断が曖昧になる部分が出てくるが、<br>
 GFXコア部に関する部分では <em>Navi10/Navi12/Navi14</em> 、<em>RDNA/GFX10.1 GPU</em> と同じものを使用しているため、<em>Cyan Skilfish</em> は <em>RDNA/GFX10.1</em> を GPU部に採用した APU だと考えられる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>     [CHIP_DIMGREY_CAVEFISH] = &amp;gfx_v10_3_kfd2kgd,
-     [CHIP_BEIGE_GOBY] = &amp;gfx_v10_3_kfd2kgd,
-     [CHIP_YELLOW_CARP] = &amp;gfx_v10_3_kfd2kgd,
- +   [CHIP_CYAN_SKILLFISH] = &amp;gfx_v10_kfd2kgd,
-  };</code></pre>
+<pre><code>  	[CHIP_DIMGREY_CAVEFISH] = &amp;gfx_v10_3_kfd2kgd,
+  	[CHIP_BEIGE_GOBY] = &amp;gfx_v10_3_kfd2kgd,
+  	[CHIP_YELLOW_CARP] = &amp;gfx_v10_3_kfd2kgd,
+ +	[CHIP_CYAN_SKILLFISH] = &amp;gfx_v10_kfd2kgd,
+  };
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066817.html" rel="nofollow noreferrer" target="_blank">[PATCH 14/29] drm/amdkfd: enable cyan_skillfish KFD</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066817.html">[PATCH 14/29] drm/amdkfd: enable cyan_skillfish KFD</a></cite>
 </div>
 
-<pre tabindex="0"><code>  @@ -4748,6 +4759,7 @@ static int gfx_v10_0_sw_init(void *handle)
-     case CHIP_NAVI10:
-     case CHIP_NAVI14:
-     case CHIP_NAVI12:
- +   case CHIP_CYAN_SKILLFISH:
-         adev-&gt;gfx.me.num_me = 1;
-         adev-&gt;gfx.me.num_pipe_per_me = 1;
-         adev-&gt;gfx.me.num_queue_per_pipe = 1;
+</blockquote>
+<blockquote>
+<pre><code>  @@ -4748,6 +4759,7 @@ static int gfx_v10_0_sw_init(void *handle)
+  	case CHIP_NAVI10:
+  	case CHIP_NAVI14:
+  	case CHIP_NAVI12:
+ +	case CHIP_CYAN_SKILLFISH:
+  		adev-&gt;gfx.me.num_me = 1;
+  		adev-&gt;gfx.me.num_pipe_per_me = 1;
+  		adev-&gt;gfx.me.num_queue_per_pipe = 1;
  @@ -7712,6 +7724,7 @@ static int gfx_v10_0_early_init(void *handle)
-     case CHIP_NAVI10:
-     case CHIP_NAVI14:
-     case CHIP_NAVI12:
- +   case CHIP_CYAN_SKILLFISH:
-         adev-&gt;gfx.num_gfx_rings = GFX10_NUM_GFX_RINGS_NV1X;
-         break;</code></pre>
+  	case CHIP_NAVI10:
+  	case CHIP_NAVI14:
+  	case CHIP_NAVI12:
+ +	case CHIP_CYAN_SKILLFISH:
+  		adev-&gt;gfx.num_gfx_rings = GFX10_NUM_GFX_RINGS_NV1X;
+  		break;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066814.html" rel="nofollow noreferrer" target="_blank">[PATCH 11/29] drm/amdgpu: add cyan_skillfish support in gfx v10</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066814.html">[PATCH 11/29] drm/amdgpu: add cyan_skillfish support in gfx v10</a></cite>
 </div>
 
 </blockquote>
-
 <p>そして興味深いことに、 <code>amd_asci_type</code> 列挙体に <em>Cyan Skilfish</em> を追加する際、最近になって追加された <a href="https://www.coelacanth-dream.com/tags/yellow_carp">Yellow Carp APU</a> の後ではなく、<em>Navi10</em> と <em>Navi14</em> の間に入るように追加されている。</p>
-
 <p>若干直感的ではあるが、以前 LLVM に追加された <a href="https://www.coelacanth-dream.com/tags/gfx1013">GPUID: gfx1013</a> が示す APU が <em>Cyan Skilfish</em> だと自分は考えている。何よりも <em>gfx1013</em> と <em>Cyan Skilfish</em> は <em>RDNA APU</em> という点が一致する。現在、他に <em>RDNA APU</em> は AMD GPU のオープンソースソフトウェアスタックにおいて存在しない。</p>
+<p><em>Navi10</em> と <em>Navi12/Navi14</em> は同じ <em>RDNA/GFX10.1</em> 世代であっても対応する機能や命令に違いが存在し、基本的に <em>Navi12/Navi14</em> が多くの機能、命令をサポートしている。<br>
+<em>Navi12/Navi14</em> が対応する、RB (Render Backend) 部における DCC (Delta Color Compression) 機能やドット積命令の一部は <em>Navi10</em> ではサポートされていない。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/07/29/amd-navy_flounder-umd-patch/#navi10-rb">RadeonSI、RADV が AMD Navy Flounder をサポート | Coelacanth&rsquo;s Dream</a></span>
 
-<p><em>Navi10</em> と <em>Navi12/Navi14</em> は同じ <em>RDNA/GFX10.1</em> 世代であっても対応する機能や命令に違いが存在し、基本的に <em>Navi12/Navi14</em> が多くの機能、命令をサポートしている。<br />
-<em>Navi12/Navi14</em> が対応する、RB (Render Backend) 部における DCC (Delta Color Compression) 機能やドット積命令の一部は <em>Navi10</em> ではサポートされていない。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/07/29/amd-navy_flounder-umd-patch/#navi10-rb">RadeonSI、RADV が AMD Navy Flounder をサポート | Coelacanth's Dream</a></span>
+<em>gfx1013</em> は命令範囲について <em>Navi10/gfx1010</em> をベースにしており、ドット積命令の一部に対応しない点も引き継いでいる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/06/04/llvm-gpuid-gfx1013/">RDNA/GFX10.1世代に新たな GPUID、gfx1013? | Coelacanth&rsquo;s Dream</a></span>
 
-<em>gfx1013</em> は命令範囲について <em>Navi10/gfx1010</em> をベースにしており、ドット積命令の一部に対応しない点も引き継いでいる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/04/llvm-gpuid-gfx1013/">RDNA/GFX10.1世代に新たな GPUID、gfx1013? | Coelacanth's Dream</a></span>
-
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/06/gfx1013-apu-rt/">GPUID: gfx1013 は RDNA/Navi10ベースの APU で、レイトレーシング命令をサポートしている? | Coelacanth's Dream</a></span>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/06/06/gfx1013-apu-rt/">GPUID: gfx1013 は RDNA/Navi10ベースの APU で、レイトレーシング命令をサポートしている? | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <p>GPU ASIC の開発時期を反映したか、関連して <em>Navi10</em> をベースにしたとするならば、わざわざ <em>Navi10</em> と <em>Navi14</em> の間に <em>Cyan Skilfish</em> を置いたことがしっくりいく。</p>
-
 <blockquote>
-<pre tabindex="0"><code>     CHIP_NAVI10,    /* 26 */
- -   CHIP_NAVI14,    /* 27 */
- -   CHIP_NAVI12,    /* 28 */
- -   CHIP_SIENNA_CICHLID,    /* 29 */
- -   CHIP_NAVY_FLOUNDER, /* 30 */
- -   CHIP_VANGOGH,   /* 31 */
- -   CHIP_DIMGREY_CAVEFISH,  /* 32 */
- -   CHIP_BEIGE_GOBY,    /* 33 */
- -   CHIP_YELLOW_CARP,   /* 34 */
- +   CHIP_CYAN_SKILLFISH,    /* 27 */
- +   CHIP_NAVI14,    /* 28 */
- +   CHIP_NAVI12,    /* 29 */
- +   CHIP_SIENNA_CICHLID,    /* 30 */
- +   CHIP_NAVY_FLOUNDER, /* 31 */
- +   CHIP_VANGOGH,   /* 32 */
- +   CHIP_DIMGREY_CAVEFISH,  /* 33 */
- +   CHIP_BEIGE_GOBY,    /* 34 */
- +   CHIP_YELLOW_CARP,   /* 35 */
-     CHIP_LAST,
-  };</code></pre>
+<pre><code>  	CHIP_NAVI10,	/* 26 */
+ -	CHIP_NAVI14,	/* 27 */
+ -	CHIP_NAVI12,	/* 28 */
+ -	CHIP_SIENNA_CICHLID,	/* 29 */
+ -	CHIP_NAVY_FLOUNDER,	/* 30 */
+ -	CHIP_VANGOGH,	/* 31 */
+ -	CHIP_DIMGREY_CAVEFISH,	/* 32 */
+ -	CHIP_BEIGE_GOBY,	/* 33 */
+ -	CHIP_YELLOW_CARP,	/* 34 */
+ +	CHIP_CYAN_SKILLFISH,	/* 27 */
+ +	CHIP_NAVI14,	/* 28 */
+ +	CHIP_NAVI12,	/* 29 */
+ +	CHIP_SIENNA_CICHLID,	/* 30 */
+ +	CHIP_NAVY_FLOUNDER,	/* 31 */
+ +	CHIP_VANGOGH,	/* 32 */
+ +	CHIP_DIMGREY_CAVEFISH,	/* 33 */
+ +	CHIP_BEIGE_GOBY,	/* 34 */
+ +	CHIP_YELLOW_CARP,	/* 35 */
+  	CHIP_LAST,
+  };
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066805.html" rel="nofollow noreferrer" target="_blank">[PATCH 03/29] drm/amdgpu: add cyan_skillfish asic type</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066805.html">[PATCH 03/29] drm/amdgpu: add cyan_skillfish asic type</a></cite>
 </div>
 
 </blockquote>
-
 <h3 id="display-output">ディスプレイ出力はサポートせず?</h3>
-
-<p>それと <em>Cyan Skilfish</em> は APU だが、今回のパッチではディスプレイコントローラー/エンジン部のサポートが追加されていない。<br />
+<p>それと <em>Cyan Skilfish</em> は APU だが、今回のパッチではディスプレイコントローラー/エンジン部のサポートが追加されていない。<br>
 それだけでなくディスプレイコントローラー/エンジン部の IP に関しても仮想的なものを用いるように記述されており、ディスプレイ出力をサポートした <em>Cyan Skilfish</em> を想定していないか、あるいは本当に元から <em>Cyan Skilfish</em> にディスプレイ出力とコントローラー/エンジンが実装されていないか、だと思われる。</p>
-
 <blockquote>
-<pre tabindex="0"><code> +   case CHIP_CYAN_SKILLFISH:
- +       amdgpu_device_ip_block_add(adev, &amp;nv_common_ip_block);
+<pre><code> +	case CHIP_CYAN_SKILLFISH:
+ +		amdgpu_device_ip_block_add(adev, &amp;nv_common_ip_block);
  +                amdgpu_device_ip_block_add(adev, &amp;gmc_v10_0_ip_block);
  +                amdgpu_device_ip_block_add(adev, &amp;navi10_ih_ip_block);
  +                if (adev-&gt;enable_virtual_display || amdgpu_sriov_vf(adev))
  +                        amdgpu_device_ip_block_add(adev, &amp;dce_virtual_ip_block);
  +                amdgpu_device_ip_block_add(adev, &amp;gfx_v10_0_ip_block);
  +                amdgpu_device_ip_block_add(adev, &amp;sdma_v5_0_ip_block);
- +       break;</code></pre>
+ +		break;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066808.html" rel="nofollow noreferrer" target="_blank">[PATCH 06/29] drm/amdgpu: set ip blocks for cyan_skillfish</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066808.html">[PATCH 06/29] drm/amdgpu: set ip blocks for cyan_skillfish</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="v2">Cyan Skilfish と Cyan Skilfish2</h2>
-
 <p><em>Cyan Skilfish</em> にはもう 1つ、<em>Cyan Skilfish2</em> が存在することが示されており、読み込むファームウェアはその 2つで別に用意されることになっている。</p>
-
 <blockquote>
-<pre tabindex="0"><code> +   case CHIP_CYAN_SKILLFISH:
- +       if (adev-&gt;apu_flags &amp; AMD_APU_IS_CYAN_SKILLFISH2)
- +           chip_name = &#34;cyan_skillfish2&#34;;
- +       else
- +           chip_name = &#34;cyan_skillfish&#34;;
- +       break;</code></pre>
+<pre><code> +	case CHIP_CYAN_SKILLFISH:
+ +		if (adev-&gt;apu_flags &amp; AMD_APU_IS_CYAN_SKILLFISH2)
+ +			chip_name = &quot;cyan_skillfish2&quot;;
+ +		else
+ +			chip_name = &quot;cyan_skillfish&quot;;
+ +		break;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066809.html" rel="nofollow noreferrer" target="_blank">[PATCH 07/29] drm/amdgpu: add cp/rlc fw loading support for cyan_skillfish</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066809.html">[PATCH 07/29] drm/amdgpu: add cp/rlc fw loading support for cyan_skillfish</a></cite>
 </div>
 
 </blockquote>
-
-<p>ただ、ここで <code>chip_name</code> を <code>&quot;cyan_skillfish2&quot;</code> と判定する部分に使われているフラグは PCI ID が <code>0x13FE</code> の時にセットされるようになっている。上で触れたように <em>Cyan Skilfish</em> の ID として追加されたのはその <code>0x13FE</code> のみである。<br />
+<p>ただ、ここで <code>chip_name</code> を <code>&quot;cyan_skillfish2&quot;</code> と判定する部分に使われているフラグは PCI ID が <code>0x13FE</code> の時にセットされるようになっている。上で触れたように <em>Cyan Skilfish</em> の ID として追加されたのはその <code>0x13FE</code> のみである。<br>
 今回のパッチで想定しているのは <em>Cyan Skilfish2</em> のみで、恐らくそうでない <em>Cyan Skilfish</em> は開発中に何かしらのバグがあった GPU ASIC ではないかと思われる。</p>
-
 <blockquote>
-<pre tabindex="0"><code> +   case CHIP_CYAN_SKILLFISH:
- +       if (adev-&gt;pdev-&gt;device == 0x13FE)
- +           adev-&gt;apu_flags |= AMD_APU_IS_CYAN_SKILLFISH2;
- +       break;</code></pre>
+<pre><code> +	case CHIP_CYAN_SKILLFISH:
+ +		if (adev-&gt;pdev-&gt;device == 0x13FE)
+ +			adev-&gt;apu_flags |= AMD_APU_IS_CYAN_SKILLFISH2;
+ +		break;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066805.html" rel="nofollow noreferrer" target="_blank">[PATCH 03/29] drm/amdgpu: add cyan_skillfish asic type</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066805.html">[PATCH 03/29] drm/amdgpu: add cyan_skillfish asic type</a></cite>
 </div>
 
 </blockquote>
-
-<p>また、<em>Cyan Skilfish/2</em> で処理が分けられているのは主に PSP (Platform Security Processor) に関する部分であり、開発中に問題が発生してしまったのも PSP部ではないかと考えられる。<br />
-<em>Cyan Skilfish</em> は PSP の IPバージョンが異なり、PSP v11.0.8 を採用している。<br />
+<p>また、<em>Cyan Skilfish/2</em> で処理が分けられているのは主に PSP (Platform Security Processor) に関する部分であり、開発中に問題が発生してしまったのも PSP部ではないかと考えられる。<br>
+<em>Cyan Skilfish</em> は PSP の IPバージョンが異なり、PSP v11.0.8 を採用している。<br>
 他の <em>RDNA / RDNA 2 APU/GPU</em> は PSP v11.0 を採用しているため、新規に開発したとすれば問題が起きやすいことが想像できる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>     case CHIP_CYAN_SKILLFISH:
- +       if (adev-&gt;apu_flags &amp; AMD_APU_IS_CYAN_SKILLFISH2 &amp;&amp;
- +           load_type &gt; 1)
- +           return AMDGPU_FW_LOAD_PSP;
-         return AMDGPU_FW_LOAD_DIRECT;</code></pre>
+<pre><code>  	case CHIP_CYAN_SKILLFISH:
+ +		if (adev-&gt;apu_flags &amp; AMD_APU_IS_CYAN_SKILLFISH2 &amp;&amp;
+ +		    load_type &gt; 1)
+ +			return AMDGPU_FW_LOAD_PSP;
+  		return AMDGPU_FW_LOAD_DIRECT;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066822.html" rel="nofollow noreferrer" target="_blank">[PATCH 21/29] drm/amdgpu: use direct loading by default for cyan_skillfish2</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066822.html">[PATCH 21/29] drm/amdgpu: use direct loading by default for cyan_skillfish2</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="8-core">8-Core APU</h2>
-
-<p><em>Cyan Skilfish</em> は SMU (System Management Unit) に関する記述から、CPU部 8-Core を持つ APU だと考えられる。<br />
-8-Core APU には <em>Xbox Series S|X SoC</em> や <em>PS5 SoC</em> 、後はまあ <em>AMD 4700S</em> とか色々存在するが、<code>0x13FE</code> は <a href="https://pci-ids.ucw.cz/read/PC/1002" rel="nofollow noreferrer" target="_blank">The PCI ID Repository</a> にもまだ追加されていなかった ID であり、そして AMD が公式的に提供している情報では <em>Cyan Skilfish</em> についてそれ以上の判断はできないため、とりあえず自分が触れるのもここまでにしておきたい。</p>
-
+<p><em>Cyan Skilfish</em> は SMU (System Management Unit) に関する記述から、CPU部 8-Core を持つ APU だと考えられる。<br>
+8-Core APU には <em>Xbox Series S|X SoC</em> や <em>PS5 SoC</em> 、後はまあ <em>AMD 4700S</em> とか色々存在するが、<code>0x13FE</code> は <a href="https://pci-ids.ucw.cz/read/PC/1002">The PCI ID Repository</a> にもまだ追加されていなかった ID であり、そして AMD が公式的に提供している情報では <em>Cyan Skilfish</em> についてそれ以上の判断はできないため、とりあえず自分が触れるのもここまでにしておきたい。</p>
 <blockquote>
-<pre tabindex="0"><code> +#define NUMBER_OF_PSTATES      8
- +#define NUMBER_OF_CORES            8</code></pre>
+<pre><code> +#define NUMBER_OF_PSTATES		8
+ +#define NUMBER_OF_CORES			8
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066825.html" rel="nofollow noreferrer" target="_blank">[PATCH 24/29] drm/amdgpu: add smu interface header for cyan_skilfish</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066825.html">[PATCH 24/29] drm/amdgpu: add smu interface header for cyan_skilfish</a></cite>
 </div>
 
-<pre tabindex="0"><code> +typedef enum {
- +   CPU_CORE0 = 0,
- +   CPU_CORE1,
- +   CPU_CORE2,
- +   CPU_CORE3,
- +   CPU_CORE4,
- +   CPU_CORE5,
- +   CPU_CORE6,
- +   CPU_CORE7
- +} CORE_ID_e;</code></pre>
+<pre><code> +typedef enum {
+ +	CPU_CORE0 = 0,
+ +	CPU_CORE1,
+ +	CPU_CORE2,
+ +	CPU_CORE3,
+ +	CPU_CORE4,
+ +	CPU_CORE5,
+ +	CPU_CORE6,
+ +	CPU_CORE7
+ +} CORE_ID_e;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066825.html" rel="nofollow noreferrer" target="_blank">[PATCH 24/29] drm/amdgpu: add smu interface header for cyan_skilfish</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066825.html">[PATCH 24/29] drm/amdgpu: add smu interface header for cyan_skilfish</a></cite>
 </div>
 
 </blockquote>

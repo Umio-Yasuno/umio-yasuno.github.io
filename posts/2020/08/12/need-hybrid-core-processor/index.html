@@ -70,72 +70,57 @@
 <div class="article-time">
     <time datetime="2020-08-12 08:14 &#43;0900" class="time-b">Post: 2020/08/12 08:14 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/08/16 15:35 &#43;0900</div>
-  </div>
-
-<p>異なる種類のコアを 1つのSoC/プロセッサに搭載するハイブリッドコア技術を、Intel は <a href="https://www.coelacanth-dream.com/tags/lakefield">Lakefield</a>で実用化し、続く <a href="https://www.coelacanth-dream.com/tags/alder_lake">Alder Lake</a> ではデスクトップ向けにも導入すると目されている。<br />
-AMD もまたハイブリッドコア技術に関する特許を提出しており、注目を浴びている。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/08/11/amd-hybrid-core-for-low-power/">AMD の省電力に向けたハイブリットコア技術を読む | Coelacanth's Dream</a></span>
+  </div><p>異なる種類のコアを 1つのSoC/プロセッサに搭載するハイブリッドコア技術を、Intel は <a href="https://www.coelacanth-dream.com/tags/lakefield">Lakefield</a>で実用化し、続く <a href="https://www.coelacanth-dream.com/tags/alder_lake">Alder Lake</a> ではデスクトップ向けにも導入すると目されている。<br>
+AMD もまたハイブリッドコア技術に関する特許を提出しており、注目を浴びている。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/08/11/amd-hybrid-core-for-low-power/">AMD の省電力に向けたハイブリットコア技術を読む | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p>ハイブリッドコアは主に、高性能、高機能でダイエリアを大きく取るコア(<code>big /High /Core系</code>コア) と、<br />
+<p>ハイブリッドコアは主に、高性能、高機能でダイエリアを大きく取るコア(<code>big /High /Core系</code>コア) と、<br>
 性能、機能面では <code>big /High /Core</code>コアより劣るが、電力比性能で優れ、占有するダイエリアが小さいコア(<code>small /Low /Atom</code>コア) の 2種類を用いて構成される。</p>
-
-<p>このハイブリッド技術に関して、ただ私見を書いていく。<br />
-先に書くと、以前書いた <em>Alder Lake</em> の推測だいぶ被る内容となっている。<sup class="footnote-ref" id="fnref:adl-cd-guess"><a href="#fn:adl-cd-guess">1</a></sup></p>
-
+<p>このハイブリッド技術に関して、ただ私見を書いていく。<br>
+先に書くと、以前書いた <em>Alder Lake</em> の推測だいぶ被る内容となっている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <h2 id="dark-silicon">ダークシリコン問題</h2>
-
-<p>ずっと以前より、消費電力、電力密度、発熱等から、ダイ上に同時には電力を供給できない部分が出てくる <em>ダークシリコン問題</em> が顕在化していた。<br />
-この問題に対し、CPUベンダーはプロセッサに CPU とは別に、ある特定の用途に対して効率的に処理ができるユニットを搭載したり、または、シングルコアではあるクロックを設定できるプロセッサに対し、全てのコアに負荷が掛かる場合はクロックをそれよりも制限することで対処してきた。<br />
+<p>ずっと以前より、消費電力、電力密度、発熱等から、ダイ上に同時には電力を供給できない部分が出てくる <em>ダークシリコン問題</em> が顕在化していた。<br>
+この問題に対し、CPUベンダーはプロセッサに CPU とは別に、ある特定の用途に対して効率的に処理ができるユニットを搭載したり、または、シングルコアではあるクロックを設定できるプロセッサに対し、全てのコアに負荷が掛かる場合はクロックをそれよりも制限することで対処してきた。<br>
 例えば、Intel はある世代から同じダイに CPU と GPU を搭載し、時には GPU に半分近くのダイエリアを割くことでダークシリコン問題を軽減してきた。それ以外にも <em>Ice Lake (Client)</em> に Thunderbold 3 のコントローラーを搭載するなどしている。</p>
-
-<p>このダークシリコン問題により、仮に <code>big /High /Core</code>コアを多数搭載したとしても、消費電力、発熱等によって最大クロックは制限され、ピーク性能は下がる。そのことはトランジスタ数効率の悪化も意味する。<br />
-トランジスタ数が多ければリーク電流もまた増大するため、トランジスタ数効率の悪化は大きな問題と言える。<br />
+<p>このダークシリコン問題により、仮に <code>big /High /Core</code>コアを多数搭載したとしても、消費電力、発熱等によって最大クロックは制限され、ピーク性能は下がる。そのことはトランジスタ数効率の悪化も意味する。<br>
+トランジスタ数が多ければリーク電流もまた増大するため、トランジスタ数効率の悪化は大きな問題と言える。<br>
 性能がトランジスタ数、ダイサイズに見合わないとなると、生産コストが重く伸し掛かるという商業的な問題もあるだろう。</p>
-
 <h2 id="merit">ハイブリッドコア構成の利点</h2>
-
-<p><em>Alder Lake</em> に導入されるハイブリッドコア(<code>Core/Atom</code>)技術もまた、ダークシリコン問題対策の意味を含んでいるのではないかと自分は思う。<br />
-<code>small /Low /Atom</code>コアも搭載することでダークシリコン問題を軽減しつつ、GPU を多く搭載するのとは別アプローチで CPU 性能を向上させる。<br />
+<p><em>Alder Lake</em> に導入されるハイブリッドコア(<code>Core/Atom</code>)技術もまた、ダークシリコン問題対策の意味を含んでいるのではないかと自分は思う。<br>
+<code>small /Low /Atom</code>コアも搭載することでダークシリコン問題を軽減しつつ、GPU を多く搭載するのとは別アプローチで CPU 性能を向上させる。<br>
 搭載する GPU の規模を増やすことでは、特定の処理を割り振ったり、ダークシリコン問題を軽減した分 CPU の最大動作クロックを伸ばすぐらいでしか性能を向上させられなかった。</p>
-
 <p>しかし Intel が <em>Lakefield</em> で示したように、<code>small /Low /Atom</code>コアにバックグラウンドタスクや軽い処理を割り振ることで、CPU 全体の性能に直接的に影響させつつ、動作時の消費電力を最適化することができる。</p>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/08/12/lkf-workload.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2020/08/12/lkf-workload.webp"
       alt="画像出典: https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf"/>
 </a><figcaption>
-      <h4 class="fig-title">LKF Workload</h4><p>画像出典: <cite><a href="https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf" rel="nofollow noreferrer" target="_blank">https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf</a></cite></p>
+      <h4 class="fig-title">LKF Workload</h4><p>画像出典: <cite><a href="https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf">https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf</a></cite></p>
   </figcaption>
 </figure>
 
-
-<p><a href="https://www.coelacanth-dream.com/posts/2020/08/11/amd-hybrid-core-for-low-power/">先日の AMD のハイブリッドコア技術</a>は、電力効率に優れる <code>Low</code>コアを搭載し、高性能な <code>High</code>コアと対応させることで幅広い範囲の電力比性能をカバーするものだったが、<br />
+<p><a href="https://www.coelacanth-dream.com/posts/2020/08/11/amd-hybrid-core-for-low-power/">先日の AMD のハイブリッドコア技術</a>は、電力効率に優れる <code>Low</code>コアを搭載し、高性能な <code>High</code>コアと対応させることで幅広い範囲の電力比性能をカバーするものだったが、<br>
 Intel が <em>Lakefield</em> に導入したハイブリッドコア技術では、全てのコアが同時に処理に行なえるため、<span class="complement">スケジューリング等の壁はあるだろうが</span>
 重い処理は <code>Core</code>コアに、バックグラウンドタスク、軽い処理は<code>Atom</code>コアに割り振ることで電力効率の良い処理が可能だろう。</p>
-
-<p>そういったトランジスタ数効率、電力効率に優れるハイブリッドコア技術に対し、Cinebench のようなシンプルなベンチマークソフトウェアではその真価を測りづらい。<br />
-様々な種類の、その時で異なる負荷が掛かるような、<em>現実的な</em> ベンチマークが必要となる。<br />
+<p>そういったトランジスタ数効率、電力効率に優れるハイブリッドコア技術に対し、Cinebench のようなシンプルなベンチマークソフトウェアではその真価を測りづらい。<br>
+様々な種類の、その時で異なる負荷が掛かるような、<em>現実的な</em> ベンチマークが必要となる。<br>
 このことが近年の Intel が示す、人気のベンチマークソフトウェアへの一部否定的な姿勢ではないかと考えている。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://pc.watch.impress.co.jp/docs/2004/0922/kaigai120.htm" rel="nofollow noreferrer" target="_blank">Intelの65nmプロセスでCPUの消費電力が下がる? - PC Watch</a></li>
-<li><a href="https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf" rel="nofollow noreferrer" target="_blank">https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf</a></li>
+<li><a href="https://pc.watch.impress.co.jp/docs/2004/0922/kaigai120.htm">Intelの65nmプロセスでCPUの消費電力が下がる? - PC Watch</a></li>
+<li><a href="https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf">https://www.hotchips.org/hc31/HC31_2.10_LKF_HC_2019_Final_v7.pdf</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:adl-cd-guess"><a href="https://www.coelacanth-dream.com/posts/2020/05/07/alderlake-rumor-guess/">Alder Lake の噂と推測 ――Alder Lake は現実に向けたプロセッサか | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:adl-cd-guess"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/05/07/alderlake-rumor-guess/">Alder Lake の噂と推測 ――Alder Lake は現実に向けたプロセッサか | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

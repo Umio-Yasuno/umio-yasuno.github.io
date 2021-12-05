@@ -70,139 +70,124 @@
 <div class="article-time">
     <time datetime="2021-07-17 06:24 &#43;0900" class="time-b">Post: 2021/07/17 06:24 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/07/17 06:58 &#43;0900</div>
-  </div><p>プロプライエタリな BIOS (ファームウェア) の代替を目的としたフリーソフトプロジェクト <a href="https://www.coreboot.org/" rel="nofollow noreferrer" target="_blank">Coreboot</a> に、Felix Held 氏より、新たな AMD APU <em>Barcelo</em> をサポートする最初のパッチが投稿された。<br />
+  </div><p>プロプライエタリな BIOS (ファームウェア) の代替を目的としたフリーソフトプロジェクト <a href="https://www.coreboot.org/">Coreboot</a> に、Felix Held 氏より、新たな AMD APU <em>Barcelo</em> をサポートする最初のパッチが投稿された。<br>
 パッチは <em>Barcelo</em> の PCI (Device) ID を追加するものとなっている。</p>
-
 <ul>
-<li><a href="https://review.coreboot.org/c/coreboot/+/56396" rel="nofollow noreferrer" target="_blank">soc/amd/common/block/graphics: add GPU PCI ID for Barcelo (I1c5446c1) · Gerrit Code Review</a></li>
-<li><a href="https://review.coreboot.org/c/coreboot/+/56392" rel="nofollow noreferrer" target="_blank">soc/amd/cezanne/graphics: add VBIOS ID remapping for Barcelo (I2eed4370) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/56396">soc/amd/common/block/graphics: add GPU PCI ID for Barcelo (I1c5446c1) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/56392">soc/amd/cezanne/graphics: add VBIOS ID remapping for Barcelo (I2eed4370) · Gerrit Code Review</a></li>
 </ul>
-
 <blockquote>
-<pre tabindex="0"><code>  #define PCI_DEVICE_ID_ATI_FAM19H_MODEL51H_GPU_CEZANNE      0x1638
-  #define PCI_DEVICE_ID_ATI_FAM19H_MODEL51H_GPU_BARCELO      0x15e7</code></pre>
+<pre><code>  #define PCI_DEVICE_ID_ATI_FAM19H_MODEL51H_GPU_CEZANNE		0x1638
+  #define PCI_DEVICE_ID_ATI_FAM19H_MODEL51H_GPU_BARCELO		0x15e7
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/56396/3/src/include/device/pci_ids.h#507" rel="nofollow noreferrer" target="_blank">https://review.coreboot.org/c/coreboot/+/56396/3/src/include/device/pci_ids.h#507</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/56396/3/src/include/device/pci_ids.h#507">https://review.coreboot.org/c/coreboot/+/56396/3/src/include/device/pci_ids.h#507</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>Barcelo</em> の Device ID は <code>0x15e7</code> となっている。この ID はちょうど先日 Linux Kernel における AMD GPUドライバーに追加されており、その時のパッチタイトルは <em>「[PATCH] drm/amdgpu: add another Renior DID」</em> 。<sup class="footnote-ref" id="fnref:another-rn"><a href="#fn:another-rn">1</a></sup><br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/31/amd-renoir-apu-gfx90c/">AMD Renoir APU の GPU ID が 「gfx90c」 に | Coelacanth's Dream</a></span>
+<p><em>Barcelo</em> の Device ID は <code>0x15e7</code> となっている。この ID はちょうど先日 Linux Kernel における AMD GPUドライバーに追加されており、その時のパッチタイトルは <em>「[PATCH] drm/amdgpu: add another Renior DID」</em> 。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/10/31/amd-renoir-apu-gfx90c/">AMD Renoir APU の GPU ID が 「gfx90c」 に | Coelacanth&rsquo;s Dream</a></span>
 
 <em>Barcelo</em> は <em>Renoir・Lucienne・Cezanne</em> 同様に Vega GPU を搭載し、GPU ID は <em>gfx90c</em> になると見られる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>     /* Renoir */
- +   {0x1002, 0x15E7, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},
-     {0x1002, 0x1636, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},
-     {0x1002, 0x1638, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},
-     {0x1002, 0x164C, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},</code></pre>
+<pre><code>  	/* Renoir */
+ +	{0x1002, 0x15E7, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},
+  	{0x1002, 0x1636, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},
+  	{0x1002, 0x1638, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},
+  	{0x1002, 0x164C, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_RENOIR|AMD_IS_APU},
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066502.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: add another Renior DID</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066502.html">[PATCH] drm/amdgpu: add another Renior DID</a></cite>
 </div>
 
 </blockquote>
-
-<p>CPU に関してはパッチではあまり触れられていないが、<em>Cezanne</em> 同様に <em>Zen 3 アーキテクチャ</em> を採用しているのではないかと思う。<br />
+<p>CPU に関してはパッチではあまり触れられていないが、<em>Cezanne</em> 同様に <em>Zen 3 アーキテクチャ</em> を採用しているのではないかと思う。<br>
 <em>Barcelo</em> は <em>Raven</em> に対する <em>Picasso</em> 、<em>Renoir</em> に対する <em>Lucienne</em> のような、構成はほぼ同じだが製造プロセスや電力管理機能等にわずかな改良を施した後継 APU というポジションにいるのだろう。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">GPUID</th>
-<th align="center">Arch</th>
-<th align="center">Codename</th>
+<th style="text-align:left">GPUID</th>
+<th style="text-align:center">Arch</th>
+<th style="text-align:center">Codename</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left"><em>gfx909</em></td>
-<td align="center">Vega</td>
-<td align="center">Raven2 (Dali/Pollock)</td>
+<td style="text-align:left"><em>gfx909</em></td>
+<td style="text-align:center">Vega</td>
+<td style="text-align:center">Raven2 (Dali/Pollock)</td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx90c</em></td>
-<td align="center">Vega</td>
-<td align="center">Renoir/Lucienne/Cezanne (Green Sardine)<sup class="footnote-ref" id="fnref:green-sardine"><a href="#fn:green-sardine">2</a></sup></td>
+<td style="text-align:left"><em>gfx90c</em></td>
+<td style="text-align:center">Vega</td>
+<td style="text-align:center">Renoir/Lucienne/Cezanne (Green Sardine)<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx1010</em></td>
-<td align="center">RDNA</td>
-<td align="center">Navi10</td>
+<td style="text-align:left"><em>gfx1010</em></td>
+<td style="text-align:center">RDNA</td>
+<td style="text-align:center">Navi10</td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx1011</em></td>
-<td align="center">RDNA</td>
-<td align="center">Navi12</td>
+<td style="text-align:left"><em>gfx1011</em></td>
+<td style="text-align:center">RDNA</td>
+<td style="text-align:center">Navi12</td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx1012</em></td>
-<td align="center">RDNA</td>
-<td align="center">Navi14</td>
+<td style="text-align:left"><em>gfx1012</em></td>
+<td style="text-align:center">RDNA</td>
+<td style="text-align:center">Navi14</td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx1013</em></td>
-<td align="center">RDNA</td>
-<td align="center">?????<br>(APU, Navi10-base, Support RayTracing Inst.)<sup class="footnote-ref" id="fnref:gfx1013"><a href="#fn:gfx1013">3</a></sup></td>
+<td style="text-align:left"><em>gfx1013</em></td>
+<td style="text-align:center">RDNA</td>
+<td style="text-align:center">?????<br>(APU, Navi10-base, Support RayTracing Inst.)<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx1030</em></td>
-<td align="center">RDNA 2</td>
-<td align="center">Sienna Cichlid/Navi21</td>
+<td style="text-align:left"><em>gfx1030</em></td>
+<td style="text-align:center">RDNA 2</td>
+<td style="text-align:center">Sienna Cichlid/Navi21</td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx1031</em></td>
-<td align="center">RDNA 2</td>
-<td align="center">Navy Flounder/Navi22</td>
+<td style="text-align:left"><em>gfx1031</em></td>
+<td style="text-align:center">RDNA 2</td>
+<td style="text-align:center">Navy Flounder/Navi22</td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx1032</em></td>
-<td align="center">RDNA 2</td>
-<td align="center">Dimgrey Cavefish/Navi23 ?</td>
+<td style="text-align:left"><em>gfx1032</em></td>
+<td style="text-align:center">RDNA 2</td>
+<td style="text-align:center">Dimgrey Cavefish/Navi23 ?</td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx1033</em></td>
-<td align="center">RDNA 2</td>
-<td align="center">VanGogh? (APU)</td>
+<td style="text-align:left"><em>gfx1033</em></td>
+<td style="text-align:center">RDNA 2</td>
+<td style="text-align:center">VanGogh? (APU)</td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx1034</em></td>
-<td align="center">RDNA 2</td>
-<td align="center">Beige Goby?</td>
+<td style="text-align:left"><em>gfx1034</em></td>
+<td style="text-align:center">RDNA 2</td>
+<td style="text-align:center">Beige Goby?</td>
 </tr>
-
 <tr>
-<td align="left"><em>gfx1035</em></td>
-<td align="center">RDNA 2</td>
-<td align="center">Yellow Carp? (APU)</td>
+<td style="text-align:left"><em>gfx1035</em></td>
+<td style="text-align:center">RDNA 2</td>
+<td style="text-align:center">Yellow Carp? (APU)</td>
 </tr>
 </tbody>
 </table>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:another-rn"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066502.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: add another Renior DID</a>
- <a class="footnote-return" href="#fnref:another-rn"><sup>[return]</sup></a></li>
-<li id="fn:green-sardine"><a href="https://www.coelacanth-dream.com/posts/2021/01/14/green_sardine-pciid/">Green Sardine APU の PCI ID が追加、正体は Cezanne APU だったか | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:green-sardine"><sup>[return]</sup></a></li>
-<li id="fn:gfx1013"><a href="https://www.coelacanth-dream.com/tags/gfx1013/">gfx1013 | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:gfx1013"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-July/066502.html">[PATCH] drm/amdgpu: add another Renior DID</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2021/01/14/green_sardine-pciid/">Green Sardine APU の PCI ID が追加、正体は Cezanne APU だったか | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/tags/gfx1013/">gfx1013 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

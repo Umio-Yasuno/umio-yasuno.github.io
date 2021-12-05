@@ -70,145 +70,135 @@
 <div class="article-time">
     <time datetime="2021-03-05 17:04 &#43;0900" class="time-b">Post: 2021/03/05 17:04 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/14 15:51 &#43;0900</div>
-  </div>
-
-<p>改めて <em>Aldebaran</em> GPU 関連のパッチを読んでいた所、以下のような記述が見つかった。<br />
+  </div><p>改めて <em>Aldebaran</em> GPU 関連のパッチを読んでいた所、以下のような記述が見つかった。<br>
 レジスタに特定の値をセットし、GPU の内部設定を行う部分がダイ 2種類分用意されている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   +static const struct soc15_reg_golden golden_settings_gc_9_4_2_alde_die_0[] = {
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_0, 0x3fffffff, 0x141dc920),
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_1, 0x3fffffff, 0x3b458b93),
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_2, 0x3fffffff, 0x1a4f5583),
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_3, 0x3fffffff, 0x317717f6),
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_4, 0x3fffffff, 0x107cc1e6),
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_5, 0x3ff, 0x351),
+<pre><code>   +static const struct soc15_reg_golden golden_settings_gc_9_4_2_alde_die_0[] = {
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_0, 0x3fffffff, 0x141dc920),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_1, 0x3fffffff, 0x3b458b93),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_2, 0x3fffffff, 0x1a4f5583),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_3, 0x3fffffff, 0x317717f6),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_4, 0x3fffffff, 0x107cc1e6),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_5, 0x3ff, 0x351),
    +};
    +
    +static const struct soc15_reg_golden golden_settings_gc_9_4_2_alde_die_1[] = {
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_0, 0x3fffffff, 0x2591aa38),
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_1, 0x3fffffff, 0xac9688B),
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_2, 0x3fffffff, 0x2bc3369B),
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_3, 0x3fffffff, 0xfb74ee),
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_4, 0x3fffffff, 0x21f0a2fe),
-   + SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_5, 0x3ff, 0x49),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_0, 0x3fffffff, 0x2591aa38),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_1, 0x3fffffff, 0xac9688B),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_2, 0x3fffffff, 0x2bc3369B),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_3, 0x3fffffff, 0xfb74ee),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_4, 0x3fffffff, 0x21f0a2fe),
+   +	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_5, 0x3ff, 0x49),
    +};
-   +</code></pre>
+   +
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059840.html" rel="nofollow noreferrer" target="_blank">[PATCH 148/159] drm/amdgpu: apply gc v9_4_2 golden settings for aldebaran</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059840.html">[PATCH 148/159] drm/amdgpu: apply gc v9_4_2 golden settings for aldebaran</a></cite>
 </div>
 
 </blockquote>
-
 <p>以下のコードを見る限り、想定しているダイ数は 2個 <em>まで</em> であり、それより多いダイは無効化、無視される。</p>
-
 <blockquote>
-<pre tabindex="0"><code>     /* apply golden settings per die */
-     switch (die_id) {
-     case 0:
-         soc15_program_register_sequence(adev,
-                 golden_settings_gc_9_4_2_alde_die_0,
-                 ARRAY_SIZE(golden_settings_gc_9_4_2_alde_die_0));
-         break;
-     case 1:
-         soc15_program_register_sequence(adev,
-                 golden_settings_gc_9_4_2_alde_die_1,
-                 ARRAY_SIZE(golden_settings_gc_9_4_2_alde_die_1));
-         break;
-     default:
-         dev_warn(adev-&gt;dev,
-              &#34;invalid die id %d, ignore channel fabricid remap settings\n&#34;,
-              die_id);
-         break;
-     }</code></pre>
+<pre><code>   	/* apply golden settings per die */
+   	switch (die_id) {
+   	case 0:
+   		soc15_program_register_sequence(adev,
+   				golden_settings_gc_9_4_2_alde_die_0,
+   				ARRAY_SIZE(golden_settings_gc_9_4_2_alde_die_0));
+   		break;
+   	case 1:
+   		soc15_program_register_sequence(adev,
+   				golden_settings_gc_9_4_2_alde_die_1,
+   				ARRAY_SIZE(golden_settings_gc_9_4_2_alde_die_1));
+   		break;
+   	default:
+   		dev_warn(adev-&gt;dev,
+   			 &quot;invalid die id %d, ignore channel fabricid remap settings\n&quot;,
+   			 die_id);
+   		break;
+   	}
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059840.html" rel="nofollow noreferrer" target="_blank">[PATCH 148/159] drm/amdgpu: apply gc v9_4_2 golden settings for aldebaran</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059840.html">[PATCH 148/159] drm/amdgpu: apply gc v9_4_2 golden settings for aldebaran</a></cite>
 </div>
 
 </blockquote>
-
-<p>2-Die というのはそれなりに納得のいく数字で、というのも、パッチが投稿された時の記事で <em>XGMI/Infinity Fabric Link</em> に最適化された SDMAエンジンが 3基と、<em>Arcturus</em> よりも少ない、半分の数になっていると書いた。<br />
+<p>2-Die というのはそれなりに納得のいく数字で、というのも、パッチが投稿された時の記事で <em>XGMI/Infinity Fabric Link</em> に最適化された SDMAエンジンが 3基と、<em>Arcturus</em> よりも少ない、半分の数になっていると書いた。<br>
 それが 2-Die 構成であれば、<em>XGMI/Infinity Fabric Link</em> 用の SDMAエンジンは計 6基となり、いつかに示されたようなコーダルリング状のネットワークによる 8-GPU のトポロジが構成可能になる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   static const struct kfd_device_info arcturus_device_info = {
-     .asic_family = CHIP_ARCTURUS,
-     .asic_name = &#34;arcturus&#34;,
-     .max_pasid_bits = 16,
-     .max_no_of_hqd  = 24,
-     .doorbell_size  = 8,
-     .ih_ring_entry_size = 8 * sizeof(uint32_t),
-     .event_interrupt_class = &amp;event_interrupt_class_v9,
-     .num_of_watch_points = 4,
-     .mqd_size_aligned = MQD_SIZE_ALIGNED,
-     .supports_cwsr = true,
-     .needs_iommu_device = false,
-     .needs_pci_atomics = false,
-     .num_sdma_engines = 2,
-     .num_xgmi_sdma_engines = 6,
-     .num_sdma_queues_per_engine = 8,
+<pre><code>   static const struct kfd_device_info arcturus_device_info = {
+   	.asic_family = CHIP_ARCTURUS,
+   	.asic_name = &quot;arcturus&quot;,
+   	.max_pasid_bits = 16,
+   	.max_no_of_hqd	= 24,
+   	.doorbell_size	= 8,
+   	.ih_ring_entry_size = 8 * sizeof(uint32_t),
+   	.event_interrupt_class = &amp;event_interrupt_class_v9,
+   	.num_of_watch_points = 4,
+   	.mqd_size_aligned = MQD_SIZE_ALIGNED,
+   	.supports_cwsr = true,
+   	.needs_iommu_device = false,
+   	.needs_pci_atomics = false,
+   	.num_sdma_engines = 2,
+   	.num_xgmi_sdma_engines = 6,
+   	.num_sdma_queues_per_engine = 8,
    };
-
+   
    static const struct kfd_device_info aldebaran_device_info = {
-     .asic_family = CHIP_ALDEBARAN,
-     .asic_name = &#34;aldebaran&#34;,
-     .max_pasid_bits = 16,
-     .max_no_of_hqd  = 24,
-     .doorbell_size  = 8,
-     .ih_ring_entry_size = 8 * sizeof(uint32_t),
-     .event_interrupt_class = &amp;event_interrupt_class_v9,
-     .num_of_watch_points = 4,
-     .mqd_size_aligned = MQD_SIZE_ALIGNED,
-     .supports_cwsr = true,
-     .needs_iommu_device = false,
-     .needs_pci_atomics = false,
-     .num_sdma_engines = 2,
-     .num_xgmi_sdma_engines = 3,
-     .num_sdma_queues_per_engine = 8,
-   };</code></pre>
+   	.asic_family = CHIP_ALDEBARAN,
+   	.asic_name = &quot;aldebaran&quot;,
+   	.max_pasid_bits = 16,
+   	.max_no_of_hqd	= 24,
+   	.doorbell_size	= 8,
+   	.ih_ring_entry_size = 8 * sizeof(uint32_t),
+   	.event_interrupt_class = &amp;event_interrupt_class_v9,
+   	.num_of_watch_points = 4,
+   	.mqd_size_aligned = MQD_SIZE_ALIGNED,
+   	.supports_cwsr = true,
+   	.needs_iommu_device = false,
+   	.needs_pci_atomics = false,
+   	.num_sdma_engines = 2,
+   	.num_xgmi_sdma_engines = 3,
+   	.num_sdma_queues_per_engine = 8,
+   };
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/agd5f/linux/-/blob/1b1515513cdcc6cfa86d7f4f8c1db899695f25f6/drivers/gpu/drm/amd/amdkfd/kfd_device.c#L379" rel="nofollow noreferrer" target="_blank">drivers/gpu/drm/amd/amdkfd/kfd_device.c · 1b1515513cdcc6cfa86d7f4f8c1db899695f25f6 · Alex Deucher / linux · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/agd5f/linux/-/blob/1b1515513cdcc6cfa86d7f4f8c1db899695f25f6/drivers/gpu/drm/amd/amdkfd/kfd_device.c#L379">drivers/gpu/drm/amd/amdkfd/kfd_device.c · 1b1515513cdcc6cfa86d7f4f8c1db899695f25f6 · Alex Deucher / linux · GitLab</a></cite>
 </div>
 
 </blockquote>
-
-<p>ただ、それもやはり、記述されている SDMAエンジンの数が GPU全体ではなくダイごとのもので、ダイ同士の接続は SDMAエンジンを用いる <em>XGMI</em> 接続ではない必要が出てくる。<br />
+<p>ただ、それもやはり、記述されている SDMAエンジンの数が GPU全体ではなくダイごとのもので、ダイ同士の接続は SDMAエンジンを用いる <em>XGMI</em> 接続ではない必要が出てくる。<br>
 Intel の <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> も 1パッケージ内に EMIB技術による複数の GPUチップ (タイル) を搭載する MCM構成を取っているが、メモリアクセスについては各 GPU に接続された HBM2eメモリが最も高速であり、他の GPU に接続されたメモリはそれよりも遅くなる。<br />
+</em> も 1パッケージ内に EMIB技術による複数の GPUチップ (タイル) を搭載する MCM構成を取っているが、メモリアクセスについては各 GPU に接続された HBM2eメモリが最も高速であり、他の GPU に接続されたメモリはそれよりも遅くなる。<br>
 <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> のあるタイルに接続されたメモリと、他の GPU に接続されたメモリを区別するパッチは既に投稿されており、<em>Aldebaran</em> も MCM構成を採るのであればドライバー側でそれを意識する必要があるように思われる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/12/21/intel-xe-dgpu-recent-info/">Intel Xe GPU 近況　―― Xe-HPのメモリリージョン, PXP, Iris Xe MAX のサポート状況 | Coelacanth's Dream</a></span>
+</em> のあるタイルに接続されたメモリと、他の GPU に接続されたメモリを区別するパッチは既に投稿されており、<em>Aldebaran</em> も MCM構成を採るのであればドライバー側でそれを意識する必要があるように思われる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/12/21/intel-xe-dgpu-recent-info/">Intel Xe GPU 近況　―― Xe-HPのメモリリージョン, PXP, Iris Xe MAX のサポート状況 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2021/03/05/amdgpu-fabric.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2021/03/05/amdgpu-fabric.webp"
       alt="画像出典: ORNL_Application_Readiness_Workshop-AMD_GPU_Basics.pdf"/>
 </a><figcaption>
-      <h4 class="fig-title">GPU Memory, I/O, and Connectivity</h4><p>画像出典: <a href="https://www.olcf.ornl.gov/wp-content/uploads/2019/10/ORNL_Application_Readiness_Workshop-AMD_GPU_Basics.pdf" rel="nofollow noreferrer" target="_blank">ORNL_Application_Readiness_Workshop-AMD_GPU_Basics.pdf</a></p>
+      <h4 class="fig-title">GPU Memory, I/O, and Connectivity</h4><p>画像出典: <a href="https://www.olcf.ornl.gov/wp-content/uploads/2019/10/ORNL_Application_Readiness_Workshop-AMD_GPU_Basics.pdf">ORNL_Application_Readiness_Workshop-AMD_GPU_Basics.pdf</a></p>
   </figcaption>
 </figure>
 
-
 <h2 id="tcx">TCX</h2>
-
-<p><em>Aldebaran</em> GPU の謎をもう1つ挙げると、<em>Aldebaran</em> では <em>TCX</em> という GPUブロックが追加されている。<br />
+<p><em>Aldebaran</em> GPU の謎をもう1つ挙げると、<em>Aldebaran</em> では <em>TCX</em> という GPUブロックが追加されている。<br>
 Linux Kernel のドライバー部を見る限りでは <em>Aldebran</em> 関連のファイルのみに <em>TCX</em> は出てきている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   + /* TCX */
-   + { SOC15_REG_ENTRY(GC, 0, regTCX_EDC_CNT), 0, 1, 2 },
-   + { SOC15_REG_ENTRY(GC, 0, regTCX_EDC_CNT2), 0, 1, 2 },</code></pre>
+<pre><code>   +	/* TCX */
+   +	{ SOC15_REG_ENTRY(GC, 0, regTCX_EDC_CNT), 0, 1, 2 },
+   +	{ SOC15_REG_ENTRY(GC, 0, regTCX_EDC_CNT2), 0, 1, 2 },
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059838.html" rel="nofollow noreferrer" target="_blank">[PATCH 152/159] drm/amdgpu: add ras support for gfx of aldebaran</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059838.html">[PATCH 152/159] drm/amdgpu: add ras support for gfx of aldebaran</a></cite>
 </div>
 
 </blockquote>
-
-<p>まあ謎と言ったように、具体的な機能は不明だし、名前の意味も不明。<br />
-そも、GPUブロックについては、<em>TCP</em> が CU内の L1ベクタキャッシュ (GCN) を意味し、<em>TCC</em> は L2キャッシュを意味するということくらいはコード中のコメント等で語られていたりするが、名前自体の意味は隠されていることがほとんどである。<em>TCC</em> は <em>Texture Channel Cache</em> の略と考えられるが、他は不明。<br />
+<p>まあ謎と言ったように、具体的な機能は不明だし、名前の意味も不明。<br>
+そも、GPUブロックについては、<em>TCP</em> が CU内の L1ベクタキャッシュ (GCN) を意味し、<em>TCC</em> は L2キャッシュを意味するということくらいはコード中のコメント等で語られていたりするが、名前自体の意味は隠されていることがほとんどである。<em>TCC</em> は <em>Texture Channel Cache</em> の略と考えられるが、他は不明。<br>
 <em>TCX</em> はコードから 15グループ存在しているとも読めるが、それくらいしか読めるところは無かった。</p>
-
 <p>パッチにしろ、正式発表にしろ、その後の公式資料にしろ、その内公式から語ってくれるだろうから、ただそれを待つ。</p>
 <div class="article-bottom-misc">
   <div class="rss-block">

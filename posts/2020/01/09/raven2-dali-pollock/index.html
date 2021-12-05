@@ -70,34 +70,42 @@
 <div class="article-time">
     <time datetime="2020-01-09 14:15 &#43;0900" class="time-b">Post: 2020/01/09 14:15 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/07/20 11:51 &#43;0900</div>
-  </div><p>Linux Kernel（amd-gfx）へのパッチから新たなASIC、Pollockが判明した。<br />
-<a href="https://lists.freedesktop.org/archives/amd-gfx/2020-January/044548.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amd/display: add Pollock IDs, fix Pollock &amp; Dali clk mgr construct</a></p>
-
-<p>DIDは15D8とPicasso、Raven2、Daliと共用であり、RIDは94、95、E9、EA、EBが割り当てられている。<br />
-15DDにRavenとRaven2が、15D8にPicassoとRaven2が共用していた時点でそれなりにややこしかったのだが、これでさらにややこしくなってしまった。<br />
+  </div><p>Linux Kernel（amd-gfx）へのパッチから新たなASIC、Pollockが判明した。<br>
+<a href="https://lists.freedesktop.org/archives/amd-gfx/2020-January/044548.html">[PATCH] drm/amd/display: add Pollock IDs, fix Pollock &amp; Dali clk mgr construct</a></p>
+<p>DIDは15D8とPicasso、Raven2、Daliと共用であり、RIDは94、95、E9、EA、EBが割り当てられている。<br>
+15DDにRavenとRaven2が、15D8にPicassoとRaven2が共用していた時点でそれなりにややこしかったのだが、これでさらにややこしくなってしまった。<br>
 パッチのPollockの判定部分を見ても中々に面倒くさいことになっている。</p>
-
 <blockquote>
-<p>+#define ASICREV_IS_POLLOCK(eChipRev) (eChipRev == RAVEN2_15D8_REV_94 <br />
-+       || eChipRev == RAVEN2_15D8_REV_95 <br />
-+           || eChipRev == RAVEN2_15D8_REV_E9 <br />
-+               || eChipRev == RAVEN2_15D8_REV_EA <br />
-+                   || eChipRev == RAVEN2_15D8_REV_EB)</p>
+<p>+#define ASICREV_IS_POLLOCK(eChipRev) (eChipRev == RAVEN2_15D8_REV_94 \</p>
 </blockquote>
-
+<ul>
+<li>
+<pre><code>  || eChipRev == RAVEN2_15D8_REV_95 \
+</code></pre>
+</li>
+<li>
+<pre><code>  	|| eChipRev == RAVEN2_15D8_REV_E9 \
+</code></pre>
+</li>
+<li>
+<pre><code>  		|| eChipRev == RAVEN2_15D8_REV_EA \
+</code></pre>
+</li>
+<li>
+<pre><code>  			|| eChipRev == RAVEN2_15D8_REV_EB)
+</code></pre>
+</li>
+</ul>
 <p>DIDだけで判定できるようにしないのは何か特殊な事情でもあるのだろうか。</p>
-
-<p>Raven2とDali/Pollockの違いは、後者だとディスプレイコントローラー部の電圧のレベルが1つのみで、最低電圧で固定されるというものだと思われる。（読み間違えていたら申し訳ない。）<br />
-<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=e42a34dec68950ebad7904f235ed2dfff5bb27b5" rel="nofollow noreferrer" target="_blank">drm/amd/display: Implement voltage limitation for dali - agd5f/linux</a><br />
-推測するに常時稼働させるシステム向けだろうか。<br />
+<p>Raven2とDali/Pollockの違いは、後者だとディスプレイコントローラー部の電圧のレベルが1つのみで、最低電圧で固定されるというものだと思われる。（読み間違えていたら申し訳ない。）<br>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=e42a34dec68950ebad7904f235ed2dfff5bb27b5">drm/amd/display: Implement voltage limitation for dali - agd5f/linux</a><br>
+推測するに常時稼働させるシステム向けだろうか。<br>
 ただ今ある情報だけではDaliに割り当てるRIDを追加させず、新たにPollockと付けた理由がわからない。</p>
-
-<p>APU系統では他にDID:15D9も確認されており、これにPollockが追加で割り当てられるのかそれともまた新しいコードネームを持ったASICとなるのかはまだ不明。<br />
-<a href="https://github.com/GPUOpen-Tools/common-src-DeviceInfo/blob/master/DeviceInfoUtils.cpp#L523" rel="nofollow noreferrer" target="_blank">DeviceInfoUtils.cpp#L523</a></p>
-
-<p><br>
-こちらで既に反映させてあるため、ややこしさの解消に役立てていただければ幸いだ。<br />
-<a href="https://www.coelacanth-dream.com/posts/2019/12/30/did-rid-product-matome-p2/#pollock-gfx909">AMDGPUのDID、RID、Productのびみょうまとめ Part2</a></p>
+<p>APU系統では他にDID:15D9も確認されており、これにPollockが追加で割り当てられるのかそれともまた新しいコードネームを持ったASICとなるのかはまだ不明。<br>
+<a href="https://github.com/GPUOpen-Tools/common-src-DeviceInfo/blob/master/DeviceInfoUtils.cpp#L523">DeviceInfoUtils.cpp#L523</a></p>
+<br>
+こちらで既に反映させてあるため、ややこしさの解消に役立てていただければ幸いだ。  
+[AMDGPUのDID、RID、Productのびみょうまとめ Part2](/posts/2019/12/30/did-rid-product-matome-p2/#pollock-gfx909)  
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

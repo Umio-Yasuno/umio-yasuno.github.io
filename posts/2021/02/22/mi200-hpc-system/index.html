@@ -70,36 +70,29 @@
 <div class="article-time">
     <time datetime="2021-02-22 01:59 &#43;0900" class="time-b">Post: 2021/02/22 01:59 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/09/05 12:36 &#43;0900</div>
-  </div>
-
-<p>先日、LLVM にサポートが追加された GPUID <em>gfx90a</em> を用いると思われる <strong>MI200</strong> だが、すでにスーパーコンピューター <em>Frontier</em> と <em>LUMI</em> へ採用されており、2021年中に納入、一部運用を開始する予定にある。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth's Dream</a></span>
+  </div><p>先日、LLVM にサポートが追加された GPUID <em>gfx90a</em> を用いると思われる <strong>MI200</strong> だが、すでにスーパーコンピューター <em>Frontier</em> と <em>LUMI</em> へ採用されており、2021年中に納入、一部運用を開始する予定にある。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <p><em>Frontier</em> は 2021年にシステムを納入予定としているが、<em>LUMI</em> は 2021半ばから運用を開始する予定で進められている。</p>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#frontier-and-lumi">Frontier と LUMI</a></li>
 <li><a href="#lumi">LUMI の構成</a>
-
 <ul class="page-index">
 <li><a href="#hip">CUDAコードから HIPコードへの変換</a></li>
-</ul></li>
+</ul>
+</li>
 </ul>
 
-
 <h2 id="frontier-and-lumi">Frontier と LUMI</h2>
-
-<p><em>Frontier</em> と <em>LUMI</em> をざっくりと説明すれば、どちらも AMD CPU + AMD GPU の構成で構築されるスパコンである。そして GPU には <strong>MI200</strong> が採用される予定にある。<br />
-CPU にはどちらにも <em>Trento</em> の名があるが、そのコードネームを持つ EPYC CPU について AMD から直接語られたことはまだない。<br />
+<p><em>Frontier</em> と <em>LUMI</em> をざっくりと説明すれば、どちらも AMD CPU + AMD GPU の構成で構築されるスパコンである。そして GPU には <strong>MI200</strong> が採用される予定にある。<br>
+CPU にはどちらにも <em>Trento</em> の名があるが、そのコードネームを持つ EPYC CPU について AMD から直接語られたことはまだない。<br>
 しかし、<em>Frontier</em> のノード構成と発表内容から、CPU は <em>Zen 3 アーキテクチャ</em> (<em>Milan</em> と同じチップレット?) を採用し、GPU との <em>XGMI/Infinity Fabric Link</em> 対応に I/Oチップレットを拡張させたものではないかと予想されている。</p>
-
 <p><figure>
   <a href="https://www.coelacanth-dream.com/image/2021/02/22/frontier-trento-mi200.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2021/02/22/frontier-trento-mi200.webp"
       alt="画像出典: HPE-GABRIELE-PACIUCCI - HPE-GABRIELE-PACIUCCI.pdf"/>
 </a><figcaption>
-      <p>画像出典: <a href="https://indico.ph.ed.ac.uk/event/69/contributions/908/attachments/723/886/HPE-GABRIELE-PACIUCCI.pdf" rel="nofollow noreferrer" target="_blank">HPE-GABRIELE-PACIUCCI - HPE-GABRIELE-PACIUCCI.pdf</a></p>
+      <p>画像出典: <a href="https://indico.ph.ed.ac.uk/event/69/contributions/908/attachments/723/886/HPE-GABRIELE-PACIUCCI.pdf">HPE-GABRIELE-PACIUCCI - HPE-GABRIELE-PACIUCCI.pdf</a></p>
   </figcaption>
 </figure>
 
@@ -108,98 +101,86 @@ CPU にはどちらにも <em>Trento</em> の名があるが、そのコード�
   <img src="https://www.coelacanth-dream.com/image/2021/02/22/lumi-epyc-mi200.webp"
       alt="画像出典: Presentation_GENCI_JCAD2020.pdf"/>
 </a><figcaption>
-      <p>画像出典: <a href="https://jcad2020.sciencesconf.org/data/Presentation_GENCI_JCAD2020.pdf" rel="nofollow noreferrer" target="_blank">Presentation_GENCI_JCAD2020.pdf</a></p>
+      <p>画像出典: <a href="https://jcad2020.sciencesconf.org/data/Presentation_GENCI_JCAD2020.pdf">Presentation_GENCI_JCAD2020.pdf</a></p>
   </figcaption>
 </figure>
 </p>
-
-<p>2つの大きな違いは目標とするピーク性能とスケジュールにあり、<em>Frontier</em> はピークFP64演算性能 1.5 EF を目標に掲げるエクサスケールシステムだが、<em>LUMI</em> は 552PF のプリエクサスケールシステムとなる。<br />
-<em>Frontier</em> は <em>LUMI</em> の約 2.7倍のピークFP64演算性能を持つが、スケジュールは 2021半ばに設置、2022年後半から運用を開始、となっている。<sup class="footnote-ref" id="fnref:frontier-schedule"><a href="#fn:frontier-schedule">1</a></sup><br />
-<em>LUMI</em> は 2019年11月から 2020年8月にかけてシステムを調達、2020年Q4には納入するデータセンタを準備、そして 2021年半ばにはもう運用を開始する予定にあるが、それは GPU をメインとしたパーテーション以外となる。そのパーテーションは 2021年Q4 に設置される予定。<br />
-それでも他のパーテーションに GPU は搭載され、GPU をメインとするパーテーションも 2021年Q4 と <em>Frontier</em> よりも早いことから、<em>LUMI</em> は <strong>MI200</strong> を採用したスパコンとして最初に稼働するものになると思われる。<sup class="footnote-ref" id="fnref:lumi-schedule"><a href="#fn:lumi-schedule">2</a></sup></p>
-
-<p>他の情報にも触れると、<em>Frontier</em> の納入先は米エレルギー省管轄下にあるオークリッジ国立研究所、<em>LUMI</em> はフィンランドに拠点を置く EuroHPC JU (European High Performance Computer Joint Undertaking) となる。<em>LUMI</em> は欧州10ヶ国 (ベルギー、チェコ共和国、デンマーク、エストニア、フィンランド、アイスランド、ノルウェー、ポーランド、スウェーデン、スイス) で共有される。<br />
+<p>2つの大きな違いは目標とするピーク性能とスケジュールにあり、<em>Frontier</em> はピークFP64演算性能 1.5 EF を目標に掲げるエクサスケールシステムだが、<em>LUMI</em> は 552PF のプリエクサスケールシステムとなる。<br>
+<em>Frontier</em> は <em>LUMI</em> の約 2.7倍のピークFP64演算性能を持つが、スケジュールは 2021半ばに設置、2022年後半から運用を開始、となっている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+<em>LUMI</em> は 2019年11月から 2020年8月にかけてシステムを調達、2020年Q4には納入するデータセンタを準備、そして 2021年半ばにはもう運用を開始する予定にあるが、それは GPU をメインとしたパーテーション以外となる。そのパーテーションは 2021年Q4 に設置される予定。<br>
+それでも他のパーテーションに GPU は搭載され、GPU をメインとするパーテーションも 2021年Q4 と <em>Frontier</em> よりも早いことから、<em>LUMI</em> は <strong>MI200</strong> を採用したスパコンとして最初に稼働するものになると思われる。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>他の情報にも触れると、<em>Frontier</em> の納入先は米エレルギー省管轄下にあるオークリッジ国立研究所、<em>LUMI</em> はフィンランドに拠点を置く EuroHPC JU (European High Performance Computer Joint Undertaking) となる。<em>LUMI</em> は欧州10ヶ国 (ベルギー、チェコ共和国、デンマーク、エストニア、フィンランド、アイスランド、ノルウェー、ポーランド、スウェーデン、スイス) で共有される。<br>
 契約の総額は <em>Frontier</em> が $600M (6億ドル)、<em>LUMI</em> が $160M (1億6,000万ドル)。</p>
-
-<p><em>LUMI</em> は予定通り 2021年中に運用が開始されれば、ピークFP64性能では現在世界最速のスパコン、富嶽 (Fugaku) の 513 PetaFlops を越すとされる。<br />
+<p><em>LUMI</em> は予定通り 2021年中に運用が開始されれば、ピークFP64性能では現在世界最速のスパコン、富嶽 (Fugaku) の 513 PetaFlops を越すとされる。<br>
 しかし、<em>LUMI</em> の HPL (Linpack) での性能は 375 PF とされ、対して富嶽は 442.01 PF の性能を発揮しており、実行性能や実行効率では富嶽がまだ勝っている。</p>
-
 <h2 id="lumi">LUMI の構成</h2>
-
-<p><em>LUMI</em> は複数のパーテーションで構成され、パーテーション間は <a href="https://www.hpe.com/jp/ja/compute/hpc/slingshot-interconnect.html" rel="nofollow noreferrer" target="_blank">HPE Silingshot</a> による高速なインターコネクト技術で接続される。</p>
-
+<p><em>LUMI</em> は複数のパーテーションで構成され、パーテーション間は <a href="https://www.hpe.com/jp/ja/compute/hpc/slingshot-interconnect.html">HPE Silingshot</a> による高速なインターコネクト技術で接続される。</p>
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2021/02/22/lumi-system.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2021/02/22/lumi-system.webp"
       alt="画像出典: May we introduce: LUMI - LUMI"/>
 </a><figcaption>
-      <p>画像出典: <a href="https://www.lumi-supercomputer.eu/may-we-introduce-lumi/" rel="nofollow noreferrer" target="_blank">May we introduce: LUMI - LUMI</a></p>
+      <p>画像出典: <a href="https://www.lumi-supercomputer.eu/may-we-introduce-lumi/">May we introduce: LUMI - LUMI</a></p>
   </figcaption>
 </figure>
 
-
-<p><em>LUMI-G</em> パーテーションに主要な CPU + GPUノードが搭載され、パーテーション内の GPU による総ピークFP64演算性能は 550 PFlops 以上になると言う。CPU + GPUノードの構成は <em>Frontier</em> と同じ 1 CPU : 4 GPU の構成になるとされている。<em>Frontier</em> も <em>LUMI</em> もプライムコントラクターとして HPE が関わっており、CPU、GPU が同世代となるとノード構成が同じになるのは自然だろう。<sup class="footnote-ref" id="fnref:lumi-g-node"><a href="#fn:lumi-g-node">3</a></sup><br />
+<p><em>LUMI-G</em> パーテーションに主要な CPU + GPUノードが搭載され、パーテーション内の GPU による総ピークFP64演算性能は 550 PFlops 以上になると言う。CPU + GPUノードの構成は <em>Frontier</em> と同じ 1 CPU : 4 GPU の構成になるとされている。<em>Frontier</em> も <em>LUMI</em> もプライムコントラクターとして HPE が関わっており、CPU、GPU が同世代となるとノード構成が同じになるのは自然だろう。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 前述したように、<em>LUMI-G</em> は他のパーテーションよりも遅れて 2021Q4 から運用が開始される。</p>
-
-<p><em>LUMI-C</em> は補助的なパーテーションとなり、GPU は搭載せず、CPU のみで構成される。<br />
-<em>LUMI-C</em> には 64-Core の <em>AMD EPYC CPU</em> を搭載することがすでに語られており、<em>LUMI-C</em> に搭載される総CPUコア数は 〜200,000コア (〜3125 EPYC CPU) にもなる。<br />
+<p><em>LUMI-C</em> は補助的なパーテーションとなり、GPU は搭載せず、CPU のみで構成される。<br>
+<em>LUMI-C</em> には 64-Core の <em>AMD EPYC CPU</em> を搭載することがすでに語られており、<em>LUMI-C</em> に搭載される総CPUコア数は 〜200,000コア (〜3125 EPYC CPU) にもなる。<br>
 上に載せた画像中に <em>AMD Milan + Torento</em> と書かれてあったが、恐らくは CPU + GPU のノードには <em>Trento</em> を採用し、CPU のみとなる <em>LUMI-C</em> には <em>Milan</em> が採用されるのだろう。</p>
+<p><em>LUMI-D</em> は巨大なデータ解析や前後処理用のパーテーションとされ、32TBのメモリと 64 GPU が搭載される。<br>
+32TB のメモリというのは CPU と GPU のメモリを合わせた容量となる。GPU のメモリサイズについて、仕様がまだ固まっていない頃の発言だが、少なくとも 40GB以上はあることが語られている。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
+このことから、<strong>MI100</strong> は HBM2 4096-bit 32GB (4スタック、スタックあたり 8GB) というメモリ仕様だったが、<strong>MI200</strong> ではスタックあたり 16GB の容量が可能で、より高速な HBM2e を採用すると思われる。メモリバス幅を広げる、あるいは両方を採用する可能性もあるが、NVIDIA GA100 GPU がチップとしては HBM2e 6144-bit (6スタック) を持つが、製品としては歩留まり等から 1スタックを無効化していたことを考えると若干薄い可能性のように思える。<br>
+チップレットアーキテクチャなどである程度軽減可能な問題ではあるが。<br>
+ちょうど HPE の製品名に <strong>AMD Instinct MI200 OAM x1 MCM Special FIO Accelerator for HPE Cray EX</strong> があったことが話題になっている。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
+<span class="thread-link"><a href="https://assets.ext.hpe.com/is/content/hpedam/a50002555enw">Intel OneAPI - a50002555enw</a></span>
 
-<p><em>LUMI-D</em> は巨大なデータ解析や前後処理用のパーテーションとされ、32TBのメモリと 64 GPU が搭載される。<br />
-32TB のメモリというのは CPU と GPU のメモリを合わせた容量となる。GPU のメモリサイズについて、仕様がまだ固まっていない頃の発言だが、少なくとも 40GB以上はあることが語られている。<sup class="footnote-ref" id="fnref:lumi-gpu-memory"><a href="#fn:lumi-gpu-memory">4</a></sup><br />
-このことから、<strong>MI100</strong> は HBM2 4096-bit 32GB (4スタック、スタックあたり 8GB) というメモリ仕様だったが、<strong>MI200</strong> ではスタックあたり 16GB の容量が可能で、より高速な HBM2e を採用すると思われる。メモリバス幅を広げる、あるいは両方を採用する可能性もあるが、NVIDIA GA100 GPU がチップとしては HBM2e 6144-bit (6スタック) を持つが、製品としては歩留まり等から 1スタックを無効化していたことを考えると若干薄い可能性のように思える。<br />
-チップレットアーキテクチャなどである程度軽減可能な問題ではあるが。<br />
-ちょうど HPE の製品名に <strong>AMD Instinct MI200 OAM x1 MCM Special FIO Accelerator for HPE Cray EX</strong> があったことが話題になっている。<sup class="footnote-ref" id="fnref:mcm"><a href="#fn:mcm">5</a></sup><br />
-<span class="thread-link"><a href="https://assets.ext.hpe.com/is/content/hpedam/a50002555enw" rel="nofollow noreferrer" target="_blank">Intel OneAPI - a50002555enw</a></span>
-
-64 GPUs が 64GB のメモリを持つとして 4TB、残り 28TB は CPU が持つものと思われる。<br />
-CPU と GPU のメモリ空間の統合は <em>CDNA 2 アーキテクチャ</em> と <em>3rd Gen Infinity Architecture</em> で可能となることが以前に発表されている。<br />
+64 GPUs が 64GB のメモリを持つとして 4TB、残り 28TB は CPU が持つものと思われる。<br>
+CPU と GPU のメモリ空間の統合は <em>CDNA 2 アーキテクチャ</em> と <em>3rd Gen Infinity Architecture</em> で可能となることが以前に発表されている。<br>
 CPU + GPU という構成であっても <em>LUMI-G</em> と <em>LUMI-D</em> とで使い分けているのは <em>LUMI</em> システムの特徴的で面白い点と言える。</p>
-
-<p><em>LUMI-F</em> 、<em>LUMI-P</em> 、<em>LUMI-O</em> はストレージ用パーテーションとなり、<em>LUMI-O</em> にはデータセット等共有するデータが置かれる。<br />
+<p><em>LUMI-F</em> 、<em>LUMI-P</em> 、<em>LUMI-O</em> はストレージ用パーテーションとなり、<em>LUMI-O</em> にはデータセット等共有するデータが置かれる。<br>
 量子コンピューティング研究のための <em>LUMI-Q</em> も名前だけはあるが、詳細はまだ決められていない。</p>
-
 <h3 id="hip">CUDAコードから HIPコードへの変換</h3>
-
-<p>ちょうど <em>LUMI</em> システムに向けた、CUDA用のコードを AMD GPU に対応している HIP (Heterogeneous Interface for Portability) コードに変換や移植する際の手順、性能についての発表が Fosdem 2021 で行われた。<br />
+<p>ちょうど <em>LUMI</em> システムに向けた、CUDA用のコードを AMD GPU に対応している HIP (Heterogeneous Interface for Portability) コードに変換や移植する際の手順、性能についての発表が Fosdem 2021 で行われた。<br>
 発表内容は以下のリンク先で PDFと動画形式で公開されている。</p>
-
 <ul>
-<li><a href="https://fosdem.org/2021/schedule/event/amd_gpus/" rel="nofollow noreferrer" target="_blank">FOSDEM 2021 - Getting ready for the AMD GPUs</a></li>
+<li><a href="https://fosdem.org/2021/schedule/event/amd_gpus/">FOSDEM 2021 - Getting ready for the AMD GPUs</a></li>
 </ul>
-
-<p>CUDAコードを移植する方法は複数あるが、その中でも十分に使い慣れたものを選択し、可能な限り性能を発揮させる必要があるとし、性能が出ない場合は OpenMP を GPU にオフロードすることや、プロファイリングツールを駆使してデータ転送を最適化する、CU内の LDS (Local Data Share) を活用する等の方法を提案している。<br />
+<p>CUDAコードを移植する方法は複数あるが、その中でも十分に使い慣れたものを選択し、可能な限り性能を発揮させる必要があるとし、性能が出ない場合は OpenMP を GPU にオフロードすることや、プロファイリングツールを駆使してデータ転送を最適化する、CU内の LDS (Local Data Share) を活用する等の方法を提案している。<br>
 また、CUDAコードと HIPコードの性能比較では、多くで同等か HIPコードがわずかに優れており、合計実行時間では HIPコードの方が少し掛かっているが約 2% のオーバーヘッドに収まっている。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="https://www.hpe.com/jp/ja/japan/newsroom/press-release/2020/102901.html" rel="nofollow noreferrer" target="_blank">HPE、1億6,000万ドル超の世界最速スーパーコンピューターをフィンランドに構築する契約を獲得し、欧州の科学研究の発展と経済成長を支援 | HPE 日本</a></li>
-<li><a href="https://www.businessoulu.com/media/2019/pdf/lumi-businessoulu_pekka_manninen_2020-11-26.pdf" rel="nofollow noreferrer" target="_blank">LUMI resource allocation (Finland) - lumi-businessoulu_pekka_manninen_2020-11-26.pdf</a></li>
-<li><a href="https://p3hpcforum2020.alcf.anl.gov/wp-content/uploads/sites/8/2020/09/P3HPC_Karlin_Day-2-.pdf" rel="nofollow noreferrer" target="_blank">Karlin_P3HPC_2020 - P3HPC_Karlin_Day-2-.pdf</a></li>
-<li><a href="https://www.csc.fi/en/-/the-aftermath-of-the-lumi-end-user-webinar" rel="nofollow noreferrer" target="_blank">The aftermath of the LUMI end user webinar - The aftermath of the LUMI end user webinar - CSC Company Site</a></li>
-<li><a href="https://www.csc.fi/en/-/lumi-one-of-the-worlds-mightiest-supercomputers" rel="nofollow noreferrer" target="_blank">One of the world’s mightiest supercomputers, LUMI, will lift European research and competitiveness to a new level and promotes green transition - One of the world’s mightiest supercomputers, LUMI, will lift European research and competitiveness to a new level and promotes green transition - CSC Company Site</a></li>
-<li><a href="https://www.lumi-supercomputer.eu/may-we-introduce-lumi/" rel="nofollow noreferrer" target="_blank">May we introduce: LUMI - LUMI</a></li>
+<li><a href="https://www.hpe.com/jp/ja/japan/newsroom/press-release/2020/102901.html">HPE、1億6,000万ドル超の世界最速スーパーコンピューターをフィンランドに構築する契約を獲得し、欧州の科学研究の発展と経済成長を支援 | HPE 日本</a></li>
+<li><a href="https://www.businessoulu.com/media/2019/pdf/lumi-businessoulu_pekka_manninen_2020-11-26.pdf">LUMI resource allocation (Finland) - lumi-businessoulu_pekka_manninen_2020-11-26.pdf</a></li>
+<li><a href="https://p3hpcforum2020.alcf.anl.gov/wp-content/uploads/sites/8/2020/09/P3HPC_Karlin_Day-2-.pdf">Karlin_P3HPC_2020 - P3HPC_Karlin_Day-2-.pdf</a></li>
+<li><a href="https://www.csc.fi/en/-/the-aftermath-of-the-lumi-end-user-webinar">The aftermath of the LUMI end user webinar - The aftermath of the LUMI end user webinar - CSC Company Site</a></li>
+<li><a href="https://www.csc.fi/en/-/lumi-one-of-the-worlds-mightiest-supercomputers">One of the world’s mightiest supercomputers, LUMI, will lift European research and competitiveness to a new level and promotes green transition - One of the world’s mightiest supercomputers, LUMI, will lift European research and competitiveness to a new level and promotes green transition - CSC Company Site</a></li>
+<li><a href="https://www.lumi-supercomputer.eu/may-we-introduce-lumi/">May we introduce: LUMI - LUMI</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:frontier-schedule"><a href="https://www.olcf.ornl.gov/2018/02/13/frontier-olcfs-exascale-future/" rel="nofollow noreferrer" target="_blank">Frontier: OLCF’S Exascale Future – Oak Ridge Leadership Computing Facility</a>
- <a class="footnote-return" href="#fnref:frontier-schedule"><sup>[return]</sup></a></li>
-<li id="fn:lumi-schedule"><a href="https://www.businessoulu.com/media/2019/pdf/lumi-businessoulu_pekka_manninen_2020-11-26.pdf" rel="nofollow noreferrer" target="_blank">LUMI resource allocation (Finland) - lumi-businessoulu_pekka_manninen_2020-11-26.pdf</a>
- <a class="footnote-return" href="#fnref:lumi-schedule"><sup>[return]</sup></a></li>
-<li id="fn:lumi-g-node"><a href="https://www.deic.dk/sites/default/files/uploads/PDF/Webinar_LUMI_040221.pdf" rel="nofollow noreferrer" target="_blank">LUMI resource allocation (Finland) - Webinar_LUMI_040221.pdf</a>
- <a class="footnote-return" href="#fnref:lumi-g-node"><sup>[return]</sup></a></li>
-<li id="fn:lumi-gpu-memory"><a href="https://www.csc.fi/en/-/the-aftermath-of-the-lumi-end-user-webinar" rel="nofollow noreferrer" target="_blank">The aftermath of the LUMI end user webinar - The aftermath of the LUMI end user webinar - CSC Company Site</a>
- <a class="footnote-return" href="#fnref:lumi-gpu-memory"><sup>[return]</sup></a></li>
-<li id="fn:mcm"><a href="https://assets.ext.hpe.com/is/content/hpedam/a50002555enw" rel="nofollow noreferrer" target="_blank">Intel OneAPI - a50002555enw</a>
- <a class="footnote-return" href="#fnref:mcm"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.olcf.ornl.gov/2018/02/13/frontier-olcfs-exascale-future/">Frontier: OLCF’S Exascale Future – Oak Ridge Leadership Computing Facility</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.businessoulu.com/media/2019/pdf/lumi-businessoulu_pekka_manninen_2020-11-26.pdf">LUMI resource allocation (Finland) - lumi-businessoulu_pekka_manninen_2020-11-26.pdf</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.deic.dk/sites/default/files/uploads/PDF/Webinar_LUMI_040221.pdf">LUMI resource allocation (Finland) - Webinar_LUMI_040221.pdf</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://www.csc.fi/en/-/the-aftermath-of-the-lumi-end-user-webinar">The aftermath of the LUMI end user webinar - The aftermath of the LUMI end user webinar - CSC Company Site</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://assets.ext.hpe.com/is/content/hpedam/a50002555enw">Intel OneAPI - a50002555enw</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

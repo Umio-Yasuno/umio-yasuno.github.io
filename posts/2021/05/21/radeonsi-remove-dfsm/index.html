@@ -70,95 +70,86 @@
 <div class="article-time">
     <time datetime="2021-05-21 01:28 &#43;0900" class="time-b">Post: 2021/05/21 01:28 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/21 13:04 &#43;0900</div>
-  </div>
-
-<p>オープンソースで開発される AMD GPU の OpenGLドライバー <strong>RadeonSI</strong> に向けて、AMD の GPUドライバー開発者である <a href="https://github.com/marekolsak" rel="nofollow noreferrer" target="_blank">Marek Olšák</a> 氏より DFSM 機能のサポートを削除するパッチが投稿された。<br />
+  </div><p>オープンソースで開発される AMD GPU の OpenGLドライバー <strong>RadeonSI</strong> に向けて、AMD の GPUドライバー開発者である <a href="https://github.com/marekolsak">Marek Olšák</a> 氏より DFSM 機能のサポートを削除するパッチが投稿された。<br>
 パッチのマージリクエストは、元は <em>Navi1x/GFX10.1</em> 世代の GPU に存在するハードウェアのバグに対する回避策や、 <a href="https://www.coelacanth-dream.com/tags/ngg">NGG (Next Generation Geometry)</a> カリング機能の最適化等、細やかな修正、最適化を目的としたもので、DFSM 機能を削除する部分は後から追加されている。</p>
-
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/2e4ca54a02b60ca39699f00d3089c38b5a25fc7c?merge_request_iid=10813" rel="nofollow noreferrer" target="_blank">radeonsi: remove DFSM after we discovered how bad it is (2e4ca54a) · Commits · Mesa / mesa · GitLab</a></li>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/cc92c72798842958c58441cff08de6fe8324c4b1?merge_request_iid=10813" rel="nofollow noreferrer" target="_blank">radeonsi: disable DFSM on gfx9 by default because it decreases performance a lot (cc92c727) · Commits · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/2e4ca54a02b60ca39699f00d3089c38b5a25fc7c?merge_request_iid=10813">radeonsi: remove DFSM after we discovered how bad it is (2e4ca54a) · Commits · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/cc92c72798842958c58441cff08de6fe8324c4b1?merge_request_iid=10813">radeonsi: disable DFSM on gfx9 by default because it decreases performance a lot (cc92c727) · Commits · Mesa / mesa · GitLab</a></li>
 </ul>
-
 <h2 id="dfsm">DFSM</h2>
-
-<p>DFSM 機能は <em>Vega/GFX9</em> 世代の AMD GPU からハードウェアに搭載された機能であり、その世代における改良の目玉とされた <em>DSBR (Draw Stream Binning Rasterizer)</em> を全体的に適用するのが DFSM とされる。<sup class="footnote-ref" id="fnref:pb"><a href="#fn:pb">1</a></sup><br />
-<em>DSBR</em> ではレンダリング領域を細かいタイルに分割し、頻繁に使われる部分を L2キャッシュに置くことで性能向上とメモリアクセスを減らすことで電力効率の向上を狙った機能。<br />
-<em>Vega/GFX9</em> 発表時の資料では、有効時で最大 10%のフレームレート向上と 33% の使用メモリ帯域削減が確認できたとしている。<sup class="footnote-ref" id="fnref:vega-whitepaper"><a href="#fn:vega-whitepaper">2</a></sup><br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2019/12/07/where-vega-new-feature/">Vegaの新機能今いずこ | Coelacanth's Dream</a></span>
+<p>DFSM 機能は <em>Vega/GFX9</em> 世代の AMD GPU からハードウェアに搭載された機能であり、その世代における改良の目玉とされた <em>DSBR (Draw Stream Binning Rasterizer)</em> を全体的に適用するのが DFSM とされる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+<em>DSBR</em> ではレンダリング領域を細かいタイルに分割し、頻繁に使われる部分を L2キャッシュに置くことで性能向上とメモリアクセスを減らすことで電力効率の向上を狙った機能。<br>
+<em>Vega/GFX9</em> 発表時の資料では、有効時で最大 10%のフレームレート向上と 33% の使用メモリ帯域削減が確認できたとしている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2019/12/07/where-vega-new-feature/">Vegaの新機能今いずこ | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
-<p>DFSM が何の略かは正直不明で、1年と半年前の自分は <em>DFSM （Deterministic Finite State Machine）</em> の略だとしていたが、AMD の公式資料あるいは AMD のソフトウェアエンジニア方がそう呼ぶところは見付からなかった。唯一 <a href="https://www.phoronix.com/" rel="nofollow noreferrer" target="_blank">Phoronix</a> の <a href="https://www.phoronix.com/scan.php?page=michaellarabel" rel="nofollow noreferrer" target="_blank">Michael Larabel</a> 氏が記事内でそう書いており、恐らく過去の自分はそれを元にしたと思われるが、記事内にあるリンクからその略称とする根拠になるようなものは無い。<sup class="footnote-ref" id="fnref:phoronix"><a href="#fn:phoronix">3</a></sup><br />
-その記事のコメントに 「<em>Deterministic Finite State Machine</em> の意じゃないか」というものがあり、<a href="https://www.phoronix.com/scan.php?page=michaellarabel" rel="nofollow noreferrer" target="_blank">Michael Larabel</a> 氏はそれをそのまま追記した可能性がある。<br />
+<p>DFSM が何の略かは正直不明で、1年と半年前の自分は <em>DFSM （Deterministic Finite State Machine）</em> の略だとしていたが、AMD の公式資料あるいは AMD のソフトウェアエンジニア方がそう呼ぶところは見付からなかった。唯一 <a href="https://www.phoronix.com/">Phoronix</a> の <a href="https://www.phoronix.com/scan.php?page=michaellarabel">Michael Larabel</a> 氏が記事内でそう書いており、恐らく過去の自分はそれを元にしたと思われるが、記事内にあるリンクからその略称とする根拠になるようなものは無い。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
+その記事のコメントに 「<em>Deterministic Finite State Machine</em> の意じゃないか」というものがあり、<a href="https://www.phoronix.com/scan.php?page=michaellarabel">Michael Larabel</a> 氏はそれをそのまま追記した可能性がある。<br>
 要は DFSM が何の略かは本当に不明で、 Phoronix や自分は一度二度 <em>Deterministic Finite State Machine</em> の略と説明したがそれは不確かな情報ということだ。</p>
-
-<p><em>DSBR</em> の部分的な適用が <em>DPBB</em> とされるが、こっちは <em>Raven Ridge APU</em> の資料で言及され、特許資料もあり、 <em>Deferred Primitive Batch Binning</em> の略であることが確認できる。<sup class="footnote-ref" id="fnref:rv-apu"><a href="#fn:rv-apu">4</a></sup></p>
-
+<p><em>DSBR</em> の部分的な適用が <em>DPBB</em> とされるが、こっちは <em>Raven Ridge APU</em> の資料で言及され、特許資料もあり、 <em>Deferred Primitive Batch Binning</em> の略であることが確認できる。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
 <h3 id="dfsm-の効果">DFSM の効果</h3>
-
-<p>ドライバーからサポートが削除されることになった DFSM の性能への効果は実際どうだったかと言うと、まあ微妙だった。<br />
-Vulkanドライバー <strong>RADV</strong> においては、<em>Raven APU</em> だといくつかのグラフィクスデモとゲームで 2-3% の性能向上が確認できたことからデフォルトで有効化――された後に一部のゲームでは逆に 3% 性能低下したためデフォルトでは無効状態に戻されている。<br />
-<strong>RADV</strong> 開発者の一人である <a href="https://www.basnieuwenhuizen.nl/about/" rel="nofollow noreferrer" target="_blank">Bas Nieuwenhuizen</a> 氏が検証した限りではベンチマーク (dual_quad_bench) で最大フィルレートが 16 pixels/cycles から 32 pixel/cycles に倍の性能向上があったとコメントしている。<sup class="footnote-ref" id="fnref:dfsm-fillrate"><a href="#fn:dfsm-fillrate">5</a></sup> シンプルなベンチマークでは DFSM の効果が最大限発揮されるが、ゲームといった現実的なアプリケーションではそう単純には行かなかったということだろう。</p>
-
-<p>DFSM 自体は <em>Vega/GFX9</em> の次世代、<em>Navi1x/RDNA/GFX10.1</em> でも引き継がれたが、有益な効果は得られないとコード中のコメントに記述され、さらにその次世代 <em>Navi2x/RDNA 2/GFX10.3</em> ではサポートがとうとう削除された。<br />
+<p>ドライバーからサポートが削除されることになった DFSM の性能への効果は実際どうだったかと言うと、まあ微妙だった。<br>
+Vulkanドライバー <strong>RADV</strong> においては、<em>Raven APU</em> だといくつかのグラフィクスデモとゲームで 2-3% の性能向上が確認できたことからデフォルトで有効化――された後に一部のゲームでは逆に 3% 性能低下したためデフォルトでは無効状態に戻されている。<br>
+<strong>RADV</strong> 開発者の一人である <a href="https://www.basnieuwenhuizen.nl/about/">Bas Nieuwenhuizen</a> 氏が検証した限りではベンチマーク (dual_quad_bench) で最大フィルレートが 16 pixels/cycles から 32 pixel/cycles に倍の性能向上があったとコメントしている。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup> シンプルなベンチマークでは DFSM の効果が最大限発揮されるが、ゲームといった現実的なアプリケーションではそう単純には行かなかったということだろう。</p>
+<p>DFSM 自体は <em>Vega/GFX9</em> の次世代、<em>Navi1x/RDNA/GFX10.1</em> でも引き継がれたが、有益な効果は得られないとコード中のコメントに記述され、さらにその次世代 <em>Navi2x/RDNA 2/GFX10.3</em> ではサポートがとうとう削除された。<br>
 それでも <em>Vega/GFX9</em> 世代の GPU を搭載する APU は今も多くが出回っており (<em>Raven2/Renoir/Cezanne</em>)、DFSM は今までドライバーでのサポートが残され、APU の場合はデフォルトで有効にする処置が取られていたが、<em>Raven2 APU</em> だとプリミティブ描画のレートを最大 43%も低下することが判明し、今回サポートが削除されることになった。</p>
-
 <blockquote>
-<pre tabindex="0"><code>       /* DFSM is not supported on GFX 10.3 and not beneficial on Navi1x. */
+<pre><code>       /* DFSM is not supported on GFX 10.3 and not beneficial on Navi1x. */
     } else if (sscreen-&gt;info.chip_class == GFX9) {
        sscreen-&gt;dpbb_allowed = !sscreen-&gt;info.has_dedicated_vram;
        /* DFSM reduces the Raven2 draw prim rate by ~43%. Disable it. */
        sscreen-&gt;dfsm_allowed = false;
-     }</code></pre>
+     }
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/cc92c72798842958c58441cff08de6fe8324c4b1?merge_request_iid=10813" rel="nofollow noreferrer" target="_blank">radeonsi: disable DFSM on gfx9 by default because it decreases performance a lot (cc92c727) · Commits · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/cc92c72798842958c58441cff08de6fe8324c4b1?merge_request_iid=10813">radeonsi: disable DFSM on gfx9 by default because it decreases performance a lot (cc92c727) · Commits · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>Raven2 APU</em> の GPU L2キャッシュは小さく、<em>Raven/Picasso/Renoir/Cezanne APU</em> が 1MiB 持つ中、その 1/8 の 128KiB しか持たない。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/11/raven2-gpu-l2c-size/">Raven2 の GPU L2キャッシュは 128KB | Coelacanth's Dream</a></span>
+<p><em>Raven2 APU</em> の GPU L2キャッシュは小さく、<em>Raven/Picasso/Renoir/Cezanne APU</em> が 1MiB 持つ中、その 1/8 の 128KiB しか持たない。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/02/11/raven2-gpu-l2c-size/">Raven2 の GPU L2キャッシュは 128KB | Coelacanth&rsquo;s Dream</a></span>
 
 DFSM に使用メモリ帯域を削減する効果があり、それはメモリ帯域がディスクリートGPUより狭い APU では性能への良い影響を与える可能性があったが、L2キャッシュを多く活用するため、L2キャッシュが小さい <em>Raven2 APU</em> では逆に働いてしまったのではないかと考えられる。</p>
-
-<p><em>DSBR</em> を部分的に適用する <em>DPBB (Deferred Primitive Batch Binning)</em> は対照的に優秀とも言え、性能向上はおとなしいが低下されることはなく、<em>Vega/GFX9</em> 世代の以降の GPU では APU、dGPU 問わずデフォルトで有効化され、<em>Navi2x/RDNA 2/GFX10.3</em> 世代でもハードウェアに機能が搭載されている。<br />
-ただ、ソースコードを追うと RenderBackend が 4基 (ROP 16基相当、RB+ は 32基相当<sup class="footnote-ref" id="fnref:rbplus"><a href="#fn:rbplus">6</a></sup>) 搭載されている GPU のような場合では (他の条件もあるが) 非効率なためか無効化されるようだ。<br />
+<p><em>DSBR</em> を部分的に適用する <em>DPBB (Deferred Primitive Batch Binning)</em> は対照的に優秀とも言え、性能向上はおとなしいが低下されることはなく、<em>Vega/GFX9</em> 世代の以降の GPU では APU、dGPU 問わずデフォルトで有効化され、<em>Navi2x/RDNA 2/GFX10.3</em> 世代でもハードウェアに機能が搭載されている。<br>
+ただ、ソースコードを追うと RenderBackend が 4基 (ROP 16基相当、RB+ は 32基相当<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>) 搭載されている GPU のような場合では (他の条件もあるが) 非効率なためか無効化されるようだ。<br>
 GPU の規模が小さく、メモリ帯域も狭い APU 向けという所は <em>DPBB</em> も同じだと言える。</p>
-
 <blockquote>
-<pre tabindex="0"><code>    /* Disable DPBB when it&#39;s believed to be inefficient. */
+<pre><code>    /* Disable DPBB when it's believed to be inefficient. */
     if (sscreen-&gt;info.max_render_backends &gt; 4 &amp;&amp; ps_can_kill &amp;&amp; db_can_reject_z_trivially &amp;&amp;
         sctx-&gt;framebuffer.state.zsbuf &amp;&amp; dsa-&gt;db_can_write) {
        si_emit_dpbb_disable(sctx);
        return;
-    }</code></pre>
+    }
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/cc92c72798842958c58441cff08de6fe8324c4b1/src/gallium/drivers/radeonsi/si_state_binning.c" rel="nofollow noreferrer" target="_blank">src/gallium/drivers/radeonsi/si_state_binning.c · cc92c72798842958c58441cff08de6fe8324c4b1 · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/cc92c72798842958c58441cff08de6fe8324c4b1/src/gallium/drivers/radeonsi/si_state_binning.c">src/gallium/drivers/radeonsi/si_state_binning.c · cc92c72798842958c58441cff08de6fe8324c4b1 · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
-
-<p>ほとんどの機能は性能向上、電力効率の向上を目的に開発、実装されるが、その全てがうまく働いてくれる訳ではないという現実を DFSM は見せてくれたのかもしれない。<br />
+<p>ほとんどの機能は性能向上、電力効率の向上を目的に開発、実装されるが、その全てがうまく働いてくれる訳ではないという現実を DFSM は見せてくれたのかもしれない。<br>
 実装されても一切サポートされなかった機能がある可能性を思えば、DFSM は一時期でも注目、活用されたことはまだ幸いだったとも考える。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:pb"><a href="https://lists.freedesktop.org/archives/mesa-dev/2017-October/172054.html" rel="nofollow noreferrer" target="_blank">[Mesa-dev] [PATCH 2/2] radeonsi: disable primitive binning on Vega10 (v2)</a>
- <a class="footnote-return" href="#fnref:pb"><sup>[return]</sup></a></li>
-<li id="fn:vega-whitepaper"><a href="https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf" rel="nofollow noreferrer" target="_blank">https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf</a>
- <a class="footnote-return" href="#fnref:vega-whitepaper"><sup>[return]</sup></a></li>
-<li id="fn:phoronix"><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=DFSM-RADV-September-2019" rel="nofollow noreferrer" target="_blank">Performance-Boosting DFSM Support Flipped On &amp; Off For RADV Vulkan Driver - Phoronix</a>
- <a class="footnote-return" href="#fnref:phoronix"><sup>[return]</sup></a></li>
-<li id="fn:rv-apu"><a href="https://old.hotchips.org/hc30/1conf/1.05_AMD_APU_AMD_Raven_HotChips30_Final.pdf" rel="nofollow noreferrer" target="_blank">presentation title - 1.05_AMD_APU_AMD_Raven_HotChips30_Final.pdf</a>
- <a class="footnote-return" href="#fnref:rv-apu"><sup>[return]</sup></a></li>
-<li id="fn:dfsm-fillrate"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/4b7e7956f0f161c958f570f1201517d50e5d3ed4" rel="nofollow noreferrer" target="_blank">radv: Add DFSM support. (4b7e7956) · Commits · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:dfsm-fillrate"><sup>[return]</sup></a></li>
-<li id="fn:rbplus"><a href="https://www.coelacanth-dream.com/posts/2020/11/10/what-is-rbplus/">一部の AMD GPU で実装、有効化されている RB+ とは何か | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:rbplus"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/mesa-dev/2017-October/172054.html">[Mesa-dev] [PATCH 2/2] radeonsi: disable primitive binning on Vega10 (v2)</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf">https://en.wikichip.org/w/images/a/a1/vega-whitepaper.pdf</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=DFSM-RADV-September-2019">Performance-Boosting DFSM Support Flipped On &amp; Off For RADV Vulkan Driver - Phoronix</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://old.hotchips.org/hc30/1conf/1.05_AMD_APU_AMD_Raven_HotChips30_Final.pdf">presentation title - 1.05_AMD_APU_AMD_Raven_HotChips30_Final.pdf</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/4b7e7956f0f161c958f570f1201517d50e5d3ed4">radv: Add DFSM support. (4b7e7956) · Commits · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/11/10/what-is-rbplus/">一部の AMD GPU で実装、有効化されている RB+ とは何か | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

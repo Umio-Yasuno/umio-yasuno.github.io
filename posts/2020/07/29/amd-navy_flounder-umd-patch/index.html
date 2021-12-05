@@ -70,81 +70,71 @@
 <div class="article-time">
     <time datetime="2020-07-29 01:56 &#43;0900" class="time-b">Post: 2020/07/29 01:56 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/11/28 04:45 &#43;0900</div>
-  </div>
-
-<p>AMDGPU向けオープンソース・ドライバー、<strong>RadeonSI (OpenGL)</strong> と <strong>RADV(Vulkan)</strong> に AMD の次世代 <em>RDNA 2</em> GPU、<em>Navy Flounder</em> をサポートするパッチ/マージリクエストが投稿された。<br />
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=3e1090e53ddc9881f4c0f9c4a89f1ad0b213b289" rel="nofollow noreferrer" target="_blank">amd: Navy Flounder support, enable displayable DCC on gfx10.3 (!6100) · Merge Requests · Mesa / mesa · GitLab</a></span>
+  </div><p>AMDGPU向けオープンソース・ドライバー、<strong>RadeonSI (OpenGL)</strong> と <strong>RADV(Vulkan)</strong> に AMD の次世代 <em>RDNA 2</em> GPU、<em>Navy Flounder</em> をサポートするパッチ/マージリクエストが投稿された。<br>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=3e1090e53ddc9881f4c0f9c4a89f1ad0b213b289">amd: Navy Flounder support, enable displayable DCC on gfx10.3 (!6100) · Merge Requests · Mesa / mesa · GitLab</a></span>
 </p>
-
 <p>しかし、GFX10.3世代での主な追加点、変更点は <a href="https://www.coelacanth-dream.com/tags/sienna_cichlid">Sienna Cichlid</a> サポートの時点で作業が行なわれたためか、今回のパッチから読み取れることはそう多くない。</p>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#navi22">やっぱり Navi22</a></li>
 <li><a href="#gfx1030">gfx1030 に関連付けられる</a></li>
 <li><a href="#digression">余談</a>
-
 <ul class="page-index">
 <li><a href="#navi10-rb">RenderBackend でも他と揃わない Navi10</a></li>
-</ul></li>
+</ul>
+</li>
 </ul>
 
-
 <h2 id="navi22">やっぱり Navi22</h2>
-
-<p><a href="https://www.coelacanth-dream.com/posts/2020/07/15/amd-next-gen-gpu-navy_flounder/">Linux Kernel へのパッチが投稿された際</a>にも書いたが、<code>chipRevision</code> の範囲が、以前 <a href="https://github.com/GPUOpen-Drivers/pal" rel="nofollow noreferrer" target="_blank">GPUOpen-Drivers/pal</a> 一時的に組み込まれた <em>Navi22</em> のコードのものと一致するため<sup class="footnote-ref" id="fnref:pal-navi22"><a href="#fn:pal-navi22">1</a></sup>、やはり <code>Navy Flounder == Navi22</code> であると考えられる。</p>
-
+<p><a href="https://www.coelacanth-dream.com/posts/2020/07/15/amd-next-gen-gpu-navy_flounder/">Linux Kernel へのパッチが投稿された際</a>にも書いたが、<code>chipRevision</code> の範囲が、以前 <a href="https://github.com/GPUOpen-Drivers/pal">GPUOpen-Drivers/pal</a> 一時的に組み込まれた <em>Navi22</em> のコードのものと一致するため<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、やはり <code>Navy Flounder == Navi22</code> であると考えられる。</p>
 <blockquote>
-<pre tabindex="0"><code>  #define AMDGPU_NAVY_FLOUNDER_RANGE      0x32, 0x3C</code></pre>
-<p>引用元: <cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=3e1090e53ddc9881f4c0f9c4a89f1ad0b213b289#diff-content-c1f3b41aade2b5733c9e6855b5288f64c3048688" rel="nofollow noreferrer" target="_blank">amd: Navy Flounder support, enable displayable DCC on gfx10.3 (!6100) · Merge Requests · Mesa / mesa · GitLab</a></cite></p>
-<pre tabindex="0"><code>  #define AMDGPU_NAVI22_RANGE     0x32, 0x3C</code></pre>
-<p>引用元: <cite><a href="https://github.com/GPUOpen-Drivers/pal/blob/39abe2297ca58a2b84dcd9bc5e238fbc399bd6e0/src/core/imported/addrlib/src/amdgpu_asic_addr.h#L111" rel="nofollow noreferrer" target="_blank">pal/amdgpu_asic_addr.h at 39abe2297ca58a2b84dcd9bc5e238fbc399bd6e0 · GPUOpen-Drivers/pal</a></cite></p>
+<pre><code>  #define AMDGPU_NAVY_FLOUNDER_RANGE      0x32, 0x3C
+</code></pre>
+<p>引用元: <cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=3e1090e53ddc9881f4c0f9c4a89f1ad0b213b289#diff-content-c1f3b41aade2b5733c9e6855b5288f64c3048688">amd: Navy Flounder support, enable displayable DCC on gfx10.3 (!6100) · Merge Requests · Mesa / mesa · GitLab</a></cite></p>
+<pre><code>  #define AMDGPU_NAVI22_RANGE     0x32, 0x3C
+</code></pre>
+<p>引用元: <cite><a href="https://github.com/GPUOpen-Drivers/pal/blob/39abe2297ca58a2b84dcd9bc5e238fbc399bd6e0/src/core/imported/addrlib/src/amdgpu_asic_addr.h#L111">pal/amdgpu_asic_addr.h at 39abe2297ca58a2b84dcd9bc5e238fbc399bd6e0 · GPUOpen-Drivers/pal</a></cite></p>
 </blockquote>
+<p>しかし、AMD GPU のオープンソース・ドライバーは Kernel側も User側も <em>Navi2x</em> は使わず、基本「色 + 硬骨魚」のコードネームで通しており、<a href="https://github.com/llvm/llvm-project">llvm/llvm-project</a>のようなコンパイラバックエンドは ASIC ごとのサポートではなくマイクロアーキテクチャのサポートであるため、GPUID で示される。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">AMD GPU の GPU ID は何を意味するか | Coelacanth&rsquo;s Dream</a></span>
 
-<p>しかし、AMD GPU のオープンソース・ドライバーは Kernel側も User側も <em>Navi2x</em> は使わず、基本「色 + 硬骨魚」のコードネームで通しており、<a href="https://github.com/llvm/llvm-project" rel="nofollow noreferrer" target="_blank">llvm/llvm-project</a>のようなコンパイラバックエンドは ASIC ごとのサポートではなくマイクロアーキテクチャのサポートであるため、GPUID で示される。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">AMD GPU の GPU ID は何を意味するか | Coelacanth's Dream</a></span>
-
-そのため、自分の範囲では <em>Navi21</em> とか <em>Navi22</em> といったコードネームに拘りを持つ必要は無く、支障が無い限り、コード中で使われているコードネーム「色 + 硬骨魚」を用いていくつもりでいる。<br />
+そのため、自分の範囲では <em>Navi21</em> とか <em>Navi22</em> といったコードネームに拘りを持つ必要は無く、支障が無い限り、コード中で使われているコードネーム「色 + 硬骨魚」を用いていくつもりでいる。<br>
 コードネームから製品展開を推測する気はないし。</p>
-
 <h2 id="gfx1030">gfx1030 に関連付けられる</h2>
-
-<p><em>Navy Flounder</em> の GPUID だが、<em>Sienna Cichlid</em> と同じ <em>gfx1030</em> とされている。<sup class="footnote-ref" id="fnref:navy-flounder-gfx1030"><a href="#fn:navy-flounder-gfx1030">2</a></sup><br />
-だが、自分が確認できる情報<sup class="footnote-ref" id="fnref:navi22-navi23-vangogh-gpuid"><a href="#fn:navi22-navi23-vangogh-gpuid">3</a></sup>では <em>Navi22</em> は <em>gfx1031</em> か <em>gfx1032</em> (恐らく前者)、インターネット上で言われている情報では <em>gfx1031</em> とされている。</p>
-
-<p>ここで考えられるのは、LLVM 側の対応がそこまで追い付いていないため、仮のコードとして記述した、<br />
-もしくは、<em>Sienna Cichlid</em> と <em>Navy Flounder</em> の間にマイクロアーキテクチャレベルの対応命令やバグに違いは無く、両方を <em>gfx1030</em> としても問題ないか。<br />
-別チップ/ASIC であってもマイクロアーキテクチャは同一、ということは普通にある。<br />
+<p><em>Navy Flounder</em> の GPUID だが、<em>Sienna Cichlid</em> と同じ <em>gfx1030</em> とされている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+だが、自分が確認できる情報<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>では <em>Navi22</em> は <em>gfx1031</em> か <em>gfx1032</em> (恐らく前者)、インターネット上で言われている情報では <em>gfx1031</em> とされている。</p>
+<p>ここで考えられるのは、LLVM 側の対応がそこまで追い付いていないため、仮のコードとして記述した、<br>
+もしくは、<em>Sienna Cichlid</em> と <em>Navy Flounder</em> の間にマイクロアーキテクチャレベルの対応命令やバグに違いは無く、両方を <em>gfx1030</em> としても問題ないか。<br>
+別チップ/ASIC であってもマイクロアーキテクチャは同一、ということは普通にある。<br>
 しかし後者では情報と矛盾するため、前者である可能性が高いだろう。</p>
-
 <h2 id="digression">余談</h2>
-
 <h3 id="navi10-rb">RenderBackend でも他と揃わない Navi10</h3>
+<p>同じ <em>Navi1x /GFX10.1</em> 世代であっても、命令の対応範囲が <em>Navi10</em> と <em>Navi12 /Navi14</em> で異なり、<em>Navi10</em> は一部命令に対応していないことは、これまで何度か触れたことがあったが、<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/03/09/navi12-recent-info/">Navi12情報近況 (2020-03-09) &amp; 推測 | Coelacanth&rsquo;s Dream</a></span>
 
-<p>同じ <em>Navi1x /GFX10.1</em> 世代であっても、命令の対応範囲が <em>Navi10</em> と <em>Navi12 /Navi14</em> で異なり、<em>Navi10</em> は一部命令に対応していないことは、これまで何度か触れたことがあったが、<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/03/09/navi12-recent-info/">Navi12情報近況 (2020-03-09) &amp; 推測 | Coelacanth's Dream</a></span>
-
-RenderBackendの機能にも差異があるらしく、DCC(Delta Color Compression) 機能の一部を <em>Navi12 /Navi14</em> はサポートし、<em>Navi10</em> はサポートしないとなっている。<sup class="footnote-ref" id="fnref:navi12-14-dcc"><a href="#fn:navi12-14-dcc">4</a></sup><br />
+RenderBackendの機能にも差異があるらしく、DCC(Delta Color Compression) 機能の一部を <em>Navi12 /Navi14</em> はサポートし、<em>Navi10</em> はサポートしないとなっている。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
 <em>RDNA 2/GFX10.3</em> 世代はすべてサポートするとして判定が行なわれている。</p>
-
-<p>その機能についてコードを漁ってみると、独立した 64Byte のブロックで DCC を実行するものらしいことがわかる。<sup class="footnote-ref" id="fnref:dcc-64b-block"><a href="#fn:dcc-64b-block">5</a></sup><br />
+<p>その機能についてコードを漁ってみると、独立した 64Byte のブロックで DCC を実行するものらしいことがわかる。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
 それと、<em>RDNA 2 /GFX10.3</em> 世代ではそのブロックサイズの対応が拡張され、128B のブロックもサポートされる。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:pal-navi22"><a href="https://github.com/GPUOpen-Drivers/pal/blob/39abe2297ca58a2b84dcd9bc5e238fbc399bd6e0/src/core/imported/addrlib/src/amdgpu_asic_addr.h#L111" rel="nofollow noreferrer" target="_blank">pal/amdgpu_asic_addr.h at 39abe2297ca58a2b84dcd9bc5e238fbc399bd6e0 · GPUOpen-Drivers/pal</a>
- <a class="footnote-return" href="#fnref:pal-navi22"><sup>[return]</sup></a></li>
-<li id="fn:navy-flounder-gfx1030"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=3e1090e53ddc9881f4c0f9c4a89f1ad0b213b289#diff-content-fbbe09bc487101e3f2f96c0b8fe543c915fa99bf" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=3e1090e53ddc9881f4c0f9c4a89f1ad0b213b289#diff-content-fbbe09bc487101e3f2f96c0b8fe543c915fa99bf</a>
- <a class="footnote-return" href="#fnref:navy-flounder-gfx1030"><sup>[return]</sup></a></li>
-<li id="fn:navi22-navi23-vangogh-gpuid"><a href="https://github.com/ROCm-Developer-Tools/ROCclr/commit/df2e0b9ae27f43ba8e23a3afa185c16dd3bb5ebc" rel="nofollow noreferrer" target="_blank">P4 to Git Change 2008166 by vsytchen@vsytchen-remote-ocl-win10 on 201… · ROCm-Developer-Tools/ROCclr@df2e0b9</a>
- <a class="footnote-return" href="#fnref:navi22-navi23-vangogh-gpuid"><sup>[return]</sup></a></li>
-<li id="fn:navi12-14-dcc"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=2ba4fe2f1f1d7bcfc1222d3141b4ce981455d498" rel="nofollow noreferrer" target="_blank">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=2ba4fe2f1f1d7bcfc1222d3141b4ce981455d498</a>
- <a class="footnote-return" href="#fnref:navi12-14-dcc"><sup>[return]</sup></a></li>
-<li id="fn:dcc-64b-block"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/87ecfdfbf0a8448d1475e6da15175e68bdeb933b/src/amd/common/ac_surface.c#L1991" rel="nofollow noreferrer" target="_blank">src/amd/common/ac_surface.c · 87ecfdfbf0a8448d1475e6da15175e68bdeb933b · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:dcc-64b-block"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/GPUOpen-Drivers/pal/blob/39abe2297ca58a2b84dcd9bc5e238fbc399bd6e0/src/core/imported/addrlib/src/amdgpu_asic_addr.h#L111">pal/amdgpu_asic_addr.h at 39abe2297ca58a2b84dcd9bc5e238fbc399bd6e0 · GPUOpen-Drivers/pal</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=3e1090e53ddc9881f4c0f9c4a89f1ad0b213b289#diff-content-fbbe09bc487101e3f2f96c0b8fe543c915fa99bf">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=3e1090e53ddc9881f4c0f9c4a89f1ad0b213b289#diff-content-fbbe09bc487101e3f2f96c0b8fe543c915fa99bf</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://github.com/ROCm-Developer-Tools/ROCclr/commit/df2e0b9ae27f43ba8e23a3afa185c16dd3bb5ebc">P4 to Git Change 2008166 by vsytchen@vsytchen-remote-ocl-win10 on 201… · ROCm-Developer-Tools/ROCclr@df2e0b9</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=2ba4fe2f1f1d7bcfc1222d3141b4ce981455d498">https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6100/diffs?commit_id=2ba4fe2f1f1d7bcfc1222d3141b4ce981455d498</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/87ecfdfbf0a8448d1475e6da15175e68bdeb933b/src/amd/common/ac_surface.c#L1991">src/amd/common/ac_surface.c · 87ecfdfbf0a8448d1475e6da15175e68bdeb933b · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

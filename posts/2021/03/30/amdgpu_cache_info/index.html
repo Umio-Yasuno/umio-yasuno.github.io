@@ -70,16 +70,12 @@
 <div class="article-time">
     <time datetime="2021-03-30 02:12 &#43;0900" class="time-b">Post: 2021/03/30 02:12 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/09/19 06:53 &#43;0900</div>
-  </div>
-
-<p><em>Vega10</em> 以降の AMD GPU のキャッシュ構成情報をドライバーに追加するパッチが Linux Kernel (amd-gfx) に投稿された。<br />
-キャッシュ情報が追加されたのは、Kernelドライバーでも KFD (Kernel Fusion Driver) の部分であり、KFD は各種ROCmソフトウェアを動作させるためのドライバーとして機能する。<br />
+  </div><p><em>Vega10</em> 以降の AMD GPU のキャッシュ構成情報をドライバーに追加するパッチが Linux Kernel (amd-gfx) に投稿された。<br>
+キャッシュ情報が追加されたのは、Kernelドライバーでも KFD (Kernel Fusion Driver) の部分であり、KFD は各種ROCmソフトウェアを動作させるためのドライバーとして機能する。<br>
 これまでは CU ごとに持つプライベートな L1ベクタキャッシュの情報だけだったが、今回のパッチにより、複数の CU で共有するスカラL1データ/命令キャッシュ、L2データキャッシュ、そして <em>RDNA/GFX10</em> 世代から追加された GL1キャッシュ、 <em>RDNA 2/GFX10.3</em> 世代から追加された L3データキャッシュ/Infinity Cache の情報が追加された。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></li>
 </ul>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#aldebaran">Aldebaran のキャッシュ構成</a></li>
 <li><a href="#vgh">VanGogh のキャッシュ構成と CU数　―― GL1キャッシュは持つが L3キャッシュは持たず</a></li>
@@ -87,333 +83,305 @@
 <li><a href="#cache-info">AMD GPU cache info</a></li>
 </ul>
 
-
 <h2 id="aldebaran">Aldebaran のキャッシュ構成</h2>
-
-<p><em>Aldebaran</em> の CU はプライベートL1キャッシュ 16KiB を持ち、これは他の AMD GPU アーキテクチャ、<em>GCN, CDNA, RDNA/2</em> と同じである。<br />
-スカラL1データ/命令キャッシュは、<em>Vega/GFX9</em> 世代では基本 CU 3基で共有していたが、2基で共有する形となる。L1データキャッシュは 16KiB、L1命令キャッシュは 32KiB で、キャッシュサイズに変わりはない。<br />
-L2データキャッシュは 8192KiB (8MiB)、CU 14基で共有すると記述されているが、ここでの CU は SE (ShaderEngine) あたりの数であり、全体の規模ではないと思われる。<br />
-しかし、<strong>Radeon Instinct MI50/60</strong> のベースとなる <em>Vega20</em> や <em>CDNA アーキテクチャ</em> を採用する <em>Arcturus/MI100</em> が SE あたりの CU 16基、というバランスを採り続けてきたことを考えると、それよりもわずかに少ない CU 14基となるのは興味深い点ではある。<br />
-それでも、<em>Aldebaran</em> では CU あたりの演算性能が大幅に強化されており、SE あたりの CU数が前世代よりも 2基減ったとしても、SE のような広い範囲で見た演算性能は前世代よりもずっと大きくなる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth's Dream</a></span>
+<p><em>Aldebaran</em> の CU はプライベートL1キャッシュ 16KiB を持ち、これは他の AMD GPU アーキテクチャ、<em>GCN, CDNA, RDNA/2</em> と同じである。<br>
+スカラL1データ/命令キャッシュは、<em>Vega/GFX9</em> 世代では基本 CU 3基で共有していたが、2基で共有する形となる。L1データキャッシュは 16KiB、L1命令キャッシュは 32KiB で、キャッシュサイズに変わりはない。<br>
+L2データキャッシュは 8192KiB (8MiB)、CU 14基で共有すると記述されているが、ここでの CU は SE (ShaderEngine) あたりの数であり、全体の規模ではないと思われる。<br>
+しかし、<strong>Radeon Instinct MI50/60</strong> のベースとなる <em>Vega20</em> や <em>CDNA アーキテクチャ</em> を採用する <em>Arcturus/MI100</em> が SE あたりの CU 16基、というバランスを採り続けてきたことを考えると、それよりもわずかに少ない CU 14基となるのは興味深い点ではある。<br>
+それでも、<em>Aldebaran</em> では CU あたりの演算性能が大幅に強化されており、SE あたりの CU数が前世代よりも 2基減ったとしても、SE のような広い範囲で見た演算性能は前世代よりもずっと大きくなる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth&rsquo;s Dream</a></span>
 
 また、スカラL1データ/命令キャッシュは 2基で共有するため、それらキャッシュの総数は他 <em>Vega/GFX9</em> 系よりも増えることになる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   +static struct kfd_gpu_cache_info aldebaran_cache_info[] = {
-   + {
-   +     /* TCP L1 Cache per CU */
-   +     .cache_size = 16,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 1,
-   + },
-   + {
-   +     /* Scalar L1 Instruction Cache per SQC */
-   +     .cache_size = 32,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_INST_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 2,
-   + },
-   + {
-   +     /* Scalar L1 Data Cache per SQC */
-   +     .cache_size = 16,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 2,
-   + },
-   + {
-   +     /* L2 Data Cache per GPU (Total Tex Cache) */
-   +     .cache_size = 8192,
-   +     .cache_level = 2,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 14,
-   + },
-   +};</code></pre>
+<pre><code>   +static struct kfd_gpu_cache_info aldebaran_cache_info[] = {
+   +	{
+   +		/* TCP L1 Cache per CU */
+   +		.cache_size = 16,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 1,
+   +	},
+   +	{
+   +		/* Scalar L1 Instruction Cache per SQC */
+   +		.cache_size = 32,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_INST_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 2,
+   +	},
+   +	{
+   +		/* Scalar L1 Data Cache per SQC */
+   +		.cache_size = 16,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 2,
+   +	},
+   +	{
+   +		/* L2 Data Cache per GPU (Total Tex Cache) */
+   +		.cache_size = 8192,
+   +		.cache_level = 2,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 14,
+   +	},
+   +};
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
 </div>
 
 </blockquote>
-
 <p>今回のパッチでは <em>Vega20</em> と <em>Arcturus</em> のキャッシュ情報を共通のものとしており、そのためか <em>Vega20</em> の L2キャッシュサイズが 8192KiB(8MiB) になっているが、<em>Vega20</em> は 4MiB、<em>Arcturus</em> は 8MiB というのが正しいように思われる。</p>
-
-<p><em>Aldebaran</em> では <em>Arcturus</em> から L2キャッシュサイズが変わらないこととなるが、L2キャッシュラインサイズを変更することは明らかにされており、<em>RDNA/2 アーキテクチャ</em> と同じ 128Byte になる。<br />
-キャッシュラインサイズを大きくすることは、メモリアクセスのデータ単位を大きくすることとなり、少ないメモリリクエストで広いメモリ帯域を活用することができる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/#tcc-line-128B">RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される | Coelacanth's Dream</a></span>
+<p><em>Aldebaran</em> では <em>Arcturus</em> から L2キャッシュサイズが変わらないこととなるが、L2キャッシュラインサイズを変更することは明らかにされており、<em>RDNA/2 アーキテクチャ</em> と同じ 128Byte になる。<br>
+キャッシュラインサイズを大きくすることは、メモリアクセスのデータ単位を大きくすることとなり、少ないメモリリクエストで広いメモリ帯域を活用することができる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/#tcc-line-128B">RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <h2 id="vgh">VanGogh のキャッシュ構成と CU数　―― GL1キャッシュは持つが L3キャッシュは持たず</h2>
-
-<p>パッチでは <em>VanGogh APU</em> のキャッシュ情報も追加されている。<br />
-プライベートL1キャッシュ、スカラL1データ/命令キャッシュは他と同様。<br />
+<p>パッチでは <em>VanGogh APU</em> のキャッシュ情報も追加されている。<br>
+プライベートL1キャッシュ、スカラL1データ/命令キャッシュは他と同様。<br>
 <em>VanGogh</em> において興味深いのは <em>RDNA/GFX10</em> から追加された GL1キャッシュは持つが、<em>RDNA 2/GFX10.3</em> から追加された <em>L3キャッシュ/Infinity Cache</em> は持たないことだ。</p>
-
-<p><em>VanGogh</em> の前に各キャッシュ階層の呼称について説明すると、<br />
-<em>RDNA系アーキテクチャ</em> では CU内のプライベートL1キャッシュ、複数の CU で共有する L1データ/命令キャッシュと、グローバルでアクセス可能な L2キャッシュの間に階層が 1つ増設された。<br />
-そして、<em>GCN/CDNA アーキテクチャ</em> における L1キャッシュを <em>RDNA アーキテクチャ</em> では L0キャッシュとし、新たなキャッシュ階層を L1キャッシュとした。<br />
-マーケティング上の資料等ではそうした呼び方で問題無いと思われるが、ドライバー等の扱いでは、呼び方が違ってもキャッシュの扱いは同じであるため、その呼び方をそのまま使うのではややこしく、コードを複雑にし、問題が生じる原因となる。<br />
-そのため、オープンソース・ドライバーのコードを読む限りでは、<em>RDNA アーキテクチャ</em> における L1キャッシュを <code>GL1</code> と呼び、区別している。<br />
-AMD GPU のキャッシュの別名は他にもあり、プライベートL1キャッシュは <code>TCP (Texture Cache Private?)</code> 、L2キャッシュは <code>TCC (Total Texture Cache?)</code> <sup class="footnote-ref" id="fnref:tcc"><a href="#fn:tcc">1</a></sup> 、L3キャッシュは <code>MALL (Memory Access at Last Level)</code> とされる。</p>
-
-<p><em>VanGogh</em> の各 L1キャッシュサイズは他と同じで、L1データ/命令キャッシュを CU 2基で共有するのは <em>RDNA系アーキテクチャ</em> で共通する特徴 (WGP) となる。<br />
-そして、<em>VanGogh</em> は GL1キャッシュ 128KiB を持ち、これは他の <em>RDNA系アーキテクチャ</em> を採用するディスクリートGPUと同じ規模のキャッシュサイズとなる。<br />
+<p><em>VanGogh</em> の前に各キャッシュ階層の呼称について説明すると、<br>
+<em>RDNA系アーキテクチャ</em> では CU内のプライベートL1キャッシュ、複数の CU で共有する L1データ/命令キャッシュと、グローバルでアクセス可能な L2キャッシュの間に階層が 1つ増設された。<br>
+そして、<em>GCN/CDNA アーキテクチャ</em> における L1キャッシュを <em>RDNA アーキテクチャ</em> では L0キャッシュとし、新たなキャッシュ階層を L1キャッシュとした。<br>
+マーケティング上の資料等ではそうした呼び方で問題無いと思われるが、ドライバー等の扱いでは、呼び方が違ってもキャッシュの扱いは同じであるため、その呼び方をそのまま使うのではややこしく、コードを複雑にし、問題が生じる原因となる。<br>
+そのため、オープンソース・ドライバーのコードを読む限りでは、<em>RDNA アーキテクチャ</em> における L1キャッシュを <code>GL1</code> と呼び、区別している。<br>
+AMD GPU のキャッシュの別名は他にもあり、プライベートL1キャッシュは <code>TCP (Texture Cache Private?)</code> 、L2キャッシュは <code>TCC (Total Texture Cache?)</code> <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> 、L3キャッシュは <code>MALL (Memory Access at Last Level)</code> とされる。</p>
+<p><em>VanGogh</em> の各 L1キャッシュサイズは他と同じで、L1データ/命令キャッシュを CU 2基で共有するのは <em>RDNA系アーキテクチャ</em> で共通する特徴 (WGP) となる。<br>
+そして、<em>VanGogh</em> は GL1キャッシュ 128KiB を持ち、これは他の <em>RDNA系アーキテクチャ</em> を採用するディスクリートGPUと同じ規模のキャッシュサイズとなる。<br>
 L2キャッシュは 1024KiB (1MiB) であり、これは近年の <em>Vega/GFX9</em> 世代 APU <span class="complement">Raven, Picasso, Renoir, Lucienne, Cezanne</span>
- と同じサイズであり、AMD としては APU の GPU部に持たせる L2キャッシュはまだ 1MiB がちょうど良いという判断なのかもしれない。<br />
+ と同じサイズであり、AMD としては APU の GPU部に持たせる L2キャッシュはまだ 1MiB がちょうど良いという判断なのかもしれない。<br>
 それでも GL1キャッシュを持つため、GPU のメモリ性能向上が期待できる。</p>
-
-<p>また、CU 8基で共有するとされているが、他の RDNA系dGPU の情報を見るに、SA (ShaderArray) あたりの CU数ではないかと思われる。<br />
-<em>RDNA系アーキテクチャ</em> では SE あたりの SA数が 2基となっているため、<em>VanGogh</em> でもそうなるかはここでは読み取れない。<br />
+<p>また、CU 8基で共有するとされているが、他の RDNA系dGPU の情報を見るに、SA (ShaderArray) あたりの CU数ではないかと思われる。<br>
+<em>RDNA系アーキテクチャ</em> では SE あたりの SA数が 2基となっているため、<em>VanGogh</em> でもそうなるかはここでは読み取れない。<br>
 しかし、L2キャッシュ 1MiB ということから、<em>Vega/GFX9</em> 世代 APU からそう CU数を増やすことはせず、SE あたり SA 1基という構成を採る可能性は考えられる。</p>
-
-<p>そして、<em>VanGogh APU</em> は GPU部に <em>RDNA 2 アーキテクチャ</em> を採用するが、L3キャッシュ/Infinity Cache は持たない。<br />
-このことはディスプレイエンジン周りのドライバーコードから読み取ることができ、正確な情報と思われる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth's Dream</a></span>
+<p>そして、<em>VanGogh APU</em> は GPU部に <em>RDNA 2 アーキテクチャ</em> を採用するが、L3キャッシュ/Infinity Cache は持たない。<br>
+このことはディスプレイエンジン周りのドライバーコードから読み取ることができ、正確な情報と思われる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <p><em>RDNA 2アーキテクチャ</em> でありながら L3キャッシュ/Infinity Cache を持たず、また SE あたり SA 1基という構成 <span class="complement">を採る可能性がある</span>
  からは、コストを重視した APU/SoC という設計思想が窺える。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   +static struct kfd_gpu_cache_info vangogh_cache_info[] = {
-   + {
-   +     /* TCP L1 Cache per CU */
-   +     .cache_size = 16,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 1,
-   + },
-   + {
-   +     /* Scalar L1 Instruction Cache per SQC */
-   +     .cache_size = 32,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_INST_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 2,
-   + },
-   + {
-   +     /* Scalar L1 Data Cache per SQC */
-   +     .cache_size = 16,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 2,
-   + },
-   + {
-   +     /* GL1 Data Cache per SA */
-   +     .cache_size = 128,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 8,
-   + },
-   + {
-   +     /* L2 Data Cache per GPU (Total Tex Cache) */
-   +     .cache_size = 1024,
-   +     .cache_level = 2,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 8,
-   + },
-   +};</code></pre>
+<pre><code>   +static struct kfd_gpu_cache_info vangogh_cache_info[] = {
+   +	{
+   +		/* TCP L1 Cache per CU */
+   +		.cache_size = 16,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 1,
+   +	},
+   +	{
+   +		/* Scalar L1 Instruction Cache per SQC */
+   +		.cache_size = 32,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_INST_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 2,
+   +	},
+   +	{
+   +		/* Scalar L1 Data Cache per SQC */
+   +		.cache_size = 16,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 2,
+   +	},
+   +	{
+   +		/* GL1 Data Cache per SA */
+   +		.cache_size = 128,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 8,
+   +	},
+   +	{
+   +		/* L2 Data Cache per GPU (Total Tex Cache) */
+   +		.cache_size = 1024,
+   +		.cache_level = 2,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 8,
+   +	},
+   +};
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="dimgrey_cavefish">Dimgrey Cavefish/Navi23 のキャッシュ構成　―― 32MiB の L3キャッシュ</h2>
-
 <p><em>Dimgrey Cavefish/Navi23</em> のキャッシュ情報も追加されており、そこからはメモリバス幅が読み取れる。</p>
-
-<p><em>Dimgrey Cavefish</em> は L2キャッシュ 2048KiB (2MiB)、L3キャッシュ/Infinity Cache 32MiB を持つ。<br />
-L3キャッシュ/Infinity Cache については、ディスプレイエンジン周りのドライバーコードから、メモリチャネルあたり 4MiB ということが読み取れ、他 <em>RDNA 2</em> dGPU同様に GDDR6メモリ (1ch = 16-bit) だとするとメモリバス幅は 128-bit だと考えられる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth's Dream</a></span>
+<p><em>Dimgrey Cavefish</em> は L2キャッシュ 2048KiB (2MiB)、L3キャッシュ/Infinity Cache 32MiB を持つ。<br>
+L3キャッシュ/Infinity Cache については、ディスプレイエンジン周りのドライバーコードから、メモリチャネルあたり 4MiB ということが読み取れ、他 <em>RDNA 2</em> dGPU同様に GDDR6メモリ (1ch = 16-bit) だとするとメモリバス幅は 128-bit だと考えられる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth&rsquo;s Dream</a></span>
 
 L2キャッシュ 2MiB からも、他同様に L2キャッシュブロックあたり 256KiB とすると 8ブロック (ch) となり、ここでも 128-bit と考えられる。</p>
-
-<p>既に製品が出ている <em>RDNA 2</em> dGPU、<em>Sienna Cichlid/Navi21</em> 、<em>Navy Flounder/Navi22</em> では、メモリチャネルあたり 8MiB の L3キャッシュ/Infinity Cache を持ち、<em>Dimgrey Cavefish/Navi23</em> はそれよりも小さいバランスとなるが、これは製造コストを意識した結果、あるいはターゲット帯に必要な性能を考えてのものだろう。<br />
+<p>既に製品が出ている <em>RDNA 2</em> dGPU、<em>Sienna Cichlid/Navi21</em> 、<em>Navy Flounder/Navi22</em> では、メモリチャネルあたり 8MiB の L3キャッシュ/Infinity Cache を持ち、<em>Dimgrey Cavefish/Navi23</em> はそれよりも小さいバランスとなるが、これは製造コストを意識した結果、あるいはターゲット帯に必要な性能を考えてのものだろう。<br>
 また、 <em>Dimgrey Cavefish</em> の SA あたりの CU数は 8基とされ、<em>Sienna Cichlid</em> 、<em>Navy Flounder</em> は 10基であったから、ここでも小さめバランスを取ったことが読み取れる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   +static struct kfd_gpu_cache_info dimgrey_cavefish_cache_info[] = {
-   + {
-   +     /* TCP L1 Cache per CU */
-   +     .cache_size = 16,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 1,
-   + },
-   + {
-   +     /* Scalar L1 Instruction Cache per SQC */
-   +     .cache_size = 32,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_INST_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 2,
-   + },
-   + {
-   +     /* Scalar L1 Data Cache per SQC */
-   +     .cache_size = 16,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 2,
-   + },
-   + {
-   +     /* GL1 Data Cache per SA */
-   +     .cache_size = 128,
-   +     .cache_level = 1,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 8,
-   + },
-   + {
-   +     /* L2 Data Cache per GPU (Total Tex Cache) */
-   +     .cache_size = 2048,
-   +     .cache_level = 2,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 8,
-   + },
-   + {
-   +     /* L3 Data Cache per GPU */
-   +     .cache_size = 32*1024,
-   +     .cache_level = 3,
-   +     .flags = (CRAT_CACHE_FLAGS_ENABLED |
-   +             CRAT_CACHE_FLAGS_DATA_CACHE |
-   +             CRAT_CACHE_FLAGS_SIMD_CACHE),
-   +     .num_cu_shared = 8,
-   + },
-   +};</code></pre>
+<pre><code>   +static struct kfd_gpu_cache_info dimgrey_cavefish_cache_info[] = {
+   +	{
+   +		/* TCP L1 Cache per CU */
+   +		.cache_size = 16,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 1,
+   +	},
+   +	{
+   +		/* Scalar L1 Instruction Cache per SQC */
+   +		.cache_size = 32,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_INST_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 2,
+   +	},
+   +	{
+   +		/* Scalar L1 Data Cache per SQC */
+   +		.cache_size = 16,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 2,
+   +	},
+   +	{
+   +		/* GL1 Data Cache per SA */
+   +		.cache_size = 128,
+   +		.cache_level = 1,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 8,
+   +	},
+   +	{
+   +		/* L2 Data Cache per GPU (Total Tex Cache) */
+   +		.cache_size = 2048,
+   +		.cache_level = 2,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 8,
+   +	},
+   +	{
+   +		/* L3 Data Cache per GPU */
+   +		.cache_size = 32*1024,
+   +		.cache_level = 3,
+   +		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+   +				CRAT_CACHE_FLAGS_DATA_CACHE |
+   +				CRAT_CACHE_FLAGS_SIMD_CACHE),
+   +		.num_cu_shared = 8,
+   +	},
+   +};
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="cache-info">AMD GPU cache info</h2>
-
 <table>
 <thead>
 <tr>
-<th align="left">AMD GPU<br>cache info</th>
-<th align="center">RDNA L1 (GL1)</th>
-<th align="center">L2 (TCC)</th>
-<th align="center">L3/Infinity Cache (MALL)</th>
+<th style="text-align:left">AMD GPU<br>cache info</th>
+<th style="text-align:center">RDNA L1 (GL1)</th>
+<th style="text-align:center">L2 (TCC)</th>
+<th style="text-align:center">L3/Infinity Cache (MALL)</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Raven/Picasso<br>Renoir/Lucienne/Cezanne</td>
-<td align="center">-</td>
-<td align="center">1M</td>
-<td align="center">-</td>
+<td style="text-align:left">Raven/Picasso<br>Renoir/Lucienne/Cezanne</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">1M</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">Raven2</td>
-<td align="center">-</td>
-<td align="center">128K<sup class="footnote-ref" id="fnref:rv2-l2c"><a href="#fn:rv2-l2c">2</a></sup></td>
-<td align="center">-</td>
+<td style="text-align:left">Raven2</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">128K<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">Vega20</td>
-<td align="center">-</td>
-<td align="center">4M</td>
-<td align="center">-</td>
+<td style="text-align:left">Vega20</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">4M</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">Arcturus</td>
-<td align="center">-</td>
-<td align="center">8M?</td>
-<td align="center">-</td>
+<td style="text-align:left">Arcturus</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">8M?</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">Aldebaran</td>
-<td align="center">-</td>
-<td align="center">8M</td>
-<td align="center">-</td>
+<td style="text-align:left">Aldebaran</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">8M</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">Navi10/Navi12</td>
-<td align="center">128K</td>
-<td align="center">4M</td>
-<td align="center">-</td>
+<td style="text-align:left">Navi10/Navi12</td>
+<td style="text-align:center">128K</td>
+<td style="text-align:center">4M</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">Navi14</td>
-<td align="center">128K</td>
-<td align="center">2M</td>
-<td align="center">-</td>
+<td style="text-align:left">Navi14</td>
+<td style="text-align:center">128K</td>
+<td style="text-align:center">2M</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">VanGogh</td>
-<td align="center">128K</td>
-<td align="center">1M</td>
-<td align="center">-</td>
+<td style="text-align:left">VanGogh</td>
+<td style="text-align:center">128K</td>
+<td style="text-align:center">1M</td>
+<td style="text-align:center">-</td>
 </tr>
-
 <tr>
-<td align="left">Sienna Cichlid</td>
-<td align="center">128K</td>
-<td align="center">4M</td>
-<td align="center">128M</td>
+<td style="text-align:left">Sienna Cichlid</td>
+<td style="text-align:center">128K</td>
+<td style="text-align:center">4M</td>
+<td style="text-align:center">128M</td>
 </tr>
-
 <tr>
-<td align="left">Navy Flounder</td>
-<td align="center">128K</td>
-<td align="center">3M</td>
-<td align="center">96M</td>
+<td style="text-align:left">Navy Flounder</td>
+<td style="text-align:center">128K</td>
+<td style="text-align:center">3M</td>
+<td style="text-align:center">96M</td>
 </tr>
-
 <tr>
-<td align="left">Dimgrey Cavefish</td>
-<td align="center">128K</td>
-<td align="center">2M</td>
-<td align="center">32M</td>
+<td style="text-align:left">Dimgrey Cavefish</td>
+<td style="text-align:center">128K</td>
+<td style="text-align:center">2M</td>
+<td style="text-align:center">32M</td>
 </tr>
 </tbody>
 </table>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:tcc">Texture Channel Cache とされることも
- <a class="footnote-return" href="#fnref:tcc"><sup>[return]</sup></a></li>
-<li id="fn:rv2-l2c"><a href="https://www.coelacanth-dream.com/posts/2021/02/11/raven2-gpu-l2c-size/">Raven2 の GPU L2キャッシュは 128KB | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:rv2-l2c"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p>Texture Channel Cache とされることも&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2021/02/11/raven2-gpu-l2c-size/">Raven2 の GPU L2キャッシュは 128KB | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

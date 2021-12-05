@@ -70,72 +70,63 @@
 <div class="article-time">
     <time datetime="2020-12-02 01:17 &#43;0900" class="time-b">Post: 2020/12/02 01:17 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/12/02 08:52 &#43;0900</div>
-  </div>
-
-<p><em>Alder Lake-P</em> を搭載する Chromebookボード、コードネーム <strong>Brya</strong> に関するパッチが Coreboot に投稿され始めている。<br />
-<span class="thread-link"><a href="https://review.coreboot.org/c/coreboot/+/47819" rel="nofollow noreferrer" target="_blank">mb/google/brya: Add new google brya mainboard (Ia34130ff) · Gerrit Code Review</a></span>
+  </div><p><em>Alder Lake-P</em> を搭載する Chromebookボード、コードネーム <strong>Brya</strong> に関するパッチが Coreboot に投稿され始めている。<br>
+<span class="thread-link"><a href="https://review.coreboot.org/c/coreboot/+/47819">mb/google/brya: Add new google brya mainboard (Ia34130ff) · Gerrit Code Review</a></span>
 
 <strong>Brya</strong> が Chromebookボードにおけるメインボード、またはリファレンスボードとなり、各社はそれを基に製品化に向けたボードを開発する。</p>
+<p><em>Alder Lake</em> には <em>Alder Lake-S</em> と <em>Alder Lake-P</em> の 2種類が確認されているが、Linux向けの電力モニタリングツールである <a href="https://github.com/fenrus75/powertop">PowerTOP</a> に送られたパッチから、<em>Alder Lake-S</em> はデスクトップ向け、<em>Alder Lake-P</em> はモバイル向けであることが確定した。<br>
+<span class="thread-link"><a href="https://github.com/fenrus75/powertop/pull/77">Add Sapphire rapids, Alder Lake mobile and desktop support in Powertop by gkammela · Pull Request #77 · fenrus75/powertop</a></span>
 
-<p><em>Alder Lake</em> には <em>Alder Lake-S</em> と <em>Alder Lake-P</em> の 2種類が確認されているが、Linux向けの電力モニタリングツールである <a href="https://github.com/fenrus75/powertop" rel="nofollow noreferrer" target="_blank">PowerTOP</a> に送られたパッチから、<em>Alder Lake-S</em> はデスクトップ向け、<em>Alder Lake-P</em> はモバイル向けであることが確定した。<br />
-<span class="thread-link"><a href="https://github.com/fenrus75/powertop/pull/77" rel="nofollow noreferrer" target="_blank">Add Sapphire rapids, Alder Lake mobile and desktop support in Powertop by gkammela · Pull Request #77 · fenrus75/powertop</a></span>
-
-パッチを投稿した <a href="https://github.com/gkammela" rel="nofollow noreferrer" target="_blank">Gayatri Kammela (ユーザー名: gkammela)</a> 氏は Linux Kernel 等を担当する Intel のソフトウェアエンジニアだ。</p>
-
-<p>上記に関連して、CPUID と x86_Model について雑に補足すると、プロセッサのタイプ、ファミリー、モデルとなる下記引用部のような場合は、16進数であることを示す <code>0x</code> の後に続く数字が <code>Extended Model</code>、<code>Extended Family</code>、<code>Family</code>、<code>Model</code> といった風に並び、そして末尾が <code>Stepping</code> を意味する。<sup class="footnote-ref" id="fnref:coreboot-cpuid"><a href="#fn:coreboot-cpuid">1</a></sup><br />
-Coreboot 内のコードに記述されている、下記 <em>Alder Lake-S/P</em> の CPUID をデコードすると、<br />
-<em>Alder Lake-S</em> は <code>Family: 0x6, Model: 0x97, Stepping: 0x0</code>、<br />
+パッチを投稿した <a href="https://github.com/gkammela">Gayatri Kammela (ユーザー名: gkammela)</a> 氏は Linux Kernel 等を担当する Intel のソフトウェアエンジニアだ。</p>
+<p>上記に関連して、CPUID と x86_Model について雑に補足すると、プロセッサのタイプ、ファミリー、モデルとなる下記引用部のような場合は、16進数であることを示す <code>0x</code> の後に続く数字が <code>Extended Model</code>、<code>Extended Family</code>、<code>Family</code>、<code>Model</code> といった風に並び、そして末尾が <code>Stepping</code> を意味する。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+Coreboot 内のコードに記述されている、下記 <em>Alder Lake-S/P</em> の CPUID をデコードすると、<br>
+<em>Alder Lake-S</em> は <code>Family: 0x6, Model: 0x97, Stepping: 0x0</code>、<br>
 <em>Alder Lake-P</em> は <code>Family: 0x6, Model: 0x9A, Stepping: 0x0</code> となる。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   #define CPUID_ALDERLAKE_S_A0  0x90670
-   #define CPUID_ALDERLAKE_P_A0  0x906a0</code></pre>
+<pre><code>   #define CPUID_ALDERLAKE_S_A0	0x90670
+   #define CPUID_ALDERLAKE_P_A0	0x906a0
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/coreboot/coreboot/blob/21910f00de511d2b3ac1f15bb0fbda7761e3847d/src/soc/intel/common/block/include/intelblocks/mp_init.h#L47" rel="nofollow noreferrer" target="_blank">coreboot/mp_init.h at 21910f00de511d2b3ac1f15bb0fbda7761e3847d · coreboot/coreboot</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/coreboot/coreboot/blob/21910f00de511d2b3ac1f15bb0fbda7761e3847d/src/soc/intel/common/block/include/intelblocks/mp_init.h#L47">coreboot/mp_init.h at 21910f00de511d2b3ac1f15bb0fbda7761e3847d · coreboot/coreboot</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="alder-lake-m">Alder Lake-M</h2>
-
 <p>そうして <em>Alder Lake-S/P</em> の立ち位置がはっきりした中で、もう 1つ、<em>Alder Lake-M</em> が現れた。</p>
+<p><em>Alder Lake-M</em> を搭載したボードをサポートする初期のパッチが ChromiumOS関連のレポジトリに投稿されている。<br>
+<span class="thread-link"><a href="https://chromium-review.googlesource.com/c/chromiumos/platform/depthcharge/+/2565086/">adlerb:[TEST] Add new board config for ADL-M (I6b2cfa13) · Gerrit Code Review</a></span>
 
-<p><em>Alder Lake-M</em> を搭載したボードをサポートする初期のパッチが ChromiumOS関連のレポジトリに投稿されている。<br />
-<span class="thread-link"><a href="https://chromium-review.googlesource.com/c/chromiumos/platform/depthcharge/+/2565086/" rel="nofollow noreferrer" target="_blank">adlerb:[TEST] Add new board config for ADL-M (I6b2cfa13) · Gerrit Code Review</a></span>
-
-パッチの投稿先のレポジトリ、depthcharge は ChromeOS に採用されているブートローダーであり、まさに初期的なサポートと言える。<br />
-ERB は &quot;Early Engineering Reference Board&quot; の略。<sup class="footnote-ref" id="fnref:erb"><a href="#fn:erb">2</a></sup></p>
-
-<p><em>Alder Lake-M</em> のサポートは <em>tglrvp (Tiger Lake RVP)</em> をベースとし、ドライバー等も <em>Tiger Lake</em> となっていることは特筆すべきだろう。<em>adlrvp (Alder Lake-P)</em> を見るとドライバーはしっかり <em>Alder Lake</em> のものとなっている。<sup class="footnote-ref" id="fnref:adlrvp"><a href="#fn:adlrvp">3</a></sup><br />
+パッチの投稿先のレポジトリ、depthcharge は ChromeOS に採用されているブートローダーであり、まさに初期的なサポートと言える。<br>
+ERB は &ldquo;Early Engineering Reference Board&rdquo; の略。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p><em>Alder Lake-M</em> のサポートは <em>tglrvp (Tiger Lake RVP)</em> をベースとし、ドライバー等も <em>Tiger Lake</em> となっていることは特筆すべきだろう。<em>adlrvp (Alder Lake-P)</em> を見るとドライバーはしっかり <em>Alder Lake</em> のものとなっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 最初のパッチセットでは ALDERLAKE となっていた部分を、後のバージョンで TIGERLAKE に修正しているため、誤字ということはないだろう。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   CONFIG_DRIVER_SOC_TIGERLAKE=y
+<pre><code>   CONFIG_DRIVER_SOC_TIGERLAKE=y
    ~~~
-   CONFIG_DRIVER_GPIO_TIGERLAKE=y</code></pre>
+   CONFIG_DRIVER_GPIO_TIGERLAKE=y
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link">(<a href="https://chromium-review.googlesource.com/c/chromiumos/platform/depthcharge/+/2565086/5/board/adlmerb/defconfig" rel="nofollow noreferrer" target="_blank">https://chromium-review.googlesource.com/c/chromiumos/platform/depthcharge/+/2565086/5/board/adlmerb/defconfig</a>)</cite>
+<div class="quote-source">引用元:<cite class="source-link">(https://chromium-review.googlesource.com/c/chromiumos/platform/depthcharge/+/2565086/5/board/adlmerb/defconfig)</cite>
 </div>
 
 </blockquote>
-
-<p>突然現れた <em>Alder Lake-M</em> について考えると、まずパッチが depthcharge に投稿されたことから、<em>Alder Lake-P</em> と同様のプラットフォームに向けた、CPU と PCH を 1パッケージに統合した形式ということが浮かぶ。<br />
+<p>突然現れた <em>Alder Lake-M</em> について考えると、まずパッチが depthcharge に投稿されたことから、<em>Alder Lake-P</em> と同様のプラットフォームに向けた、CPU と PCH を 1パッケージに統合した形式ということが浮かぶ。<br>
 そしてドライバーの違いから、<em>Alder Lake-P</em> とは異なり、<em>Tiger Lake PCH</em> と組み合わされる CPU が <em>Alder Lake-M</em> ではないか、となるが、まだ初期的なパッチが投稿されたばかりの段階であり、あくまでも個人の推測である。</p>
-
 <p>ただ付け加えるならば、その唐突さも合わせ、CPU の素性は <em>Alder Lake-P</em> と同じであるかもしれない。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:coreboot-cpuid"><a href="https://github.com/coreboot/coreboot/commit/dcea700762bc97bd7fcabf2e960d47805129aeb1?branch=dcea700762bc97bd7fcabf2e960d47805129aeb1&amp;diff=unified" rel="nofollow noreferrer" target="_blank">inteltool: Print raw CPUID and make hexadecimal values unambiguous · coreboot/coreboot@dcea700</a>
- <a class="footnote-return" href="#fnref:coreboot-cpuid"><sup>[return]</sup></a></li>
-<li id="fn:erb"><a href="https://www.intel.com/content/dam/www/public/us/en/documents/guides/2nd-gen-core-6-series-chipset-dev-kit.pdf" rel="nofollow noreferrer" target="_blank">2nd Generation Intel Core Processor Family with Intel 6 Series Chipset Development Kit User Guide - 2nd-gen-core-6-series-chipset-dev-kit.pdf</a>
- <a class="footnote-return" href="#fnref:erb"><sup>[return]</sup></a></li>
-<li id="fn:adlrvp"><a href="https://chromium-review.googlesource.com/c/chromiumos/platform/depthcharge/+/2525915" rel="nofollow noreferrer" target="_blank">src/board/adlrvp: Add ADL-P RVP board support (I745fc592) · Gerrit Code Review</a>
- <a class="footnote-return" href="#fnref:adlrvp"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/coreboot/coreboot/commit/dcea700762bc97bd7fcabf2e960d47805129aeb1?branch=dcea700762bc97bd7fcabf2e960d47805129aeb1&amp;diff=unified">inteltool: Print raw CPUID and make hexadecimal values unambiguous · coreboot/coreboot@dcea700</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.intel.com/content/dam/www/public/us/en/documents/guides/2nd-gen-core-6-series-chipset-dev-kit.pdf">2nd Generation Intel Core Processor Family with Intel 6 Series Chipset Development Kit User Guide - 2nd-gen-core-6-series-chipset-dev-kit.pdf</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://chromium-review.googlesource.com/c/chromiumos/platform/depthcharge/+/2525915">src/board/adlrvp: Add ADL-P RVP board support (I745fc592) · Gerrit Code Review</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

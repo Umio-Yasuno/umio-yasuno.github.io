@@ -70,107 +70,93 @@
 <div class="article-time">
     <time datetime="2021-03-04 05:15 &#43;0900" class="time-b">Post: 2021/03/04 05:15 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/09/19 06:53 &#43;0900</div>
-  </div>
-
-<p><em>Sienna Cichlid/Navi21</em> 、<em>Navy Flounder/Navi22</em> が L3キャッシュに位置する <em>Infinity Cache</em> を、メモリチャネルあたり 8MiB のサイズを持つのに対し、<br />
+  </div><p><em>Sienna Cichlid/Navi21</em> 、<em>Navy Flounder/Navi22</em> が L3キャッシュに位置する <em>Infinity Cache</em> を、メモリチャネルあたり 8MiB のサイズを持つのに対し、<br>
 <em>Dimgrey Cavefish/Navi23</em> のサイズを採ることが Linux Kernel (amd-gfx) へのパッチから判明した。</p>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#mall-size">メモリチャネルあたり 4MiB の Infinity Cache</a></li>
 <li><a href="#disp-engine">ディスプレイエンジン数も 1基少ない Dimgrey Cavefish</a></li>
 </ul>
 
-
 <h2 id="mall-size">メモリチャネルあたり 4MiB の Infinity Cache</h2>
-
 <p>判明したと言っても、パッチが投稿されたのは 2021/01/19、1ヶ月半近く前で、自分が今まで気付いていなかっただけだ。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-January/058679.html" rel="nofollow noreferrer" target="_blank">[PATCH 3/3] drm/amd/display: Update dcn30_apply_idle_power_optimizations() code</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-January/058679.html">[PATCH 3/3] drm/amd/display: Update dcn30_apply_idle_power_optimizations() code</a></li>
 </ul>
+<p>以下に引用した部分のコードは、DCN 3.02 関連のファイルに追加されたもので、そして DCN 3.02 は <em>Dimgrey Cavefish/Navi23</em> に搭載されるディスプレイエンジンIPとなる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/10/08/amd-dimgrey_cavefish-linux-kernel-patch/">Linux Kernel に RDNA 2 GPU &ldquo;Dimgrey Cavefish&rdquo; をサポートするパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
 
-<p>以下に引用した部分のコードは、DCN 3.02 関連のファイルに追加されたもので、そして DCN 3.02 は <em>Dimgrey Cavefish/Navi23</em> に搭載されるディスプレイエンジンIPとなる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/08/amd-dimgrey_cavefish-linux-kernel-patch/">Linux Kernel に RDNA 2 GPU &quot;Dimgrey Cavefish&quot; をサポートするパッチが投稿される | Coelacanth's Dream</a></span>
-
-<code>caps.mall_size_per_mem_channel</code> に 4 が代入され、<code>caps.mall_size_total</code> を <code>dc-&gt;caps.mall_size_per_mem_channel * dc-&gt;ctx-&gt;dc_bios-&gt;vram_info.num_chans * 1048576</code> 、<br />
+<code>caps.mall_size_per_mem_channel</code> に 4 が代入され、<code>caps.mall_size_total</code> を <code>dc-&gt;caps.mall_size_per_mem_channel * dc-&gt;ctx-&gt;dc_bios-&gt;vram_info.num_chans * 1048576</code> 、<br>
 わかりやすく言い換えれば、<em>MALL</em> の総サイズを <code>メモリチャネルあたりの MALL サイズ * メモリチャネル数 * 1048576 [2^20]</code> で求めている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   --- a/drivers/gpu/drm/amd/display/dc/dcn302/dcn302_resource.c
+<pre><code>   --- a/drivers/gpu/drm/amd/display/dc/dcn302/dcn302_resource.c
    +++ b/drivers/gpu/drm/amd/display/dc/dcn302/dcn302_resource.c
    @@ -1316,7 +1316,9 @@ static bool dcn302_resource_construct(
-     dc-&gt;caps.max_cursor_size = 256;
-     dc-&gt;caps.min_horizontal_blanking_period = 80;
-     dc-&gt;caps.dmdata_alloc_size = 2048;
+    	dc-&gt;caps.max_cursor_size = 256;
+    	dc-&gt;caps.min_horizontal_blanking_period = 80;
+    	dc-&gt;caps.dmdata_alloc_size = 2048;
    -
-   + dc-&gt;caps.mall_size_per_mem_channel = 4;
-   + /* total size = mall per channel * num channels * 1024 * 1024 */
-   + dc-&gt;caps.mall_size_total = dc-&gt;caps.mall_size_per_mem_channel * dc-&gt;ctx-&gt;dc_bios-&gt;vram_info.num_chans * 1048576;
-     dc-&gt;caps.cursor_cache_size = dc-&gt;caps.max_cursor_size * dc-&gt;caps.max_cursor_size * 8;</code></pre>
+   +	dc-&gt;caps.mall_size_per_mem_channel = 4;
+   +	/* total size = mall per channel * num channels * 1024 * 1024 */
+   +	dc-&gt;caps.mall_size_total = dc-&gt;caps.mall_size_per_mem_channel * dc-&gt;ctx-&gt;dc_bios-&gt;vram_info.num_chans * 1048576;
+    	dc-&gt;caps.cursor_cache_size = dc-&gt;caps.max_cursor_size * dc-&gt;caps.max_cursor_size * 8;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-January/058679.html" rel="nofollow noreferrer" target="_blank">[PATCH 3/3] drm/amd/display: Update dcn30_apply_idle_power_optimizations() code</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-January/058679.html">[PATCH 3/3] drm/amd/display: Update dcn30_apply_idle_power_optimizations() code</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>MALL</em> については <em>Memory Access at Last Level</em> の略であり、<em>Last Level Cache</em> の別名。オープンソースドライバーのコード中では <em>MALL</em> が主に使われている。マーケティング的には <em>Infinity Cache</em> と呼ばれる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/21/sienna_cichlid-support-mall/">Sienna Cichlid は MALL 機能をサポート | Coelacanth's Dream</a></span>
+<p><em>MALL</em> については <em>Memory Access at Last Level</em> の略であり、<em>Last Level Cache</em> の別名。オープンソースドライバーのコード中では <em>MALL</em> が主に使われている。マーケティング的には <em>Infinity Cache</em> と呼ばれる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/10/21/sienna_cichlid-support-mall/">Sienna Cichlid は MALL 機能をサポート | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <blockquote>
-<pre tabindex="0"><code>   // =====================================================================================================================
-   // Helper function for calculating an SRD&#39;s &#34;llc_noalloc&#34; field (last level cache, aka the mall).</code></pre>
+<pre><code>   // =====================================================================================================================
+   // Helper function for calculating an SRD's &quot;llc_noalloc&quot; field (last level cache, aka the mall).
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/c9d1904b35ac5eb70bd4738a5bf5e537adbf5ab0/src/core/hw/gfxip/gfx9/gfx9Device.cpp" rel="nofollow noreferrer" target="_blank">pal/gfx9Device.cpp at c9d1904b35ac5eb70bd4738a5bf5e537adbf5ab0 · GPUOpen-Drivers/pal</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/c9d1904b35ac5eb70bd4738a5bf5e537adbf5ab0/src/core/hw/gfxip/gfx9/gfx9Device.cpp">pal/gfx9Device.cpp at c9d1904b35ac5eb70bd4738a5bf5e537adbf5ab0 · GPUOpen-Drivers/pal</a></cite>
 </div>
 
 </blockquote>
-
-<p>そして、<em>Sienna Cichlid/Navi21</em> と <em>Navy Flounder/Navi22</em> が搭載する DCN 3.0 関連ファイルの同様の部分は 8 [MiB] となっており、これは発表済みの <strong>Radeon RX 6000 シリーズ</strong> の仕様と一致する。<br />
+<p>そして、<em>Sienna Cichlid/Navi21</em> と <em>Navy Flounder/Navi22</em> が搭載する DCN 3.0 関連ファイルの同様の部分は 8 [MiB] となっており、これは発表済みの <strong>Radeon RX 6000 シリーズ</strong> の仕様と一致する。<br>
 <em>Sienna Cichlid/Navi21</em> は GDDR6 256-bit に対して <em>MALL/Infinity Cache</em> は 128MiB、<em>Navy Flounder/Navi22</em> は 192-bit に対して 96MiB となっている。(厳密に言えば、<strong>Radeon RX 6700 XT</strong> = <em>Navy Flounder/Navi22</em> というのはまだ確認できていないが。だが恐らくそうだろう)</p>
-
 <blockquote>
-<pre tabindex="0"><code>     dc-&gt;caps.mall_size_per_mem_channel = 8;
-     /* total size = mall per channel * num channels * 1024 * 1024 */
-     dc-&gt;caps.mall_size_total = dc-&gt;caps.mall_size_per_mem_channel * dc-&gt;ctx-&gt;dc_bios-&gt;vram_info.num_chans * 1048576;</code></pre>
+<pre><code>   	dc-&gt;caps.mall_size_per_mem_channel = 8;
+   	/* total size = mall per channel * num channels * 1024 * 1024 */
+   	dc-&gt;caps.mall_size_total = dc-&gt;caps.mall_size_per_mem_channel * dc-&gt;ctx-&gt;dc_bios-&gt;vram_info.num_chans * 1048576;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/agd5f/linux/-/commit/4f8d4007752e45b1cb5a9b649a2271565af7b550#4395e2a537b31b3470d7ff79bb73bfea155dab0e" rel="nofollow noreferrer" target="_blank">drm/amd/display: Update idle optimization handling (4f8d4007) · Commits · Alex Deucher / linux · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/agd5f/linux/-/commit/4f8d4007752e45b1cb5a9b649a2271565af7b550#4395e2a537b31b3470d7ff79bb73bfea155dab0e">drm/amd/display: Update idle optimization handling (4f8d4007) · Commits · Alex Deucher / linux · GitLab</a></cite>
 </div>
 
 </blockquote>
-
 <p>以上のことから、<em>Dimgrey Cavefish/Navi23</em> のメモリチャネルあたりの <em>MALL/Infinity Cache</em> は、 <em>Sienna Cichlid/Navi21</em> 、 <em>Navy Flounder/Navi22</em> よりも半分のサイズとなる 4 [MiB] だと考えられる。</p>
-
-<p>また、<em>RDNA 2 アーキテクチャ</em> を採用する APU に <a href="https://www.coelacanth-dream.com/tags/vangogh">VanGogh</a> がいるが、<em>VanGogh APU</em> が搭載する DCN 3.01 の関連ファイルには <em>MALL/Infinity Cache</em> の記述が無い。<em>RDNA 2</em> ではあるが <em>MALL/Infinity Cache</em> を省いていると思われる。<br />
+<p>また、<em>RDNA 2 アーキテクチャ</em> を採用する APU に <a href="https://www.coelacanth-dream.com/tags/vangogh">VanGogh</a> がいるが、<em>VanGogh APU</em> が搭載する DCN 3.01 の関連ファイルには <em>MALL/Infinity Cache</em> の記述が無い。<em>RDNA 2</em> ではあるが <em>MALL/Infinity Cache</em> を省いていると思われる。<br>
 APU がターゲットとする性能帯とコストから省いたのではないかと考えられる。</p>
-
 <h2 id="disp-engine">ディスプレイエンジン数も 1基少ない Dimgrey Cavefish</h2>
-
 <p><em>Dimgrey Cavefish/Navi23</em> が <em>Sienna Cichlid/Navi21</em> 、<em>Navy Flounder/Navi22</em> より規模を減らしているのは <em>MALL/Infinity Cache</em> だけでなく、ディスプレイエンジン数の数も 1基少ない 5基となっている。</p>
-
 <blockquote>
-<pre tabindex="0"><code> +static const struct resource_caps res_cap_dcn302 = {
- +       .num_timing_generator = 5,
- +       .num_opp = 5,
- +       .num_video_plane = 5,
- +       .num_audio = 5,
- +       .num_stream_encoder = 5,
- +       .num_dwb = 1,
- +       .num_ddc = 5,
- +       .num_vmid = 16,
- +       .num_mpc_3dlut = 2,
- +       .num_dsc = 5,
+<pre><code> +static const struct resource_caps res_cap_dcn302 = {
+ +		.num_timing_generator = 5,
+ +		.num_opp = 5,
+ +		.num_video_plane = 5,
+ +		.num_audio = 5,
+ +		.num_stream_encoder = 5,
+ +		.num_dwb = 1,
+ +		.num_ddc = 5,
+ +		.num_vmid = 16,
+ +		.num_mpc_3dlut = 2,
+ +		.num_dsc = 5,
  +};
- +</code></pre>
+ +
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-October/054588.html" rel="nofollow noreferrer" target="_blank">[PATCH 49/50] drm/amd/display: Add support for DCN302 (v2)</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-October/054588.html">[PATCH 49/50] drm/amd/display: Add support for DCN302 (v2)</a></cite>
 </div>
 
 </blockquote>
-
-<p>Linux Kernel (amd-gfx) に <em>Dimgrey Cavefish/Navi23</em> をサポートする最初のパッチが投稿された時の記事でも触れたが、<br />
-ディスプレイエンジンの数を減らすのは、<em>Polaris10</em> に対する <em>Polaris11/12</em> 、<em>Navi10</em> に対する <em>Navi14</em> のように、エントリー市場をターゲットとする GPU にはよく見られる設計点である。<br />
-メモリチャネルあたりの <em>MALL/Infinity Cache</em> サイズを減らしたのも、<em>Dimgrey Cavefish/Navi23</em> はエントリー市場向けの <em>RDNA 2</em> GPU であり、製造コストの削減を意識した結果と思われる。<br />
+<p>Linux Kernel (amd-gfx) に <em>Dimgrey Cavefish/Navi23</em> をサポートする最初のパッチが投稿された時の記事でも触れたが、<br>
+ディスプレイエンジンの数を減らすのは、<em>Polaris10</em> に対する <em>Polaris11/12</em> 、<em>Navi10</em> に対する <em>Navi14</em> のように、エントリー市場をターゲットとする GPU にはよく見られる設計点である。<br>
+メモリチャネルあたりの <em>MALL/Infinity Cache</em> サイズを減らしたのも、<em>Dimgrey Cavefish/Navi23</em> はエントリー市場向けの <em>RDNA 2</em> GPU であり、製造コストの削減を意識した結果と思われる。<br>
 あるいは、ターゲットの性能帯 <span class="complement">1080p と考えられる</span>
  では、メモリチャネルあたり 8 [MiB] の <em>MALL/Infinity Cache</em> を持っても効果が小さかった、4 [MiB] でも十分効果を発揮したため、最適なサイズ 4 [MiB] を選択した、という可能性もある。</p>
 <div class="article-bottom-misc">

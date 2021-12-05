@@ -70,164 +70,137 @@
 <div class="article-time">
     <time datetime="2021-06-07 23:08 &#43;0900" class="time-b">Post: 2021/06/07 23:08 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/06/08 16:02 &#43;0900</div>
-  </div>
-
-<p><strong>AMD Smart Shift</strong> は <strong>Ryzen 4000 U/H-Series</strong> と <strong>Radeon RX 5000M Series</strong> の発表に合わせて登場した機能であり、ワークロードに応じて APU/dGPU への電力の割り振りを動的に変更させることで、限られた電力枠内で性能を最大限引き出すというもの。</p>
-
+  </div><p><strong>AMD Smart Shift</strong> は <strong>Ryzen 4000 U/H-Series</strong> と <strong>Radeon RX 5000M Series</strong> の発表に合わせて登場した機能であり、ワークロードに応じて APU/dGPU への電力の割り振りを動的に変更させることで、限られた電力枠内で性能を最大限引き出すというもの。</p>
 <ul>
-<li><a href="https://www.amd.com/ja/technologies/smartshift" rel="nofollow noreferrer" target="_blank">SmartShiftテクノロジー | AMD</a></li>
+<li><a href="https://www.amd.com/ja/technologies/smartshift">SmartShiftテクノロジー | AMD</a></li>
 </ul>
-
 <p>その <strong>Smart Shift</strong> を Linux AMDGPUドライバーにおいて本格的にサポートするためのパッチが、Linux Kernel (amd-gfx) メーリングリストに投稿、公開され始めた。</p>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#dev_drv">Device/Driver State</a></li>
 <li><a href="#power_limit">APU/dGPU の Power Limit</a></li>
 <li><a href="#bias">Smart Shift のバイアスが設定可能に</a></li>
 </ul>
 
-
 <h2 id="dev_drv">Device/Driver State</h2>
-
-<p>まず、<strong>Smart Shift</strong> に必要な、dGPU のデバイスステートを管理するパッチから読んでいく。<br />
+<p>まず、<strong>Smart Shift</strong> に必要な、dGPU のデバイスステートを管理するパッチから読んでいく。<br>
 以下のパッチは AMD のソフトウェアエンジニア <strong>Sathishkumar S</strong> 氏より作成、投稿されている。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-May/064441.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: support atcs method powershift (v4)</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-May/064536.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: enable smart shift on dGPU (v5)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-May/064441.html">[PATCH] drm/amdgpu: support atcs method powershift (v4)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-May/064536.html">[PATCH] drm/amdgpu: enable smart shift on dGPU (v5)</a></li>
 </ul>
-
-<p>パッチ内に出てくる PX, HG といった単語はそれぞれ Power eXpress, Hybrid Graphics の略とされるが<sup class="footnote-ref" id="fnref:px-hg"><a href="#fn:px-hg">1</a></sup>、<br />
+<p>パッチ内に出てくる PX, HG といった単語はそれぞれ Power eXpress, Hybrid Graphics の略とされるが<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、<br>
 その他の AT, CS については、何の略かはっきりと示してくれるようなドキュメント、パッチを見付けられなかった。CS はまだ Clock State か Chipset Specific というような推測はできるが、AT はさっぱり。</p>
-
-<p>パッチでは APU/System BIOS に dGPU のデバイスステートを通知する <code>POWER_SHIFT_CONTROL</code> 機能を追加しており、ステートにはデバイス側は D0 と D3_hot、ドライバー側には LOAD/OPR (Operational) と UNLOAD/NOT_OPR が用意されている。<br />
-D0 ステートは通常の稼働状態を示し、D3 ステートは最も低い消費電力となるステートであり、デバイスは稼働せず待機状態に入る。D3_hot はそのサブステート。<br />
-D3 ステートのサブステートには D3_cold もあり、D3_hot は D0 から直接移行することができるが、D3_cold は D3_hot からしか移行できない。<br />
+<p>パッチでは APU/System BIOS に dGPU のデバイスステートを通知する <code>POWER_SHIFT_CONTROL</code> 機能を追加しており、ステートにはデバイス側は D0 と D3_hot、ドライバー側には LOAD/OPR (Operational) と UNLOAD/NOT_OPR が用意されている。<br>
+D0 ステートは通常の稼働状態を示し、D3 ステートは最も低い消費電力となるステートであり、デバイスは稼働せず待機状態に入る。D3_hot はそのサブステート。<br>
+D3 ステートのサブステートには D3_cold もあり、D3_hot は D0 から直接移行することができるが、D3_cold は D3_hot からしか移行できない。<br>
 また D3_cold は消費電力が D3_hot よりも低くなるが、D0 への復帰に時間が掛かる。</p>
-
-<p>dGPU が待機状態である D3_hot ステートに入ること自体は、<strong>Smart Shift</strong> 発表時に行われたテクニカルジャーナリスト <a href="https://twitter.com/zenjinishikawa" rel="nofollow noreferrer" target="_blank">西川善司</a> 氏の取材によれば、iGPU と単体 GPU (dGPU) を同時に稼働することは無く、常に一方のみが稼働する状態で <strong>Smart Shift</strong> は機能する、と説明されている。<br />
+<p>dGPU が待機状態である D3_hot ステートに入ること自体は、<strong>Smart Shift</strong> 発表時に行われたテクニカルジャーナリスト <a href="https://twitter.com/zenjinishikawa">西川善司</a> 氏の取材によれば、iGPU と単体 GPU (dGPU) を同時に稼働することは無く、常に一方のみが稼働する状態で <strong>Smart Shift</strong> は機能する、と説明されている。<br>
 グラフィクス処理の負荷が低い時は APU 内の GPU のみが動作し、dGPU は待機状態に入ることで最低限の電力のみを消費する。</p>
-
 <blockquote>
 <p>――グラフィックス処理の負荷に応じて，CPUとGPUの間で電力を動的に振り分ける「AMD SmartShift」において，iGPUと単体GPUを同時に稼動させることはできるのか。</p>
-
-<p>Stankard氏：<br />
+<p>Stankard氏：<br>
 　iGPUと単体GPUを同時に動かすことはできない。iGPUと単体GPUのどちらか一方が動いているとき，稼動していないGPUはほぼ完全に動作を停止する。</p>
 
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://www.4gamer.net/games/446/G044684/20200115091/" rel="nofollow noreferrer" target="_blank">西川善司の3DGE:Ryzen 4000とRadeon RX 5600 XTの気になるところをAMDにアレコレ聞いてみた</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://www.4gamer.net/games/446/G044684/20200115091/">西川善司の3DGE:Ryzen 4000とRadeon RX 5600 XTの気になるところをAMDにアレコレ聞いてみた</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="power_limit">APU/dGPU の Power Limit</h2>
-
-<p><strong>Smart Shift</strong> は APU と dGPU を合計した消費電力枠の中で、割り振りをワークロードに最適化することで性能を引き出す。そのためにはドライバーが APU/dGPU の消費電力枠、Power Limit を管理する必要がある。<br />
-そこで従来は dGPU の Power Limit を VBIOS から取得していたが、APU のも取得するようにするパッチが投稿された。<br />
+<p><strong>Smart Shift</strong> は APU と dGPU を合計した消費電力枠の中で、割り振りをワークロードに最適化することで性能を引き出す。そのためにはドライバーが APU/dGPU の消費電力枠、Power Limit を管理する必要がある。<br>
+そこで従来は dGPU の Power Limit を VBIOS から取得していたが、APU のも取得するようにするパッチが投稿された。<br>
 パッチは <strong>Darren Powell</strong> 氏より作成、投稿されている。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064917.html" rel="nofollow noreferrer" target="_blank">[PATCH 2/6] amdgpu/pm: clean up smu_get_power_limit function signature</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064918.html" rel="nofollow noreferrer" target="_blank">[PATCH 3/6] amdgpu/pm: modify Powerplay API get_power_limit to use new pp_power enums</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064920.html" rel="nofollow noreferrer" target="_blank">[PATCH 4/6] amdgpu/pm: modify and add smu_get_power_limit to Powerplay API</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064921.html" rel="nofollow noreferrer" target="_blank">[PATCH 6/6] amdgpu/pm: add kernel documentation for smu_get_power_limit</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064917.html">[PATCH 2/6] amdgpu/pm: clean up smu_get_power_limit function signature</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064918.html">[PATCH 3/6] amdgpu/pm: modify Powerplay API get_power_limit to use new pp_power enums</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064920.html">[PATCH 4/6] amdgpu/pm: modify and add smu_get_power_limit to Powerplay API</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064921.html">[PATCH 6/6] amdgpu/pm: add kernel documentation for smu_get_power_limit</a></li>
 </ul>
-
-<p>CPU と GPU の両方を搭載する APU 全体の Power Limit は PPT (Package Power Tracking) で管理されており、それを SMU (System Management Unit) から取得する。<br />
-PPT には Sustained と Fast、2種類の Power Limit Type があり、それらはブーストクロックの継続時間に関係する。<br />
-前者は長い時間 (~5000ms) 動作するブーストクロックとその電力枠となり、基本 TDP として表記されている値が電力枠に使われる。Fast は短い時間 (~10ms) 動作し、電力を基準としている。<br />
-Intel CPU における PL1 が Sustained、PL2 が Fast に大体相当する。<br />
-Slow と呼ばれる Power Limit Type もあるが、これは Fast が時間か電力の制限に達し、Sustained に移行する際に使われる電力枠で、Sustained と Fast の中間に近い値が設定される。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/02/03/vgh-ppt/">AMD VanGogh APU では PPT もドライバーから調節可能に | Coelacanth's Dream</a></span>
+<p>CPU と GPU の両方を搭載する APU 全体の Power Limit は PPT (Package Power Tracking) で管理されており、それを SMU (System Management Unit) から取得する。<br>
+PPT には Sustained と Fast、2種類の Power Limit Type があり、それらはブーストクロックの継続時間に関係する。<br>
+前者は長い時間 (~5000ms) 動作するブーストクロックとその電力枠となり、基本 TDP として表記されている値が電力枠に使われる。Fast は短い時間 (~10ms) 動作し、電力を基準としている。<br>
+Intel CPU における PL1 が Sustained、PL2 が Fast に大体相当する。<br>
+Slow と呼ばれる Power Limit Type もあるが、これは Fast が時間か電力の制限に達し、Sustained に移行する際に使われる電力枠で、Sustained と Fast の中間に近い値が設定される。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/02/03/vgh-ppt/">AMD VanGogh APU では PPT もドライバーから調節可能に | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <h2 id="bias">Smart Shift のバイアスが設定可能に</h2>
-
 <p>Linux AMDGPUドライバーへの <strong>Smart Shift</strong> の実装では、APU/dGPU のどちらに電力を優先的に割り振るかが設定可能になる。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064577.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: attr to control SS2.0 bias level (v2)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064577.html">[PATCH] drm/amdgpu: attr to control SS2.0 bias level (v2)</a></li>
 </ul>
-
 <p>-100..100 の範囲でバイアスが設定可能になっており、-100 ではAPU に、100 では dGPU に最大限優先的に割り振るようになる。デフォルトは 0 でバイアスは掛かっていない状態。</p>
-
 <blockquote>
-<pre tabindex="0"><code> +/**
+<pre><code> +/**
  + * DOC: smartshift_bias
  + *
  + * The amdgpu driver provides a sysfs API for reporting the
  + * smartshift(SS2.0) bias level. The value ranges from -100 to 100
  + * and the default is 0. -100 sets maximum preference to APU
  + * and 100 sets max perference to dGPU.
- + */</code></pre>
+ + */
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064577.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amdgpu: attr to control SS2.0 bias level (v2)</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064577.html">[PATCH] drm/amdgpu: attr to control SS2.0 bias level (v2)</a></cite>
 </div>
 
 </blockquote>
-
-<p>ただあくまでも設定できるのはバイアスであり、それで変更されるのは負荷に応じて割り振られる量の度合いと考えられる。CPU に負荷がほとんど無いグラフィクス処理の場合に、dGPU へ割り振られる電力量は、バイアスを -100 に設定しても変わらないだろう。<br />
-CPU/GPU への負荷量が全体としては低いが、負荷に波があり iGPU と dGPU の切り替えが多く発生するようなブラウジング、あるいは複数のアプリケーションを立ち上げている場合等、どちらかが電力枠の制限に達することのない程度のワークロードには有効的に働く設定と思われる。そうした場合には性能、消費電力をバイアスの設定によって実質的にコントロール可能となる。<br />
+<p>ただあくまでも設定できるのはバイアスであり、それで変更されるのは負荷に応じて割り振られる量の度合いと考えられる。CPU に負荷がほとんど無いグラフィクス処理の場合に、dGPU へ割り振られる電力量は、バイアスを -100 に設定しても変わらないだろう。<br>
+CPU/GPU への負荷量が全体としては低いが、負荷に波があり iGPU と dGPU の切り替えが多く発生するようなブラウジング、あるいは複数のアプリケーションを立ち上げている場合等、どちらかが電力枠の制限に達することのない程度のワークロードには有効的に働く設定と思われる。そうした場合には性能、消費電力をバイアスの設定によって実質的にコントロール可能となる。<br>
 だがバイアスの設定が <em>どれだけ</em> 有効的に働くは微妙で、BIOS とドライバーの実装に任せた方が良い場合がほとんどかもしれない。</p>
-
 <p>また、APU/dGPU がもう一方の電力枠をどれだけ用いているかを sysfs から読み取れるようにするパッチも投稿されている。</p>
-
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064575.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amd/pm: sysfs attrs to read ss powershare (v6)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064575.html">[PATCH] drm/amd/pm: sysfs attrs to read ss powershare (v6)</a></li>
 </ul>
-
 <blockquote>
-<pre tabindex="0"><code> +/**
+<pre><code> +/**
  + * DOC: smartshift_apu_power
  + *
  + * The amdgpu driver provides a sysfs API for reporting APU power
  + * share if it supports smartshift. The value is expressed as
  + * the proportion of stapm limit where stapm limit is the total APU
  + * power limit. The result is in percentage. If APU power is 130% of
- + * STAPM, then APU is using 30% of the dGPU&#39;s headroom.
- + */</code></pre>
+ + * STAPM, then APU is using 30% of the dGPU's headroom.
+ + */
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064575.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amd/pm: sysfs attrs to read ss powershare (v6)</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064575.html">[PATCH] drm/amd/pm: sysfs attrs to read ss powershare (v6)</a></cite>
 </div>
 
-<pre tabindex="0"><code> +/**
+<pre><code> +/**
  + * DOC: smartshift_dgpu_power
  + *
  + * The amdgpu driver provides a sysfs API for reporting the dGPU power
  + * share if the device is in HG and supports smartshift. The value
  + * is expressed as the proportion of stapm limit where stapm limit
  + * is the total APU power limit. The value is in percentage. If dGPU
- + * power is 20% higher than STAPM power(120%), it&#39;s using 20% of the
- + * APU&#39;s power headroom.
- + */</code></pre>
+ + * power is 20% higher than STAPM power(120%), it's using 20% of the
+ + * APU's power headroom.
+ + */
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064575.html" rel="nofollow noreferrer" target="_blank">[PATCH] drm/amd/pm: sysfs attrs to read ss powershare (v6)</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064575.html">[PATCH] drm/amd/pm: sysfs attrs to read ss powershare (v6)</a></cite>
 </div>
 
 </blockquote>
-
-<p>ドキュメントとしても扱われるコメント部を読むに、APU/dGPU が協調して動作する点に変わりはないが、<br />
+<p>ドキュメントとしても扱われるコメント部を読むに、APU/dGPU が協調して動作する点に変わりはないが、<br>
 ワークロードに適した電力割り振りを APU/dGPU に行う、というよりはワークロードに応じて余裕のある APU/dGPU がその分を一方が使えるよう分け与える、といった表現のがしっくりくるかもしれない。</p>
-
 <div class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
-<li><a href="htps://www.4gamer.net/games/446/G044684/20200115091/" rel="nofollow noreferrer" target="_blank">西川善司の3DGE:Ryzen 4000とRadeon RX 5600 XTの気になるところをAMDにアレコレ聞いてみた</a></li>
-<li><a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/device-power-states" rel="nofollow noreferrer" target="_blank">Device Power States - Windows drivers | Microsoft Docs</a></li>
-<li><a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/device-sleeping-states" rel="nofollow noreferrer" target="_blank">Device Low-Power States - Windows drivers | Microsoft Docs</a></li>
-<li><a href="https://japan.xilinx.com/support/answers/3552.html" rel="nofollow noreferrer" target="_blank">AR# 3552: LogiCORE PCI - Power Management: Description of Function Power states</a></li>
+<li><a href="htps://www.4gamer.net/games/446/G044684/20200115091/">西川善司の3DGE:Ryzen 4000とRadeon RX 5600 XTの気になるところをAMDにアレコレ聞いてみた</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/device-power-states">Device Power States - Windows drivers | Microsoft Docs</a></li>
+<li><a href="https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/device-sleeping-states">Device Low-Power States - Windows drivers | Microsoft Docs</a></li>
+<li><a href="https://japan.xilinx.com/support/answers/3552.html">AR# 3552: LogiCORE PCI - Power Management: Description of Function Power states</a></li>
 </ul>
 
 </div>
 
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:px-hg"><a href="https://www.anandtech.com/show/6243/amds-enduro-switchable-graphics-levels-up/2" rel="nofollow noreferrer" target="_blank">Recap: AMD’s PowerXpress, aka Dynamic Switchable Graphics, aka Enduro - AMD’s Enduro Switchable Graphics Levels Up</a>
- <a class="footnote-return" href="#fnref:px-hg"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.anandtech.com/show/6243/amds-enduro-switchable-graphics-levels-up/2">Recap: AMD’s PowerXpress, aka Dynamic Switchable Graphics, aka Enduro - AMD’s Enduro Switchable Graphics Levels Up</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

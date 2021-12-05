@@ -70,36 +70,29 @@
     <time datetime="2020-10-11 17:34 &#43;0900" class="time-b">Post: 2020/10/11 17:34 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/10/28 18:30 &#43;0900</div>
   </div><p>AMD GPU のコンパイラバックエンドとして用いられる LLVM に、現行よりも二世代から四世代前の GPUID を一部整理するためのパッチが投稿された。製品が出た年で言えば、4〜7年前の AMD GPU が対象となる。(R7 250 は1スロットLPカードとして需要があるのか未だに出てきたりするが。)</p>
+<p>これまではある GPU の GPUID を、細かな違いを無視して他の GPUID とまとめて認識、コンパイラバックエンドとして最適化処理を行なっていたが、無視することをやめ、細かな違いを区別するため GPUID を追加、GPU の割り当てを行なったのが今回のパッチとなる。<br>
+追加された GPUID は、<em>gfx602, gfx705, gfx805</em> 。<br>
+<span class="thread-link"><a href="https://github.com/llvm/llvm-project/commit/666ef0db208bb3880115bdc133e72e954ed55300">[AMDGPU] Add gfx602, gfx705, gfx805 targets · llvm/llvm-project@666ef0d</a></span>
 
-<p>これまではある GPU の GPUID を、細かな違いを無視して他の GPUID とまとめて認識、コンパイラバックエンドとして最適化処理を行なっていたが、無視することをやめ、細かな違いを区別するため GPUID を追加、GPU の割り当てを行なったのが今回のパッチとなる。<br />
-追加された GPUID は、<em>gfx602, gfx705, gfx805</em> 。<br />
-<span class="thread-link"><a href="https://github.com/llvm/llvm-project/commit/666ef0db208bb3880115bdc133e72e954ed55300" rel="nofollow noreferrer" target="_blank">[AMDGPU] Add gfx602, gfx705, gfx805 targets · llvm/llvm-project@666ef0d</a></span>
-
-<span class="thread-link"><a href="https://github.com/GPUOpen-Drivers/llpc/pull/994" rel="nofollow noreferrer" target="_blank">Add new targets for a few cases in old hardware by trenouf · Pull Request #994 · GPUOpen-Drivers/llpc</a></span>
+<span class="thread-link"><a href="https://github.com/GPUOpen-Drivers/llpc/pull/994">Add new targets for a few cases in old hardware by trenouf · Pull Request #994 · GPUOpen-Drivers/llpc</a></span>
 </p>
-
-<p>GPUID については以下を参照。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">AMD GPU の GPU ID は何を意味するか | Coelacanth's Dream</a></span>
+<p>GPUID については以下を参照。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/06/22/amdgpu-gpuid-mean/">AMD GPU の GPU ID は何を意味するか | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <p><em>gfx602 (Oland, Hainan)</em> を <em>gfx601 (Pitcairn, Verde)</em> と区別した理由は、これまでシェーダーコンパイラのフロントエンド部で <em>GFX6</em> 世代に存在する <code>shaderZExport</code> 機能の問題に対処していたが、<em>gfx602 (Oland, Hainan)</em> ではそれが必要ないからとしている。</p>
-
-<p><em>gfx805</em> は、<em>Tonga (gfx802)</em> のワークステーション向けバリアント <em>TongaPro</em> の GPUID となり、倍精度シフト演算が <em>Tonga</em> よりも速く処理できるとしている。<br />
+<p><em>gfx805</em> は、<em>Tonga (gfx802)</em> のワークステーション向けバリアント <em>TongaPro</em> の GPUID となり、倍精度シフト演算が <em>Tonga</em> よりも速く処理できるとしている。<br>
 ただ、今回のパッチは <em>gfx805</em> の区別とターゲット追加のみであり、その倍精度シフト演算の処理フローは実装されていない。</p>
-
-<p>そして謎なのが <em>gfx705</em> であり、<em>gfx703</em> と区別した理由は <em>gfx602</em> のように、<code>shaderSpiCsRegAllocFragmentation</code> 機能に関する回避策が必要ないからとしているが、その <em>gfx705</em> が何の GPU に採用されているかは不明である。記述から APU とされてはいる。<sup class="footnote-ref" id="fnref:gfx705-unknown"><a href="#fn:gfx705-unknown">1</a></sup><br />
+<p>そして謎なのが <em>gfx705</em> であり、<em>gfx703</em> と区別した理由は <em>gfx602</em> のように、<code>shaderSpiCsRegAllocFragmentation</code> 機能に関する回避策が必要ないからとしているが、その <em>gfx705</em> が何の GPU に採用されているかは不明である。記述から APU とされてはいる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 前世代のアーキテクチャを採りながらその正体が不明な APU には <a href="https://www.coelacanth-dream.com/tags/cato">Cato APU</a> がいるが、それだったりするのだろうか。</p>
-
 <p>それにしても発端であり、<em>Cato APU</em> をベースとする <strong>A9-9820</strong> を搭載するミニPC、AeroBox は 2020/03 に発表されて以降、発売開始の音沙汰が特に無いが、今どこにいるのだろう。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:gfx705-unknown"><a href="https://github.com/llvm/llvm-project/commit/666ef0db208bb3880115bdc133e72e954ed55300#diff-e60878666958a89628598e321bbd8dca134904a69313d8afb07aa6771945fc3f" rel="nofollow noreferrer" target="_blank">https://github.com/llvm/llvm-project/commit/666ef0db208bb3880115bdc133e72e954ed55300#diff-e60878666958a89628598e321bbd8dca134904a69313d8afb07aa6771945fc3f</a>
- <a class="footnote-return" href="#fnref:gfx705-unknown"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/llvm/llvm-project/commit/666ef0db208bb3880115bdc133e72e954ed55300#diff-e60878666958a89628598e321bbd8dca134904a69313d8afb07aa6771945fc3f">https://github.com/llvm/llvm-project/commit/666ef0db208bb3880115bdc133e72e954ed55300#diff-e60878666958a89628598e321bbd8dca134904a69313d8afb07aa6771945fc3f</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

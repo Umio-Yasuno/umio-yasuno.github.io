@@ -70,218 +70,184 @@
 <div class="article-time">
     <time datetime="2020-11-05 05:14 &#43;0900" class="time-b">Post: 2020/11/05 05:14 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/01/03 18:22 &#43;0900</div>
-  </div>
-
-<p><em>RDNA 2 / GFX10.3</em> 世代の GPU、<strong>Radeon RX 6000シリーズ</strong> が発表された際、一緒にソフトウェアの新機能 <em>AMD Smart Access Memory</em> が発表された。<br />
-<span class="thread-link"><a href="https://www.amd.com/en/technologies/smart-access-memory" rel="nofollow noreferrer" target="_blank">AMD Smart Access Memory | AMD</a></span>
+  </div><p><em>RDNA 2 / GFX10.3</em> 世代の GPU、<strong>Radeon RX 6000シリーズ</strong> が発表された際、一緒にソフトウェアの新機能 <em>AMD Smart Access Memory</em> が発表された。<br>
+<span class="thread-link"><a href="https://www.amd.com/en/technologies/smart-access-memory">AMD Smart Access Memory | AMD</a></span>
 
 <em>AMD Smart Access Memory</em> は、従来の Windows OS をベースとするシステムでは、CPU から GPU VRAM へは一度に 256MB までしかアクセス出来なかったが、その制限を取り払うことでボトルネックを減らし、ゲームにおける性能を高めるというもの。AMD が示している結果では、API に Vulkan または DX12 を用いるゲームで 5〜11% の性能向上となっている。</p>
-
 <p>その時はついに公開された <em>RDNA 2 / GFX10.3</em> の方に興味が集中していたため、ほとんどスルーしていたが、後に面白いことが判明した。</p>
-
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#already">Linux では既にサポート済み</a>
-
 <ul class="page-index">
 <li><a href="#enable">いざ有効化</a></li>
-</ul></li>
+</ul>
+</li>
 <li><a href="#effect">効果の程は</a>
-
 <ul class="page-index">
 <li><a href="#env">環境</a></li>
 <li><a href="#how">計測方法</a></li>
 <li><a href="#result">結果</a></li>
-</ul></li>
+</ul>
+</li>
 </ul>
 
-
 <h2 id="already">Linux では既にサポート済み</h2>
-
-<p>以下は Linux Kenrel の AMD GPU ドライバーの開発者である <a href="https://gitlab.freedesktop.org/agd5f" rel="nofollow noreferrer" target="_blank">Alex Deucher</a> 氏が <a href="https://www.phoronix.com/scan.php?page=home" rel="nofollow noreferrer" target="_blank">Phoronix</a> の記事に投稿したコメント。</p>
-
+<p>以下は Linux Kenrel の AMD GPU ドライバーの開発者である <a href="https://gitlab.freedesktop.org/agd5f">Alex Deucher</a> 氏が <a href="https://www.phoronix.com/scan.php?page=home">Phoronix</a> の記事に投稿したコメント。</p>
 <blockquote>
-<p>Smart Access Technology works just fine on Linux. It is resizeable BAR support which Linux has supported for years (AMD actually added support for this), but which is relatively new on windows. You just need a platform with enough MMIO space. On older systems this is enabled via sbios options with names like &quot;&gt;4GB MMIO&quot;.</p>
+<p>Smart Access Technology works just fine on Linux. It is resizeable BAR support which Linux has supported for years (AMD actually added support for this), but which is relatively new on windows. You just need a platform with enough MMIO space. On older systems this is enabled via sbios options with names like &ldquo;&gt;4GB MMIO&rdquo;.</p>
 
-
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1215570-linux-support-expectations-for-the-amd-radeon-rx-6000-series/page4#post1215694" rel="nofollow noreferrer" target="_blank">Linux Support Expectations For The AMD Radeon RX 6000 Series - Phoronix Forums</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1215570-linux-support-expectations-for-the-amd-radeon-rx-6000-series/page4#post1215694">Linux Support Expectations For The AMD Radeon RX 6000 Series - Phoronix Forums</a></cite>
 </div>
 
 </blockquote>
-
-<p><em>AMD Smart Access Memory</em> はリサイズ可能な BAR (Base Address Register) であり、この機能は既に何年も前から Linux 上ではサポートされているが、Windows では比較的新しい機能であるとのこと。<br />
+<p><em>AMD Smart Access Memory</em> はリサイズ可能な BAR (Base Address Register) であり、この機能は既に何年も前から Linux 上ではサポートされているが、Windows では比較的新しい機能であるとのこと。<br>
 また、古いシステムでは BIOS の <code>&gt;4GB MMIO</code> といった名前のオプションによって有効化されていると氏は述べている。</p>
-
 <h3 id="enable">いざ有効化</h3>
-
 <p>まず、CPU から GPU VRAM へ一度にアクセスできるサイズは、ユーザーモードドライバーである <strong>RadeonSI (OpenGL) / RADV (Vulkan)</strong> のデバッグ機能で確認できる。</p>
-
-<p><strong>RadeonSI</strong> の場合は <code>AMD_DEBUG=info</code> を環境変数にセットした状態で (実行コマンドの前の記述するだけでいい)、OpenGL API を用いるソフトウェアを実行、<br />
-<strong>RADV</strong> の場合は <code>RADV_DEBUG=info</code> をセットして、Vulkan API を用いるソフトウェアを実行すれば、現在搭載されている AMD GPU についての詳細情報がずらっと出力される。<br />
-そして、その中の <code>vram_vis_size</code> が CPU が一度にアクセス可能なサイズを示している。<sup class="footnote-ref" id="fnref:vram-vis-size"><a href="#fn:vram-vis-size">1</a></sup><br />
+<p><strong>RadeonSI</strong> の場合は <code>AMD_DEBUG=info</code> を環境変数にセットした状態で (実行コマンドの前の記述するだけでいい)、OpenGL API を用いるソフトウェアを実行、<br>
+<strong>RADV</strong> の場合は <code>RADV_DEBUG=info</code> をセットして、Vulkan API を用いるソフトウェアを実行すれば、現在搭載されている AMD GPU についての詳細情報がずらっと出力される。<br>
+そして、その中の <code>vram_vis_size</code> が CPU が一度にアクセス可能なサイズを示している。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 以下は具体的な実行コマンドの一例。<code>AMD_DEBUG=info</code> を設定し、GLX の実装情報を示す <code>glxinfo</code> を実行、結果を <code>grep</code> に受け渡して抽出している。</p>
-<pre tabindex="0"><code>  $ AMD_DEBUG=&#34;info&#34; glxinfo -B | grep vram_vis_size</code></pre>
+<pre><code>  $ AMD_DEBUG=&quot;info&quot; glxinfo -B | grep vram_vis_size
+</code></pre>
 <p>自分が最初確認した時は、BIOS のあるオプションを有効化していなかったため、256MB と表示されていた。AMD が解説している通りのサイズだ。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  vram_vis_size = 256 MB</code></pre></blockquote>
-
-<p>次に BIOS側の設定となるが、<code>&gt;4GB MMIO</code> といったオプションは <code>Above 4G Decoding</code> という名前で存在している。自分が持っている <strong>GIGABYTE GA-A320-HD2 (rev. 1.0)</strong> (現在のメイン機) ではそのようになっており、他社製のマザーボードでもそのようになっているのではないかと思われる。<br />
-<code>Above 4G Decoding</code> は複数の GPUカード、またはコプロセッサーである <strong>Xeon Phi</strong> や、GPUアクセラレーターである <strong>NVIDIA Tesla</strong> を搭載したシステムを扱う際にも有効にする必要があったらしい。<sup class="footnote-ref" id="fnref:asus-above-4g-decoding"><a href="#fn:asus-above-4g-decoding">2</a></sup><br />
+<pre><code>  vram_vis_size = 256 MB
+</code></pre>
+</blockquote>
+<p>次に BIOS側の設定となるが、<code>&gt;4GB MMIO</code> といったオプションは <code>Above 4G Decoding</code> という名前で存在している。自分が持っている <strong>GIGABYTE GA-A320-HD2 (rev. 1.0)</strong> (現在のメイン機) ではそのようになっており、他社製のマザーボードでもそのようになっているのではないかと思われる。<br>
+<code>Above 4G Decoding</code> は複数の GPUカード、またはコプロセッサーである <strong>Xeon Phi</strong> や、GPUアクセラレーターである <strong>NVIDIA Tesla</strong> を搭載したシステムを扱う際にも有効にする必要があったらしい。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 一部の Intelプラットフォームでもサポートされていると思われるが、確証はない、というより試せない。</p>
-
 <p><code>Above 4G Decoding</code> を Enabled に設定して起動、上述したようなコマンドで確かめた結果、<code>vram_vis_size</code> の値は、搭載している <strong>RX 560 (Polaris11)</strong> が持つ VRAM と同じサイズである 4096MB となっていた。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  vram_vis_size = 4096 MB</code></pre></blockquote>
-
+<pre><code>  vram_vis_size = 4096 MB
+</code></pre>
+</blockquote>
 <p>また、スーパーユーザー権限が必要となるが <code>dmesg</code> コマンドでも確認することができる。</p>
-<pre tabindex="0"><code>   % dmesg | grep &#34;Detected VRAM&#34;</code></pre>
+<pre><code>   % dmesg | grep &quot;Detected VRAM&quot;
+</code></pre>
 <p>BAR の値が CPU から VRAM へアクセス可能なサイズとなる。以下は <code>Above 4G Decoding</code> 無効時の実行結果。有効時は <code>BAR=4096M</code> となっていた。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  [    2.565379] [drm] Detected VRAM RAM=4096M, BAR=256M</code></pre></blockquote>
-
-<p><a href="https://gitlab.freedesktop.org/agd5f" rel="nofollow noreferrer" target="_blank">Alex Deucher</a> 氏のコメント通り、Linux環境では既にサポートされており、<strong>Ryzen 5 2600 (Zen+)</strong> と <strong>RX 560</strong> という構成でも有効化が可能だった。</p>
-
+<pre><code>  [    2.565379] [drm] Detected VRAM RAM=4096M, BAR=256M
+</code></pre>
+</blockquote>
+<p><a href="https://gitlab.freedesktop.org/agd5f">Alex Deucher</a> 氏のコメント通り、Linux環境では既にサポートされており、<strong>Ryzen 5 2600 (Zen+)</strong> と <strong>RX 560</strong> という構成でも有効化が可能だった。</p>
 <h2 id="effect">効果の程は</h2>
-
 <p>有効化できたとして、その効果が気になる所だが、まず検証環境に問題がある。</p>
-
-<p>AMD が示している <strong>AMD Smart Access Memory</strong> 機能による性能向上は、<strong>Ryzen 9 5900X</strong> と <strong>RX 6800 XT</strong> というハードウェア構成で、現実的な使用状況、Vulkan/DX12 のゲームを 4K Ultra 設定で実行している。<br />
+<p>AMD が示している <strong>AMD Smart Access Memory</strong> 機能による性能向上は、<strong>Ryzen 9 5900X</strong> と <strong>RX 6800 XT</strong> というハードウェア構成で、現実的な使用状況、Vulkan/DX12 のゲームを 4K Ultra 設定で実行している。<br>
 対し自分のハードウェア構成は <strong>Ryzen 5 2600</strong> と <strong>RX 560</strong> という構成で、絶対的な性能に圧倒的な差があり、CPU-GPU のインターフェイスも <strong>RX 560</strong> が Gen3 x8、<strong>RX 6800 XT</strong> は Gen4 x16 だろうから、<strong>RX 6800 XT</strong> の PCIe帯域は 4倍広い。</p>
-
-<p>そして、AMD はボトルネックを削減できるとしているが、どういった処理がボトルネックになっていて、何のソフトウェアであればそれを検証できるか、という問題もある。<br />
+<p>そして、AMD はボトルネックを削減できるとしているが、どういった処理がボトルネックになっていて、何のソフトウェアであればそれを検証できるか、という問題もある。<br>
 自分は Linux でも動作する Vulkan ゲームなんて所有しておらず、現実的な使用状況を高度に再現できる Vulkan ベンチマークソフトというのもない。</p>
-
-<p>それでも一応、VRAM をそれなりに使うソフトとしては <a href="https://github.com/nihui/waifu2x-ncnn-vulkan" rel="nofollow noreferrer" target="_blank">waifu2x-ncnn-vulkan</a> が思い浮かんだため、試してはみた。waifu2x-ncnn-vulkan は <strong>RX 560</strong> の VRAM 4GB をちゃんと使い切ってくれる。<br />
+<p>それでも一応、VRAM をそれなりに使うソフトとしては <a href="https://github.com/nihui/waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan</a> が思い浮かんだため、試してはみた。waifu2x-ncnn-vulkan は <strong>RX 560</strong> の VRAM 4GB をちゃんと使い切ってくれる。<br>
 それと、グラフィクス系として vkmark (1920x1080) を実行したが、vkmark はあまり VRAM を使わないため、CPU からアクセスすることもあまり無いのではないかと思われる。</p>
-
 <h4 id="env">環境</h4>
-
 <table>
 <thead>
 <tr>
-<th align="left">Hardware/Software</th>
-<th align="center">Desc</th>
+<th style="text-align:left">Hardware/Software</th>
+<th style="text-align:center">Desc</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">CPU</td>
-<td align="center">AMD Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
+<td style="text-align:left">CPU</td>
+<td style="text-align:center">AMD Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
 </tr>
-
 <tr>
-<td align="left">M/B</td>
-<td align="center">GIGABYTE GA-A320-HD2 (rev 1.0)</td>
+<td style="text-align:left">M/B</td>
+<td style="text-align:center">GIGABYTE GA-A320-HD2 (rev 1.0)</td>
 </tr>
-
 <tr>
-<td align="left">Memory</td>
-<td align="center">DDR4-2933 16GB</td>
+<td style="text-align:left">Memory</td>
+<td style="text-align:center">DDR4-2933 16GB</td>
 </tr>
-
 <tr>
-<td align="left">GPU</td>
-<td align="center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 7Gbps<br>PCIe Gen3 x8)</td>
+<td style="text-align:left">GPU</td>
+<td style="text-align:center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 7Gbps<br>PCIe Gen3 x8)</td>
 </tr>
-
 <tr>
-<td align="left">Linux Kernel</td>
-<td align="center">5.9.1</td>
+<td style="text-align:left">Linux Kernel</td>
+<td style="text-align:center">5.9.1</td>
 </tr>
-
 <tr>
-<td align="left">User Mode Driver</td>
-<td align="center">Mesa 20.3.0-devel (git-5957b0c162)</td>
+<td style="text-align:left">User Mode Driver</td>
+<td style="text-align:center">Mesa 20.3.0-devel (git-5957b0c162)</td>
 </tr>
 </tbody>
 </table>
-
 <h4 id="how">計測方法</h4>
-
 <p>実行コマンド:</p>
-<pre tabindex="0"><code>  waifu2x-ncnn-vulkan:
-     $ time -p &lt;waifu2x-ncnn-vulkan binary&gt; -i &#34;&lt;input dir&gt;&#34; -o &#34;&lt;output dir&gt;&#34; -n 1 -s 2 -m &#34;&lt;waifu2x-ncnn-vulkan model&gt;&#34;
+<pre><code>  waifu2x-ncnn-vulkan:
+     $ time -p &lt;waifu2x-ncnn-vulkan binary&gt; -i &quot;&lt;input dir&gt;&quot; -o &quot;&lt;output dir&gt;&quot; -n 1 -s 2 -m &quot;&lt;waifu2x-ncnn-vulkan model&gt;&quot;
 
   vkmark (1920x1080):
-     $ ./vkmark -s 1920x1080</code></pre>
-<p>いつかに RADV/ACO の検証した時とハードウェア構成は変わらず、Linux Kenrel や Mesa のバージョンだけが上がっている。<sup class="footnote-ref" id="fnref:radv-aco-test"><a href="#fn:radv-aco-test">3</a></sup><br />
+     $ ./vkmark -s 1920x1080
+</code></pre>
+<p>いつかに RADV/ACO の検証した時とハードウェア構成は変わらず、Linux Kenrel や Mesa のバージョンだけが上がっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 実行コマンドも変わらず、/tmp 下に置いた入力用の画像 5枚を収めたディレクトリを指定し、出力画像も /tmp 下に作成したディレクトリを指定している。</p>
-
 <p>waifu2x-ncnn-vulkan の設定はデノイズレベルは 1、拡大率は 2x、tile-size はデフォルトの 400、load:proc:save もデフォルトの 1:2:2。
 使用画像の解像度は全て 1136x640。</p>
-
 <h4 id="result">結果</h4>
-
 <table>
 <thead>
 <tr>
-<th align="left">waifu2x-ncnn-vulkan<br>(real time)</th>
-<th align="center">SAM Off</th>
-<th align="center">SAM On</th>
+<th style="text-align:left">waifu2x-ncnn-vulkan<br>(real time)</th>
+<th style="text-align:center">SAM Off</th>
+<th style="text-align:center">SAM On</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">cunet</td>
-<td align="center">14.27s</td>
-<td align="center">12.71s<br>(+12%)</td>
+<td style="text-align:left">cunet</td>
+<td style="text-align:center">14.27s</td>
+<td style="text-align:center">12.71s<br>(+12%)</td>
 </tr>
-
 <tr>
-<td align="left">upconv_7_anime_style_art_rgb</td>
-<td align="center">5.93s</td>
-<td align="center">5.90s<br>(+0.5%)</td>
+<td style="text-align:left">upconv_7_anime_style_art_rgb</td>
+<td style="text-align:center">5.93s</td>
+<td style="text-align:center">5.90s<br>(+0.5%)</td>
 </tr>
 </tbody>
 </table>
-
 <table>
 <thead>
 <tr>
-<th align="left">vkmark<br>1920x1080</th>
-<th align="center">SAM Off</th>
-<th align="center">SAM On</th>
+<th style="text-align:left">vkmark<br>1920x1080</th>
+<th style="text-align:center">SAM Off</th>
+<th style="text-align:center">SAM On</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Score</td>
-<td align="center">4729</td>
-<td align="center">4748<br>(+0.4%)</td>
+<td style="text-align:left">Score</td>
+<td style="text-align:center">4729</td>
+<td style="text-align:center">4748<br>(+0.4%)</td>
 </tr>
 </tbody>
 </table>
-
-<p>cunet モデルでの結果は <em>AMD Smart Access Memory</em> 有効で 12% の性能向上が確認できたが、正直有意な性能向上が確認できたのはこれくらいで、他の upconv_7_anime_style_art_rgb モデルでの結果と vkmark の結果は誤差だろう。<br />
-AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、安定して性能向上の効果を得られないからなのかもしれない。<br />
+<p>cunet モデルでの結果は <em>AMD Smart Access Memory</em> 有効で 12% の性能向上が確認できたが、正直有意な性能向上が確認できたのはこれくらいで、他の upconv_7_anime_style_art_rgb モデルでの結果と vkmark の結果は誤差だろう。<br>
+AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、安定して性能向上の効果を得られないからなのかもしれない。<br>
 あるいはアクセス可能なサイズを大きくする以外に、別の工夫を施しているか。</p>
-
-<p>ただ、上述したように、システム構成がアレであるため、自分の構成でまともに検証できるかは怪しく、また、これ以上に労力を掛ける気が起きない。<br />
-現実的なゲームに近いベンチマークとなると、モデルやテクスチャの格納で必要なファイルサイズもいやに大きくなり、テストに使う時間もかなり掛かる。<br />
-自分でハードウェア/ソフトウェアの検証というものをやってみると、いかにテクニカルライターの方々は忍耐強いかが身に沁みてくる。<br />
+<p>ただ、上述したように、システム構成がアレであるため、自分の構成でまともに検証できるかは怪しく、また、これ以上に労力を掛ける気が起きない。<br>
+現実的なゲームに近いベンチマークとなると、モデルやテクスチャの格納で必要なファイルサイズもいやに大きくなり、テストに使う時間もかなり掛かる。<br>
+自分でハードウェア/ソフトウェアの検証というものをやってみると、いかにテクニカルライターの方々は忍耐強いかが身に沁みてくる。<br>
 もっとまともなシステムを持ち、経験豊富な方が検証を行なってくれることを願う。</p>
-
-<p>また、<code>Above 4G Decoding</code> を有効にすると VRAM のマッピングのためか、Linux Kenrel をブートし、ログイン時間に辿り着くまでの時間が若干増えた。精々 1秒前後だが。<br />
-そういうことで、自分の用途では <code>Above 4G Decoding</code> を有効にする意味はほとんど無いのだが、<br />
+<p>また、<code>Above 4G Decoding</code> を有効にすると VRAM のマッピングのためか、Linux Kenrel をブートし、ログイン時間に辿り着くまでの時間が若干増えた。精々 1秒前後だが。<br>
+そういうことで、自分の用途では <code>Above 4G Decoding</code> を有効にする意味はほとんど無いのだが、<br>
 最新世代の組み合わせで利用できる新機能として謳われるものを、1、2世代前の構成で有効にしているというのは中々に面白い状況に思えるため、このまましばらくは有効にしておくつもりでいる。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:vram-vis-size"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/d8ea50996580a34b17059ec5456c75bb0d1f8750/src/gallium/winsys/radeon/drm/radeon_drm_winsys.c#L364" rel="nofollow noreferrer" target="_blank">src/gallium/winsys/radeon/drm/radeon_drm_winsys.c · d8ea50996580a34b17059ec5456c75bb0d1f8750 · Mesa / mesa · GitLab</a> <br> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/3c2489d2e45b3013361c7284ed9de14fe40554cc/src/amd/common/ac_gpu_info.c#L345" rel="nofollow noreferrer" target="_blank">src/amd/common/ac_gpu_info.c · 3c2489d2e45b3013361c7284ed9de14fe40554cc · Mesa / mesa · GitLab</a>
- <a class="footnote-return" href="#fnref:vram-vis-size"><sup>[return]</sup></a></li>
-<li id="fn:asus-above-4g-decoding"><a href="https://www.asus.com/jp/support/FAQ/1017190/" rel="nofollow noreferrer" target="_blank">拡張カードを複数取り付けた場合に正しく認識されない | サポート 公式 | ASUS 日本</a>
- <a class="footnote-return" href="#fnref:asus-above-4g-decoding"><sup>[return]</sup></a></li>
-<li id="fn:radv-aco-test"><a href="https://www.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">RADV/ACO 検証: waifu2x-ncnn-vulkan の実行が最大3倍近く高速に | Coelacanth's Dream</a>
- <a class="footnote-return" href="#fnref:radv-aco-test"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/d8ea50996580a34b17059ec5456c75bb0d1f8750/src/gallium/winsys/radeon/drm/radeon_drm_winsys.c#L364">src/gallium/winsys/radeon/drm/radeon_drm_winsys.c · d8ea50996580a34b17059ec5456c75bb0d1f8750 · Mesa / mesa · GitLab</a> <br> <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/3c2489d2e45b3013361c7284ed9de14fe40554cc/src/amd/common/ac_gpu_info.c#L345">src/amd/common/ac_gpu_info.c · 3c2489d2e45b3013361c7284ed9de14fe40554cc · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.asus.com/jp/support/FAQ/1017190/">拡張カードを複数取り付けた場合に正しく認識されない | サポート 公式 | ASUS 日本</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">RADV/ACO 検証: waifu2x-ncnn-vulkan の実行が最大3倍近く高速に | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

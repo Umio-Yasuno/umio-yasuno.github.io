@@ -70,41 +70,33 @@
 <div class="article-time">
     <time datetime="2021-05-22 01:08 &#43;0900" class="time-b">Post: 2021/05/22 01:08 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/05/27 03:34 &#43;0900</div>
-  </div>
-
-<p>組み込みデバイス向けのハイパーバイザー <a href="https://github.com/projectacrn/acrn-hypervisor" rel="nofollow noreferrer" target="_blank">ACRN Hypervisor</a> へのプルリクエストの中で <em>Alder Lake-P</em> の構成ファイルが投稿された。投稿したのは Intel の <a href="https://github.com/Kunhui-Li" rel="nofollow noreferrer" target="_blank">Kunhui-Li</a> 氏。<br />
-ACRN Hypervisor は Intel が推進するオープンソースプロジェクトの一つであり、Intel はメンバーとして参加、自社プロセッサ用のコードを提供している。<sup class="footnote-ref" id="fnref:intel-acrn"><a href="#fn:intel-acrn">1</a></sup><br />
-そして構成ファイルには CPUキャッシュの詳細情報が含まれており、既にキャッシュサイズはベンチマーク結果から知られていたが、今回キャッシュの way数も公開されたことになる。<br />
-<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/06/intel-adls-benchmark-cache/">Intel Alder Lake-S のベンチマーク結果から読むキャッシュ構成　【追記 2020-10-07】16-Core/24-Thread? | Coelacanth's Dream</a></span>
+  </div><p>組み込みデバイス向けのハイパーバイザー <a href="https://github.com/projectacrn/acrn-hypervisor">ACRN Hypervisor</a> へのプルリクエストの中で <em>Alder Lake-P</em> の構成ファイルが投稿された。投稿したのは Intel の <a href="https://github.com/Kunhui-Li">Kunhui-Li</a> 氏。<br>
+ACRN Hypervisor は Intel が推進するオープンソースプロジェクトの一つであり、Intel はメンバーとして参加、自社プロセッサ用のコードを提供している。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+そして構成ファイルには CPUキャッシュの詳細情報が含まれており、既にキャッシュサイズはベンチマーク結果から知られていたが、今回キャッシュの way数も公開されたことになる。<br>
+<span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/10/06/intel-adls-benchmark-cache/">Intel Alder Lake-S のベンチマーク結果から読むキャッシュ構成　【追記 2020-10-07】16-Core/24-Thread? | Coelacanth&rsquo;s Dream</a></span>
 </p>
-
 <ul>
-<li><a href="https://github.com/projectacrn/acrn-hypervisor/commit/918ec7aaf316b49aba5f58ffed6513f84cc1f96f" rel="nofollow noreferrer" target="_blank">Config_tools: Update board xml for acrn 2.5 · projectacrn/acrn-hypervisor@918ec7a</a>
-
+<li><a href="https://github.com/projectacrn/acrn-hypervisor/commit/918ec7aaf316b49aba5f58ffed6513f84cc1f96f">Config_tools: Update board xml for acrn 2.5 · projectacrn/acrn-hypervisor@918ec7a</a>
 <ul>
-<li><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/adl-rvp/adl-rvp.xml" rel="nofollow noreferrer" target="_blank">acrn-hypervisor/adl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a></li>
-</ul></li>
+<li><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/adl-rvp/adl-rvp.xml">acrn-hypervisor/adl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a></li>
 </ul>
-
+</li>
+</ul>
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#cache">構成ファイルからキャッシュ情報を読み取る</a></li>
 <li><a href="#table">Golden Cove, Gramont</a></li>
 </ul>
 
-
 <h2 id="cache">構成ファイルからキャッシュ情報を読み取る</h2>
-
-<p>まず構成ファイルからキャッシュ情報を読み取る方法を書くと、構成ファイルは基本以下のように記述されている。<br />
-<code>cache level</code> とその値はそのまま意と思われ、<code>&lt;processor&gt;..&lt;/procssor&gt;</code> にあるのはそのキャッシュを持つ CPUコアの ID と思われる。<br />
-そして <code>type</code> だが、これは CPUID からキャッシュパラメーターを読み取るのに使われる定義と同じと思われる。<br />
-<a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html" rel="nofollow noreferrer" target="_blank">Intel® Architecture Instruction Set Extensions Programming Reference</a> の Table 1-3 に記載されているが、 Leaf (EAXレジスタ) に 0x4、Sub-leaf (ECXレジスタ) にキャッシュレベルに対応した値をセットして CPUID命令を実行すると得られる 32-bit の値では、Bit 4-0 がキャッシュタイプを示すフィールドとなっており、1 は Data Cache、2 は Instruction Cache、3 は Unified Cache、0 は Null でその他は予約領域。<br />
+<p>まず構成ファイルからキャッシュ情報を読み取る方法を書くと、構成ファイルは基本以下のように記述されている。<br>
+<code>cache level</code> とその値はそのまま意と思われ、<code>&lt;processor&gt;..&lt;/procssor&gt;</code> にあるのはそのキャッシュを持つ CPUコアの ID と思われる。<br>
+そして <code>type</code> だが、これは CPUID からキャッシュパラメーターを読み取るのに使われる定義と同じと思われる。<br>
+<a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html">Intel® Architecture Instruction Set Extensions Programming Reference</a> の Table 1-3 に記載されているが、 Leaf (EAXレジスタ) に 0x4、Sub-leaf (ECXレジスタ) にキャッシュレベルに対応した値をセットして CPUID命令を実行すると得られる 32-bit の値では、Bit 4-0 がキャッシュタイプを示すフィールドとなっており、1 は Data Cache、2 は Instruction Cache、3 は Unified Cache、0 は Null でその他は予約領域。<br>
 これを踏まえると、以下の上側は L1 Data Cache の構成を、下は L1 Instruction Cache の構成を示していることがわかる。早速ツールを自作する時に得た CPUID の知識が役立った。</p>
-
 <p>また、ここにおける <em>Alder Lake-P</em> は 2x Core (Golden Cove) + 8x Atom (Gracemont) の構成となっており、Core ID: 0x0, 0x4 に <em>Golden Cove</em> 、Core ID: 0x8-0xF に <em>Gracemont</em> が対応している。</p>
-
 <blockquote>
-<pre tabindex="0"><code>   &lt;caches&gt;
-     &lt;cache level=&#34;1&#34; id=&#34;0x0&#34; type=&#34;1&#34;&gt;
+<pre><code>   &lt;caches&gt;
+     &lt;cache level=&quot;1&quot; id=&quot;0x0&quot; type=&quot;1&quot;&gt;
        &lt;cache_size&gt;49152&lt;/cache_size&gt;
        &lt;line_size&gt;64&lt;/line_size&gt;
        &lt;ways&gt;12&lt;/ways&gt;
@@ -119,7 +111,7 @@ ACRN Hypervisor は Intel が推進するオープンソースプロジェクト
          &lt;processor&gt;0x0&lt;/processor&gt;
        &lt;/processors&gt;
      &lt;/cache&gt;
-     &lt;cache level=&#34;1&#34; id=&#34;0x0&#34; type=&#34;2&#34;&gt;
+     &lt;cache level=&quot;1&quot; id=&quot;0x0&quot; type=&quot;2&quot;&gt;
        &lt;cache_size&gt;32768&lt;/cache_size&gt;
        &lt;line_size&gt;64&lt;/line_size&gt;
        &lt;ways&gt;8&lt;/ways&gt;
@@ -133,82 +125,73 @@ ACRN Hypervisor は Intel が推進するオープンソースプロジェクト
        &lt;processors&gt;
          &lt;processor&gt;0x0&lt;/processor&gt;
        &lt;/processors&gt;
-     &lt;/cache&gt;</code></pre>
+     &lt;/cache&gt;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/adl-rvp/adl-rvp.xml" rel="nofollow noreferrer" target="_blank">acrn-hypervisor/adl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/adl-rvp/adl-rvp.xml">acrn-hypervisor/adl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a></cite>
 </div>
 
 </blockquote>
-
 <h2 id="table">Golden Cove, Gramont</h2>
-
 <p>現世代、<em>Golden Cove</em> と <em>Gracemont</em> からすれば前世代となる <em>Willow Cove</em> 、<em>Tremont</em> と一緒にキャッシュ構成をまとめたのが以下の表となる。</p>
-
 <table>
 <thead>
 <tr>
-<th align="left">uArch</th>
-<th align="center">Golden Cove</th>
-<th align="center">Willow Cove</th>
-<th align="center">Sunny Cove</th>
-<th align="center">Gracemont</th>
-<th align="center">Tremont</th>
+<th style="text-align:left">uArch</th>
+<th style="text-align:center">Golden Cove</th>
+<th style="text-align:center">Willow Cove</th>
+<th style="text-align:center">Sunny Cove</th>
+<th style="text-align:center">Gracemont</th>
+<th style="text-align:center">Tremont</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">L1 Data</td>
-<td align="center">48 KiB<br>/12-way</td>
-<td align="center">48 KiB<br>/12-way</td>
-<td align="center">48 KiB<br>/12-way</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
+<td style="text-align:left">L1 Data</td>
+<td style="text-align:center">48 KiB<br>/12-way</td>
+<td style="text-align:center">48 KiB<br>/12-way</td>
+<td style="text-align:center">48 KiB<br>/12-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
 </tr>
-
 <tr>
-<td align="left">L1 Inst</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
-<td align="center">&gt;64 KiB<br>/8-way</td>
-<td align="center">32 KiB<br>/8-way</td>
+<td style="text-align:left">L1 Inst</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
+<td style="text-align:center">&gt;64 KiB<br>/8-way</td>
+<td style="text-align:center">32 KiB<br>/8-way</td>
 </tr>
-
 <tr>
-<td align="left">L2</td>
-<td align="center">1.25 MiB<br>/10-way</td>
-<td align="center">1.25 MiB<br>/20-way</td>
-<td align="center">512 KiB<br>/8-way</td>
-<td align="center">2 MiB<br>/16-way<br>(per Module)</td>
-<td align="center">1.5-4.5 MiB<br>/12-way<br>(per Cluster/Tile)</td>
+<td style="text-align:left">L2</td>
+<td style="text-align:center">1.25 MiB<br>/10-way</td>
+<td style="text-align:center">1.25 MiB<br>/20-way</td>
+<td style="text-align:center">512 KiB<br>/8-way</td>
+<td style="text-align:center">2 MiB<br>/16-way<br>(per Module)</td>
+<td style="text-align:center">1.5-4.5 MiB<br>/12-way<br>(per Cluster/Tile)</td>
 </tr>
-
 <tr>
-<td align="left">L3</td>
-<td align="center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
-<td align="center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
-<td align="center">2 MiB<br>/12-way</td>
-<td align="center">12 MiB<br>/12-way<br>(3 MiB per Cluster/Tile)</td>
-<td align="center">4 MiB<br>/16-way</td>
+<td style="text-align:left">L3</td>
+<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
+<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
+<td style="text-align:center">2 MiB<br>/12-way</td>
+<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Cluster/Tile)</td>
+<td style="text-align:center">4 MiB<br>/16-way</td>
 </tr>
 </tbody>
 </table>
-
 <ul>
 <li>表参考リンク
-
 <ul>
-<li>Tremont - <a href="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2" rel="nofollow noreferrer" target="_blank">Tremont: A Wider Front End and Caches - Intel's new Atom Microarchitecture: The Tremont Core in Lakefield</a></li>
-<li>Willow Cove/Sunny Cove - <a href="https://www.anandtech.com/show/16084/intel-tiger-lake-review-deep-dive-core-11th-gen/4" rel="nofollow noreferrer" target="_blank">Cache Architecture: The Effect of Increasing L2 and L3 - Intel’s Tiger Lake 11th Gen Core i7-1185G7 Review and Deep Dive: Baskin’ for the Exotic</a></li>
-</ul></li>
+<li>Tremont - <a href="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2">Tremont: A Wider Front End and Caches - Intel&rsquo;s new Atom Microarchitecture: The Tremont Core in Lakefield</a></li>
+<li>Willow Cove/Sunny Cove - <a href="https://www.anandtech.com/show/16084/intel-tiger-lake-review-deep-dive-core-11th-gen/4">Cache Architecture: The Effect of Increasing L2 and L3 - Intel’s Tiger Lake 11th Gen Core i7-1185G7 Review and Deep Dive: Baskin’ for the Exotic</a></li>
 </ul>
-
-<p>注目されるのは <em>Golden Cove</em> のキャッシュ構成だが、L1D/I と L2 のキャッシュサイズは <em>Willow Cove</em> と同じだが、L1I と L2 の way数を減らした興味深いものになっている。特に L2キャッシュは 半分の 10-way に減らされている。<br />
-<a href="https://github.com/projectacrn/acrn-hypervisor" rel="nofollow noreferrer" target="_blank">ACRN Hypervisor</a> には <em>Tiger Lake</em> の構成ファイルも存在するためそちらも確認したが、やはり <em>Tiger Lake/Willow Cove</em> は L2 1.25 MiB/20-way の構成だった。<sup class="footnote-ref" id="fnref:tgl-rvp"><a href="#fn:tgl-rvp">2</a></sup></p>
-
+</li>
+</ul>
+<p>注目されるのは <em>Golden Cove</em> のキャッシュ構成だが、L1D/I と L2 のキャッシュサイズは <em>Willow Cove</em> と同じだが、L1I と L2 の way数を減らした興味深いものになっている。特に L2キャッシュは 半分の 10-way に減らされている。<br>
+<a href="https://github.com/projectacrn/acrn-hypervisor">ACRN Hypervisor</a> には <em>Tiger Lake</em> の構成ファイルも存在するためそちらも確認したが、やはり <em>Tiger Lake/Willow Cove</em> は L2 1.25 MiB/20-way の構成だった。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <blockquote>
-<pre tabindex="0"><code>     &lt;cache level=&#34;2&#34; id=&#34;0x0&#34; type=&#34;3&#34;&gt;
+<pre><code>     &lt;cache level=&quot;2&quot; id=&quot;0x0&quot; type=&quot;3&quot;&gt;
        &lt;cache_size&gt;1310720&lt;/cache_size&gt;
        &lt;line_size&gt;64&lt;/line_size&gt;
        &lt;ways&gt;10&lt;/ways&gt;
@@ -222,32 +205,30 @@ ACRN Hypervisor は Intel が推進するオープンソースプロジェクト
        &lt;processors&gt;
          &lt;processor&gt;0x0&lt;/processor&gt;
        &lt;/processors&gt;
-     &lt;/cache&gt;</code></pre>
+     &lt;/cache&gt;
+</code></pre>
 
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/adl-rvp/adl-rvp.xml" rel="nofollow noreferrer" target="_blank">acrn-hypervisor/adl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/adl-rvp/adl-rvp.xml">acrn-hypervisor/adl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a></cite>
 </div>
 
 </blockquote>
-
 <p>CPUキャッシュにおいて、メモリアドレスに対応するキャッシュラインを複数設ける (n-way) ことは、キャッシュラインの競合 (スラッシング) が発生する確率を減らし、性能低下を防ぐ役割がある。way数を減らしたことは、単純にスラッシングが発生しやすくなるようにも思えるが、キャッシュラインに設けられたタグの比較回路を小さくできるため、キャッシュ密度を高めることができる。</p>
-
-<p>また <em>Gracemont</em> では L1I キャッシュサイズが <em>Tremont</em> の 32 KiB/8-way から大幅に増量され、64 KiB/8-way となった。Core/Big側の <em>Golden Cove</em> も 32 KiB/8-way であり、<em>Gracemont</em> の L1I キャッシュは異様とも言える大きさだ。<br />
+<p>また <em>Gracemont</em> では L1I キャッシュサイズが <em>Tremont</em> の 32 KiB/8-way から大幅に増量され、64 KiB/8-way となった。Core/Big側の <em>Golden Cove</em> も 32 KiB/8-way であり、<em>Gracemont</em> の L1I キャッシュは異様とも言える大きさだ。<br>
 これについては、<em>Tremont</em> で大幅に拡張されたデコーダーをより活用し、IPC と電力効率を向上させる狙いがあるのかもしれない。</p>
-
-<p><em>Gracemont</em> の L2キャッシュについては構成ファイルから得られる情報をそのまま記載したが、<em>Tremont</em> のように、プロセッサによって一定の範囲でサイズが選択可能となっている可能性もある。<br />
-<em>Gracemont</em> では <em>Tremont</em> 同様に 4コアで L2キャッシュを共有する、タイルとも呼ばれるクラスタを構成する。<br />
+<p><em>Gracemont</em> の L2キャッシュについては構成ファイルから得られる情報をそのまま記載したが、<em>Tremont</em> のように、プロセッサによって一定の範囲でサイズが選択可能となっている可能性もある。<br>
+<em>Gracemont</em> では <em>Tremont</em> 同様に 4コアで L2キャッシュを共有する、タイルとも呼ばれるクラスタを構成する。<br>
 L2キャッシュのサイズは <em>Tremont</em> では、マイクロサーバー向けの <em>Snow Ridge</em> が 4.5 MiB、他 <em>Lakefield</em> 、<em>Elkhart Lake</em> 、<em>Jasper Lake</em> が 1.5 MiB の構成を採用している。</p>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:intel-acrn"><a href="https://thinkit.co.jp/article/13695" rel="nofollow noreferrer" target="_blank">Intelが推進するEdgeの仮想化、ACRNとは？ | Think IT（シンクイット）</a>
- <a class="footnote-return" href="#fnref:intel-acrn"><sup>[return]</sup></a></li>
-<li id="fn:tgl-rvp"><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/tgl-rvp/tgl-rvp.xml#L744" rel="nofollow noreferrer" target="_blank">acrn-hypervisor/tgl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a>
- <a class="footnote-return" href="#fnref:tgl-rvp"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://thinkit.co.jp/article/13695">Intelが推進するEdgeの仮想化、ACRNとは？ | Think IT（シンクイット）</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/projectacrn/acrn-hypervisor/blob/918ec7aaf316b49aba5f58ffed6513f84cc1f96f/misc/config_tools/data/tgl-rvp/tgl-rvp.xml#L744">acrn-hypervisor/tgl-rvp.xml at 918ec7aaf316b49aba5f58ffed6513f84cc1f96f · projectacrn/acrn-hypervisor</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>

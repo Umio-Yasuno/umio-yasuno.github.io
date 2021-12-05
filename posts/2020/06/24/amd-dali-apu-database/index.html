@@ -70,10 +70,7 @@
 <div class="article-time">
     <time datetime="2020-06-24 19:52 &#43;0900" class="time-b">Post: 2020/06/24 19:52 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/02/11 19:35 &#43;0900</div>
-  </div>
-
-<p>ベースとなるシリコンが同じ <a href="https://www.coelacanth-dream.com/tags/raven2">Raven2</a> であるため、<a href="https://www.coelacanth-dream.com/posts/2020/06/14/amd-pollock-apu-database/">AMD Pollock APU Database</a>と内容はいくつか被るが、それ故相互補完する関係にあると言える。</p>
-
+  </div><p>ベースとなるシリコンが同じ <a href="https://www.coelacanth-dream.com/tags/raven2">Raven2</a> であるため、<a href="https://www.coelacanth-dream.com/posts/2020/06/14/amd-pollock-apu-database/">AMD Pollock APU Database</a>と内容はいくつか被るが、それ故相互補完する関係にあると言える。</p>
 <h2 id="page-index">Index</h2><ul class="page-index">
 <li><a href="#dali-summay">Dali Summary /概要</a></li>
 <li><a href="#dali-spec">Dali Spec /仕様 (推測)</a></li>
@@ -81,119 +78,93 @@
 <li><a href="#dali-x86model">x86_Model について ――Picasso と呼ばれる Dali</a></li>
 </ul>
 
-
 <h2 id="dali-summay">Dali Summary /概要</h2>
-
-<p>コードネーム <em>Dali</em> は <a href="https://www.coelacanth-dream.com/tags/raven2">Raven2</a> をベースとする省電力APU。<br />
-アーキテクチャと規模は、CPU は Zenアーキテクチャ、2-Core/4-Thread、CPU L3cache 4MB、<br />
-GPU は Vega/GCN5アーキテクチャ <a href="https://www.coelacanth-dream.com/tags/gfx909">(gfx909)</a>、総CU数 3基、総RB(RenderBackend)数 1基(4-ROP相当)、GPU L2cache 512KB。<br />
+<p>コードネーム <em>Dali</em> は <a href="https://www.coelacanth-dream.com/tags/raven2">Raven2</a> をベースとする省電力APU。<br>
+アーキテクチャと規模は、CPU は Zenアーキテクチャ、2-Core/4-Thread、CPU L3cache 4MB、<br>
+GPU は Vega/GCN5アーキテクチャ <a href="https://www.coelacanth-dream.com/tags/gfx909">(gfx909)</a>、総CU数 3基、総RB(RenderBackend)数 1基(4-ROP相当)、GPU L2cache 512KB。<br>
 製造プロセスは Global Foundries 14nm FinFet (14LP)。</p>
-
-<p>パッケージには現状、<em>Raven /Picasso</em> 同様にBGAタイプの <em>FP5 パッケージ</em> が使われるものが確認されている。<br />
-対応する TDP は、デフォルトで <strong>AMD 3020e</strong> <sup class="footnote-ref" id="fnref:4"><a href="#fn:4">1</a></sup> の 6W から <strong>Ryzen 3 3250U</strong> <sup class="footnote-ref" id="fnref:5"><a href="#fn:5">2</a></sup> の 15W、cTDP では 25W までと幅広い。</p>
-
-<p>コードネーム <em>Dali</em> の略称は <em>DAL</em> 。<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">3</a></sup><br />
-Linux Kernel へのパッチに初めて <em>Dali</em> という名前が出てきたのは、2019/09/09 とされる。<sup class="footnote-ref" id="fnref:1"><a href="#fn:1">4</a></sup></p>
-
-<p>双子の弟的な存在に、コードネーム <a href="https://www.coelacanth-dream.com/tags/pollock">Pollock</a> がいるが、それぞれの i2cコントローラ数が異なり、<br />
-<em>Dali</em> は 3基、<em>Pollock</em> は 5基持つとされている。<sup class="footnote-ref" id="fnref:12"><a href="#fn:12">5</a></sup><br />
+<p>パッケージには現状、<em>Raven /Picasso</em> 同様にBGAタイプの <em>FP5 パッケージ</em> が使われるものが確認されている。<br>
+対応する TDP は、デフォルトで <strong>AMD 3020e</strong> <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> の 6W から <strong>Ryzen 3 3250U</strong> <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> の 15W、cTDP では 25W までと幅広い。</p>
+<p>コードネーム <em>Dali</em> の略称は <em>DAL</em> 。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
+Linux Kernel へのパッチに初めて <em>Dali</em> という名前が出てきたのは、2019/09/09 とされる。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<p>双子の弟的な存在に、コードネーム <a href="https://www.coelacanth-dream.com/tags/pollock">Pollock</a> がいるが、それぞれの i2cコントローラ数が異なり、<br>
+<em>Dali</em> は 3基、<em>Pollock</em> は 5基持つとされている。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
 また、<em>Dali</em> は <em>FP5 /AM4 パッケージ</em> を採用し、<em>Pollock</em> は <em>FT5 パッケージ</em> を採用したものと分けられ、そこで <em>Dali</em> と <em>Pollock</em> とを区別することができる。</p>
-
-<p><em>Dali</em> と <em>Pollock</em> は <em>Raven2</em> の別リビジョンとなるが、それらを分ける決定的なもの、<em>Dali</em> を <em>Dali</em> 足らしめるものはまだはっきりとしていない。<br />
+<p><em>Dali</em> と <em>Pollock</em> は <em>Raven2</em> の別リビジョンとなるが、それらを分ける決定的なもの、<em>Dali</em> を <em>Dali</em> 足らしめるものはまだはっきりとしていない。<br>
 ただ、<em>Dali, Pollock</em> が登場してからは <em>Raven2</em> GPU に新たな DeviceID が割り振られることはなく、<em>Raven2</em> が元いた位置は完全に <em>Dali</em> へ引き継がれたものと認識している。</p>
-
 <p>一部製品で <code>x86_model</code> が異なり、<em>Picasso</em> と同じ <code>18h</code> と、<em>Pollock</em> と同じ <code>20h</code> に分かれる。</p>
-
 <h2 id="dali-spec">Dali Spec /仕様 (推測)</h2>
-
 <table>
 <thead>
 <tr>
-<th align="left">AMD Dali</th>
-<th align="center"></th>
+<th style="text-align:left">AMD Dali</th>
+<th style="text-align:center"></th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Socket</td>
-<td align="center">FP5 <!-- /AM4 --></td>
+<td style="text-align:left">Socket</td>
+<td style="text-align:center">FP5 <!-- /AM4 --></td>
 </tr>
-
 <tr>
-<td align="left">Memory Interface</td>
-<td align="center">128-bit (2ch)</td>
+<td style="text-align:left">Memory Interface</td>
+<td style="text-align:center">128-bit (2ch)</td>
 </tr>
-
 <tr>
-<td align="left">CPU</td>
-<td align="center"><em>Zen</em> <br>(Family 17h, Model 18h/20h)</td>
+<td style="text-align:left">CPU</td>
+<td style="text-align:center"><em>Zen</em> <br>(Family 17h, Model 18h/20h)</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;Max CPU Core/Thread</td>
-<td align="center">2/4</td>
+<td style="text-align:left"> Max CPU Core/Thread</td>
+<td style="text-align:center">2/4</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;CPU L3cache</td>
-<td align="center">4 MB</td>
+<td style="text-align:left"> CPU L3cache</td>
+<td style="text-align:center">4 MB</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;CPU Base Clock</td>
-<td align="center">(1.2 ~ 2.6 GHz)</td>
+<td style="text-align:left"> CPU Base Clock</td>
+<td style="text-align:center">(1.2 ~ 2.6 GHz)</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;CPU Boost Clock</td>
-<td align="center">(2.6 ~ 3.5 GHz)</td>
+<td style="text-align:left"> CPU Boost Clock</td>
+<td style="text-align:center">(2.6 ~ 3.5 GHz)</td>
 </tr>
-
 <tr>
-<td align="left">GPU</td>
-<td align="center"><em>Vega (gfx909)</em></td>
+<td style="text-align:left">GPU</td>
+<td style="text-align:center"><em>Vega (gfx909)</em></td>
 </tr>
-
 <tr>
-<td align="left">&emsp;Max GPU CU</td>
-<td align="center">3</td>
+<td style="text-align:left"> Max GPU CU</td>
+<td style="text-align:center">3</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;Max GPU SP</td>
-<td align="center">192</td>
+<td style="text-align:left"> Max GPU SP</td>
+<td style="text-align:center">192</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;Max RB+</td>
-<td align="center">1<br>(== 8-ROP)</td>
+<td style="text-align:left"> Max RB+</td>
+<td style="text-align:center">1<br>(== 8-ROP)</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;GPU L2cache</td>
-<td align="center">128 KB</td>
+<td style="text-align:left"> GPU L2cache</td>
+<td style="text-align:center">128 KB</td>
 </tr>
-
 <tr>
-<td align="left">&emsp;GPU Clock</td>
-<td align="center">800 ~ 1200 MHz</td>
+<td style="text-align:left"> GPU Clock</td>
+<td style="text-align:center">800 ~ 1200 MHz</td>
 </tr>
-
 <tr>
-<td align="left">Process</td>
-<td align="center">GF 14nm</td>
+<td style="text-align:left">Process</td>
+<td style="text-align:center">GF 14nm</td>
 </tr>
-
 <tr>
-<td align="left">TDP</td>
-<td align="center">6 ~ 25W</td>
+<td style="text-align:left">TDP</td>
+<td style="text-align:center">6 ~ 25W</td>
 </tr>
 </tbody>
 </table>
-
 <h2 id="dali-product">Dali Product /製品</h2>
-
 <!--
 
  * Athlon Silver 3050U
@@ -206,210 +177,206 @@ Linux Kernel へのパッチに初めて <em>Dali</em> という名前が出て�
  * Ryzen 3 3250C
 
 -->
-
 <table>
 <thead>
 <tr>
-<th align="left">Dali SKU</th>
-<th align="center">Core/Thread</th>
-<th align="center">CPU Base/Boost</th>
-<th align="center">GPU CU</th>
-<th align="center">GPU Clock</th>
-<th align="center">TDP</th>
+<th style="text-align:left">Dali SKU</th>
+<th style="text-align:center">Core/Thread</th>
+<th style="text-align:center">CPU Base/Boost</th>
+<th style="text-align:center">GPU CU</th>
+<th style="text-align:center">GPU Clock</th>
+<th style="text-align:center">TDP</th>
 </tr>
 </thead>
-
 <tbody>
 <tr>
-<td align="left">Athlon Silver 3050U <sup class="footnote-ref" id="fnref:t3050u"><a href="#fn:t3050u">6</a></sup></td>
-<td align="center">2/2</td>
-<td align="center">2.3GHz/3.2GHz</td>
-<td align="center">2</td>
-<td align="center">1.1GHz</td>
-<td align="center">15(12-25)W</td>
+<td style="text-align:left">Athlon Silver 3050U <sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></td>
+<td style="text-align:center">2/2</td>
+<td style="text-align:center">2.3GHz/3.2GHz</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">1.1GHz</td>
+<td style="text-align:center">15(12-25)W</td>
 </tr>
-
 <tr>
-<td align="left">Athlon Gold 3150U <sup class="footnote-ref" id="fnref:t3150u"><a href="#fn:t3150u">7</a></sup></td>
-<td align="center">2/4</td>
-<td align="center">2.4GHz/3.3GHz</td>
-<td align="center">3</td>
-<td align="center">1.0GHz</td>
-<td align="center">15(12-25)W</td>
+<td style="text-align:left">Athlon Gold 3150U <sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></td>
+<td style="text-align:center">2/4</td>
+<td style="text-align:center">2.4GHz/3.3GHz</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1.0GHz</td>
+<td style="text-align:center">15(12-25)W</td>
 </tr>
-
 <tr>
-<td align="left">Ryzen 3 3250U <sup class="footnote-ref" id="fnref:t3250u"><a href="#fn:t3250u">8</a></sup></td>
-<td align="center">2/4</td>
-<td align="center">2.6GHz/3.5GHz</td>
-<td align="center">3</td>
-<td align="center">1.2GHz</td>
-<td align="center">15(12-25)W</td>
+<td style="text-align:left">Ryzen 3 3250U <sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></td>
+<td style="text-align:center">2/4</td>
+<td style="text-align:center">2.6GHz/3.5GHz</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1.2GHz</td>
+<td style="text-align:center">15(12-25)W</td>
 </tr>
-
 <tr>
-<td align="left">AMD 3020e <sup class="footnote-ref" id="fnref:t3020e"><a href="#fn:t3020e">9</a></sup></td>
-<td align="center">2/2</td>
-<td align="center">1.2GHz/2.6GHz</td>
-<td align="center">3</td>
-<td align="center">1.0GHz</td>
-<td align="center">6W</td>
+<td style="text-align:left">AMD 3020e <sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup></td>
+<td style="text-align:center">2/2</td>
+<td style="text-align:center">1.2GHz/2.6GHz</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1.0GHz</td>
+<td style="text-align:center">6W</td>
 </tr>
-
 <tr>
-<td align="left">Athlon Silver 3050e <sup class="footnote-ref" id="fnref:t3050e"><a href="#fn:t3050e">10</a></sup></td>
-<td align="center">2/4</td>
-<td align="center">(1.4GHz?)/2.8GHz</td>
-<td align="center">3</td>
-<td align="center">1.0GHz</td>
-<td align="center">6W</td>
+<td style="text-align:left">Athlon Silver 3050e <sup id="fnref:10"><a href="#fn:10" class="footnote-ref" role="doc-noteref">10</a></sup></td>
+<td style="text-align:center">2/4</td>
+<td style="text-align:center">(1.4GHz?)/2.8GHz</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1.0GHz</td>
+<td style="text-align:center">6W</td>
 </tr>
-
 <tr>
-<td align="left">Athlon Silver 3050C <sup class="footnote-ref" id="fnref:t3050c"><a href="#fn:t3050c">11</a></sup></td>
-<td align="center">2/2</td>
-<td align="center">2.3GHz/3.2GHz</td>
-<td align="center">3</td>
-<td align="center">1.1GHz</td>
-<td align="center">15(12-25)W</td>
+<td style="text-align:left">Athlon Silver 3050C <sup id="fnref:11"><a href="#fn:11" class="footnote-ref" role="doc-noteref">11</a></sup></td>
+<td style="text-align:center">2/2</td>
+<td style="text-align:center">2.3GHz/3.2GHz</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1.1GHz</td>
+<td style="text-align:center">15(12-25)W</td>
 </tr>
-
 <tr>
-<td align="left">Athlon Gold 3150C <sup class="footnote-ref" id="fnref:t3150c"><a href="#fn:t3150c">12</a></sup></td>
-<td align="center">2/4</td>
-<td align="center">2.4GHz/3.3GHz</td>
-<td align="center">3</td>
-<td align="center">1.1GHz</td>
-<td align="center">15(12-25)W</td>
+<td style="text-align:left">Athlon Gold 3150C <sup id="fnref:12"><a href="#fn:12" class="footnote-ref" role="doc-noteref">12</a></sup></td>
+<td style="text-align:center">2/4</td>
+<td style="text-align:center">2.4GHz/3.3GHz</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1.1GHz</td>
+<td style="text-align:center">15(12-25)W</td>
 </tr>
-
 <tr>
-<td align="left">Ryzen 3 3250C <sup class="footnote-ref" id="fnref:t3250c"><a href="#fn:t3250c">13</a></sup></td>
-<td align="center">2/4</td>
-<td align="center">2.6GHz/3.5GHz</td>
-<td align="center">3</td>
-<td align="center">1.2GHz</td>
-<td align="center">15(12-25)W</td>
+<td style="text-align:left">Ryzen 3 3250C <sup id="fnref:13"><a href="#fn:13" class="footnote-ref" role="doc-noteref">13</a></sup></td>
+<td style="text-align:center">2/4</td>
+<td style="text-align:center">2.6GHz/3.5GHz</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1.2GHz</td>
+<td style="text-align:center">15(12-25)W</td>
 </tr>
-
 <tr>
-<td align="left">Ryzen Embedded R1102G <sup class="footnote-ref" id="fnref:t1102g"><a href="#fn:t1102g">14</a></sup></td>
-<td align="center">2/2</td>
-<td align="center">1.2GHz/2.6GHz</td>
-<td align="center">3</td>
-<td align="center">1.0GHz</td>
-<td align="center">6W</td>
+<td style="text-align:left">Ryzen Embedded R1102G <sup id="fnref:14"><a href="#fn:14" class="footnote-ref" role="doc-noteref">14</a></sup></td>
+<td style="text-align:center">2/2</td>
+<td style="text-align:center">1.2GHz/2.6GHz</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1.0GHz</td>
+<td style="text-align:center">6W</td>
 </tr>
-
 <tr>
-<td align="left">Ryzen Embedded R1305G <sup class="footnote-ref" id="fnref:t1305g"><a href="#fn:t1305g">15</a></sup></td>
-<td align="center">2/4</td>
-<td align="center">1.5GHz/2.8GHz</td>
-<td align="center">3</td>
-<td align="center">1.0GHz</td>
-<td align="center">8-10W</td>
+<td style="text-align:left">Ryzen Embedded R1305G <sup id="fnref:15"><a href="#fn:15" class="footnote-ref" role="doc-noteref">15</a></sup></td>
+<td style="text-align:center">2/4</td>
+<td style="text-align:center">1.5GHz/2.8GHz</td>
+<td style="text-align:center">3</td>
+<td style="text-align:center">1.0GHz</td>
+<td style="text-align:center">8-10W</td>
 </tr>
 </tbody>
 </table>
-
 <h2 id="dali-x86model">x86_Model について ――Picasso と呼ばれる Dali</h2>
-
 <p>まず、GF 12nmプロセスで製造される Zen+ APU、<em>Picasso</em> はプロセッサの判別にも使われる <code>x86_Model</code> の値が <code>18h (24)</code> となっている。</p>
-
 <blockquote>
-<pre tabindex="0"><code>  switch (boot_cpu_data.x86_model) { 
-  case 0x1:  /* Zen */
-  case 0x8:  /* Zen+ */
-  case 0x11: /* Zen APU */
-  case 0x18: /* Zen+ APU */</code></pre>
-<p>引用元: <cite><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587" rel="nofollow noreferrer" target="_blank">linux/k10temp.c at b02c6857389da66b09e447103bdb247ccd182456 · torvalds/linux</a></cite></p>
+<pre><code>  switch (boot_cpu_data.x86_model) { 
+  case 0x1:	/* Zen */
+  case 0x8:	/* Zen+ */
+  case 0x11:	/* Zen APU */
+  case 0x18:	/* Zen+ APU */
+</code></pre>
+<p>引用元: <cite><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587">linux/k10temp.c at b02c6857389da66b09e447103bdb247ccd182456 · torvalds/linux</a></cite></p>
 </blockquote>
-
-<p><em>Raven2</em> とその別リビジョンである <em>Dali</em> 、<em>Pollock</em> は当然違う <code>x86_Model</code> が与えられるべきなのだが、<em>Raven2</em> は <em>Picasso</em> と同じ <code>18h</code> となり、CPUID も共有する。<br />
-それだけでなく、<em>Dali</em> は製品によって <code>18h</code> 、または <code>20h</code> と分かれており、Chromebook向けでない製品の、またその一部が <code>18h</code> となる。<sup class="footnote-ref" id="fnref:16"><a href="#fn:16">16</a></sup></p>
-
+<p><em>Raven2</em> とその別リビジョンである <em>Dali</em> 、<em>Pollock</em> は当然違う <code>x86_Model</code> が与えられるべきなのだが、<em>Raven2</em> は <em>Picasso</em> と同じ <code>18h</code> となり、CPUID も共有する。<br>
+それだけでなく、<em>Dali</em> は製品によって <code>18h</code> 、または <code>20h</code> と分かれており、Chromebook向けでない製品の、またその一部が <code>18h</code> となる。<sup id="fnref:16"><a href="#fn:16" class="footnote-ref" role="doc-noteref">16</a></sup></p>
 <blockquote>
 <p>some non-Chrome OPN Dali APU use the same CPUID with Picasso.
 to identify those APU via reading the opn spare fuse from smu.</p>
-
-<p>引用元: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2033051" rel="nofollow noreferrer" target="_blank">soc/amd/picasso: load RV2 VBIOS with rv2 family OPN (I21f317e1) · Gerrit Code Review</a></cite></p>
+<p>引用元: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2033051">soc/amd/picasso: load RV2 VBIOS with rv2 family OPN (I21f317e1) · Gerrit Code Review</a></cite></p>
 </blockquote>
-
-<p><em>Picasso</em> とは違う <code>20h</code> が本来 <em>Raven2</em> に与えられるべき値と考えているのだが、何故そうなったのかは不明。<br />
-<em>Dali</em> がすべて <code>20h</code> となるならば、それが <em>Dali</em> が <em>Raven2</em> の別リビジョンとされることの理由としてまだ考えられたのだが。<br />
+<p><em>Picasso</em> とは違う <code>20h</code> が本来 <em>Raven2</em> に与えられるべき値と考えているのだが、何故そうなったのかは不明。<br>
+<em>Dali</em> がすべて <code>20h</code> となるならば、それが <em>Dali</em> が <em>Raven2</em> の別リビジョンとされることの理由としてまだ考えられたのだが。<br>
 <em>Pollock</em> はまだ実際の製品が確認できていないが、すべて <code>20h</code> となることを願う。</p>
-
 <p><code>18h</code> であり、<em>Picasso</em> と認識される製品には、以下の 3つが確認されている。</p>
-
 <ul>
-<li>Athlon Silver 3050U <sup class="footnote-ref" id="fnref:18h3050u"><a href="#fn:18h3050u">17</a></sup></li>
-<li>Athlon Gold 3150U <sup class="footnote-ref" id="fnref:18h3150u"><a href="#fn:18h3150u">18</a></sup></li>
-<li>Ryzen 3 3250U <sup class="footnote-ref" id="fnref:18h3250u"><a href="#fn:18h3250u">19</a></sup></li>
+<li>Athlon Silver 3050U <sup id="fnref:17"><a href="#fn:17" class="footnote-ref" role="doc-noteref">17</a></sup></li>
+<li>Athlon Gold 3150U <sup id="fnref:18"><a href="#fn:18" class="footnote-ref" role="doc-noteref">18</a></sup></li>
+<li>Ryzen 3 3250U <sup id="fnref:19"><a href="#fn:19" class="footnote-ref" role="doc-noteref">19</a></sup></li>
 </ul>
-
 <p><code>20h</code> となる製品には以下 2つが確認されており、</p>
-
 <ul>
-<li>AMD 3020e <sup class="footnote-ref" id="fnref:20h3020e"><a href="#fn:20h3020e">20</a></sup></li>
-<li>Athlon Silver 3050e <sup class="footnote-ref" id="fnref:20h3050e"><a href="#fn:20h3050e">21</a></sup></li>
+<li>AMD 3020e <sup id="fnref:20"><a href="#fn:20" class="footnote-ref" role="doc-noteref">20</a></sup></li>
+<li>Athlon Silver 3050e <sup id="fnref:21"><a href="#fn:21" class="footnote-ref" role="doc-noteref">21</a></sup></li>
 </ul>
-
 <p>またChromebook向けである以下 3つが <code>20h</code> になると考えられる。</p>
-
 <ul>
 <li>Athlon Silver 3050C</li>
 <li>Athlon Gold 3150C</li>
 <li>Ryzen 3 3250C</li>
 </ul>
-<div class="footnotes">
-
-<hr />
-
+<section class="footnotes" role="doc-endnotes">
+<hr>
 <ol>
-<li id="fn:4"><a href="https://www.amd.com/en/products/apu/amd-3020e#product-specs" rel="nofollow noreferrer" target="_blank">AMD 3020e | AMD</a>
- <a class="footnote-return" href="#fnref:4"><sup>[return]</sup></a></li>
-<li id="fn:5"><a href="https://www.amd.com/en/products/apu/amd-ryzen-3-3250u#product-specs" rel="nofollow noreferrer" target="_blank">AMD Ryzen™ 3 3250U | AMD</a>
- <a class="footnote-return" href="#fnref:5"><sup>[return]</sup></a></li>
-<li id="fn:2"><a href="https://ir.amd.com/news-releases/news-release-details/amd-announces-worlds-highest-performance-desktop-and-ultrathin" rel="nofollow noreferrer" target="_blank">AMD Announces World’s Highest Performance Desktop and Ultrathin Laptop Processors at CES 2020 | Advanced Micro Devices</a>
- <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
-<li id="fn:1"><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/039775.html" rel="nofollow noreferrer" target="_blank">[PATCH 0/2] Enable Dali for DC</a>
- <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
-<li id="fn:12"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2057468" rel="nofollow noreferrer" target="_blank">soc/amd/common: Determine # of i2c controllers at runtime (I397b074e) · Gerrit Code Review</a>
- <a class="footnote-return" href="#fnref:12"><sup>[return]</sup></a></li>
-<li id="fn:t3050u"><a href="https://www.amd.com/en/products/apu/amd-athlon-silver-3050u#product-specs" rel="nofollow noreferrer" target="_blank">AMD Athlon™ Silver 3050U | AMD</a>
- <a class="footnote-return" href="#fnref:t3050u"><sup>[return]</sup></a></li>
-<li id="fn:t3150u"><a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150u#product-specs" rel="nofollow noreferrer" target="_blank">AMD Athlon™ Gold 3150U | AMD</a>
- <a class="footnote-return" href="#fnref:t3150u"><sup>[return]</sup></a></li>
-<li id="fn:t3250u"><a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150u#product-specs" rel="nofollow noreferrer" target="_blank">AMD Ryzen™ 3 3250U | AMD</a>
- <a class="footnote-return" href="#fnref:t3250u"><sup>[return]</sup></a></li>
-<li id="fn:t3020e"><a href="https://www.amd.com/en/products/apu/amd-3020e#product-specs" rel="nofollow noreferrer" target="_blank">AMD 3020e | AMD</a>
- <a class="footnote-return" href="#fnref:t3020e"><sup>[return]</sup></a></li>
-<li id="fn:t3050e"><a href="https://www.amd.com/en/product/9896" rel="nofollow noreferrer" target="_blank">AMD Athlon™ Silver 3050e | AMD</a>
- <a class="footnote-return" href="#fnref:t3050e"><sup>[return]</sup></a></li>
-<li id="fn:t3050c"><a href="https://www.amd.com/en/products/apu/amd-athlon-silver-3050c#product-specs" rel="nofollow noreferrer" target="_blank">AMD Athlon Silver 3050C | AMD</a>
- <a class="footnote-return" href="#fnref:t3050c"><sup>[return]</sup></a></li>
-<li id="fn:t3150c"><a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150c#product-specs" rel="nofollow noreferrer" target="_blank">AMD Athlon Gold 3150C | AMD</a>
- <a class="footnote-return" href="#fnref:t3150c"><sup>[return]</sup></a></li>
-<li id="fn:t3250c"><a href="https://www.amd.com/en/products/apu/amd-ryzen-3-3250c#product-specs" rel="nofollow noreferrer" target="_blank">AMD Ryzen™ 3 3250C | AMD</a>
- <a class="footnote-return" href="#fnref:t3250c"><sup>[return]</sup></a></li>
-<li id="fn:t1102g"><a href="https://www.amd.com/en/product/9226" rel="nofollow noreferrer" target="_blank">AMD Ryzen™ Embedded R1102G with Radeon™ Vega 3 Graphics | AMD</a>
- <a class="footnote-return" href="#fnref:t1102g"><sup>[return]</sup></a></li>
-<li id="fn:t1305g"><a href="https://www.amd.com/en/product/9221" rel="nofollow noreferrer" target="_blank">AMD Ryzen™ Embedded R1305G with Radeon™ Vega 3 Graphics | AMD</a>
- <a class="footnote-return" href="#fnref:t1305g"><sup>[return]</sup></a></li>
-<li id="fn:16"><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2033051" rel="nofollow noreferrer" target="_blank">soc/amd/picasso: load RV2 VBIOS with rv2 family OPN (I21f317e1) · Gerrit Code Review</a>
- <a class="footnote-return" href="#fnref:16"><sup>[return]</sup></a></li>
-<li id="fn:18h3050u"><a href="https://browser.geekbench.com/v5/cpu/2340721" rel="nofollow noreferrer" target="_blank">HP HP All-in-One 22-df0xxx - Geekbench Browser</a>
- <a class="footnote-return" href="#fnref:18h3050u"><sup>[return]</sup></a></li>
-<li id="fn:18h3150u"><a href="https://browser.geekbench.com/v5/cpu/910983" rel="nofollow noreferrer" target="_blank">HP HP Slim Desktop S01-aF0XXX - Geekbench Browser</a>
- <a class="footnote-return" href="#fnref:18h3150u"><sup>[return]</sup></a></li>
-<li id="fn:18h3250u"><a href="https://browser.geekbench.com/v5/cpu/2445614" rel="nofollow noreferrer" target="_blank">HP HP Laptop 15s-eq1xxx - Geekbench Browser</a>
- <a class="footnote-return" href="#fnref:18h3250u"><sup>[return]</sup></a></li>
-<li id="fn:20h3020e"><a href="https://browser.geekbench.com/v4/cpu/15465129" rel="nofollow noreferrer" target="_blank">HP HP Laptop 15-ef1xxx - Geekbench Browser</a>
- <a class="footnote-return" href="#fnref:20h3020e"><sup>[return]</sup></a></li>
-<li id="fn:20h3050e"><a href="https://browser.geekbench.com/v4/cpu/15554063" rel="nofollow noreferrer" target="_blank">HC HCAR357-MI - Geekbench Browser</a>
- <a class="footnote-return" href="#fnref:20h3050e"><sup>[return]</sup></a></li>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/apu/amd-3020e#product-specs">AMD 3020e | AMD</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/apu/amd-ryzen-3-3250u#product-specs">AMD Ryzen™ 3 3250U | AMD</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://ir.amd.com/news-releases/news-release-details/amd-announces-worlds-highest-performance-desktop-and-ultrathin">AMD Announces World’s Highest Performance Desktop and Ultrathin Laptop Processors at CES 2020 | Advanced Micro Devices</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/039775.html">[PATCH 0/2] Enable Dali for DC</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2057468">soc/amd/common: Determine # of i2c controllers at runtime (I397b074e) · Gerrit Code Review</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/apu/amd-athlon-silver-3050u#product-specs">AMD Athlon™ Silver 3050U | AMD</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150u#product-specs">AMD Athlon™ Gold 3150U | AMD</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150u#product-specs">AMD Ryzen™ 3 3250U | AMD</a>&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:9" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/apu/amd-3020e#product-specs">AMD 3020e | AMD</a>&#160;<a href="#fnref:9" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:10" role="doc-endnote">
+<p><a href="https://www.amd.com/en/product/9896">AMD Athlon™ Silver 3050e | AMD</a>&#160;<a href="#fnref:10" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:11" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/apu/amd-athlon-silver-3050c#product-specs">AMD Athlon Silver 3050C | AMD</a>&#160;<a href="#fnref:11" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:12" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/apu/amd-athlon-gold-3150c#product-specs">AMD Athlon Gold 3150C | AMD</a>&#160;<a href="#fnref:12" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:13" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/apu/amd-ryzen-3-3250c#product-specs">AMD Ryzen™ 3 3250C | AMD</a>&#160;<a href="#fnref:13" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:14" role="doc-endnote">
+<p><a href="https://www.amd.com/en/product/9226">AMD Ryzen™ Embedded R1102G with Radeon™ Vega 3 Graphics | AMD</a>&#160;<a href="#fnref:14" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:15" role="doc-endnote">
+<p><a href="https://www.amd.com/en/product/9221">AMD Ryzen™ Embedded R1305G with Radeon™ Vega 3 Graphics | AMD</a>&#160;<a href="#fnref:15" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:16" role="doc-endnote">
+<p><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2033051">soc/amd/picasso: load RV2 VBIOS with rv2 family OPN (I21f317e1) · Gerrit Code Review</a>&#160;<a href="#fnref:16" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:17" role="doc-endnote">
+<p><a href="https://browser.geekbench.com/v5/cpu/2340721">HP HP All-in-One 22-df0xxx - Geekbench Browser</a>&#160;<a href="#fnref:17" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:18" role="doc-endnote">
+<p><a href="https://browser.geekbench.com/v5/cpu/910983">HP HP Slim Desktop S01-aF0XXX - Geekbench Browser</a>&#160;<a href="#fnref:18" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:19" role="doc-endnote">
+<p><a href="https://browser.geekbench.com/v5/cpu/2445614">HP HP Laptop 15s-eq1xxx - Geekbench Browser</a>&#160;<a href="#fnref:19" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:20" role="doc-endnote">
+<p><a href="https://browser.geekbench.com/v4/cpu/15465129">HP HP Laptop 15-ef1xxx - Geekbench Browser</a>&#160;<a href="#fnref:20" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:21" role="doc-endnote">
+<p><a href="https://browser.geekbench.com/v4/cpu/15554063">HC HCAR357-MI - Geekbench Browser</a>&#160;<a href="#fnref:21" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
 </ol>
-</div>
+</section>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
