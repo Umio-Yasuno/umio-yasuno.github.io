@@ -74,11 +74,13 @@
 </p>
 <p>AMD GPU アーキテクチャにおいて、初期の GCN から <em>Polaris1x /VegaM</em> までを含む <em>GFX6-8</em> では FMA の処理が MAD の 4倍遅く、<em>Vega, Navi</em> の世代である <em>GFX9-10</em> では FMA も MAD も同じ処理性能であり、<em>RDNA 2 /GFX10.3</em> では MAD をサポートせず、MUL と ADD 2つに分けて処理するため遅くなり、FMA を使う方が速くなるとされる。</p>
 <h2 id="perf">FMA と MAD の性能違い</h2>
-<p>AMD GPU アーキテクチャのバージョンを示す GPUID と、そのアーキテクチャでサポートしている機能について、LLVM では <a href="https://github.com/llvm/llvm-project/blob/main/llvm/lib/Target/AMDGPU/AMDGPU.td">llvm-project/AMDGPU.td</a> に記述されている。<br>
+<p>AMD GPU アーキテクチャのバージョンを示す GPUID と、そのアーキテクチャでサポートしている機能について、LLVM では <a href="https://github.com/llvm/llvm-project/blob/main/llvm/lib/Target/AMDGPU/AMDGPU.td" target="_blank" rel="noopener" >llvm-project/AMDGPU.td</a>
+ に記述されている。<br>
 そこで FMA命令が MAD命令 (MUL + ADD) と同速で処理できるかというのは <code>FeatureFastFMAF32</code> という機能名で管理されている。<br>
 それを辿ると、上記の <em>GFX6-8</em> 世代は MAD の方が遅い、というのはだいぶざっくりとした説明で、実際には <em>GFX6-8</em> 世代の一部は FMA と MAD の処理性能が同じであることが分かる。<br>
 <em>Tahiti (gfx600), Hawaii (gfx702), Hawaii Pro (gfx701), Carrizo (gfx801)</em> が該当し、それらは同時に FP64演算を FP32 の半分のレートで実行する <code>HalfRate64Ops</code> もサポートしている。<br>
-<em>Hawaii (gfx702)</em> だけ <code>HalfRate64Ops</code> をサポートしていないとしているが、LLVM 内の AMD GPU ユーザーガイド <a href="https://github.com/llvm/llvm-project/blob/main/llvm/docs/AMDGPUUsage.rst">llvm-project/AMDGPUUsage.rst</a> によると製品によって <em>Hawaii /Pro</em> を分けているため、コンシューマ向けでは FP64演算性能を抑えるための方策ではないかと思われる。<br>
+<em>Hawaii (gfx702)</em> だけ <code>HalfRate64Ops</code> をサポートしていないとしているが、LLVM 内の AMD GPU ユーザーガイド <a href="https://github.com/llvm/llvm-project/blob/main/llvm/docs/AMDGPUUsage.rst" target="_blank" rel="noopener" >llvm-project/AMDGPUUsage.rst</a>
+ によると製品によって <em>Hawaii /Pro</em> を分けているため、コンシューマ向けでは FP64演算性能を抑えるための方策ではないかと思われる。<br>
 <code>FeatureFastFMAF32</code> は <em>Vega (GFX9)</em> から世代全体でサポートするようになり、これは上記の説明と一致する。</p>
 <p>そして、<em>GFX6-8</em> 世代で <code>FeatureFastFMAF32</code> をサポートする AMD GPUアーキテクチャでは、<code>HalfRate64Ops</code> も(ほぼ) 同時にサポートするというのが性能に関係すると思われる。<br>
 AMD が公開している AMD GPU の ISA (Instruction Set Architecture) ドキュメントには、FMA命令 <code>V_FMA_F32</code> の概要部分に <em>Only for double-precision parts.</em> という記述がある。</p>
@@ -95,7 +97,8 @@ AMD が公開している AMD GPU の ISA (Instruction Set Architecture) ドキ�
 <p><em>Vega (GFX9)</em> では単精度演算ユニットでも <code>V_FMA_F32</code> を実行可能となるよう改良され、FMA と MAD の処理性能が同じになったのだと思われる。<br>
 また、今まで見落としていたが、Hot Chips 29 (2017) における <em>Vega アーキテクチャ</em> の発表でこの点に触れており、<em>Full rate IEEE compliant FMA32</em> としてアピールされている。</p>
 <ul>
-<li><a href="https://old.hotchips.org/wp-content/uploads/hc_archives/hc29/HC29.21-Monday-Pub/HC29.21.10-GPU-Gaming-Pub/HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf">AMD’s Radeon Next Generation GPU</a></li>
+<li><a href="https://old.hotchips.org/wp-content/uploads/hc_archives/hc29/HC29.21-Monday-Pub/HC29.21.10-GPU-Gaming-Pub/HC29.21.120-Radeon-Vega10-Mantor-AMD-f1.pdf" target="_blank" rel="noopener" >AMD’s Radeon Next Generation GPU</a>
+</li>
 </ul>
 <h2 id="ulp">FMA と MAD の精度違い</h2>
 <p>FMA も MAD の計算精度について、MAD は乗算の結果を、掛けた値と同じビット数に丸めてから加算の処理を行なうが、 FMA は乗算の結果を掛けた値の倍のビット長で保持してから加算を行なうため、FMA の方が計算精度が高くなる。<br>

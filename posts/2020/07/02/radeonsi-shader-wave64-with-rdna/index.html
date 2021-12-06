@@ -72,7 +72,8 @@
     <div class="article-time-update time-b">Update: 2021/11/27 17:09 &#43;0900</div>
   </div><p>オープンソースで開発される AMD GPU向け OpenGLドライバー <strong>RadeonSI</strong> への最新コミットの中で、ネイティブで Wave32モードに対応する <em>RDNA /Navi1x GPU</em> も Wave64モードで各シェーダーを実行するように変更が行なわれた。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/90cf741d316d231bdc8a67dce8ef1c84a80eeec8">radeonsi: always use Wave64 for HS/GS/VS shader stages (except GS fast launch) (90cf741d) · Commits · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/90cf741d316d231bdc8a67dce8ef1c84a80eeec8" target="_blank" rel="noopener" >radeonsi: always use Wave64 for HS/GS/VS shader stages (except GS fast launch) (90cf741d) · Commits · Mesa / mesa · GitLab</a>
+</li>
 </ul>
 <p>Wave は コンピュートユニット(CU) 内の SIMDユニットが実行するスレッドの塊を意味し、後の数字はスレッドの数を意味する。Wavefront とも呼ぶ。</p>
 <h2 id="page-index">Index</h2><ul class="page-index">
@@ -91,8 +92,10 @@
 <p><em>GCN アーキテクチャ</em> では命令の発行に 4サイクル掛かるが、<em>RDNA アーキテクチャ</em> は 1サイクルと短いレイテンシで処理できるため、グラフィクス処理やゲーミング向けとして有利である……とされていたが、今回の <strong>RadeonSI</strong> に加えられた変更は、<em>RDNA /Navi1x GPU</em> でもネイティブの Wave32 ではなく Wave64 でシェーダー実行するというものだ。</p>
 <h2 id="why-wave64">Wave64 で実行する理由</h2>
 <p>以前より、通常 Pixel Shader は Wave64、Vertex/Tess/Geometry Shader は Wave32 で実行するようにしていたのを、後者も Wave64 で実行するようにしたのが今回の変更点となる。<br>
-また、<a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf">RDNA_Architecture_public.pdf</a> には Compute Shader は Wave32 とあるが、何か問題が発生するらしく、<strong>RadeonSI</strong> では Wave64 となっている。</p>
-<p>Vertex/Tess/Geometry Shader も Wave64 で実行する方が良いと考える理由に、GPUドライバーの開発者である <a href="https://gitlab.freedesktop.org/mareko">Marek Olšák</a> 氏は以下の項目をあげている。</p>
+また、<a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener" >RDNA_Architecture_public.pdf</a>
+ には Compute Shader は Wave32 とあるが、何か問題が発生するらしく、<strong>RadeonSI</strong> では Wave64 となっている。</p>
+<p>Vertex/Tess/Geometry Shader も Wave64 で実行する方が良いと考える理由に、GPUドライバーの開発者である <a href="https://gitlab.freedesktop.org/mareko" target="_blank" rel="noopener" >Marek Olšák</a>
+ 氏は以下の項目をあげている。</p>
 <blockquote>
 <ul>
 <li>greater chance of L0 cache hits, because more threads are assigned to the same CU</li>

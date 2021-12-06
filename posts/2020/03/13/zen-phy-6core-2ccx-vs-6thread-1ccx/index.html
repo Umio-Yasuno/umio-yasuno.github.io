@@ -73,7 +73,8 @@
   </div><p>今更 Ryzen 5 2600 を使って <em>Zen/+</em> の検証。<br>
 試したい、というだけの理由で <em>Zen 2</em> を買える程のお金がない。さらに言うと、2666MHzでCL1も安定しないような<del>クソ</del>メモリを使っている。</p>
 <h2 id="前提">前提</h2>
-<p><a href="https://www.coelacanth-dream.com/posts/2020/03/12/private-conkyrc/">1つ前の記事</a>で、「なんか1CCXで処理が回されやすいっぽい」とか書いたが、それがどの程度性能に影響を与えるのか気になった。<br>
+<p><a href="https://www.coelacanth-dream.com/posts/2020/03/12/private-conkyrc/">1つ前の記事</a>
+で、「なんか1CCXで処理が回されやすいっぽい」とか書いたが、それがどの程度性能に影響を与えるのか気になった。<br>
 6スレッドで処理するとして考えられるパターンは主に、1CCX内の3-Core/6-Thread、それと2CCXに跨る6-Coreの2つがある。<br>
 前者は1CCX内に収まるため短いレイテンシでスレッド間の通信、同期を行なえるが、SMT機能によって1-Coreで2-Threadを実行するため、実行ユニットのリソース競合、スレッド切り替えのオーバーヘッド等で性能向上が見られない、もしくは低下することが起こりうる。片方がメモリからデータをロードしている間、もう片方のスレッドを実行する、という風に実行ユニットの有効活用が可能だが、1-Threadあたりのキャッシュ量も単純に半分となるため、処理によってはキャッシュミスが頻発、メモリアクセスが増える要因にもなる。以下、このパターンを <em>6-Thread 1CCX</em> とする。<br>
 後者はCCXを跨るため、その分レイテンシが長くなるが、SMT機能の悪影響をほぼ受けない。以下、このパターンを <em>6-Core 2CCX</em> とする。</p>
@@ -120,7 +121,10 @@ Zen/+は本来ならCCXあたり4-Core/8-Threadを構成しているが、Ryzen 
 <p>で <em>6-Thread 1CCX</em> を指定して実行させられる。</p>
 <p>また、省電力機能による誤差を減らすため、CPUクロックは3.6GHzで固定して計測を行なう。</p>
 <h3 id="ベンチマークソフト">ベンチマークソフト</h3>
-<p>ベンチマークソフトには、歴史ある<a href="https://github.com/kdlucas/byte-unixbench">byte-unixbench</a> の一部、それとOpenMPを有効にした<a href="https://github.com/sudden6/m-queens">m-queens</a>、レイテンシの測定に <a href="https://github.com/akopytov/sysbench">sysbench</a> を採用した。<br>
+<p>ベンチマークソフトには、歴史ある<a href="https://github.com/kdlucas/byte-unixbench" target="_blank" rel="noopener" >byte-unixbench</a>
+ の一部、それとOpenMPを有効にした<a href="https://github.com/sudden6/m-queens" target="_blank" rel="noopener" >m-queens</a>
+、レイテンシの測定に <a href="https://github.com/akopytov/sysbench" target="_blank" rel="noopener" >sysbench</a>
+ を採用した。<br>
 出来る限り上述したようなテストとは違うものを選んだつもりだが、やはり現実的なベンチマークというのは難しく、他に適したベンチマークソフトがあれば教えて頂けると嬉しい。それがLinuxに対応しており、計測が特別難しくなければ試すつもりでいる。</p>
 <h4 id="byte-unixbench">byte-unixbench</h4>
 <p>テストする項目の詳細。</p>
@@ -146,12 +150,14 @@ Zen/+は本来ならCCXあたり4-Core/8-Threadを構成しているが、Ryzen 
 </ul>
 </li>
 </ul>
-<p><a href="https://github.com/kdlucas/byte-unixbench/blob/master/README.md">https://github.com/kdlucas/byte-unixbench/blob/master/README.md</a></p>
+<p><a href="https://github.com/kdlucas/byte-unixbench/blob/master/README.md" target="_blank" rel="noopener" >https://github.com/kdlucas/byte-unixbench/blob/master/README.md</a>
+</p>
 <h4 id="m-queens">m-queens</h4>
 <p>Phoronix Test Suiteのプロファイルを参考に、以下のコマンドでビルドした。</p>
 <pre><code>CFLAGS=&quot;-O2 -march=znver1&quot; g++-8 -fopenmp main.c -o m-queens.bin
 </code></pre>
-<p><a href="https://openbenchmarking.org/innhold/707926477c5cf3e3b33d1b9375523aee5f3d2020">OpenBenchmarking.org - m-queens v1.1.0 Test [m-queens]</a><br>
+<p><a href="https://openbenchmarking.org/innhold/707926477c5cf3e3b33d1b9375523aee5f3d2020" target="_blank" rel="noopener" >OpenBenchmarking.org - m-queens v1.1.0 Test [m-queens]</a>
+<br>
 N(クイーンの数)は17とし、計測結果5回の平均をスコアとする。</p>
 <h2 id="環境">環境</h2>
 <table>
@@ -280,7 +286,9 @@ N(クイーンの数)は17とし、計測結果5回の平均をスコアとす�
 <p>正直、少し意外な結果だった。あんなメモリを使っているため、CCX間通信のオーバーヘッドが大きく、<em>6-Thread 1CCX</em> のが勝つのではないかと思っていた。レイテンシだけではなく一部性能でももしかしたらと。<br>
 だが <em>6-Core 2CCX</em> が勝った。やはり物理コアは正義か。</p>
 <p>byte-unixbench では <code>Process Creation</code> のみ <em>6-Thread 1CCX</em> が勝っているが、これはテストがメモリ帯域幅を反映する傾向にあり、メモリ割り当てではCPUのキャッシュが効きにくいため、CCX間通信が発生する <em>6-Core 2CCX</em> の方が遅くなった……ということなのだろうか。<br>
-<a href="https://github.com/akopytov/sysbench">sysbench</a> と <a href="https://github.com/jeffhammond/STREAM">stream</a> でもメモリ帯域を計測したところ、sysbench では <em>6-Thread 1CCX</em> が広いメモリ帯域を示したが、stream では逆に <em>6-Core 2CCX</em> が勝った。<br>
+<a href="https://github.com/akopytov/sysbench" target="_blank" rel="noopener" >sysbench</a>
+ と <a href="https://github.com/jeffhammond/STREAM" target="_blank" rel="noopener" >stream</a>
+ でもメモリ帯域を計測したところ、sysbench では <em>6-Thread 1CCX</em> が広いメモリ帯域を示したが、stream では逆に <em>6-Core 2CCX</em> が勝った。<br>
 しかし stream では差が2%程しかなかったのに対し、sysbench は read で約36%、write で約23%の差が見られた。<br>
 また、レイテンシの点では <em>6-Core 2CCX</em> の方が小さい結果となった。<br>
 CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの部分が原因となっているかは今後の課題としたい。<br>
@@ -298,7 +306,8 @@ CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの�
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p><a href="https://linux.die.net/man/1/taskset">taskset(1): retrieve/set process&rsquo;s CPU affinity - Linux man page</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://linux.die.net/man/1/taskset" target="_blank" rel="noopener" >taskset(1): retrieve/set process&rsquo;s CPU affinity - Linux man page</a>
+&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>

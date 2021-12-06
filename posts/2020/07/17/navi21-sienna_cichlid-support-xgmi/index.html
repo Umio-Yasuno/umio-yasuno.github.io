@@ -70,13 +70,17 @@
 <div class="article-time">
     <time datetime="2020-07-17 12:46 &#43;0900" class="time-b">Post: 2020/07/17 12:46 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/08/05 15:27 &#43;0900</div>
-  </div><p>AMD の次世代 <a href="https://www.coelacanth-dream.com/tags/rdna_2">RDNA 2</a> GPU、<em>Navi21 /Sienna Cichlid</em> が高速なGPU間通信、<strong>XGMI</strong> をサポートする。<br>
-<strong>XGMI</strong> は <a href="https://www.coelacanth-dream.com/tags/vega20">Vega20</a> と <a href="https://www.coelacanth-dream.com/tags/arcturus">Arcturus</a> もサポートしており<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、<strong>Infinity Fabric Link</strong> とも言い換えられるだろう。<br>
+  </div><p>AMD の次世代 <a href="https://www.coelacanth-dream.com/tags/rdna_2">RDNA 2</a>
+ GPU、<em>Navi21 /Sienna Cichlid</em> が高速なGPU間通信、<strong>XGMI</strong> をサポートする。<br>
+<strong>XGMI</strong> は <a href="https://www.coelacanth-dream.com/tags/vega20">Vega20</a>
+ と <a href="https://www.coelacanth-dream.com/tags/arcturus">Arcturus</a>
+ もサポートしており<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、<strong>Infinity Fabric Link</strong> とも言い換えられるだろう。<br>
 <span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-July/051633.html">[PATCH] drm/amdgpu: enable xgmi support for sienna cichlid</a></span>
 </p>
 <h2 id="sdma-for-xgmi">増やされた SDMAコントローラは結局 XGMI のためか</h2>
 <p>従来の AMD GPU と比べて多い <em>Sienna Cichlid</em> の SDMAコントローラについて、疑うようなことばかり書いてきたが、<em>Sienna Cichlid</em> が <strong>XGMI</strong> をサポートすることが明らかになった以上、つまるところ SDMAコントローラは <strong>XGMI</strong> のために増やされたのだろう。</p>
-<p><a href="https://lists.freedesktop.org/archives/amd-gfx/">The amd-gfx Archives</a> でのレビューを通らずに(見つけられなかった) 組み込まれたパッチを見るに、<em>Sienna Cichlid</em> は最大 4GPU との接続を可能とするようだ。<br>
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/" target="_blank" rel="noopener" >The amd-gfx Archives</a>
+ でのレビューを通らずに(見つけられなかった) 組み込まれたパッチを見るに、<em>Sienna Cichlid</em> は最大 4GPU との接続を可能とするようだ。<br>
 <span class="thread-link"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfxhub_v2_1.c?h=amd-staging-drm-next&amp;id=57bde5ec6ffbeb984981ab1a38d85b07df651bd2">drm/amdgpu: add XGMI support for sienna cichlid</a></span>
 </p>
 <blockquote>
@@ -86,7 +90,8 @@
   +		max_physical_node_id     = 3;
   +		break;
 </code></pre>
-<p>引用元: <cite><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfxhub_v2_1.c?h=amd-staging-drm-next&amp;id=57bde5ec6ffbeb984981ab1a38d85b07df651bd2">drm/amdgpu: add XGMI support for sienna cichlid</a></cite></p>
+<p>引用元: <cite><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfxhub_v2_1.c?h=amd-staging-drm-next&amp;id=57bde5ec6ffbeb984981ab1a38d85b07df651bd2" target="_blank" rel="noopener" >drm/amdgpu: add XGMI support for sienna cichlid</a>
+</cite></p>
 </blockquote>
 <p>この最大 4GPUというのは <em>Vega20</em> と同数であり<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、<em>Vega20</em> の場合は 3GPU以上での接続はリングバスの構成を取ることになり、それによって GPU間のデータ転送に幾許かの遅延が発生しうるものとなっていた。<br>
 だが <em>Sienna Cichlid</em> は、SDMAコントローラ 2基である <em>Vega20</em> に対し、倍の 4基持つ。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
@@ -103,7 +108,8 @@
   +		max_physical_node_id     = 7;
   +		break;
 </code></pre>
-<p>引用元: <cite><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_1.c?h=amd-staging-drm-next&amp;id=f0312f45a0540a1551ca4644ff2461250520111a">drm/amdgpu: Added ASIC specific checks in gfxhub V1.1 get XGMI info</a></cite></p>
+<p>引用元: <cite><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_1.c?h=amd-staging-drm-next&amp;id=f0312f45a0540a1551ca4644ff2461250520111a" target="_blank" rel="noopener" >drm/amdgpu: Added ASIC specific checks in gfxhub V1.1 get XGMI info</a>
+</cite></p>
 </blockquote>
 <h2 id="detail-unknown">詳細はまだまだ不明</h2>
 <p>高速なGPU間通信 <strong>XGMI</strong> をサポートするといっても、ネットワーク構成と帯域はどうなるかや、<em>Arcturus</em> のように、増やした 2基の SDMAコントローラを <strong>XGMI</strong> に最適化されたものにしなかったのは何故か等、不明な点はある。<br>
@@ -124,25 +130,32 @@
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=eb39aff7e0e33870319dd7c70a293c80e2df26c7">drm/amdgpu: Enable xgmi support for Arcturus</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=eb39aff7e0e33870319dd7c70a293c80e2df26c7" target="_blank" rel="noopener" >drm/amdgpu: Enable xgmi support for Arcturus</a>
+&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2" role="doc-endnote">
-<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_1.c?h=amd-staging-drm-next&amp;id=f0312f45a0540a1551ca4644ff2461250520111a">drm/amdgpu: Added ASIC specific checks in gfxhub V1.1 get XGMI info</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd/amdgpu/gfxhub_v1_1.c?h=amd-staging-drm-next&amp;id=f0312f45a0540a1551ca4644ff2461250520111a" target="_blank" rel="noopener" >drm/amdgpu: Added ASIC specific checks in gfxhub V1.1 get XGMI info</a>
+&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3" role="doc-endnote">
-<p><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdkfd/kfd_device.c?h=amd-staging-drm-next&amp;id=3ace943f8f8158ee2b0fed8482edb37245b28f45#n356">kfd_device.c\amdkfd\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdkfd/kfd_device.c?h=amd-staging-drm-next&amp;id=3ace943f8f8158ee2b0fed8482edb37245b28f45#n356" target="_blank" rel="noopener" >kfd_device.c\amdkfd\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a>
+&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4" role="doc-endnote">
-<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049985.html">[PATCH 021/207] drm/amdgpu: add sdma ip block for sienna_cichlid (v5)</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/049985.html" target="_blank" rel="noopener" >[PATCH 021/207] drm/amdgpu: add sdma ip block for sienna_cichlid (v5)</a>
+&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:5" role="doc-endnote">
-<p><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdkfd/kfd_device.c?h=amd-staging-drm-next&amp;id=3ace943f8f8158ee2b0fed8482edb37245b28f45#n374">kfd_device.c\amdkfd\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdkfd/kfd_device.c?h=amd-staging-drm-next&amp;id=3ace943f8f8158ee2b0fed8482edb37245b28f45#n374" target="_blank" rel="noopener" >kfd_device.c\amdkfd\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a>
+&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:6" role="doc-endnote">
-<p><a href="https://www.amd.com/en/graphics/workstations-radeon-pro-vega-ii">Radeon™ Pro Vega II Graphics | AMD</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.amd.com/en/graphics/workstations-radeon-pro-vega-ii" target="_blank" rel="noopener" >Radeon™ Pro Vega II Graphics | AMD</a>
+&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:7" role="doc-endnote">
-<p><a href="https://www.amd.com/en/products/professional-graphics/radeon-pro-vii">AMD Radeon™ Pro VII Graphics | AMD</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.amd.com/en/products/professional-graphics/radeon-pro-vii" target="_blank" rel="noopener" >AMD Radeon™ Pro VII Graphics | AMD</a>
+&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>

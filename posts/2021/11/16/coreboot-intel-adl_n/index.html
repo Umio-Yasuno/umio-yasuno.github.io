@@ -70,9 +70,11 @@
 <div class="article-time">
     <time datetime="2021-11-16 00:13 &#43;0900" class="time-b">Post: 2021/11/16 00:13 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/11/20 15:39 &#43;0900</div>
-  </div><p>プロプライエタリな BIOS (firmware) の置き換えを目指すフリーソフトウェアプロジェクト <a href="https://github.com/coreboot/coreboot">Coreboot</a> に、<em>Alder Lake-N</em> の CPUID, DeviceID を追加するパッチが投稿、公開されている。</p>
+  </div><p>プロプライエタリな BIOS (firmware) の置き換えを目指すフリーソフトウェアプロジェクト <a href="https://github.com/coreboot/coreboot" target="_blank" rel="noopener" >Coreboot</a>
+ に、<em>Alder Lake-N</em> の CPUID, DeviceID を追加するパッチが投稿、公開されている。</p>
 <ul>
-<li><a href="https://review.coreboot.org/c/coreboot/+/59306">soc/intel/common: Include Alder Lake device IDs (I0974fc6e) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/&#43;/59306" target="_blank" rel="noopener" >soc/intel/common: Include Alder Lake device IDs (I0974fc6e) · Gerrit Code Review</a>
+</li>
 </ul>
 <h2 id="cpuid">CPUID</h2>
 <p>Intel CPU では CPUID における <code>Model</code> がマーケットセグメント別に割り当てられていることが多く、例えば <em>Alder Lake-M/P</em> はどちらもモバイル向けであり、<code>Model: 0x9A (ALDERLAKE_L)</code> が割り当てられている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>
@@ -93,8 +95,10 @@
 
 </blockquote>
 <p>デスクトップ向けでもモバイル向けでもないことから、<em>Alder Lake-N</em> は組み込み向けのプロセッサではないかと思われる。<br>
-ただ <a href="https://github.com/torvalds/linux/blob/fbdb5e8f2926ae9636c9fa6f42c7426132ddeeb2/arch/x86/include/asm/intel-family.h">intel-family.h</a> にはまだ <code>ALDERLAKE_N (Model: 0xBE)</code> は追加されておらず、他 <em>Alder Lake</em> 同様に <em>Golden Cove + Gracemont</em> のハイブリッドアーキテクチャを採るのか、組み込み向けとして処理性能を安定させるため <em>Gracemont</em> だけの構成とするのかなどは不明。</p>
-<p>余談だが、 Intel Corporation の Githubレポジトリの 1つ <a href="https://github.com/intel/dptf">intel/dptf</a> (Intel (R) Dynamic Tuning for Chromium OS) には既に <em>Meteor Lake M &amp; P, N, S</em> の CPUID が記載されており、モバイル向けに M &amp; P、デスクトップ向けに S、そして恐らく組み込み向けだろう N の 3つのセグメントに分かれる方針は <em>Meteor Lake</em> にも用いられると思われる。</p>
+ただ <a href="https://github.com/torvalds/linux/blob/fbdb5e8f2926ae9636c9fa6f42c7426132ddeeb2/arch/x86/include/asm/intel-family.h" target="_blank" rel="noopener" >intel-family.h</a>
+ にはまだ <code>ALDERLAKE_N (Model: 0xBE)</code> は追加されておらず、他 <em>Alder Lake</em> 同様に <em>Golden Cove + Gracemont</em> のハイブリッドアーキテクチャを採るのか、組み込み向けとして処理性能を安定させるため <em>Gracemont</em> だけの構成とするのかなどは不明。</p>
+<p>余談だが、 Intel Corporation の Githubレポジトリの 1つ <a href="https://github.com/intel/dptf" target="_blank" rel="noopener" >intel/dptf</a>
+ (Intel (R) Dynamic Tuning for Chromium OS) には既に <em>Meteor Lake M &amp; P, N, S</em> の CPUID が記載されており、モバイル向けに M &amp; P、デスクトップ向けに S、そして恐らく組み込み向けだろう N の 3つのセグメントに分かれる方針は <em>Meteor Lake</em> にも用いられると思われる。</p>
 <blockquote>
 <pre><code> #define CPUID_FAMILY_MODEL_MTL_M_P	0x000A06A0		// Meteor Lake M &amp; P
  #define CPUID_FAMILY_MODEL_MTL_N	0x000A06B0		// Meteor Lake N
@@ -121,7 +125,8 @@
 </div>
 
 </blockquote>
-<p>Mesa3D 内の <a href="https://gitlab.freedesktop.org/mesa/mesa/blob/main/include/pci_ids/iris_pci_ids.h">iris_pci_ids.h</a> では、2つの DeviceID は Alder Lake GT2 に当たるため、<em>Alder Lake-N</em> の GPU部は <em>Alder Lake-M/P</em> 同様に最大 96EU の構成とされる。<br>
+<p>Mesa3D 内の <a href="https://gitlab.freedesktop.org/mesa/mesa/blob/main/include/pci_ids/iris_pci_ids.h" target="_blank" rel="noopener" >iris_pci_ids.h</a>
+ では、2つの DeviceID は Alder Lake GT2 に当たるため、<em>Alder Lake-N</em> の GPU部は <em>Alder Lake-M/P</em> 同様に最大 96EU の構成とされる。<br>
 また <em>Alder Lake-N</em> の DeviceID の上に <code>PCI_DEVICE_ID_INTEL_ADL_M_GT3</code> があるが、この <code>DeviceID: 0x46C3</code> も Alder Lake GT2 に当たる。そのため製品的な意味では GT3 なのかもしれないが、最大構成としては Alder Lake GT2 (96EU) だと思われる。</p>
 <p>あるいは、<em>Jasper Lake</em> の GPU部の DeviceID にも GT1 から GT4 があるが、Intel のドキュメントによれば <code>GT4 (0x4E55)</code> は 16EU、<code>GT3 (0x4E61)</code> は 24EU、<code>GT2 (0x4E71)</code> は 32EU、<code>GT1 (0x4E51)</code> は予約された ID にあたるため、単に連番以上の意味は持たないかもしれない。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <blockquote>
@@ -152,10 +157,12 @@
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p><a href="https://github.com/torvalds/linux/blob/fbdb5e8f2926ae9636c9fa6f42c7426132ddeeb2/arch/x86/include/asm/intel-family.h">https://github.com/torvalds/linux/blob/fbdb5e8f2926ae9636c9fa6f42c7426132ddeeb2/arch/x86/include/asm/intel-family.h</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/torvalds/linux/blob/fbdb5e8f2926ae9636c9fa6f42c7426132ddeeb2/arch/x86/include/asm/intel-family.h" target="_blank" rel="noopener" >https://github.com/torvalds/linux/blob/fbdb5e8f2926ae9636c9fa6f42c7426132ddeeb2/arch/x86/include/asm/intel-family.h</a>
+&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2" role="doc-endnote">
-<p><a href="https://edc.intel.com/content/www/us/en/design/ipla/software-development-platforms/servers/platforms/intel-pentium-silver-and-intel-celeron-processors-datasheet-volume-1-of-2/005/compute-global-device-id/">Compute Global Device ID - 005 - ID:633935 | Intel® Pentium® Silver and Intel® Celeron® Processors Datasheet, Volume 1</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://edc.intel.com/content/www/us/en/design/ipla/software-development-platforms/servers/platforms/intel-pentium-silver-and-intel-celeron-processors-datasheet-volume-1-of-2/005/compute-global-device-id/" target="_blank" rel="noopener" >Compute Global Device ID - 005 - ID:633935 | Intel® Pentium® Silver and Intel® Celeron® Processors Datasheet, Volume 1</a>
+&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>

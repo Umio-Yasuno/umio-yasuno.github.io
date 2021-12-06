@@ -72,7 +72,8 @@
     <div class="article-time-update time-b">Update: 2021/06/08 16:02 &#43;0900</div>
   </div><p><strong>AMD Smart Shift</strong> は <strong>Ryzen 4000 U/H-Series</strong> と <strong>Radeon RX 5000M Series</strong> の発表に合わせて登場した機能であり、ワークロードに応じて APU/dGPU への電力の割り振りを動的に変更させることで、限られた電力枠内で性能を最大限引き出すというもの。</p>
 <ul>
-<li><a href="https://www.amd.com/ja/technologies/smartshift">SmartShiftテクノロジー | AMD</a></li>
+<li><a href="https://www.amd.com/ja/technologies/smartshift" target="_blank" rel="noopener" >SmartShiftテクノロジー | AMD</a>
+</li>
 </ul>
 <p>その <strong>Smart Shift</strong> を Linux AMDGPUドライバーにおいて本格的にサポートするためのパッチが、Linux Kernel (amd-gfx) メーリングリストに投稿、公開され始めた。</p>
 <h2 id="page-index">Index</h2><ul class="page-index">
@@ -85,8 +86,10 @@
 <p>まず、<strong>Smart Shift</strong> に必要な、dGPU のデバイスステートを管理するパッチから読んでいく。<br>
 以下のパッチは AMD のソフトウェアエンジニア <strong>Sathishkumar S</strong> 氏より作成、投稿されている。</p>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-May/064441.html">[PATCH] drm/amdgpu: support atcs method powershift (v4)</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-May/064536.html">[PATCH] drm/amdgpu: enable smart shift on dGPU (v5)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-May/064441.html" target="_blank" rel="noopener" >[PATCH] drm/amdgpu: support atcs method powershift (v4)</a>
+</li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-May/064536.html" target="_blank" rel="noopener" >[PATCH] drm/amdgpu: enable smart shift on dGPU (v5)</a>
+</li>
 </ul>
 <p>パッチ内に出てくる PX, HG といった単語はそれぞれ Power eXpress, Hybrid Graphics の略とされるが<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、<br>
 その他の AT, CS については、何の略かはっきりと示してくれるようなドキュメント、パッチを見付けられなかった。CS はまだ Clock State か Chipset Specific というような推測はできるが、AT はさっぱり。</p>
@@ -94,7 +97,8 @@
 D0 ステートは通常の稼働状態を示し、D3 ステートは最も低い消費電力となるステートであり、デバイスは稼働せず待機状態に入る。D3_hot はそのサブステート。<br>
 D3 ステートのサブステートには D3_cold もあり、D3_hot は D0 から直接移行することができるが、D3_cold は D3_hot からしか移行できない。<br>
 また D3_cold は消費電力が D3_hot よりも低くなるが、D0 への復帰に時間が掛かる。</p>
-<p>dGPU が待機状態である D3_hot ステートに入ること自体は、<strong>Smart Shift</strong> 発表時に行われたテクニカルジャーナリスト <a href="https://twitter.com/zenjinishikawa">西川善司</a> 氏の取材によれば、iGPU と単体 GPU (dGPU) を同時に稼働することは無く、常に一方のみが稼働する状態で <strong>Smart Shift</strong> は機能する、と説明されている。<br>
+<p>dGPU が待機状態である D3_hot ステートに入ること自体は、<strong>Smart Shift</strong> 発表時に行われたテクニカルジャーナリスト <a href="https://twitter.com/zenjinishikawa" target="_blank" rel="noopener" >西川善司</a>
+ 氏の取材によれば、iGPU と単体 GPU (dGPU) を同時に稼働することは無く、常に一方のみが稼働する状態で <strong>Smart Shift</strong> は機能する、と説明されている。<br>
 グラフィクス処理の負荷が低い時は APU 内の GPU のみが動作し、dGPU は待機状態に入ることで最低限の電力のみを消費する。</p>
 <blockquote>
 <p>――グラフィックス処理の負荷に応じて，CPUとGPUの間で電力を動的に振り分ける「AMD SmartShift」において，iGPUと単体GPUを同時に稼動させることはできるのか。</p>
@@ -110,10 +114,14 @@ D3 ステートのサブステートには D3_cold もあり、D3_hot は D0 か
 そこで従来は dGPU の Power Limit を VBIOS から取得していたが、APU のも取得するようにするパッチが投稿された。<br>
 パッチは <strong>Darren Powell</strong> 氏より作成、投稿されている。</p>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064917.html">[PATCH 2/6] amdgpu/pm: clean up smu_get_power_limit function signature</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064918.html">[PATCH 3/6] amdgpu/pm: modify Powerplay API get_power_limit to use new pp_power enums</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064920.html">[PATCH 4/6] amdgpu/pm: modify and add smu_get_power_limit to Powerplay API</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064921.html">[PATCH 6/6] amdgpu/pm: add kernel documentation for smu_get_power_limit</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064917.html" target="_blank" rel="noopener" >[PATCH 2/6] amdgpu/pm: clean up smu_get_power_limit function signature</a>
+</li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064918.html" target="_blank" rel="noopener" >[PATCH 3/6] amdgpu/pm: modify Powerplay API get_power_limit to use new pp_power enums</a>
+</li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064920.html" target="_blank" rel="noopener" >[PATCH 4/6] amdgpu/pm: modify and add smu_get_power_limit to Powerplay API</a>
+</li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064921.html" target="_blank" rel="noopener" >[PATCH 6/6] amdgpu/pm: add kernel documentation for smu_get_power_limit</a>
+</li>
 </ul>
 <p>CPU と GPU の両方を搭載する APU 全体の Power Limit は PPT (Package Power Tracking) で管理されており、それを SMU (System Management Unit) から取得する。<br>
 PPT には Sustained と Fast、2種類の Power Limit Type があり、それらはブーストクロックの継続時間に関係する。<br>
@@ -125,7 +133,8 @@ Slow と呼ばれる Power Limit Type もあるが、これは Fast が時間か
 <h2 id="bias">Smart Shift のバイアスが設定可能に</h2>
 <p>Linux AMDGPUドライバーへの <strong>Smart Shift</strong> の実装では、APU/dGPU のどちらに電力を優先的に割り振るかが設定可能になる。</p>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064577.html">[PATCH] drm/amdgpu: attr to control SS2.0 bias level (v2)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064577.html" target="_blank" rel="noopener" >[PATCH] drm/amdgpu: attr to control SS2.0 bias level (v2)</a>
+</li>
 </ul>
 <p>-100..100 の範囲でバイアスが設定可能になっており、-100 ではAPU に、100 では dGPU に最大限優先的に割り振るようになる。デフォルトは 0 でバイアスは掛かっていない状態。</p>
 <blockquote>
@@ -148,7 +157,8 @@ CPU/GPU への負荷量が全体としては低いが、負荷に波があり iG
 だがバイアスの設定が <em>どれだけ</em> 有効的に働くは微妙で、BIOS とドライバーの実装に任せた方が良い場合がほとんどかもしれない。</p>
 <p>また、APU/dGPU がもう一方の電力枠をどれだけ用いているかを sysfs から読み取れるようにするパッチも投稿されている。</p>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064575.html">[PATCH] drm/amd/pm: sysfs attrs to read ss powershare (v6)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-June/064575.html" target="_blank" rel="noopener" >[PATCH] drm/amd/pm: sysfs attrs to read ss powershare (v6)</a>
+</li>
 </ul>
 <blockquote>
 <pre><code> +/**
@@ -197,7 +207,8 @@ CPU/GPU への負荷量が全体としては低いが、負荷に波があり iG
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p><a href="https://www.anandtech.com/show/6243/amds-enduro-switchable-graphics-levels-up/2">Recap: AMD’s PowerXpress, aka Dynamic Switchable Graphics, aka Enduro - AMD’s Enduro Switchable Graphics Levels Up</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.anandtech.com/show/6243/amds-enduro-switchable-graphics-levels-up/2" target="_blank" rel="noopener" >Recap: AMD’s PowerXpress, aka Dynamic Switchable Graphics, aka Enduro - AMD’s Enduro Switchable Graphics Levels Up</a>
+&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>

@@ -14,9 +14,9 @@
   <meta name="twitter:title" content="現時点で 2バージョン存在する AMD GPU の HWレイトレーシング IP | Coelacanth&#39;s Dream">
 
   <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/06/11/amd-rt-ip-1_0-1_1/">
-  <meta name="description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler)、">
-  <meta property="og:description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler)、">
-  <meta name="twitter:description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler)、">
+  <meta name="description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler) 、PAL (Platform Abstraction Library) 、X">
+  <meta property="og:description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler) 、PAL (Platform Abstraction Library) 、X">
+  <meta name="twitter:description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler) 、PAL (Platform Abstraction Library) 、X">
   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/06/11/amd-rt-ip-1_0-1_1/">
@@ -70,18 +70,25 @@
 <div class="article-time">
     <time datetime="2021-06-11 15:55 &#43;0900" class="time-b">Post: 2021/06/11 15:55 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/08/01 12:38 &#43;0900</div>
-  </div><p>AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、<a href="https://github.com/GPUOpen-Drivers/AMDVLK">AMDVLK</a> の v-2021.Q2.5 がリリースされ、それを構成する <a href="https://github.com/GPUOpen-Drivers/llpc">LLPC (LLVM-Based Pipeline Compiler)</a>、<a href="https://github.com/GPUOpen-Drivers/pal">PAL (Platform Abstraction Library)</a>、<a href="https://github.com/GPUOpen-Drivers/xgl">XGL (Vulkan API Layer)</a> が共にアップデートされたが、<br>
+  </div><p>AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、<a href="https://github.com/GPUOpen-Drivers/AMDVLK" target="_blank" rel="noopener" >AMDVLK</a>
+ の v-2021.Q2.5 がリリースされ、それを構成する <a href="https://github.com/GPUOpen-Drivers/llpc" target="_blank" rel="noopener" >LLPC (LLVM-Based Pipeline Compiler)</a>
+、<a href="https://github.com/GPUOpen-Drivers/pal" target="_blank" rel="noopener" >PAL (Platform Abstraction Library)</a>
+、<a href="https://github.com/GPUOpen-Drivers/xgl" target="_blank" rel="noopener" >XGL (Vulkan API Layer)</a>
+ が共にアップデートされたが、<br>
 その中で AMD GPU が搭載するレイトレーシングハードウェアの IPバージョンが 2種類存在することが新たに明かされた。<br>
 レイトレーシングHW は AMD GPU の CU内に、<em>Ray Accelerator</em> という名で搭載されている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <ul>
-<li><a href="https://github.com/GPUOpen-Drivers/AMDVLK/releases/tag/v-2021.Q2.5">Release v-2021.Q2.5 · GPUOpen-Drivers/AMDVLK</a>
+<li><a href="https://github.com/GPUOpen-Drivers/AMDVLK/releases/tag/v-2021.Q2.5" target="_blank" rel="noopener" >Release v-2021.Q2.5 · GPUOpen-Drivers/AMDVLK</a>
+
 <ul>
-<li><a href="https://github.com/GPUOpen-Drivers/pal/commit/02ac99ba650afb3aebff3eb8006862ce93d31968">Update pal from commit: a735a4dfb · GPUOpen-Drivers/pal@02ac99b</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/pal/commit/02ac99ba650afb3aebff3eb8006862ce93d31968" target="_blank" rel="noopener" >Update pal from commit: a735a4dfb · GPUOpen-Drivers/pal@02ac99b</a>
+</li>
 </ul>
 </li>
 </ul>
 <h2 id="rt-ip-1_0-1_1">RT IP 1.0, 1.1</h2>
-<p>今回 <a href="https://github.com/GPUOpen-Drivers/pal">PAL (Platform Abstraction Library)</a> のアップデートで追加された内容によれば、レイトレーシングHW の IP には現時点で、最初の実装となる <code>RtIp1_0</code> と、そこにトライアングルの重心座標 (<code>triangle barycentrics</code>) を処理する機能を追加した <code>RtIp1_1</code> が存在するとされる。</p>
+<p>今回 <a href="https://github.com/GPUOpen-Drivers/pal" target="_blank" rel="noopener" >PAL (Platform Abstraction Library)</a>
+ のアップデートで追加された内容によれば、レイトレーシングHW の IP には現時点で、最初の実装となる <code>RtIp1_0</code> と、そこにトライアングルの重心座標 (<code>triangle barycentrics</code>) を処理する機能を追加した <code>RtIp1_1</code> が存在するとされる。</p>
 <blockquote>
 <pre><code> /// Supported RTIP version enumeration
  enum class RayTracingIpLevel : uint32
@@ -101,7 +108,8 @@
 
 </blockquote>
 <p>そして、他の部分に追加されたコードでは、<em>RDNA 2/GFX10.3</em> とそれ以降の HWレイトレーシング IP が <code>RtIp1_1</code> だとしている。  (<code>IsGfx103Plus()</code> は処理的には <em>RDNA/GFX10.1</em> 以降の場合に true を返すようになっている<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>)</p>
-<p>このことは <a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf">&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide</a> の 「8.2.10 Ray Tracing」セクションでも触れられており、そこでも レイトレーシングHW は重心座標の計算処理を直接サポートするよう設計されていると説明している。</p>
+<p>このことは <a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" target="_blank" rel="noopener" >&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide</a>
+ の 「8.2.10 Ray Tracing」セクションでも触れられており、そこでも レイトレーシングHW は重心座標の計算処理を直接サポートするよう設計されていると説明している。</p>
 <blockquote>
 <pre><code>         if (IsGfx103Plus(pInfo-&gt;gfxLevel))
          {
@@ -114,7 +122,8 @@
 
 </blockquote>
 <p>そして、<em>RDNA 2/GFX10.3</em> とそれ以降のレイトレーシングHW が <code>RtIp1_1</code> だとされていることからは、<em>RDNA 2/GFX10.3</em> 以前は <code>RtIp1_0</code> を搭載している可能性が示される。<br>
-先日、LLVM に追加された <a href="https://www.coelacanth-dream.com/tags/gfx1013">GPUID: gfx1013</a> は、<em>Navi10 (gfx1010)</em> をベースにしながら <em>RDNA 2/GFX10.3</em> でサポートされているレイトレーシング命令をサポートし、さらには APU という奇妙なものだったが、<br>
+先日、LLVM に追加された <a href="https://www.coelacanth-dream.com/tags/gfx1013">GPUID: gfx1013</a>
+ は、<em>Navi10 (gfx1010)</em> をベースにしながら <em>RDNA 2/GFX10.3</em> でサポートされているレイトレーシング命令をサポートし、さらには APU という奇妙なものだったが、<br>
 <span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/06/06/gfx1013-apu-rt/">GPUID: gfx1013 は APU で、レイトレーシング命令をサポートしている? | Coelacanth&rsquo;s Dream</a></span>
 
 今回 PAL に追加された内容と合わせて、 <em>gfx1013</em> で実装されているレイトレーシングHW <em>RDNA 2/GFX10.3</em> とは異なると考えられる。<br>
@@ -132,10 +141,12 @@
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p><a href="https://gpuopen.com/wp-content/uploads/slides/AMD_RDNA2_DirectX12_Ultimate_Raytracing1_1.pdf">DirectX ® Ray tracing 1.1 - AMD_RDNA2_DirectX12_Ultimate_Raytracing1_1.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gpuopen.com/wp-content/uploads/slides/AMD_RDNA2_DirectX12_Ultimate_Raytracing1_1.pdf" target="_blank" rel="noopener" >DirectX ® Ray tracing 1.1 - AMD_RDNA2_DirectX12_Ultimate_Raytracing1_1.pdf</a>
+&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2" role="doc-endnote">
-<p><a href="https://github.com/GPUOpen-Drivers/pal/blob/7f6e731aa5193a518356bdfddc75571d032a3928/src/core/device.h#L2555">pal/device.h at 7f6e731aa5193a518356bdfddc75571d032a3928 · GPUOpen-Drivers/pal</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/GPUOpen-Drivers/pal/blob/7f6e731aa5193a518356bdfddc75571d032a3928/src/core/device.h#L2555" target="_blank" rel="noopener" >pal/device.h at 7f6e731aa5193a518356bdfddc75571d032a3928 · GPUOpen-Drivers/pal</a>
+&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>

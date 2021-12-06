@@ -70,18 +70,24 @@
 <div class="article-time">
     <time datetime="2021-11-27 00:00 &#43;0900" class="time-b">Post: 2021/11/27 00:00 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/12/05 08:28 &#43;0900</div>
-  </div><p>1年半近く前 (2020/07) に AMD のソフトウェアエンジニア、<a href="https://gitlab.freedesktop.org/mareko">Marek Olšák</a> 氏によって投稿されたパッチから、<strong>RadeonSI (OpenGL)</strong> ドライバーでは、Wave32 に対応する RDNA系アーキテクチャであっても、各シェーダーステージを Wave64モードで実行するようになっていた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+  </div><p>1年半近く前 (2020/07) に AMD のソフトウェアエンジニア、<a href="https://gitlab.freedesktop.org/mareko" target="_blank" rel="noopener" >Marek Olšák</a>
+ 氏によって投稿されたパッチから、<strong>RadeonSI (OpenGL)</strong> ドライバーでは、Wave32 に対応する RDNA系アーキテクチャであっても、各シェーダーステージを Wave64モードで実行するようになっていた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 <span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/">RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <p>それが今回、いくつかのマージリクエストに分割された新たなパッチによって、一部のシェーダーでは再び Wave32モードで実行されるようになり、同時に Wave32モードへの最適化も行われた。<br>
 シェーダーステージによって Wave32/64 を切り替えるのではなく、Workgroup (Thread Block) のサイズが小さい場合は Wave32モード、またプロファイリングによる結果から特定のシェーダーは Wave64モードで実行する等、きめ細かい切り替えが行われるようになるため、フラグの最適化も施されている。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13869">mesa,nir: propagate shader source SHA1 to gallium drivers, a precursor to shader profiles (!13869) · Merge requests · Mesa / mesa · GitLab</a></li>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13878">radeonsi: rework to make the wave size configurable per shader for fine-grained Wave32/64 selection (!13878) · Merge requests · Mesa / mesa · GitLab</a></li>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13890">nir,glsl: serialize divergent fields, handle more instrinsics in divergence analysis, add nir_has_divergent_loop, fix source_sha1 (!13890) · Merge requests · Mesa / mesa · GitLab</a></li>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13966">radeonsi: add Wave32 heuristics and shader profiles (!13966) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13869" target="_blank" rel="noopener" >mesa,nir: propagate shader source SHA1 to gallium drivers, a precursor to shader profiles (!13869) · Merge requests · Mesa / mesa · GitLab</a>
+</li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13878" target="_blank" rel="noopener" >radeonsi: rework to make the wave size configurable per shader for fine-grained Wave32/64 selection (!13878) · Merge requests · Mesa / mesa · GitLab</a>
+</li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13890" target="_blank" rel="noopener" >nir,glsl: serialize divergent fields, handle more instrinsics in divergence analysis, add nir_has_divergent_loop, fix source_sha1 (!13890) · Merge requests · Mesa / mesa · GitLab</a>
+</li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13966" target="_blank" rel="noopener" >radeonsi: add Wave32 heuristics and shader profiles (!13966) · Merge requests · Mesa / mesa · GitLab</a>
+</li>
 </ul>
-<p><a href="https://gitlab.freedesktop.org/mareko">Marek Olšák</a> 氏は、シェーダープロファイルと発見 (heuristics) による手直し、クリーンアップだとコメントしている。</p>
+<p><a href="https://gitlab.freedesktop.org/mareko" target="_blank" rel="noopener" >Marek Olšák</a>
+ 氏は、シェーダープロファイルと発見 (heuristics) による手直し、クリーンアップだとコメントしている。</p>
 <blockquote>
 <pre><code> This is a rework and cleanup to be able to enable Wave32 based on shader profiles and heuristics.  
  No functional change.
@@ -103,7 +109,8 @@
 </ul>
 
 <h2 id="wave32">Wave32</h2>
-<p>各シェーダーステージを Wave64 で実行するようにした際、<a href="https://gitlab.freedesktop.org/mareko">Marek Olšák</a> 氏 Wave32 より性能面で優れていると考えた理由として以下の項目を挙げていた。</p>
+<p>各シェーダーステージを Wave64 で実行するようにした際、<a href="https://gitlab.freedesktop.org/mareko" target="_blank" rel="noopener" >Marek Olšák</a>
+ 氏 Wave32 より性能面で優れていると考えた理由として以下の項目を挙げていた。</p>
 <blockquote>
 <ul>
 <li>greater chance of L0 cache hits, because more threads are assigned to the same CU</li>
@@ -118,7 +125,9 @@
 </blockquote>
 <p>これはコード内にコメントで残されていたが、今回のリワークに伴い、実際のところは正しくなかった (<em>The big comment was not really true.</em>) として削除されている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <h3 id="cs">Compute Shader</h3>
-<p><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf">RDNA_Architecture_public.pdf</a> では元より Compute Shader は通常 Wave32 を選択されるとしていたが、Wave32 で実行すると OpenGL のテストスイートである <a href="https://gitlab.freedesktop.org/mesa/piglit">piglit</a> が失敗することから <strong>RadeonSI</strong> では Wave64 で実行するようになっていた。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener" >RDNA_Architecture_public.pdf</a>
+ では元より Compute Shader は通常 Wave32 を選択されるとしていたが、Wave32 で実行すると OpenGL のテストスイートである <a href="https://gitlab.freedesktop.org/mesa/piglit" target="_blank" rel="noopener" >piglit</a>
+ が失敗することから <strong>RadeonSI</strong> では Wave64 で実行するようになっていた。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
 <p>それが今回、Workgroup のサイズが小さい場合は Wave32 で実行するように変更された。<br>
 Workgroup が十分に大きく、かつ Waveサイズを指定するデバッグフラグが設定されていない場合は、以前同様 Compute Shader は Wave64 で実行される。</p>
 <blockquote>
@@ -136,7 +145,8 @@ Workgroup が十分に大きく、かつ Waveサイズを指定するデバッ�
 
 </blockquote>
 <h3 id="ps">Pixel Shader</h3>
-<p><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf">RDNA_Architecture_public.pdf</a> では Pixel Shader のみ、通常 Wave64 が選択されるとしていたが、今回で一部は Pixel Shader も Wave32 で実行されるようになった。</p>
+<p><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener" >RDNA_Architecture_public.pdf</a>
+ では Pixel Shader のみ、通常 Wave64 が選択されるとしていたが、今回で一部は Pixel Shader も Wave32 で実行されるようになった。</p>
 <p>LLVM 13/14 では、ピクセルの廃棄処理 (discard) を含む Pixel Shader を Wave32モードでコンパイルすると、エラーを起こすバグがあるため、Wave64 で実行するとしている。<br>
 新たに追加されたデバッグオプション <code>w32psdiscard (W32_PS_DISCARD)</code> は、そのエラーを無視して Wave32モードでコンパイル、実行するためのもの。</p>
 <blockquote>
@@ -154,7 +164,8 @@ Workgroup が十分に大きく、かつ Waveサイズを指定するデバッ�
 
 </blockquote>
 <p>そして補間命令の無い Pixel Shader は、Wave32モードにおいて補間性能の低下を受けないため Wave32 で実行する。<br>
-この方針は <a href="https://www.geeks3d.com/gputest/">GpuTest</a> の PixMark Piano/Voloplosion にて役立つとしている。</p>
+この方針は <a href="https://www.geeks3d.com/gputest/" target="_blank" rel="noopener" >GpuTest</a>
+ の PixMark Piano/Voloplosion にて役立つとしている。</p>
 <blockquote>
 <pre><code> +   /* Pixel shaders without interp instructions don't suffer from reduced interpolation
  +    * performance in Wave32, so use Wave32. This helps Piano and Voloplosion.
@@ -173,7 +184,8 @@ Workgroup が十分に大きく、かつ Waveサイズを指定するデバッ�
 Tessellation Control Shader または Geometry Shader を実行するが、結果を GS copy shader で Pixel Shader に渡すことはしない場合を <code>merged_shader (true)</code> とし、<br>
 その条件から外れると同時に、(分岐による？) 発散性 (divergent) のあるループは Wave32 で実行するようになった。</p>
 <ul>
-<li>参考: <a href="https://juln.hatenablog.com/entry/2021/05/13/181020">GPU向けコンパイラの最適化の紹介と論文のサーベイ - Jicchoの箱</a></li>
+<li>参考: <a href="https://juln.hatenablog.com/entry/2021/05/13/181020" target="_blank" rel="noopener" >GPU向けコンパイラの最適化の紹介と論文のサーベイ - Jicchoの箱</a>
+</li>
 </ul>
 <blockquote>
 <pre><code>    /* TODO: Merged shaders must use the same wave size because the driver doesn't recompile
@@ -204,8 +216,10 @@ Wave32 ではアイドリング状態になる半分を排除でき、次の Wav
 2つの Wave32 に分割されるといっても、スカラ命令は 1回のみとなる。また Workgroup の最大サイズはスレッド (work-item) 数で決まっているため、Workgroup 内の Wave数は Wave32 の場合は 32 Wave、Wave64 の場合は 16 Wave となる。</p>
 <h3 id="shader-profile">Shader Profile</h3>
 <p>シェーダープロファイルによる Wave サイズの選択も、現時点では SPECviewperfベンチマークのみが対象だが、実装されている。<br>
-<a href="https://www.spec.org/gwpg/gpc.static/energy-02.html">Viewperf/Energy</a> は Pixel Shader の部で挙げた Discard処理を含む Pixel Shader のコンパイルエラーが起きないため Wave32 で実行され、<br>
-<a href="https://www.spec.org/gwpg/gpc.static/med-02.html">Viewperf/Medical</a> は分岐発散のあるループにおいて上記の Wave32 の恩恵を受けられないため、Wave64 で実行される。プロファイリングの結果による選択とされるが、Marek Olšák 氏はおそらく補間性能の影響を受けているのではないかとしている。</p>
+<a href="https://www.spec.org/gwpg/gpc.static/energy-02.html" target="_blank" rel="noopener" >Viewperf/Energy</a>
+ は Pixel Shader の部で挙げた Discard処理を含む Pixel Shader のコンパイルエラーが起きないため Wave32 で実行され、<br>
+<a href="https://www.spec.org/gwpg/gpc.static/med-02.html" target="_blank" rel="noopener" >Viewperf/Medical</a>
+ は分岐発散のあるループにおいて上記の Wave32 の恩恵を受けられないため、Wave64 で実行される。プロファイリングの結果による選択とされるが、Marek Olšák 氏はおそらく補間性能の影響を受けているのではないかとしている。</p>
 <blockquote>
 <pre><code> +struct si_shader_profile {
  +   uint32_t sha1[SHA1_DIGEST_LENGTH32];
@@ -233,7 +247,8 @@ Wave32 ではアイドリング状態になる半分を排除でき、次の Wav
 </div>
 
 </blockquote>
-<p><a href="https://www.coelacanth-dream.com/tags/ngg">NGG (Next Generation Geometry)</a> を使用しない <em>Legacy GS (pipeline)</em> は Wave64 のみでサポートされるが、<em>RDNA系 アーキテクチャ (GFX10 &lt;=)</em> では <em>Navi14</em> 以外はデフォルトで <em>NGG</em> が有効化される。<br>
+<p><a href="https://www.coelacanth-dream.com/tags/ngg">NGG (Next Generation Geometry)</a>
+ を使用しない <em>Legacy GS (pipeline)</em> は Wave64 のみでサポートされるが、<em>RDNA系 アーキテクチャ (GFX10 &lt;=)</em> では <em>Navi14</em> 以外はデフォルトで <em>NGG</em> が有効化される。<br>
 そう深くコードを追ってはいないが、<em>NGG</em> 有効の場合は Wave32 で実行されるものと思われる。</p>
 <blockquote>
 <pre><code>    /* Legacy GS only supports Wave64. */
@@ -261,16 +276,20 @@ Wave32 ではアイドリング状態になる半分を排除でき、次の Wav
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5524">ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge requests · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5524" target="_blank" rel="noopener" >ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge requests · Mesa / mesa · GitLab</a>
+&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2" role="doc-endnote">
-<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13878/diffs?commit_id=676d4ddcf83a62973aad8062a34c7c838bfc8a4f#68ea09d61709a8690d922a47246019c3819579d7">radeonsi: rework to make the wave size configurable per shader for fine-grained Wave32/64 selection (!13878) · Merge requests · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13878/diffs?commit_id=676d4ddcf83a62973aad8062a34c7c838bfc8a4f#68ea09d61709a8690d922a47246019c3819579d7" target="_blank" rel="noopener" >radeonsi: rework to make the wave size configurable per shader for fine-grained Wave32/64 selection (!13878) · Merge requests · Mesa / mesa · GitLab</a>
+&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3" role="doc-endnote">
-<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/a0d330bedb9eb5668bc73c60e525f3c76d23a93a">radeonsi/gfx10: enable Wave32 for vertex, geometry, and tessellation shaders (a0d330be) · Commits · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/a0d330bedb9eb5668bc73c60e525f3c76d23a93a" target="_blank" rel="noopener" >radeonsi/gfx10: enable Wave32 for vertex, geometry, and tessellation shaders (a0d330be) · Commits · Mesa / mesa · GitLab</a>
+&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4" role="doc-endnote">
-<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/d5d3106ddde9b711ed3231c91f97a5a407836ba6/src/gallium/drivers/radeonsi/si_state_shaders.cpp#L46-47">https://gitlab.freedesktop.org/mesa/mesa/-/blob/d5d3106ddde9b711ed3231c91f97a5a407836ba6/src/gallium/drivers/radeonsi/si_state_shaders.cpp#L46-47</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/d5d3106ddde9b711ed3231c91f97a5a407836ba6/src/gallium/drivers/radeonsi/si_state_shaders.cpp#L46-47" target="_blank" rel="noopener" >https://gitlab.freedesktop.org/mesa/mesa/-/blob/d5d3106ddde9b711ed3231c91f97a5a407836ba6/src/gallium/drivers/radeonsi/si_state_shaders.cpp#L46-47</a>
+&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>

@@ -70,11 +70,14 @@
 <div class="article-time">
     <time datetime="2021-09-29 06:17 &#43;0900" class="time-b">Post: 2021/09/29 06:17 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/11/27 17:09 &#43;0900</div>
-  </div><p>以前、<strong>RADV</strong> では <em>RDNA 2/GFX10.3</em> 世代で <em>NGGカリング/プリミティブカリング</em> をデフォルトで有効化するつもりがあることに触れたが、<a href="https://www.phoronix.com/">Phoronix</a> の Michael Larabel 氏による検証で安定したパフォーマンス向上が確認できたとし、<a href="https://gitlab.freedesktop.org/Venemo">Timur Kristóf</a> 氏によってそれを適用するパッチ/マージリクエストが投稿されている。<br>
+  </div><p>以前、<strong>RADV</strong> では <em>RDNA 2/GFX10.3</em> 世代で <em>NGGカリング/プリミティブカリング</em> をデフォルトで有効化するつもりがあることに触れたが、<a href="https://www.phoronix.com/" target="_blank" rel="noopener" >Phoronix</a>
+ の Michael Larabel 氏による検証で安定したパフォーマンス向上が確認できたとし、<a href="https://gitlab.freedesktop.org/Venemo" target="_blank" rel="noopener" >Timur Kristóf</a>
+ 氏によってそれを適用するパッチ/マージリクエストが投稿されている。<br>
 <span class="thread-link"><a href="https://www.coelacanth-dream.com/posts/2021/09/21/radeonsi-remove-prim-discard/">RadeonSI ドライバーから非同期コンピュートによるプリミティブカリング機能が削除 | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13086">radv: Enable NGG culling by default on GFX10.3 (!13086) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13086" target="_blank" rel="noopener" >radv: Enable NGG culling by default on GFX10.3 (!13086) · Merge requests · Mesa / mesa · GitLab</a>
+</li>
 </ul>
 <h2 id="nggnggカリング">NGG/NGGカリング</h2>
 <p><em>NGG/プリミティブシェーダー</em> は <em>Navi14</em> を除く <em>RDNA/GFX10</em> 世代の GPU でデフォルトで有効化されているが、<em>NGGカリング</em> は条件が増え、<em>RDNA 2/GFX10.3</em> とそれ以降の世代の GPU、かつ RenderBackend (RB) を 2基以上持つ GPU がデフォルトで有効化の対象になる。<br>
@@ -94,7 +97,8 @@
 
 </blockquote>
 <p>判定部からして RB が 1基の場合は有効化が不可能となっているが、この点は以前から変わらない。<br>
-現時点ではまだ対象となる RB 1基の <em>RDNA 2/GFX10.3</em> APU/GPU は登場していないが、小規模な <em>Zen 2 + RDNA 2 APU</em> <a href="https://www.coelacanth-dream.com/rags/vangogh">VanGogh</a> が該当する可能性はある。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+現時点ではまだ対象となる RB 1基の <em>RDNA 2/GFX10.3</em> APU/GPU は登場していないが、小規模な <em>Zen 2 + RDNA 2 APU</em> <a href="https://www.coelacanth-dream.com/rags/vangogh">VanGogh</a>
+ が該当する可能性はある。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <p>シェーダーベースのカリング処理は、効率が Pixel Shader (PS) のスループットに依存するとされており、<strong>RADV</strong> では GPU の規模、構成から PS への最大入力パラメーター数を決定している。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 RB 1基の場合、<em>NGGカリング</em> を有効化できないようにされているのも、効率が低く、かえって性能に悪影響が与える可能性があるからなのかもしれない。</p>
 <blockquote>
@@ -172,10 +176,12 @@ RB 1基の場合、<em>NGGカリング</em> を有効化できないようにさ
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13056/diffs?commit_id=39f5be7d6ed133659160a791c9c752b99f8bcc28">ac/surface: Expose modifiers capable of DCC image stores first (!13056) · Merge requests · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13056/diffs?commit_id=39f5be7d6ed133659160a791c9c752b99f8bcc28" target="_blank" rel="noopener" >ac/surface: Expose modifiers capable of DCC image stores first (!13056) · Merge requests · Mesa / mesa · GitLab</a>
+&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2" role="doc-endnote">
-<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/576d56780cad1e26dd401ef09318a85dd64841f3/src/amd/vulkan/radv_shader.c#L899">src/amd/vulkan/radv_shader.c · 576d56780cad1e26dd401ef09318a85dd64841f3 · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/576d56780cad1e26dd401ef09318a85dd64841f3/src/amd/vulkan/radv_shader.c#L899" target="_blank" rel="noopener" >src/amd/vulkan/radv_shader.c · 576d56780cad1e26dd401ef09318a85dd64841f3 · Mesa / mesa · GitLab</a>
+&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>

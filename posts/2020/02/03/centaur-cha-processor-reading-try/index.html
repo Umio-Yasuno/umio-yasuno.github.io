@@ -45,7 +45,7 @@
   },
     "dateCreated"   : "2020-02-04",
     "datePublished" : "2020-02-04",
-    "dateModufied"  : "2020-03-03",
+    "dateModufied"  : "2021-12-07",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -69,13 +69,16 @@
 </nav>
 <div class="article-time">
     <time datetime="2020-02-04 17:49 &#43;0900" class="time-b">Post: 2020/02/04 17:49 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2020/03/03 18:14 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2021/12/07 08:08 &#43;0900</div>
   </div><p>かつてx86 CPU市場にてある程度の存在感を示していたVIA/Centaur Technologyが、新たに推論用のアクセラレーターを組み込んだサーバー向けCPUを発表し、話題になっていたが、<br>
 先日、Centaur Technologyが資料の一部公開とRedditのスレッドで質疑応答を行ない、より詳細が明らかになったため、紹介してみようと思い立った次第だ。</p>
 <ul>
-<li><a href="https://www.reddit.com/r/hardware/comments/ep0lf4/x86_cpu_design_house_centaur_technology_will_host/">x86 CPU Design House Centaur Technology will host an AMA next week, Thursday Jan 23, 2020 @ 12:00pm-3:00pm CST - r/hardware Reddit</a></li>
-<li><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf">MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a></li>
-<li><a href="https://centtech.com/wp-content/uploads/PRSlides_1118_Release.pdf">Centaur’s x86 SoC with AI Coprocessor Technology - PRSlides_1118_Release.pdf</a></li>
+<li><a href="https://www.reddit.com/r/hardware/comments/ep0lf4/x86_cpu_design_house_centaur_technology_will_host/" target="_blank" rel="noopener" >x86 CPU Design House Centaur Technology will host an AMA next week, Thursday Jan 23, 2020 @ 12:00pm-3:00pm CST - r/hardware Reddit</a>
+</li>
+<li><a href="https://centtech.com/wp-content/uploads/MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf" target="_blank" rel="noopener" >MPR Article Template - MPR_19_12_02_Centaur_Adds_AI_to_Server_Processor.pdf</a>
+</li>
+<li><a href="https://centtech.com/wp-content/uploads/PRSlides_1118_Release.pdf" target="_blank" rel="noopener" >Centaur’s x86 SoC with AI Coprocessor Technology - PRSlides_1118_Release.pdf</a>
+</li>
 </ul>
 <p>ただ、最初に断りを入れさせていただくと、自分はテクニカルライターではなく、ブロガーと言うのも怪しい存在だ。<br>
 そのため、内容の正確性には責任を持てない。<br>
@@ -83,22 +86,32 @@
 だが責任を完全に放棄した訳ではないため、間違っていた場合は連絡をくださると嬉しい。</p>
 <p>解説にはWikiChipをオススメしたい。</p>
 <ul>
-<li><a href="https://fuse.wikichip.org/news/3099/centaur-unveils-its-new-server-class-x86-core-cns-adds-avx-512/">Centaur Unveils Its New Server-Class x86 Core: CNS; Adds AVX-512 | WikiChip Fuse</a></li>
-<li><a href="https://fuse.wikichip.org/news/3256/centaur-new-x86-server-processor-packs-an-ai-punch/comment-page-1/">Centaur New x86 Server Processor Packs an AI Punch | WikiChip Fuse</a></li>
+<li><a href="https://fuse.wikichip.org/news/3099/centaur-unveils-its-new-server-class-x86-core-cns-adds-avx-512/" target="_blank" rel="noopener" >Centaur Unveils Its New Server-Class x86 Core: CNS; Adds AVX-512 | WikiChip Fuse</a>
+</li>
+<li><a href="https://fuse.wikichip.org/news/3256/centaur-new-x86-server-processor-packs-an-ai-punch/comment-page-1/" target="_blank" rel="noopener" >Centaur New x86 Server Processor Packs an AI Punch | WikiChip Fuse</a>
+</li>
 </ul>
 <h4 id="table-of-content">Table of Content</h4>
 <ul>
 <li><a href="#cns-x86-cpu">CNS (x86 CPU)</a>
+
 <ul>
-<li><a href="#%E3%83%95%E3%83%AD%E3%83%B3%E3%83%88%E3%82%A8%E3%83%B3%E3%83%89">フロントエンド</a></li>
-<li><a href="#%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89">バックエンド</a></li>
-<li><a href="#%E3%82%A4%E3%83%B3%E3%82%BF%E3%83%BC%E3%82%B3%E3%83%8D%E3%82%AF%E3%83%88">インターコネクト</a></li>
-<li><a href="#%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3-spectre-meltdown">セキュリティ</a></li>
+<li><a href="#%e3%83%95%e3%83%ad%e3%83%b3%e3%83%88%e3%82%a8%e3%83%b3%e3%83%89">フロントエンド</a>
+</li>
+<li><a href="#%e3%83%90%e3%83%83%e3%82%af%e3%82%a8%e3%83%b3%e3%83%89">バックエンド</a>
+</li>
+<li><a href="#%e3%82%a4%e3%83%b3%e3%82%bf%e3%83%bc%e3%82%b3%e3%83%8d%e3%82%af%e3%83%88">インターコネクト</a>
+</li>
+<li><a href="#%e3%82%bb%e3%82%ad%e3%83%a5%e3%83%aa%e3%83%86%e3%82%a3-spectre-meltdown">セキュリティ</a>
+</li>
 </ul>
 </li>
-<li><a href="#ncore">Ncore</a></li>
-<li><a href="#i-o">I/O</a></li>
-<li><a href="#%E3%81%9D%E3%81%AE%E4%BB%96">その他</a></li>
+<li><a href="#ncore">Ncore</a>
+</li>
+<li><a href="#i-o">I/O</a>
+</li>
+<li><a href="#%e3%81%9d%e3%81%ae%e4%bb%96">その他</a>
+</li>
 </ul>
 <h4 id="概略">概略</h4>
 <p>名称は、SoC全体のコードネームが<strong>CHA</strong>、x86 CPU部のマイクロアーキテクチャ名が<strong>CNS</strong>、DLA（deep-learning accelarator）部が<strong>Ncore</strong>とされている。</p>
@@ -156,9 +169,8 @@ FP/AVXユニットからは2つのリードポートがレジスタファイル�
 <blockquote>
 <p>ZENの4つの浮動小数点/SIMD演算ユニットは、それぞれ2つのレジスタリードポートを備える。1サイクルに、各ユニットで2つのソースオペランドのリードが可能だ。しかし積和算時には、3つのソースオペランドをリードする必要がある。</p>
 <p>「積和算では、3つの(ソース)オペランドが必要だ。レジスタファイルから読み出す場合、リードポートが足りなくなる。そのため、ちょっとしたトリックを使っている。積和算時には、加算パイプからレジスタファイルリードポートを1つ借用している。積和算時には、加算ユニットは使っていないため、加算ユニット自体は空いている。しかし、加算ユニットにはレジスタリードポートが1つしか残らない。そのため、加算(の命令発行)はスケジューラがブロックする」(Mike Clark氏, Senior Fellow, AMD)</p>
-</blockquote>
-<blockquote>
-<p>(引用元: <a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1039027.html">相対的に大人しい設計のAMD次世代CPU「ZEN」の浮動小数点/SIMDユニット - PC Watch</a>)</p>
+<p>(引用元: <a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1039027.html" target="_blank" rel="noopener" >相対的に大人しい設計のAMD次世代CPU「ZEN」の浮動小数点/SIMDユニット - PC Watch</a>
+)</p>
 </blockquote>
 <p>AVX-512のロードとストアはそれぞれ2つのmicro-opsに分解されるものの、L1 Data Cacheはサイクルあたり合計512-bitのデータを受け渡せるようになっており、将来FP/AVXユニットを512-bit幅へ拡張したりするのかもしれない。</p>
 <p>そしてAVX-512命令は、x86コアがNcoreへ高速に読み書きを行なうのに活かされているとのこと。</p>
@@ -254,12 +266,11 @@ Zen/2アーキテクチャをその表のフォーマットに合わせたもの
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p>参考:</p>
-</blockquote>
 <ul>
-<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1192135.html">AMD Zen 2の高い性能効率を支えるフロントエンドアーキテクチャ - PC Watch</a></li>
-<li><a href="https://www.anandtech.com/show/14525/amd-zen-2-microarchitecture-analysis-ryzen-3000-and-epyc-rome">AMD Zen 2 Microarchitecture Analysis: Ryzen 3000 and EPYC Rome - AnandTech</a></li>
+<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1192135.html" target="_blank" rel="noopener" >AMD Zen 2の高い性能効率を支えるフロントエンドアーキテクチャ - PC Watch</a>
+</li>
+<li><a href="https://www.anandtech.com/show/14525/amd-zen-2-microarchitecture-analysis-ryzen-3000-and-epyc-rome" target="_blank" rel="noopener" >AMD Zen 2 Microarchitecture Analysis: Ryzen 3000 and EPYC Rome - AnandTech</a>
+</li>
 </ul>
 </details>
 <p>Centaurは客観的に、公正に見て、CHAをHaswellクラスの性能と評価している。</p>
@@ -274,20 +285,22 @@ CHAが最大2.5GHzで動作するのに対し、IntelはSkylakeアーキテク�
 <h4 id="セキュリティ-spectre-meltdown">セキュリティ (Spectre, Meltdown)</h4>
 <p>言ってしまえば、不明。<br>
 ただ正式には公表されていないものの、過去のVIAプロセッサはSpectre、Meltdownの影響を受けるとされている。<br>
-<a href="https://pc.watch.impress.co.jp/docs/news/1180455.html">Windows月例更新でVIAプロセッサにもSpectre/Meltdown対策が盛り込まれる - PC Watch</a></p>
+<a href="https://pc.watch.impress.co.jp/docs/news/1180455.html" target="_blank" rel="noopener" >Windows月例更新でVIAプロセッサにもSpectre/Meltdown対策が盛り込まれる - PC Watch</a>
+</p>
 <p>資料でもRedditのスレッド（後になってからだが質問をしたユーザーはいた）でも特に述べられていないことから、ハードウェアでの対策は施されていない可能性が高い。</p>
 <p>余談だが、Centaur Technologyが設計した中国市場向けCPU、Zhaoxin（兆芯）は、<br>
 次世代の7-Seriesにて、SpsctreV2とSWAPGSの対策が施されている。<br>
-<a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Zhaoxin-7-Series-Mitigations">Zhaoxin 7-Series x86 CPUs Mitigated For Spectre V2 + SWAPGS - Phoronix</a><br>
-<a href="http://lkml.iu.edu/hypermail/linux/kernel/2001.1/08763.html">[PATCH] x86/speculation/spectre_v2: Exclude Zhaoxin CPUs from SPECTRE_V2 - Linux-Lernel Archive</a></p>
+<a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=Zhaoxin-7-Series-Mitigations" target="_blank" rel="noopener" >Zhaoxin 7-Series x86 CPUs Mitigated For Spectre V2 + SWAPGS - Phoronix</a>
+<br>
+<a href="http://lkml.iu.edu/hypermail/linux/kernel/2001.1/08763.html" target="_blank" rel="noopener" >[PATCH] x86/speculation/spectre_v2: Exclude Zhaoxin CPUs from SPECTRE_V2 - Linux-Lernel Archive</a>
+</p>
 <p>このパッチを読む限り、x86 CPUでSpectreV2への対策が為されたのはZhaxin 7-Seriesが何気に初となるのだろうか。<br>
 AMDはZen2アーキテクチャでSpectre対策強化のため一部設計を変更したが、あくまで強化であり、ソフトウェア側（OS Kernel、ファームウェア）での対策が不要になる訳ではなかった。</p>
-<blockquote>
-<p>参考:</p>
-</blockquote>
 <ul>
-<li><a href="https://japan.cnet.com/article/35114046/">AMD、「Spectre」対策で次世代チップ「Zen 2」の設計を変更 - CNET Japan</a></li>
-<li><a href="https://ascii.jp/elem/000/001/882/1882171/3/">ASCII.jp：判明した第3世代Ryzenの内部構造を大解説　AMD CPUロードマップ (3/4)</a></li>
+<li><a href="https://japan.cnet.com/article/35114046/" target="_blank" rel="noopener" >AMD、「Spectre」対策で次世代チップ「Zen 2」の設計を変更 - CNET Japan</a>
+</li>
+<li><a href="https://ascii.jp/elem/000/001/882/1882171/3/" target="_blank" rel="noopener" >ASCII.jp：判明した第3世代Ryzenの内部構造を大解説　AMD CPUロードマップ (3/4)</a>
+</li>
 </ul>
 <h3 id="ncore">Ncore</h3>
 <details>
@@ -348,29 +361,25 @@ Redditのスレッドにおける回答では、USBとSATAは外部チップセ�
 ただ、それもリングバスで接続されていることを考えると、そう高くはなく、実効帯域も低めだろう。<br>
 参考までに記しておくと、Intel Xeon Scalableで双方向2x 10.4 GT/s@20レーン (104GT/s?)、（Cascade Lakeなら3リンクで156GT/s?）<br>
 AMD EPYC Romeで双方向4x 18GT/s@16レーン (288GT/s, 実帯域 202GB/s)。</p>
-<blockquote>
-<p>参考:</p>
-</blockquote>
-<blockquote>
 <ul>
-<li><a href="https://software.intel.com/en-us/articles/intel-xeon-processor-scalable-family-technical-overview">Intel® Xeon® Processor Scalable Family Technical Overview | Intel® Software</a></li>
-<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1201352.html">AMDが最高性能のx86 CPUと謳う「AMD EPYC 7002」シリーズ - PC Watch</a></li>
-<li><a href="https://pc.watch.impress.co.jp/img/pcw/docs/1201/352/html/23_o.jpg.html">[画像] 【後藤弘茂のWeekly海外ニュース】AMDが最高性能のx86 CPUと謳う「AMD EPYC 7002」シリーズ (25/28) - PC Watch</a></li>
+<li><a href="https://software.intel.com/en-us/articles/intel-xeon-processor-scalable-family-technical-overview" target="_blank" rel="noopener" >Intel® Xeon® Processor Scalable Family Technical Overview | Intel® Software</a>
+</li>
+<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1201352.html" target="_blank" rel="noopener" >AMDが最高性能のx86 CPUと謳う「AMD EPYC 7002」シリーズ - PC Watch</a>
+</li>
+<li><a href="https://pc.watch.impress.co.jp/img/pcw/docs/1201/352/html/23_o.jpg.html" target="_blank" rel="noopener" >[画像] 【後藤弘茂のWeekly海外ニュース】AMDが最高性能のx86 CPUと謳う「AMD EPYC 7002」シリーズ (25/28) - PC Watch</a>
+</li>
 </ul>
-</blockquote>
 <h3 id="その他">その他</h3>
 <p>製造プロセスはTSMC 16nm FinFet Compact(16FFC)。<br>
 ハイパフォーマンス向けの16FF+を低コストにしたのが16FFC (16FF Compact) であり、メインストリーム向けや低消費電力 (Ultra Low Power) 向けに位置付けされている。</p>
-<blockquote>
-<p>参考:</p>
-</blockquote>
-<blockquote>
 <ul>
-<li><a href="https://ascii.jp/elem/000/001/516/1516220/2/">10nmに見切りをつけ低コストの12FFCに注力　TSMC 半導体ロードマップ - ASCII.jp</a></li>
-<li><a href="https://www.tsmc.com/english/dedicatedFoundry/technology/16nm.htm">16/12nm Technology - Taiwan Semiconductor Manufacturing Company Limited</a></li>
-<li><a href="https://community.cadence.com/cadence_blogs_8/b/ii/posts/tsmc-symposium-new-16ffc-and-28hpc-processes-target-mainstream-designers-and-internet-of-things-iot">TSMC Symposium: New 16FFC and 28HPC+ Processes Target “Mainstream” Designers and Internet of Things (IoT) - Industry Insights - Cadence Blogs - Cadence Community</a></li>
+<li><a href="https://ascii.jp/elem/000/001/516/1516220/2/" target="_blank" rel="noopener" >10nmに見切りをつけ低コストの12FFCに注力　TSMC 半導体ロードマップ - ASCII.jp</a>
+</li>
+<li><a href="https://www.tsmc.com/english/dedicatedFoundry/technology/16nm.htm" target="_blank" rel="noopener" >16/12nm Technology - Taiwan Semiconductor Manufacturing Company Limited</a>
+</li>
+<li><a href="https://community.cadence.com/cadence_blogs_8/b/ii/posts/tsmc-symposium-new-16ffc-and-28hpc-processes-target-mainstream-designers-and-internet-of-things-iot" target="_blank" rel="noopener" >TSMC Symposium: New 16FFC and 28HPC+ Processes Target “Mainstream” Designers and Internet of Things (IoT) - Industry Insights - Cadence Blogs - Cadence Community</a>
+</li>
 </ul>
-</blockquote>
 <p>余談だが、Habanaの推論用アクセラレーター Goya、Cerebrasの学習用プロセッサー WSE (Wafer Scale Engine)もTSMC 16nmで製造されている。（16FFCかどうかは不明）<br>
 ユニットを増やし、並列に実行するのが効果的なディープラーニング用途ではコストの低さから人気なのかもしれない。</p>
 <p>CPUのクロックは2.5GHzと、IntelやAMDのCPUと比べれば低いが、CPUの最高速度を制限することで、物理設計の最適化に費やす時間を大幅に短縮したとのこと。</p>
@@ -396,8 +405,7 @@ SIMD幅をさらに増やすかは、今もソフトウェアの最適化で忙�
 <p>メモリ、I/Oも、7nmで製造されるZhaoxin 7-SeriesがDDR5、PCIe Gen4に対応することを考えれば、次世代CHAでの対応も期待できる。</p>
 <p>16FFCのままでx86 CPU、メモリーコントローラー、I/Oをスケールダウンさせ、より小型な推論用エッジサーバー向けのSoCがあっても面白そうだが、そのターゲット層だと絶対的な消費電力が課題となるのかもしれない。<br>
 x86 CPUでmicro-opキャッシュも持たないCNSアーキテクチャは消費電力の点で、他のARM+コプロセッサーの構成を取る製品より劣るはずだ。</p>
-<br>
-色んなことを期待しつつ、今後も情報を追っていきたい。  
+<p>色んなことを期待しつつ、今後も情報を追っていきたい。</p>
 <div class="article-bottom-misc">
   <div class="rss-block">
   <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
