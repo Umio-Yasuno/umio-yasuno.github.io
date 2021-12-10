@@ -72,16 +72,16 @@
     <time datetime="2020-06-20 06:56 &#43;0900" class="time-b">Post: 2020/06/20 06:56 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/11/12 10:18 &#43;0900</div>
   </div><p>Intel は <a href="https://spec.oneapi.com/versions/latest/elements/l0/source/index.html" target="_blank" rel="noopener" >oneAPI Level Zero</a> と OpenCLドライバー のための <a href="https://github.com/intel/compute-runtime" target="_blank" rel="noopener" >compute-runtime</a> に、Gen12アーキテクチャ採用の dGPU、<em>DG1</em> をサポートするパッチを投稿した。<br>
-<span class="thread-link"><a href="https://github.com/intel/compute-runtime/commit/3029db07c3135ec5fde55de369ead2c14f9b3f9c">Add DG1 support to OpenCL and Level Zero (1/n) · intel/compute-runtime@3029db0</a></span>
+<span class="thread-link"><a href="https://github.com/intel/compute-runtime/commit/3029db07c3135ec5fde55de369ead2c14f9b3f9c" target="_blank" rel="noopener" >Add DG1 support to OpenCL and Level Zero (1/n) · intel/compute-runtime@3029db0</a></span>
 </p>
 <p>その中で <em>DG1</em> の詳細な構成が明らかとなっており、同じ Gen12アーキテクチャで、EU数が同規模の <em>Tiger Lake</em> とはキャッシュやスレッドの構成が大きく異なることがわかった。</p>
 <h2 id="巨大なキャッシュより多くのスレッド">巨大なキャッシュ、より多くのスレッド</h2>
 <p><em>DG1</em> は <em>Tiger Lake GT2</em> と同様に、EU数 96基、L3cacheバンク 8基、EUをまとめる Sub-Slice内の共有キャッシュ(SLM)のサイズ 64KB、EUあたりが保持するスレッド数 7スレッド、という構成になる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p>しかし、<em>DG1</em> の L3cacheバンクあたりの容量は大幅に増量され、<em>Tiger Lake GT2</em> がバンクあたり 480KB、計 3840KB であるのに対し、<br>
 <em>DG1</em> はバンクあたり 2048KB(2MB)、計 16384KB(16MB) となっている。<br>
-<span class="thread-link"><a href="https://github.com/intel/compute-runtime/blob/3029db07c3135ec5fde55de369ead2c14f9b3f9c/opencl/source/gen12lp/hw_info_dg1.inl">compute-runtime/hw_info_dg1.inl at 3029db07c3135ec5fde55de369ead2c14f9b3f9c · intel/compute-runtime</a></span>
+<span class="thread-link"><a href="https://github.com/intel/compute-runtime/blob/3029db07c3135ec5fde55de369ead2c14f9b3f9c/opencl/source/gen12lp/hw_info_dg1.inl" target="_blank" rel="noopener" >compute-runtime/hw_info_dg1.inl at 3029db07c3135ec5fde55de369ead2c14f9b3f9c · intel/compute-runtime</a></span>
 
-<span class="thread-link"><a href="https://github.com/intel/compute-runtime/blob/3029db07c3135ec5fde55de369ead2c14f9b3f9c/opencl/source/gen12lp/hw_info_tgllp.inl">compute-runtime/hw_info_tgllp.inl at 3029db07c3135ec5fde55de369ead2c14f9b3f9c · intel/compute-runtime</a></span>
+<span class="thread-link"><a href="https://github.com/intel/compute-runtime/blob/3029db07c3135ec5fde55de369ead2c14f9b3f9c/opencl/source/gen12lp/hw_info_tgllp.inl" target="_blank" rel="noopener" >compute-runtime/hw_info_tgllp.inl at 3029db07c3135ec5fde55de369ead2c14f9b3f9c · intel/compute-runtime</a></span>
 
 また、各シェーダーステージでの生成可能なスレッド数も増やされており、その数 <em>DG1</em> は <em>Tiger Lake GT2</em> の倍となる。</p>
 <p>96EU(768SP) というのは、AMD GPU では <em>Polaris11 (1024SP, 4RB/16ROP)</em> 、<em>Polaris12 (640SP, 4RB/16ROP)</em> なんかが近い規模となる。<br>

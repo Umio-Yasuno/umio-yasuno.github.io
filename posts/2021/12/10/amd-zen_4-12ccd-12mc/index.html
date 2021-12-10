@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/12/10/amd-zen_4-12ccd-12mc/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>最大で CCD 12基、メモリコントローラ 12基となる AMD Zen 4 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="最大で CCD 12基、メモリコントローラ 12基となる AMD Zen 4 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="最大で CCD 12基、メモリコントローラ 12基となる AMD Zen 4 | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/12/10/amd-zen_4-12ccd-12mc/">
+  <meta name="description" content="Linux Kernel において CPU に関わるドライバー部に、AMD の次世代プロセッサのサポートが追加され始めている。 IndexCCD メモリコントローラ CCD デバイスの各種センサーを読み">
+  <meta property="og:description" content="Linux Kernel において CPU に関わるドライバー部に、AMD の次世代プロセッサのサポートが追加され始めている。 IndexCCD メモリコントローラ CCD デバイスの各種センサーを読み">
+  <meta name="twitter:description" content="Linux Kernel において CPU に関わるドライバー部に、AMD の次世代プロセッサのサポートが追加され始めている。 IndexCCD メモリコントローラ CCD デバイスの各種センサーを読み">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/12/10/amd-zen_4-12ccd-12mc/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/12/10/amd-zen_4-12ccd-12mc/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="Zen 4, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background-attachment:fixed;background-color:#004955;background-repeat:no-repeat;font-size:.925rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:16px 0}header{grid-row:1;grid-column:3/-2;margin-top:1rem;margin-left:auto}.site-title{font:2rem/1.1 monospace;text-decoration:none;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #d4dcda;padding:0}.site-title a:hover{color:#c3cfcc;text-shadow:2px 2px 1.1em #fff}.site-title .lain-e{display:inline-block;font:700 .7em/1 monospace;contain:content;padding:0 .3em .2em;margin:0 -.2em 0 -.1em;vertical-align:bottom;background-color:#1003;clip-path:circle(.48em);transform:rotateZ(-32deg)}.site-title a:hover .lain-e{background-color:#1005}a{color:#b7ffff;text-decoration:none;padding:0 .2rem 0 .18rem;margin:0}.text{grid-row:2/4;grid-column:2/-1;color:#fffefe;line-height:1.65;overflow-wrap:anywhere;word-break:break-word;overflow:clip;contain:content;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0}.text>*{grid-column:3/-1}.side,.slide{position:fixed;top:1vh;left:0;visibility:hidden;contain:content}footer{visibility:hidden;grid-row:5;grid-column:1/-1}.head-cat-tag{grid-column:1/-1;border:1px solid #26bfb3;background-color:#1332;max-width:max-content;padding:8px 2px 6px;margin:1rem 0;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag a:hover{text-decoration:underline}.head-cat-tag-type{color:#00e0e0;padding:0 .4em}.head-cat-block,.head-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.5rem 0}.head-cat-lower,.head-tag-lower{margin:0 .1rem;padding:0 .5rem}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.shadow{background-size:100% 100%;background-attachment:fixed;background-image:radial-gradient(ellipse 69% 67%,#fdd1 0%,#0000 97%,#000 103%);opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:auto;pointer-events:none;overflow:hidden;isolation:isolate;contain:content}.crt{background-image:linear-gradient(#f00 0%,#f00 33%,#0f0 33%,#0f0 67%,#00f 67%,#00f 100%);background-size:100% .6rem;width:100%;height:100%;background-repeat:repeat-y;opacity:.04;isolation:isolate}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;row-gap:4px}.text{grid-row:3;grid-column:3/-1}.side{height:96vh;width:180px;padding:12px 8px 0 12px;color:#26bfb3;border-right:1px solid #1a847b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000;transform:translateX(0)}.slide{visibility:hidden}}article{}article>h1~*{visibility:hidden}article blockquote,article pre{overflow-x:scroll}article>p{margin:.4rem 0}article>p::before{padding:0 .3rem;content:''}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:90%;height:54vh}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "最大で CCD 12基、メモリコントローラ 12基となる AMD Zen 4",
+  "headline" : "最大で CCD 12基、メモリコントローラ 12基となる AMD Zen 4",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-12-10",
+    "datePublished" : "2021-12-10",
+    "dateModufied"  : "2021-12-11",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title">
+  <a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</div>
+</header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css">
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><article class="text">
+    <div class="head-cat-tag"><div class="head-cat-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-lower">Hardware</a></div><div class="head-cat-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/zen_4/" class="head-cat-lower">Zen 4</a></div>
+    </div>
+    <h1 class="page-title">最大で CCD 12基、メモリコントローラ 12基となる AMD Zen 4</h1>
+<nav class="article-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+    <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></div>
+</nav>
+<div class="article-time">
+    <time datetime="2021-12-10 10:53 &#43;0900" class="time-b">Post: 2021/12/10 10:53 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/12/11 04:02 &#43;0900</div>
+  </div><p>Linux Kernel において CPU に関わるドライバー部に、AMD の次世代プロセッサのサポートが追加され始めている。</p>
+<h2 id="page-index">Index</h2><ul class="page-index">
+<li><a href="#ccd">CCD</a></li>
+<li><a href="#mc">メモリコントローラ</a></li>
+</ul>
+
+<h2 id="ccd">CCD</h2>
+<p>デバイスの各種センサーを読み取る HWMON (Hardware Monitoring)、その中の AMD CPU の温度センサーを読み取る <code>k10temp</code> ドライバーに、<code>Family 19h Models 10-1Fh, A0-AFh</code> のサポートを追加するパッチが、AMD のソフトウェアエンジニア <a href="https://www.linkedin.com/in/babumoger" target="_blank" rel="noopener" >Babu Moger</a> 氏によって投稿された。</p>
+<ul>
+<li><a href="https://lore.kernel.org/linux-hwmon/163640828133.955062.18349019796157170473.stgit@bmoger-ubuntu/T/#u" target="_blank" rel="noopener" >[PATCH 0/3] k10temp/amd_nb: Add support for AMD Family 19h Models 10h-1Fh and A0h-AFh</a></li>
+</ul>
+<p>それら <code>x86_Model</code> が何のコードネームを持った AMD CPU に割り当てられているかは不明だが、新世代 (<em>new generation</em>) とは説明されている。<br>
+おそらくは <em>Zen 4 アーキテクチャ</em> を採用する AMD の次世代サーバ向け CPU と思われ、丁度 2021/11/08 に最大 <em>Zen 4</em> 96-Core を持ち、5nmプロセスで製造される <em>Genoa</em>、同じく 5nmプロセスで製造され、電力効率と実装密度に最適化された <em>Zen 4c</em> を 128-Core 持つ <em>Bergamo</em> が発表されている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<blockquote>
+<pre><code> Add the new PCI Device IDs to support new generation of AMD 19h family of
+ processors.
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-hwmon/163640828133.955062.18349019796157170473.stgit@bmoger-ubuntu/T/#m8738c235c10cad6f598f7c19ff40b862d7304fe1" target="_blank" rel="noopener" >[PATCH 0/3] k10temp/amd_nb: Add support for AMD Family 19h Models 10h-1Fh and A0h-AFh</a></cite>
+</div>
+
+</blockquote>
+<p>そして、従来の Zen系 CPU では CCD(Core-Complex Die) は最大 8基まで搭載可能な構成を採っており (<em>Zen/Zen+</em> では最大 4基、<em>Zen 2</em> では最大 8基)、<code>k10temp</code> ドライバーも最大 8基までをサポートしていたが、<br>
+<code>Family 19h Models 10-1Fh, A0-AFh</code> では最大で CCD 12基の構成をサポートするとして、それに対応するためのパッチが、同じく <a href="https://www.linkedin.com/in/babumoger" target="_blank" rel="noopener" >Babu Moger</a> 氏によって投稿された。</p>
+<ul>
+<li><a href="https://lore.kernel.org/linux-hwmon/163770216907.777059.6947726637265961161.stgit@bmoger-ubuntu/T/#u" target="_blank" rel="noopener" >[PATCH 1/2] hwmon: (k10temp) Move the CCD limit info inside k10temp_data structure</a></li>
+</ul>
+<blockquote>
+<pre><code> The current driver can read the temperatures from upto 8 CCDs
+ (Core-Complex Die).
+	
+ The newer AMD Family 19h Models 10h-1Fh and A0h-AFh can support up to
+ 12 CCDs. Update the driver to read up to 12 CCDs.
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-hwmon/163770216907.777059.6947726637265961161.stgit@bmoger-ubuntu/T/#m0b7b7dc210f76c4f2e7d046ea8a48350907a0326" target="_blank" rel="noopener" >[PATCH 1/2] hwmon: (k10temp) Move the CCD limit info inside k10temp_data structure</a></cite>
+</div>
+
+</blockquote>
+<p><em>Zen-Zen 3</em> では CCD あたり最大 8-Core を搭載しており、この単位をそのままに CCD を 12基とすると 96-Core、<em>Genoa</em> の最大 CPUコア数と一致する。<br>
+CCD では L3キャッシュ 1基を共有するコア数、それとおそらくリングバス構成は <em>Zen 3 アーキテクチャ</em> から引き継ぎ、IOD (I/O Die) を CCD 12基まで対応を拡張するのだろう。<br>
+他にも <em>Genoa</em> では DDR5、PCIe Gen5、CXL に対応することが発表されており、<em>Rome (Zen 2) / Milan (Zen 3)</em> では同じ構成のものが使われていた IOD が大きく拡張されることとなる。</p>
+<p>ただ <em>Bergamo</em> の 128-Core と CCD 12基という数は合わないため、<em>Bergamo</em> では CCD あたり 16-Core に増やし、CCD は 8基となるのではないかと思われる。<br>
+ただリングバスでは構成上、経由するリングストップが増えると、同時に遅延も増えていく。<br>
+<em>Zen 4c</em> の特徴として、密度に最適化したキャッシュ階層 (Density-Optimized Cache Hierarchy) があり<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、Intel Atom のように L3キャッシュより上の階層、L2キャッシュを複数のコアで共有し、リングストップの数を減らした構成も <em>想像</em> できる。</p>
+<h2 id="mc">メモリコントローラ</h2>
+<p>メモリやキャッシュで発生したエラー、サーマルスロットリング等、ハードウェア部で発生、報告されたエラーを検知し、記録する EDAC (Error Detection And Correction) ドライバーにも、<code>Models 10-1Fh, A0-AFh</code> のサポートを追加するパッチが、Yazen Ghannam 氏によって投稿されている。</p>
+<ul>
+<li><a href="https://lore.kernel.org/linux-edac/20211208174356.1997855-1-yazen.ghannam@amd.com/T/" target="_blank" rel="noopener" >[PATCH 0/4] AMD Family 19h Models 10h-1Fh Updates</a></li>
+</ul>
+<p>RDDR5 (Registered DDR5)、LRDDR5 (Load-Reduced DDR5) のサポートが追加され、最大メモリコントローラ数が 12基となる。</p>
+<blockquote>
+<pre><code> Add a new family type for AMD Family 19h Models 10h to 1Fh. Use this new
+ family type for Models A0h to AFh also.
+	
+ Increase the maximum number of controllers from 8 to 12.
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-edac/20211208174356.1997855-1-yazen.ghannam@amd.com/T/" target="_blank" rel="noopener" >[PATCH 0/4] AMD Family 19h Models 10h-1Fh Updates</a></cite>
+</div>
+
+<pre><code> +	[F19_M10H_CPUS] = {
+ +		.ctl_name = &quot;F19h_M10h&quot;,
+ +		.f0_id = PCI_DEVICE_ID_AMD_19H_M10H_DF_F0,
+ +		.f6_id = PCI_DEVICE_ID_AMD_19H_M10H_DF_F6,
+ +		.max_mcs = 12,
+ +		.ops = {
+ +			.early_channel_count	= f17_early_channel_count,
+ +			.dbam_to_cs		= f17_addr_mask_to_cs_size,
+ +		}
+ +	},
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-edac/20211208174356.1997855-1-yazen.ghannam@amd.com/T/" target="_blank" rel="noopener" >[PATCH 0/4] AMD Family 19h Models 10h-1Fh Updates</a></cite>
+</div>
+
+</blockquote>
+<p><em>Rome (Zen 2)</em> 等のチップレット構成を採る AMD CPU では、CCD-IOD間が Read: 32B/cycle、Write: 16B/cycle で接続されており、その関係か、少ない CCD数で構成された一部 SKU (EPYC 7282/7272/7252/7232P) では、メモリチャネルは 8ch ながらソケットあたりの帯域は 85.30 GB/s (4ch 2667MT/s 相当) となっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>
+メモリ帯域に対して、搭載 CCD数が少なすぎるとそれを活用することができない。<br>
+<code>Family 19h Models 10-1Fh, A0-AFh</code> で CCD数、メモリコントローラ数を同時に増やしたのはそうしたことが関係しているのではないかと思われる。</p>
+<p>モノリシック構成を採る APU では CCX-DataFabric間が Read/Write 共に 32B/cycle なのに対し<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>、チップレット構成では Write を 16B/cycle に減らしていることについて AMD は、ダイ間のデータ転送による消費電力を減らすためとし、また実際のワークロードではメモリへの書き込みはあまり発生しないと説明している。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://ir.amd.com/news-events/press-releases/detail/1031/amd-unveils-workload-tailored-innovations-and-products-at" target="_blank" rel="noopener" >AMD Unveils Workload-Tailored Innovations and Products at The Accelerated Data Center Premiere :: Advanced Micro Devices, Inc. (AMD)</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://news.mynavi.jp/techplus/article/20211109-2182109/" target="_blank" rel="noopener" >AMD、スケーラビリティ重視の「Zen 4c」を発表 - MSがMilan-Xのベンチを公開 | TECH+</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.amd.com/en/products/specifications/processors/2316,14566,20376" target="_blank" rel="noopener" >Processor Specifications | AMD</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_AMD%20Ryzen%E2%84%A2%20Processor%20Software%20Optimization.pdf" target="_blank" rel="noopener" >GPUOpen_Let’sBuild2020_AMD Ryzen™ Processor Software Optimization.pdf</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5" role="doc-endnote">
+<p><a href="https://www.tweaktown.com/reviews/9051/amd-ryzen-3900x-3700x-zen2-review/index.html" target="_blank" rel="noopener" >AMD Ryzen 3900X and 3700X (Zen2) Review | TweakTown</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+<div class="article-bottom-misc">
+  <div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a href="https://www.coelacanth-dream.com/about/#contact"  class="sb" target="_blank" rel="noopener noreferrer">Contact</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/12/10/amd-zen_4-12ccd-12mc.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</div><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3HV7bnk" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lain Blu-ray BOX</a>
+      <div class="amzn_link_desc">Present day, Preset time</div>
+  </div><br>
+
+  </div>
+</div>
+</article><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-cat-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag :</a>
+    <a href="https://www.coelacanth-dream.com/tags/zen_4/" class="menu-cat-tag-lower">Zen 4</a>
+</div>
+<div class="menu-cat-tag-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <div class="share-button-links">
+    <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+    <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></div>
+</nav>
+<div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<div class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.89.4</a>
+</div>
+
+  </div>
+</div>
+<footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<div class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.89.4</a>
+</div>
+
+</footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-cat-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag :</a>
+    <a href="https://www.coelacanth-dream.com/tags/zen_4/" class="menu-cat-tag-lower">Zen 4</a>
+</div>
+<div class="menu-cat-tag-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</div>
+<div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="shadow">
+        <div class="crt"></div>
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>

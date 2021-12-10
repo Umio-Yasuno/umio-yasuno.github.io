@@ -88,14 +88,14 @@ NVIDIA がコンシューマ向けに Ampere世代の GPU を発表した今、A
 -->
 <h2 id="gfx103-big_page">帯域を節約する BIG_PAGE 機能</h2>
 <p>バッファがある特定のアラインメントに一致する場合に、<em>CB (Command Buffer?) /DB (Data Buffer?) /TCP</em> 間のデータトラフィックを減らす機能と説明されている。<br>
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/f4d861696dfb11dc2b6242a683a13238981f705f?merge_request_iid=6482">radv: set BIG_PAGE to improve performance on GFX10.3 (f4d86169) · Commits · Mesa / mesa · GitLab</a></span>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/f4d861696dfb11dc2b6242a683a13238981f705f?merge_request_iid=6482" target="_blank" rel="noopener" >radv: set BIG_PAGE to improve performance on GFX10.3 (f4d86169) · Commits · Mesa / mesa · GitLab</a></span>
 
 <em>TCP</em> は何の略か不明だが、CU内の L1ベクタキャッシュ (RDNAアーキテクチャにおける L0ベクタキャッシュ) を指すようだ。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
 <p>また、<em>RDNA 2 /GFX10.3</em> 世代はカラー圧縮、DCC(Delta Color Compression) を行なうブロックのサイズを拡張する等、RenderBackend部やフレームバッファに関わる部分でメモリ帯域を節約する工夫を実装している。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
 こうした機能は広帯域の専用メモリを持つ dGPU にも効くが、CPU と共有する関係上、帯域が縛られる APU だと特に活きてくるのではないかと思う。</p>
 <h2 id="vcn3-2instance">VCN3 を 2基持つのは Sienna Cichlid のみ</h2>
 <p><em>Navy Flounder</em> をサポートする最初の Linux Kernel パッチが投稿された際にも少し触れたが<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup>、主に動画のデコード/エンコードを担当するユニット VCN3 (Video Core Next) を 2基持つのは <em>Sienna Cichlid</em> のみであるようだ。<br>
-<span class="thread-link"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=86f2ed2b14b35b32fb956e58b3e0723b3f687c6c">drm/amdgpu/vcn3.0: only SIENNA_CICHLID need specify instance for dec/enc</a></span>
+<span class="thread-link"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=86f2ed2b14b35b32fb956e58b3e0723b3f687c6c" target="_blank" rel="noopener" >drm/amdgpu/vcn3.0: only SIENNA_CICHLID need specify instance for dec/enc</a></span>
 </p>
 <p>そして片方がデコードのみを、もう片方がエンコードのみを担当する。<br>
 分けるにあたって必要の無い部分の回路を削っている可能性があるが、余計な手間がかかるため、機能としては非対称にしているが、実際はどちらも同じ回路で実装されているのではないかと思う。<br>
@@ -105,9 +105,9 @@ VCN3 1基を持つ <em>Navy Flounder</em> より、割くダイサイズ、ト�
 また、<a href="https://www.coelacanth-dream.com/tags/sg1">Intel SG1</a> のようにマルチメディアサーバー向けのGPUとして意識された部分であるようにも思える。</p>
 <h2 id="rdna_2-vf">Virtual Function をサポート</h2>
 <p><em>RDNA /Navi1x /GFX10.1</em> 世代では <a href="https://www.coelacanth-dream.com/tags/navi12">Navi12</a> しかサポートしていなかった VF (Virtual Function) だが、<em>RDNA 2 /GFX10.3</em> 世代では、今の所 <em>Sienna Cichlid</em> 、<em>Navy Flounder</em> の両方がサポートしているようだ。<br>
-<span class="thread-link"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=9110b6c1cbcd98a39134273f321691d7729dd72a">drm/amdkfd: sienna_cichlid virtual function support</a></span>
+<span class="thread-link"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=9110b6c1cbcd98a39134273f321691d7729dd72a" target="_blank" rel="noopener" >drm/amdkfd: sienna_cichlid virtual function support</a></span>
 
-<span class="thread-link"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=09bce5fe2cf94765ffdf607411950335f0bc9ba9">drm/amdkfd: Support navy_flounder KFD</a></span>
+<span class="thread-link"><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=09bce5fe2cf94765ffdf607411950335f0bc9ba9" target="_blank" rel="noopener" >drm/amdkfd: Support navy_flounder KFD</a></span>
 </p>
 <p><em>Navi12</em> をベースとした製品が現状 Apple 向けの <strong>Radeon Pro 5600M</strong> しかないため、何か推測を打ち立てることは気が引けるが、サーバー向けの機能であると言える。</p>
 <section class="footnotes" role="doc-endnotes">

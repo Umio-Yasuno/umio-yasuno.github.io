@@ -79,7 +79,7 @@
 <p>Vega10/12/20では有効に出来るはずだが、それ以降のArcturus、Naviでは削除されたと思われる。</p>
 <p>まずHBCCのOFF/ONでGFX IDが異なり、Vega10ではOFFがgfx900、ONがgfx901となっているのだが、<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 そのgfx901でLLVMのレポジトリを検索したところ、無慈悲な言葉が。<br>
-<span class="thread-link"><a href="https://github.com/llvm/llvm-project/commit/1501af4846791c3b52b812c41ec540081343ba38">AMDGPU: Remove remnants of gfx901 (it was deprecated some time ago) - llvm/llvm-project</a></span>
+<span class="thread-link"><a href="https://github.com/llvm/llvm-project/commit/1501af4846791c3b52b812c41ec540081343ba38" target="_blank" rel="noopener" >AMDGPU: Remove remnants of gfx901 (it was deprecated some time ago) - llvm/llvm-project</a></span>
 </p>
 <p>Ravenが <strong>gfx902</strong> 、Vega12が <strong>gfx904</strong> 、Vega20が <strong>gfx906</strong> であり、HBCC ONのGFX IDがそれに1足した <strong>gxf903/gfx905/gfx907</strong> となる。<br>
 そして、Arcturusが <strong>gfx908</strong> 、Raven2/Renoirが <strong>gfx909</strong> となっており、HBCC ON分の空きが存在しない。<br>
@@ -100,16 +100,16 @@ HBM2が広帯域といっても、オンチップなL2キャッシュには速�
 <p>ソフトウェア側では DPBB、DFSM に分けて実装された。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
 DPBBが部分的な、DFSMは全体的なものとなるらしいが、決まって速くなる訳ではないため、有効可能ではあるがデフォルトでは無効にされている。</p>
 <p>そしてしばらくしてから、Vega10、Ravenの、指定範囲外の描画を切る scissor 機能にバグが見つかった。<br>
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/71eca0780a0cd0794545c1fbfdd96fa4f07c2476"> radeonsi/gfx9: add a scissor bug workaround - Mesa GitLab</a></span>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/71eca0780a0cd0794545c1fbfdd96fa4f07c2476" target="_blank" rel="noopener" > radeonsi/gfx9: add a scissor bug workaround - Mesa GitLab</a></span>
 
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/e616743dabe4cdee789c7ad8386fbe9195cbb0ca"> radeonsi/gfx9: limit the scissor bug workaround to Vega10 and Raven only - Mesa GitLab</a></span>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/e616743dabe4cdee789c7ad8386fbe9195cbb0ca" target="_blank" rel="noopener" > radeonsi/gfx9: limit the scissor bug workaround to Vega10 and Raven only - Mesa GitLab</a></span>
 </p>
 <p>よく使われる部分を判別しておこなうDSBR機能はこのバグの影響を受け、限定的な実装となってしまった。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
 このバグは Vega12/20、Raven2では修正されている。</p>
 <p>Raven（APU）向けのチューニングがされていることから、メモリ帯域が狭いAPUでは効果があったが、dGPUではそうでもなかったのかもしれない。<br>
 （じゃあ上述したフレームレート最大10%UP、メモリ帯域33%削減は何なんだとなるが、10fpsが11fpsになっても10%の向上だ。下衆の勘繰りであることは否めないが。バグの影響もあったかもしれない）</p>
 <p>それでもGFX10に引き継がれ、改良は進められているらしい。DPBBのみだが、GFX10ではデフォルトで有効にされる。<br>
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/9f68367d19d9c0394bc935493788dcd189e08f49"> radeonsi/gfx10: implement primitive binning - Mesa GitLab</a></span>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/9f68367d19d9c0394bc935493788dcd189e08f49" target="_blank" rel="noopener" > radeonsi/gfx10: implement primitive binning - Mesa GitLab</a></span>
 </p>
 <p>オープンソースドライバーのRadeonSI、RADVでは確認できるが、Windowsのプロプライエタリなドライバーではどうなのかはわからない。</p>
 <h3 id="dpbbdeferred-primitive-batch-binning">DPBB（Deferred Primitive Batch Binning）</h3>
@@ -130,17 +130,17 @@ Vega20ではINT4のPacked、INT4/8、FP16/32/64の混合演算にも対応した
 もう Next-Generation ではないから？</p>
 <h2 id="nggnext-generation-geometry--primitive-shader">NGG（Next Generation Geometry） / Primitive Shader</h2>
 <p>解説に関しては、こちらの4Gamer.netの記事を見るのが早い。<br>
-<span class="thread-link"><a href="https://www.4gamer.net/games/337/G033714/20170804085/">西川善司の3DGE：新設の「プリミティブシェーダ」を搭載し，Radeon RX Vegaはどこへ行く？</a></span>
+<span class="thread-link"><a href="https://www.4gamer.net/games/337/G033714/20170804085/" target="_blank" rel="noopener" >西川善司の3DGE：新設の「プリミティブシェーダ」を搭載し，Radeon RX Vegaはどこへ行く？</a></span>
 </p>
 <p>注目の新機能ではあったが Vega（GFX9）では廃止、諦め、GFX10での実装に注力することとなった。<br>
-<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2018-August/025320.html">Making a GDS Allocation for NGG</a></span>
+<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2018-August/025320.html" target="_blank" rel="noopener" >Making a GDS Allocation for NGG</a></span>
 </p>
 <p>DFSMと相性が良いはずで、廃止になってしまったのは残念。もしかしたら、DFSMの効果があまりなかったのに関係しているかもしれない。</p>
 <p>具体的に何が原因で廃止になったかは不明。<br>
 GFX10ではGFX9から設計に変更があったらしいが、<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup>GFX9でのNGGに何らかの問題があって変更したのか、<br>
 GFX10で変更することが決まったからGFX9では廃止したのか。</p>
 <p><a href="https://github.com/GPUOpen-Drivers/llpc" target="_blank" rel="noopener" >LLPC</a>（LLVM-Based Pipeline）を見る限り、GFX10での実装はしっかりと進められている様子。<br>
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/226f650d9222a191130ee673d2cb4405da972c4a">radeonsi/gfx10: document NGG shader stages - Mesa GitLab</a></span>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/commit/226f650d9222a191130ee673d2cb4405da972c4a" target="_blank" rel="noopener" >radeonsi/gfx10: document NGG shader stages - Mesa GitLab</a></span>
 </p>
 <h2 id="感想">感想</h2>
 <p>新機能にバグは付き物……<br>
