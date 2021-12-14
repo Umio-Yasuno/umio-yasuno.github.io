@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/12/14/yc-rmb-bootlog/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMD Yellow Carp/Rembrandt APU ブートログ | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMD Yellow Carp/Rembrandt APU ブートログ | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMD Yellow Carp/Rembrandt APU ブートログ | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/12/14/yc-rmb-bootlog/">
+  <meta name="description" content="Ubuntu in Launchpad にて、You-Sheng Yang 氏によるバグ報告の中で Yellow Carp/Rembrandt APU の Linux Kernel ブートログが投稿されている。 Bug #1953008 “Support USB4 DP alt mode for AMD Yellow Carp graph&h">
+  <meta property="og:description" content="Ubuntu in Launchpad にて、You-Sheng Yang 氏によるバグ報告の中で Yellow Carp/Rembrandt APU の Linux Kernel ブートログが投稿されている。 Bug #1953008 “Support USB4 DP alt mode for AMD Yellow Carp graph&h">
+  <meta name="twitter:description" content="Ubuntu in Launchpad にて、You-Sheng Yang 氏によるバグ報告の中で Yellow Carp/Rembrandt APU の Linux Kernel ブートログが投稿されている。 Bug #1953008 “Support USB4 DP alt mode for AMD Yellow Carp graph&h">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/12/14/yc-rmb-bootlog/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/12/14/yc-rmb-bootlog/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="Yellow Carp, RDNA 2, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1rem 0 0 auto}.site-title{font:2rem/1.1 monospace;text-decoration:none;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #d4dcda;padding:0}.site-title a:hover{color:#c3cfcc;text-shadow:2px 2px 1.1em #fff}.site-title .lain-e{display:inline-block;font:700 .7em/1 monospace;padding:0 .4em .2em;margin:0 -.2em 0 -.1em;vertical-align:bottom;background-color:#1003;clip-path:circle(.5em);transform:rotateZ(-32deg)}.site-title a:hover .lain-e{background-color:#1004}a{color:#b7ffff;text-decoration:none;padding:0 .2rem;margin:0}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.67;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:clip;contain:content;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;top:1vh;left:0;visibility:hidden;contain:paint}footer{visibility:hidden;grid-row:5;grid-column:1/-1}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00eaea;padding:0 .4rem}.head-cat-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(ellipse 69% 67%,#fee1 0%,#0000 97%,#000 103%)50%/contain fixed no-repeat,linear-gradient(#8001 0%,#8001 33%,#0801 33%,#0801 67%,#0081 67%,#0081 100%)50%/100% .6rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:3;grid-column:3/-1}.side{height:96vh;width:180px;padding:0 .5rem 0 1rem;color:#26bfb3;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000;transform:translateX(0)}.slide{visibility:hidden}}article>*{grid-column:3/-1}article>h1~*{visibility:hidden}article blockquote,article pre{overflow-x:scroll}article>p{margin:.5rem 0}article>p:before{content:'';padding:0 .3rem}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:90%;height:54vh}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMD Yellow Carp/Rembrandt APU ブートログ",
+  "headline" : "AMD Yellow Carp/Rembrandt APU ブートログ",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-12-14",
+    "datePublished" : "2021-12-14",
+    "dateModufied"  : "2021-12-14",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title">
+  <a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</div>
+</header>
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css">
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><article class="text">
+    <div class="head-cat-tag"><div class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/apu/" class="head-cat-tag-lower">APU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-tag-lower">Hardware</a></div><div class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-cat-tag-lower">RDNA 2</a>/<a href="https://www.coelacanth-dream.com/tags/yellow_carp/" class="head-cat-tag-lower">Yellow Carp</a></div>
+    </div>
+    <h1 class="page-title">AMD Yellow Carp/Rembrandt APU ブートログ</h1>
+<nav class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></nav>
+<div class="article-time">
+    <time datetime="2021-12-14 20:21 &#43;0900" class="time-b">Post: 2021/12/14 20:21 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/12/14 22:12 &#43;0900</div>
+  </div><p><a href="https://launchpad.net/ubuntu" target="_blank" rel="noopener" >Ubuntu in Launchpad</a> にて、You-Sheng Yang 氏によるバグ報告の中で <em>Yellow Carp/Rembrandt APU</em> の Linux Kernel ブートログが投稿されている。</p>
+<ul>
+<li><a href="https://bugs.launchpad.net/ubuntu/&#43;source/linux-firmware/&#43;bug/1953008" target="_blank" rel="noopener" >Bug #1953008 “Support USB4 DP alt mode for AMD Yellow Carp graph&hellip;” : Bugs : linux-firmware package : Ubuntu</a></li>
+</ul>
+<p>使用しているボードは <em>AMD LilacKD-RMB/LilacKD-RMB</em> 。</p>
+<blockquote>
+<pre><code> [    0.000000] DMI: AMD LilacKD-RMB/LilacKD-RMB, BIOS RRL0080C 09/15/2021
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/571858317/CurrentDmesg.txt" target="_blank" rel="noopener" >https://launchpadlibrarian.net/571858317/CurrentDmesg.txt</a></cite>
+</div>
+
+</blockquote>
+<h2 id="page-index">Index</h2><ul class="page-index">
+<li><a href="#cpu">CPU</a></li>
+<li><a href="#gpu">GPU</a></li>
+<li><a href="#memory">Memory</a></li>
+</ul>
+
+<h2 id="cpu">CPU</h2>
+<p>プロセッサ名は <strong>AMD Eng Sample: 100-000000560-40_Y</strong> 、エンジニアサンプリング品となる。<br>
+CPUID における <code>Family, Model</code> は <code>family: 0x19 (25), model: 0x44 (68)</code>、EAXレジスタそのままの値に書くと <code>0x00A40F40</code>。<br>
+<em>Yellow Carp/Rembrandt</em> の <code>Family, Model</code> 情報は、AMD CPU の温度センサーを読み取る <code>k10temp</code> ドライバーにサポートを追加する際に、<code>Model 40h-4fh</code> となることが明かされていた。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/08/27/yc-x86-model/">Yellow Carp は Family 19h Model 40h-4Fh | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<blockquote>
+<pre><code> [    0.195807] smpboot: CPU0: AMD Eng Sample: 100-000000560-40_Y (family: 0x19, model: 0x44, stepping: 0x0)
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/571858317/CurrentDmesg.txt" target="_blank" rel="noopener" >https://launchpadlibrarian.net/571858317/CurrentDmesg.txt</a></cite>
+</div>
+
+</blockquote>
+<p><em>Yellow Carp/Rembrandt</em> の TLBエントリ数は以下のようになっており、<em>Zen 3 アーキテクチャ</em> と同様の構成となっている。</p>
+<blockquote>
+<pre><code> [    0.082550] Last level iTLB entries: 4KB 512, 2MB 512, 4MB 256
+ [    0.082551] Last level dTLB entries: 4KB 2048, 2MB 2048, 4MB 1024, 1GB 0
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/571858317/CurrentDmesg.txt" target="_blank" rel="noopener" >https://launchpadlibrarian.net/571858317/CurrentDmesg.txt</a></cite>
+</div>
+
+</blockquote>
+<p>CPUスレッド数は 16-Thread 認識されている。<br>
+ブートログと一緒に投稿されている <code>/proc/cpuinfo</code> の情報では 8-Core/16-Thread とされている。<br>
+対応する機能、命令も <em>Zen 3 アーキテクチャ</em> とほとんど同じものになっている。<br>
+<code>FSRM (Fast Short REP MOV)</code> のフラグが立っていないが、BIOS/UEFI から無効化されているのかもしれない。自分が今使用している A520 M/B に <code>FSRM</code> の有無を切り替えるオプションが存在していた。<br>
+CPUクロックは最小 1.6GHz、ブートログの情報より、ベース 3.1GHz (3094MHz) で動作している。<br>
+L3キャッシュの情報は無いが、AMD GPUドライバーに記述されているセンサー情報から L3キャッシュは 1基、8-Core CCX 1基の構成とされる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<blockquote>
+<pre><code> processor	: 0
+ vendor_id	: AuthenticAMD
+ cpu family	: 25
+ model		: 68
+ model name	: AMD Eng Sample: 100-000000560-40_Y
+ stepping	: 0
+ microcode	: 0xa404002
+ cpu MHz		: 1600.000
+ cache size	: 512 KB
+ physical id	: 0
+ siblings	: 16
+ core id		: 0
+ cpu cores	: 8
+ apicid		: 0
+ initial apicid	: 0
+ fpu		: yes
+ fpu_exception	: yes
+ cpuid level	: 16
+ wp		: yes
+ flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 invpcid cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip pku ospke vaes vpclmulqdq rdpid overflow_recov succor smca
+ bugs		: sysret_ss_attrs spectre_v1 spectre_v2 spec_store_bypass
+ bogomips	: 6188.30
+ TLB size	: 2560 4K pages
+ clflush size	: 64
+ cache_alignment	: 64
+ address sizes	: 48 bits physical, 48 bits virtual
+ power management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/571858415/ProcCpuinfo.txt" target="_blank" rel="noopener" >https://launchpadlibrarian.net/571858415/ProcCpuinfo.txt</a></cite>
+</div>
+
+</blockquote>
+<h2 id="gpu">GPU</h2>
+<p><strong>AMD Eng Sample: 100-000000560-40_Y</strong> の GPU部は DeviceID: 0x1681, RevID: 0xC7 。<br>
+<em>Yellow Carp/Rembrandt</em> の DeviceID には既に 2つが割り当てられており、今回の 0x1681 ともう 1つ、0x164D がある。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/07/26/yc-apu-two-did/">既に 2つの DeviceID が用意されている Yellow Carp APU ファミリー | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<blockquote>
+<pre><code> [    1.746371] [drm] initializing kernel modesetting (YELLOW_CARP 0x1002:0x1681 0x1002:0x0123 0xC7).
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/571858317/CurrentDmesg.txt" target="_blank" rel="noopener" >https://launchpadlibrarian.net/571858317/CurrentDmesg.txt</a></cite>
+</div>
+
+<pre><code> [    1.755206] amdgpu 0000:62:00.0: amdgpu: Fetched VBIOS from VFCT
+ [    1.755208] amdgpu: ATOM BIOS: 113-REMBRANDT-032
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/571858317/CurrentDmesg.txt" target="_blank" rel="noopener" >https://launchpadlibrarian.net/571858317/CurrentDmesg.txt</a></cite>
+</div>
+
+</blockquote>
+<p>GPU部の構成は、SE (ShaderEngine) 1基、SE あたりの SH (ShaderArray) 2基、SH あたりの CU 6基で、総 CU 12基が有効化されている。</p>
+<blockquote>
+<pre><code> [    3.876317] amdgpu: HMM registered 512MB device memory
+ [    3.876352] amdgpu: SRAT table not found
+ [    3.876354] amdgpu: Virtual CRAT table created for GPU
+ [    3.876394] amdgpu: Topology: Add dGPU node [0x1681:0x1002]
+ [    3.876398] kfd kfd: amdgpu: added device 1002:1681
+ [    3.876417] amdgpu 0000:62:00.0: amdgpu: SE 1, SH per SE 2, CU per SH 6, active_cu_number 12
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/571858317/CurrentDmesg.txt" target="_blank" rel="noopener" >https://launchpadlibrarian.net/571858317/CurrentDmesg.txt</a></cite>
+</div>
+
+</blockquote>
+<p><em>Yellow Carp/Rembrandt</em> の GPUキャッシュ構成もまた、以前に (2021/06) 投稿された AMD GPUドライバーへのパッチで既に明かされている。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/03/yellow_carp-apu-linux-kernel/#yc-cache">RDNA 2 APU 「Yellow Carp」 をサポートするパッチが Linux Kernel に投稿される　―― DCN3.1 / VanGogh より大きいキャッシュ | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<p><em>Yellow Carp/Rembrandt</em> は GPU部に <em>RDNA 2 アーキテクチャ</em> を採用しており、同様の APU には <em>VanGogh (Aerith) APU</em> がいる。<br>
+そして <em>Yellow Carp/Rembrandt</em> は <em>VanGogh</em> と比べて、CU数だけでなくキャッシュの規模も大きくしている。<br>
+<em>RDNA系アーキテクチャ</em> では、SH ごとに GL1キャッシュ 128KiB を持ち、ほとんどの RDNA/2 GPU では SE あたり SH 2基という構成を採っているが、<em>VanGogh</em> は SE あたり SH 1基という GL1キャッシュを減らし、小規模であることを意識した構成だった。<br>
+<em>Yellow Carp/Rembrandt</em> のキャッシュが大きいというより、<em>VanGogh</em> が特別小さかったと言った方が適切かもしれない。一応 <em>RDNA 2 APU</em> という枠内で強化された点ではある。<br>
+また、GPU全体で共有する L2キャッシュも、<em>VanGogh</em> では 2MiB だったのが <em>Yellow Carp/Rembrandt</em> では 4MiB となり、容量を増やしている。<br>
+なお現時点の <em>RDNA 2 APU</em> は共通して L3/Infinity Cache (MALL) を持たない。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">RDNA 2 APU</th>
+<th style="text-align:center">VanGogh</th>
+<th style="text-align:center">Yellow Carp<br>(Rembrandt)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">GL1 Cache</td>
+<td style="text-align:center">128KiB</td>
+<td style="text-align:center">256 KiB<br>(2x 128KiB)</td>
+</tr>
+<tr>
+<td style="text-align:left">L2 Cache</td>
+<td style="text-align:center">2MiB</td>
+<td style="text-align:center">4MiB</td>
+</tr>
+<tr>
+<td style="text-align:left">L3 Cache/MALL</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+<h2 id="memory">Memory</h2>
+<p>メモリは DDR5 64-bit、メモリサイズは約 8GB となっている。<br>
+AMD GPUドライバーは LPDDR5、DDR5 をまとめて DDR5 と認識し、また VBIOS からメモリチャネル数を読み取り、そこに 64 を掛けてメモリバス幅とする実装になっている。<br>
+少し話がずれるが、以前このことを書いた時に出した VanGogh は LPDDR5 64-bit という推測は結局間違っていた。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/03/19/coelacanth-diary-2021-03-19/">【雑記】 VanGogh APU のメモリインターフェイスは (恐らく) LPDDR5 64-bit | Coelacanth&rsquo;s Dream</a></span>
+
+それとして、メモリサイズから今回のブートログは 1x DDR5 8GB 構成のものではないかと思われる。</p>
+<blockquote>
+<pre><code> [    1.755245] [drm] Detected VRAM RAM=512M, BAR=512M
+ [    1.755246] [drm] RAM width 64bits DDR5
+ [    1.755269] [drm] amdgpu: 512M of VRAM memory ready
+ [    1.755270] [drm] amdgpu: 3072M of GTT memory ready.
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/571858317/CurrentDmesg.txt" target="_blank" rel="noopener" >https://launchpadlibrarian.net/571858317/CurrentDmesg.txt</a></cite>
+</div>
+
+<pre><code> [    0.038348] Memory: 7185464K/7640100K available (16393K kernel code, 3525K rwdata, 5504K rodata, 2904K init, 5712K bss, 454376K reserved, 0K cma-reserved)
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/571858317/CurrentDmesg.txt" target="_blank" rel="noopener" >https://launchpadlibrarian.net/571858317/CurrentDmesg.txt</a></cite>
+</div>
+
+</blockquote>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/blob/385bb92fdc5813c5f6a8168d6bba8680f2c1d0de/drivers/gpu/drm/amd/pm/inc/smu13_driver_if_yellow_carp.h#L173-L178" target="_blank" rel="noopener" >linux/smu13_driver_if_yellow_carp.h at 385bb92fdc5813c5f6a8168d6bba8680f2c1d0de · torvalds/linux</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+<div class="article-bottom-misc">
+  <div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a href="https://www.coelacanth-dream.com/about/#contact"  class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/12/14/yc-rmb-bootlog.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</div><div class="amzn">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3HV7bnk" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lain Blu-ray BOX</a>
+      <div class="amzn_link_desc">Present day, Preset time</div>
+  </div><br>
+
+  </div>
+</div>
+</article><div class="side">
+  <div class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-cat-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag :</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a>
+    <a href="https://www.coelacanth-dream.com/tags/yellow_carp/" class="menu-cat-tag-lower">Yellow Carp</a>
+</div>
+<div class="menu-cat-tag-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</div>
+<nav class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></nav>
+<div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<div class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.89.4</a>
+</div>
+
+  </div>
+</div>
+<footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<div class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.89.4</a>
+</div>
+
+</footer>
+<div class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <div class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<div class="menu-cat-tag-block">
+  <a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag :</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a>
+    <a href="https://www.coelacanth-dream.com/tags/yellow_carp/" class="menu-cat-tag-lower">Yellow Carp</a>
+</div>
+<div class="menu-cat-tag-block">
+  <a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category :</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</div>
+<div class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</div>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </div>
+</div>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt">
+      </div>
+      <div id="msg"></div>
+  </body>
+</html>
