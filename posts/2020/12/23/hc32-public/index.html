@@ -78,37 +78,27 @@
 AMD は <em>Renoir APU</em> について発表しており、それと Microsoft より、CPU部に <em>Zen 2 8-Core</em> 、GPU部に <em>RDNA 2</em> を採用した <strong>Xbox Series X SoC</strong> の詳細が発表されている。<br>
 NVIDIA からは 7nmプロセスで製造される <strong>A100 GPU</strong> のアーキテクチャと新機能について発表されている。</p>
 <h2 id="intel-xe-gpu-復習">Intel Xe GPU 復習</h2>
-<p>Intel の Xe GPU、特に <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> の知識が抜け落ちていることに気が付いたため、発表内容を整理しながら復習したい。</p>
+<p>Intel の Xe GPU、特に <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> の知識が抜け落ちていることに気が付いたため、発表内容を整理しながら復習したい。</p>
 <ul>
 <li><a href="https://www.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Intel_Xe_David_Blythe.pdf" target="_blank" rel="noopener" >HotChips2020_GPU_Intel_Xe_David_Blythe.pdf</a></li>
 </ul>
 <p><em>Xe/Gen12アーキテクチャ</em> はハイレベルで見ると、シェーダー等を処理する 3D/Compute Slice、メディアエンコード/デコードを処理する固定機能部 Media Slice、Intel GPU で言う L3キャッシュやその他 I/O がある Memory Fabric/Cache に分かれている。<br>
 3D/Compute Slice にはグラフィクス処理のための固定機能部 (Geometry, Raster, Pixel Backend/ROP) と Sub-Slice が収められている。<br>
-Sub-Slice の数は可変で、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-アーキテクチャ</em> は Sub-Slices数は最大 16基の構成となっている。Slice数は 1基。</p>
+Sub-Slice の数は可変で、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>アーキテクチャ</em> は Sub-Slices数は最大 16基の構成となっている。Slice数は 1基。</p>
 <p>Sub-Slice には、実行に直接関わる EU (Execution Unit)、スレッドディスパッチャー、各キャッシュメモリ (命令キャッシュ、L1データキャッシュ、テクスチャキャッシュ)、SLM (Shared Local Memory)、ロード/ストアユニット、テクスチャサンプラー、メディアサンプラーが収められている。<br>
 <em>Xe/Gen12アーキテクチャ</em> では、Sub-Slice あたりの EU数は 16基。<br>
-また、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
-</em> が対応する HWレイトレーシングを処理するユニットはここに配置され、Sub-Slice ごとの数となる。<br>
+また、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> が対応する HWレイトレーシングを処理するユニットはここに配置され、Sub-Slice ごとの数となる。<br>
 何故 EU 16基あたり 1 RTユニットというバランスを取ったのか、という質問に対して、発表者の David Blythe 氏は、それがスケーラビリティにおいて適切と思ったから、と回答している。また、RTユニットごとのスループットも変更可能としている。<br>
 RTユニットが BVHデータを読み込む上で、キャッシュ、ローカルメモリをどのように扱うかも重要になると思われる。<br>
 SLM は <em>Gen9アーキテクチャ</em> では GPU L3キャッシュの一部を割り当てて利用する形だったが、<em>Gen11アーキテクチャ</em> から分離され、Sub-Slice部に配置するようになった。これにより、EU から直接 SLM にアクセス可能となり、レイテンシ削減とスループット向上という効果を得ている。</p>
 <p>EU にはスレッドスケジューラー、レジスタファイル、Branch/Sendユニット、演算器とそのベクタパイプで構成される。<br>
-ベクタパイプには 倍精度演算 (FP64) や行列演算用の XMX が追加可能で、これらは <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> 、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
-</em> で実装されると見られる。</p>
+ベクタパイプには 倍精度演算 (FP64) や行列演算用の XMX が追加可能で、これらは <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> 、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> で実装されると見られる。</p>
 <p>Memory Fabric には各用途に割り当てられる L3キャッシュが配置されており、GTI (Graphics Technology Interface) を介してメモリにアクセスする。<br>
-<em>RAMBOキャッシュ</em> という <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
-</em> に実装されるキャッシュもこのレベルに配置される。<br>
-<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> はマルチ GPU構成を取り、1パッケージ内に EMIB技術を用いてタイルと呼ぶ各GPUチップを接続し、複数搭載する。タイル数は 1/2/4タイル構成の 3種類が予定されている。<br>
+<em>RAMBOキャッシュ</em> という <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> に実装されるキャッシュもこのレベルに配置される。<br>
+<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> はマルチ GPU構成を取り、1パッケージ内に EMIB技術を用いてタイルと呼ぶ各GPUチップを接続し、複数搭載する。タイル数は 1/2/4タイル構成の 3種類が予定されている。<br>
 タイルは Memory Fabric から接続される。<br>
-<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
-</em> に実装される CXL ベースの GPU間接続技術には <strong>Xe Link</strong> というそれらしい名前が付いているが、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> のタイル間接続は <strong>Tile-to-Tile</strong> とどこか素っ気ないものである。</p>
-<p><em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> は機械学習とメディア処理に最適化されたものとなり、メモリに HBM2e を採用する。メディア処理に最適化とのことから、Media Slice部を改良、あるいは同時に複数搭載すると思われる。</p>
+<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> に実装される CXL ベースの GPU間接続技術には <strong>Xe Link</strong> というそれらしい名前が付いているが、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> のタイル間接続は <strong>Tile-to-Tile</strong> とどこか素っ気ないものである。</p>
+<p><em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> は機械学習とメディア処理に最適化されたものとなり、メモリに HBM2e を採用する。メディア処理に最適化とのことから、Media Slice部を改良、あるいは同時に複数搭載すると思われる。</p>
 </section>
 
   <aside class="article-bottom-misc delay-page">

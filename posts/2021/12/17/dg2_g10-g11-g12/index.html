@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/12/17/dg2_g10-g11-g12/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>3種類存在するかも知れない Intel Alchemist/DG2 と 2種類存在する Ponte Vecchio | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="3種類存在するかも知れない Intel Alchemist/DG2 と 2種類存在する Ponte Vecchio | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="3種類存在するかも知れない Intel Alchemist/DG2 と 2種類存在する Ponte Vecchio | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/12/17/dg2_g10-g11-g12/">
+  <meta name="description" content="オープンソースで開発され、Github上 (Intel Corporation) で公開されている Intel GPU 各種ライブラリ/ドライバにて、Alchemist/DG2 (Xe-HPG) と Ponte Vecchio (Xe-HPC) への対応が進め">
+  <meta property="og:description" content="オープンソースで開発され、Github上 (Intel Corporation) で公開されている Intel GPU 各種ライブラリ/ドライバにて、Alchemist/DG2 (Xe-HPG) と Ponte Vecchio (Xe-HPC) への対応が進め">
+  <meta name="twitter:description" content="オープンソースで開発され、Github上 (Intel Corporation) で公開されている Intel GPU 各種ライブラリ/ドライバにて、Alchemist/DG2 (Xe-HPG) と Ponte Vecchio (Xe-HPC) への対応が進め">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/12/17/dg2_g10-g11-g12/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/12/17/dg2_g10-g11-g12/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="Xe-HPG, DG2, Xe-HPC, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1rem 0 0 auto}.site-title{font:2rem/1.1 monospace;text-decoration:none;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate}.site-title a{color:#b7b7ab;text-shadow:2px 2px 1.1em #dcdcd7;padding:0}.site-title a:hover{color:#cecec6;text-shadow:2px 2px 1.1em #fff}.site-title .lain-e{display:inline-block;font:700 .7em/1 monospace;padding:0 .4em .2em;margin:0 -.2em 0 -.1em;vertical-align:bottom;background-color:#1003;clip-path:circle(.5em);transform:rotateZ(-32deg)}.site-title a:hover .lain-e{background-color:#1004}a{color:#b7ffff;text-decoration:none;padding:0 .2rem;margin:0}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.67;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:clip;contain:content;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:paint}footer{visibility:hidden;grid-column:1/-1}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0;visibility:visible}.head-cat-tag-type{color:#00eaea;padding:0 .4rem}.head-cat-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(ellipse 69% 67%,#fee1 0%,#0000 97%,#000 103%)50%/contain fixed no-repeat,linear-gradient(#8001 0%,#8001 33%,#0801 33%,#0801 67%,#0081 67%,#0081 100%)50%/100% .6rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#26bfb3;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000}.slide{visibility:hidden}}.page-main{font-size:.96rem;grid-column:3/-1;overflow:clip;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:1rem}.page-main>p{margin:.5rem 0}.page-main>p:before{content:'';padding:0 .3rem}blockquote,pre{overflow-x:scroll}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:90%;height:54vh}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "3種類存在するかも知れない Intel Alchemist/DG2 と 2種類存在する Ponte Vecchio",
+  "headline" : "3種類存在するかも知れない Intel Alchemist/DG2 と 2種類存在する Ponte Vecchio",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-12-17",
+    "datePublished" : "2021-12-17",
+    "dateModufied"  : "2021-12-17",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title">
+  <a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</div>
+</header>
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><article class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-tag-lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head-cat-tag-lower">Intel</a></nav><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/dg2/" class="head-cat-tag-lower">DG2</a>/<a href="https://www.coelacanth-dream.com/tags/xe-hpc/" class="head-cat-tag-lower">Xe-HPC</a>/<a href="https://www.coelacanth-dream.com/tags/xe-hpg/" class="head-cat-tag-lower">Xe-HPG</a></nav></nav>
+
+  <h1 class="page-title"> 3種類存在するかも知れない Intel Alchemist/DG2 と 2種類存在する Ponte Vecchio</h1>
+
+
+  <section class="page-main delay-page"><aside class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></aside>
+<aside class="article-time">
+    <time datetime="2021-12-17 03:52 &#43;0900" class="time-b">Post: 2021/12/17 03:52 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/12/17 06:33 &#43;0900</div>
+  </aside><p>オープンソースで開発され、Github上 (<a href="https://github.com/orgs/intel/repositories" target="_blank" rel="noopener" >Intel Corporation</a>) で公開されている Intel GPU 各種ライブラリ/ドライバにて、<em>Alchemist/DG2 (<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>)</em> と <em>Ponte Vecchio (<span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>)</em> への対応が進められている。<br>
+その中に <em>Alchemist/DG2</em> 、<em>Ponte Vecchio</em> に複数の種類が存在することが示唆する記述が確認できた。</p>
+<ul>
+<li><a href="https://github.com/intel/intel-graphics-compiler/commit/692203101999269a6a4d56f9112c6588321157ca" target="_blank" rel="noopener" >Add Alchemist (aka ACM, DG2) &amp; PVC related methods in Platforms.hpp · intel/intel-graphics-compiler@6922031</a></li>
+<li><a href="https://github.com/intel/gmmlib/commit/2d5f77a6a3d016ebe0e24439f9789dae740cd3b2" target="_blank" rel="noopener" >Adding Support for DG2 (#74) · intel/gmmlib@2d5f77a</a></li>
+<li><a href="https://github.com/intel/gmmlib/blob/2d5f77a6a3d016ebe0e24439f9789dae740cd3b2/Source/inc/common/igfxfmid.h" target="_blank" rel="noopener" >gmmlib/igfxfmid.h at 2d5f77a6a3d016ebe0e24439f9789dae740cd3b2 · intel/gmmlib</a></li>
+</ul>
+<p>余談だが、どうやら <em>Alchemist</em> は <em>ACM</em> と略されるらしい。</p>
+<h2 id="page-index">Index</h2><ul class="page-index">
+<li><a href="#dg2">DG2-G10/G11/G12</a>
+<ul class="page-index">
+<li><a href="#dg2-did">DG2 DeviceID</a></li>
+</ul>
+</li>
+<li><a href="#xl-xt">PVC-XL/XT・<span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>-XL/XT</a></li>
+</ul>
+
+<h2 id="dg2">DG2-G10/G11/G12</h2>
+<p><em>DG2</em> は元々、Linux Kernel における Intel GFXドライバー (i915) へのパッチにて <em>DG2-G10/G11</em> という 2種類のバリアントが存在することが明らかにされていた。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/07/02/intel-xe_hp-dg2-linux-kernel-patch/#xe-hpg">Linux Kernel に Intel Xe-HP SDV, DG2 をサポートする最初のパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
+
+Intel Architecture Day 2021 で公開された <em>DG2</em> のダイCGもまた 2種類あり、規模は不明だが <em>DG2-G10/G11</em> がそれに対応するものと考えられていた。</p>
+<p>それが、最近 <a href="https://github.com/intel/intel-graphics-compiler" target="_blank" rel="noopener" >IGC (intel-graphics-compiler)</a>、<a href="https://github.com/intel/compute-runtime" target="_blank" rel="noopener" >compute-runtime</a> に取り込まれた変更から、<em>DG2-G12</em> というバリアントも存在することが示唆されている。</p>
+<blockquote>
+<pre><code>     DG1 = 0x0c0000,
+     RPL_S = 0x0c0000,
+     ADL_P = 0x0c0000,
+     ADL_S = 0x0c0000,
+     RKL = 0x0c0000,
+     TGL = 0x0c0000,
+     XEHP_SDV = 0x0c0100,
+     DG2_G10_A0 = 0x0c0200,
+     DG2_G11 = 0x0c0201,
+     DG2_G10_B0 = 0x0c0201,
+     DG2_G12 = 0x0c0202,
+     PVC_XL_A0 = 0x0c0300,
+     PVC_XL_B0 = 0x0c0301,
+     PVC_XT_A0 = 0x0c0400,
+     PVC_XT_B0 = 0x0c0401,
+     CONFIG_MAX_PLATFORM,
+ } PRODUCT_CONFIG;
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/compute-runtime/blob/0aeca8df22cdd41c6c43df21a2eda2c139a1a52f/shared/source/dll/devices/platforms.h" target="_blank" rel="noopener" >compute-runtime/platforms.h at 0aeca8df22cdd41c6c43df21a2eda2c139a1a52f · intel/compute-runtime</a></cite>
+</div>
+
+</blockquote>
+<p><code>PRODUCT_CONFIG</code> での値は Target device を示し、<code>&lt;Major&gt;.&lt;Minor&gt;.&lt;Revision&gt;</code> のフォーマットになっている。AMDGPU における GPU/Target ID も同様のフォーマットを用いている。<br>
+Intel GPU では、GPU/Media/Display IP バージョンを <code>&lt;Gen&gt;.&lt;Release&gt;</code> のフォーマットで示し、先の <code>&lt;Major&gt;</code> と <code>&lt;Gen&gt;</code> は基本同じ値、世代が入るため混同しやすいが、それぞれ意味は異なる。</p>
+<p>そして上記引用部では、<em>DG2-G10 A0</em> は <code>12.2.0</code>、<em>DG2-G10 B0/G11</em> は <code>12.2.1</code>、<em>DG2-G12</em> は <code>12.2.2</code> とされている。<br>
+Revison が異なることから、ハードウェアに存在するバグとソフトウェア側でのその回避策 (Workaround) が異なると思われるが、それ以上のことは不明。<br>
+Intel GFXドライバーにも、<em>DG2-G12</em> のサポートはまだ追加されていない。<br>
+<em>DG2</em> 全体の規模については現在、最小で EU 128基、最大で 512基であることが各種ライブラリ、ドライバーのコメント部などで語られている。<br>
+今回の変更で新たに現れた <em>DG2-G12</em> がその範囲内に存在するか、それともさらに小さい、あるいは大きなバリアントとなるか。</p>
+<h3 id="dg2-did">DG2 DeviceID</h3>
+<p>Mesa3D、IGC、gmmlib に <em>DG2</em> の DeviceID (PCI ID) が追加されているが、中でも gmmlib は <em>DG2-G10/G11</em> がそれぞれどの DeviceID が割り当てられているか、詳細を明らかにしている。</p>
+<blockquote>
+<pre><code> // Macro to identify DG2 device IDs
+ #define GFX_IS_DG2_G11_CONFIG(d) ( ( d == DEV_ID_56A5 )               ||   \
+                                  ( d == DEV_ID_56A6 )             ||   \
+                                  ( d == DEV_ID_5693 )             ||   \
+                                  ( d == DEV_ID_5694 )             ||   \
+                                  ( d == DEV_ID_56B0 )             ||   \
+                                  ( d == DEV_ID_56B1 )             ||   \
+                                  ( d == DEV_ID_4F87 )             ||   \
+                                  ( d == DEV_ID_4F88 ))
+	
+ #define GFX_IS_DG2_G10_CONFIG(d) ( ( d == DEV_ID_56A0 )                              ||   \
+                                       ( d == DEV_ID_56A1 )                              ||   \
+                                       ( d == DEV_ID_56A2 )                              ||   \
+                                       ( d == DEV_ID_5690 )                              ||   \
+                                       ( d == DEV_ID_5691 )                              ||   \
+                                       ( d == DEV_ID_5692 )                              ||   \
+                                       ( d == DEV_ID_4F80 )                              ||   \
+                                       ( d == DEV_ID_4F81 )                              ||   \
+                                       ( d == DEV_ID_4F82 )                              ||   \
+                                       ( d == DEV_ID_4F83 )                              ||   \
+                                       ( d == DEV_ID_4F84 ))
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/gmmlib/blob/2d5f77a6a3d016ebe0e24439f9789dae740cd3b2/Source/inc/common/igfxfmid.h" target="_blank" rel="noopener" >gmmlib/igfxfmid.h at 2d5f77a6a3d016ebe0e24439f9789dae740cd3b2 · intel/gmmlib</a></cite>
+</div>
+
+</blockquote>
+<p><em>DG2-G10</em> には 11個、<em>DG2-G11</em> には 8個の DeviceID が割り当てられている。<br>
+ただ IGC には gmmlib と異なり、<em>DG2</em> 全体で 33個の DeviceID、そして <em>DG2-G11</em> には上記引用部に <code>0x56C1</code> を加えた計 9個の DeviceID が割り当てられているとする。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+また一方で、Mesa3D には現在 13個の DeviceID が追加されている。おそらく IGC, gmmlib は開発用カードの DeviceId も含まれており、実際にリリースされる SKU数には Mesa3D の DeviceID数のが近いと思われる。</p>
+<blockquote>
+<pre><code> +
+ +CHIPSET(0x5690, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x5691, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x5692, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x5693, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x5694, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x5695, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x56a0, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x56a1, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x56a2, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x56a5, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x56a6, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x56b0, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+ +CHIPSET(0x56b1, dg2, &quot;DG2&quot;, &quot;Intel(R) Graphics&quot;)
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/12706" target="_blank" rel="noopener" >[Draft] intel: Add dg2 pci ids (!12706) · Merge requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<h2 id="xl-xt">PVC-XL/XT・<span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>-XL/XT</h2>
+<p><em>Alchemist/DG2</em> だけでなく <em>Ponte Vechhio (<span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>)</em> にも <strong>XL/XT</strong> バリアントが存在する。<br>
+このことは少し前に IGC へ取り込まれた変更から確認されていたが、上 <em>DG2</em> の部で引用した <code>PRODUCT_CONFIG</code> から、異なる Target device ID が割り当てられていることが新たに分かった。<br>
+<em>PVC_XL</em> は <code>12.3.x</code>、<em>PVC_XT</em> は <code>12.4.x</code> が割り当てられている。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/10/29/xe-hpc-onednn/#xl-xt">Xe-HPC のサポートが intel-graphics-compiler、oneDNN に追加される | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<p><strong>XL/XT</strong> の違いとしては機能的な面が挙げられる。<br>
+コード中のコメントによれば、<em>PVC XL A0</em> では倍精度演算や LSC (Load Store Cache) の一部機能に対応しておらず、<em>PVC XT B0</em> からの対応としている。<br>
+LSC は <em>Alchemist/DG2</em> にも実装されており、従来のデータポートから大幅に設計が見直されている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<blockquote>
+<pre><code> bool hasHalfSIMDLSC() const
+ {
+     return (m_platformInfo.eProductFamily == IGFX_DG2 &amp;&amp; SI_WA_FROM(m_platformInfo.usRevId, ACM_G10_GT_REV_ID_B0)) ||
+         GFX_IS_DG2_G11_CONFIG(m_platformInfo.usDeviceID) ||
+         // false for PVC XL A0 RevID==0x0, true from PVC XT A0 RevID==0x3==REVISION_B
+         (m_platformInfo.eProductFamily == IGFX_PVC &amp;&amp; m_platformInfo.usRevId &gt;= REVISION_B);
+ }
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/70fe72803348a2e44bcdbb31c6f50c9f448ede0a/IGC/Compiler/CISACodeGen/Platform.hpp#L625-L631" target="_blank" rel="noopener" >intel-graphics-compiler/Platform.hpp at 70fe72803348a2e44bcdbb31c6f50c9f448ede0a · intel/intel-graphics-compiler</a></cite>
+</div>
+
+<pre><code>  bool hasPartialInt64Support() const
+ {
+     // false for PVC XL A0 RevID==0x0, true from PVC XT A0 RevID==0x3==REVISION_B
+     return (m_platformInfo.eProductFamily == IGFX_PVC &amp;&amp; m_platformInfo.usRevId &gt;= REVISION_B) ||
+         IGC_IS_FLAG_ENABLED(ForcePartialInt64);
+ }
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/70fe72803348a2e44bcdbb31c6f50c9f448ede0a/IGC/Compiler/CISACodeGen/Platform.hpp#L639-L644" target="_blank" rel="noopener" >intel-graphics-compiler/Platform.hpp at 70fe72803348a2e44bcdbb31c6f50c9f448ede0a · intel/intel-graphics-compiler</a></cite>
+</div>
+
+</blockquote>
+<p><em>PVC/<span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> の倍精度演算対応については、oneAPI の深層学習ライブラリ <a href="https://github.com/oneapi-src/oneDNN" target="_blank" rel="noopener" >oneDNN</a> でも触れられている。<br>
+<em>PVC XT B0</em> 以前のステッピングでは倍精度演算にネイティブで対応しておらず、エミュレートでの対応となる。<br>
+だが以下の記述からは <em>PVC XT B0</em> でもまだ完全には対応していないように受け取れる。</p>
+<blockquote>
+<pre><code>     EmulationStrategy(ngen::HW hw_, int stepping = 0) {
+         using namespace ngen;
+         if (hw_ == HW::Gen11) emulate64 = true;
+         if (hw_ &gt;= HW::Gen11) emulateDWxDW = true;
+         if (hw_ == HW::Gen12LP) emulate64 = true;
+         if (hw_ == HW::XeHPG) emulate64 = true;
+         if (hw_ == HW::XeHPC) {
+             if (stepping &gt;= SteppingPVCXTB0)
+                 emulate64_mul = emulate64_logic = true;
+             else
+                 emulate64 = noemulate64_shift = true;
+         }
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/oneapi-src/oneDNN/blob/94d1786f3e6ab756959c18d852649edaec9a7bce/src/gpu/jit/gemm/emulation.hpp#L41-L53" target="_blank" rel="noopener" >oneDNN/emulation.hpp at 94d1786f3e6ab756959c18d852649edaec9a7bce · oneapi-src/oneDNN</a></cite>
+</div>
+
+</blockquote>
+<p>Intel Architecture Day 2021、HotChips33 で <em>Ponte Vecchio A0</em> の現在ステータスが示された際、倍精度ではない単精度でのスループットが出されていたが、早期リビジョンでは倍精度に対応していなかったことが関係していたのだろう。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>また、倍精度 (FP64/Int64) への対応は別の部分でも管理されているが、そこに <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> の記述が無いことから、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> では既に対応が行われていると考えられる。<br>
+上記 oneDNN からの引用部分にも <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> の記述はない。</p>
+<p>以前は BaseTile 1基構成が <strong>XL</strong>、これまでに何度も公開されている BaseTile 2基構成が <strong>XT</strong> となるのではないかと書いたが、ステッピングと対応機能から、<strong>XL</strong> は開発途中のシリコンに当てられたバリアントなのかもしれない。</p>
+<p><em>PVC XL/XT</em> の DeviceID 情報も追加されており、<em>PVC XL</em> には <code>0x0BD0</code> のみが、<em>PVC XT</em> には <code>0x0BD5..0x0BD8, 0x0BE1</code>、そして <em>PVC XT</em> の一時的な DeviceID に <code>0x0BE5</code> が割り当てられている。</p>
+<blockquote>
+<pre><code>     static constexpr uint32_t pvcXlDeviceId = 0x0BD0;
+     static constexpr uint32_t pvcXtDeviceIds[5] = {0x0BD5, 0x0BD6, 0x0BD7, 0x0BD8, 0x0BE1};
+     static constexpr uint32_t pvcXtTemporaryDeviceId = 0x0BE5;
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/compute-runtime/blob/f20236c7f2ded888bd7fa52db72e115a273c8937/shared/source/xe_hpc_core/hw_cmds_base.h#L32-L34" target="_blank" rel="noopener" >compute-runtime/hw_cmds_base.h at f20236c7f2ded888bd7fa52db72e115a273c8937 · intel/compute-runtime</a></cite>
+</div>
+
+</blockquote>
+<nav class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://github.com/intel/intel-graphics-compiler/blob/6ca724757953d27bb601b4c66c17f372d4f5c333/inc/common/platforms.h" target="_blank" rel="noopener" >intel-graphics-compiler/platforms.h at 6ca724757953d27bb601b4c66c17f372d4f5c333 · intel/intel-graphics-compiler</a></li>
+<li><a href="https://github.com/intel/compute-runtime/blob/0aeca8df22cdd41c6c43df21a2eda2c139a1a52f/shared/source/dll/devices/platforms.h" target="_blank" rel="noopener" >compute-runtime/platforms.h at 0aeca8df22cdd41c6c43df21a2eda2c139a1a52f · intel/compute-runtime</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/12706" target="_blank" rel="noopener" >[Draft] intel: Add dg2 pci ids (!12706) · Merge requests · Mesa / mesa · GitLab</a></li>
+</ul>
+
+</nav>
+
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/intel/intel-graphics-compiler/blob/70fe72803348a2e44bcdbb31c6f50c9f448ede0a/inc/common/igfxfmid.h#L644-L687" target="_blank" rel="noopener" >intel-graphics-compiler/igfxfmid.h at 70fe72803348a2e44bcdbb31c6f50c9f448ede0a · intel/intel-graphics-compiler</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/11600" target="_blank" rel="noopener" >intel/compiler: Add support for the LSC (!11600) · Merge requests · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://hc33.hotchips.org/" target="_blank" rel="noopener" >https://hc33.hotchips.org/</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</section>
+
+  <aside class="article-bottom-misc delay-page">
+  <nav class="rss-block" role="feed">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</nav>
+<a href="https://www.coelacanth-dream.com/about/#contact"  class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/12/17/dg2_g10-g11-g12.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3HV7bnk" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lain Blu-ray BOX</a>
+      <div class="amzn_link_desc">Present day, Preset time</div>
+  </div></div>
+</aside>
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<div class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.89.4</a>
+</div>
+
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/dg2/" class="menu-cat-tag-lower">DG2</a>
+    <a href="https://www.coelacanth-dream.com/tags/xe-hpc/" class="menu-cat-tag-lower">Xe-HPC</a>
+    <a href="https://www.coelacanth-dream.com/tags/xe-hpg/" class="menu-cat-tag-lower">Xe-HPG</a>
+</nav></nav><aside class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></aside>
+<nav class="rss-block" role="feed">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</nav>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<div class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.89.4</a>
+</div>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <aside class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/dg2/" class="menu-cat-tag-lower">DG2</a>
+    <a href="https://www.coelacanth-dream.com/tags/xe-hpc/" class="menu-cat-tag-lower">Xe-HPC</a>
+    <a href="https://www.coelacanth-dream.com/tags/xe-hpg/" class="menu-cat-tag-lower">Xe-HPG</a>
+</nav></nav><nav class="rss-block" role="feed">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</nav>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </aside>
+</aside>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>

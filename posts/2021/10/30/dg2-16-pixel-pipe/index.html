@@ -68,25 +68,18 @@
 <aside class="article-time">
     <time datetime="2021-10-30 08:55 &#43;0900" class="time-b">Post: 2021/10/30 08:55 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/10/30 14:23 &#43;0900</div>
-  </aside><p>まだドラフトで、マージリクエストの段階ではあるが、Intel <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span>
-</em> の Pixel pipe を最適化するパッチがオープンソースドライバー Mesa3D に投稿されている。<br>
-GFXバージョン (<code>GFX_VER</code>) では Gfx12.5、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> も対象に入っているが、パッチのコメントでは主に <em>DG2/<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
-</em> を想定している。</p>
+  </aside><p>まだドラフトで、マージリクエストの段階ではあるが、Intel <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span></em> の Pixel pipe を最適化するパッチがオープンソースドライバー Mesa3D に投稿されている。<br>
+GFXバージョン (<code>GFX_VER</code>) では Gfx12.5、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> も対象に入っているが、パッチのコメントでは主に <em>DG2/<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> を想定している。</p>
 <ul>
 <li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569" target="_blank" rel="noopener" >Draft: intel: Pixel pipeline optimizations for XeHP hardware. (!13569) · Merge requests · Mesa / mesa · GitLab</a></li>
 </ul>
-<p>以前にも <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-</em> 向けに Pixel pipe を最適化するパッチが投稿されていた。<br>
-Intel Gen12/<span class="xe-gpu-arch">X<sup>e</sup></span>
-プラットフォームでは事前に設定された Pixel pipe のハッシュテーブルを用いるが、それはすべての Pixel pipe に等しく EU あるいは Sub-Slice が割り当てられていることを前提としていた。それにより <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-</em> の最大構成 6 Sub-Slice (96 EU) より小さい規模の構成を採る SKU では、アンバランスな割り当てがボトルネックとなり性能が低下することとなっていた。<br>
+<p>以前にも <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> 向けに Pixel pipe を最適化するパッチが投稿されていた。<br>
+Intel Gen12/<span class="xe-gpu-arch">X<sup>e</sup></span>プラットフォームでは事前に設定された Pixel pipe のハッシュテーブルを用いるが、それはすべての Pixel pipe に等しく EU あるいは Sub-Slice が割り当てられていることを前提としていた。それにより <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> の最大構成 6 Sub-Slice (96 EU) より小さい規模の構成を採る SKU では、アンバランスな割り当てがボトルネックとなり性能が低下することとなっていた。<br>
 パッチではそれを修正し、適切に EU を Pixel pipe に割り当てることを目的としたもので、80 EU (5 Sub-Slice ?) 構成の <em>Tiger Lake</em> において 10%~63% の性能改善を果たしている。</p>
 <ul>
 <li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8749" target="_blank" rel="noopener" >intel: Fix pixel-pipe performance bottlenecks on fused Gen12 parts. (!8749) · Merge requests · Mesa / mesa · GitLab</a></li>
 </ul>
-<p><em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-</em> は最大で 3本の Pixel pipe、それぞれ ROP 8基相当の Pixel Backend を 3基持っている。</p>
+<p><em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> は最大で 3本の Pixel pipe、それぞれ ROP 8基相当の Pixel Backend を 3基持っている。</p>
 <blockquote>
 <pre><code> +#define GEN_DEVICE_MAX_PIXEL_PIPES      (3)  /* Maximum on gen12 */
 </code></pre>
@@ -95,14 +88,10 @@ Intel Gen12/<span class="xe-gpu-arch">X<sup>e</sup></span>
 </div>
 
 </blockquote>
-<p>今回の <em>DG2/<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
-</em> に向けたパッチも同様のものと思われ、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-</em> から大幅に増えた Pixel pipe、EU、Sub-Slice に対応している。</p>
+<p>今回の <em>DG2/<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> に向けたパッチも同様のものと思われ、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> から大幅に増えた Pixel pipe、EU、Sub-Slice に対応している。</p>
 <h2 id="16-pipes">最大で 16本の Pixel pipe</h2>
-<p><em>DG2/<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
-</em> においても、最大構成から一部 EU、Sub-Slice を無効化した構成を予定しているらしく、マージリクエストのコメントでは今回のパッチで <strong>DG2-448</strong> の場合、20%-40% の性能改善を確認できたとしている。<br>
-デモシーンやベンチマーク以外にゲームでも確かな性能向上を果たしており、規模が大きくなった分 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-</em> よりも影響と恩恵が大きいのかもしれない。</p>
+<p><em>DG2/<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> においても、最大構成から一部 EU、Sub-Slice を無効化した構成を予定しているらしく、マージリクエストのコメントでは今回のパッチで <strong>DG2-448</strong> の場合、20%-40% の性能改善を確認できたとしている。<br>
+デモシーンやベンチマーク以外にゲームでも確かな性能向上を果たしており、規模が大きくなった分 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> よりも影響と恩恵が大きいのかもしれない。</p>
 <blockquote>
 <p>This series is part of the XeHP enabling effort.  It&rsquo;s not strictly required for functional correctness, but it improves performance significantly for most non-trivial workloads on all DG2 platforms it&rsquo;s been tested on so far, particularly on fused configurations &ndash; E.g. on DG2-448 it gives us a 20%-40% performance improvement on most interesting workloads:</p>
 
@@ -110,14 +99,11 @@ Intel Gen12/<span class="xe-gpu-arch">X<sup>e</sup></span>
 </div>
 
 </blockquote>
-<p><em>DG2/<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
-</em> については、各 Sub-Slice (<span class="xe-gpu-arch">X<sup>e</sup></span>
--Core) が EU 16基 (Vector Engine + Matrix Engine) とレイトレーシングユニット、テクスチャサンプラーを持ち、その Sub-Slice 4基と固定機能ユニット、Pixel Backend 2基で <em>Render Slice</em> を構成する図が Intel Architecture Day 2021 で示されていた。<br>
+<p><em>DG2/<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> については、各 Sub-Slice (<span class="xe-gpu-arch">X<sup>e</sup></span>-Core) が EU 16基 (Vector Engine + Matrix Engine) とレイトレーシングユニット、テクスチャサンプラーを持ち、その Sub-Slice 4基と固定機能ユニット、Pixel Backend 2基で <em>Render Slice</em> を構成する図が Intel Architecture Day 2021 で示されていた。<br>
 <em>Render Slice</em> あたり Sub-Slice 4基、EU 64基、Pixel Backend 2基 (ROP 16基相当?) となる。<br>
 巨大な L2キャッシュとそこに <em>Render Slice</em> 8基 (Sub-Slice 32基、EU 512基、Pixel Backend 16基) を搭載した構成も示されており、低消費電力ソリューションからエンスージアストクラスのゲーミングソリューションまでスケールアップ可能としている。</p>
 <p>パッチでは <em>DG2</em> は最大 16本の Pixel pipe を持つとしており、これは Intel が示した図の Pixel Backend 数とも一致する。<br>
-また、Sub-Slice 2基 (EU 32基) に対して Pixel Backend 1基というバランスは <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-</em> と同じ。</p>
+また、Sub-Slice 2基 (EU 32基) に対して Pixel Backend 1基というバランスは <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> と同じ。</p>
 <blockquote>
 <pre><code> +#define INTEL_DEVICE_MAX_PIXEL_PIPES      (16) /* Maximum on DG2 */
 </code></pre>

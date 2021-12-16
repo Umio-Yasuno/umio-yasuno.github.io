@@ -68,29 +68,21 @@
 <aside class="article-time">
     <time datetime="2020-12-21 04:09 &#43;0900" class="time-b">Post: 2020/12/21 04:09 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/01/08 21:03 &#43;0900</div>
-  </aside><h2 id="hahahugoshortcode-s0-hbhb-のメモリリージョン"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
- のメモリリージョン</h2>
+  </aside><h2 id="hahahugoshortcode-s0-hbhb-のメモリリージョン"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span> のメモリリージョン</h2>
 <p>2020/11/27、Linux Kernel (intel-gfx) に <em>DG1</em> の持つ VRAM、LMEM (Local Memory) を有効にするパッチが投稿された。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
-パッチには <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> に向けた準備も含まれており、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> のメモリリージョンについて言及された部分があった。</p>
+パッチには <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> に向けた準備も含まれており、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> のメモリリージョンについて言及された部分があった。</p>
 <p><em>DG1</em> は 1つの GPUチップに LPDDR4x 128-bit という、GPU としては一般的な構成を取る。<br>
 データセンター向け PCIeカード <em>H3C XG310 GPU</em> は、サーバー向け dGPU <strong>SG1</strong> を 4チップ搭載するが、GPU間は PLXチップで接続されていると思われ、GPU はそれぞれ別のデバイスとして認識され、メモリ空間も別々となる。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
-そして、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> はチップをタイルとして 1つのパッケージに複数搭載され、タイル間は EMIB技術を用いて接続される。<br>
-<strong>H3C XG310 GPU</strong> と異なるのは、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> はマルチコアGPUであるように動作し、単一のメモリ空間となる (だろう) 点。<br>
+そして、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> はチップをタイルとして 1つのパッケージに複数搭載され、タイル間は EMIB技術を用いて接続される。<br>
+<strong>H3C XG310 GPU</strong> と異なるのは、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> はマルチコアGPUであるように動作し、単一のメモリ空間となる (だろう) 点。<br>
 メモリ空間を共有し、EMIB技術によって GPU間が広帯域で接続されても、やはりメモリアクセスに掛かる時間としてはその GPU に直接接続されているメモリが速い。<br>
 そのため、マルチコアGPUとしてもメモリに異なる層、リージョンが存在する。<br>
 パッチではそれを区別するため、LMEM とは別に SHMEM のバッファーオブジェクト (BO, GPU メモリ管理の単位) のサポート準備が含まれている。</p>
-<p>他社の GPU間接続には、NVIDIA は NVLink、AMD は Infinity Fabric (xGMI) といった名前があり、そして Intel には <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>
-</em> に採用される、CXL をベースとした Xe Link がある。その Xe Link が <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> に置いても使われるかは不明。</p>
+<p>他社の GPU間接続には、NVIDIA は NVLink、AMD は Infinity Fabric (xGMI) といった名前があり、そして Intel には <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> に採用される、CXL をベースとした Xe Link がある。その Xe Link が <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> に置いても使われるかは不明。</p>
 <p>メモリ帯域と GPU間接続の関係について <strong>AMD Instinct MI100</strong> を例に挙げると、<br>
 <strong>MI100</strong> はメモリに HBM2 32GB を採用しており、メモリバス幅は 4096-bit、ピークメモリ帯域は 1228.8 GB/s にもなる。<br>
 対し Infinity Fabric はリンクあたり 92 GB/s、<strong>MI100</strong> は 3リンク持っているため、それらを合わせても 276 GB/s と、メモリ帯域の 2割程しかない。<br>
-<strong>MI100</strong> は実際には GPUカード間の接続となるが、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> はパッケージ内での接続となるため、もっと高速に接続できると思われる。<br>
+<strong>MI100</strong> は実際には GPUカード間の接続となるが、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> はパッケージ内での接続となるため、もっと高速に接続できると思われる。<br>
 Intel Architecture Day 2020 での発表においても、スケーリング性能に自信がある様子だった。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 それでも、消費電力や発熱等の制約や、異なる GPU に接続されたメモリへのアクセスに発生するレイテンシにより、結局はローカルな HBMメモリを活用することが重要となる。</p>
 <h2 id="gen12-gpu-は-pxp-をサポート">Gen12 GPU は PXP をサポート</h2>
@@ -103,18 +95,15 @@ PXP はユーザースペースで実行可能な ring3 レベルに、ハード
 <p>PXP も TMZ 同様に DRM への活用を想定した機能ではないかと思われる。</p>
 <h2 id="linux環境における-iris-xe-max-のサポート状況">Linux環境における Iris Xe MAX のサポート状況</h2>
 <p>ディスクリートGPUと言うと、マザーボードの PCIeスロット差し、ケーブルでモニタと繋げば映像が出力され、適切なドライバーをインストールすればそのグラフィクス処理を発揮できる、とシンプルに思っているが、<strong>DG1 / Iris Xe MAX</strong> はまだそういった段階にはないらしい。</p>
-<p>Intel が公開しているドキュメントによると、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>
-/Gen12アーキテクチャ</em> のサポートは既に Linux に為されているが、それは <em>Tiger Lake</em> 等に統合されている GPU までで、dGPU である <strong>Iris Xe MAX</strong> のサポート作業はまだ進行中だとされている。</p>
+<p>Intel が公開しているドキュメントによると、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>/Gen12アーキテクチャ</em> のサポートは既に Linux に為されているが、それは <em>Tiger Lake</em> 等に統合されている GPU までで、dGPU である <strong>Iris Xe MAX</strong> のサポート作業はまだ進行中だとされている。</p>
 <ul>
 <li><a href="https://dgpu-docs.intel.com/devices/iris-xe-max-graphics/index.html" target="_blank" rel="noopener" >GPGPU: Intel Iris Xe MAX graphics</a></li>
 </ul>
 <p>現在では早期アクセスとして、仮想環境を構築、異なる Linux Kernel を 2つインストールし、<strong>Iris Xe MAX</strong> はゲストVM で動作させる手段を提供している。<br>
 ディスプレイ出力は <em>Tiger Lake</em> の iGPU側から行ない、<strong>Iris Xe MAX</strong> でグラフィクス処理、GPGPU、メディアエンコードを実行できるが、やはりユーザーが一般的に見て、求めるシステムとは離れている気がする。</p>
 <p><strong>Iris Xe MAX</strong> はゲストVMに PCIパススルーを用いてアクセスする。<br>
-データセンター向け製品である <strong>H3C XG310 GPU</strong> がリリースされ、2021年には <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> GPU が登場するため、PCIパススルー機能が既に Intel dGPU でサポートされているのは歓迎されることではある。また、近頃 Intel にとってサーバー市場はますます重要なものとなっており、そのために仮想化機能のサポートに力を入れている可能性もある。</p>
-<p>ただ 2021年前半には OEM向けにデスクトップ向け <em>DG1</em> がリリースされ、同年中にはHWレイトレーシングもサポートしたゲーミング向け dGPU <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>
-</em> がリリース予定にある中で、<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
+データセンター向け製品である <strong>H3C XG310 GPU</strong> がリリースされ、2021年には <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> GPU が登場するため、PCIパススルー機能が既に Intel dGPU でサポートされているのは歓迎されることではある。また、近頃 Intel にとってサーバー市場はますます重要なものとなっており、そのために仮想化機能のサポートに力を入れている可能性もある。</p>
+<p>ただ 2021年前半には OEM向けにデスクトップ向け <em>DG1</em> がリリースされ、同年中にはHWレイトレーシングもサポートしたゲーミング向け dGPU <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> がリリース予定にある中で、<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
 それらの先立ちである <strong>Iris Xe MAX</strong> の、Linux環境におけるサポートがまだ十分な状態にないことに不安を覚えるのは確かだ。</p>
 <nav class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>

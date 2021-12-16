@@ -68,21 +68,18 @@
 <aside class="article-time">
     <time datetime="2021-10-10 23:10 &#43;0900" class="time-b">Post: 2021/10/10 23:10 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2021/10/16 13:03 &#43;0900</div>
-  </aside><p>intel-gfxメーリングリストに、Linux Kernel に <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> のようなマルチタイル構成を採る GPU の初期的なサポートを追加するパッチが投稿された。</p>
+  </aside><p>intel-gfxメーリングリストに、Linux Kernel に <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> のようなマルチタイル構成を採る GPU の初期的なサポートを追加するパッチが投稿された。</p>
 <ul>
 <li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-October/280126.html" target="_blank" rel="noopener" >[Intel-gfx] [PATCH 00/11] i915: Initial multi-tile support</a></li>
 </ul>
-<p><em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> 含め、今後の Intel GPU プラットフォームではマルチタイル構成が採られ、そこでは複数の GPUタイル (ダイ) とそれぞれに接続されたローカルなメモリが存在する。<br>
+<p><em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> 含め、今後の Intel GPU プラットフォームではマルチタイル構成が採られ、そこでは複数の GPUタイル (ダイ) とそれぞれに接続されたローカルなメモリが存在する。<br>
 今回のパッチは初期的なサポートを追加するもので、複数のタイルで構成されながら単一の GPUデバイスとして認識される完全なマルチタイルプラットフォームのサポートにはさらなる作業、特にローカルメモリに関する作業が必要だと語られている。<br>
 なお、パッチ中では <strong>GT</strong> という単語が使われているが、<em>Graphics Technology</em> の略であり、Intel GPU ドライバーでは単に GPU を指す際に用いられる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <p><em>AMD CDNA 2 アーキテクチャ</em> を採用すると目される <a href="https://www.coelacanth-dream.com/tags/aldebaran">AMD Aldebran/MI200 GPU</a> もまた 2基の GPUダイで構成される。<br>
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/09/aldebaran-primary-secondary/">プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth&rsquo;s Dream</a></span>
 
 ダイ・チップレット・タイルと用語がバラバラに使われているが、Raja Koduri 氏は以前 Intel 社内ではバンプピッチ 55um以下の高密度実装を必要とするシリコンを「タイル」、標準的なパッケージに実装されるシリコンを「チップレット」と、区別していると語っていた。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
-バンプピッチ 55um以下の高密度実装には EMIB、Foreros が該当し、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> では各 GPUダイが EMIB で接続されるため「タイル」と呼ぶのが適当となる。<br>
+バンプピッチ 55um以下の高密度実装には EMIB、Foreros が該当し、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> では各 GPUダイが EMIB で接続されるため「タイル」と呼ぶのが適当となる。<br>
 AMD はまだそうした使い分けに関しては触れていない (と記憶している) が、パッチやオープンソースドライバー中では主に「ダイ」が使われている。</p>
 <h2 id="multi-die-tile-support">マルチダイ/タイル GPU のソフトウェアサポート</h2>
 <p>マルチダイ/タイル構成を GPU に導入する上で、ソフトウェア、ドライバーにおけるサポートは Intel, AMD で共通する部分がある。<br>
@@ -102,8 +99,7 @@ KMD (Kernel Mode Driver) が複数のダイ/タイルを意識し、ユーザー
 <p>こうした点は <em>AMD Aldebaran/MI200</em> においても同じであり、<em>Aldebaran/MI200</em> はプライマリダイとセカンダリダイで構成される。そして、AMD のマルチダイ構成における関連特許から、単一の GPU として認識されると考えられる。<br>
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/06/09/aldebaran-primary-secondary/">プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth&rsquo;s Dream</a></span>
 
-<em>Aldebaran/MI200</em> は CPU とも <em>XGMI/Infinity Fabric</em> で接続し、CPU と GPU のメモリ空間を統合する <em>3rd Gen Infinity Architecture</em> を想定している関係で、サポートにおいてドライバー部に必要な変更は <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span>
-</em> よりも広い。</p>
+<em>Aldebaran/MI200</em> は CPU とも <em>XGMI/Infinity Fabric</em> で接続し、CPU と GPU のメモリ空間を統合する <em>3rd Gen Infinity Architecture</em> を想定している関係で、サポートにおいてドライバー部に必要な変更は <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> よりも広い。</p>
 <p>マルチダイ/タイル構成では、単一の GPU に見せつつ、処理をいかに各ダイ/タイルに分散し、メモリアクセスを最適化するかが重要になると考えられる。<br>
 ただ、Intel, AMD 共にまだ分散処理の全容は明かしていない。<br>
 <em>Aldebaran/MI200</em> ではプライマリダイが、セカンダリダイと合わせたソケットレベルの電力情報を返すことから、分散処理以外に GPUダイ間のみでそれぞれの温度や電力情報をやり取りしていると推測される。<br>
