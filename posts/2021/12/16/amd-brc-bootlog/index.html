@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/12/16/amd-brc-bootlog/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMD Barcelo APU ブートログ | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMD Barcelo APU ブートログ | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMD Barcelo APU ブートログ | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/12/16/amd-brc-bootlog/">
+  <meta name="description" content="先日取り上げた Yellow Carp/Rembrandt のブートログ同様、Ubuntu in Launchpad における You-Sheng Yang 氏によるバグ報告の中で Barcelo APU の Linux Kernel ブートログが投稿されている。 AMD Yellow Carp/Rembrandt APU ブートログ |">
+  <meta property="og:description" content="先日取り上げた Yellow Carp/Rembrandt のブートログ同様、Ubuntu in Launchpad における You-Sheng Yang 氏によるバグ報告の中で Barcelo APU の Linux Kernel ブートログが投稿されている。 AMD Yellow Carp/Rembrandt APU ブートログ |">
+  <meta name="twitter:description" content="先日取り上げた Yellow Carp/Rembrandt のブートログ同様、Ubuntu in Launchpad における You-Sheng Yang 氏によるバグ報告の中で Barcelo APU の Linux Kernel ブートログが投稿されている。 AMD Yellow Carp/Rembrandt APU ブートログ |">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/12/16/amd-brc-bootlog/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/12/16/amd-brc-bootlog/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="Barcelo, Cezanne, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}main{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1rem 0 0 auto}.site-title{font:2rem/1.1 monospace;text-decoration:none;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate}.site-title a{color:#a7b8b4;text-shadow:2px 2px 1.1em #d4dcda;padding:0}.site-title a:hover{color:#c3cfcc;text-shadow:2px 2px 1.1em #fff}.site-title .lain-e{display:inline-block;font:700 .7em/1 monospace;padding:0 .4em .2em;margin:0 -.2em 0 -.1em;vertical-align:bottom;background-color:#1003;clip-path:circle(.5em);transform:rotateZ(-32deg)}.site-title a:hover .lain-e{background-color:#1004}a{color:#b7ffff;text-decoration:none;padding:0 .2rem;margin:0}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.67;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:clip;contain:content;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:paint}footer{visibility:hidden;grid-column:1/-1}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0;visibility:visible}.head-cat-tag-type{color:#00eaea;padding:0 .4rem}.head-cat-tag-block{max-width:max-content;display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(ellipse 69% 67%,#fee1 0%,#0000 97%,#000 103%)50%/contain fixed no-repeat,linear-gradient(#8001 0%,#8001 33%,#0801 33%,#0801 67%,#0081 67%,#0081 100%)50%/100% .6rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate}@media(min-width:840px){main{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#26bfb3;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000}.slide{visibility:hidden}}.page-main{font-size:.96rem;grid-column:3/-1;overflow:clip;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:1rem}.page-main>p{margin:.5rem 0}.page-main>p:before{content:'';padding:0 .3rem}blockquote,pre{overflow-x:scroll}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-1;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:90%;height:54vh}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMD Barcelo APU ブートログ",
+  "headline" : "AMD Barcelo APU ブートログ",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-12-16",
+    "datePublished" : "2021-12-16",
+    "dateModufied"  : "2021-12-16",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body>
+    <main>
+      <header><div class="site-title">
+  <a href="https://www.coelacanth-dream.com/">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</div>
+</header>
+        <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><article class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/apu/" class="head-cat-tag-lower">APU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-tag-lower">Hardware</a></nav><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/barcelo/" class="head-cat-tag-lower">Barcelo</a>/<a href="https://www.coelacanth-dream.com/tags/cezanne/" class="head-cat-tag-lower">Cezanne</a></nav></nav>
+
+  <h1 class="page-title">AMD Barcelo APU ブートログ</h1>
+
+
+  <section class="page-main delay-page"><aside class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></aside>
+<aside class="article-time">
+    <time datetime="2021-12-16 21:16 &#43;0900" class="time-b">Post: 2021/12/16 21:16 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/12/16 22:04 &#43;0900</div>
+  </aside><p>先日取り上げた <a href="https://www.coelacanth-dream.com/tags/yellow_carp/">Yellow Carp/Rembrandt</a> のブートログ同様、<a href="https://launchpad.net/ubuntu" target="_blank" rel="noopener" >Ubuntu in Launchpad</a> における You-Sheng Yang 氏によるバグ報告の中で <em>Barcelo APU</em> の Linux Kernel ブートログが投稿されている。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/12/14/yc-rmb-bootlog/">AMD Yellow Carp/Rembrandt APU ブートログ | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<ul>
+<li><a href="https://bugs.launchpad.net/ubuntu/&#43;source/linux/&#43;bug/1954633" target="_blank" rel="noopener" >Bug #1954633 “s2idle suspend failure: amd_pmc AMDI0005:00: SMU r&hellip;” : Bugs : linux package : Ubuntu</a></li>
+<li><a href="https://bugs.launchpad.net/ubuntu/&#43;source/linux/&#43;bug/1954930" target="_blank" rel="noopener" >Bug #1954930 “AMD: Suspend not working when some cores are disab&hellip;” : Bugs : linux package : Ubuntu</a></li>
+</ul>
+<p><strong>AMD Ryzen 7 5825U with Radeon Graphics</strong> 16-Thread、<strong>AMD Eng Sample: 100-000000586-40_Y</strong> 8-Thread の 2種類が確認できる。<br>
+<strong>Ryzen 7 5825U</strong> は、ボードに <em>Dell Inc. Vostro 3525</em>、ベースクロックは 2.0 GHz (1999.583 MHz) で動作している。<br>
+<strong>AMD Eng Sample: 100-000000586-40_Y</strong> は、<em>AMD Celadon-CZN/Celadon-CZN</em>、ベースクロック 2.6 GHz (2595.124 MHz)。</p>
+<p>どちらも GPU部の DeviceID が <code>0x15E7</code> であり、これは <em>Barcelo</em> に割り当てられた DeviceID。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/07/17/amd-barcelo-vega-apu/">新たな Zen 3 + Vega APU 「Barcelo」 | Coelacanth&rsquo;s Dream</a></span>
+
+そのため、確かに <em>Barcelo APU</em> だと言えるのだが、CPU の <code>Family, Model, Stepping</code> は <em>Green Sardine/Cezanne APU</em> と同一となっている。<br>
+また、当てられているマイクロコードのバージョン (<code>0xa50000c</code>) も同一のものだった。</p>
+<blockquote>
+<pre><code> åäºŒ 14 21:00:15 WMVB5-DVT2-A2 kernel: smpboot: CPU0: AMD Ryzen 7 5825U with Radeon Graphics (family: 0x19, model: 0x50, stepping: 0x0)
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/574000802/suspend-success.log" target="_blank" rel="noopener" >https://launchpadlibrarian.net/574000802/suspend-success.log</a></cite>
+</div>
+
+<pre><code> [    0.209819] smpboot: CPU0: AMD Eng Sample: 100-000000586-40_Y (family: 0x19, model: 0x50, stepping: 0x0)
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://launchpadlibrarian.net/574190473/CurrentDmesg.txt" target="_blank" rel="noopener" >https://launchpadlibrarian.net/574190473/CurrentDmesg.txt</a></cite>
+</div>
+
+</blockquote>
+<p>Coreboot へのパッチから、<em>Barcelo</em> が <em>Green Sardine/Cezanne</em> と同じ構成、<em>Raven</em> に対する <em>Picasso</em> 、<em>Renoir</em> に対する <em>Lucienne</em> のような存在であることは窺い知れていたが、<em>Picasso</em> には製造プロセス、<em>Lucienne</em> は電力管理機能に改良が含まれており、<code>Model</code> は <em>Raven</em>、<em>Renoir</em> と異なっていた。<br>
+CPU の識別に使われる <code>Family, Model, Stepping</code> が変わらないあたり、<em>Barcelo</em> には <em>Green Sardine/Cezanne</em> から加えられた改良が特に無いということなのだろうか。<br>
+ダイが異なりながら、一部が <em>Picasso</em> と同じ <code>Model</code> であり、DeviceID も他と被っている (RevisionID は異なる) <em>Raven2 APU</em> という前例がいるため、これだけの情報では 100% そうだとは言えないが、そうした可能性は考えられる。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/02/16/raven-family-complex/">いかに Zen APU は複雑か | Coelacanth&rsquo;s Dream</a></span>
+
+<strong>AMD Eng Sample: 100-000000586-40_Y</strong> はボードに <em>Celadon-CZN</em> が使われており、ここでも <em>Cezanne</em> と同一となっている。<br>
+<em>Celadon</em> はプラットフォーム、開発用のリファレンスボードに対するコードネームであり、モバイル向けリファレンスボード (FP6パッケージ) には <em>Celadon</em> か <em>Majolica</em>、デスクトップ向け AM4 APU には <em>Artic</em> が使われている。<br>
+モバイル向けは Proモデルに <em>Celadon</em> 、通常モデルには <em>Majolica</em> として使い分けていると思われる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p><em>Barcelo APU</em> は他に、ボードに <em>Majolica-BRC</em>、CPU は 8-Core/16-Thread、ベース 1.9GHz で動作する <strong>AMD Eng Sample 100-000000580-40_Y</strong> も確認されている。</p>
+<ul>
+<li><a href="https://openbenchmarking.org/result/2112063-TJ-FUNC8359488" target="_blank" rel="noopener" >Func Benchmarks [2112063-TJ-FUNC8359488] - OpenBenchmarking.org</a></li>
+</ul>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.coelacanth-dream.com/posts/2020/11/22/lcn-czn-fp6-chromebook-board/">Lucienne/Cezanne APU を搭載する Chromebookボード　―― Guybrush、Mancomb | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</section>
+
+  <aside class="article-bottom-misc delay-page">
+  <nav class="rss-block" role="feed">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</nav>
+<a href="https://www.coelacanth-dream.com/about/#contact"  class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/12/16/amd-brc-bootlog.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3HV7bnk" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lain Blu-ray BOX</a>
+      <div class="amzn_link_desc">Present day, Preset time</div>
+  </div></div>
+</aside>
+</article><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<div class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.89.4</a>
+</div>
+
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/barcelo/" class="menu-cat-tag-lower">Barcelo</a>
+    <a href="https://www.coelacanth-dream.com/tags/cezanne/" class="menu-cat-tag-lower">Cezanne</a>
+</nav></nav><aside class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></aside>
+<nav class="rss-block" role="feed">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</nav>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<div class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.89.4</a>
+</div>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <aside class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/barcelo/" class="menu-cat-tag-lower">Barcelo</a>
+    <a href="https://www.coelacanth-dream.com/tags/cezanne/" class="menu-cat-tag-lower">Cezanne</a>
+</nav></nav><nav class="rss-block" role="feed">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</nav>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </aside>
+</aside>
+</main>
+      <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
