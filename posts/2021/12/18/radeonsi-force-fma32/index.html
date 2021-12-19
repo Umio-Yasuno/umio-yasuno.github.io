@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/12/18/radeonsi-force-fma32/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>RadeonSIドライバーに FMA32命令を強制するオプションが追加 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="RadeonSIドライバーに FMA32命令を強制するオプションが追加 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="RadeonSIドライバーに FMA32命令を強制するオプションが追加 | Coelacanth&#39;s Dream">
+
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/12/18/radeonsi-force-fma32/">
+  <meta name="description" content="これまでに取り上げた AMDGPU における FMA、MAD命令の違いが関係する話。 AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い | Coelacanth&rsquo;s Dream AMD GPU の世代におけ">
+  <meta property="og:description" content="これまでに取り上げた AMDGPU における FMA、MAD命令の違いが関係する話。 AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い | Coelacanth&rsquo;s Dream AMD GPU の世代におけ">
+  <meta name="twitter:description" content="これまでに取り上げた AMDGPU における FMA、MAD命令の違いが関係する話。 AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い | Coelacanth&rsquo;s Dream AMD GPU の世代におけ">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/12/18/radeonsi-force-fma32/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/12/18/radeonsi-force-fma32/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="RadeonSI, GFX9, GFX10, RDNA 2, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 4vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1rem 0 0}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:2px 2px 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.site-title-link:hover .lain-e{background-color:#0004}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.68;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:clip;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:paint}footer{visibility:hidden;grid-column:1/-1}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00eaea;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(ellipse 69% 67%,#fee1 0%,#0000 97%,#000 103%)50%/contain fixed no-repeat,linear-gradient(#8001 0%,#8001 33%,#0801 33%,#0801 67%,#0081 67%,#0081 100%)50%/100% .6rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#26bfb3;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000}.slide{visibility:hidden}}.page-main{font-size:.96rem;grid-column:3/-1;overflow:clip;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:1rem}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:1/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:90%;height:54vh}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "RadeonSIドライバーに FMA32命令を強制するオプションが追加",
+  "headline" : "RadeonSIドライバーに FMA32命令を強制するオプションが追加",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2021-12-18",
+    "datePublished" : "2021-12-18",
+    "dateModufied"  : "2021-12-19",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head-cat-tag-lower">Software</a></nav><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/gfx10/" class="head-cat-tag-lower">GFX10</a>/<a href="https://www.coelacanth-dream.com/tags/gfx9/" class="head-cat-tag-lower">GFX9</a>/<a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="head-cat-tag-lower">RadeonSI</a>/<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-cat-tag-lower">RDNA 2</a></nav></nav>
+
+  <h1 class="page-title"> RadeonSIドライバーに FMA32命令を強制するオプションが追加</h1>
+
+
+  <article class="page-main delay-page"><aside class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></aside>
+<aside class="article-time">
+    <time datetime="2021-12-18 13:18 &#43;0900" class="time-b">Post: 2021/12/18 13:18 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2021/12/19 10:50 &#43;0900</div>
+  </aside><p>これまでに取り上げた AMDGPU における FMA、MAD命令の違いが関係する話。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/09/16/amd-gcn-rdna-fma-mad/">AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い | Coelacanth&rsquo;s Dream</a></span>
+
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/09/28/amd-gpu-fma-mad-part2/">AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い Part2 | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<p>タイトルの通り、<strong>RadeonSI (OpenGL)</strong> ドライバーに FMA32命令を強制的に使用するオプションが追加された。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13686" target="_blank" rel="noopener" >driconf: support META application (!13686) · Merge requests · Mesa / mesa · GitLab</a></li>
+</ul>
+<section class="page-index">
+  <h2 id="page-index">Index</h2><ul>
+<li><a href="#perf">性能</a></li>
+<li><a href="#ulp">丸め誤差 ULP</a></li>
+</ul>
+</section>
+
+<h2 id="perf">性能</h2>
+<p>段階を踏んで解説すると、AMD GPU では <em>GFX6-8</em> の世代だと FMA、MAD命令の処理性能に違いがあり、FMA命令は MAD命令の 1/4 という性能だった。<br>
+<em>GFX9 (Vega)</em> の世代からは FMA命令が MAD命令と同等の処理性能となり、<em>GFX10.3 (RDNA 2)</em> の世代では MAD命令が取り除かれ、FMA命令に置き換えられた。<br>
+ドライバー、シェーダーコンパイラでは、<em>GFX6-8</em> では MAD命令を、<em>GFX9-10</em> ではどちらでも性能は変わらないが MAD命令を、<em>GFX10.3</em> では FMA命令を使う形で対応していた。<em>GFX10.3</em> の場合、MAD命令だと MUL+ADD に分けて処理するため、逆に遅くなる。<br>
+一応、<em>GFX6-8</em> 世代でも倍精度演算への対応が強化されている GPU は FMA、MAD命令の性能が同等になっているが、対応を簡潔にするため上のようになっているものと思われる。</p>
+<blockquote>
+<pre><code>       /*        |---------------------------------- Performance &amp; Availability --------------------------------|
+        *        |MAD/MAC/MADAK/MADMK|MAD_LEGACY|MAC_LEGACY|    FMA     |FMAC/FMAAK/FMAMK|FMA_LEGACY|PK_FMA_F16,|Best choice
+        * Arch   |    F32,F16,F64    | F32,F16  | F32,F16  |F32,F16,F64 |    F32,F16     | F32,F16  |PK_FMAC_F16|F16,F32,F64
+        * ------------------------------------------------------------------------------------------------------------------
+        * gfx6,7 |     1 , - , -     |  1 , -   |  1 , -   |1/4, - ,1/16|     - , -      |  - , -   |   - , -   | - ,MAD,FMA
+        * gfx8   |     1 , 1 , -     |  1 , -   |  - , -   |1/4, 1 ,1/16|     - , -      |  - , -   |   - , -   |MAD,MAD,FMA
+        * gfx9   |     1 ,1|0, -     |  1 , -   |  - , -   | 1 , 1 ,1/16|    0|1, -      |  - , 1   |   2 , -   |FMA,MAD,FMA
+        * gfx10  |     1 , - , -     |  1 , -   |  1 , -   | 1 , 1 ,1/16|     1 , 1      |  - , -   |   2 , 2   |FMA,MAD,FMA
+        * gfx10.3|     - , - , -     |  - , -   |  - , -   | 1 , 1 ,1/16|     1 , 1      |  1 , -   |   2 , 2   |  all FMA
+        *
+        * Tahiti, Hawaii, Carrizo, Vega20: FMA_F32 is full rate, FMA_F64 is 1/4
+        * gfx9 supports MAD_F16 only on Vega10, Raven, Raven2, Renoir.
+        * gfx9 supports FMAC_F32 only on Vega20, but doesn't support FMAAK and FMAMK.
+        *
+        * gfx8 prefers MAD for F16 because of MAC/MADAK/MADMK.
+        * gfx9 and newer prefer FMA for F16 because of the packed instruction.
+        * gfx10 and older prefer MAD for F32 because of the legacy instruction.
+        */
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/9ff086052ab7bff3cb55c06365543190a3afe188/src/gallium/drivers/radeonsi/si_get.c#L1017-1034" target="_blank" rel="noopener" >src/gallium/drivers/radeonsi/si_get.c · 9ff086052ab7bff3cb55c06365543190a3afe188 · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<h2 id="ulp">丸め誤差 ULP</h2>
+<p>AMD GPU における FMA、MAD命令の性能以外での違いには計算精度、丸め誤差 ULP (Unit in the Last Place) の違いが挙げられる。<br>
+FMA命令では 0.5ULP、MAD命令では 1ULP が保証されており、FMA命令の方が精度が高くなっている。<br>
+今回 FMA命令を強制するオプションが追加されたのは、この計算精度のためで、該当マージリークエストによれば、精度の違いにより結果の最後のビットが異なることがある。<br>
+シミュレーションによる試作、試験のポストプロセッシングツール <a href="https://www.ansa-usa.com/software/meta/" target="_blank" rel="noopener" >META</a> では精度の違いが赤いブロックとして表れ、FMA、MAD命令で目に見える結果も異なってしまう。</p>
+<p>RadeonSIドライバーでは、FMA命令を強制するオプション (<code>radeonsi_force_use_fma32</code>) が METAアプリケーションに対してはデフォルトで有効化される。<br>
+またオプションの影響を受ける AMDGPU の世代は、FMA、MAD命令で性能が変わらない <em>GFX9-10</em> のみで、性能に差が大きくある <em>GFX6-8</em> ではそのまま MAD命令が使われる。</p>
+<blockquote>
+<pre><code> +   /* fma32 is too slow for gpu &lt; gfx9, so force it only when gpu &gt;= gfx9 */
+ +   bool force_fma32 =
+ +      sscreen-&gt;info.chip_class &gt;= GFX9 &amp;&amp; sscreen-&gt;options.force_use_fma32;
+ +
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13686" target="_blank" rel="noopener" >driconf: support META application (!13686) · Merge requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<section class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://www.ansa-usa.com/software/meta/" target="_blank" rel="noopener" >META | BETA CAE Systems USA, Inc.</a></li>
+<li><a href="https://beta-cae.jp/products/eta/featured/nvh.html" target="_blank" rel="noopener" >META｜製品紹介｜BETA CAE Systems Japan</a></li>
+</ul>
+
+</section>
+
+</article><aside class="article-bottom-misc delay-page">
+  <nav class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</nav>
+<a href="https://www.coelacanth-dream.com/about/#contact"  class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/12/18/radeonsi-force-fma32.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3HV7bnk" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lain Blu-ray BOX</a>
+      <div class="amzn_link_desc">Present day, Preset time</div>
+  </div></div>
+</aside>
+</main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<aside class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.89.4</a>
+</aside>
+
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/gfx10/" class="menu-cat-tag-lower">GFX10</a>
+    <a href="https://www.coelacanth-dream.com/tags/gfx9/" class="menu-cat-tag-lower">GFX9</a>
+    <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a>
+</nav></nav><aside class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url('url')"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url('title_url')"></button></aside>
+<nav class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</nav>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<aside class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.89.4</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/gfx10/" class="menu-cat-tag-lower">GFX10</a>
+    <a href="https://www.coelacanth-dream.com/tags/gfx9/" class="menu-cat-tag-lower">GFX9</a>
+    <a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a>
+</nav></nav><nav class="rss-block">
+  <a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank">RSS: Home</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank">RSS: Updated</a>
+</nav>
+<a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
