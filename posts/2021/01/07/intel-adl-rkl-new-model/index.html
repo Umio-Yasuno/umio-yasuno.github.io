@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2021/01/07/intel-adl-rkl-new-model/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Intel Alder Lake と Rocket Lake に追加される CPUID Model | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Intel Alder Lake と Rocket Lake に追加される CPUID Model | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Intel Alder Lake と Rocket Lake に追加される CPUID Model | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2021/01/07/intel-adl-rkl-new-model/">
+  <meta name="description" content="Intel のソフトウェアエンジニア Cui,Lili 氏より、GCC に Alder Lake, Rocket Lake の CPUID Model を追加するパッチが投稿された。 CPUID (Leaf: 0x1) Model は、CPUアーキテクチャやプロセッサの種類を識別">
+  <meta property="og:description" content="Intel のソフトウェアエンジニア Cui,Lili 氏より、GCC に Alder Lake, Rocket Lake の CPUID Model を追加するパッチが投稿された。 CPUID (Leaf: 0x1) Model は、CPUアーキテクチャやプロセッサの種類を識別">
+  <meta name="twitter:description" content="Intel のソフトウェアエンジニア Cui,Lili 氏より、GCC に Alder Lake, Rocket Lake の CPUID Model を追加するパッチが投稿された。 CPUID (Leaf: 0x1) Model は、CPUアーキテクチャやプロセッサの種類を識別">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2021/01/07/intel-adl-rkl-new-model/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2021/01/07/intel-adl-rkl-new-model/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="Alder Lake, Rocket Lake, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:2px 2px 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.site-title-link:hover .lain-e{background-color:#0004}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:clip;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:paint}footer{visibility:hidden;grid-column:1/-1}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00eaea;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(ellipse 69% 67%,#fee2 0%,#0000 97%,#000 102%)50%/contain fixed no-repeat,linear-gradient(#d001 0%,#d001 33%,#0d01 33%,#0d01 67%,#00d1 67%,#00d1 100%)50%/100% .6rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#26bfb3;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000}.slide{visibility:hidden}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:clip;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:1rem}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:1/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#27c4b7;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Intel Alder Lake と Rocket Lake に追加される CPUID Model",
+  "headline" : "Intel Alder Lake と Rocket Lake に追加される CPUID Model",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-01-07",
+    "datePublished" : "2022-01-07",
+    "dateModufied"  : "2022-01-07",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-tag-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-tag-lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head-cat-tag-lower">Intel</a></nav><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="head-cat-tag-lower">Alder Lake</a>/<a href="https://www.coelacanth-dream.com/tags/rocket_lake/" class="head-cat-tag-lower">Rocket Lake</a></nav></nav>
+
+  <h1 class="page-title"> Intel Alder Lake と Rocket Lake に追加される CPUID Model</h1>
+<aside class="article-time">
+    <time datetime="2022-01-07 18:12 &#43;0900" class="time-b">Post: 2022/01/07 18:12 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2022/01/07 20:56 &#43;0900</div>
+  </aside><article class="page-main delay-page"><p>Intel のソフトウェアエンジニア Cui,Lili 氏より、GCC に <em>Alder Lake, Rocket Lake</em> の CPUID Model を追加するパッチが投稿された。<br>
+CPUID (Leaf: 0x1) Model は、CPUアーキテクチャやプロセッサの種類を識別するのに使われる値。</p>
+<ul>
+<li><a href="https://gcc.gnu.org/pipermail/gcc-patches/2022-January/587591.html" target="_blank" rel="noopener" >[PATCH] x86: Update model value for Alderlake and Rocketlake</a></li>
+</ul>
+<blockquote>
+<pre><code> @@ -415,6 +415,7 @@ get_intel_cpu (struct __processor_model *cpu_model,
+        cpu_model-&gt;__cpu_subtype = INTEL_COREI7_SKYLAKE;
+        break;
+      case 0xa7:
+ +    case 0xa8:
+        /* Rocket Lake.  */
+        cpu = &quot;rocketlake&quot;;
+        CHECK___builtin_cpu_is (&quot;corei7&quot;);
+ @@ -487,6 +488,7 @@ get_intel_cpu (struct __processor_model *cpu_model,
+        break;
+      case 0x97:
+      case 0x9a:
+ +    case 0xbf:
+        /* Alder Lake.  */
+        cpu = &quot;alderlake&quot;;
+        CHECK___builtin_cpu_is (&quot;corei7&quot;);
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gcc.gnu.org/pipermail/gcc-patches/2022-January/587591.html" target="_blank" rel="noopener" >[PATCH] x86: Update model value for Alderlake and Rocketlake</a></cite>
+</div>
+
+</blockquote>
+<p>プロセッサに割り当てられている CPUID Model は <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html" target="_blank" rel="noopener" >Intel® 64 and IA-32 Architectures Software Developer Manuals</a> 「Volume 4: Model-Specific Registers」に記載されている。<br>
+タイムスタンプでは 2021/12/01 に更新されており、GCC へのパッチはそれを反映させたものと思われる。</p>
+<h2 id="adl">Alder Lake</h2>
+<p><em>Alder Lake</em> ではデスクトップ向け (-S) に 0x97 (151)、モバイル向け (-P/M) に 0x9A (154) が割り当てられている。<br>
+今回追加されたのは 0xBF (191) だが、最近になって coreboot でサポートが進められている <em>Alder Lake-N</em> は 0xBE (190) であり、どちらかがタイポ、間違っているのではないかと思われる。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/11/16/coreboot-intel-adl_n/">N バリアントも存在する Alder Lake | Coelacanth&rsquo;s Dream</a></span>
+
+<em>Alder Lake-N</em> については、GPUドライバーにおいてもサポートが進められていることから確かに存在するとされる。それ以外のバリアントが存在して、ドキュメントや coreboot 等で別々にサポート作業が行われているとは考えにくい。</p>
+<blockquote>
+<pre><code> enum alderlake_model {
+ 	ADL_MODEL_P_M = 0x9A,
+ 	ADL_MODEL_N = 0xBE,
+ };
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/&#43;/59360/10/src/soc/intel/alderlake/cpu.c#19" target="_blank" rel="noopener" >https://review.coreboot.org/c/coreboot/+/59360/10/src/soc/intel/alderlake/cpu.c#19</a></cite>
+</div>
+
+</blockquote>
+<h2 id="rkl">Rocket Lake</h2>
+<p><em>Rocket Lake</em> に追加された 0xA8 (168) には謎がある。<br>
+<em>Rocket Lake</em> は現在デスクトップ向け (-S)、Model: 0xA7 (167) のみがリリースされており、コンパイラやGPUドライバにおいて、それ以外のバリアントをサポートする動きはこれまで無かった。<br>
+一応 0xA8 は <em>Rocket Lake</em> のモバイル向けバリアントに割り当てられていたが、サポートもリリースもされなかったことから、キャンセルされたのではないかという考えが多数だった。<br>
+第11世代 Intel プロセッサにおけるモバイル向けは <em>Tiger Lake-U</em> が担当しており、デスクトップ向け <em>Rocket Lake-S</em> と棲み分けがなされていた。<br>
+CPUID Model だけではあるが、今になってサポートを追加するのは少し不思議に思える。<br>
+とはいえサポートを追加したから製品としてリリースされるという確証もないが。<br>
+モバイル向けには先日 <em>Alder Lake-P/M</em> の SKU が発表されたばかりであるから、単に非公開の内部ドキュメントとのズレを修正したか、手違いということも考えられる。</p>
+<section class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html" target="_blank" rel="noopener" >Intel® 64 and IA-32 Architectures Software Developer Manuals</a></li>
+</ul>
+
+</section>
+
+</article><aside class="article-share delay-page">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><aside class="article-bottom-misc delay-page">
+  <nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a href="https://www.coelacanth-dream.com/about/#contact"  class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/01/07/intel-adl-rkl-new-model.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3HV7bnk" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lain Blu-ray BOX</a>
+      <div class="amzn_link_desc">Present day, Preset time</div>
+  </div></div>
+</aside>
+</main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<aside class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+</aside>
+
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-cat-tag-lower">Alder Lake</a>
+    <a href="https://www.coelacanth-dream.com/tags/rocket_lake/" class="menu-cat-tag-lower">Rocket Lake</a>
+</nav></nav><aside class="menu-share ">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<aside class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-cat-tag-lower">Alder Lake</a>
+    <a href="https://www.coelacanth-dream.com/tags/rocket_lake/" class="menu-cat-tag-lower">Rocket Lake</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
