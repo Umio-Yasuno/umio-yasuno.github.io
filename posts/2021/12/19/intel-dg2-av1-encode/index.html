@@ -42,7 +42,7 @@
   },
     "dateCreated"   : "2021-12-19",
     "datePublished" : "2021-12-19",
-    "dateModufied"  : "2021-12-19",
+    "dateModufied"  : "2022-01-09",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -59,7 +59,7 @@
   <h1 class="page-title"> Intel Alchemist/DG2 は AV1エンコードをサポートか</h1>
 <aside class="article-time">
     <time datetime="2021-12-19 13:52 &#43;0900" class="time-b">Post: 2021/12/19 13:52 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/12/19 16:00 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2022/01/09 23:03 &#43;0900</div>
   </aside><article class="page-main delay-page"><p>Intel GPU のメディア関連機能 (動画エンコード/デコード、ポストプロセッシング) をサポートする VA-API (Video Acceleration API) 向けドライバー、<a href="https://github.com/intel/media-driver" target="_blank" rel="noopener" >Intel(R) Media Driver</a> で <em>Alchemist/DG2</em> 、<em>Ponte Vecchio</em> 、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span> SDV/ATS-M (Arctic Sound-M?)</em> のサポートが進められている。<br>
 そして masterブランチに取り込まれた変更の中に、<em>Alchemist/DG2</em> では AV1コーディックの HWエンコードに対応していることを示唆するものがあった。</p>
 <ul>
@@ -127,7 +127,8 @@
 <p><em>Tiger Lake</em> 等 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> ではバンクあたり 480KB、Way あたり 4KB、セクションあたり 2-Way、<br>
 <em>DG1</em> ではバンクあたり 2048KB (2MB)、Way あたり 16KB、セクションあたり 2-Way と構成。</p>
 <p>DGPU としての比較では、<em>Alchemist/DG2, Ponte Vecchio</em> の L3キャッシュは <em>DG1</em> より、バンクあたりの規模で小さいと言えるが、L3キャッシュ帯域ではバンク数が多い方が有利と考えられる。<br>
-また、Intel GPU では L3キャッシュバンク内部を、データキャッシュやリードオンリーキャッシュ、Unified Tile Cache (UTC)、Command Buffer (CB) といった用途ごとに分けて割り当てる方式を採っている。<br>
+ローカルメモリを持つ dGPU になったことで、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> からメモリバス幅が増えたことも関係するだろう。</p>
+<p>Intel GPU では L3キャッシュバンク内部を、データキャッシュやリードオンリーキャッシュ、Unified Tile Cache (UTC)、Command Buffer (CB) といった用途ごとに分けて割り当てる方式を採っている。<br>
 <em>DG1</em> では L3キャッシュバンクの割り当て設定は 3パターンだったが、<em>Alchemist/DG2, PVC</em> では 6パターンであるため、より用途に合わせた割り当てが可能となっている。<br>
 それと、<em>DG1</em> は内蔵 GPU を想定した <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> から構成をほとんど変えずに L3キャッシュを増やした結果、バンクあたり 2048KB、全体では 16MB というサイズになったと考えられる。</p>
 <blockquote>
@@ -144,6 +145,42 @@
 </div>
 
 </blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">L3$</th>
+<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span><br>(TGL/RKL/ADL)</th>
+<th style="text-align:center">DG1</th>
+<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG/HPC</span><br>(Alchemist/DG2, PVC)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Up to L3$ size</td>
+<td style="text-align:center">3840KB</td>
+<td style="text-align:center">16384KB (16MB)</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">L3$ size per bank</td>
+<td style="text-align:center">480KB</td>
+<td style="text-align:center">2048KB</td>
+<td style="text-align:center">512KB</td>
+</tr>
+<tr>
+<td style="text-align:left">size per way</td>
+<td style="text-align:center">4KB</td>
+<td style="text-align:center">16KB</td>
+<td style="text-align:center">4KB</td>
+</tr>
+<tr>
+<td style="text-align:left">way count per section</td>
+<td style="text-align:center">2-Way</td>
+<td style="text-align:center">2-Way</td>
+<td style="text-align:center">2-Way</td>
+</tr>
+</tbody>
+</table>
 <section class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
 <li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol07-memory_cache.pdf" target="_blank" rel="noopener" >Intel® Iris® Xe MAX Graphics Open Source Programmer&rsquo;s Reference Manual For the 2020 Discrete GPU formerly named &ldquo;DG1&rdquo; Volume 7: Memory Cache - intel-gfx-prm-osrc-dg1-vol07-memory_cache.pdf</a></li>
