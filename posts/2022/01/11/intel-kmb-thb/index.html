@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/">
+  <meta name="description" content="Intel Movidius VPU (Vision Processing Unit) についてのメモ。 Movidius社が開発する 128-bit の SIMD-VLIWプロセッサ、SHAVE (Streaming Hybrid Architecture Vector Engine) と、Intel に Movidius社">
+  <meta property="og:description" content="Intel Movidius VPU (Vision Processing Unit) についてのメモ。 Movidius社が開発する 128-bit の SIMD-VLIWプロセッサ、SHAVE (Streaming Hybrid Architecture Vector Engine) と、Intel に Movidius社">
+  <meta name="twitter:description" content="Intel Movidius VPU (Vision Processing Unit) についてのメモ。 Movidius社が開発する 128-bit の SIMD-VLIWプロセッサ、SHAVE (Streaming Hybrid Architecture Vector Engine) と、Intel に Movidius社">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="Meteor Lake, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:2px 2px 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.site-title-link:hover .lain-e{background-color:#0004}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:clip;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:paint}footer{visibility:hidden;grid-column:1/-1}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00eaea;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(ellipse 69% 67%,#fee2 0%,#0000 97%,#000 102%)50%/contain fixed no-repeat,linear-gradient(#d001 0%,#d001 33%,#0d01 33%,#0d01 67%,#00d1 67%,#00d1 100%)50%/100% .6rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#26bfb3;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000}.slide{visibility:hidden}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:clip;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:1rem}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:1/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#27c4b7;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake",
+  "headline" : "Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-01-11",
+    "datePublished" : "2022-01-11",
+    "dateModufied"  : "2022-01-11",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-tag-lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head-cat-tag-lower">Intel</a>/<a href="https://www.coelacanth-dream.com/categories/note/" class="head-cat-tag-lower">Note</a>/<a href="https://www.coelacanth-dream.com/categories/vpu/" class="head-cat-tag-lower">VPU</a></nav><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="head-cat-tag-lower">Meteor Lake</a></nav></nav>
+
+  <h1 class="page-title"> Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake</h1>
+<aside class="article-time">
+    <time datetime="2022-01-11 12:13 &#43;0900" class="time-b">Post: 2022/01/11 12:13 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2022/01/11 19:35 &#43;0900</div>
+  </aside><article class="page-main delay-page"><p>Intel Movidius VPU (Vision Processing Unit) についてのメモ。<br>
+Movidius社が開発する 128-bit の SIMD-VLIWプロセッサ、SHAVE (Streaming Hybrid Architecture Vector Engine) と、Intel に Movidius社が買収するまでの流れは以下の記事が詳しい。</p>
+<ul>
+<li><a href="https://ascii.jp/elem/000/004/015/4015611/" target="_blank" rel="noopener" >ASCII.jp：マルチメディア向けからAI向けに大変貌を遂げたMovidiusのMyriad 2　AIプロセッサーの昨今 (1/3)</a></li>
+</ul>
+<section class="page-index">
+  <h2 id="page-index">Index</h2><ul>
+<li><a href="#myriad-x">Myriad X</a></li>
+<li><a href="#kmb">Keem Bay</a></li>
+<li><a href="#thb">Thunder Bay</a></li>
+<li><a href="#mtl">Meteor Lake</a></li>
+</ul>
+</section>
+
+<h2 id="myriad-x">Myriad X</h2>
+<p>Intel の Movidius社買収から約 1年後に、<em>Myriad X</em> が発表された。<br>
+前世代にあたる <em>Myriad 2</em> からの改良点としては、SHAVEプロセッサの増量 (12基 -&gt; 16基)、プロセスの更新 (TSMC 28nm HPM -&gt; TSMC 16nm FFC)、オンチップメモリ CMX (Connection MatriX) の拡大 (2MB, 400GB/s -&gt; 2.5MB, 450GB/s)、LPDDR4メモリのサポートが挙げられる。<br>
+また、新たに Neural Compute Engine を搭載し、推論処理において 1TOPS の演算性能を発揮するとしている。<br>
+RISC系CPU (LEON4 SPARC V8) 2-Core を搭載しており、RTOS (Real Time Operating System) のスケジューリング、パイプライン管理、センサー操作を担当している。<br>
+ハードウェアエンコーダも搭載し、H.264/H.265 4K 30Hz、MPEG/JPEG 4K 60Hz に対応する。インターフェイスに USB 3.1、PCIe Gen3 も備える。</p>
+<p><em>Myriad X</em> は LPDDR3/LPDDR4 32-bit インターフェイスを持つ MA2485 と、外部メモリへのインターフェイスのみを持つ MA2085 の 2種類が発表された。<br>
+ただ MA2485 は 2020Q2 に生産中止、現在は MA2085 のみが提供されている。</p>
+<ul>
+<li><a href="https://www.anandtech.com/show/11771/intel-announces-movidius-myriad-x-vpu" target="_blank" rel="noopener" >Intel Announces Movidius Myriad X VPU, Featuring ‘Neural Compute Engine’</a></li>
+<li><a href="https://newsroom.intel.com/news/intel-unveils-neural-compute-engine-movidius-myriad-x-vpu-unleash-ai-edge/#gs.lzzj2p" target="_blank" rel="noopener" >Intel Unveils Neural Compute Engine in Movidius Myriad X VPU to Unleash AI at the Edge | Intel Newsroom</a></li>
+<li><a href="https://www.mouser.com/catalog/additional/Intel_ProductOverview_Neural_Compute_Stick_2.pdf" target="_blank" rel="noopener" >Intel_ProductOverview_Neural_Compute_Stick_2.pdf</a></li>
+<li><a href="https://www.youtube-nocookie.com/embed/oYQwRdDGqzw" rel="nofollow noreferrer noopener" target="_blank">Introducing Movidius Myriad-X | OpenVINO™ toolkit | Ep. 27 | Intel Software - Youtube</a>
+</li>
+</ul>
+<h2 id="kmb">Keem Bay</h2>
+<p>コードネーム <em>Keem Bay (KMB)</em> は、Gen 3 Intel Movidius VPU として 2019/11/15 に Intel AI Summit で発表された。<br>
+CPU に Arm A53 4-Core を搭載し、これによりスタンドアローンで Linuxシステムを動作させることができるようになった。<br>
+4-15W という範囲の電力で動作し、M.2カードや複数を搭載する PCIeカードのフォームファクタに対応する。<br>
+推論性能において、NVIDIA Jetson TX2 と比較では、電力効率は 6.2倍、面積あたりの性能は 8.7倍優れているとされる。<br>
+また、<em>Myriad X</em> との比較では 10倍の推論性能を持つとしている。</p>
+<p>ただ競合製品と比較したときの性能効率は公開されているが、VPU部や Neural Compute Engine、オンチップメモリ CMX の規模、<em>Myriad X</em> からの改良点は公開されていない。<br>
+また Intel AI Summit 2019 では 2020年の前半に発売予定としていたが、具体的な SKU については未だ発表されていない。<br>
+製造プロセスについても同様。</p>
+<ul>
+<li><a href="https://itpeernetwork.intel.com/ai-summit-2019/" target="_blank" rel="noopener" >The Cutting Edge of AI… Everything Matters! - IT Peer Network</a></li>
+<li><a href="https://www.xlsoft.com/jp/products/intel/openvino/document/ai-summit-2019.html" target="_blank" rel="noopener" >AI の最先端… すべてが重要！ | XLsoft エクセルソフト</a></li>
+</ul>
+<p>しかし検索エンジンに頼ったところ、一部の顧客は <em>Keem Bay</em> の SKU と採用製品について発表していた。<br>
+それによると、<em>Keem Bay</em> は TSMC 12nmプロセス (12FFC?) で製造され、SKU には <strong>3400VE/3700VE/3500SE</strong> の 3種類が存在する。<br>
+SKU間の違いは主に VPU 数と動作クロック、それと DPU (Deep-Learning Processor Unit?, = Neural Compute Engine?) の数となる。<br>
+<em>Myriad X</em> 1-Chip が 0.7 TOPS とされ、<strong>3700VE</strong> は 7.1 TOPS 持つため、ここで上記の推論性能 10倍が達成されている。<br>
+メモリインターフェイスは 2x32-bit LPDDR4/X 1600-2133 MHz に対応し、<em>Myriad X</em> から倍以上のメモリ帯域を実現可能になっている。<br>
+SHAVEプロセッサは 12基か 16基となり、最大 16基という点では <em>Myriad X</em> と同数。DPU とメモリインターフェイスの強化がメインとなっているのだろうか。<br>
+外部インターフェイスも強化されており、PCIe Gen4 x2 と eMMC に対応する。</p>
+<ul>
+<li><a href="https://www.arrow.com/ais/intel/wp-content/uploads/sites/6/2021/04/Keem-Bay-One-pager_Draft_NA_External_Feb-26.pdf" target="_blank" rel="noopener" >Keem-Bay-One-pager_Draft_NA_External_Feb-26.pdf</a></li>
+<li><a href="https://up-board.org/wp-content/uploads/2020/06/DefenceLine-webinar_20200625.pdf?mc_cid=800de085f9&amp;mc_eid=0cd2fc3ef1" target="_blank" rel="noopener" >PowerPoint Presentation - DefenceLine-webinar_20200625.pdf</a></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Intel Keem Bay</th>
+<th style="text-align:center">3400VE</th>
+<th style="text-align:center">3700VE</th>
+<th style="text-align:center">3500SE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Process</td>
+<td style="text-align:center">TSMC 12nm</td>
+<td style="text-align:center">TSMC 12nm</td>
+<td style="text-align:center">TSMC 12nm</td>
+</tr>
+<tr>
+<td style="text-align:left">VPU clock</td>
+<td style="text-align:center">500 MHz</td>
+<td style="text-align:center">700 MHz</td>
+<td style="text-align:center">700 MHz</td>
+</tr>
+<tr>
+<td style="text-align:left">Max TOPS (AI inference)</td>
+<td style="text-align:center">5.1/3.0 TOPS</td>
+<td style="text-align:center">7.1 TOPS</td>
+<td style="text-align:center">4.3 TOPS</td>
+</tr>
+<tr>
+<td style="text-align:left">DPU count</td>
+<td style="text-align:center">20 (5x4) / 12 (3x4)</td>
+<td style="text-align:center">20 (5x4)</td>
+<td style="text-align:center">12 (3x4)</td>
+</tr>
+<tr>
+<td style="text-align:left">SHAVE processors count</td>
+<td style="text-align:center">16 / 12</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">16</td>
+</tr>
+<tr>
+<td style="text-align:left">CPU</td>
+<td style="text-align:center">Arm A53 4-Core (1.5 GHz)</td>
+<td style="text-align:center">Arm A53 4-Core (1.5 GHz)</td>
+<td style="text-align:center">Arm A53 4-Core (1.5 GHz)</td>
+</tr>
+<tr>
+<td style="text-align:left">Memory</td>
+<td style="text-align:center">2x 32-bit LPDDR4/X 1600-2133 MHz</td>
+<td style="text-align:center">2x 32-bit LPDDR4/X 1600-2133 MHz</td>
+<td style="text-align:center">2x 32-bit LPDDR4/X 1600-2133 MHz</td>
+</tr>
+</tbody>
+</table>
+<p>Linux Kernel へのパッチから得られる情報では、<em>Keem Bay</em> は OCS (Offload and Crypto Subsystem) を持ち、楕円曲線暗号 (Elliptic Curve Cryptography, ECC) 処理を専用ハードウェアで実行できる。<br>
+専用ハードウェアは ECDH-256, ECDH-384 アルゴリズムに対応。</p>
+<ul>
+<li><a href="https://lore.kernel.org/linux-devicetree/20211020103538.360614-1-daniele.alessandrelli@linux.intel.com/T/#m0a328ead665886f48ae0c60a79d694662042468a" target="_blank" rel="noopener" >[PATCH 0/5] Keem Bay OCS ECC crypto driver</a></li>
+</ul>
+<h2 id="thb">Thunder Bay</h2>
+<p>まだ公式発表はされていないが、Intel Movidius VPU には <em>Thunder Bay (THB)</em> なる SoC も存在し、Linux Kernel にパッチが投稿されている。</p>
+<ul>
+<li><a href="https://lore.kernel.org/linux-gpio/20211216150100.21171-1-lakshmi.sowjanya.d@intel.com/T/#u" target="_blank" rel="noopener" >[PATCH v3 0/2] Add pinctrl support for Intel Thunder Bay SoC</a></li>
+<li><a href="https://lore.kernel.org/linux-devicetree/1626758569-27176-1-git-send-email-kenchappa.demakkanavar@intel.com/T/#u" target="_blank" rel="noopener" >[PATCH V2 0/3] Add initial Thunder Bay SoC / Board support</a></li>
+</ul>
+<p><em>Thunder Bay</em> は CPUクラスタ 4基を持ち、クラスタごとに <em>Keem Bay</em> と同じく Arm A53 4-Core を持つ。<br>
+Full と Prime (Standard) と呼ぶ 2種類の構成が存在し、CPUクラスタ 4基、クラスタあたり Arm A53 4-Core というのは共通。VPUスライスの数と搭載メモリが異なり、Full は VPUスライス 4基を持ち、メモリは 2x8GB + 2x4GB という構成。Prime (Standard) は VPUスライス 2基、メモリは 8GB + 4GB とされている。<br>
+VPUスライスについては、複数の SHAVEプロセッサと Neural Compute Engine をまとめたものと推察される。<br>
+<em>Thunder Bay</em> は <em>Keem Bay</em> の複数並べたような構成と見えるが、VPUスライスあたりの規模は不明。<br>
+しかし <em>Keem Bay</em> よりも全体の規模は大きくなっているのは確かであり、15Wより上か、Arm A53 CPU に多くの汎用処理を割り当てたい用途向けの製品を想定しているのではないかと思われる。</p>
+<blockquote>
+<pre><code> This patch-set adds initial support for a new Intel Movidius SoC
+ code-named Thunder Bay. The SoC couples an ARM Cortex A53 CPU
+ with an Intel Movidius VPU.
+	
+ This initial patch-set enables only the minimal set of components
+ required to make the Thunder Bay full or prime configuration boards
+ boot into initramfs.
+	
+ Thunder Bay full configuration board has 4 clusters of 4 ARM
+ Cortex A53 CPUs per cluster, 4 VPU processors and
+ (8GB + 8GB + 4GB + 4GB) DDR memory.
+	
+ Thunder Bay prime configuration board has 4 clusters of 4 ARM
+ Cortex A53 CPUs per cluster, 2 VPU processors and
+ (8GB + 4GB) DDR memory.
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-devicetree/1626758569-27176-1-git-send-email-kenchappa.demakkanavar@intel.com/T/#u" target="_blank" rel="noopener" >[PATCH V2 0/3] Add initial Thunder Bay SoC / Board support</a></cite>
+</div>
+
+</blockquote>
+<blockquote>
+<pre><code> Add initial device tree for Intel Movidius SoC code-named Thunder Bay.
+	
+ This initial DT includes nodes for 4 CPU clusters with 4 Cortex-A53
+ cores per cluster, UARTs, GIC, ARM Timer and PSCI.
+	
+ thunderbay-soc.dtsi   - Thunder Bay SoC dtsi file
+ hddl_hybrid_4s.dts    - Thunder Bay full configuration board dts
+ 			with 4 VPU processors
+ hddl_hybrid_2s_02.dts - Thunder Bay prime configuration board dts with
+ 			2 VPU processors (slice 0 and slice 2 enabled)
+ hddl_hybrid_2s_03.dts - Thunder Bay prime configuration board dts with
+ 			2 VPU processors (slice 0 and slice 3 enabled)
+ hddl_hybrid_2s_12.dts - Thunder Bay prime configuration board dts with
+ 			2 VPU processors (slice 1 and slice 2 enabled)
+ hddl_hybrid_2s_13.dts - Thunder Bay prime configuration board dts with
+ 			2 VPU processors (slice 1 and slice 3 enabled)
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-devicetree/1626758569-27176-1-git-send-email-kenchappa.demakkanavar@intel.com/T/#e5e8fba959b11f1cc80d9c261a78a0285fa86f342" target="_blank" rel="noopener" >[PATCH V2 0/3] Add initial Thunder Bay SoC / Board support</a></cite>
+</div>
+
+</blockquote>
+<p><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/movidius-accelerator-on-edge-software-hub.html" target="_blank" rel="noopener" >Intel® Movidius™ Accelerator on Edge Software Hub</a> には、Gen 3 Intel Movidius VPU として、<em>Keem Bay</em> ともう 1つ、<em>Shamrock Bay</em> を挙げているが、<em>Thunder Bay</em> の名はない。<br>
+<em>Shamrock Bay</em> の名だけが変更されて <em>Thunder Bay</em> になったのか、あるいはキャンセルされて <em>Thunder Bay</em> のプロジェクトが立ち上げられたのか。<br>
+<em>Shamrock Bay</em> はそのページで触れられているのみであるため、どちらにしても実質 <em>Thunder Bay</em> に置き換えられたものと思われる。</p>
+<h2 id="mtl">Meteor Lake</h2>
+<p>オープンソースライセンスの元に公開されている <a href="https://github.com/intel/intel-inb-manageability" target="_blank" rel="noopener" >Intel In-Band Manageability Framework (INBM)</a> 等では、VPU Platform/Device List に <em>Meteor Lake</em> がすでにリストされており、<em>Meteor Lake</em> の世代で VPU を統合するものと思われる。<br>
+<em>Meteor Lake</em> は複数の Tile (CPU [Compute], SoC, GPU) で構成されることが公式に発表されている。VPU を統合するとしたら SoC Tile になるだろうか。</p>
+<blockquote>
+<pre><code>     &quot;&quot;&quot;Check the platform type based on b7 to b4 in sw device id.
+        0000b – KMB device
+        0001b – THB Prime device with 2 compute slices
+        0010b – THB Standard device with 4 compute slices
+        0011b – OYB device
+        0100b – MTL device
+        0101b – STF device
+        Rest of the values – reserved for future or not used
+     @param sw_device_id: unique sw device id obtained from xlink
+     @return: platform type
+     &quot;&quot;&quot;
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-inb-manageability/blob/48d7af6f49e2bb5faf0e6dd7754fb55eb68dd5f0/inbm-lib/inbm_vision_lib/xlink/ixlink_wrapper.py#L328-L340" target="_blank" rel="noopener" >intel-inb-manageability/ixlink_wrapper.py at 48d7af6f49e2bb5faf0e6dd7754fb55eb68dd5f0 · intel/intel-inb-manageability</a></cite>
+</div>
+
+</blockquote>
+<blockquote>
+<pre><code> enum class VPUXPlatform: int {
+     AUTO            = 0,    // auto detection
+     MA2490          = 1,    // Keem bay A0
+     MA2490_B0       = 2,    // Keem bay B0
+     MA3100          = 3,    // Thunder bay harbor A0
+     MA3720          = 4,    // Meteor lake
+ };
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/YaoxinShi/openvino_sample/blob/55f4011f326211e0d9efc15a31e403272acc59e7/openvino/inference_engine/include/vpux/vpux_plugin_config.hpp#L60-L70" target="_blank" rel="noopener" >openvino_sample/vpux_plugin_config.hpp at 55f4011f326211e0d9efc15a31e403272acc59e7 · YaoxinShi/openvino_sample</a></cite>
+</div>
+
+</blockquote>
+<p>推論処理向けアクセラレータとしては、Atom系では <em>Gemini Lake</em>、Core系では <em>Cannon Lake</em> から GNA (Gaussian &amp; Neural Accelerator) が搭載されている。</p>
+<p>OpenVINO のドキュメントでは、GNA が 推論処理において CPU, GPU, VPU を置き換えるものではなく、ノイズ除去や音声認識といった推論処理 (continuous inference workloads) をオフロードし、CPU やメモリに負荷を掛けることなく低消費電力で処理することを目的に設計されたものだとしている。<br>
+OpenVINO は、Intel がオープンソースで開発する AI推論ツールキット。CPU/GPU/VPU/GNA といった複数のデバイスに対応している。</p>
+<ul>
+<li><a href="https://docs.openvino.ai/latest/openvino_docs_IE_DG_supported_plugins_GNA.html" target="_blank" rel="noopener" >GNA Plugin — OpenVINO™ documentation</a></li>
+</ul>
+<p>VPU は Vision Processing Unit の名の通り、画像認識等に特化している。<br>
+GNA、VPU ともに、それぞれ音声処理、画像処理に限定されてはいないが、向いた処理は異なる。<br>
+<em>Meteor Lake</em> ではより推論処理を高速かつ低消費電力に処理するために、GNA と VPU を両方搭載する可能性もある。</p>
+<p><em>Meteor Lake</em> の他に、<em>OYB</em>、<em>STF</em> といったプラットフォームもリストされているが、何の略称かは明かされておらず、将来登場するであろう VPU としか言えない。</p>
+<section class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/movidius-accelerator-on-edge-software-hub.html" target="_blank" rel="noopener" >Intel® Movidius™ Accelerator on Edge Software Hub</a></li>
+<li><a href="https://edc.intel.com/content/www/us/en/design/ipla/software-development-platforms/client/platforms/alder-lake-desktop/12th-generation-intel-core-processors-datasheet-volume-1-of-2/003/intel-gmm-and-neural-network-accelerator/" target="_blank" rel="noopener" >Intel® GMM and Neural Network Accelerator - 003 - ID:655258 | Core™ Processors</a></li>
+<li><a href="https://docs.openvino.ai/2020.4/openvino_docs_IE_DG_supported_plugins_GNA.html" target="_blank" rel="noopener" >GNA Plugin - OpenVINO™ Toolkit</a></li>
+<li><a href="https://newsroom.intel.com/wp-content/uploads/sites/11/2019/11/intel-ai-summit-keynote-slides.pdf" target="_blank" rel="noopener" >PowerPoint Presentation - intel-ai-summit-keynote-slides.pdf</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Movidius" target="_blank" rel="noopener" >Movidius - Wikipedia</a></li>
+<li><a href="https://news.mynavi.jp/techplus/article/20140905-hotchips26_myraid2/" target="_blank" rel="noopener" >Hot Chips 26 - Movidius、「Myriad 2」ビジョンプロセサを発表 | TECH+</a></li>
+<li><a href="https://old.hotchips.org/wp-content/uploads/hc_archives/hc28/HC28.23-Tuesday-Epub/HC28.23.80-Big-Data-Epub/HC28.23.811-Deep-Neural-Moloney-Movidius_16x9.pdf" target="_blank" rel="noopener" >PowerPoint Presentation - HC28.23.811-Deep-Neural-Moloney-Movidius_16x9.pdf</a></li>
+</ul>
+
+</section>
+
+</article><aside class="article-share delay-page">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><aside class="article-bottom-misc delay-page"><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions/"  class="sb" target="_blank" rel="noopener noreferrer">Github Discussions</a>
+<nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a href="https://www.coelacanth-dream.com/about/#contact"  class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/01/11/intel-kmb-thb.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3HV7bnk" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lain Blu-ray BOX</a>
+      <div class="amzn_link_desc">Present day, Preset time</div>
+  </div></div>
+</aside>
+</main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<aside class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+</aside>
+
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+    <a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+    <a href="https://www.coelacanth-dream.com/categories/vpu/" class="menu-cat-tag-lower">VPU</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="menu-cat-tag-lower">Meteor Lake</a>
+</nav></nav><aside class="menu-share ">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<aside class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+    <a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+    <a href="https://www.coelacanth-dream.com/categories/vpu/" class="menu-cat-tag-lower">VPU</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="menu-cat-tag-lower">Meteor Lake</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
