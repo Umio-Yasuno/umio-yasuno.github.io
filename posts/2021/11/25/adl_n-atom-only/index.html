@@ -42,7 +42,7 @@
   },
     "dateCreated"   : "2021-11-25",
     "datePublished" : "2021-11-25",
-    "dateModufied"  : "2021-11-26",
+    "dateModufied"  : "2022-01-13",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -59,7 +59,7 @@
   <h1 class="page-title"> Alder Lake-N は Atom系コアのみの構成か</h1>
 <aside class="article-time">
     <time datetime="2021-11-25 12:53 &#43;0900" class="time-b">Post: 2021/11/25 12:53 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2021/11/26 03:34 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2022/01/13 03:28 &#43;0900</div>
   </aside><article class="page-main delay-page"><p>Coreboot に、<em>Alder Lake (Golden Cove + Gracemont)</em> のようにハイブリットコア構成を採る CPU における CPPC v3 のサポートに向けて、コアタイプを取得するためのパッチが投稿、公開された。</p>
 <ul>
 <li><a href="https://review.coreboot.org/c/coreboot/&#43;/59360/3" target="_blank" rel="noopener" >soc/intel/alderlake, soc/common: Add method to determine the cpu type mask (If4ceb24d) · Gerrit Code Review</a></li>
@@ -90,9 +90,9 @@
 
 </blockquote>
 <p>上記引用部が該当のコード <code>get_soc_cpu_type</code> 関数だが、処理内容は非常にシンプルで、まず実行する CPU がハイブリッドコア構成を採っている場合は CPUコアタイプを取得する <code>cpu_get_cpu_type</code> 関数を呼んでいる。<br>
-CPUID では、ハイブリッドコア構成であることを示すビットフラグ (<code>EAX=0x7, ECX=0 [EDX: Bit15]</code>) と、CPUコアタイプを示す値 (<code>EAX=0x1A [0x20: Atom, 0x40: Core]</code>) が定義されている。<br>
-<em>Alder Lake-S/P/M</em> ではその時点で関数はコアタイプを返すが、ハイブリッド構成を採っていない場合は <code>CPUID (EAX=1)</code> から <code>Family, Model, Stepping</code> を取得、そして <code>Faily: 0x6, Model: 0xBE</code> の場合はコアタイプに <code>Atom (0x20)</code> を、それ以外は <code>Core (0x40)</code> を返す。</p>
-<p><code>Family: 0x6, Model: 0xBE</code> には <em>Alder Lake-N</em> が該当し、その <code>Family, Model, Stepping</code> を示す CPUID は以前に追加されていた。</p>
+CPUID では、ハイブリッドコア構成であることを示すビットフラグ (<code>EAX=0x7, ECX=0 [EDX: Bit15]</code>) と、CPUコアタイプを示す値 (<code>Leaf: 0x1A [0x20: Atom, 0x40: Core]</code>) が定義されており、それをチェックする。<br>
+<em>Alder Lake-S/P/M</em> ではその時点で関数は CPUコアタイプを返すが、ハイブリッド構成を採っていない場合は <code>CPUID (Leaf: 0x1)</code> から <code>Family, Model, Stepping</code> を取得。そして <code>Faily: 0x6, Model: 0xBE</code> の場合はコアタイプに <code>Atom (0x20)</code> を、それ以外は <code>Core (0x40)</code> を返す。<br>
+<code>Family: 0x6, Model: 0xBE</code> には <em>Alder Lake-N</em> が該当し、その <code>Family, Model, Stepping</code> を示す CPUID は以前に別のパッチで追加されていた。</p>
 <blockquote>
 <pre><code> #define CPUID_ALDERLAKE_S_A0		0x90670
  #define CPUID_ALDERLAKE_A0		0x906a0
@@ -108,8 +108,8 @@ CPUID では、ハイブリッドコア構成であることを示すビット�
 </blockquote>
 <p>ここでの CPUID では、Bit 0-3 が <code>Stepping</code>、Bit 8-11 が <code>Family ID</code>、Bit 4-7 が <code>Model ID</code>、Bit 20-27 が <code>Extended Family ID</code>、Bit 16-19 が <code>Extended Model ID</code> を表現しており、<code>0xb06e0</code> をデコードすると <code>Family: 0x6, Model: 0xBE, Stepping: 0</code> となる。<br>
 <code>Extended Model ID</code> は 1桁左にずらして (<code>&lt;&lt; 4</code>) から <code>Model ID</code> と組み合わされる。</p>
-<p>以上のことから、<em>Alder Lake-N</em> はハイブリッドコア構成を採らず、Atom系コアのみで構成されると考えられる。<br>
-モバイル向けの <code>ALDERLAKE_L (Model: 0x9A)</code> (<em>Alder Lake-P/M</em>) とは異なる Display Model ID であることから、<em>Alder Lake-N</em> は組み込み向けとして想定されているのではないかと思われる。<br>
+<p><em>Alder Lake-N</em> では <code>cpu_is_hybrid_supported()</code> の判定から外れ、他 CPU と区別されて CPUコアタイプに Atom (0x20) が返されることから、<em>Alder Lake-N</em> はハイブリッドコア構成を採らず、Atom系コアのみで構成されると考えられる。<br>
+モバイル向けの <code>ALDERLAKE_L (Model: 0x9A)</code> (<em>Alder Lake-P/M</em>) とは異なる CPUID Model であることから、<em>Alder Lake-N</em> は組み込み向けとして想定されているのではないかと思われる。<br>
 Atom系コアで構成される製品は、<a href="https://www.coelacanth-dream.com/tags/tremont">Tremont アーキテクチャ</a> を採用する組み込み向けの <em>Elkhart Lake</em> 、モバイル向けの <em>Jasper Lake</em> で最後となるという話があったが<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、方針転換したのかもしれない。<br>
 今回調べ直したところ、特別ハイブリッドコア構成は組み込みに向いていないという訳ではないらしいが<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、<em>Alder Lake</em> においては消費電力やダイサイズから Atomコアのみで構成する方が適していると判断された可能性がある。</p>
 <p>また N バリアントは以前にも使われたことがあり、MacbookPro向けの <em>Ice Lake</em> や <em>Jasper Lake</em> が当たるが <sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、CPU ではなく PCH部に使われており<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>、意味合いとしては異なると思われる。</p>
