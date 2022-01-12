@@ -42,7 +42,7 @@
   },
     "dateCreated"   : "2022-01-11",
     "datePublished" : "2022-01-11",
-    "dateModufied"  : "2022-01-11",
+    "dateModufied"  : "2022-01-12",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -59,7 +59,7 @@
   <h1 class="page-title"> Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake</h1>
 <aside class="article-time">
     <time datetime="2022-01-11 12:13 &#43;0900" class="time-b">Post: 2022/01/11 12:13 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2022/01/11 19:35 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2022/01/12 15:17 &#43;0900</div>
   </aside><article class="page-main delay-page"><p>Intel Movidius VPU (Vision Processing Unit) についてのメモ。<br>
 Movidius社が開発する 128-bit の SIMD-VLIWプロセッサ、SHAVE (Streaming Hybrid Architecture Vector Engine) と、Intel に Movidius社が買収するまでの流れは以下の記事が詳しい。</p>
 <ul>
@@ -182,7 +182,7 @@ SHAVEプロセッサは 12基か 16基となり、最大 16基という点では
 Full と Prime (Standard) と呼ぶ 2種類の構成が存在し、CPUクラスタ 4基、クラスタあたり Arm A53 4-Core というのは共通。VPUスライスの数と搭載メモリが異なり、Full は VPUスライス 4基を持ち、メモリは 2x8GB + 2x4GB という構成。Prime (Standard) は VPUスライス 2基、メモリは 8GB + 4GB とされている。<br>
 VPUスライスについては、複数の SHAVEプロセッサと Neural Compute Engine をまとめたものと推察される。<br>
 <em>Thunder Bay</em> は <em>Keem Bay</em> の複数並べたような構成と見えるが、VPUスライスあたりの規模は不明。<br>
-しかし <em>Keem Bay</em> よりも全体の規模は大きくなっているのは確かであり、15Wより上か、Arm A53 CPU に多くの汎用処理を割り当てたい用途向けの製品を想定しているのではないかと思われる。</p>
+しかし <em>Keem Bay</em> よりも全体の規模は大きくなっているのは確かであり、15Wより上か、Arm A53 16-Core からサーバ向けの製品を想定しているのではないかと思われる。</p>
 <blockquote>
 <pre><code> This patch-set adds initial support for a new Intel Movidius SoC
  code-named Thunder Bay. The SoC couples an ARM Cortex A53 CPU
@@ -228,7 +228,7 @@ VPUスライスについては、複数の SHAVEプロセッサと Neural Comput
 </div>
 
 </blockquote>
-<p><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/movidius-accelerator-on-edge-software-hub.html" target="_blank" rel="noopener" >Intel® Movidius™ Accelerator on Edge Software Hub</a> には、Gen 3 Intel Movidius VPU として、<em>Keem Bay</em> ともう 1つ、<em>Shamrock Bay</em> を挙げているが、<em>Thunder Bay</em> の名はない。<br>
+<p><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/movidius-accelerator-on-edge-software-hub.html" target="_blank" rel="noopener" >Intel® Movidius™ Accelerator on Edge Software Hub</a> には、Gen 3 Intel Movidius VPU として、<em>Keem Bay</em> ともう 1つ、<em>Shamrock Bay</em> を挙げられているが、<em>Thunder Bay</em> の名はない。<br>
 <em>Shamrock Bay</em> の名だけが変更されて <em>Thunder Bay</em> になったのか、あるいはキャンセルされて <em>Thunder Bay</em> のプロジェクトが立ち上げられたのか。<br>
 <em>Shamrock Bay</em> はそのページで触れられているのみであるため、どちらにしても実質 <em>Thunder Bay</em> に置き換えられたものと思われる。</p>
 <h2 id="mtl">Meteor Lake</h2>
@@ -267,15 +267,13 @@ VPUスライスについては、複数の SHAVEプロセッサと Neural Comput
 
 </blockquote>
 <p>推論処理向けアクセラレータとしては、Atom系では <em>Gemini Lake</em>、Core系では <em>Cannon Lake</em> から GNA (Gaussian &amp; Neural Accelerator) が搭載されている。</p>
-<p>OpenVINO のドキュメントでは、GNA が 推論処理において CPU, GPU, VPU を置き換えるものではなく、ノイズ除去や音声認識といった推論処理 (continuous inference workloads) をオフロードし、CPU やメモリに負荷を掛けることなく低消費電力で処理することを目的に設計されたものだとしている。<br>
-OpenVINO は、Intel がオープンソースで開発する AI推論ツールキット。CPU/GPU/VPU/GNA といった複数のデバイスに対応している。</p>
-<ul>
-<li><a href="https://docs.openvino.ai/latest/openvino_docs_IE_DG_supported_plugins_GNA.html" target="_blank" rel="noopener" >GNA Plugin — OpenVINO™ documentation</a></li>
-</ul>
-<p>VPU は Vision Processing Unit の名の通り、画像認識等に特化している。<br>
+<p>OpenVINO のドキュメントでは、GNA が 推論処理において CPU, GPU, VPU を置き換えるものではなく、ノイズ除去や音声認識といった推論処理 (continuous inference workloads) をオフロードし、CPU やメモリに負荷を掛けることなく低消費電力で処理することを目的に設計されたものだとしている。[^openvino-gna]<br>
+OpenVINO は、Intel がオープンソースで開発する AI推論ツールキット。CPU/GPU/VPU/GNA といった複数のデバイスに対応している。<br>
+VPU は Vision Processing Unit の名の通り、画像認識等に特化している。<br>
 GNA、VPU ともに、それぞれ音声処理、画像処理に限定されてはいないが、向いた処理は異なる。<br>
 <em>Meteor Lake</em> ではより推論処理を高速かつ低消費電力に処理するために、GNA と VPU を両方搭載する可能性もある。</p>
 <p><em>Meteor Lake</em> の他に、<em>OYB</em>、<em>STF</em> といったプラットフォームもリストされているが、何の略称かは明かされておらず、将来登場するであろう VPU としか言えない。</p>
+<p>[^openvino-gna] <a href="https://docs.openvino.ai/latest/openvino_docs_IE_DG_supported_plugins_GNA.html" target="_blank" rel="noopener" >GNA Plugin — OpenVINO™ documentation</a></p>
 <section class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
 <li><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/movidius-accelerator-on-edge-software-hub.html" target="_blank" rel="noopener" >Intel® Movidius™ Accelerator on Edge Software Hub</a></li>
