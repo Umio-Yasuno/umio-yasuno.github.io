@@ -59,7 +59,7 @@
   <h1 class="page-title"> Alder Lake-N を搭載する Chromebookボード Nissa, Nivviks, Nereid</h1>
 <aside class="article-time">
     <time datetime="2022-01-12 21:31 &#43;0900" class="time-b">Post: 2022/01/12 21:31 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2022/01/13 03:28 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2022/01/13 19:49 &#43;0900</div>
   </aside><article class="page-main delay-page"><p>Google の Reka Norman 氏より、Coreboot に <em>Alder Lake-N</em> の Chromebookボード、<strong>Nissa /Nivviks /Nereid</strong> のサポートを追加するパッチが投稿された。<br>
 <strong>Nissa</strong> のベースボード、<strong>Nivviks /Nereid</strong> はそこから派生したリファレンスボードとなる。</p>
 <ul>
@@ -91,8 +91,48 @@ USB Type-C についても、<em>Alder Lake-P</em> では最大 4-Ports をサ�
 </div>
 
 </blockquote>
+<p>GPU部は、当初 <em>Alder Lake-N</em> の DeviceID として追加された <code>0x46A0/0x46A3</code> が <em>Alder Lake GT2</em> にも当たるため、最大 96EU 構成である可能性があったが、後にパッチが更新され、<code>0x46D0/0x46D1/0x46D2</code> に変更された。<br>
+この DeviceID は Linux Kernel における Intel GPUドライバ、各種ソフトウェアにも <em>Alder Lake-N</em> として追加されているため、こちらが正しい DeviceID と思われる。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+そして EU数は不明だが、<a href="https://github.com/intel/media-driver" target="_blank" rel="noopener" >Intel Media Driver</a> では <em>Alder Lake-N GT1</em> とされているため、<em>Rocket Lake-S /Tiger Lake-H /Alder Lake-S</em> のように最大 32EU である可能性が高くなった。</p>
+<blockquote>
+<pre><code> +#ifdef IGFX_GEN12_ADLN_SUPPORTED
+ +static struct GfxDeviceInfo adlnGt1Info = {
+ +    .platformType     = PLATFORM_MOBILE,
+ +    .productFamily    = IGFX_ALDERLAKE_N,
+ +    .displayFamily    = IGFX_GEN12_CORE,
+ +    .renderFamily     = IGFX_GEN12_CORE,
+ +    .eGTType          = GTTYPE_GT1,
+ +    .L3CacheSizeInKb  = 0,
+ +    .L3BankCount      = 8,
+ +    .EUCount          = 0,
+ +    .SliceCount       = 0,
+ +    .SubSliceCount    = 0,
+ +    .MaxEuPerSubSlice = 0,
+ +    .isLCIA           = 0,
+ +    .hasLLC           = 0,
+ +    .hasERAM          = 0,
+ +    .InitMediaSysInfo = InitTglMediaSysInfo,
+ +    .InitShadowSku    = InitTglShadowSku,
+ +    .InitShadowWa     = InitTglShadowWa,
+ +};
+ +
+ +static bool adlnGt1Device46D0 = DeviceInfoFactory&lt;GfxDeviceInfo&gt;::
+ +    RegisterDevice(0x46D0, &amp;adlnGt1Info);
+ +
+ +static bool adlnGt1Device46D1 = DeviceInfoFactory&lt;GfxDeviceInfo&gt;::
+ +    RegisterDevice(0x46D1, &amp;adlnGt1Info);
+ +
+ +static bool adlnGt1Device46D2 = DeviceInfoFactory&lt;GfxDeviceInfo&gt;::
+ +    RegisterDevice(0x46D2, &amp;adlnGt1Info);
+ +#endif
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/media-driver/commit/348e98e90d240deecd3040f3846a27e9bb6c3ac1#diff-8dffc32a698ea3c63a66dc6c33d530bb9fafced3b89d7198e1ec929c179344a2" target="_blank" rel="noopener" >[Upstream] upstream ADLN · intel/media-driver@348e98e</a></cite>
+</div>
+
+</blockquote>
 <p>Intel はハイブリッドアーキテクチャを採用する <em>Alder Lake-S/P/M</em> は正式に発表しているが、Atomコアのみの構成と目される <em>Alder Lake-N</em> は未発表となっている。<br>
-元より Atom系プロセッサは <em>Tremont アーキテクチャ</em> の世代、<em>Elkhart/Jasper Lake</em> で最後になるという話があったことから、どこか発表しにくいものがあるのかもしれない。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+元より Atom系プロセッサは <em>Tremont アーキテクチャ</em> の世代、<em>Elkhart/Jasper Lake</em> で最後になるという話があったことから、どこか発表しにくいものがあるのかもしれない。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
 <section class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
@@ -100,7 +140,10 @@ USB Type-C についても、<em>Alder Lake-P</em> では最大 4-Ports をサ�
 <p><a href="https://review.coreboot.org/c/coreboot/&#43;/60193" target="_blank" rel="noopener" >mb/intel/adlrvp_n: Add support for ADL-N LP5 RVP (Ib2f53e65) · Gerrit Code Review</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2" role="doc-endnote">
-<p><a href="https://ascii.jp/elem/000/004/040/4040489/3/" target="_blank" rel="noopener" >ASCII.jp：最後のAtomとなるChromebook向けプロセッサーのJasper Lake　インテル CPUロードマップ (3/3)</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-December/285043.html" target="_blank" rel="noopener" >[Intel-gfx] [PATCH V3] drm/i915/adl-n: Enable ADL-N platform</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://ascii.jp/elem/000/004/040/4040489/3/" target="_blank" rel="noopener" >ASCII.jp：最後のAtomとなるChromebook向けプロセッサーのJasper Lake　インテル CPUロードマップ (3/3)</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>
