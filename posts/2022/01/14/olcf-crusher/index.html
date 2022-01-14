@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/01/14/olcf-crusher/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 &#43; 4x MI250X | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 &#43; 4x MI250X | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 &#43; 4x MI250X | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/01/14/olcf-crusher/">
+  <meta name="description" content="Oak Ridge Leadership Computing Facility (OLCF) の HPCシステムの 1つ、Crusher の Quick-Start Guide が公開された。 Crusher Quick-Start Guide — OLCF User Documentation Crusher Crusher のノードは、1x AMD EPYC 7A53 (Zen 3) &#43; 4x AMD MI250X (CDNA 2, Aldebaran) 、メモリは CPU">
+  <meta property="og:description" content="Oak Ridge Leadership Computing Facility (OLCF) の HPCシステムの 1つ、Crusher の Quick-Start Guide が公開された。 Crusher Quick-Start Guide — OLCF User Documentation Crusher Crusher のノードは、1x AMD EPYC 7A53 (Zen 3) &#43; 4x AMD MI250X (CDNA 2, Aldebaran) 、メモリは CPU">
+  <meta name="twitter:description" content="Oak Ridge Leadership Computing Facility (OLCF) の HPCシステムの 1つ、Crusher の Quick-Start Guide が公開された。 Crusher Quick-Start Guide — OLCF User Documentation Crusher Crusher のノードは、1x AMD EPYC 7A53 (Zen 3) &#43; 4x AMD MI250X (CDNA 2, Aldebaran) 、メモリは CPU">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/01/14/olcf-crusher/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/01/14/olcf-crusher/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="HPC, Aldebaran, gfx90a, CDNA 2, ROCm, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:2px 2px 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.site-title-link:hover .lain-e{background-color:#0004}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:clip;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:paint}footer{visibility:hidden;grid-column:1/-1}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00eaea;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(ellipse 69% 67%,#fee2 0%,#0000 97%,#000 102%)50%/contain fixed no-repeat,linear-gradient(#d001 0%,#d001 33%,#0d01 33%,#0d01 67%,#00d1 67%,#00d1 100%)50%/100% .6rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#26bfb3;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000}.slide{visibility:hidden}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:clip;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:1rem}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:1/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#27c4b7;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 &#43; 4x MI250X",
+  "headline" : "OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 &#43; 4x MI250X",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-01-14",
+    "datePublished" : "2022-01-14",
+    "dateModufied"  : "2022-01-15",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-tag-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-tag-lower">Hardware</a></nav><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="head-cat-tag-lower">Aldebaran</a>/<a href="https://www.coelacanth-dream.com/tags/cdna_2/" class="head-cat-tag-lower">CDNA 2</a>/<a href="https://www.coelacanth-dream.com/tags/gfx90a/" class="head-cat-tag-lower">gfx90a</a>/<a href="https://www.coelacanth-dream.com/tags/hpc/" class="head-cat-tag-lower">HPC</a>/<a href="https://www.coelacanth-dream.com/tags/rocm/" class="head-cat-tag-lower">ROCm</a></nav></nav>
+
+  <h1 class="page-title">OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 + 4x MI250X</h1>
+<aside class="article-time">
+    <time datetime="2022-01-14 22:50 &#43;0900" class="time-b">Post: 2022/01/14 22:50 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2022/01/15 01:46 &#43;0900</div>
+  </aside><article class="page-main delay-page"><p>Oak Ridge Leadership Computing Facility (OLCF) の HPCシステムの 1つ、<strong>Crusher</strong> の Quick-Start Guide が公開された。</p>
+<ul>
+<li><a href="https://docs.olcf.ornl.gov/systems/crusher_quick_start_guide.html" target="_blank" rel="noopener" >Crusher Quick-Start Guide — OLCF User Documentation</a></li>
+</ul>
+<h2 id="crusher">Crusher</h2>
+<p><strong>Crusher</strong> のノードは、<strong>1x AMD EPYC 7A53 (Zen 3) + 4x AMD MI250X (CDNA 2, Aldebaran)</strong> 、メモリは CPU側に DDR4 512GB (3200 MT/s) が搭載されている。<strong>AMD MI250X</strong> GPU はそれぞれ GCD (Graphics Compute Die) 2基で構成され、GCD ごとに HBM2E 64GB が搭載されている。<br>
+<strong>AMD EPYC 7A53</strong> は CPU-GPU とメモリコヒーレントを取る XGMI (Infinity Fabric) 接続をサポートしており、<em>Optimized 3rd Gen EPYC</em>、あるいはコードネーム <em>Trento</em> とも呼ばれる。<br>
+<em>Optimized 3rd Gen EPYC</em> としてこれまでにもドキュメント中に出てきたが、具体的な SKU名が明かされたのはこれが初めてな気がする。<br>
+<strong>AMD EPYC 7A53</strong> は 64-Core/128-Thread を持ち、この点は <em>EPYC Milan (Zen 3)</em> と同じ。CPUキャッシュ構成は明かされていないが、こちらも <em>EPYC Milan</em> と同様、というより同じ CCD を用いているのではないかと思われる。</p>
+<p>エクサスケールスパコン <strong>Frontier</strong> のノードも同様のハードウェアで構成され、<strong>Crusher</strong> は <strong>Frontier</strong> のテストベッド (実証基盤) として使用される。ソフトウェア環境も基本 <strong>Frontier</strong> と同じだとしている。<br>
+<strong>Crusher</strong> システムは 128ノードと 64ノードのキャビネット 2基で構成され、全体では 196ノードとなる。<br>
+同じく <strong>Frontier</strong> に向けたテストベッドには <strong>Spock</strong> システムも存在する。ただし、<strong>Spock</strong> はノードが <strong>AMD EPYC 7662 (Zen 2) + 4x AMD MI100 (CDNA, Arcturus)</strong> で構成されている。<strong>Frontier</strong> と近いハードウェア構成ではあるが、同じではない。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p><strong>AMD EPYC 7A53</strong> は内部的に 4個の NUMAトポロジに分割され、NUMAトポロジあたり CCD 2基、L3キャッシュリージョンを 2個持つ構成を採っている。<br>
+<strong>AMD MI250X</strong> はパッケージあたり GCD 2基で構成され、それらは 200+200 GB/s という広帯域で接続されている。ただ、あくまでも広帯域で接続された GPU 2基 として扱われる。<br>
+そのためプログラムからはノードあたり GPU 8基 が見える形となっている。</p>
+<p><strong>Crusher</strong> ノードでは、L3キャッシュリージョン 1個に GPU (GCD) 1基を関連付ける形式を採っている。<br>
+これは <strong>Crusher</strong> の特性だとしており、プロセス間のメッセージ機能、Open MPI (Message Passing Interface) ライブラリを使う上で性能に影響する。<br>
+MPIランク (プロセスIDに相当する) は各 GPU にマッピングされるが、この時その GPU に関連付けられた L3キャッシュリージョンとは異なる CPUスレッドが割り当てられた場合、性能が低下する恐れがある。<br>
+そのため、マッピングによる性能への影響を考慮することが重要だとしている。</p>
+<h2 id="amdgpu-driver">AMDGPUドライバ側の対応</h2>
+<p>Linux Kernel における AMDGPUドライバでは、CPU-GPU のメモリコヒーレントを取るシステムへの対応を進めている。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-January/073357.html" target="_blank" rel="noopener" >[PATCH v3 00/10] Add MEMORY_DEVICE_COHERENT for coherent device memory mapping</a></li>
+</ul>
+<p>CPU と GPU すべてのメモリを単一のアドレススペースにマッピングには、BIOS/UEFI のレベルからそれを意識する必要がある。以下のパッチを投稿した AMD のソフトウェアエンジニアである Alex Sierra 氏は、GPUメモリを BIOS/UEFI では SPM (Special Purpose Memory) としてマッピングし、Linux Kernel はその情報を元にメモリのリマッピングを行う。<br>
+以上とハードウェアのページ移行機能を採用する最初のユーザとして、<strong>Frontier</strong> が想定されているが、Alex Sierra 氏は AMD CPU + GPU 固有の機能ではないとし、将来的に他の GPUベンダにも活用されることを期待していると語っている。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/01/07/add-svm-to-amdgpu-kfd/">Linux Kernel に CPU + GPU の統合メモリ空間をサポートする最初のパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<section class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://www.gsic.titech.ac.jp/supercon/supercon2004/jp/mpi/hello.htm" target="_blank" rel="noopener" >Hello World: MPIプログラム入門</a></li>
+<li><a href="https://www.amd.com/en/technologies/cdna2" target="_blank" rel="noopener" >AMD CDNA™ 2 Architecture | AMD</a></li>
+</ul>
+
+</section>
+
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://docs.olcf.ornl.gov/systems/spock_quick_start_guide.html#system-overview" target="_blank" rel="noopener" >Spock Quick-Start Guide — OLCF User Documentation</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><aside class="article-share delay-page">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><aside class="article-bottom-misc delay-page"><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions/"  class="sb" target="_blank" rel="noopener noreferrer">Github Discussions</a>
+<nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a href="https://www.coelacanth-dream.com/about/#contact"  class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/01/14/olcf-crusher.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lainを観る | Prime Video</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3HV7bnk" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lain Blu-ray BOX</a>
+      <div class="amzn_link_desc">Present day, Preset time</div>
+  </div></div>
+</aside>
+</main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<aside class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+</aside>
+
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="menu-cat-tag-lower">Aldebaran</a>
+    <a href="https://www.coelacanth-dream.com/tags/cdna_2/" class="menu-cat-tag-lower">CDNA 2</a>
+    <a href="https://www.coelacanth-dream.com/tags/gfx90a/" class="menu-cat-tag-lower">gfx90a</a>
+    <a href="https://www.coelacanth-dream.com/tags/hpc/" class="menu-cat-tag-lower">HPC</a>
+    <a href="https://www.coelacanth-dream.com/tags/rocm/" class="menu-cat-tag-lower">ROCm</a>
+</nav></nav><aside class="menu-share ">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<aside class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/aldebaran/" class="menu-cat-tag-lower">Aldebaran</a>
+    <a href="https://www.coelacanth-dream.com/tags/cdna_2/" class="menu-cat-tag-lower">CDNA 2</a>
+    <a href="https://www.coelacanth-dream.com/tags/gfx90a/" class="menu-cat-tag-lower">gfx90a</a>
+    <a href="https://www.coelacanth-dream.com/tags/hpc/" class="menu-cat-tag-lower">HPC</a>
+    <a href="https://www.coelacanth-dream.com/tags/rocm/" class="menu-cat-tag-lower">ROCm</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
