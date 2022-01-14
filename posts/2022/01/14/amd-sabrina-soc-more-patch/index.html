@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/01/14/amd-sabrina-soc-more-patch/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMD Sabrina SoC に向けたさらなるパッチ | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMD Sabrina SoC に向けたさらなるパッチ | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMD Sabrina SoC に向けたさらなるパッチ | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/01/14/amd-sabrina-soc-more-patch/">
+  <meta name="description" content="先日に続いて Coreboot に、Felix Held 氏より、AMD Sabrina SoC (Family 17h Model A0h (0x008A0F00)) のサポート追加に向けたパッチが投稿されている。 topic:amd-sabrina-soc · Gerrit Code Review #define SABRINA_A0_CPUID 0x008a0f00 引用元:https://">
+  <meta property="og:description" content="先日に続いて Coreboot に、Felix Held 氏より、AMD Sabrina SoC (Family 17h Model A0h (0x008A0F00)) のサポート追加に向けたパッチが投稿されている。 topic:amd-sabrina-soc · Gerrit Code Review #define SABRINA_A0_CPUID 0x008a0f00 引用元:https://">
+  <meta name="twitter:description" content="先日に続いて Coreboot に、Felix Held 氏より、AMD Sabrina SoC (Family 17h Model A0h (0x008A0F00)) のサポート追加に向けたパッチが投稿されている。 topic:amd-sabrina-soc · Gerrit Code Review #define SABRINA_A0_CPUID 0x008a0f00 引用元:https://">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/01/14/amd-sabrina-soc-more-patch/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/01/14/amd-sabrina-soc-more-patch/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="Sabrina, Coreboot, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:2px 2px 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.site-title-link:hover .lain-e{background-color:#0004}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:clip;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:paint}footer{visibility:hidden;grid-column:1/-1}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00eaea;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(ellipse 69% 67%,#fee2 0%,#0000 97%,#000 102%)50%/contain fixed no-repeat,linear-gradient(#d001 0%,#d001 33%,#0d01 33%,#0d01 67%,#00d1 67%,#00d1 100%)50%/100% .6rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#26bfb3;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000}.slide{visibility:hidden}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:clip;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:1rem}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:1/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#27c4b7;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMD Sabrina SoC に向けたさらなるパッチ",
+  "headline" : "AMD Sabrina SoC に向けたさらなるパッチ",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-01-14",
+    "datePublished" : "2022-01-14",
+    "dateModufied"  : "2022-01-14",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/apu/" class="head-cat-tag-lower">APU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-tag-lower">Hardware</a></nav><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/coreboot/" class="head-cat-tag-lower">Coreboot</a>/<a href="https://www.coelacanth-dream.com/tags/sabrina/" class="head-cat-tag-lower">Sabrina</a></nav></nav>
+
+  <h1 class="page-title">AMD Sabrina SoC に向けたさらなるパッチ</h1>
+<aside class="article-time">
+    <time datetime="2022-01-14 06:18 &#43;0900" class="time-b">Post: 2022/01/14 06:18 &#43;0900</time>
+    <div class="article-time-update time-b">Update: 2022/01/14 09:42 &#43;0900</div>
+  </aside><article class="page-main delay-page"><p>先日に続いて Coreboot に、<a href="https://github.com/felixheld" target="_blank" rel="noopener" >Felix Held</a> 氏より、<em>AMD Sabrina SoC</em> (<code>Family 17h Model A0h (0x008A0F00)</code>) のサポート追加に向けたパッチが投稿されている。</p>
+<ul>
+<li><a href="https://review.coreboot.org/q/topic:amd-sabrina-soc" target="_blank" rel="noopener" >topic:amd-sabrina-soc · Gerrit Code Review</a></li>
+</ul>
+<blockquote>
+<pre><code> #define SABRINA_A0_CPUID	0x008a0f00
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/&#43;/61087/2/src/soc/amd/sabrina/include/soc/cpu.h#6" target="_blank" rel="noopener" >https://review.coreboot.org/c/coreboot/+/61087/2/src/soc/amd/sabrina/include/soc/cpu.h#6</a></cite>
+</div>
+
+</blockquote>
+<h2 id="chausie">AMD Chausie</h2>
+<p><em>Sabrina SoC</em> のメインボード名は <em>AMD Chausie</em>。コードとしては、<em>AMD Chausie</em> ボード部に <em>FP6パッケージ</em> を採用する <em>AMD Majolica</em> をベースとし、FSP (Firmware Support Package) も <em>Cezanne SoC</em> をベースにしている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+そのためベース部の情報が多く、<em>Sabrina SoC</em> 、<em>AMD Chausie</em> 固有の情報はまだ読みにくいところがある。</p>
+<h3 id="uart">4基の UARTコントローラ</h3>
+<p>それでも確かな部分を読んでいくと、まず UART (Universal Asynchronous Receiver Transmitter) コントローラが 4基に増やされている。<br>
+<em>Zen 2/3 APU (Renoir /Lucienne /Cezanne /Barcelo)</em> では UARTコントローラは 2基だったため、増やされたと言えるが、<em>Zen/+ APU (Raven /Picasso /Raven2 [Dali /Pollock])</em> では 4基だったため、それらに近い仕様へ戻したとも見られる。</p>
+<ul>
+<li><a href="https://review.coreboot.org/c/coreboot/&#43;/61086/3" target="_blank" rel="noopener" >soc/amd/sabrina: add additional UART controllers (I628b1a7a) · Gerrit Code Review</a></li>
+</ul>
+<h3 id="cppc2">CPPC2 をサポートせず</h3>
+<p><em>Sabrina SoC</em> では CPPC2 (Collaborative Processor Performance Control 2) をサポートしないとし、<em>Cezanne SoC</em> からコピーした CPPC2 関連コード、ファイルを削除している。<br>
+CPPC2 は <em>Zen 2 アーキテクチャ</em> の世代から実装されている。CPPC2 ではクロックの選択が高速化されているため、性能と電力効率、両方の向上に効果があるとされる。</p>
+<p><em>Sabrina SoC</em> は CPUID Family は 17h (23) であり、アーキテクチャは <em>Zen/+/2</em> のどれかと見られるが、CPPC2 をサポートしないことから <em>Zen/+</em> の可能性も充分に考えられる。<br>
+今になって CPU部が <em>Zen/+ アーキテクチャ</em> の APU/SoC が新規に登場するというのも不自然だが、CPPC2 をサポートしない <em>Zen 2 アーキテクチャ</em> というのもどこかちぐはぐに感じられる。</p>
+<ul>
+<li><a href="https://review.coreboot.org/c/coreboot/&#43;/61096" target="_blank" rel="noopener" >soc/amd/sabrina: drop CPPC code (I71a1b071) · Gerrit Code Review</a></li>
+</ul>
+<h3 id="pcie">PCIe</h3>
+<p><em>Sabrina SoC</em> では他 APU/SoC より PCIe I/O の規模が小さい。</p>
+<p>Dicrete GPU用の PCIe GPP (General Purpose Port) は 1ポート、<em>Zen 2/3 APU</em> のようにそこから 3ポートに分割することはできないと思われる。<br>
+<em>Zen/+ APU</em> でも同じ仕様だったため、ここも戻したとも見られる点となる。<br>
+それ以外の PCIe GPP を合わせて 6ポートとなり、<em>Raven2 (Dali /Pollock)</em> 以外の <em>Zen系 APU</em> が持つ 7ポートより 1ポート少ない。</p>
+<blockquote>
+<pre><code> -/* PCIe GFX/GPP Bridge device 1 with up to 3 ports */
+ +/* PCIe GFX/GPP Bridge device 1 with no ports */
+  #define PCIE_GPP_BRIDGE_1_DEV	0x1
+	 
+ -#define PCIE_GPP_1_0_FUNC	1
+ -#define PCIE_GPP_1_0_DEVFN	PCI_DEVFN(PCIE_GPP_BRIDGE_1_DEV, PCIE_GPP_1_0_FUNC)
+ -#define SOC_GPP_1_0_DEV		_SOC_DEV(PCIE_GPP_BRIDGE_1_DEV, PCIE_GPP_1_0_FUNC)
+ -
+ -#define PCIE_GPP_1_1_FUNC	2
+ -#define PCIE_GPP_1_1_DEVFN	PCI_DEVFN(PCIE_GPP_BRIDGE_1_DEV, PCIE_GPP_1_1_FUNC)
+ -#define SOC_GPP_1_1_DEV		_SOC_DEV(PCIE_GPP_BRIDGE_1_DEV, PCIE_GPP_1_1_FUNC)
+ -
+ -#define PCIE_GPP_1_2_FUNC	3
+ -#define PCIE_GPP_1_2_DEVFN	PCI_DEVFN(PCIE_GPP_BRIDGE_1_DEV, PCIE_GPP_1_2_FUNC)
+ -#define SOC_GPP_1_2_DEV		_SOC_DEV(PCIE_GPP_BRIDGE_1_DEV, PCIE_GPP_1_2_FUNC)
+ -
+ -/* PCIe GPP Bridge device 2 with up to 7 ports */
+ +/* PCIe GPP Bridge device 2 with up to 6 ports */
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/plugins/gitiles/coreboot/&#43;/cfa7f283968621d31a49c5179496e72ec7504ce5%5E%21/#F0" target="_blank" rel="noopener" >Diff - cfa7f283968621d31a49c5179496e72ec7504ce5^! - coreboot - Gitiles</a></cite>
+</div>
+
+</blockquote>
+<h3 id="sata">SATA</h3>
+<p><em>Sabrisa SoC</em> は SATAコントローラを持たないとされる。<br>
+<em>Pollock APU</em> が搭載可能な小型、省電力クラスのパッケージ、<em>FT5</em> では SATAインターフェイスを持たなかったが、それに近い。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/02/12/amd-pollock-ft5/">Chromebookに搭載されるPollockはFT5ソケット ――DDR4シングルチャネル、SATA無し | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<blockquote>
+<pre><code> soc/amd/sabrina/fsp_m_params: drop sata_enable UPD write
+	
+ There are no SATA controllers on the Sabrina SoC. The UPD field will be
+ removed later as a part of the initial UPD header update.
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/&#43;/61091/3" target="_blank" rel="noopener" >soc/amd/sabrina/fsp_m_params: drop sata_enable UPD write (Iedefd9f1) · Gerrit Code Review</a></cite>
+</div>
+
+</blockquote>
+<p><em>Sabrina SoC</em> については、まだ AMDGPUドライバ等へのパッチが公開されていないため、謎がまだまだある存在ではあるが、I/O の規模から <em>Raven2 (Dali /Pollock)</em> に似ているように思う。<br>
+<em>Raven2 (Dali /Pollock)</em> は CPU <em>Zen</em> 2-Core、GPU <em>Vega (gfx909)</em> 3CU という、小規模で、低コスト省電力が必要なプラットフォームに向けた APU/SoC。<br>
+<em>Zen 2 アーキテクチャ</em> を採用する <em>Renoir APU</em> からは、CPU 8-Core の APU がメインとなり、更新されるのも上位帯に向けたものだった。<em>VanGogh APU</em> は <em>Zen 2</em> 4-Core、<em>RDNA 2</em> 8CU であり、小規模な APU と言えるかもしれないが、カスタム APU であるため、一般向け製品に採用される見込みは薄い。<br>
+そうした中で、<em>Sabrina SoC</em> は <em>Raven2</em> 以降の小規模 APU となるかもしれない。</p>
+<section class="reference">
+  <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
+<li><a href="https://emb.macnica.co.jp/articles/8191/" target="_blank" rel="noopener" >よく分かる！ シリアル通信基礎講座 | 組込み技術ラボ</a></li>
+</ul>
+
+</section>
+
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://review.coreboot.org/c/coreboot/&#43;/61076" target="_blank" rel="noopener" >vc/amd/fsp/sabrina: add as a copy of vc/amd/fsp/cezanne (Ib3bf5059) · Gerrit Code Review</a> <br> <a href="https://review.coreboot.org/c/coreboot/&#43;/61079/3" target="_blank" rel="noopener" >mb/amd/chausie: add mainboard as copy of mb/amd/majolica (Ic7b18f7a) · Gerrit Code Review</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><aside class="article-share delay-page">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><aside class="article-bottom-misc delay-page"><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions/"  class="sb" target="_blank" rel="noopener noreferrer">Github Discussions</a>
+<nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a href="https://www.coelacanth-dream.com/about/#contact"  class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/01/14/amd-sabrina-soc-more-patch.md"  class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lainを観る | Prime Video</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3HV7bnk" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored">serial experiments lain Blu-ray BOX</a>
+      <div class="amzn_link_desc">Present day, Preset time</div>
+  </div></div>
+</aside>
+</main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<aside class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+</aside>
+
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/coreboot/" class="menu-cat-tag-lower">Coreboot</a>
+    <a href="https://www.coelacanth-dream.com/tags/sabrina/" class="menu-cat-tag-lower">Sabrina</a>
+</nav></nav><aside class="menu-share ">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav>
+  <small class="copyright">
+    &copy; 2019 - 2021 Umio-Yasuno
+  </small>
+<aside class="hosted">Hosted by
+    <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+,
+  Powered by
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/coreboot/" class="menu-cat-tag-lower">Coreboot</a>
+    <a href="https://www.coelacanth-dream.com/tags/sabrina/" class="menu-cat-tag-lower">Sabrina</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
