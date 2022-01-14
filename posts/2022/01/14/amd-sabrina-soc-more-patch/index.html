@@ -59,7 +59,7 @@
   <h1 class="page-title">AMD Sabrina SoC に向けたさらなるパッチ</h1>
 <aside class="article-time">
     <time datetime="2022-01-14 06:18 &#43;0900" class="time-b">Post: 2022/01/14 06:18 &#43;0900</time>
-    <div class="article-time-update time-b">Update: 2022/01/14 09:53 &#43;0900</div>
+    <div class="article-time-update time-b">Update: 2022/01/14 19:56 &#43;0900</div>
   </aside><article class="page-main delay-page"><p>先日に続いて Coreboot に、<a href="https://github.com/felixheld" target="_blank" rel="noopener" >Felix Held</a> 氏より、<em>AMD Sabrina SoC</em> (<code>Family 17h Model A0h (0x008A0F00)</code>) のサポート追加に向けたパッチが投稿されている。</p>
 <ul>
 <li><a href="https://review.coreboot.org/q/topic:amd-sabrina-soc" target="_blank" rel="noopener" >topic:amd-sabrina-soc · Gerrit Code Review</a></li>
@@ -86,8 +86,9 @@
 </section>
 
 <h2 id="chausie">AMD Chausie</h2>
-<p><em>Sabrina SoC</em> のメインボード名は <em>AMD Chausie</em>。コードとしては、<em>AMD Chausie</em> ボード部に <em>FP6パッケージ</em> を採用する <em>AMD Majolica</em> をベースとし、FSP (Firmware Support Package) も <em>Cezanne SoC</em> をベースにしている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
-そのためベース部の情報が多く、<em>Sabrina SoC</em> 、<em>AMD Chausie</em> 固有の情報はまだ読みにくいところがある。</p>
+<p><em>Sabrina SoC</em> のメインボード名は <em>AMD Chausie</em>。コードとしては、<em>AMD Chausie</em> ボード部に <em>FP6パッケージ</em> を採用する <em>AMD Majolica</em> を、FSP (Firmware Support Package) も <em>Cezanne SoC</em> をベースにし、コードファイルのほとんどをコピーし、名前だけを置き換えた形となっている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+コードファイルを <em>Cezanne</em> 関連からコピーした理由に、<a href="https://github.com/felixheld" target="_blank" rel="noopener" >Felix Held</a> 氏はひとまずビルドを成功させることを挙げている。<br>
+そのためベース部の情報が多く、<em>Sabrina SoC</em> 、<em>AMD Chausie</em> 固有の情報はまだ読みにくいところがある。パッケージも、<em>Cezanne</em> 同様に FP6 が使われるかどうかはまだ判然としない。</p>
 <h3 id="uart">4基の UARTコントローラ</h3>
 <p>それでも確かな部分を読んでいくと、まず UART (Universal Asynchronous Receiver Transmitter) コントローラが 4基に増やされている。<br>
 <em>Zen 2/3 APU (Renoir /Lucienne /Cezanne /Barcelo)</em> では UARTコントローラは 2基だったため、増やされたと言えるが、<em>Zen/+ APU (Raven /Picasso /Raven2 [Dali /Pollock])</em> では 4基だったため、それらに近い仕様へ戻したとも見られる。</p>
@@ -152,6 +153,54 @@ CPPC2 は <em>Zen 2 アーキテクチャ</em> の世代から実装されてい
 <em>Raven2 (Dali /Pollock)</em> は CPU <em>Zen</em> 2-Core、GPU <em>Vega (gfx909)</em> 3CU という、小規模で、低コスト省電力が必要なプラットフォームに向けた APU/SoC。<br>
 <em>Zen 2 アーキテクチャ</em> を採用する <em>Renoir APU</em> からは、CPU 8-Core の APU がメインとなり、更新されるのも上位帯に向けたものだった。<em>VanGogh APU</em> は <em>Zen 2</em> 4-Core、<em>RDNA 2</em> 8CU であり、小規模な APU と言えるかもしれないが、カスタム APU であるため、一般向け製品に採用される見込みは薄い。<br>
 そうした中で、<em>Sabrina SoC</em> は <em>Raven2</em> 以降の小規模 APU となるかもしれない。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th style="text-align:center">Raven /Picasso<br>/Raven2 (Dali)</th>
+<th style="text-align:center">Renoir /Cezanne<br>/Barcelo</th>
+<th style="text-align:center">Raven2<br>(Pollock)</th>
+<th style="text-align:center">Sabrina</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Package</td>
+<td style="text-align:center">FP5</td>
+<td style="text-align:center">FP6</td>
+<td style="text-align:center">FT5</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">Base Borard</td>
+<td style="text-align:center">Mandolin</td>
+<td style="text-align:center">Cereme</td>
+<td style="text-align:center">Majolica</td>
+<td style="text-align:center">Chausie</td>
+</tr>
+<tr>
+<td style="text-align:left">UART controller</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">4?</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td style="text-align:left">SATA Poat</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">0</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">0</td>
+</tr>
+<tr>
+<td style="text-align:left">PCIe GPP</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">5</td>
+<td style="text-align:center">6</td>
+</tr>
+</tbody>
+</table>
 <section class="reference">
   <h3 class="reference_title" id="reference_title">参考リンク</h3><ul>
 <li><a href="https://emb.macnica.co.jp/articles/8191/" target="_blank" rel="noopener" >よく分かる！ シリアル通信基礎講座 | 組込み技術ラボ</a></li>
