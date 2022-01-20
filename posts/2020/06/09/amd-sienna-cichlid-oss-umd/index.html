@@ -78,7 +78,7 @@ LLVM のリリース間隔を見ると、ver11 は 2020/09 に来る可能性が
 <span class="thread-link"><a href="https://releases.llvm.org/" target="_blank" rel="noopener" >Download LLVM releases</a></span>
 
 インターネット上の噂でもそのくらいに新GPUが出るのではと囁かれている。</p>
-<h2 id="wavefront-16">SIMDユニットあたりで保持する Wave数が減る、スレッド性能の向上が目的か <a href="#wavefront-16" class="head-cur-link"></a></h2>
+<h2 id="wavefront-16">SIMDユニットあたりで保持する Wave数が減る、スレッド性能の向上が目的か<a href="#wavefront-16" class="head-cur-link"></a></h2>
 <p><em>AMD GCNアーキテクチャ</em> では SIMD16ユニットあたりに保持する実行中の Wave数(Wavefront)が 10エントリであり、CU全体では 40エントリとなっていた。<br>
 <em>AMD RDNAアーキテクチャ</em> でもそのバランスを保ち、SIMD32ユニットあたり 20エントリ、WGP(2CU)全体では 80エントリとなっていた。<br>
 それが <em>Sienna Cichlid</em> では SIMD32ユニットあたり 16エントリ、WGP(2CU)全体で 64エントリになることが今回のマージリクエストからわかる。<br>
@@ -87,9 +87,9 @@ LLVM のリリース間隔を見ると、ver11 は 2020/09 に来る可能性が
 <span class="thread-link">参考: <cite><a href="https://news.mynavi.jp/article/architecture-365/" target="_blank" rel="noopener" >コンピュータアーキテクチャの話(365) GCNのブロックダイヤグラムを読む | マイナビニュース</a></cite></span>
 </p>
 <p>ちなみに、コードを見る限り <em>AMD Polaris系 (Polaris10/11/12, VegaM)</em> も SIMD16ユニットあたり 8エントリ、CU全体で 32エントリとなっているらしく、過去にゲーミングGPUのため取り入れた改良点を再度取り入れたとも見られる。</p>
-<h2 id="gfx1030">GPU ID: gfx1030 <a href="#gfx1030" class="head-cur-link"></a></h2>
+<h2 id="gfx1030">GPU ID: gfx1030<a href="#gfx1030" class="head-cur-link"></a></h2>
 <p>ディスプレイコントローラの eChipRev が <em>Navi21</em> と一致していたことから、<code>Sienna Cichlid == Navi21</code> と考えたが、<em>gfx1030</em> という GPU ID もやはり <em>Navi21</em> と一致する。</p>
-<h2 id="dfsm">DFSM のサポートが外される <a href="#dfsm" class="head-cur-link"></a></h2>
+<h2 id="dfsm">DFSM のサポートが外される<a href="#dfsm" class="head-cur-link"></a></h2>
 <p>DFSM(Deterministic Finite State Machine) は、<br>
 GFX9 で追加された、レンダリング領域を細かいタイルに分割、頻繁に使われる部分を L2cache に置くことで効率化する DSBR(Draw Stream Binning Rasterizer) 機能のソフトウェア側実装だが、<br>
 まあ色々あったり効果が無かったりで微妙な扱いを受けていた。<br>
@@ -100,14 +100,14 @@ GFX9 で追加された、レンダリング領域を細かいタイルに分割
 </code></pre><p>引用元: <cite><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=3239184db55f21c6708c87805284e257b780b5cb#diff-content-c5f2982df5fe472882e2234484ac9885cc80b82f" target="_blank" rel="noopener" >https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5389/diffs?commit_id=3239184db55f21c6708c87805284e257b780b5cb#diff-content-c5f2982df5fe472882e2234484ac9885cc80b82f</a></cite></p>
 <p>そこに元あったコードでは、専用VRAMが無い場合、つまり APU ならば有効可能にする処理を取っていたが、Navi1x GPUを統合した APU は現在無い。<br>
 <em>Raven</em> でも DFSM有効化により、かえって性能が下がるケースがあったため、今後 GFX 10.3 またはそれ以降の GPU を統合した APU が出てきても DFSM が有効にされることはないだろう。</p>
-<h2 id="pc-lines">pc_lines は 1024 <a href="#pc-lines" class="head-cur-link"></a></h2>
+<h2 id="pc-lines">pc_lines は 1024<a href="#pc-lines" class="head-cur-link"></a></h2>
 <p><code>pc_lines</code> は Parameter Cache Lines の略とされている<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup>、のだが正直、自分自身詳しいことはわかっていない。<br>
 上記 DFSM機能にその一部が使われるというくらいで。</p>
 <p><em>Sienna Cichlid</em> の <code>pc_lines</code> の値は 1024 で、<em>Navi10 /Navi12</em> と同一である、ということを言及するに留めておく。</p>
-<h2 id="big-page">フレームバッファの big_page に対応 <a href="#big-page" class="head-cur-link"></a></h2>
+<h2 id="big-page">フレームバッファの big_page に対応<a href="#big-page" class="head-cur-link"></a></h2>
 <p>使用するメモリを表すバッファオブジェクトをより大きな単位で取り扱う機能と推察される。<br>
 メモリの効率化が目的だろうか。</p>
-<h2 id="sdma-big-packet">SDMAが巨大なサイズ(約1GB)のパケットに対応 <a href="#sdma-big-packet" class="head-cur-link"></a></h2>
+<h2 id="sdma-big-packet">SDMAが巨大なサイズ(約1GB)のパケットに対応<a href="#sdma-big-packet" class="head-cur-link"></a></h2>
 <p>これまでは 4MBまでだったパケットサイズが、1GBまでに拡張された。<br>
 これもまた上記 <code>big_page</code> のように効率化が目的と思われる。</p>
 <p>加えて <em>Sienna Cichlid</em> はSDMAコントローラを4基持つことからも、SDMA周りの機能をかなり強化している印象を受けるが、それが向かう先はまだベールに包まれている。</p>
@@ -190,7 +190,7 @@ GFX9 で追加された、レンダリング領域を細かいタイルに分割
     <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
 ,
   Powered by
-    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
 </aside>
 
 </footer>
@@ -225,7 +225,7 @@ GFX9 で追加された、レンダリング領域を細かいタイルに分割
     <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
 ,
   Powered by
-    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
 </aside>
 
   </aside>

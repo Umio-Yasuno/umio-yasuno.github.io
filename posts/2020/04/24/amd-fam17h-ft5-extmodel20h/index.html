@@ -63,13 +63,13 @@
   </aside><article class="page-main delay-page"><p>以前、ややこしいややこしいと書いた Zen APU に関して、<a href="https://www.coelacanth-dream.com/tags/pollock">Raven2 (Pollock)</a>のx86_Model が <code>20h</code> となることがわかった。</p>
 <span class="thread-link">参考: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/&#43;/2153715" target="_blank" rel="noopener" >soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review</a></cite></span>
 
-<h2 id="インデックス">インデックス <a href="#%e3%82%a4%e3%83%b3%e3%83%87%e3%83%83%e3%82%af%e3%82%b9" class="head-cur-link"></a></h2>
+<h2 id="インデックス">インデックス<a href="#%e3%82%a4%e3%83%b3%e3%83%87%e3%83%83%e3%82%af%e3%82%b9" class="head-cur-link"></a></h2>
 <ul>
 <li><a href="#x86_model">x86_Model</a></li>
 <li><a href="#pollock">Pollock の x86_Model は &ldquo;0x20&rdquo;</a></li>
 <li><a href="#worry">気がかり</a></li>
 </ul>
-<h2 id="x86_model">x86_Model <a href="#x86_model" class="head-cur-link"></a></h2>
+<h2 id="x86_model">x86_Model<a href="#x86_model" class="head-cur-link"></a></h2>
 <p>現在主流の x86-64プロセッサはその判別に Family ID と Model を用いられる。<br>
 基本的に、Family ID は ベースとなるアーキテクチャを、Model はより詳細なプロセッサの種類を表す。<br>
 例で言えば、<strong>Ryzen 5 2600</strong> は Family ID: <code>&quot;0x17&quot;</code>、Model: <code>&quot;0x8&quot;</code> となっており、この値は Linux Kernelの温度センサーに関するコードでは <em>Zen+</em> と判別され、<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>GCCでは <code>znver1</code> と判別される。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
@@ -86,14 +86,14 @@
 <em>Zen APU</em> である<a href="https://www.coelacanth-dream.com/tags/raven2">Raven2</a>までも x86_Model が <code>&quot;0x18&quot;</code> となっており、それによって <em>Zen+ APU /Picasso</em> と判別されてしまう――というのを前回記事にした。<br>
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/02/16/raven-family-complex/#cpu">いかに Zen APU は複雑か | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<h2 id="pollock">Pollock の x86_Model は &ldquo;0x20&rdquo; <a href="#pollock" class="head-cur-link"></a></h2>
+<h2 id="pollock">Pollock の x86_Model は &ldquo;0x20&rdquo;<a href="#pollock" class="head-cur-link"></a></h2>
 <p>そういうことで <em>Raven2</em> の影が薄いことを勝手に憂いていたが、先日投稿された ChromiumOSのリポジトリにおける Coreboot へのパッチで、<a href="https://www.coelacanth-dream.com/tags/pollock">Pollock</a>の x86_Model が <code>&quot;0x20&quot;</code> であることがわかった。</p>
 <span class="thread-link">参考: <cite><a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/&#43;/2153715" target="_blank" rel="noopener" >soc/amd: Update macro name for IOMMU on AMD Family 17h (I17c78200) · Gerrit Code Review</a></cite></span>
 
 <p>コミットメッセージでは <em>FP5ソケット</em> が <code>&quot;0x18&quot;</code> としているが、これはChromebookに採用される <em>FP5ソケット</em> 搭載のAPUが <em>Raven</em> 以降の <em>Picasso</em> 、<em>Raven2 (Dali)</em> のみであるからと思われる。<br>
 そして、<em>FT5ソケット</em> を <code>&quot;0x20&quot;</code> としているが、それに搭載するAPUは <em>Raven2 (Pollock)</em> だけとなっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 少なくとも <em>Raven2 (Pollock)</em> は、12nm <em>Zen+ APU /Picasso</em> ではなく、14nm <em>Zen APU /Raven2 (Pollock)</em> としっかり判別されるはずだ。</p>
-<h3 id="worry">気がかり <a href="#worry" class="head-cur-link"></a></h3>
+<h3 id="worry">気がかり<a href="#worry" class="head-cur-link"></a></h3>
 <p>気がかりなのは、CPU-Z<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>といったハードウェアの情報を表示するソフトウェアで<em>FT5ソケット</em> <em>Raven2 (Pollock)</em> を見た時、コードネームの項目に表示されるのは <em>Raven2</em> となるか <em>Pollock</em> となるかだ。<br>
 個人的には、<em>Pollock</em> は <em>Raven2</em> のリビジョンの1つというものであるため、<em>Raven2</em> と表示してほしい。</p>
 <p>それと、<a href="https://www.coelacanth-dream.com/tags/dali">Raven2 (Dali)</a>は恐らく <em>Picasso</em> と判別されるままだろう。<br>
@@ -162,7 +162,7 @@ Chromebookには <em>Raven2 (Dali)</em> ベースの <strong>Ryzen 3 3250C</stro
     <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
 ,
   Powered by
-    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
 </aside>
 
 </footer>
@@ -196,7 +196,7 @@ Chromebookには <em>Raven2 (Dali)</em> ベースの <strong>Ryzen 3 3250C</stro
     <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
 ,
   Powered by
-    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
 </aside>
 
   </aside>

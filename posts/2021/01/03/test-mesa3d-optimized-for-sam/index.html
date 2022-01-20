@@ -78,7 +78,7 @@
 </ul>
 </section>
 
-<h2 id="env">環境 <a href="#env" class="head-cur-link"></a></h2>
+<h2 id="env">環境<a href="#env" class="head-cur-link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -136,7 +136,7 @@ Linux Kernel を v5.10.4 にアップデートした点と、メモリ速度が 
 Mesa3D のビルド方法、インストール方法については約1年前に書いたのがあるため、そちらを参考にしてほしい。近い内に加筆修正するかも。<br>
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/">Radeon向けMesaビルド方法　―― RadeonSI, RADV | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<h2 id="how">計測方法 <a href="#how" class="head-cur-link"></a></h2>
+<h2 id="how">計測方法<a href="#how" class="head-cur-link"></a></h2>
 <p>検証には、glxgears、<a href="https://github.com/nihui/waifu2x-ncnn-vulkan" target="_blank" rel="noopener" >waifu2x-ncnn-vulkan</a>、<a href="https://github.com/DTolm/VkFFT" target="_blank" rel="noopener" >vkfft</a>、vkmark、<a href="https://www.basemark.com/benchmarks/basemark-gpu/" target="_blank" rel="noopener" >Basemark GPU</a> を採用した。</p>
 <p>glxgears はベンチマークではなく、動作を確認するための基本的なデモアプリケーションなのだが、それ故に GPU への負荷が小さく、CPU 性能の影響を受けやすいため検証に用いている。<br>
 <code>vblank_mode=0</code> で垂直同期を無効化、5秒間に処理されたフレーム数が出力されるため、それを 4回分取り、平均を結果とした。</p>
@@ -158,7 +158,7 @@ $ vkmark -s 1920x1080
 </code></pre>
 <p>vkfft と Basemark はそのまま実行し、表示されたスコアを結果とした。<br>
 vkmark は 1920x1080 の解像度設定で実行している。</p>
-<h2 id="result">結果 <a href="#result" class="head-cur-link"></a></h2>
+<h2 id="result">結果<a href="#result" class="head-cur-link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -207,7 +207,7 @@ vkmark は 1920x1080 の解像度設定で実行している。</p>
 </tr>
 </tbody>
 </table>
-<h2 id="consider">考察 <a href="#consider" class="head-cur-link"></a></h2>
+<h2 id="consider">考察<a href="#consider" class="head-cur-link"></a></h2>
 <p>結果は、<em>SAM</em> を有効化した、最適化が組み込まれていない以前のバージョンを基準とした。</p>
 <p>まず、<em>Ryzen 5 2600 (Zen+) + RX 560 (Polaris11)</em> という構成における <em>SAM</em> の効果だが、やはりほとんど無い。<br>
 一応、Basemark GPU ではドライバーを最近のバージョン同士で比較して、僅かでも効果があると言えなくもないくらいには <em>SAM</em> の効果が出ており、<br>
@@ -224,7 +224,7 @@ glxgears を検証に用いた場合の特性と、他では性能がここま�
 上述したように、glxgears は基本的な動作をするデモアプリケーションであるから、PCIe経由の転送ではなく CPU部でオーバーヘッドが増加したと考えられる。<br>
 繰り返しになるが、glxgears はベンチマークではないし、現実的なアプリケーションに則さない。だが、傾向を見ることはできるだろう。</p>
 <p>DX12、Vulkan API を用いるベンチマーク、ゲームでは効果が出やすいことは、API として層が薄く、OpenGL API より CPU部がボトルネックとなりにくいからかもしれない。</p>
-<h3 id="significance">Zen 3 + RDNA 2 以前の環境で SAM を有効にする意義 <a href="#significance" class="head-cur-link"></a></h3>
+<h3 id="significance">Zen 3 + RDNA 2 以前の環境で SAM を有効にする意義<a href="#significance" class="head-cur-link"></a></h3>
 <p>これらのことから <em>SAM</em> が効果的に働くシチュエーションを考えると、4K のような高解像度設定や、テクスチャ設定をハイクオリティにした場合のような、相対的に GPU がボトルネックになりやすい、もしくは VRAM へのテクスチャ転送が FPS 低下の原因となる、VRAM をほぼ使うようなゲームに行き着く。<br>
 GPU性能と VRAM に余裕のあるものでは、<em>SAM</em> の効果がほとんど無いか、性能が低下することが考えられる。</p>
 <p><em>SAM</em> の最適化は <em>Zen 3 + RDNA 2</em> であればデフォルトで適用され、他はオプションで有効化する形となったが、<em>Zen 3 + RDNA 2</em> なら確実に効果が出るとも考えにくく、アプリケーションと解像度等の設定によっては逆効果になるのではないだろうか<br>
@@ -236,7 +236,7 @@ glxgears では <em>SAM ON + 最適化</em> だと明確に FPS が低下して�
 <p>組み合わせというより、<strong>RX 560 (Polairs11)</strong> のようなエントリー向け GPU では多くで効果が見られない。上と関連して、GPU性能に余裕がある状況が少なく、先に GPU がボトルネックとなりやすい。<br>
 GPU性能に余裕があれば CPU によらず効果を発揮する余地があるとも考えられ、<br>
 この点、Linux では <em>Above 4G Decoding</em> を有効にすれば <em>SAM</em> が使えることや、各社 M/Bベンダーの UEFI/BIOSアップデートにより、<em>Zen 2</em> や Intel CPU でも Windows環境で <em>SAM</em> を有効化可能となっていることは喜ばしい状況と言える。</p>
-<h2 id="revise">加筆 [2021/01/05] <a href="#revise" class="head-cur-link"></a></h2>
+<h2 id="revise">加筆 [2021/01/05]<a href="#revise" class="head-cur-link"></a></h2>
 <p><strong>RADV (Vulkan)</strong> ドライバーでも <strong>RadeonSI (OpenGL)</strong> ドライバー同様の最適化が既に組み込まれているものとして上文章を書きましたが、<br>
 実際には検証時まだ組み込まれておらず、つい先程組み込まれました。</p>
 <ul>
@@ -339,7 +339,7 @@ Vulkan ゲームを普段プレイする人は、<em>Zen 3 + RDNA 2</em> 以前�
     <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
 ,
   Powered by
-    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
 </aside>
 
 </footer>
@@ -371,7 +371,7 @@ Vulkan ゲームを普段プレイする人は、<em>Zen 3 + RDNA 2</em> 以前�
     <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
 ,
   Powered by
-    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
 </aside>
 
   </aside>

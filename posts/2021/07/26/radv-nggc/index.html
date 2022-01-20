@@ -67,13 +67,13 @@
 <p>当マージリクエストを作成した、<strong>RADV</strong> の開発者である <a href="https://gitlab.freedesktop.org/Venemo" target="_blank" rel="noopener" >Timur Kristóf</a> 氏は <em>NGG</em> と <em>NGGカリング</em> について解説を行っており、理解を深めるため個人的に整理し、書き起こしてみる。また、以前書いた内容と被る部分がある。<br>
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/">ACOバックエンドでも NGG をサポートする動き | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<h2 id="ngg">NGG <a href="#ngg" class="head-cur-link"></a></h2>
+<h2 id="ngg">NGG<a href="#ngg" class="head-cur-link"></a></h2>
 <p><em>NGG</em> は <em>GFX10/RDNA</em> 世代の GPU から <em>サポート</em> されているハードウェアにおけるシェーダーステージであり、ピクセルシェーダー (Pixel Shader, PS) の入力に用いられるオンチップバッファ、パラメーターキャッシュ (Parameter cache, PC) が直接接続されている。<br>
 <em>NGG</em> ステージでは、オブジェクトの頂点処理を行なうバーテックスシェーダー (Vertex Shader, VS)、頂点の増減を行なうジオメトリシェーダー (Geometry Shader, GS) が実行でき、将来的にはメッシュシェーダー (Mesh Shader, MS) も <em>NGG</em> ステージで実行するとしている。<br>
 従来の AMD GPU のハードウェアシェーダーパイプラインでは、GS の実行結果を直接 PS に渡すことができず、一度 VRAM に結果を書き込み、そこから PS が受け取るバッファに書き込む必要があったが、<em>NGG</em> はその手間を解消するものとなる。</p>
 <p><em>NGG</em> ステージで実行されるシェーダーは頂点だけでなくトライアングルなどのプリミティブも変更することができ、これを活用したのが <em>NGGカリング</em> とされる。</p>
 <p><em>NGG</em> は <em>GFX9/Vega</em> 世代からハードウェアに実装されたが、具体的な理由は明かされていないものの、最終的に <em>GFX9/Vega</em> 世代のサポートは諦め、<em>GFX10/RDNA</em> からのサポートに注力されることとなった。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
-<h3 id="pc">Parameter cache <a href="#pc" class="head-cur-link"></a></h3>
+<h3 id="pc">Parameter cache<a href="#pc" class="head-cur-link"></a></h3>
 <p><em>NGGカリング</em> の前にパラメーターキャッシュについて触れると、<br>
 パラメーターキャッシュの規模は APU/GPU ごとに異なり、 <a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/9da4590df8b7d08d51464874987313d230adfee8/src/amd/common/ac_gpu_info.c#L980-1007" target="_blank" rel="noopener" >src/amd/common/ac_gpu_info.c</a> にパラメーターキャッシュラインの数が記述されている。<br>
 <em>GFX9/Vega</em> 世代の dGPU、<em>Vega10・Vega12・Vega20</em> は最も多い 2048、同世代の <em>Raven・Raven2・Renoir</em> APU では 1024。<br>
@@ -120,7 +120,7 @@
 NGG を用いたパイプラインを実行する際にパラメーターキャッシュの一部を割り当てる形となり、<a href="https://www.coelacanth-dream.com/tags/gpuopen">AMDVLK GPUOpen</a>ドライバーでは <em>GFX10/RDNA</em> 世代の場合、バッチ 1つがパラメータキャッシュ全体の 1/3 を使用することを推奨値としている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p>パラメータキャッシュの規模が NGG の実効性能に影響すると思われるが、どれ程影響するかは不明で、パッチ内で触れられたこともない。<br>
 恐らく、パラメーターキャッシュの規模を決めているのは GPU のハードウェア開発チームであり、ドライバーを開発するソフトウェアチームは決定までの具体的な情報を知りにくいのだと思われる。</p>
-<h2 id="nggc">NGG culling <a href="#nggc" class="head-cur-link"></a></h2>
+<h2 id="nggc">NGG culling<a href="#nggc" class="head-cur-link"></a></h2>
 <p>最終的には表示されない、不要なトライアングルを削除する処理が <em>カリング</em> となる。<br>
 カリング処理は従来ラスタライザで実行されていたが、ラスタライザは固定機能部であり、大量のプリミティブが作成された際、ラスタライザがボトルネックとなることがあった。<br>
 小さいトライアングルが大量に存在すると、GCN/RDNA GPU ではラスタライズ処理の効率が特に低下していた。</p>
@@ -189,7 +189,7 @@ NGG を用いたパイプラインを実行する際にパラメーターキャ�
     <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
 ,
   Powered by
-    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
 </aside>
 
 </footer>
@@ -219,7 +219,7 @@ NGG を用いたパイプラインを実行する際にパラメーターキャ�
     <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
 ,
   Powered by
-    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
 </aside>
 
   </aside>

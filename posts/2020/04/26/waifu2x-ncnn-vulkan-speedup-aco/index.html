@@ -61,7 +61,7 @@
     <time datetime="2020-04-26 00:04 &#43;0900" class="time-b">Post: 2020/04/26 00:04 &#43;0900</time>
     <div class="article-time-update time-b">Update: 2020/12/04 22:27 &#43;0900</div>
   </aside><article class="page-main delay-page"><p>Radeonの性能をさらに引き出す <em>ACO</em> だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。</p>
-<h2 id="インデックス">インデックス <a href="#%e3%82%a4%e3%83%b3%e3%83%87%e3%83%83%e3%82%af%e3%82%b9" class="head-cur-link"></a></h2>
+<h2 id="インデックス">インデックス<a href="#%e3%82%a4%e3%83%b3%e3%83%87%e3%83%83%e3%82%af%e3%82%b9" class="head-cur-link"></a></h2>
 <ul>
 <li><a href="#aco">ACOとは</a></li>
 <li><a href="#waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan</a></li>
@@ -72,7 +72,7 @@
 <li><a href="#issue">課題</a></li>
 <li><a href="#shinning-radeon">最適化で Radeon はさらに輝く</a></li>
 </ul>
-<h2 id="aco">ACOとは <a href="#aco" class="head-cur-link"></a></h2>
+<h2 id="aco">ACOとは<a href="#aco" class="head-cur-link"></a></h2>
 <p>オープンソースのAMDGPU向けVulkanドライバー、RADVの新たなシェーダーコンパイラバックエンド。<br>
 <em>ACO</em> の IR(Intermediate Representaions, 中間言語)<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>は完全に SSA(Static Single Assignment form, 静的単一代入)<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>ベースであり、<br>
 レジスタ割り付けも SSA で行なうため、シェーダーのレジスタ要求を正確に事前計算することができる。<br>
@@ -89,7 +89,7 @@ Just-in-timeコンパイルを念頭に置いてに記述されており、反�
 <p>最新ドライバーのビルド方法は別記事で。<br>
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/">Radeon向けMesaビルド方法 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<h2 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan <a href="#waifu2x-ncnn-vulkan" class="head-cur-link"></a></h2>
+<h2 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan<a href="#waifu2x-ncnn-vulkan" class="head-cur-link"></a></h2>
 <p>高性能なニューラルネットワークの推論フレームワーク、<a href="https://github.com/Tencent/ncnn" target="_blank" rel="noopener" >ncnn</a>を用いた画像の高解像度化ソフトウェア。<br>
 Vulkan APIでGPGPU処理を行なうため、広いプラットフォームに対応しており、Intel / AMD / NVIDIA GPUで実行できることが特徴。<br>
 <span class="thread-link"><a href="https://github.com/nihui/waifu2x-ncnn-vulkan" target="_blank" rel="noopener" >nihui/waifu2x-ncnn-vulkan: waifu2x converter ncnn version, runs fast on intel / amd / nvidia GPU with vulkan</a></span>
@@ -99,7 +99,7 @@ Vulkan APIでGPGPU処理を行なうため、広いプラットフォームに�
 </p>
 <p>ncnn はVulkan拡張 <code>VK_KHR_shader_float16_int8</code> に対応しているのだが、RADV/LLVM ではそれが有効となっているのに対し、RADV/ACO では無効とされていた。<br>
 そのため比較検証を見送っていたが、先日 RADV/ACO での対応が mesa の masterリポジトリに組み込まれたため、検証が可能となった。<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></p>
-<h2 id="env">環境 <a href="#env" class="head-cur-link"></a></h2>
+<h2 id="env">環境<a href="#env" class="head-cur-link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -138,7 +138,7 @@ Vulkan APIでGPGPU処理を行なうため、広いプラットフォームに�
 </tr>
 </tbody>
 </table>
-<h3 id="how">計測方法 <a href="#how" class="head-cur-link"></a></h3>
+<h3 id="how">計測方法<a href="#how" class="head-cur-link"></a></h3>
 <p>実行コマンド:</p>
 <pre><code>RADV/ACO:
 	$ RADV_PERFTEST=&quot;aco&quot; time -p &lt;waifu2x-ncnn-vulkan binary&gt; -i &quot;&lt;input dir&gt;&quot; -o &lt;output dir&gt; -n 1 -s 2 -m &quot;&lt;waifu2x-ncnn-vulkan model&gt;&quot;
@@ -152,7 +152,7 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 <p>使用画像もここに掲載しようと思ったのだが、面倒くさいことを避けるべく、画像に関しては解像度 1136x640、そしてソフトウェア名に似合った感じであることだけを記す。<br>
 さすがに二次元系でパブリック・ドメインな画像は見つからなかった。</p>
 <p>それぞれ3回実行し、timeコマンドで得られる現実にかかった時間を平均し、結果とする。</p>
-<h2 id="result">結果 <a href="#result" class="head-cur-link"></a></h2>
+<h2 id="result">結果<a href="#result" class="head-cur-link"></a></h2>
 <table>
 <thead>
 <tr>
@@ -187,17 +187,17 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 </table>
 <p>RADV/ACO は、RADV(LLVM) より <code>models-cunet</code> では 1.48倍、<code>models-upconv_7_anime_style_art_rgb</code> では 3.42倍も高速という結果となった。<br>
 同じモデル、同じパラメーター、そこまで高精度なデータタイプは用いないため、出力結果の画像に違いはなかった。</p>
-<h3 id="guess">推測 <a href="#guess" class="head-cur-link"></a></h3>
+<h3 id="guess">推測<a href="#guess" class="head-cur-link"></a></h3>
 <p>まず、どちらも RADV/ACO の方が高速という結果となったが、これは <em>ACO</em> の正確なレジスタ割り付けが効いているものと思われる。<br>
 レジスタあふれの頻度が減ったことで、そのままメモリにアクセスする頻度も減り、効率的な実行が可能となった。<br>
 そして、Vulkan の Compute Shader で実行される waifu2x-ncnn-vulkan では、CU(Compute Unit)以外のユニットに性能が左右されにくく、<em>ACO</em> の利点が最大限発揮されたはずだ。</p>
 <p>また、<code>models-upconv_7_anime_style_art_rgb</code> では差が <code>models-cunet</code> よりも大きくついているが、これはモデルのサイズが前者の方が 1.1MBと半分近く( <code>models-cunet</code> は 2.6MB)小さく、レイヤー数も少ないため、その分キャッシュヒットしやすく、さらにメモリアクセスが少なくなったのではないだろうか。</p>
-<h4 id="issue">課題 <a href="#issue" class="head-cur-link"></a></h4>
+<h4 id="issue">課題<a href="#issue" class="head-cur-link"></a></h4>
 <p>何ともぼやけた推測となってしまった。<br>
 AMD が提供する <a href="https://github.com/GPUOpen-Tools/radeon_gpu_analyzer" target="_blank" rel="noopener" >RGA (Radeon GPU Analyzer)</a>や<a href="https://github.com/GPUOpen-Tools/radeon_gpu_profiler" target="_blank" rel="noopener" >Radeon™ GPU Profiler</a>といったツールを使いこなせれば、詳細な分析ができたのかもしれないが、<br>
 それらツールでモニタやプロファイル生成することもうまくいかず、<br>
 RADV にあるシェーダーや SPIR-V をダンプする機能から作成したファイルを使おうにもうまくいかず、断念した。</p>
-<h2 id="shinning-radeon">最適化で Radeon はさらに輝く <a href="#shinning-radeon" class="head-cur-link"></a></h2>
+<h2 id="shinning-radeon">最適化で Radeon はさらに輝く<a href="#shinning-radeon" class="head-cur-link"></a></h2>
 <p><em>ACO</em> によって <strong>Radeon</strong> の性能はより引き出される。<br>
 ゲームといったグラフィック処理では RADV(LLVM) から 1.1倍(+10%)近い性能向上を確認でき、この 10%というのは同一ダイベースの製品の性能差に設定されることが多い。Polari10ベースの RX 570 と RX 580、Navi10ベースの RX 5700 と RX 5700 XT 等がそうだ。<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup><br>
 ソフトウェアの最適化によって現在使っているGPUが実質1ランク上がるというのは、消費者からすれば最高と言う他ないだろう。<br>
@@ -288,7 +288,7 @@ RADV にあるシェーダーや SPIR-V をダンプする機能から作成し�
     <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
 ,
   Powered by
-    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
 </aside>
 
 </footer>
@@ -320,7 +320,7 @@ RADV にあるシェーダーや SPIR-V をダンプする機能から作成し�
     <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
 ,
   Powered by
-    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.91.2</a>
+    <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
 </aside>
 
   </aside>
