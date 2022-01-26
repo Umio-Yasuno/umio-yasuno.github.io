@@ -42,7 +42,7 @@
   },
     "dateCreated"   : "2022-01-14",
     "datePublished" : "2022-01-14",
-    "dateModufied"  : "2022-01-22",
+    "dateModufied"  : "2022-01-27",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -65,7 +65,7 @@
   <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions/" class="sb"target="_blank" rel="noopener noreferrer">GH Discussions</a>
 </aside><aside class="article-time">
     <time datetime="2022-01-14 06:18 &#43;0900">Post: 2022/01/14 06:18 &#43;0900</time>
-    <aside class="update">Update: 2022/01/22 20:55 &#43;0900</aside>
+    <aside class="update">Update: 2022/01/27 01:24 &#43;0900</aside>
   </aside><p>先日に続いて Coreboot に、<a href="https://github.com/felixheld" target="_blank" rel="noopener" >Felix Held</a> 氏より、<em>AMD Sabrina SoC</em> (<code>Family 17h Model A0h (0x008A0F00)</code>) のサポート追加に向けたパッチが投稿されている。</p>
 <ul>
 <li><a href="https://review.coreboot.org/q/topic:amd-sabrina-soc" target="_blank" rel="noopener" >topic:amd-sabrina-soc · Gerrit Code Review</a></li>
@@ -82,7 +82,7 @@
 <ul>
 <li><a href="#chausie">AMD Chausie</a>
 <ul>
-<li><a href="#uart">4基の UARTコントローラ</a></li>
+<li><a href="#uart">UARTコントローラ</a></li>
 <li><a href="#cppc2">CPPC2 をサポートせず</a></li>
 <li><a href="#pcie">PCIe</a></li>
 <li><a href="#sata">SATAコントローラを持たず</a></li>
@@ -95,15 +95,20 @@
 <p><em>Sabrina SoC</em> のメインボード名は <em>AMD Chausie</em>。コードとしては、<em>AMD Chausie</em> ボード部に <em>FP6パッケージ</em> を採用する <em>AMD Majolica</em> を、FSP (Firmware Support Package) も <em>Cezanne SoC</em> をベースにしている。コードファイルのほとんどをコピーし、名前だけを置き換えた形となっている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 コードファイルを <em>Cezanne</em> 関連からコピーした理由に、<a href="https://github.com/felixheld" target="_blank" rel="noopener" >Felix Held</a> 氏は、ひとまずビルドを成功させることを挙げている。<br>
 そのためベース部の情報が多く、<em>Sabrina SoC</em> 、<em>AMD Chausie</em> 固有の情報はまだ読みにくいところがある。パッケージも、<em>Cezanne</em> 同様に FP6 が使われるかどうかはまだ判然としない。</p>
-<h3 id="uart">4基の UARTコントローラ<a href="#uart" class="head-cur-link"></a></h3>
-<p>それでも確かな部分を読んでいくと、まず UART (Universal Asynchronous Receiver Transmitter) コントローラが 4基に増やされている。<br>
-<em>Zen 2/3 APU (Renoir /Lucienne /Cezanne /Barcelo)</em> では UARTコントローラは 2基だったため、増やされたと言えるが、<em>Zen/+ APU (Raven /Picasso /Raven2 [Dali /Pollock])</em> では 4基だったため、それらに近い仕様へ戻したとも見られる。</p>
+<p>それでも確かな部分を読んでいくと、<em>Sabrina SoC</em> では一部の機能、I/O が削減され、また規模が増やされた部分がわずかに存在する。</p>
+<h3 id="uart">UARTコントローラ<a href="#uart" class="head-cur-link"></a></h3>
+<p><em>Sabrina SoC</em> では UART (Universal Asynchronous Receiver Transmitter) コントローラが、<em>Cezanne</em> から 3基増やされている。</p>
 <ul>
+<li><a href="https://review.coreboot.org/c/coreboot/&#43;/61082/4" target="_blank" rel="noopener" >soc/amd/sabrina/include/aoac_defs: add additional UARTs (Id9876719) · Gerrit Code Review</a></li>
 <li><a href="https://review.coreboot.org/c/coreboot/&#43;/61086/3" target="_blank" rel="noopener" >soc/amd/sabrina: add additional UART controllers (I628b1a7a) · Gerrit Code Review</a></li>
 </ul>
+<p><em>Cezanne</em> 、というより <em>Zen 2/3 APU (Renoir /Lucienne /Cezanne /Barcelo)</em> では UARTコントローラは 2基だったため、合計で 5基となる。<br>
+<em>Zen/+ APU (Raven /Picasso /Raven2 [Dali /Pollock])</em> では 4基だったため、それよりも 1基増やされた。<br>
+UART はデバイス間のシリアル通信に使われるため、組み込み向け製品への採用を想定しているのかもしれない。</p>
 <h3 id="cppc2">CPPC2 をサポートせず<a href="#cppc2" class="head-cur-link"></a></h3>
 <p><em>Sabrina SoC</em> では CPPC2 (Collaborative Processor Performance Control 2) をサポートしないとし、<em>Cezanne SoC</em> からコピーした CPPC2 関連のコードファイルを削除している。<br>
-CPPC2 ではクロックの選択が高速化されているため、性能と電力効率、両方の向上に効果があるとされ、AD CPU/SoC では <em>Zen 2 アーキテクチャ</em> の世代から実装されている。。</p>
+CPPC は電源管理機能の 1つであり、CPPC2 ではクロックの選択が高速化されている。CPPC2 のサポートは性能と電力効率、両方の向上に効果があるとされ、AMD CPU/SoC では <em>Zen 2 アーキテクチャ</em> の世代から実装されている。<br>
+だがそれを <em>Sabrina SoC</em> ではサポートしないという。</p>
 <p><em>Sabrina SoC</em> は CPUID Family は 17h (23) であり、アーキテクチャは <em>Zen/+/2</em> のどれかと見られるが、CPPC2 をサポートしないことから <em>Zen/+</em> の可能性も充分に考えられるようになった。<br>
 ただ、今になって CPU部が <em>Zen/+ アーキテクチャ</em> の APU/SoC が新規に登場するというのも不自然だが、CPPC2 をサポートしない <em>Zen 2 アーキテクチャ</em> というのもどこかちぐはぐに感じられる。</p>
 <ul>
@@ -112,9 +117,10 @@ CPPC2 ではクロックの選択が高速化されているため、性能と�
 <h3 id="pcie">PCIe<a href="#pcie" class="head-cur-link"></a></h3>
 <p><em>Sabrina SoC</em> では <em>Zen 2/3 APU</em> と比べて規模が抑えられているように見える。</p>
 <p>Dicrete GPU用の PCIe GPP (General Purpose Port) Bridge 1基でそこから出せるポート数は 1ポート。<em>Zen 2/3 APU</em> では PCIe GFX/GPP Bridge から 3ポートに分割して出すことが可能だった。<br>
-<em>Zen/+ APU</em> でも PCIe GFX/GPP Bridge 1基から 1ポートという仕様だったため、ここも UARTコントローラのように戻したとも見られる点となる。<br>
+<em>Zen/+ APU</em> でも PCIe GFX/GPP Bridge 1基から 1ポートという仕様だったため、それらと同様の仕様に戻したとも見られる。<br>
 それ以外の PCIe GPP を合わせて 6ポートとなり、<em>Raven2 (Dali /Pollock)</em> 以外の <em>Zen系 APU</em> が持つ 7ポートより 1ポート少ない。<br>
-以上はポート数であり、全体の PCIeレーン数は不明。</p>
+以上はポート数であり、全体の PCIeレーン数は不明。<br>
+とはいえ、分割可能なポート数を減らしていることと <em>Sabrina SoC</em> が内蔵 GPU を持つ APU であることを考えると、<em>Zen 2/3 APU</em> より小さいと思われる。</p>
 <blockquote>
 <pre><code> -/* PCIe GFX/GPP Bridge device 1 with up to 3 ports */
  +/* PCIe GFX/GPP Bridge device 1 with no ports */
@@ -193,7 +199,7 @@ CPPC2 ではクロックの選択が高速化されているため、性能と�
 <td style="text-align:center">4</td>
 <td style="text-align:center">2</td>
 <td style="text-align:center">4?</td>
-<td style="text-align:center">4</td>
+<td style="text-align:center">5</td>
 </tr>
 <tr>
 <td style="text-align:left">SATA controller</td>
