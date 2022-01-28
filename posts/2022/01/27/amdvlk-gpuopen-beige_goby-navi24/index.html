@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/01/27/amdvlk-gpuopen-beige_goby-navi24/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMDVLK GPUOpenドライバが Beige Goby/Navi24 に対応 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMDVLK GPUOpenドライバが Beige Goby/Navi24 に対応 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMDVLK GPUOpenドライバが Beige Goby/Navi24 に対応 | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/01/27/amdvlk-gpuopen-beige_goby-navi24/">
+  <meta name="description" content="AMD が公式に提供しているオープンソース Vulkanドライバ、AMDVLK、それを構成する各種ソフトウェア (LLPC (LLVM-Based Pipeline Compiler), PAL (Platform Abstraction Library), XGL (Vulkan API Layer)) が、Beige Goby/Navi24 (gfx10)">
+  <meta property="og:description" content="AMD が公式に提供しているオープンソース Vulkanドライバ、AMDVLK、それを構成する各種ソフトウェア (LLPC (LLVM-Based Pipeline Compiler), PAL (Platform Abstraction Library), XGL (Vulkan API Layer)) が、Beige Goby/Navi24 (gfx10)">
+  <meta name="twitter:description" content="AMD が公式に提供しているオープンソース Vulkanドライバ、AMDVLK、それを構成する各種ソフトウェア (LLPC (LLVM-Based Pipeline Compiler), PAL (Platform Abstraction Library), XGL (Vulkan API Layer)) が、Beige Goby/Navi24 (gfx10)">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/01/27/amdvlk-gpuopen-beige_goby-navi24/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/01/27/amdvlk-gpuopen-beige_goby-navi24/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="GPUOpen, RDNA 2, Beige Goby, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:2px 2px 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.site-title-link:hover .lain-e{background-color:#0004}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:clip;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:paint}footer{visibility:hidden;grid-column:1/-1}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00eaea;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(farthest-corner,#fee2 0%,#0000 48%,#0000 96%,#000 100%)50%/contain fixed no-repeat,linear-gradient(#d001 0%,#d001 33%,#0d01 33%,#0d01 67%,#00d1 67%,#00d1 100%)50%/100% .6rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#26bfb3;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000}.slide{visibility:hidden}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:clip;display:flex;flex-flow:column nowrap;gap:.8rem 0;margin-top:1rem}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#27c4b7;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMDVLK GPUOpenドライバが Beige Goby/Navi24 に対応",
+  "headline" : "AMDVLK GPUOpenドライバが Beige Goby/Navi24 に対応",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-01-27",
+    "datePublished" : "2022-01-27",
+    "dateModufied"  : "2022-01-28",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-tag-lower">Hardware</a></nav><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="head-cat-tag-lower">Beige Goby</a>/<a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="head-cat-tag-lower">GPUOpen</a>/<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-cat-tag-lower">RDNA 2</a></nav></nav>
+
+  <h1 class="page-title">AMDVLK GPUOpenドライバが Beige Goby/Navi24 に対応</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share ">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions/" class="sb"target="_blank" rel="noopener noreferrer">GH Discussions</a>
+</aside><aside class="article-time">
+    <time datetime="2022-01-27 07:54 &#43;0900">Post: 2022/01/27 07:54 &#43;0900</time>
+    <aside class="update">Update: 2022/01/28 17:30 &#43;0900</aside>
+  </aside><p>AMD が公式に提供しているオープンソース Vulkanドライバ、<a href="https://github.com/GPUOpen-Drivers/AMDVLK" target="_blank" rel="noopener" >AMDVLK</a>、それを構成する各種ソフトウェア (<a href="https://github.com/GPUOpen-Drivers/llpc" target="_blank" rel="noopener" >LLPC (LLVM-Based Pipeline Compiler)</a>, <a href="https://github.com/GPUOpen-Drivers/pal" target="_blank" rel="noopener" >PAL (Platform Abstraction Library)</a>, <a href="https://github.com/GPUOpen-Drivers/xgl" target="_blank" rel="noopener" >XGL (Vulkan API Layer)</a>) が、<em>Beige Goby/Navi24 (gfx10)</em> に対応した。</p>
+<ul>
+<li><a href="https://github.com/GPUOpen-Drivers/pal/commit/0a0a4ae4ab062d31fcd68863c35952967a8060ee#diff-671366d7e4dc96c40f966d81a9dccc4812240e5452105162205974e3b310194b" target="_blank" rel="noopener" >Update pal from commit: f4c1b21c · GPUOpen-Drivers/pal@0a0a4ae</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/llpc/commit/7c2f5f7e28f62f82524baa6234d967eeef9e77a9" target="_blank" rel="noopener" >Update llpc from commit: 9c33c180 · GPUOpen-Drivers/llpc@7c2f5f7</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/xgl/commit/d01032b9f8f7f3b7ce54a3078e9aae149386b716" target="_blank" rel="noopener" >Update xgl from commit: b30d9ce9 · GPUOpen-Drivers/xgl@d01032b</a></li>
+</ul>
+<h2 id="beige_goby">Beige Goby/Navi24 spec<a href="#beige_goby" class="head-cur-link"></a></h2>
+<p><em>Beige Goby/Navi24</em> の GPUコア部は、ShaderEngine (SE) 1基、SE あたりの ShaderArray (SA,SH) 2基、SA あたりの WGP (CU) 4基 (8基)、SE あたりの RenderBackend (RB) 4基という構成になっている。<br>
+スペックに関するもう 1つのコードブロックでは SE あたりの RB数は 2基となっているが、AMD 公式サイトでは ROP 32基 (RB+ 4基) となっているため、下引用部が正しいと思われる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+メモリサイドキャッシュには、L2キャッシュブロック 1MiB (ブロック 4基)、L3キャッシュ/MALL 16MiB を持つ。メモリチャネルは 4ch、メモリタイプは GDDR6 に対応している (GDDR6 64-bit [16-bit x 4ch])。<br>
+余談となるが、AMDGPU に関するソフトウェア中では L3キャッシュを MALL と呼んでいるものの、MALL が何の略称かは分かれており、LLVM では <em>Memory Attached Last Level</em> <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、Linux Kernel における AMDGPUドライバでは <em>Memory Access at Last Level</em> だとしている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<blockquote>
+<pre><code>     else if (AMDGPU_IS_NAVI24(m_nullIdLookup.familyId, m_nullIdLookup.eRevId))
+     {
+         pChipInfo-&gt;supportSpiPrefPriority  =     1;
+         pChipInfo-&gt;doubleOffchipLdsBuffers =     1;
+         pChipInfo-&gt;gbAddrConfig            = 0x242; // GB_ADDR_CONFIG_DEFAULT;
+         pChipInfo-&gt;numShaderEngines        =     1; // GPU__GC__NUM_SE;
+         pChipInfo-&gt;numShaderArrays         =     2; // GPU__GC__NUM_SA_PER_SE
+         pChipInfo-&gt;maxNumRbPerSe           =     4; // GPU__GC__NUM_RB_PER_SE;
+         pChipInfo-&gt;nativeWavefrontSize     =    32; // GPU__GC__SQ_WAVE_SIZE;
+         pChipInfo-&gt;minWavefrontSize        =    32;
+         pChipInfo-&gt;maxWavefrontSize        =    64;
+         pChipInfo-&gt;numPhysicalVgprsPerSimd =  1024; // GPU__GC__NUM_GPRS;
+         pChipInfo-&gt;maxNumCuPerSh           =     8; // GPU__GC__NUM_WGP_PER_SA * 2;
+         pChipInfo-&gt;numTccBlocks            =     4; // GPU__GC__NUM_GL2C;
+         pChipInfo-&gt;gsVgtTableDepth         =    32; // GPU__VGT__GS_TABLE_DEPTH;
+         pChipInfo-&gt;gsPrimBufferDepth       =  1792; // GPU__GC__GSPRIM_BUFF_DEPTH;
+         pChipInfo-&gt;maxGsWavesPerVgt        =    32; // GPU__GC__NUM_MAX_GS_THDS;
+     }
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/blob/0a0a4ae4ab062d31fcd68863c35952967a8060ee/src/core/os/nullDevice/ndDevice.cpp#L1050-L1067" target="_blank" rel="noopener" >pal/ndDevice.cpp at 0a0a4ae4ab062d31fcd68863c35952967a8060ee · GPUOpen-Drivers/pal</a></cite>
+</div>
+
+</blockquote>
+<p><em>NGG (Next Generation Geometry)</em> に対応する RDNA系アーキテクチャ GPU では、特殊なオンチップバッファ、Parameter Cache (PC) を持つ。PC はメモリキャッシュと異なり、ピクセルシェーダ (Pixel Shader, PS) への入力バッファとして用いられる。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/07/26/radv-nggc/#pc">RADVドライバーに NGGカリングが実装 | Coelacanth&rsquo;s Dream</a></span>
+
+PC の規模について <em>RDNA 2 dGPU</em> という枠で見たとき、<em>Beige Goby</em> は他 GPU よりも少ない 512ラインとなっている。<br>
+規模が大きく異なる <em>Sienna Cichlid/Navi21</em> と <em>Navy Flounder/Navi22, Dimgrey Cavefish/Navi23</em> で同じ 1024ラインという構成を採っており、PC は GPUコア部の規模とは別に調節されているものと思われる。<br>
+また、<em>RDNA 2 APU</em> である <em>VanGogh (Aerith), Yellow Carp (Rembrandt)</em> で PC は、<em>Beige Goby</em> よりも小さい 256ラインとなっている。</p>
+<blockquote>
+<pre><code>       case CHIP_RAVEN:
+       case CHIP_RAVEN2:
+       case CHIP_RENOIR:
+       case CHIP_NAVI10:
+       case CHIP_NAVI12:
+       case CHIP_SIENNA_CICHLID:
+       case CHIP_NAVY_FLOUNDER:
+       case CHIP_DIMGREY_CAVEFISH:
+          pc_lines = 1024;
+          break;
+       case CHIP_NAVI14:
+       case CHIP_BEIGE_GOBY:
+          pc_lines = 512;
+          break;
+       case CHIP_VANGOGH:
+       case CHIP_YELLOW_CARP:
+          pc_lines = 256;
+          break;
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/29f264f25804eeea962f21c29c39050c3fc1663d/src/amd/common/ac_gpu_info.c#L1022-1039" target="_blank" rel="noopener" >src/amd/common/ac_gpu_info.c · 29f264f25804eeea962f21c29c39050c3fc1663d · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">RDNA 2</th>
+<th style="text-align:center">Sienna Cichlid<br>(Navi21)</th>
+<th style="text-align:center">Navy Flounder<br>(Navi22)</th>
+<th style="text-align:center">Dimgrey Cavefish<br>(Navi23)</th>
+<th style="text-align:center">Beige Goby<br>(Navi24)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Shader Engine</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:left">WGP (CU)</td>
+<td style="text-align:center">40 (80)</td>
+<td style="text-align:center">20 (40)</td>
+<td style="text-align:center">16 (32)</td>
+<td style="text-align:center">8 (16)</td>
+</tr>
+<tr>
+<td style="text-align:left">RB+</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td style="text-align:left">Memory Bus</td>
+<td style="text-align:center">256-bit</td>
+<td style="text-align:center">192-bit</td>
+<td style="text-align:center">128-bit</td>
+<td style="text-align:center">64-bit</td>
+</tr>
+<tr>
+<td style="text-align:left">L3 Cache</td>
+<td style="text-align:center">128 MiB</td>
+<td style="text-align:center">96 MiB</td>
+<td style="text-align:center">32 MiB</td>
+<td style="text-align:center">16 MiB</td>
+</tr>
+<tr>
+<td style="text-align:left">Transistor</td>
+<td style="text-align:center">26.8 B</td>
+<td style="text-align:center">17.2 B</td>
+<td style="text-align:center">11.1 B</td>
+<td style="text-align:center">5.4 B</td>
+</tr>
+<tr>
+<td style="text-align:left">Process</td>
+<td style="text-align:center">7 nm</td>
+<td style="text-align:center">7nm</td>
+<td style="text-align:center">7 nm</td>
+<td style="text-align:center">6 nm</td>
+</tr>
+<tr>
+<td style="text-align:left">Die size</td>
+<td style="text-align:center">520 mm2</td>
+<td style="text-align:center">336 mm2</td>
+<td style="text-align:center">237 mm2</td>
+<td style="text-align:center">107 mm2</td>
+</tr>
+</tbody>
+</table>
+<p>規模、ターゲット性能が近い <em>Navi14</em> と <em>Beige Goby/Navi24</em> を比較すると、SE 1基というのは共通するが、<em>Beige Goby</em> では 総 WGP (CU) 数は 8基減り、メモリバス幅と L2キャッシュも半減した。しかし L3キャッシュ 16 MiB が追加されている。<br>
+RB数も減ったが、処理可能なピクセル数を増やした RB+ となったため、相当 ROP数は変わらない。<br>
+それと <em>Navi14</em> ではハードウェアのバグで <em>NGG</em> が無効化されていたが、<em>Beige Goby</em> ではそれが無いため有効可能になっていることは触れておきたい。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Navi</th>
+<th style="text-align:center">Navi14</th>
+<th style="text-align:center">Beige Goby<br>(Navi24)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Shader Engine</td>
+<td style="text-align:center">1</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td style="text-align:left">WGP (CU)</td>
+<td style="text-align:center">12 (24)</td>
+<td style="text-align:center">8 (16)</td>
+</tr>
+<tr>
+<td style="text-align:left">RB (ROP)</td>
+<td style="text-align:center">8 (32)</td>
+<td style="text-align:center">4 (32)</td>
+</tr>
+<tr>
+<td style="text-align:left">Memory Bus</td>
+<td style="text-align:center">128-bit</td>
+<td style="text-align:center">64-bit</td>
+</tr>
+<tr>
+<td style="text-align:left">L2 Cache</td>
+<td style="text-align:center">2 MiB</td>
+<td style="text-align:center">1 MiB</td>
+</tr>
+<tr>
+<td style="text-align:left">L3 Cache</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">16 MiB</td>
+</tr>
+<tr>
+<td style="text-align:left">Transistor</td>
+<td style="text-align:center">6.4 B</td>
+<td style="text-align:center">5.4 B</td>
+</tr>
+<tr>
+<td style="text-align:left">Process</td>
+<td style="text-align:center">7 nm</td>
+<td style="text-align:center">6 nm</td>
+</tr>
+<tr>
+<td style="text-align:left">Die size</td>
+<td style="text-align:center">158 mm2</td>
+<td style="text-align:center">107 mm2</td>
+</tr>
+<tr>
+<td style="text-align:left">NGG</td>
+<td style="text-align:center">Disabled<br>(for HW bug)</td>
+<td style="text-align:center">Enabled</td>
+</tr>
+</tbody>
+</table>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a></h3>
+<ul>
+<li><a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-6500-xt#product-specs" target="_blank" rel="noopener" >AMD Radeon RX 6500 XT Graphics Card | AMD</a></li>
+<li><a href="https://hc33.hotchips.org/assets/program/conference/day2/2021%20Hot%20Chips%20RDNA2%20Pomianowski%20Final%2020210820.pdf" target="_blank" rel="noopener" >2021 Hot Chips RDNA2 Pomianowski Final 20210820.pdf</a></li>
+</ul>
+
+</section>
+
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/GPUOpen-Drivers/pal/blob/0a0a4ae4ab062d31fcd68863c35952967a8060ee/src/core/hw/gfxip/gfx9/gfx9Device.cpp#L5097-L5115" target="_blank" rel="noopener" >pal/gfx9Device.cpp at 0a0a4ae4ab062d31fcd68863c35952967a8060ee · GPUOpen-Drivers/pal</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/llvm/llvm-project/blob/6d28dffb6bf4c97848290b9aee3c19025470e54a/llvm/docs/AMDGPUUsage.rst#memory-model-gfx10" target="_blank" rel="noopener" >llvm-project/AMDGPUUsage.rst at 6d28dffb6bf4c97848290b9aee3c19025470e54a · llvm/llvm-project</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/blob/8d0749b4f83bf4768ceae45ee6a79e6e7eddfc2a/Documentation/gpu/amdgpu/display/dc-glossary.rst" target="_blank" rel="noopener" >linux/dc-glossary.rst at 8d0749b4f83bf4768ceae45ee6a79e6e7eddfc2a · torvalds/linux</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a href="https://www.coelacanth-dream.com/about/#contact" class="sb"target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/01/27/amdvlk-gpuopen-beige_goby-navi24.md" class="changelog sb"target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
+  </div>
+  </div>
+</aside>
+</main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<small class="copyright">&copy; 2019 - 2021 Umio-Yasuno</small>
+<aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
+</aside>
+
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="menu-cat-tag-lower">Beige Goby</a>
+    <a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="menu-cat-tag-lower">GPUOpen</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a>
+</nav></nav>
+<aside class="menu-share ">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><small class="copyright">&copy; 2019 - 2021 Umio-Yasuno</small>
+<aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.0</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/beige_goby/" class="menu-cat-tag-lower">Beige Goby</a>
+    <a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="menu-cat-tag-lower">GPUOpen</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
