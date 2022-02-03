@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/01/31/amdgpu-ip-version/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMDGPUの各種 IPバージョン | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMDGPUの各種 IPバージョン | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMDGPUの各種 IPバージョン | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/01/31/amdgpu-ip-version/">
+  <meta name="description" content="以前の AMDGPUドライバーでは、DeviceID (DID) から GPU ASIC を検出し、そこから分岐して各種 IPブロック (GC, SDMA, DCN, UVD, VCN, VCE) をサポートする形を採っていたが">
+  <meta property="og:description" content="以前の AMDGPUドライバーでは、DeviceID (DID) から GPU ASIC を検出し、そこから分岐して各種 IPブロック (GC, SDMA, DCN, UVD, VCN, VCE) をサポートする形を採っていたが">
+  <meta name="twitter:description" content="以前の AMDGPUドライバーでは、DeviceID (DID) から GPU ASIC を検出し、そこから分岐して各種 IPブロック (GC, SDMA, DCN, UVD, VCN, VCE) をサポートする形を採っていたが">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/01/31/amdgpu-ip-version/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/01/31/amdgpu-ip-version/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="Linux Kernel, GFX9, RDNA, RDNA 2, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:2px 2px 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.site-title-link:hover .lain-e{background-color:#0004}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:paint}footer{visibility:hidden;grid-column:1/-1}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#fee2 0%,#0000 47.5%,#0000 95%,#000 100%)50%/contain fixed no-repeat,linear-gradient(#8002 33%,#0802 33%,#0802 67%,#0082 67%)50%/100% .7rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#0ad1c1;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;display:flex;flex-flow:column nowrap;gap:.8rem 0;margin-top:1rem}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMDGPUの各種 IPバージョン",
+  "headline" : "AMDGPUの各種 IPバージョン",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-01-31",
+    "datePublished" : "2022-01-31",
+    "dateModufied"  : "2022-02-03",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/apu/" class="head-cat-tag-lower">APU</a>/<a href="https://www.coelacanth-dream.com/categories/database/" class="head-cat-tag-lower">Database</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-tag-lower">Hardware</a></nav><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/gfx9/" class="head-cat-tag-lower">GFX9</a>/<a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="head-cat-tag-lower">Linux Kernel</a>/<a href="https://www.coelacanth-dream.com/tags/rdna/" class="head-cat-tag-lower">RDNA</a>/<a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="head-cat-tag-lower">RDNA 2</a></nav></nav>
+
+  <h1 class="page-title">AMDGPUの各種 IPバージョン</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share ">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions/" class="sb"target="_blank" rel="noopener noreferrer">GH Discussions</a>
+</aside><aside class="article-time">
+    <time datetime="2022-01-31 17:53 &#43;0900">Post: 2022/01/31 17:53 &#43;0900</time>
+    <aside class="update">Update: 2022/02/03 20:50 &#43;0900</aside>
+  </aside><p>以前の AMDGPUドライバーでは、DeviceID (DID) から GPU ASIC を検出し、そこから分岐して各種 IPブロック (GC, SDMA, DCN, UVD, VCN, VCE) をサポートする形を採っていたが、少し前 (2021/09) から、VBIOS、ファームウェアに含まれている各種 IPバージョンを取得、直接 IPブロックをサポートする形になった。<br>
+これにより、ドライバーに直接記述された DeviceIDリスト や GPU ASIC に結びつけた各種 IPバージョンの情報が無くとも IPブロックをサポートすることができる。以前の方法では、ある GPU の DeviceID を後から追加した場合、ほとんどサポートされている状態でもその DeviceID が反映されなければ不明の GPU として扱われてしまう。<br>
+例えば、<em>Renoir, Lucienne, Green Sardine (Cezanne), Barcelo</em> は共通した構成の GPU部となるが、DevceID は異なるため、サポートには DeviceID を追加するパッチを適用する必要があった。</p>
+<p>IPバージョンを VBIOS、ファームウェアに含むようになったのは <em>GFX9 (Vega)</em> 世代からとなり、それ以前の世代は従来の DeviceID から検出する方法が使われる。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-September/069191.html" target="_blank" rel="noopener" >[PATCH 00/66] Move to IP driven device enumeration</a></li>
+</ul>
+<p>ただパッチとコードを眺めているだけの自分にとっては、IPバージョンからではどの AMD GPU を想定した部分のコードなのかわかりづらいため、一度 AMD GPU と各種IPバージョンをまとめてみた。</p>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a></h2>
+<ul>
+<li><a href="#table">AMDGPU IP version table</a></li>
+</ul>
+</section>
+
+<p>先に補足的な説明を置くと、各種 IPブロックには個人的に謎な略称がそれなりにあったのだが、最近になってドキュメントが追加され、さらにはその IPブロックがどういった役割を持っているのかも記載されるようになった。</p>
+<ul>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu/driver-core.html" target="_blank" rel="noopener" >Core Driver Infrastructure — The Linux Kernel documentation</a></li>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu/display/dc-glossary.html" target="_blank" rel="noopener" >DC Glossary — The Linux Kernel documentation</a></li>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu/amdgpu-glossary.html" target="_blank" rel="noopener" >AMDGPU Glossary — The Linux Kernel documentation</a></li>
+</ul>
+<p>今回 IPバージョンをまとめた分だけだと、以下のようになっている。</p>
+<ul>
+<li>GC: Graphiics and Compute</li>
+<li>SDMA: System DMA</li>
+<li>DCE: Display Contoroller Engine</li>
+<li>DCN: Display Core Next</li>
+<li>VCN: Video Codec/Core Next
+<ul>
+<li>UVD: Unified Video Decoder</li>
+<li>VCE: Video Compression Engine</li>
+</ul>
+</li>
+<li>NBIO: North Bridge Input/Output</li>
+<li>PSP (MP0): Platform Security Processor</li>
+<li>SMU (MP1): System Management Unit</li>
+<li>UMC: Unified Memory Contoroller</li>
+</ul>
+<p>GC が GFXコア部にあたり、IPブロックの中では最大のものとなる。<br>
+AMD GPU には対応する ISA を示す GPU/GFX/Target ID があり、AMDGPU KFD (Kernel Fusion Driver) ではその情報を sysfs (/sys/class/kfd/kfd/topology/node/*) に出力するが、GC IPバージョンから判定を行っている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+GC と GPU/GFX/Target ID は近いフォーマットとバージョンになっているが完全に一致はしない。<br>
+コメントでわかりやすく示しているのもあるが、コメントが無い部分ではこんがらがりやすいと思ったのが今回の動機。<br>
+そのため主要な IPブロック、実際の機能に出そうな部分のみをまとめている。すべての IPバージョンをまとめてはいないし、正直曖昧な部分も多い。
+あくまでも個人的なデータベースとなっている。</p>
+<h2 id="table">AMDGPU IP version table<a href="#table" class="head-cur-link"></a></h2>
+<p>IPバージョンは <code>{major}.{minor}.{revision}</code> のフォーマットで記述される。</p>
+<blockquote>
+<pre><code> #define IP_VERSION(mj, mn, rv) (((mj) &lt;&lt; 16) | ((mn) &lt;&lt; 8) | (rv))
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu.h?h=next-20220128#n767" target="_blank" rel="noopener" >amdgpu.h « amdgpu « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a></cite>
+</div>
+
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">AMD GPU</th>
+<th style="text-align:center">GC</th>
+<th style="text-align:center">SDMA</th>
+<th style="text-align:center">DCE/DCN</th>
+<th style="text-align:center">VCN (UVD, VCE)</th>
+<th style="text-align:center">NBIO</th>
+<th style="text-align:center">PSP (MP0)</th>
+<th style="text-align:center">SMU (MP1)</th>
+<th style="text-align:center">UMC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Vega10 (gfx900)</td>
+<td style="text-align:center">9.0.1</td>
+<td style="text-align:center">4.0.0</td>
+<td style="text-align:center">12.0.0</td>
+<td style="text-align:center">(7.0.0, 4.0.0)</td>
+<td style="text-align:center">6.1.0</td>
+<td style="text-align:center">9.0.0</td>
+<td style="text-align:center">9.0.0</td>
+<td style="text-align:center">6.0.0</td>
+</tr>
+<tr>
+<td style="text-align:left">Vega12 (gfx904)</td>
+<td style="text-align:center">9.2.1</td>
+<td style="text-align:center">4.0.1</td>
+<td style="text-align:center">12.0.1</td>
+<td style="text-align:center">(7.0.0, 4.0.0)</td>
+<td style="text-align:center">6.2.0</td>
+<td style="text-align:center">9.0.0</td>
+<td style="text-align:center">9.0.0</td>
+<td style="text-align:center">6.1.0</td>
+</tr>
+<tr>
+<td style="text-align:left">Vega20 (gfx906)</td>
+<td style="text-align:center">9.4.0</td>
+<td style="text-align:center">4.2.0</td>
+<td style="text-align:center">12.1.0</td>
+<td style="text-align:center">(7.2.0, 4.1.0)</td>
+<td style="text-align:center">7.4.0</td>
+<td style="text-align:center">11.0.2</td>
+<td style="text-align:center">11.0.2</td>
+<td style="text-align:center">6.1.1</td>
+</tr>
+<tr>
+<td style="text-align:left">Arcturus (gfx908)</td>
+<td style="text-align:center">9.4.1</td>
+<td style="text-align:center">4.2.2</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">2.5.0</td>
+<td style="text-align:center">7.4.1</td>
+<td style="text-align:center">11.0.4</td>
+<td style="text-align:center">11.0.2</td>
+<td style="text-align:center">6.1.2</td>
+</tr>
+<tr>
+<td style="text-align:left">Aldebaran (gfx90a)</td>
+<td style="text-align:center">9.4.2</td>
+<td style="text-align:center">4.4.0</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">2.6.0</td>
+<td style="text-align:center">7.4.4</td>
+<td style="text-align:center">13.0.2</td>
+<td style="text-align:center">13.0.2</td>
+<td style="text-align:center">6.7.0</td>
+</tr>
+<tr>
+<td style="text-align:left">Raven/Picasso (gfx902)</td>
+<td style="text-align:center">9.1.0</td>
+<td style="text-align:center">4.1.1</td>
+<td style="text-align:center">1.0.0</td>
+<td style="text-align:center">1.0.0</td>
+<td style="text-align:center">7.0.0</td>
+<td style="text-align:center">10.0.0</td>
+<td style="text-align:center">10.0.0</td>
+<td style="text-align:center">7.0.0</td>
+</tr>
+<tr>
+<td style="text-align:left">Raven2 (gfx909)</td>
+<td style="text-align:center">9.2.2</td>
+<td style="text-align:center">4.1.1</td>
+<td style="text-align:center">1.0.1</td>
+<td style="text-align:center">1.0.1</td>
+<td style="text-align:center">7.0.1</td>
+<td style="text-align:center">10.0.1</td>
+<td style="text-align:center">10.0.1</td>
+<td style="text-align:center">7.5.0</td>
+</tr>
+<tr>
+<td style="text-align:left">Renoir/Lucienne<br>/Barcelo/Green Sardine [Cezanne] (gfx90c)</td>
+<td style="text-align:center">9.3.0</td>
+<td style="text-align:center">4.1.2</td>
+<td style="text-align:center">2.1.0</td>
+<td style="text-align:center">2.2.0</td>
+<td style="text-align:center">7.0.0?</td>
+<td style="text-align:center">12.0.x?</td>
+<td style="text-align:center">12.0.{1,2}<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">Navi10 (gfx1010)</td>
+<td style="text-align:center">10.1.10</td>
+<td style="text-align:center">5.0.0</td>
+<td style="text-align:center">2.0.0?</td>
+<td style="text-align:center">2.0.{0,2}?</td>
+<td style="text-align:center">2.3.x</td>
+<td style="text-align:center">11.0.0</td>
+<td style="text-align:center">11.0.0</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">Navi12 (gfx1011)</td>
+<td style="text-align:center">10.1.2</td>
+<td style="text-align:center">5.0.5</td>
+<td style="text-align:center">2.0.0?</td>
+<td style="text-align:center">2.0.{0,2}?</td>
+<td style="text-align:center">2.3.x</td>
+<td style="text-align:center">11.0.9</td>
+<td style="text-align:center">11.0.9</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">Navi14 (gfx1012)</td>
+<td style="text-align:center">10.1.1</td>
+<td style="text-align:center">5.0.2</td>
+<td style="text-align:center">2.0.0?</td>
+<td style="text-align:center">2.0.{0,2}?</td>
+<td style="text-align:center">2.3.x</td>
+<td style="text-align:center">11.0.5</td>
+<td style="text-align:center">11.0.5</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">Cyan Skilfish/Skillfish (gfx1013)</td>
+<td style="text-align:center">10.1.3</td>
+<td style="text-align:center">5.0.1</td>
+<td style="text-align:center">2.0.1?</td>
+<td style="text-align:center">?</td>
+<td style="text-align:center">2.3.x?</td>
+<td style="text-align:center">11.0.8</td>
+<td style="text-align:center">11.0.8</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">Sienna Cichlid/Navi21 (gfx1030)</td>
+<td style="text-align:center">10.3.0</td>
+<td style="text-align:center">5.2.0</td>
+<td style="text-align:center">3.0.0?</td>
+<td style="text-align:center">3.0.0</td>
+<td style="text-align:center">2.3.x?</td>
+<td style="text-align:center">11.0.7</td>
+<td style="text-align:center">11.0.7</td>
+<td style="text-align:center">8.7.x</td>
+</tr>
+<tr>
+<td style="text-align:left">VanGogh (gfx1033)</td>
+<td style="text-align:center">10.3.1</td>
+<td style="text-align:center">5.2.1</td>
+<td style="text-align:center">3.0.1?</td>
+<td style="text-align:center">3.0.33</td>
+<td style="text-align:center">2.3.x?</td>
+<td style="text-align:center">11.5.0</td>
+<td style="text-align:center">11.5.0</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">Navy Flounder/Navi22 (gfx1031)</td>
+<td style="text-align:center">10.3.2</td>
+<td style="text-align:center">5.2.2</td>
+<td style="text-align:center">3.0.0?</td>
+<td style="text-align:center">3.x.x</td>
+<td style="text-align:center">2.3.x?</td>
+<td style="text-align:center">11.0.11</td>
+<td style="text-align:center">11.0.11</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">Dimgrey Cavefish/Navi23 (gfx1032)</td>
+<td style="text-align:center">10.3.4</td>
+<td style="text-align:center">5.2.4</td>
+<td style="text-align:center">3.0.0?</td>
+<td style="text-align:center">3.x.x</td>
+<td style="text-align:center">2.3.x?</td>
+<td style="text-align:center">11.0.12</td>
+<td style="text-align:center">11.0.12</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">Beige Goby/Navi24 (gfx1034)</td>
+<td style="text-align:center">10.3.5</td>
+<td style="text-align:center">5.2.5</td>
+<td style="text-align:center">3.0.3?</td>
+<td style="text-align:center">3.0.33</td>
+<td style="text-align:center">2.3.x?</td>
+<td style="text-align:center">11.0.13</td>
+<td style="text-align:center">11.0.13</td>
+<td style="text-align:center">?</td>
+</tr>
+<tr>
+<td style="text-align:left">Yellow Carp/Rembrandt (gfx1035)</td>
+<td style="text-align:center">10.3.3</td>
+<td style="text-align:center">5.2.3</td>
+<td style="text-align:center">3.1.2?</td>
+<td style="text-align:center">3.1.1</td>
+<td style="text-align:center">2.3.x?</td>
+<td style="text-align:center">13.0.{1,3}</td>
+<td style="text-align:center">13.0.{1,3}?</td>
+<td style="text-align:center">?</td>
+</tr>
+</tbody>
+</table>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a></h3>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/tomstdenis/umr/-/tree/main/database" target="_blank" rel="noopener" >database · main · Tom St Denis / umr · GitLab</a></li>
+<li><a href="https://github.com/torvalds/linux/blob/d0a231f01e5b25bacd23e6edc7c979a18a517b2b/drivers/gpu/drm/amd/amdkfd/kfd_device.c" target="_blank" rel="noopener" >linux/kfd_device.c at d0a231f01e5b25bacd23e6edc7c979a18a517b2b · torvalds/linux</a></li>
+<li><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/amdkfd/kfd_device.c?h=next-20220128" target="_blank" rel="noopener" >kfd_device.c « amdkfd « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a></li>
+<li><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c?h=next-20220128" target="_blank" rel="noopener" >amdgpu_discovery.c « amdgpu « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a></li>
+<li><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/amdgpu/soc15.c?h=next-20220128" target="_blank" rel="noopener" >soc15.c « amdgpu « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a></li>
+<li><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/amdgpu/nv.c?h=next-20220128" target="_blank" rel="noopener" >nv.c « amdgpu « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a></li>
+<li><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/amdgpu/psp_v13_0.c?h=next-20220128" target="_blank" rel="noopener" >psp_v13_0.c « amdgpu « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a></li>
+<li><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/amdgpu/psp_v11_0.c?h=next-20220128" target="_blank" rel="noopener" >psp_v11_0.c « amdgpu « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a></li>
+</ul>
+
+</section>
+
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/amdkfd/kfd_device.c?h=next-20220128#n186" target="_blank" rel="noopener" >kfd_device.c « amdkfd « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/pm/swsmu/amdgpu_smu.c?h=next-20220128#n526" target="_blank" rel="noopener" >amdgpu_smu.c « swsmu « pm « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a href="https://www.coelacanth-dream.com/about/#contact" class="sb"target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/01/31/amdgpu-ip-version.md" class="changelog sb"target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
+  </div>
+  </div>
+</aside>
+</main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<small class="copyright">&copy; 2019 - 2021 Umio-Yasuno</small>
+<aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/database/" class="menu-cat-tag-lower">Database</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/gfx9/" class="menu-cat-tag-lower">GFX9</a>
+    <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-cat-tag-lower">RDNA</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a>
+</nav></nav>
+<aside class="menu-share ">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><small class="copyright">&copy; 2019 - 2021 Umio-Yasuno</small>
+<aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/database/" class="menu-cat-tag-lower">Database</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/gfx9/" class="menu-cat-tag-lower">GFX9</a>
+    <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-cat-tag-lower">RDNA</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
