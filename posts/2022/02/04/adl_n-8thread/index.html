@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/02/04/adl_n-8thread/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>CPU 8-Thread、GPU 32EU を持つ Alder Lake-N | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="CPU 8-Thread、GPU 32EU を持つ Alder Lake-N | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="CPU 8-Thread、GPU 32EU を持つ Alder Lake-N | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/02/04/adl_n-8thread/">
+  <meta name="description" content="Intel の Vamshigopal 氏より、Sound Open Firmware (SOF) Project における Linuxレポジトリに Alder Lake-N (ADL-N RVP) の一部ブートログがアップロードされていた。 バグ報告のためアップロードされた">
+  <meta property="og:description" content="Intel の Vamshigopal 氏より、Sound Open Firmware (SOF) Project における Linuxレポジトリに Alder Lake-N (ADL-N RVP) の一部ブートログがアップロードされていた。 バグ報告のためアップロードされた">
+  <meta name="twitter:description" content="Intel の Vamshigopal 氏より、Sound Open Firmware (SOF) Project における Linuxレポジトリに Alder Lake-N (ADL-N RVP) の一部ブートログがアップロードされていた。 バグ報告のためアップロードされた">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/02/04/adl_n-8thread/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/02/04/adl_n-8thread/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="Alder Lake, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:2px 2px 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.site-title-link:hover .lain-e{background-color:#0004}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;contain:content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:#0886}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#fee2 0%,#0000 48%,#0000 96%,#000 98%)50%/contain fixed no-repeat,linear-gradient(#8002 33%,#0802 33%,#0802 67%,#0082 67%)50%/100% .7rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#0ad1c1;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:#0886 #0000}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0;margin-top:1rem}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "CPU 8-Thread、GPU 32EU を持つ Alder Lake-N",
+  "headline" : "CPU 8-Thread、GPU 32EU を持つ Alder Lake-N",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-02-04",
+    "datePublished" : "2022-02-04",
+    "dateModufied"  : "2022-02-06",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/cpu/" class="head-cat-tag-lower">CPU</a>/<a href="https://www.coelacanth-dream.com/categories/hardware/" class="head-cat-tag-lower">Hardware</a>/<a href="https://www.coelacanth-dream.com/categories/intel/" class="head-cat-tag-lower">Intel</a></nav><nav class="head-cat-tag-block">
+    <a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="head-cat-tag-lower">Alder Lake</a></nav></nav>
+
+  <h1 class="page-title">CPU 8-Thread、GPU 32EU を持つ Alder Lake-N</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share ">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/discussions/" class="sb"target="_blank" rel="noopener noreferrer">GH Discussions</a>
+</aside><aside class="article-time">
+    <time datetime="2022-02-04 15:14 &#43;0900">Post: 2022/02/04 15:14 &#43;0900</time>
+    <aside class="update">Update: 2022/02/06 00:03 &#43;0900</aside>
+  </aside><p>Intel の <a href="https://github.com/Vamshigopal" target="_blank" rel="noopener" >Vamshigopal</a> 氏より、Sound Open Firmware (SOF) Project における Linuxレポジトリに <em>Alder Lake-N (ADL-N RVP)</em> の一部ブートログがアップロードされていた。<br>
+バグ報告のためアップロードされたログであり、得られる情報は少ないが、これまでに集めた情報と照らし合わせることはできる。</p>
+<ul>
+<li><a href="https://github.com/thesofproject/linux/issues/3401#issuecomment-1028638063" target="_blank" rel="noopener" >IO transfer error timeout and system suspend-resume test fails · Issue #3401 · thesofproject/linux</a></li>
+</ul>
+<h2 id="cpu">CPU (Model: 0xBE)<a href="#cpu" class="head-cur-link"></a></h2>
+<p>当該の CPU はエンジニアサンプリングとされ、CPU Name は <em>Genuine Intel(R) 0000</em> となっている。<br>
+CPUID Model は <code>0xBE (190)</code> であり、これは Coreboot の情報と一致し、確かに <em>Alder Lake-N</em> と言える。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/11/16/coreboot-intel-adl_n/#cpuid">N バリアントも存在する Alder Lake | Coelacanth&rsquo;s Dream</a></span>
+
+ただ、<em>Alder Lake</em> の CPUID Model として、最近 <code>0xBF (191)</code> 追加されたが、<em>Alder Lake-N</em> が <code>0xBE (190)</code> で確定したとなると、単なる誤字である可能性が濃厚になった。あるいはまた別のバリアントが用意されている可能性もあるが。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2022/01/07/intel-adl-rkl-new-model/#adl">Intel Alder Lake と Rocket Lake に追加される CPUID Model | Coelacanth&rsquo;s Dream</a></span>
+
+GCC には <code>0xBF (191)</code> を追加するパッチが既に公開されているが、<code>0xBE (190)</code> については現在 Coreboot のみサポートが進められており、Linux Kernel はまだパッチが公開されていない。<br>
+<em>Alder Lake-N</em> の GPU部、I/O部の DeviceID を Linux Kernel に追加するパッチは投稿、公開されている。</p>
+<blockquote>
+<pre><code> [    0.345485] smpboot: CPU0: Genuine Intel(R) 0000 (family: 0x6, model: 0xbe, stepping: 0x0)
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/thesofproject/linux/issues/3401#issuecomment-1028638063" target="_blank" rel="noopener" >IO transfer error timeout and system suspend-resume test fails · Issue #3401 · thesofproject/linux</a></cite>
+</div>
+
+</blockquote>
+<p>CPU Thread(s) は 8-Threads が認識されている。<br>
+<em>Alder Lake-N</em> は Coreboot の関連コード部から、他 <em>Alder Lake</em> バリアントのようにハイブリッド構成を採らず、Atom系コアのみで構成すると考えられる。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/11/25/adl_n-atom-only/">Alder Lake-N は Atom系コアのみの構成か | Coelacanth&rsquo;s Dream</a></span>
+
+コアあたりのスレッド数も 1-Thread で変わらないとすると、<em>Alder Lake-N</em> は <em>Gracemont</em> 8-Core/8-Thread、4-Core で L2キャッシュを共有するクラスタを 2基を持つ。<br>
+現世代のモバイル向け Atom系プロセッサ <em>Jasper Lake (Tremont)</em> は最大 4-Core (1-Cluster) 構成であったため、アーキテクチャの拡張も含めれば CPU部の規模は倍以上となる。</p>
+<blockquote>
+<pre><code> [    0.376494] smp: Brought up 1 node, 8 CPUs
+ [    0.377487] smpboot: Max logical packages: 2
+ [    0.378486] smpboot: Total of 8 processors activated (19009.53 BogoMIPS)
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/thesofproject/linux/issues/3401#issuecomment-1028638063" target="_blank" rel="noopener" >IO transfer error timeout and system suspend-resume test fails · Issue #3401 · thesofproject/linux</a></cite>
+</div>
+
+</blockquote>
+<h2 id="gpu">Gen12 GT1 32EU<a href="#gpu" class="head-cur-link"></a></h2>
+<p>GPU部の DeviceID は <code>0x46D0</code> 、これは <em>Alder Lake-N</em> の DeviceID に割り当てられており、ここでも <em>Alder Lake-N</em> であることを確かめられる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+各 IP の世代は、Graphics: Gen12、Media: Gen12、Display: Gen13 (Xe_LPD) であり、これはモバイル向けバリアントである <em>Alder Lake-P/M (Model: 0x9A)</em> と同じ。</p>
+<blockquote>
+<pre><code> [    2.276814] i915 device info: pciid=0x46d0 rev=0x00 platform=ALDERLAKE_P (subplatform=0x1) gen=12
+ [    2.280151] i915 device info: graphics version: 12
+ [    2.281986] i915 device info: media version: 12
+ [    2.283719] i915 device info: display version: 13
+ [    2.285521] i915 device info: gt: 0
+ [    2.286870] i915 device info: iommu: disabled
+ [    2.288544] i915 device info: memory-regions: 5
+ [    2.290291] i915 device info: page-sizes: 211000
+ [    2.292045] i915 device info: platform: ALDERLAKE_P
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/thesofproject/linux/issues/3401#issuecomment-1028638063" target="_blank" rel="noopener" >IO transfer error timeout and system suspend-resume test fails · Issue #3401 · thesofproject/linux</a></cite>
+</div>
+
+</blockquote>
+<p>規模は 32EU (1 Slice, 2 Sub-Slice, 16 EU per Sub-Slice)。<br>
+<em>Alder Lake-P/M</em> は最大 96EU だったため、デスクトップ向けと同様に GPU部の規模をだいぶ抑えている。<br>
+<em>Jasper Lake</em> は Gen11 32EU であり、Atom系プロセッサらしい規模を保ったとも見える。CPU部は最大 8-Thread に増やした一方で、GPU部は 32EU から増やさなくてもいいという判断がなされたのだろう。<br>
+ただ SDP (Scenario Design Power) 7W という省電力プロセッサだった <em>Lakefield</em> が Gen11 64EU を持っていたことを思うと、Atom系プロセッサが求められる性能、電力帯で CPU と GPU、どちらの性能がより求められているかは難しい部分だと感じられる。<br>
+<span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2022/01/12/adl_n-chromebook-board/">Alder Lake-N を搭載する Chromebookボード 「Nissa, Nivviks, Nereid」 | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<blockquote>
+<pre><code> [    2.377090] i915 device info: slice total: 1, mask=0001
+ [    2.379108] i915 device info: subslice total: 2
+ [    2.380844] i915 device info: slice0: 2 subslices, mask=00000003
+ [    2.383121] i915 device info: EU total: 32
+ [    2.384684] i915 device info: EU per subslice: 16
+ [    2.386481] i915 device info: has slice power gating: yes
+ [    2.388535] i915 device info: has subslice power gating: no
+ [    2.390652] i915 device info: has EU power gating: no
+</code></pre>
+
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/thesofproject/linux/issues/3401#issuecomment-1028638063" target="_blank" rel="noopener" >IO transfer error timeout and system suspend-resume test fails · Issue #3401 · thesofproject/linux</a></cite>
+</div>
+
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"></th>
+<th style="text-align:center">Alder Lake-N</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Model</td>
+<td style="text-align:center">0xBE</td>
+</tr>
+<tr>
+<td style="text-align:left">CPU (big + small)</td>
+<td style="text-align:center">0 + 8?</td>
+</tr>
+<tr>
+<td style="text-align:left">GPU (Gen12.2)</td>
+<td style="text-align:center">GT1 32EU</td>
+</tr>
+<tr>
+<td style="text-align:left">CPU PCIe</td>
+<td style="text-align:center">N/A</td>
+</tr>
+<tr>
+<td style="text-align:left">PCH PCIe</td>
+<td style="text-align:center">9-Lane</td>
+</tr>
+</tbody>
+</table>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-December/285043.html" target="_blank" rel="noopener" >[Intel-gfx] [PATCH V3] drm/i915/adl-n: Enable ADL-N platform</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a href="https://www.coelacanth-dream.com/about/#contact" class="sb"target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/02/04/adl_n-8thread.md" class="changelog sb"target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+
+
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
+  </div>
+  <div class="amzn_link_block">
+    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
+  </div>
+  </div>
+</aside>
+</main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<small class="copyright">&copy; 2019 - 2021 Umio-Yasuno</small>
+<aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-cat-tag-lower">Alder Lake</a>
+</nav></nav>
+<aside class="menu-share ">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><small class="copyright">&copy; 2019 - 2021 Umio-Yasuno</small>
+<aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-cat-tag-lower">Alder Lake</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+      <div class="crt"></div>
+      <div id="msg"></div>
+  </body>
+</html>
