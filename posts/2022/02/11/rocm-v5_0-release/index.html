@@ -68,7 +68,7 @@
   <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
   <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
     <time datetime="2022-02-11 13:59 +0900">Post: 2022/02/11 13:59 &#43;0900</time>
-    <aside class="update">Update: 2022/02/11 19:40 &#43;0900</aside>
+    <aside class="update">Update: 2022/02/11 20:34 &#43;0900</aside>
   </aside><p>ROCm v5.0 がリリースされた。<br>
 ついに <em>RDNA 2</em> GPU のサポートが正式に追加されたが、<em>Sienna Cichlid/Navi21 (gfx1030)</em> をベースにする <em>Radeon Pro V620/W6800</em> のみのサポートとなる。</p>
 <ul>
@@ -81,11 +81,39 @@
 <em>MI250X</em> はパッケージ内の GCD 2基と、異なるパッケージ間、どちらも XGMI で接続されるが帯域は異なるため、それを意識した対応ではないかと思われる。<br>
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2022/01/14/olcf-crusher/">OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 + 4x MI250X | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<p>ROCm から少し外れるが、HIP/CUDA API を動的に読み込み、実行時に API を切り替え可能な <a href="https://github.com/GPUOpen-LibrariesAndSDKs/Orochi" target="_blank" rel="noopener" >Orochi</a> が Apache License 2.0 下で公開された。</p>
+<p><a href="https://github.com/RadeonOpenCompute/ROCR-Runtime" target="_blank" rel="noopener" >ROCR-Runtime</a> では新たな環境変数 <code>HSA_COOP_CU_COUNT</code> が追加された。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
+これは同期などの集合的な処理を行う単位となるスレッドグループ (Cooperative Groups) に対し、正しい使用可能な CU数を取得するためのものと思われる。<br>
+<code>HSA_COOP_CU_COUNT</code> が 1 の場合、ROCr-Rutime は <code>hsa_agent_get_info()</code> の <code>HSA_AMD_AGENT_INFO_COOPERATIVE_COMPUTE_UNIT_COUNT</code> 属性を通して、Cooperative Groups用の正しい CU数を返す。<br>
+1 以外か未設定の場合は、<code>HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT</code> と同じ CU数、おそらくは全体の CU数を返す。<br>
+ROCr-Runtime のソースコードを見るに、<em>CDNA 2/MI200/Aldebaran (gfx90a)</em> を想定した機能となっている。GPUID は <code>gfx{Major, Minor, Stepping}</code> のフォーマットで表現される。</p>
+<blockquote cite=https://github.com/RadeonOpenCompute/ROCR-Runtime/blob/83b46ab91086e10edbc6100d5e55cac11c9b5d7a/src/core/runtime/amd_gpu_agent.cpp#L1013-L1023>
+<pre><code>     case HSA_AMD_AGENT_INFO_COOPERATIVE_COMPUTE_UNIT_COUNT:
+       if (core::Runtime::runtime_singleton_-&gt;flag().coop_cu_count() &amp;&amp;
+           (isa_-&gt;GetMajorVersion() == 9) &amp;&amp; (isa_-&gt;GetMinorVersion() == 0) &amp;&amp;
+           (isa_-&gt;GetStepping() == 10)) {
+         uint32_t count = 0;
+         hsa_status_t err = GetInfo((hsa_agent_info_t)HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT, &amp;count);
+         assert(err == HSA_STATUS_SUCCESS &amp;&amp; &quot;CU count query failed.&quot;);
+         *((uint32_t*)value) = (count &amp; 0xFFFFFFF8) - 8;  // value = floor(count/8)*8-8
+         break;
+       }
+        return GetInfo((hsa_agent_info_t)HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT, value);
+</code></pre>
+<cite class="bq-source-link">引用元: <a href="https://github.com/RadeonOpenCompute/ROCR-Runtime/blob/83b46ab91086e10edbc6100d5e55cac11c9b5d7a/src/core/runtime/amd_gpu_agent.cpp#L1013-L1023" target="_blank" rel="noopener" >ROCR-Runtime/amd_gpu_agent.cpp at 83b46ab91086e10edbc6100d5e55cac11c9b5d7a · RadeonOpenCompute/ROCR-Runtime</a></cite></blockquote>
+
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a></h3>
+<ul>
+<li><a href="https://images.nvidia.com/content/pdf/tesla/Volta-Architecture-Whitepaper-v1.1-jp.pdf" target="_blank" rel="noopener" >Volta-Architecture-Whitepaper-v1.1-jp.pdf</a></li>
+</ul>
+
+</section>
+
+<p>ROCm v5.0 では <em>CDNA 2/MI200/Aldebaran (gfx90a)</em> を意識した変更点がいくつかあるものの、サポートリストには追加されていない。</p>
+<p>それと、ROCm から少し外れるが、HIP/CUDA API を動的に読み込み、実行時に API を切り替え可能な <a href="https://github.com/GPUOpen-LibrariesAndSDKs/Orochi" target="_blank" rel="noopener" >Orochi</a> が Apache License 2.0 下で公開された。<br>
+Orochi を使うことで、CUDAコードを HIPコードに変換してからコンパイルする必要がなくなり、単一のバイナリを維持することができる。</p>
 <ul>
 <li><a href="https://github.com/GPUOpen-LibrariesAndSDKs/Orochi" target="_blank" rel="noopener" >GPUOpen-LibrariesAndSDKs/Orochi</a></li>
 </ul>
-<p>Orochi を使うことで、CUDAコードを HIPコードに変換してからコンパイルする必要がなくなり、単一のバイナリを維持することができる。</p>
 <h2 id="support">曖昧なサポート状況<a href="#support" class="head-cur-link"></a></h2>
 <p>まず自分が熱心な ROCmユーザーではなく、GPUプログラマーでもないことを断っておく。</p>
 <p>以前、ROCm v4.5 から OpenCLランタイムが <em>Polaris (gfx803)</em> をサポートしなくなったことに触れたが、ROCm v5.0 でこれといった進展は無かった。<br>
@@ -97,7 +125,7 @@ ROCmSupportアカウントは、意図的に (gfx803 に関する) コードを�
 <p>また、<em>Vega10 (gfx900)</em> ベースのサーバー向け SKU <em>Instinct MI25</em> が EOL (End of Life) に達し、ROCm v4.5 が <em>Instinct MI25</em> をサポートする最後の公式リリースになるとされていたが、ROCm v5.0 でも何故かサポートリストに入ったままになっている。<br>
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/10/30/rocm-4_5-release/#polaris-rdna">ROCm v4.5 がリリース ―― CPU+GPU の統合メモリをサポート、RDNA系のサポートは v5.0 に？ | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<p>ROCm v5.0 では既知の問題 (Known Issues) として、dGPU の VBIOS を上書きする AMDVBFlashツールが挙げられているが、自分が知っている限り Linux環境向けの AMDVBFlash は公開されていない。そして ROCm は現在 Linux系 OS しかサポートしていない。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<p>ROCm v5.0 では既知の問題 (Known Issues) として、dGPU の VBIOS を上書きする AMDVBFlashツールが挙げられているが、自分が知っている限り Linux環境向けの AMDVBFlash は公開されていない。そして ROCm は現在 Linux系 OS しかサポートしていない。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
 <p>全体的にサポート状況が曖昧という印象を受ける。<br>
 ROCm は複数のライブラリ、ソフトウェアから構成されるプラットフォーム、ソフトウェアスタックであり、サポートリストに載っていない AMD GPU ではどこまでサポートされているかが判然としない。<br>
 <em>RDNA 1/2</em> GPU の ROCmサポートは以前から多くに望まれており、そうした issue が複数存在するが、ROCmプラットフォーム全体でサポートしているか否かではなく、各種ツール、OpenCL/HIPランタイム、HPC向け計算ライブラリ、ML向けライブラリ、それぞれでサポート状況を示せば、サポートリストに載っていないことから発する要望やバージョン更新による混乱を減らせるのではないかと思う。</p>
@@ -111,7 +139,10 @@ ROCm は複数のライブラリ、ソフトウェアから構成されるプラ
 <p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#display-xgmi-bandwidth-between-nodes" target="_blank" rel="noopener" >https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#display-xgmi-bandwidth-between-nodes</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3" role="doc-endnote">
-<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#incorrect-dgpu-behavior-when-using-amdvbflash-tool" target="_blank" rel="noopener" >https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#incorrect-dgpu-behavior-when-using-amdvbflash-tool</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#new-environment-variable" target="_blank" rel="noopener" >https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#new-environment-variable</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#incorrect-dgpu-behavior-when-using-amdvbflash-tool" target="_blank" rel="noopener" >https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#incorrect-dgpu-behavior-when-using-amdvbflash-tool</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>
