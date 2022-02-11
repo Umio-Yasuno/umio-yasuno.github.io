@@ -68,7 +68,7 @@
   <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
   <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
     <time datetime="2022-02-11 13:59 +0900">Post: 2022/02/11 13:59 &#43;0900</time>
-    <aside class="update">Update: 2022/02/11 20:34 &#43;0900</aside>
+    <aside class="update">Update: 2022/02/11 21:06 &#43;0900</aside>
   </aside><p>ROCm v5.0 がリリースされた。<br>
 ついに <em>RDNA 2</em> GPU のサポートが正式に追加されたが、<em>Sienna Cichlid/Navi21 (gfx1030)</em> をベースにする <em>Radeon Pro V620/W6800</em> のみのサポートとなる。</p>
 <ul>
@@ -85,7 +85,8 @@
 これは同期などの集合的な処理を行う単位となるスレッドグループ (Cooperative Groups) に対し、正しい使用可能な CU数を取得するためのものと思われる。<br>
 <code>HSA_COOP_CU_COUNT</code> が 1 の場合、ROCr-Rutime は <code>hsa_agent_get_info()</code> の <code>HSA_AMD_AGENT_INFO_COOPERATIVE_COMPUTE_UNIT_COUNT</code> 属性を通して、Cooperative Groups用の正しい CU数を返す。<br>
 1 以外か未設定の場合は、<code>HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT</code> と同じ CU数、おそらくは全体の CU数を返す。<br>
-ROCr-Runtime のソースコードを見るに、<em>CDNA 2/MI200/Aldebaran (gfx90a)</em> を想定した機能となっている。GPUID は <code>gfx{Major, Minor, Stepping}</code> のフォーマットで表現される。</p>
+ドキュメント中では触れられていないが、ROCr-Runtime のソースコードを見るに、<em>CDNA 2/MI200/Aldebaran (gfx90a)</em> を想定した機能となっており、それ以外の GPU では <code>HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT</code> 属性を通した CU数が返される。<br>
+GPUID は <code>gfx{Major, Minor, Stepping}</code> のフォーマットで表現される。</p>
 <blockquote cite=https://github.com/RadeonOpenCompute/ROCR-Runtime/blob/83b46ab91086e10edbc6100d5e55cac11c9b5d7a/src/core/runtime/amd_gpu_agent.cpp#L1013-L1023>
 <pre><code>     case HSA_AMD_AGENT_INFO_COOPERATIVE_COMPUTE_UNIT_COUNT:
        if (core::Runtime::runtime_singleton_-&gt;flag().coop_cu_count() &amp;&amp;
@@ -126,7 +127,7 @@ ROCmSupportアカウントは、意図的に (gfx803 に関する) コードを�
 <span class="thread-link"><a target="_blank" rel="noreferrer noopener" href="https://www.coelacanth-dream.com/posts/2021/10/30/rocm-4_5-release/#polaris-rdna">ROCm v4.5 がリリース ―― CPU+GPU の統合メモリをサポート、RDNA系のサポートは v5.0 に？ | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <p>ROCm v5.0 では既知の問題 (Known Issues) として、dGPU の VBIOS を上書きする AMDVBFlashツールが挙げられているが、自分が知っている限り Linux環境向けの AMDVBFlash は公開されていない。そして ROCm は現在 Linux系 OS しかサポートしていない。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
-<p>全体的にサポート状況が曖昧という印象を受ける。<br>
+<p>全体的にサポート状況が曖昧という印象を受け、開発者とサポーターの間で正しく情報共有が行われていないのではないかという気がする。<br>
 ROCm は複数のライブラリ、ソフトウェアから構成されるプラットフォーム、ソフトウェアスタックであり、サポートリストに載っていない AMD GPU ではどこまでサポートされているかが判然としない。<br>
 <em>RDNA 1/2</em> GPU の ROCmサポートは以前から多くに望まれており、そうした issue が複数存在するが、ROCmプラットフォーム全体でサポートしているか否かではなく、各種ツール、OpenCL/HIPランタイム、HPC向け計算ライブラリ、ML向けライブラリ、それぞれでサポート状況を示せば、サポートリストに載っていないことから発する要望やバージョン更新による混乱を減らせるのではないかと思う。</p>
 <section class="footnotes" role="doc-endnotes">
