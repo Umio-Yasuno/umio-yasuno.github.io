@@ -56,7 +56,7 @@
 
       <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 
-    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" target="_blank" rel="noopener" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower" target="_blank" rel="noopener">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/experiment/" class="head-cat-tag-lower" target="_blank" rel="noopener">Experiment</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower" target="_blank" rel="noopener">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head-cat-tag-lower" target="_blank" rel="noopener">Software</a></nav><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" target="_blank" rel="noopener" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/gcn/" class="head-cat-tag-lower" target="_blank" rel="noopener">GCN</a>/<a href="https://www.coelacanth-dream.com/tags/gfx8/" class="head-cat-tag-lower" target="_blank" rel="noopener">GFX8</a></nav></nav>
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/experiment/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">Experiment</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">Software</a></nav><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/gcn/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">GCN</a>/<a href="https://www.coelacanth-dream.com/tags/gfx8/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">GFX8</a></nav></nav>
 
   <h1 class="page-title">RX 560 で CU数が GPU性能にどれだけ影響を与えるかを調査 【性能編】</h1>
 
@@ -70,33 +70,33 @@
   </aside><p>今回、Linux Kernel における AMDGPUドライバーのある機能を使って、<strong>RX 560</strong> の一部有効 Compute Unit を無効化し、CU数がどれだけ GPU性能に影響を与えるのかを調査してみた。</p>
 <section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a></h2>
 <ul>
-<li><a href="#motive">動機</a></li>
-<li><a href="#disable_cu">disable_cu=0.0.0,0.0.1,1.0.0,1.0.1&hellip;&hellip;&hellip;</a></li>
-<li><a href="#env">調査環境</a>
+<li><a href="#motive"  >動機</a></li>
+<li><a href="#disable_cu"  >disable_cu=0.0.0,0.0.1,1.0.0,1.0.1&hellip;&hellip;&hellip;</a></li>
+<li><a href="#env"  >調査環境</a>
 <ul>
-<li><a href="#use-software">使用ソフトウェア</a></li>
-<li><a href="#system">システム環境</a></li>
+<li><a href="#use-software"  >使用ソフトウェア</a></li>
+<li><a href="#system"  >システム環境</a></li>
 </ul>
 </li>
-<li><a href="#result">結果</a>
+<li><a href="#result"  >結果</a>
 <ul>
-<li><a href="#perf">性能</a>
+<li><a href="#perf"  >性能</a>
 <ul>
-<li><a href="#ncnn">ncnn  ( Vulkan Compute )</a></li>
-<li><a href="#vkmark">vkmark  ( Vulkan Graphics )</a></li>
-<li><a href="#clpeak-compute">clpeak  ( OpenCL Compute )</a></li>
-<li><a href="#clpeak-mbw">clpeak  ( Global memory bandwidth )</a></li>
+<li><a href="#ncnn"  >ncnn  ( Vulkan Compute )</a></li>
+<li><a href="#vkmark"  >vkmark  ( Vulkan Graphics )</a></li>
+<li><a href="#clpeak-compute"  >clpeak  ( OpenCL Compute )</a></li>
+<li><a href="#clpeak-mbw"  >clpeak  ( Global memory bandwidth )</a></li>
 </ul>
 </li>
-<li><a href="#consider">考察</a></li>
+<li><a href="#consider"  >考察</a></li>
 </ul>
 </li>
-<li><a href="#general">総論</a></li>
+<li><a href="#general"  >総論</a></li>
 </ul>
 </section>
 
 <h2 id="motive">動機<a href="#motive" class="head-cur-link"></a></h2>
-<p>今回の調査を行なったきっかけは、<a href="https://www.coelacanth-dream.com/tags/renoir">Renoir</a>が最大 8CUと、前世代の <a href="https://www.coelacanth-dream.com/tags/picasso">Picasso</a>の最大 11CUより少なく、また、<em>Renoir</em> ベースのモデルが持つ CU数がそれぞれ 1CU差と、CU数だけで見ればそう差はなかったことだったように思う。<br>
+<p>今回の調査を行なったきっかけは、<a href="https://www.coelacanth-dream.com/tags/renoir"  >Renoir</a>が最大 8CUと、前世代の <a href="https://www.coelacanth-dream.com/tags/picasso"  >Picasso</a>の最大 11CUより少なく、また、<em>Renoir</em> ベースのモデルが持つ CU数がそれぞれ 1CU差と、CU数だけで見ればそう差はなかったことだったように思う。<br>
 それが GPU性能において CU数はどれだけ影響を与えるかを調べる動機となった。</p>
 <p>より本音を言えば、AMDGPUドライバーに面白そうな機能があり、それを意義あることに使えないかという方が強いきっかけ、動機である。</p>
 <p>しかし、真面目に考えれば、同じ GPU ASIC をベースにした製品、モデルであっても、基本 CU数の変更だけでなく、クロックの調整やメモリバス幅、L2cacheサイズの削減によって製品間の差別化が為されるため、CU数が性能にどれだけ影響を与えるかは測れない。<br>
@@ -125,13 +125,13 @@
 <p>実際、これまでにそのような結果は見たことがないし、話題にもなっていない。<code>disable_cu</code> 自体は、実性能では単に性能を下げるだけであり、試したという人も見つからなかった。元から開発者向けのデバッグ機能であるため当然かもしれないが。</p>
 <p>また、1CU での動作が可能か試したが、もれなく画面に現代美術的な絵が描かれた。<br>
 しかし、2CU での起動、動作が可能であったことから、各ShaderEngineに最低でも 1CU は有効であることが必須と思われる。</p>
-<p><code>disable_cu</code> は <a href="https://www.coelacanth-dream.com/tags/gfx9">GFX9</a> までのサポートであり、<a href="https://www.coelacanth-dream.com/tags/gfx10">RDNA世代 /GFX10</a> はサポートされていない。WGP(2CU)構成では片方の CU を無効化した際に問題が出るのだろうか。</p>
+<p><code>disable_cu</code> は <a href="https://www.coelacanth-dream.com/tags/gfx9"  >GFX9</a> までのサポートであり、<a href="https://www.coelacanth-dream.com/tags/gfx10"  >RDNA世代 /GFX10</a> はサポートされていない。WGP(2CU)構成では片方の CU を無効化した際に問題が出るのだろうか。</p>
 <h2 id="env">調査環境<a href="#env" class="head-cur-link"></a></h2>
 <h3 id="use-software">使用ソフトウェア<a href="#use-software" class="head-cur-link"></a></h3>
 <p>調査の際に実行するソフトウェアには 3つ選んだ。<br>
-<a href="https://www.coelacanth-dream.com/tags/aco">RADV/ACO</a> 検証の時にも用いた Vulkan API をサポートするコンピュート系の <a href="https://github.com/Tencent/ncnn" target="_blank" rel="noopener" >ncnn</a>、<br>
-グラフィクス系 Vulkan ベンチマーク <a href="https://github.com/vkmark/vkmark" target="_blank" rel="noopener" >vkmark</a>、<br>
-OpenCL で実行され、メモリ帯域と各精度の浮動小数点演算を測定可能な <a href="https://github.com/krrishnarraj/clpeak/" target="_blank" rel="noopener" >clpeak</a>。</p>
+<a href="https://www.coelacanth-dream.com/tags/aco"  >RADV/ACO</a> 検証の時にも用いた Vulkan API をサポートするコンピュート系の <a href="https://github.com/Tencent/ncnn" target="_blank" rel="noopener noreferrer" >ncnn</a>、<br>
+グラフィクス系 Vulkan ベンチマーク <a href="https://github.com/vkmark/vkmark" target="_blank" rel="noopener noreferrer" >vkmark</a>、<br>
+OpenCL で実行され、メモリ帯域と各精度の浮動小数点演算を測定可能な <a href="https://github.com/krrishnarraj/clpeak/" target="_blank" rel="noopener noreferrer" >clpeak</a>。</p>
 <p><code>ncnn</code> は Vulkan Computeオンリーであり、ベンチマーク機能も整備され、また深層学習における推論に用いられるネットワーク実行するため実際の使用状況に近い。<br>
 GPU の検証、調査にはうってつけと言えるだろう。<br>
 <code>vkmark</code> は、読み込むテクスチャやモデル数は少なく、3Dゲーム等の環境とは少し離れているが、オープンソースで開発され、プロプライエタリなベンチマークソフトのように結果の出力が制限されることもない。解像度は 1920x1080 に設定した。<br>
@@ -731,10 +731,10 @@ CU数を減らしたことでダイサイズが抑えられ、コストと電力
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html" target="_blank" rel="noopener" >drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html" target="_blank" rel="noopener noreferrer" >drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2" role="doc-endnote">
-<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=6f8941a2308811626edc083c70584837d54e0382" target="_blank" rel="noopener" >drm/amdgpu: add disable_cu parameter</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&id=6f8941a2308811626edc083c70584837d54e0382" target="_blank" rel="noopener noreferrer" >drm/amdgpu: add disable_cu parameter</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>
@@ -747,17 +747,13 @@ CU数を減らしたことでダイサイズが抑えられ、コストと電力
 </aside><aside class="amzn delay-page">
   <div class="amzn_head">Amazonアソシエイト</div>
   <div class="amzn_links">
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
   </div>
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
   </div>
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
   </div>
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
   </div></div>
 </aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css"><footer><hr><nav class="foot-links">
   <a href="https://www.coelacanth-dream.com/">Home</a>

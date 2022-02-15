@@ -56,7 +56,7 @@
 
       <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 
-    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" target="_blank" rel="noopener" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower" target="_blank" rel="noopener">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower" target="_blank" rel="noopener">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head-cat-tag-lower" target="_blank" rel="noopener">Software</a></nav><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" target="_blank" rel="noopener" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/gfx10/" class="head-cat-tag-lower" target="_blank" rel="noopener">GFX10</a>/<a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="head-cat-tag-lower" target="_blank" rel="noopener">RadeonSI</a>/<a href="https://www.coelacanth-dream.com/tags/rdna/" class="head-cat-tag-lower" target="_blank" rel="noopener">RDNA</a></nav></nav>
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">Software</a></nav><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/gfx10/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">GFX10</a>/<a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">RadeonSI</a>/<a href="https://www.coelacanth-dream.com/tags/rdna/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">RDNA</a></nav></nav>
 
   <h1 class="page-title">RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように</h1>
 
@@ -69,15 +69,15 @@
     <aside class="update">Update: 2021/11/27 17:09 &#43;0900</aside>
   </aside><p>オープンソースで開発される AMD GPU向け OpenGLドライバー <strong>RadeonSI</strong> への最新コミットの中で、ネイティブで Wave32モードに対応する <em>RDNA /Navi1x GPU</em> も Wave64モードで各シェーダーを実行するように変更が行なわれた。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/90cf741d316d231bdc8a67dce8ef1c84a80eeec8" target="_blank" rel="noopener" >radeonsi: always use Wave64 for HS/GS/VS shader stages (except GS fast launch) (90cf741d) · Commits · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/90cf741d316d231bdc8a67dce8ef1c84a80eeec8" target="_blank" rel="noopener noreferrer" >radeonsi: always use Wave64 for HS/GS/VS shader stages (except GS fast launch) (90cf741d) · Commits · Mesa / mesa · GitLab</a></li>
 </ul>
 <p>Wave は コンピュートユニット(CU) 内の SIMDユニットが実行するスレッドの塊を意味し、後の数字はスレッドの数を意味する。Wavefront とも呼ぶ。</p>
 <section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a></h2>
 <ul>
-<li><a href="#gcn-rdna-wave-diff">GCN と RDNA の両アーキテクチャにおける Wave の違い</a></li>
-<li><a href="#why-wave64">Wave64 で実行する理由</a>
+<li><a href="#gcn-rdna-wave-diff"  >GCN と RDNA の両アーキテクチャにおける Wave の違い</a></li>
+<li><a href="#why-wave64"  >Wave64 で実行する理由</a>
 <ul>
-<li><a href="#consider">考察的な</a></li>
+<li><a href="#consider"  >考察的な</a></li>
 </ul>
 </li>
 </ul>
@@ -90,8 +90,8 @@
 <p><em>GCN アーキテクチャ</em> では命令の発行に 4サイクル掛かるが、<em>RDNA アーキテクチャ</em> は 1サイクルと短いレイテンシで処理できるため、グラフィクス処理やゲーミング向けとして有利である……とされていたが、今回の <strong>RadeonSI</strong> に加えられた変更は、<em>RDNA /Navi1x GPU</em> でもネイティブの Wave32 ではなく Wave64 でシェーダー実行するというものだ。</p>
 <h2 id="why-wave64">Wave64 で実行する理由<a href="#why-wave64" class="head-cur-link"></a></h2>
 <p>以前より、通常 Pixel Shader は Wave64、Vertex/Tess/Geometry Shader は Wave32 で実行するようにしていたのを、後者も Wave64 で実行するようにしたのが今回の変更点となる。<br>
-また、<a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener" >RDNA_Architecture_public.pdf</a> には Compute Shader は Wave32 とあるが、何か問題が発生するらしく、<strong>RadeonSI</strong> では Wave64 となっている。</p>
-<p>Vertex/Tess/Geometry Shader も Wave64 で実行する方が良いと考える理由に、GPUドライバーの開発者である <a href="https://gitlab.freedesktop.org/mareko" target="_blank" rel="noopener" >Marek Olšák</a> 氏は以下の項目をあげている。</p>
+また、<a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener noreferrer" >RDNA_Architecture_public.pdf</a> には Compute Shader は Wave32 とあるが、何か問題が発生するらしく、<strong>RadeonSI</strong> では Wave64 となっている。</p>
+<p>Vertex/Tess/Geometry Shader も Wave64 で実行する方が良いと考える理由に、GPUドライバーの開発者である <a href="https://gitlab.freedesktop.org/mareko" target="_blank" rel="noopener noreferrer" >Marek Olšák</a> 氏は以下の項目をあげている。</p>
 <blockquote>
 <ul>
 <li>greater chance of L0 cache hits, because more threads are assigned to the same CU</li>
@@ -99,7 +99,7 @@
 <li>VGPR allocation granularity is half of Wave32, so 1 Wave64 can sometimes use fewer VGPRs than 2 Wave32</li>
 <li>TessMark X64 with NGG culling is faster with Wave64</li>
 </ul>
-<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5524" target="_blank" rel="noopener" >ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5524" target="_blank" rel="noopener noreferrer" >ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge Requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
@@ -118,7 +118,7 @@
   <img src="https://www.coelacanth-dream.com/image/2020/07/02/rdna-wgp.webp"
       alt="画像出典: Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf"/>
 </a><figcaption>
-      <h4 class="fig-title">RDNA WGP (Work Group Processor)</h4><p>画像出典: <cite><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" target="_blank" rel="noopener" >Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></cite></p>
+      <h4 class="fig-title">RDNA WGP (Work Group Processor)</h4><p>画像出典: <cite><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" target="_blank" rel="noopener noreferrer" >Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></cite></p>
   </figcaption>
 </figure>
 
@@ -132,7 +132,7 @@
   <img src="https://www.coelacanth-dream.com/image/2020/07/02/rdna-sub-vector-mode.webp"
       alt="画像出典: https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf"/>
 </a><figcaption>
-      <h4 class="fig-title">RDNA Sub-Vector Mode</h4><p>画像出典: <cite><a href="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf" target="_blank" rel="noopener" >https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf</a></cite></p>
+      <h4 class="fig-title">RDNA Sub-Vector Mode</h4><p>画像出典: <cite><a href="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf" target="_blank" rel="noopener noreferrer" >https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf</a></cite></p>
   </figcaption>
 </figure>
 
@@ -150,12 +150,12 @@
 <p>そして、その様子をオープンソースであることにより追えるのは、自分のようなオタクにとってありがたい話だ。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a></h3>
 <ul>
-<li><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" target="_blank" rel="noopener" >Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></li>
-<li><a href="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf" target="_blank" rel="noopener" >7nm “Navi” GPU</a></li>
-<li><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener" >RDNA_Architecture_public.pdf</a></li>
-<li><a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" target="_blank" rel="noopener" >Introduction - rdna-whitepaper.pdf</a></li>
-<li><a href="https://news.mynavi.jp/article/20191023-912850/" target="_blank" rel="noopener" >AMDのRDNAアーキテクチャの「Navi GPU」を読み解く - Hot Chips 31 | マイナビニュース</a></li>
-<li><a href="https://news.mynavi.jp/article/architecture-366/" target="_blank" rel="noopener" >コンピュータアーキテクチャの話(366) GCNのスカラユニットとベクトル演算 | マイナビニュース</a></li>
+<li><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" target="_blank" rel="noopener noreferrer" >Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></li>
+<li><a href="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf" target="_blank" rel="noopener noreferrer" >7nm “Navi” GPU</a></li>
+<li><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener noreferrer" >RDNA_Architecture_public.pdf</a></li>
+<li><a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" target="_blank" rel="noopener noreferrer" >Introduction - rdna-whitepaper.pdf</a></li>
+<li><a href="https://news.mynavi.jp/article/20191023-912850/" target="_blank" rel="noopener noreferrer" >AMDのRDNAアーキテクチャの「Navi GPU」を読み解く - Hot Chips 31 | マイナビニュース</a></li>
+<li><a href="https://news.mynavi.jp/article/architecture-366/" target="_blank" rel="noopener noreferrer" >コンピュータアーキテクチャの話(366) GCNのスカラユニットとベクトル演算 | マイナビニュース</a></li>
 </ul>
 </section>
 
@@ -168,17 +168,13 @@
 </aside><aside class="amzn delay-page">
   <div class="amzn_head">Amazonアソシエイト</div>
   <div class="amzn_links">
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
   </div>
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
   </div>
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
   </div>
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
   </div></div>
 </aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css"><footer><hr><nav class="foot-links">
   <a href="https://www.coelacanth-dream.com/">Home</a>

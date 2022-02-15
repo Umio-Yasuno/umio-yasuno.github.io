@@ -56,7 +56,7 @@
 
       <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 
-    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" target="_blank" rel="noopener" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower" target="_blank" rel="noopener">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower" target="_blank" rel="noopener">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head-cat-tag-lower" target="_blank" rel="noopener">Software</a></nav><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" target="_blank" rel="noopener" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="head-cat-tag-lower" target="_blank" rel="noopener">Linux Kernel</a></nav></nav>
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/categories/amd/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">AMD</a>/<a href="https://www.coelacanth-dream.com/categories/gpu/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">GPU</a>/<a href="https://www.coelacanth-dream.com/categories/software/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">Software</a></nav><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer">Linux Kernel</a></nav></nav>
 
   <h1 class="page-title">Linux環境で AMDGPU のクロック、電圧を調節　―― OC/UV</h1>
 
@@ -72,14 +72,14 @@
 <p><strong>GPU のクロック、電圧をデフォルトから変更することは故障する危険が伴うものであり、完全自己責任の元で行なってください。</strong></p>
 <section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a></h2>
 <ul>
-<li><a href="#ppfeaturemask">amdgpu.ppfeaturemsk</a></li>
-<li><a href="#clk-volt-od">クロック、電圧の調節、上書き</a>
+<li><a href="#ppfeaturemask"  >amdgpu.ppfeaturemsk</a></li>
+<li><a href="#clk-volt-od"  >クロック、電圧の調節、上書き</a>
 <ul>
-<li><a href="#vega10-and-pre">Vega10 とそれ以前の AMD GPU の場合</a></li>
-<li><a href="#vega20-and-next">Vega20 とそれ以降の AMD GPU の場合</a></li>
+<li><a href="#vega10-and-pre"  >Vega10 とそれ以前の AMD GPU の場合</a></li>
+<li><a href="#vega20-and-next"  >Vega20 とそれ以降の AMD GPU の場合</a></li>
 </ul>
 </li>
-<li><a href="#end">終わりに</a></li>
+<li><a href="#end"  >終わりに</a></li>
 </ul>
 </section>
 
@@ -102,10 +102,10 @@
 統合 GPU と混在する環境については、検証できるシステムを持ってないため、申し訳ないことに注意してとしか言えない。<br>
 一応、<code>/sys/class/drm/card0/device</code> 下にある <code>device</code> 、<code>revision</code> の値を、それぞれ AMD GPU の DeviceID (PCI ID) 、RevisionID と照らし合わせることで知ることはできる。<br>
 PCIバスでもそれは可能で、その場合、<code>/sys/class/drm/card0/device</code> 下にある <code>comsumer:</code> に続く数値と、<code>lspci | grep VGA</code> や <code>lshw -c display</code> を照らし合わせる。</p>
-<p>クロック、電圧の操作に関しては、<a href="https://www.coelacanth-dream.com/tags/vega10">Vega10</a> <span class="complement">Vega56、Vega64 等のベースとなる GPU のコードネーム</span>
+<p>クロック、電圧の操作に関しては、<a href="https://www.coelacanth-dream.com/tags/vega10"  >Vega10</a> <span class="complement">Vega56、Vega64 等のベースとなる GPU のコードネーム</span>
 、それ以前の GPU と、<br>
-<a href="https://www.coelacanth-dream.com/tags/vega20">Vega20</a> <span class="complement">こちらは Radeon VII 等のベース</span>
- とそれ以降 (<a href="https://www.coelacanth-dream.com/tags/navi10">Navi10</a>, <a href="https://www.coelacanth-dream.com/tags/navi14">Navi14</a>等) とで異なる。</p>
+<a href="https://www.coelacanth-dream.com/tags/vega20"  >Vega20</a> <span class="complement">こちらは Radeon VII 等のベース</span>
+ とそれ以降 (<a href="https://www.coelacanth-dream.com/tags/navi10"  >Navi10</a>, <a href="https://www.coelacanth-dream.com/tags/navi14"  >Navi14</a>等) とで異なる。</p>
 <h3 id="vega10-and-pre">Vega10 とそれ以前の AMD GPU の場合<a href="#vega10-and-pre" class="head-cur-link"></a></h3>
 <p><code>pp_od_clk_voltage</code> に値を渡すことでクロック、電圧を調節が行なえる。<br>
 <em>Vega10</em> とそれ以前の AMD GPU の場合、<code>pp_od_clk_voltage</code> の中身は以下のようになっている。以下の例は、自分が使ってるシステム内でずっと働いてくれている <strong>RX 560 (Polaris11)</strong> 場合。</p>
@@ -152,8 +152,8 @@ SCLK は最低/最高クロックの 2つのみが設定でき、MCLK はデフ�
 GPU性能を必要とする場面が多くないため、消費電力、発熱が小さい方が自分としては嬉しいものがある。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a></h3>
 <ul>
-<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html" target="_blank" rel="noopener" >drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a></li>
-<li><a href="https://wiki.archlinux.org/index.php/AMDGPU#Overclocking" target="_blank" rel="noopener" >AMDGPU - ArchWiki</a></li>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html" target="_blank" rel="noopener noreferrer" >drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/AMDGPU#Overclocking" target="_blank" rel="noopener noreferrer" >AMDGPU - ArchWiki</a></li>
 </ul>
 </section>
 
@@ -161,10 +161,10 @@ GPU性能を必要とする場面が多くないため、消費電力、発熱�
 <hr>
 <ol>
 <li id="fn:1" role="doc-endnote">
-<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=549750a383bf1c6a4a8ba3634c85e00e7f4585da" target="_blank" rel="noopener" >drm/include: add PP_FEATURE_MASK comments (v3)</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&id=549750a383bf1c6a4a8ba3634c85e00e7f4585da" target="_blank" rel="noopener noreferrer" >drm/include: add PP_FEATURE_MASK comments (v3)</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2" role="doc-endnote">
-<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&amp;id=3d2fc0813f91a908f5c61ac0d08d89f802030d03" target="_blank" rel="noopener" >drm/amdgpu: Change default value of module parameter amdgpu_pp_feature_mask</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://cgit.freedesktop.org/~agd5f/linux/commit/drivers/gpu/drm/amd?h=amd-staging-drm-next&id=3d2fc0813f91a908f5c61ac0d08d89f802030d03" target="_blank" rel="noopener noreferrer" >drm/amdgpu: Change default value of module parameter amdgpu_pp_feature_mask</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </section>
@@ -177,17 +177,13 @@ GPU性能を必要とする場面が多くないため、消費電力、発熱�
 </aside><aside class="amzn delay-page">
   <div class="amzn_head">Amazonアソシエイト</div>
   <div class="amzn_links">
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
   </div>
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
   </div>
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
   </div>
-  <div class="amzn_link_block">
-    <a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
+  <div class="amzn_link_block"><a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
   </div></div>
 </aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css"><footer><hr><nav class="foot-links">
   <a href="https://www.coelacanth-dream.com/">Home</a>
