@@ -110,19 +110,19 @@
 <code>low power mode</code> 時ではまず <code>Low</code>コアで実行されるが、最初から <code>High</code>コアで実行するモードも存在すると思われる。</p>
 <p>SMT機能に関しては、スレッドの状態をセーブするのに必要なキャッシュメモリ量が増えるが、可能である <em>かもしれない</em> 。</p>
 <h3 id="merit-demerit">利点と欠点<a href="#merit-demerit" class="head-cur-link"></a></h3>
-<p>この構成の利点と欠点だが、Intel <a href="https://www.coelacanth-dream.com/tags/lakefield"  >Lakefield</a>と比較して見ていく。</p>
-<p>利点としては、まず<a href="https://www.coelacanth-dream.com/tags/lakefield"  >Lakefield</a> のように、AVX命令のような片方のコア(<em>Core /SunnyCove</em>) が対応していて、もう片方(<em>Atom /Tremont</em>) は対応していないような命令を、プロセッサ全体では非対応とする必要がないことがあげられる。<br>
+<p>この構成の利点と欠点だが、Intel <a href="https://www.coelacanth-dream.com/tags/lakefield" target="_blank" rel="noopener noreferrer" >Lakefield</a>と比較して見ていく。</p>
+<p>利点としては、まず<a href="https://www.coelacanth-dream.com/tags/lakefield" target="_blank" rel="noopener noreferrer" >Lakefield</a> のように、AVX命令のような片方のコア(<em>Core /SunnyCove</em>) が対応していて、もう片方(<em>Atom /Tremont</em>) は対応していないような命令を、プロセッサ全体では非対応とする必要がないことがあげられる。<br>
 <code>High</code>コアのみが対応し、<code>Low</code>コアが対応していない機能/命令も実行コアの切り替えによって実行が可能となっている。<br>
-スレッドを実行するコアの切り替えも、<a href="https://www.coelacanth-dream.com/tags/lakefield"  >Lakefield</a> は L3cache を介して行なわれるが、AMD の構成ではそれよりも低階層な L2cache を介すため、低レイテンシ、省電力で行なえるはずだ。</p>
-<p>欠点としては、実行スレッドを切り替える以上、<a href="https://www.coelacanth-dream.com/tags/lakefield"  >Lakefield</a>のように <em>Atom /Tremont</em> コアでバックグラウンドタスクを実行する、といったことは不可能であるように思う。<br>
+スレッドを実行するコアの切り替えも、<a href="https://www.coelacanth-dream.com/tags/lakefield" target="_blank" rel="noopener noreferrer" >Lakefield</a> は L3cache を介して行なわれるが、AMD の構成ではそれよりも低階層な L2cache を介すため、低レイテンシ、省電力で行なえるはずだ。</p>
+<p>欠点としては、実行スレッドを切り替える以上、<a href="https://www.coelacanth-dream.com/tags/lakefield" target="_blank" rel="noopener noreferrer" >Lakefield</a>のように <em>Atom /Tremont</em> コアでバックグラウンドタスクを実行する、といったことは不可能であるように思う。<br>
 その場合、8* <code>High</code>コア + 8* <code>Low</code>コアという構成であるとき、見かけ上のコア数は 8-Core となる。<br>
 ここはハイブリッドコア技術における、Intel と AMD のわかりやすい違いと言えるのではないだろうか。<br>
-また、<code>Low</code>コアが対応していない機能/命令も <code>High</code>コアに切り替えて実行可能だが、その分対応命令は対称的な <a href="https://www.coelacanth-dream.com/tags/lakefield"  >Lakefield</a>よりも切り替え数は増えることが考えられる。<br>
+また、<code>Low</code>コアが対応していない機能/命令も <code>High</code>コアに切り替えて実行可能だが、その分対応命令は対称的な <a href="https://www.coelacanth-dream.com/tags/lakefield" target="_blank" rel="noopener noreferrer" >Lakefield</a>よりも切り替え数は増えることが考えられる。<br>
 これを L2cache を介すことでどれだけ補えるか。</p>
 <h2 id="aside">余談<a href="#aside" class="head-cur-link"></a></h2>
 <p>近い技術として Arm の <code>big.LITTLE</code> が持ち出されたりするが、それでは <code>big</code> コアと <code>LITTLE</code> コアが同じ命令セットに対応していたのに対し、AMD の実装では高性能コアと省電力コアとで対応する命令セットが異なり、省電力コアの方が機能としては少なくなる。<br>
 厳密に言えばその点で Arm <code>big.LITTLE</code> とは異なり、<br>
-非対称コアが共通して対応している命令セットのみを抜き出し、そうでない命令は非対応とした、命令セットでは対称な Intel <a href="https://www.coelacanth-dream.com/tags/lakefield"  >Lakefield</a> の方がずっと近いと言える。</p>
+非対称コアが共通して対応している命令セットのみを抜き出し、そうでない命令は非対応とした、命令セットでは対称な Intel <a href="https://www.coelacanth-dream.com/tags/lakefield" target="_blank" rel="noopener noreferrer" >Lakefield</a> の方がずっと近いと言える。</p>
 <p>2種類のコアによって、広い範囲の消費電力比性能をカバーするという点では同じようには思うが。</p>
 <p>個人的な推測を書けば、<code>Low</code>コアは <code>High</code>コアの存在を前提にガッツリ機能を削っているようにも見える。<br>
 これを実装したプロセッサが実際に世に出るとして、アーキテクチャ名やブランドも <code>Low</code>コアと <code>High</code>コアそれぞれに付けるのではなく、まとめたものとして付けられるかもしれない。</p>
