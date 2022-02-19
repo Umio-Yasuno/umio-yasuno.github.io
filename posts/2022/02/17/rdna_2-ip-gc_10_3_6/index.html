@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/02/17/rdna_2-ip-gc_10_3_6/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>さらなる RDNA 2 APU の IPブロック ―― GC 10.3.6, DCN 3.1.5, VCN 3.1.2 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="さらなる RDNA 2 APU の IPブロック ―― GC 10.3.6, DCN 3.1.5, VCN 3.1.2 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="さらなる RDNA 2 APU の IPブロック ―― GC 10.3.6, DCN 3.1.5, VCN 3.1.2 | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/02/17/rdna_2-ip-gc_10_3_6/">
+  <meta name="description" content="先日の新たな IPブロック、GC 10.3.7, DCN 3.1.6, VCN 3.1.1 に続き、Linux Kernel における AMDGPUドライバーに向けて GC 10.3.6, DCN 3.1.5, VCN 3.1.2 のサポートを追加するパッチが Alex De">
+  <meta property="og:description" content="先日の新たな IPブロック、GC 10.3.7, DCN 3.1.6, VCN 3.1.1 に続き、Linux Kernel における AMDGPUドライバーに向けて GC 10.3.6, DCN 3.1.5, VCN 3.1.2 のサポートを追加するパッチが Alex De">
+  <meta name="twitter:description" content="先日の新たな IPブロック、GC 10.3.7, DCN 3.1.6, VCN 3.1.1 に続き、Linux Kernel における AMDGPUドライバーに向けて GC 10.3.6, DCN 3.1.5, VCN 3.1.2 のサポートを追加するパッチが Alex De">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/02/17/rdna_2-ip-gc_10_3_6/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/02/17/rdna_2-ip-gc_10_3_6/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2021 Umio-Yasuno">
+  <meta name="keywords" content="GC 10 3 6, RDNA 2, Linux Kernel, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/menu.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/toast.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#004955 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:2px 2px 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.site-title-link:hover .lain-e{background-color:#0004}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:1/-1;border:1px solid #23aea3;background-color:#1332;max-width:max-content;contain:content;margin:1rem 0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(21,106,99,.6)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 0%,#0000 66.5%,#0000 95%,#000 99%)50%/contain fixed no-repeat,linear-gradient(#f001 33%,#0f01 33%,#0f01 67%,#00f1 67%)50%/100% .34rem fixed repeat-y;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:2px solid #006374;border-color:#006374 #004955 #004955 #006374;border-radius:.1rem;background-color:#006374}.sb:active{background-color:#0e5966}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px 4px 12px auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#0ad1c1;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(21,106,99,.6)#0000}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0;margin-top:.5rem}.page-main>p{margin:.1rem 0}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "さらなる RDNA 2 APU の IPブロック ―― GC 10.3.6, DCN 3.1.5, VCN 3.1.2",
+  "headline" : "さらなる RDNA 2 APU の IPブロック ―― GC 10.3.6, DCN 3.1.5, VCN 3.1.2",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-02-17",
+    "datePublished" : "2022-02-17",
+    "dateModified"  : "2022-02-19",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/tags/amd" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer" title="AMD">AMD</a>/<a href="https://www.coelacanth-dream.com/tags/apu" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer" title="APU">APU</a>/<a href="https://www.coelacanth-dream.com/tags/hardware" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer" title="Hardware">Hardware</a></nav><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/gc_10_3_6" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer" title="GC_10_3_6">GC 10 3 6</a>/<a href="https://www.coelacanth-dream.com/tags/linux_kernel" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer" title="Linux_Kernel">Linux Kernel</a>/<a href="https://www.coelacanth-dream.com/tags/rdna_2" class="head-cat-tag-lower" target="_blank" rel="noopener noreferrer" title="RDNA_2">RDNA 2</a></nav></nav>
+
+  <h1 class="page-title">さらなる RDNA 2 APU の IPブロック ―― GC 10.3.6, DCN 3.1.5, VCN 3.1.2</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
+    <time datetime="2022-02-17 08:25 +0900">Post: 2022/02/17 08:25 &#43;0900</time>
+    <aside class="update">Update: 2022/02/19 16:05 &#43;0900</aside>
+  </aside><p>先日の新たな IPブロック、<em>GC 10.3.7, DCN 3.1.6, VCN 3.1.1</em> に続き、Linux Kernel における AMDGPUドライバーに向けて <em>GC 10.3.6, DCN 3.1.5, VCN 3.1.2</em> のサポートを追加するパッチが Alex Deucher氏より投稿されている。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/02/17/amdgpu-new-rdna_2-ip/"  >新たな RDNA 2 APU の IPブロック ―― GC 10.3.7, DCN 3.1.6, VCN 3.1.1 | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<p>IPバージョンベースのドライバーサポートについては、前回か以下の記事を参照。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/01/31/amdgpu-ip-version/"  >IPバージョンベースのサポートに移行する AMDGPUドライバー | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075519.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu: add nv common init for gc 10.3.6</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075520.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu: add Clock and Power Gating support for gc 10.3.6</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075521.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu: add support for gmc10 for gc 10.3.6</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075522.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu: add gc 10.3.6 support</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075585.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu: add support for sdma 5.2.6</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075586.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu/vcn: add vcn support for vcn 3.1.2</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075587.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu: enable vcn pg and cg for vcn 3.1.2</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075706.html" target="_blank" rel="noopener noreferrer" >[PATCH 00/13] Update DCN 3.1 support for 3.1.5</a></li>
+</ul>
+<p>詳細は後述するが、<em>GC 10.3.6</em> は APU であり、<em>DCN 3.1.5, VCN 3.1.2</em> は <em>GC 10.3.6</em> に関連付けられている。<br>
+ほぼ同じタイミングでその他 IPブロックサポートへのパッチも投稿されているが、<em>GC 10.3.6</em> に明確に関連付けられてはいない。</p>
+<h2 id="gc">GC 10.3.6<a href="#gc" class="head-cur-link"></a></h2>
+<p><em>GC 10.3.7</em> と同様、コードネームの代わりとして <em>GC_10_3_6</em> が使われている。<br>
+<em>GC 10.3.6</em> は IPバージョンこそ <em>Yellow Carp/Rembrandt APU</em> と <em>GC 10.3.7</em> に近いが、別の Family ID が割り当てられている。<br>
+Family ID は AMD GPUドライバーでは主にディスプレイ部のコードで使われている。<em>RDNA 2</em> APU では <em>VanGogh, Yellow Carp/Rembrandt, GC 10.3.6, GC 10.3.7</em> でそれぞれ Family ID が異なることになるが、ディスプレイ部にそれだけ違いがあるということなのかもしれない。</p>
+<blockquote>
+<pre><code>  #define AMDGPU_FAMILY_VGH			144 /* Van Gogh */
+  #define AMDGPU_FAMILY_YC			146 /* Yellow Carp */
+ +#define AMDGPU_FAMILY_GC_10_3_6			149 /* GC 10.3.6 */
+  #define AMDGPU_FAMILY_GC_10_3_7			151 /* GC 10.3.7 */
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075522.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu: add gc 10.3.6 support</a></cite>
+</div>
+
+</blockquote>
+<p>APU のビットフラグが立てられていることから、<em>GC 10.3.6</em> は APU であることがわかる。<br>
+補足すると、以下引用部にある <em>GC 10.3.1</em> は <em>VanGogh/Aerith APU</em> 、<em>GC 10.3.3</em> は <em>Yellow Carp/Rembrandt APU</em> の IPバージョンとなる。</p>
+<blockquote>
+<pre><code>  	case IP_VERSION(10, 1, 4):
+  	case IP_VERSION(10, 3, 1):
+  	case IP_VERSION(10, 3, 3):
+ +	case IP_VERSION(10, 3, 6):
+  	case IP_VERSION(10, 3, 7):
+  		adev-&gt;flags |= AMD_IS_APU;
+  		break;
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075522.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu: add gc 10.3.6 support</a></cite>
+</div>
+
+</blockquote>
+<p>GPUキャッシュ構成を示すコードが追加されていない点も <em>GC 10.3.7</em> と同様。</p>
+<p><em>GC 10.3.6/10.3.7</em> では、ShaderArray が無効化されることを想定したコードがあるが、<em>Yellow Carp/Rembrandt APU</em> のように複数の ShaderArray を持ち、そして <em>Radeon 660M</em> モデルのように一部 ShaderArray を無効化した SKU を計画しているのかもしれない。</p>
+<blockquote>
+<pre><code>  		for (j = 0; j &lt; adev-&gt;gfx.config.max_sh_per_se; j++) {
+  			bitmap = i * adev-&gt;gfx.config.max_sh_per_se + j;
+  			if (((adev-&gt;ip_versions[GC_HWIP][0] == IP_VERSION(10, 3, 0)) ||
+ -				(adev-&gt;ip_versions[GC_HWIP][0] == IP_VERSION(10, 3, 3)) ||
+ -				(adev-&gt;ip_versions[GC_HWIP][0] == IP_VERSION(10, 3, 7))) &amp;&amp;
+ +			     (adev-&gt;ip_versions[GC_HWIP][0] == IP_VERSION(10, 3, 3)) ||
+ +			     (adev-&gt;ip_versions[GC_HWIP][0] == IP_VERSION(10, 3, 6)) ||
+ +			     (adev-&gt;ip_versions[GC_HWIP][0] == IP_VERSION(10, 3, 7))) &amp;&amp;
+  			    ((gfx_v10_3_get_disabled_sa(adev) &gt;&gt; bitmap) &amp; 1))
+  				continue;
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075522.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu: add gc 10.3.6 support</a></cite>
+</div>
+
+</blockquote>
+<h2 id="vcn">VCN 3.1.2<a href="#vcn" class="head-cur-link"></a></h2>
+<p><em>GC 10.3.6</em> には <em>VCN 3.1.2</em> が関連付けられており、<em>Yellow Carp/Rembrandt</em> と <em>GC 10.3.7</em> に採用されている <em>VCN 3.1.1</em> とは異なる。<br>
+だが IPバージョン以外の違いは不明で、対応するコーディックとサイズは <em>VCN 3.1.1</em> とされている。</p>
+<blockquote>
+<pre><code>  	case IP_VERSION(3, 1, 1):
+ +	case IP_VERSION(3, 1, 2):
+  		if (encode)
+  			*codecs = &amp;nv_video_codecs_encode;
+  		else
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075586.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu/vcn: add vcn support for vcn 3.1.2</a></cite>
+</div>
+
+</blockquote>
+<h2 id="dcn">DCN 3.1.5<a href="#dcn" class="head-cur-link"></a></h2>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075706.html" target="_blank" rel="noopener noreferrer" >[PATCH 00/13] Update DCN 3.1 support for 3.1.5</a>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075707.html" target="_blank" rel="noopener noreferrer" >[PATCH 03/13] drm/amd/display: Add DCN315 family information</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075708.html" target="_blank" rel="noopener noreferrer" >[PATCH 04/13] drm/amd/display: Add DCN315 CLK_MGR</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075710.html" target="_blank" rel="noopener noreferrer" >[PATCH 05/13] drm/amd/display: Add DCN315 GPIO</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075711.html" target="_blank" rel="noopener noreferrer" >[PATCH 06/13] drm/amd/display: Add DCN315 IRQ</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075712.html" target="_blank" rel="noopener noreferrer" >[PATCH 07/13] drm/amd/display: Add DCN315 DMUB</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075713.html" target="_blank" rel="noopener noreferrer" >[PATCH 08/13] drm/amd/display: Add DCN315 Resource</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075709.html" target="_blank" rel="noopener noreferrer" >[PATCH 09/13] drm/amd/display: Add DCN315 Command Table Helper</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075715.html" target="_blank" rel="noopener noreferrer" >[PATCH 10/13] drm/amd/display: Add DCN315 blocks to Makefile</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075717.html" target="_blank" rel="noopener noreferrer" >[PATCH 11/13] drm/amd/display: Add DCN315 CORE</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075716.html" target="_blank" rel="noopener noreferrer" >[PATCH 12/13] drm/amd/display: Add DCN315 DM Support</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075714.html" target="_blank" rel="noopener noreferrer" >[PATCH 13/13] drm/amdgpu: add dm ip block for dcn 3.1.5</a></li>
+</ul>
+</li>
+</ul>
+<p><em>GC 10.3.6</em> には <em>DCN 3.1.5</em> が関連付けられており、<em>Yellow Carp/Rembrandt</em> とも <em>GC 10.3.7</em> とも異なる。</p>
+<blockquote>
+<pre><code> +	case AMDGPU_FAMILY_GC_10_3_6:
+ +		if (ASICREV_IS_GC_10_3_6(asic_id.hw_internal_rev))
+ +			dc_version = DCN_VERSION_3_15;
+ +		break;
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075717.html" target="_blank" rel="noopener noreferrer" >[PATCH 11/13] drm/amd/display: Add DCN315 CORE</a></cite>
+</div>
+
+</blockquote>
+<p>最大 4画面出力に対応する点は <em>GC 10.3.7</em> 等と同じで、APU ではよくある規模となっている。</p>
+<blockquote>
+<pre><code> +static const struct resource_caps res_cap_dcn31 = {
+ +	.num_timing_generator = 4,
+ +	.num_opp = 4,
+ +	.num_video_plane = 4,
+ +	.num_audio = 5,
+ +	.num_stream_encoder = 5,
+ +	.num_dig_link_enc = 5,
+ +	.num_hpo_dp_stream_encoder = 4,
+ +	.num_hpo_dp_link_encoder = 2,
+ +	.num_pll = 5,
+ +	.num_dwb = 1,
+ +	.num_ddc = 5,
+ +	.num_vmid = 16,
+ +	.num_mpc_3dlut = 2,
+ +	.num_dsc = 3,
+ +};
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075448.html" target="_blank" rel="noopener noreferrer" >[PATCH 5/6] drm/amd/display: Add DCN316 resource and SMU clock manager</a></cite>
+</div>
+
+</blockquote>
+<p>Watermark (WM) Table に DDR5用と LPDDR5用が用意されている。<br>
+この部分では DDR4用と LPDDR5用の WM Table がある <em>GC 10.3.7, DCN 3.1.6</em> と異なり、<em>Yellow Carp/Rembrandt</em> と一致する。</p>
+<blockquote>
+<pre><code> +		if (ctx-&gt;dc_bios-&gt;integrated_info-&gt;memory_type == LpDdr5MemType) {
+ +			dcn315_bw_params.wm_table = lpddr5_wm_table;
+ +		} else {
+ +			dcn315_bw_params.wm_table = ddr5_wm_table;
+ +		}
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075708.html" target="_blank" rel="noopener noreferrer" >[PATCH 04/13] drm/amd/display: Add DCN315 CLK_MGR</a></cite>
+</div>
+
+</blockquote>
+<p>今回のパッチを含め、短期間で新たな <em>RDNA 2</em> APU 2つに向けたパッチが投稿された。どちらも既存の <em>RDNA 2</em> APU、<em>VanGogh/Aerith</em> と <em>Yellow Carp/Rembrandt</em> に近い部分を持つが、完全に同じではない。<br>
+また、IPバージョンベースのサポートに移行してから、初めて新たな APU がサポートされた。<br>
+実質的に AMDGPUドライバーにおけるコードネームは廃止され、より効率的なサポート方式となった。<br>
+他の OSS、User Moder Driver である Mesa3D (RadeonSI, RADV) では GC (Graphics and Compute) の IPバージョンを、コンパイラバックエンドに採用されている LLVM、ROCmソフトウェアではこれまで通り GPUID (gfx{major.minor.stepping}) を使うものと思われる。</p>
+<p>サポートという一点では DeviceID ベースよりも効率的となったのだから喜ばしいことだと言えるが、コードネームが出てこなくなるということは少し寂しく感じる。</p>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/gc_10_3_6" class="bottom-tag-link" target="_blank" rel="noopener noreferrer" title="GC_10_3_6">#GC 10 3 6</a><a href="https://www.coelacanth-dream.com/tags/rdna_2" class="bottom-tag-link" target="_blank" rel="noopener noreferrer" title="RDNA_2">#RDNA 2</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel" class="bottom-tag-link" target="_blank" rel="noopener noreferrer" title="Linux_Kernel">#Linux Kernel</a></nav><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/02/17/rdna_2-ip-gc_10_3_6.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
+  </div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block"><a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
+  </div>
+  <div class="amzn_link_block"><a href="https://amzn.to/34I6X4d" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonギフト券 チャージタイプ</a>
+  </div></div>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="copyright">&copy; 2019 - 2021 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+</footer>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/menu.min.css"><aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/gc_10_3_6/" class="menu-cat-tag-lower">GC 10 3 6</a>
+    <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a>
+</nav></nav>
+<aside class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="copyright">&copy; 2019 - 2021 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/gc_10_3_6/" class="menu-cat-tag-lower">GC 10 3 6</a>
+    <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+    <a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/toast.min.css">
+    <div id="msg"></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+  </body>
+</html>
