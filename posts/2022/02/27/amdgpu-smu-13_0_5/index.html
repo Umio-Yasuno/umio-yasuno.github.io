@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/02/27/amdgpu-smu-13_0_5/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMDGPUドライバーに SMU 13.0.5 のサポートを追加するパッチ | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMDGPUドライバーに SMU 13.0.5 のサポートを追加するパッチ | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMDGPUドライバーに SMU 13.0.5 のサポートを追加するパッチ | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/02/27/amdgpu-smu-13_0_5/">
+  <meta name="description" content="AMDGPUドライバーに SMU (System Management Unit) 13.0.5 のサポートを追加するパッチが、amd-gfxメーリングリストにて公開されている。 SMU 13.0.5 では、Yellow Carp (Rembrandt) に採">
+  <meta property="og:description" content="AMDGPUドライバーに SMU (System Management Unit) 13.0.5 のサポートを追加するパッチが、amd-gfxメーリングリストにて公開されている。 SMU 13.0.5 では、Yellow Carp (Rembrandt) に採">
+  <meta name="twitter:description" content="AMDGPUドライバーに SMU (System Management Unit) 13.0.5 のサポートを追加するパッチが、amd-gfxメーリングリストにて公開されている。 SMU 13.0.5 では、Yellow Carp (Rembrandt) に採">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/02/27/amdgpu-smu-13_0_5/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/02/27/amdgpu-smu-13_0_5/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="Linux Kernel, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/menu.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/toast.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#0d4555 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:2px 2px 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.site-title-link:hover .lain-e{background-color:#0004}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content;display:none}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #23aea3;background-color:#1111;max-width:max-content;contain:content;margin:0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(18,98,120,.8)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#ddd1 0%,#0000 66.5%,#0000 95%,#000 99%)50%/contain fixed no-repeat,linear-gradient(#0000 25%,#0004 50%,#0000 75%)50%/100% .48rem fixed repeat-y,linear-gradient(to right,rgba(128,0,128,.133333) 0%,#f002 16.5%,#0f02 49.5%,#00f2 82.5%,rgba(128,0,128,.133333) 100%)50%/.16rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:2px solid #115b70;border-color:#126278 #0d4555 #0d4555 #126278;border-radius:.1rem;background-color:#115b70}.sb:active{background-color:#205260}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px .2rem .6rem auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#0ad1c1;border-right:1px solid #156a63;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(18,98,120,.8)#0000}footer{display:none}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0;margin-top:.5rem}.page-main>p{margin:.1rem 0}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMDGPUドライバーに SMU 13.0.5 のサポートを追加するパッチ",
+  "headline" : "AMDGPUドライバーに SMU 13.0.5 のサポートを追加するパッチ",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-02-27",
+    "datePublished" : "2022-02-27",
+    "dateModified"  : "2022-02-27",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/tags/amd" class="head-cat-tag-lower"  title="AMD">AMD</a>/<a href="https://www.coelacanth-dream.com/tags/apu" class="head-cat-tag-lower"  title="APU">APU</a>/<a href="https://www.coelacanth-dream.com/tags/hardware" class="head-cat-tag-lower"  title="Hardware">Hardware</a></nav><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/linux_kernel" class="head-cat-tag-lower"  title="Linux_Kernel">Linux Kernel</a></nav></nav>
+
+  <h1 class="page-title">AMDGPUドライバーに SMU 13.0.5 のサポートを追加するパッチ</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
+    <time datetime="2022-02-27 10:10 +0900">Post: 2022/02/27 10:10 &#43;0900</time>
+    <aside class="update">Update: 2022/02/27 12:08 &#43;0900</aside>
+  </aside><p>AMDGPUドライバーに SMU (System Management Unit) 13.0.5 のサポートを追加するパッチが、amd-gfxメーリングリストにて公開されている。<br>
+SMU 13.0.5 では、<em>Yellow Carp (Rembrandt)</em> に採用されている SMU 13.0.{1,3} とは別の電力管理テーブル、インターフェイスを用いる。<br>
+最近では SMU 13.0.8 のサポートを追加するパッチも公開されているが、機能的には SMU 13.0.{1,3} と共通としている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/076009.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amdgpu: add gfxoff support for smu 13.0.5</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075620.html" target="_blank" rel="noopener noreferrer" >[PATCH 0/3] Add SMU 13.0.5 Support</a>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075622.html" target="_blank" rel="noopener noreferrer" >[PATCH 1/3] drm/admgpu/pm: add smu 13.0.5 driver interface headers</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075621.html" target="_blank" rel="noopener noreferrer" >[PATCH 2/3] drm/amd/pm: update smc message sequence for smu 13.0.5</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075623.html" target="_blank" rel="noopener noreferrer" >[PATCH 3/3] drm/amd/pm: add smu_v13_0_5_ppt implementation</a></li>
+</ul>
+</li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075959.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amd/pm: refine smu 13.0.5 pp table code</a></li>
+</ul>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a></h2>
+<ul>
+<li><a href="#smu"  >SMU 13.0.5</a>
+<ul>
+<li><a href="#ss"  >SmartShift をサポートせず？</a></li>
+<li><a href="#cpu"  >CPU, L3キャッシュ</a></li>
+</ul>
+</li>
+<li><a href="#clock"  >GPUクロック</a></li>
+</ul>
+</section>
+
+<h2 id="smu">SMU 13.0.5<a href="#smu" class="head-cur-link"></a></h2>
+<p>まず、SMU 13.0.5 は以下引用部から、APU に採用されることを想定した IPブロックとされる。<br>
+だが、他 APU の SMU とは違う部分がいくつか見られる。</p>
+<blockquote>
+<pre><code> +void smu_v13_0_5_set_ppt_funcs(struct smu_context *smu)
+ +{
+ +	smu-&gt;ppt_funcs = &amp;smu_v13_0_5_ppt_funcs;
+ +	smu-&gt;message_map = smu_v13_0_5_message_map;
+ +	smu-&gt;feature_map = smu_v13_0_5_feature_mask_map;
+ +	smu-&gt;table_map = smu_v13_0_5_table_map;
+ +	smu-&gt;is_apu = true;
+ +}
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075623.html" target="_blank" rel="noopener noreferrer" >[PATCH 3/3] drm/amd/pm: add smu_v13_0_5_ppt implementation</a></cite>
+</div>
+
+</blockquote>
+<h3 id="ss">SmartShift をサポートせず？<a href="#ss" class="head-cur-link"></a></h3>
+<p>パッチでは、SMU 13.0.5 は SmartShift用のインターフェイスをサポートしないとしている。</p>
+<p>SmartShift は APU と dGPU を組み合わせたプラットフォーム向けの機能であり、全体での消費電力枠をワークロードに応じて APU, dGPU に適切に割り振ることで性能を最適化する。<br>
+Linux Kernel における AMDGPUドライバーでは、SamrtShift のバイアスを変更するためのインターフェイスと、SmartShift下で APU, dGPU がどれだけ電力枠を使っているかを出力するインターフェイスが実装されている。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2021/06/07/linux-amd-smart-shift/"  >AMD Smart Shift への対応を進める Linux AMDGPU ドライバー | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<p>SMU 12.0.{1,2} を採用する <em>Renoir, Lucienne, Green Sardine (Cezanne), Barcelo APU</em> 、SMU 13.0.{1,3} を採用する <em>Yellow Carp (Rembrandt) APU</em> ではサポートされており、SMU 13.0.5 ではそこから削除した形となっている。<br>
+後のパッチで削除されているが、元から <code>#if 0 .. #endif</code> マクロで無効化されていた部分であり、最初から SmartShift をサポートしないことは明確に決まっていたのかもしれない。</p>
+<blockquote>
+<pre><code> -#if 0
+ -	case METRICS_SS_APU_SHARE:
+ -		/* return the percentage of APU power with respect to APU's power limit.
+ -		 * percentage is reported, this isn't boost value. Smartshift power
+ -		 * boost/shift is only when the percentage is more than 100.
+ -		 */
+ -		if (metrics-&gt;StapmOpnLimit &gt; 0)
+ -			*value =  (metrics-&gt;ApuPower * 100) / metrics-&gt;StapmOpnLimit;
+ -		else
+ -			*value = 0;
+ -		break;
+ -	case METRICS_SS_DGPU_SHARE:
+ -		/* return the percentage of dGPU power with respect to dGPU's power limit.
+ -		 * percentage is reported, this isn't boost value. Smartshift power
+ -		 * boost/shift is only when the percentage is more than 100.
+ -		 */
+ -		if ((metrics-&gt;dGpuPower &gt; 0) &amp;&amp;
+ -		    (metrics-&gt;StapmCurrentLimit &gt; metrics-&gt;StapmOpnLimit))
+ -			*value = (metrics-&gt;dGpuPower * 100) /
+ -				  (metrics-&gt;StapmCurrentLimit - metrics-&gt;StapmOpnLimit);
+ -		else
+ -			*value = 0;
+ -		break;
+ -#endif
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075959.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amd/pm: refine smu 13.0.5 pp table code</a></cite>
+</div>
+
+</blockquote>
+<h3 id="cpu">CPU, L3キャッシュ<a href="#cpu" class="head-cur-link"></a></h3>
+<p>APU に採用される SMU には CPUコア、L3キャッシュのクロック、消費電力、温度用の値がテーブル内に用意されているが、SMU 13.0.5 では現時点で当該部をコメントアウトしている。<br>
+この部分から <em>Yellow Caro (Rembrandt)</em> は 8-Core, L3キャッシュ 1基、<em>VanGogh (Aerith)</em> は 4-Core, L3キャッシュ 1基ということを読み取ることが可能だった。</p>
+<p>SMU 13.0.5 がここで用いている構造体 (struct) <code>gpu_metrics_v2_1</code> は、8-Core、L3キャッシュ 2基までを想定している。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+そのため、SMU 13.0.5 を採用する APU ではそれに収まらないか、先の SmartShift のことと合わせて、CPU部周りのセンサーをサポートしていないことが考えられる。</p>
+<blockquote>
+<pre><code> +	/*
+ +	memcpy(&amp;gpu_metrics-&gt;temperature_core[0],
+ +		&amp;metrics.CoreTemperature[0],
+ +		sizeof(uint16_t) * 8);
+ +	gpu_metrics-&gt;temperature_l3[0] = metrics.L3Temperature;
+ +	*/
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075623.html" target="_blank" rel="noopener noreferrer" >[PATCH 3/3] drm/amd/pm: add smu_v13_0_5_ppt implementation</a></cite>
+</div>
+
+</blockquote>
+<h2 id="clock">GPUクロック<a href="#clock" class="head-cur-link"></a></h2>
+<p><code>SMU_13_0_5_UMD_PSTATE_GFXCLK   1100</code> というマクロが追加されているが、これは中間的な GPUクロックを示していると思われる。</p>
+<blockquote>
+<pre><code>  #define __SMU_V13_0_5_PPT_H__
+	
+  extern void smu_v13_0_5_set_ppt_funcs(struct smu_context *smu);
+ +#define SMU_13_0_5_UMD_PSTATE_GFXCLK   1100
+	
+  #endif
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075959.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amd/pm: refine smu 13.0.5 pp table code</a></cite>
+</div>
+
+</blockquote>
+<p><code>SMU_13_0_5_UMD_PSTATE_GFXCLK</code> は以下引用部で使われている。<br>
+変数 <code>i</code> は GPUクロックのレベル、<code>cur_value</code> はクロックを読み取った時点でのクロックを示していると思われる。<br>
+変数 <code>i</code> が設定された最大 GPUクロックに一致する場合は 2、最小 GPUクロックに一致する場合は 0 が、それ以外の場合は 1 が代入され、それを元に現在のクロックレベルを示す <code>*</code> を追加で出力する。</p>
+<blockquote>
+<pre><code> +	case SMU_GFXCLK:
+ +	case SMU_SCLK:
+ +		ret = smu_v13_0_5_get_current_clk_freq(smu, clk_type, &amp;cur_value);
+ +		if (ret)
+ +			goto print_clk_out;
+ +		min = (smu-&gt;gfx_actual_hard_min_freq &gt; 0) ? smu-&gt;gfx_actual_hard_min_freq : smu-&gt;gfx_default_hard_min_freq;
+ +		max = (smu-&gt;gfx_actual_soft_max_freq &gt; 0) ? smu-&gt;gfx_actual_soft_max_freq : smu-&gt;gfx_default_soft_max_freq;
+ +		if (cur_value  == max)
+ +			i = 2;
+ +		else if (cur_value == min)
+ +			i = 0;
+ +		else
+ +			i = 1;
+ +		size += sysfs_emit_at(buf, size, &quot;0: %uMhz %s\n&quot;, min,
+ +				i == 0 ? &quot;*&quot; : &quot;&quot;);
+ +		size += sysfs_emit_at(buf, size, &quot;1: %uMhz %s\n&quot;,
+ +				i == 1 ? cur_value : SMU_13_0_5_UMD_PSTATE_GFXCLK,
+ +				i == 1 ? &quot;*&quot; : &quot;&quot;);
+ +		size += sysfs_emit_at(buf, size, &quot;2: %uMhz %s\n&quot;, max,
+ +				i == 2 ? &quot;*&quot; : &quot;&quot;);
+ +		break;
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075959.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amd/pm: refine smu 13.0.5 pp table code</a></cite>
+</div>
+
+</blockquote>
+<p><code>i == 1</code> の場合、つまりは現在の GPUクロックが最小でも最大でもない場合、クロックレベル 1: には、現在の GPUクロックがそのまま出力される。<br>
+そして <code>SMU_13_0_5_UMD_PSTATE_GFXCLK</code> は、三項演算子であるから、<code>i == 1</code> でない場合、GPUクロックが最小か最大の状態にあるときに出力される。<br>
+以上のことから、中間的な、仮の GPUクロックが 1100 (MHz) ということと思われる。</p>
+<blockquote>
+<pre><code>  +		size += sysfs_emit_at(buf, size, &quot;1: %uMhz %s\n&quot;,
+  +				i == 1 ? cur_value : SMU_13_0_5_UMD_PSTATE_GFXCLK,
+  +				i == 1 ? &quot;*&quot; : &quot;&quot;);
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075959.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amd/pm: refine smu 13.0.5 pp table code</a></cite>
+</div>
+
+</blockquote>
+<p>同様の値は <em>Yellow Carp (Rembrandt)</em> 、<em>VanGogh (Aerith)</em> にも用意されているが、どちらも SMU 13.0.5 と同じ 1100 (MHz) に設定されており、単にドライバー開発者が決めている仮クロックとも考えられる。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> <sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<blockquote>
+<pre><code> /* UMD PState Vangogh Msg Parameters in MHz */
+ #define VANGOGH_UMD_PSTATE_STANDARD_GFXCLK       1100
+ #define VANGOGH_UMD_PSTATE_STANDARD_SOCCLK       600
+ #define VANGOGH_UMD_PSTATE_STANDARD_FCLK         800
+ #define VANGOGH_UMD_PSTATE_STANDARD_VCLK         705
+ #define VANGOGH_UMD_PSTATE_STANDARD_DCLK         600
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.h?h=next-20220225" target="_blank" rel="noopener noreferrer" >vangogh_ppt.h « smu11 « swsmu « pm « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a></cite>
+</div>
+
+</blockquote>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-February/075431.html" target="_blank" rel="noopener noreferrer" >[PATCH] drm/amd/pm: Add support for MP1 13.0.8</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/blob/8d0749b4f83bf4768ceae45ee6a79e6e7eddfc2a/drivers/gpu/drm/amd/include/kgd_pp_interface.h#L714-L762" target="_blank" rel="noopener noreferrer" >linux/kgd_pp_interface.h at 8d0749b4f83bf4768ceae45ee6a79e6e7eddfc2a · torvalds/linux</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/pm/swsmu/smu13/yellow_carp_ppt.h?h=next-20220225" target="_blank" rel="noopener noreferrer" >yellow_carp_ppt.h « smu13 « swsmu « pm « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/pm/swsmu/smu11/vangogh_ppt.h?h=next-20220225" target="_blank" rel="noopener noreferrer" >vangogh_ppt.h « smu11 « swsmu « pm « amd « drm « gpu « drivers - kernel/git/next/linux-next.git - The linux-next integration testing tree</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/linux_kernel" class="bottom-tag-link"  title="Linux_Kernel">#Linux Kernel</a></nav><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/02/27/amdgpu-smu-13_0_5.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><aside class="amzn delay-page">
+  <div class="amzn_head">Amazonアソシエイト</div>
+  <div class="amzn_links">
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a>
+  </div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a>
+  </div>
+  <div class="amzn_link_block"><a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a>
+  </div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a>
+  </div>
+  <div class="amzn_link_block"><a href="https://amzn.to/34I6X4d" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonギフト券 チャージタイプ</a>
+  </div></div>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+</footer>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/menu.min.css"><aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+</nav></nav>
+<aside class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/toast.min.css">
+    <div id="msg"></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+  </body>
+</html>
