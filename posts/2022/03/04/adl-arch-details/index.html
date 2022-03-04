@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/03/04/adl-arch-details/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Intel、SDM に Golden Cove、Gracemont アーキテクチャの詳細を追加 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Intel、SDM に Golden Cove、Gracemont アーキテクチャの詳細を追加 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Intel、SDM に Golden Cove、Gracemont アーキテクチャの詳細を追加 | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/03/04/adl-arch-details/">
+  <meta name="description" content="Intel は Software Developer Manuals (SDM) の 1つ、Intel® 64 and IA-32 Architectures Optimization Reference Manualを更新し、Alder Lake のハイブリッドアーキテクチャとそのスケジューリング、Alder Lake に">
+  <meta property="og:description" content="Intel は Software Developer Manuals (SDM) の 1つ、Intel® 64 and IA-32 Architectures Optimization Reference Manualを更新し、Alder Lake のハイブリッドアーキテクチャとそのスケジューリング、Alder Lake に">
+  <meta name="twitter:description" content="Intel は Software Developer Manuals (SDM) の 1つ、Intel® 64 and IA-32 Architectures Optimization Reference Manualを更新し、Alder Lake のハイブリッドアーキテクチャとそのスケジューリング、Alder Lake に">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/03/04/adl-arch-details/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/03/04/adl-arch-details/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="Alder Lake, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/menu.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/toast.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#0d4555 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content;display:none}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #23aea3;background-color:#1111;max-width:max-content;contain:content;margin:0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(18,98,120,.8)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#fff1 0%,#0000 66.5%,#0000 95%,#000 99%)50%/contain fixed no-repeat,linear-gradient(#0000 38%,#0004 38%,#0004 62%,#0000 62%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,rgba(128,0,128,.0666667) 0%,#f001 16.5%,#0f01 49.5%,#00f1 82.5%,rgba(128,0,128,.0666667) 100%)50%/.2rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:2px solid #115b70;border-color:#126278 #0d4555 #0d4555 #126278;border-radius:.1rem;background-color:#115b70}.sb:active{background-color:#205260}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px .2rem .6rem auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(18,98,120,.8)#0000}footer{display:none}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Intel、SDM に Golden Cove、Gracemont アーキテクチャの詳細を追加",
+  "headline" : "Intel、SDM に Golden Cove、Gracemont アーキテクチャの詳細を追加",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-03-04",
+    "datePublished" : "2022-03-04",
+    "dateModified"  : "2022-03-05",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/tags/cpu" class="head-cat-tag-lower"  title="CPU">CPU</a>/<a href="https://www.coelacanth-dream.com/tags/hardware" class="head-cat-tag-lower"  title="Hardware">Hardware</a>/<a href="https://www.coelacanth-dream.com/tags/intel" class="head-cat-tag-lower"  title="Intel">Intel</a></nav><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/alder_lake" class="head-cat-tag-lower"  title="Alder_Lake">Alder Lake</a></nav></nav>
+
+  <h1 class="page-title">Intel、SDM に Golden Cove、Gracemont アーキテクチャの詳細を追加</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
+    <time datetime="2022-03-04 16:58 +0900">Post: 2022/03/04 16:58 &#43;0900</time>
+    <aside class="update">Update: 2022/03/05 08:19 &#43;0900</aside>
+  </aside><p>Intel は Software Developer Manuals (SDM) の 1つ、Intel® 64 and IA-32 Architectures Optimization Reference Manualを更新し、<em>Alder Lake</em> のハイブリッドアーキテクチャとそのスケジューリング、<em>Alder Lake</em> に採用されているアーキテクチャ、 <em>Golden Cove (Core)</em> と <em>Gracemont (Atom)</em> の詳細を追加した。<br>
+その中の特に関心のある部分、知識がギリギリ何とか及びそうな部分だけをまとめる。</p>
+<ul>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html#inpage-nav-5" target="_blank" rel="noopener noreferrer" >Intel® 64 and IA-32 Architectures Software Developer Manuals</a></li>
+</ul>
+<h2 id="ehfi">Intel EHFI / Intel Thread Director<a href="#ehfi" class="head-cur-link"></a></h2>
+<p><em>Alder Lake</em> が対応する EHFI (Enhanced Hardware Feedback Interface)、マーケティング的には Intel Thread Director と呼ばれるそれは、OS に対してスケジューリングのヒントとなる情報を提供する。<br>
+提供される情報には、電力あるいは熱の制限に基づいた性能と電力効率の相対的なレベルがある。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/01/02/intel-hfi/"  >Linux Kernel に Intel HFI をサポートするパッチ | Coelacanth&rsquo;s Dream</a></span>
+
+同様の情報を提供する HFI には、<em>Alder Lake</em> だけでなく <em>Lakefield</em> も対応している。</p>
+<p>EHFI が HFI と異なるのは、各論理コアで実行しているソフトウェアスレッドの特性を区別する Class がある点で、OS はこれを性能と電力効率のレベルと一緒にヒントとして使うことができる。<br>
+Class がどう区別されるのか、その詳細が今回ドキュメントに追加された。<br>
+Class 0 にはベクトル化されていない整数、浮動小数点のコード、Class 1 には VNNI系命令を除いたベクトル化されたコード、Class 2 には VNNI系命令、Class 3 にはスピン・ウェイト・ループが割り当てられる。<br>
+OS のスケジューラーはこれらを基に、時にはスレッドの移行を行う。<br>
+また、ドキュメントではスピンロックに対して、古い <code>PAUSE</code> 命令に代わって、より軽量な <code>UMWAIT/TPAUSE</code> 命令の使用を推奨している。</p>
+<h2 id="gracemont">Gracemont<a href="#gracemont" class="head-cur-link"></a></h2>
+<p><em>Gracemont</em> は <em>Tremont</em> の後継であり、多くの改良が全体に盛り込まれている。</p>
+<p>ロード/ストアバッファを増やすと同時に、ロード/ストア実行ポート (AGU, Address Generation Unit) は <em>Tremont</em> の 2ポートから 4ポートに増やされている。</p>
+<p>AVX/AVX2 (256-bit) 命令をサポートし、新たな AVX-VNNI (128/256-bit) にも対応する。<br>
+VNNI (Vector Neural Network Instructions, <code>VPDPBUSD</code>) 命令は推論処理の高速化が主な用途であり、マーケティング的には Intel DL Boost とも呼ばれている。<br>
+通常では <code>VPMADDUBSW</code>, <code>VPMADDWD</code>, <code>VPADDD</code> という 3つの命令を必要とする INT8 の 畳み込み演算を、VNNI (<code>VPDPBUSD</code>) 命令 1つで実行できるのが特徴であり、命令の統合によるキャッシュ効率の向上、必要とする帯域の削減を可能とする。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>ビット操作命令 (BMI1, BMI2, ADX, LZCNT) のサポートも命令も追加され、Intel® Processors based on Gracemont Microarchitecture Instruction Throughput and Latency では MSROM (Microcode sequencer ROM) を用いないネイティブ実装だとしている。<br>
+<em>AMD Zen 1/2</em> ではマイクロコード実装、<em>AMD Zen 3</em> からネイティブ実装となった PDEP/PEXT 命令も、<em>Gracemont</em> では最初からネイティブ実装となっている。</p>
+<p><em>Tremont/Gracemont</em> では 4-Core で L2キャッシュを共有し、クラスターかモジュール、タイルとも呼ばれる構成を採る。<br>
+<em>Tremont</em> では L2キャッシュサイズを 1MB から 4.5MB の範囲で選択可能であり、マイクロサーバー向けの <em>Snow Ridge</em> では 4.5MB、それ以外の <em>Japser Lake, Elkhart Lake, Lakefield</em> では 1.5MB となっていた。<br>
+<em>Gracemont</em> ではサイズ範囲が 2MB から 4MB に変更され、<em>Alder Lake</em> は 2MB の構成を採っている。</p>
+<h3 id="decoder">Decoder<a href="#decoder" class="head-cur-link"></a></h3>
+<p><em>Tremont</em> から 2x3-wide デコードというクラスター構成を <em>Gracemont</em> は引き継ぎながら、L1命令キャッシュは 32KB から 64KBに、フェッチ幅をクラスターあたり 16Byte から 32Byte に増やしている。<br>
+またデコーダーのクラスタリングによって発生する負荷分散も、専用のハードウェアバランサーが導入されたことで <em>Tremont</em> からボトルネックが軽減されたとする。<br>
+<em>Tremont</em> では負荷分散は分岐予測に依存していたため、分岐の少ない長いコード、浮動小数点演算等でコンパイラが適用するループアンローリングのようなケースでは負荷が片方に集中し、ボトルネックとなっていた。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2021/08/24/intel-arch-day-2021/"  >Intel Architecture Day 2021 個人的まとめ　―― Gracemont, Golden Cove, Alder Lake | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<h3 id="fpu">FPU<a href="#fpu" class="head-cur-link"></a></h3>
+<p><em>Gracemont</em> では <em>Xeon Phi</em> 系を除いて、初めて AVX/AVX2 (256-bit) 命令をサポートする。<br>
+FPU部のデータパスは 128-bit 実装であり、256-bit命令は 2個の 128-bit uops に分割されて実行する。<br>
+<em>AMD Zen 1</em> を思い出す方式だが規模は異なり、<em>AMD Zen 1</em> は FPU部の実行ポートが 2xFADD + 2xFMUL という構成なのに対し、<em>Gracemont</em> は 2x(FADD+FMUL) 構成となる。</p>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.isus.jp/products/mkl/vnni-enables-inference/" target="_blank" rel="noopener noreferrer" >ベクトル・ニューラル・ネットワーク命令はインテル® アーキテクチャーによる INT8 推論を可能に | iSUS</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/alder_lake" class="bottom-tag-link"  title="Alder_Lake">#Alder Lake</a></nav><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/03/04/adl-arch-details.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><details class="amzn delay-page">
+  <summary class="amzn_head">Amazonアソシエイト</summary>
+  <div class="amzn_links">
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/34I6X4d" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonギフト券 チャージタイプ</a></div></div>
+</details></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+</footer>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/menu.min.css"><aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-cat-tag-lower">Alder Lake</a>
+</nav></nav>
+<aside class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-cat-tag-lower">Alder Lake</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/toast.min.css">
+    <div id="msg"></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+  </body>
+</html>
