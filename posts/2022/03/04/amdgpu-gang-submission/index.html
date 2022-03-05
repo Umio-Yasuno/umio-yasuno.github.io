@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/03/04/amdgpu-gang-submission/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>AMDGPUドライバーに「Gang Submit」を実装するパッチ | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="AMDGPUドライバーに「Gang Submit」を実装するパッチ | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="AMDGPUドライバーに「Gang Submit」を実装するパッチ | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/03/04/amdgpu-gang-submission/">
+  <meta name="description" content="AMD のソフトウェアエンジニア Christian König 氏より、AMDGPUドライバーの CS (Command Submission) インターフェイスに Gang submit/submission(s) と呼ぶ機能を実装するパッチが投稿されている。 Christian">
+  <meta property="og:description" content="AMD のソフトウェアエンジニア Christian König 氏より、AMDGPUドライバーの CS (Command Submission) インターフェイスに Gang submit/submission(s) と呼ぶ機能を実装するパッチが投稿されている。 Christian">
+  <meta name="twitter:description" content="AMD のソフトウェアエンジニア Christian König 氏より、AMDGPUドライバーの CS (Command Submission) インターフェイスに Gang submit/submission(s) と呼ぶ機能を実装するパッチが投稿されている。 Christian">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/03/04/amdgpu-gang-submission/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/03/04/amdgpu-gang-submission/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="Linux Kernel, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/menu.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/toast.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#0d4555 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content;display:none}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #23aea3;background-color:#1111;max-width:max-content;contain:content;margin:0;padding:.4rem .2rem;font:.96rem/1.2 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(18,98,120,.8)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#fff1 0%,#0000 66.5%,#0000 95%,#000 99%)50%/contain fixed no-repeat,linear-gradient(#0000 38%,#0004 38%,#0004 62%,#0000 62%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,rgba(128,0,128,.0666667) 0%,#f001 16.5%,#0f01 49.5%,#00f1 82.5%,rgba(128,0,128,.0666667) 100%)50%/.2rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:2px solid #115b70;border-color:#126278 #0d4555 #0d4555 #126278;border-radius:.1rem;background-color:#115b70}.sb:active{background-color:#205260}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px .2rem .6rem auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(18,98,120,.8)#0000}footer{display:none}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "AMDGPUドライバーに「Gang Submit」を実装するパッチ",
+  "headline" : "AMDGPUドライバーに「Gang Submit」を実装するパッチ",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-03-04",
+    "datePublished" : "2022-03-04",
+    "dateModified"  : "2022-03-05",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><nav class="head-cat-tag"><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Category">CAT</a>:<a href="https://www.coelacanth-dream.com/tags/amd" class="head-cat-tag-lower"  title="AMD">AMD</a>/<a href="https://www.coelacanth-dream.com/tags/apu" class="head-cat-tag-lower"  title="APU">APU</a>/<a href="https://www.coelacanth-dream.com/tags/gpu" class="head-cat-tag-lower"  title="GPU">GPU</a>/<a href="https://www.coelacanth-dream.com/tags/software" class="head-cat-tag-lower"  title="Software">Software</a></nav><nav class="head-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="head-cat-tag-type" target="_blank" rel="noopener noreferrer" title="Tag">TAG</a>:<a href="https://www.coelacanth-dream.com/tags/linux_kernel" class="head-cat-tag-lower"  title="Linux_Kernel">Linux Kernel</a></nav></nav>
+
+  <h1 class="page-title">AMDGPUドライバーに「Gang Submit」を実装するパッチ</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
+    <time datetime="2022-03-04 17:53 +0900">Post: 2022/03/04 17:53 &#43;0900</time>
+    <aside class="update">Update: 2022/03/05 09:41 &#43;0900</aside>
+  </aside><p>AMD のソフトウェアエンジニア <a href="https://de.linkedin.com/in/christian-k%C3%B6nig-35b7bbaa" target="_blank" rel="noopener noreferrer" >Christian König</a> 氏より、AMDGPUドライバーの CS (Command Submission) インターフェイスに <em>Gang submit/submission(s)</em> と呼ぶ機能を実装するパッチが投稿されている。<br>
+Christian König 氏は DRM (Direct Rendering Manager) やそのメモリ管理機能に多くのパッチを投稿しており、過去には Resizeable PCI BAR の実装も行っている。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-March/076261.html" target="_blank" rel="noopener noreferrer" >Gang submit</a></li>
+</ul>
+<p><em>Gang Submit</em> は複数の IB (Indirect Buffer) を異なるエンジンで同時に実行可能であることを保証する機能だと、Christian König 氏は説明している。<br>
+IB は特定のエンジンに対するコマンドバッファであり、コマンドはリングバッファで管理される。<br>
+また、ここでのエンジンは、GFX, Compute, SDMA, Multi Media (UVD/VCE/VCN) を指していると思われる。</p>
+<blockquote>
+<pre><code> const unsigned int amdgpu_ctx_num_entities[AMDGPU_HW_IP_NUM] = {
+ 	[AMDGPU_HW_IP_GFX]	=	1,
+ 	[AMDGPU_HW_IP_COMPUTE]	=	4,
+ 	[AMDGPU_HW_IP_DMA]	=	2,
+ 	[AMDGPU_HW_IP_UVD]	=	1,
+ 	[AMDGPU_HW_IP_VCE]	=	1,
+ 	[AMDGPU_HW_IP_UVD_ENC]	=	1,
+ 	[AMDGPU_HW_IP_VCN_DEC]	=	1,
+ 	[AMDGPU_HW_IP_VCN_ENC]	=	1,
+ 	[AMDGPU_HW_IP_VCN_JPEG]	=	1,
+ };
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/7d7630fc6b8850ceae5a708bd37dcc7583658316/drivers/gpu/drm/amd/amdgpu/amdgpu_ctx.c#L34-L44" target="_blank" rel="noopener noreferrer" >linux/amdgpu_ctx.c at 7d7630fc6b8850ceae5a708bd37dcc7583658316 · torvalds/linux</a></cite>
+</div>
+
+</blockquote>
+<p>同じ <em>Gang</em> に属するメンバー (IB を指していると思われる) は、暗黙的、明示的にも同じ VM の依存関係を取得し、他のメンバーが準備を完了するまでメンバーは実行されない。<br>
+これによりデッドロックを効果的に防止できると説明されている。</p>
+<p><em>Gang Submit</em> を実装する一連のパッチは、Christian König 氏が作成した他のパッチをベースにしているため、どのブランチにもかんたんに適用できるものではなく、実際に取り込まれるまでには時間が掛かると思われる。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a></h3>
+<ul>
+<li><a href="https://lpc.events/event/9/contributions/630/attachments/703/1300/xdc2020_rayhuang_secure_buffer_with_tmz.pdf" target="_blank" rel="noopener noreferrer" >Secure Buffer Support with Trusted Memory Zone - xdc2020_rayhuang_secure_buffer_with_tmz.pdf</a></li>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu/" target="_blank" rel="noopener noreferrer" >drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a></li>
+</ul>
+</section>
+
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/linux_kernel" class="bottom-tag-link"  title="Linux_Kernel">#Linux Kernel</a></nav><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/03/04/amdgpu-gang-submission.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><details class="amzn delay-page">
+  <summary class="amzn_head">Amazonアソシエイト</summary>
+  <div class="amzn_links">
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/34I6X4d" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonギフト券 チャージタイプ</a></div></div>
+</details></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+</footer>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/menu.min.css"><aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+</nav></nav>
+<aside class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/toast.min.css">
+    <div id="msg"></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+  </body>
+</html>
