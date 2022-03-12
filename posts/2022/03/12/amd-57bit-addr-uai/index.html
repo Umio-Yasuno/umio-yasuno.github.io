@@ -65,12 +65,24 @@
   <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
   <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
     <time datetime="2022-03-12 08:13 +0900">Post: 2022/03/12 08:13 &#43;0900</time>
-    <aside class="update">Update: 2022/03/12 13:12 &#43;0900</aside>
+    <aside class="update">Update: 2022/03/12 13:55 &#43;0900</aside>
   </aside><p>AMD の <a href="https://in.linkedin.com/in/bharata-b-rao-58123851" target="_blank" rel="noopener noreferrer" >Bharata B Rao</a> 氏より linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用するパッチが投稿されている。<br>
 AMD UAI は仮想アドレスの上位 7-bit (Bit_63:57) に対するチェックを抑制する機能であり、ソフトウェアはその分をメタデータ、タグの格納に活用することができる。</p>
 <ul>
 <li><a href="https://lore.kernel.org/linux-mm/2b26fc5b-d709-f2e1-0c8f-a6a548008216@intel.com/T/" target="_blank" rel="noopener noreferrer" >[RFC PATCH v0 0/6] x86/AMD: Userspace address tagging</a></li>
 </ul>
+<p>UAI のサポートフラグ <code>CPUID.(EAX=0x8000_0021, ECX=0x0):EAX[bit 7]</code> から確認可能としている。</p>
+<blockquote>
+<pre><code> @@ -42,6 +42,7 @@ static const struct cpuid_bit cpuid_bits[] = {
+  	{ X86_FEATURE_CPB,		CPUID_EDX,  9, 0x80000007, 0 },
+  	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
+  	{ X86_FEATURE_MBA,		CPUID_EBX,  6, 0x80000008, 0 },
+ +	{ X86_FEATURE_UAI,		CPUID_EAX,  7, 0x80000021, 0 },
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lore.kernel.org/linux-mm/20220310111545.10852-3-bharata@amd.com/" target="_blank" rel="noopener noreferrer" >[RFC PATCH v0 2/6] x86/cpufeatures: Add Upper Address Ignore(UAI) as CPU feature - Bharata B Rao</a></cite>
+</div>
+
+</blockquote>
 <p>パッチコメントにて、現 AMDプロセッサは最大 57-bits の仮想 (virtual/logical) アドレスサイズをサポートするとしているが、<em>AMD Zen 3 アーキテクチャ</em> は最大 48-bit であるため、次世代の AMDプロセッサ、<em>AMD Zen 4 アーキテクチャ</em> を指しているのではないかと思われる。</p>
 <p><em>AMD Zen 1/2/3</em> では物理アドレス空間、仮想アドレス空間ともに最大 48-bit のサポートとなっている。<br>
 <em>AMD Zen 1/2/3</em> ではメモリ暗号化機能、SME (Secure Memory Encryption ) か SEV (Secure Encrypted Virtualiza) が有効な場合、使用可能な物理アドレス空間が減る。<br>
