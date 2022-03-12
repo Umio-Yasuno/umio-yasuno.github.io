@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/03/12/amd-57bit-addr-uai/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>57-bits の仮想メモリアドレス空間と UAI が実装される将来の AMDプロセッサ | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="57-bits の仮想メモリアドレス空間と UAI が実装される将来の AMDプロセッサ | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="57-bits の仮想メモリアドレス空間と UAI が実装される将来の AMDプロセッサ | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/03/12/amd-57bit-addr-uai/">
+  <meta name="description" content="linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用するパッチが投稿">
+  <meta property="og:description" content="linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用するパッチが投稿">
+  <meta name="twitter:description" content="linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用するパッチが投稿">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/03/12/amd-57bit-addr-uai/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/03/12/amd-57bit-addr-uai/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="Linux Kernel, Zen 4, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/menu.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/toast.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#0d4555 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content;display:none}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(18,98,120,.8)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#fff1 0%,#0000 66.5%,#0000 95%,#000 99%)50%/contain fixed no-repeat,linear-gradient(#0000 38%,#0004 38%,#0004 62%,#0000 62%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,rgba(128,0,128,.133333) 0%,#f002 16.5%,#0f02 49.5%,#00f2 82.5%,rgba(128,0,128,.133333) 100%)50%/.2rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:2px solid #115b70;border-color:#126278 #0d4555 #0d4555 #126278;border-radius:.1rem;background-color:#115b70}.sb:active{background-color:#205260}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px .2rem .6rem auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(18,98,120,.8)#0000}footer{display:none}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "57-bits の仮想メモリアドレス空間と UAI が実装される将来の AMDプロセッサ",
+  "headline" : "57-bits の仮想メモリアドレス空間と UAI が実装される将来の AMDプロセッサ",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-03-12",
+    "datePublished" : "2022-03-12",
+    "dateModified"  : "2022-03-12",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">57-bits の仮想メモリアドレス空間と UAI が実装される将来の AMDプロセッサ</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
+    <time datetime="2022-03-12 08:13 +0900">Post: 2022/03/12 08:13 &#43;0900</time>
+    <aside class="update">Update: 2022/03/12 10:33 &#43;0900</aside>
+  </aside><p>linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用するパッチが投稿されている。<br>
+AMD UAI は仮想アドレスの上位 7-bit (Bit_63:57) に対するチェックを抑制する機能であり、ソフトウェアはその分をメタデータ、タグの格納に活用することができる。</p>
+<ul>
+<li><a href="https://lore.kernel.org/linux-mm/2b26fc5b-d709-f2e1-0c8f-a6a548008216@intel.com/T/#e1b9caa0c700839bc9238a3161ddc5b757062d077" target="_blank" rel="noopener noreferrer" >[RFC PATCH v0 0/6] x86/AMD: Userspace address tagging</a></li>
+</ul>
+<p>パッチコメントにて、現 AMDプロセッサは最大 57-bits の仮想 (virtual/logical) アドレスサイズをサポートするとしているが、<em>AMD Zen 3 アーキテクチャ</em> は最大 48-bit であるため、次世代の AMDプロセッサ、<em>AMD Zen 4 アーキテクチャ</em> を指しているのではないかと思われる。</p>
+<p><em>AMD Zen 1/2/3</em> では物理アドレス空間、仮想アドレス空間ともに最大 48-bit のサポートとなっている。<br>
+<em>AMD Zen 1/2/3</em> ではメモリ暗号化機能、SME (Secure Memory Encryption ) か SEV (Secure Encrypted Virtualiza) が有効な場合、使用可能な物理アドレス空間が減る。<br>
+減るアドレスサイズは <code>CPUID (Leaf: 0x8000_001F) -&gt; EBX Bit_11:6</code> から確認できる。<br>
+自分が確認できる限りでは、<em>Ryzen 5 2600 (Zen 1)</em> では 5-bits が減るアドレスサイズとなっていた。<em>Ryzen 5 5600G (Zen 3)</em> では 0 だっため、物理アドレスサイズは減らない。</p>
+<blockquote>
+<pre><code> Currently the maximum logical address size for AMD processors in
+ 64 bit mode is 57 bits. This means that the remaining 7 upper bits
+ [63:57] are available for software use. With UAI feature turned ON,
+ the processor ignores these upper bits when performing canonical
+ check on these addresses.
+	
+ Add UAI as a CPU feature.
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lore.kernel.org/linux-mm/2b26fc5b-d709-f2e1-0c8f-a6a548008216@intel.com/T/#e1b9caa0c700839bc9238a3161ddc5b757062d077" target="_blank" rel="noopener noreferrer" >[RFC PATCH v0 0/6] x86/AMD: Userspace address tagging</a></cite>
+</div>
+
+</blockquote>
+<p>メモリアドレスの一部をチェックの対象から外し、メタデータあるいはタグとして活用する機能は他でも策定と実装が進められており、Intel LAM (Linear-address Masking)、Arm TBI (Top-byte Ignore) と Arm MTE (Memory Tagging Extension) がある。<br>
+機能の主な差異としては、メタデータのサイズと位置が挙げられ、<br>
+Intel LAM は LAM_U48 の場合 Bit_62:48 (15-bits) を、LAM_U57 の場合は Bit_62:57 (6-bits) をメタデータとして用いる。<br>
+Arm TBI は Bit_63:56 (8-bits) を無視し、その内の一部、Bit_59:56 (4-bits) を Arm MTE でメタデータとして用いる。<br>
+AMD UAI は Bit_63:57 (7-bits) をメタデータとして用いるため、メタデータのサイズと位置が一致するものはなく、それぞれで異なる。</p>
+<p>Arm MTE の例ではタグの一致を確認することで、メモリ安全性に関わる 2つのエラー、解放後メモリの使用 (Use-After-Free) と領域外アクセス (out-of-bounds) を検知可能としている。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a></h3>
+<ul>
+<li><a href="https://community.arm.com/arm-community-blogs/b/architectures-and-processors-blog/posts/enhanced-security-through-mte" target="_blank" rel="noopener noreferrer" >Enhanced security through Memory Tagging Extension - Architectures and Processors blog - Arm Community blogs - Arm Community</a></li>
+<li><a href="https://www.ffri.jp/research/index.htm" target="_blank" rel="noopener noreferrer" >セキュリティ・レポート｜株式会社ＦＦＲＩセキュリティ-サイバーセキュリティ、エンドポイントセキュリティ</a>
+<ul>
+<li><a href="https://www.ffri.jp/assets/files/research/research_papers/recent_advances_vuln_mitig_jp.pdf" target="_blank" rel="noopener noreferrer" >recent_advances_vuln_mitig_jp.pdf</a></li>
+</ul>
+</li>
+<li><a href="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/Documentation/arm64/memory-tagging-extension.rst?h=v5.16.14" target="_blank" rel="noopener noreferrer" >memory-tagging-extension.rst « arm64 « Documentation - kernel/git/stable/linux.git - Linux kernel stable tree</a></li>
+<li><a href="https://lore.kernel.org/linux-mm/20210205151631.43511-2-kirill.shutemov@linux.intel.com/T/#u" target="_blank" rel="noopener noreferrer" >[RFC 0/9] Linear Address Masking enabling</a></li>
+<li><a href="https://gitlab.com/x86-psABIs/x86-64-ABI/-/wikis/home" target="_blank" rel="noopener noreferrer" >Home · Wiki · x86 psABIs / x86-64 psABI · GitLab</a></li>
+<li><a href="https://cdrdv2.intel.com/v1/dl/getContent/671368" target="_blank" rel="noopener noreferrer" >Intel® Architecture Instruction Set Extensions Programming Reference</a></li>
+</ul>
+</section>
+
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/linux_kernel" class="bottom-tag-link"  title="Linux_Kernel">#Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/zen_4" class="bottom-tag-link"  title="Zen_4">#Zen 4</a></nav><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/03/12/amd-57bit-addr-uai.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><details class="amzn delay-page">
+  <summary class="amzn_head">Amazonアソシエイト</summary>
+  <div class="amzn_links">
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/34I6X4d" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonギフト券 チャージタイプ</a></div></div>
+</details></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+</footer>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/menu.min.css"><aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+    <a href="https://www.coelacanth-dream.com/tags/zen_4/" class="menu-cat-tag-lower">Zen 4</a>
+</nav></nav>
+<aside class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.1</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+    <a href="https://www.coelacanth-dream.com/tags/zen_4/" class="menu-cat-tag-lower">Zen 4</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/toast.min.css">
+    <div id="msg"></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+  </body>
+</html>
