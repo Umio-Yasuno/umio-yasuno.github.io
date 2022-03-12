@@ -12,9 +12,9 @@
   <title>57-bits の仮想メモリアドレス空間と UAI が実装される将来の AMDプロセッサ | Coelacanth&#39;s Dream</title>
   <meta property="og:title" content="57-bits の仮想メモリアドレス空間と UAI が実装される将来の AMDプロセッサ | Coelacanth&#39;s Dream">
   <meta name="twitter:title" content="57-bits の仮想メモリアドレス空間と UAI が実装される将来の AMDプロセッサ | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/03/12/amd-57bit-addr-uai/">
-  <meta name="description" content="linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用するパッチが投稿">
-  <meta property="og:description" content="linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用するパッチが投稿">
-  <meta name="twitter:description" content="linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用するパッチが投稿">
+  <meta name="description" content="AMD の Bharata B Rao 氏より linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用">
+  <meta property="og:description" content="AMD の Bharata B Rao 氏より linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用">
+  <meta name="twitter:description" content="AMD の Bharata B Rao 氏より linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用">
   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/03/12/amd-57bit-addr-uai/">
@@ -65,11 +65,11 @@
   <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
   <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
     <time datetime="2022-03-12 08:13 +0900">Post: 2022/03/12 08:13 &#43;0900</time>
-    <aside class="update">Update: 2022/03/12 10:33 &#43;0900</aside>
-  </aside><p>linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用するパッチが投稿されている。<br>
+    <aside class="update">Update: 2022/03/12 13:12 &#43;0900</aside>
+  </aside><p>AMD の <a href="https://in.linkedin.com/in/bharata-b-rao-58123851" target="_blank" rel="noopener noreferrer" >Bharata B Rao</a> 氏より linux-mm (memory management) メーリングリストに、近く登場する AMDプロセッサでサポートされる AMD UAI (Upper Address Ignore) をメモリアドレスへのメタデータ、タグの付与に活用するパッチが投稿されている。<br>
 AMD UAI は仮想アドレスの上位 7-bit (Bit_63:57) に対するチェックを抑制する機能であり、ソフトウェアはその分をメタデータ、タグの格納に活用することができる。</p>
 <ul>
-<li><a href="https://lore.kernel.org/linux-mm/2b26fc5b-d709-f2e1-0c8f-a6a548008216@intel.com/T/#e1b9caa0c700839bc9238a3161ddc5b757062d077" target="_blank" rel="noopener noreferrer" >[RFC PATCH v0 0/6] x86/AMD: Userspace address tagging</a></li>
+<li><a href="https://lore.kernel.org/linux-mm/2b26fc5b-d709-f2e1-0c8f-a6a548008216@intel.com/T/" target="_blank" rel="noopener noreferrer" >[RFC PATCH v0 0/6] x86/AMD: Userspace address tagging</a></li>
 </ul>
 <p>パッチコメントにて、現 AMDプロセッサは最大 57-bits の仮想 (virtual/logical) アドレスサイズをサポートするとしているが、<em>AMD Zen 3 アーキテクチャ</em> は最大 48-bit であるため、次世代の AMDプロセッサ、<em>AMD Zen 4 アーキテクチャ</em> を指しているのではないかと思われる。</p>
 <p><em>AMD Zen 1/2/3</em> では物理アドレス空間、仮想アドレス空間ともに最大 48-bit のサポートとなっている。<br>
@@ -93,7 +93,8 @@ AMD UAI は仮想アドレスの上位 7-bit (Bit_63:57) に対するチェッ�
 機能の主な差異としては、メタデータのサイズと位置が挙げられ、<br>
 Intel LAM は LAM_U48 の場合 Bit_62:48 (15-bits) を、LAM_U57 の場合は Bit_62:57 (6-bits) をメタデータとして用いる。<br>
 Arm TBI は Bit_63:56 (8-bits) を無視し、その内の一部、Bit_59:56 (4-bits) を Arm MTE でメタデータとして用いる。<br>
-AMD UAI は Bit_63:57 (7-bits) をメタデータとして用いるため、メタデータのサイズと位置が一致するものはなく、それぞれで異なる。</p>
+AMD UAI は Bit_63:57 (7-bits) を無視するため、メタデータのサイズと位置が一致するものはなく、それぞれで異なる。<br>
+無視されるビットすべてをメタデータとして活用しなければ、機能間で仕様をある程度一致させることは可能かもしれないが。</p>
 <p>Arm MTE の例ではタグの一致を確認することで、メモリ安全性に関わる 2つのエラー、解放後メモリの使用 (Use-After-Free) と領域外アクセス (out-of-bounds) を検知可能としている。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a></h3>
 <ul>
