@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/03/27/zhaoxin-lujiazui/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Zhaoxin Lujiazui のマイクロアーキテクチャ構成 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Zhaoxin Lujiazui のマイクロアーキテクチャ構成 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Zhaoxin Lujiazui のマイクロアーキテクチャ構成 | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/03/27/zhaoxin-lujiazui/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/03/27/zhaoxin-lujiazui/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/03/27/zhaoxin-lujiazui/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="Lujiazui, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/menu.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/toast.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#0d4555 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content;display:none}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(18,98,120,.8)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee2 0%,#0000 76%,#0000 95%,#100 99%)50%/contain fixed no-repeat,linear-gradient(#0000 38%,#1113 38%,#1113 62%,#0000 62%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,rgba(128,17,128,.133333) 0%,#e112 16.5%,#1e12 49.5%,#11e2 82.5%,rgba(128,17,128,.133333) 100%)50%/.2rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:2px solid #115b70;border-color:#126278 #0d4555 #0d4555 #126278;border-radius:.1rem;background-color:#115b70}.sb:active{background-color:#205260}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px .2rem .6rem auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(18,98,120,.8)#0000}footer{display:none}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Zhaoxin Lujiazui のマイクロアーキテクチャ構成",
+  "headline" : "Zhaoxin Lujiazui のマイクロアーキテクチャ構成",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-03-27",
+    "datePublished" : "2022-03-27",
+    "dateModified"  : "2022-03-27",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+
+      <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">Zhaoxin Lujiazui のマイクロアーキテクチャ構成</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
+    <time datetime="2022-03-27 17:37 +0900">Post: 2022/03/27 17:37 &#43;0900</time>
+    <aside class="update">Update: 2022/03/27 19:09 &#43;0900</aside>
+  </aside><p>Zhaoxin の MayShao 氏より、GCC のメーリングリストに同社のマイクロアーキテクチャ、コードネーム <em>Lujiazui (陆家嘴)</em> の最適化情報を追加するパッチが投稿されている。<br>
+Zhaoxin は中国に本社を置く x86互換CPUの開発、製造企業であり、VIA Technologies の x86-64 のライセンスを保持している。</p>
+<p><em>Lujiazui</em> はデスクトップ/モバイル向けの KX-6000 シリーズと サーバー向けの KH-30000 シリーズに採用されている。<br>
+コアあたり 1スレッド、コア数は両シリーズ共通して最大 8コア。ブーストクロック機能は KX-6640MA (4C/4T) のみ有効化されている。<br>
+キャッシュ構成は、コアあたり L1 Data 32KB、L1 Instruction 32KB、複数コアで共有する L2キャッシュが最大 8MB。</p>
+<p>メモリは DDR4-2666、デュアルチャネルをサポートしている。<br>
+他 I/O には、PCIe 3.0 x16、USB 3.1 x2、USB 2.0 x4、SATA 3.2 x2 を備える。</p>
+<ul>
+<li><a href="https://gcc.gnu.org/pipermail/gcc-patches/2022-March/592269.html" target="_blank" rel="noopener noreferrer" >[PATCH] [x86_64] Zhaoxin lujiazui enablement</a></li>
+</ul>
+<h2 id="isa">対応命令<a href="#isa" class="head-cur-link"></a></h2>
+<p><em>Lujiazui</em> はベクトル命令に SSE4.2 /AVX、ビット操作命令に ABM (LZCNT) /BMI /BMI2 /POPCNT をサポートしている。<br>
+下引用部には記述されていないが、公式サイトの仕様と <a href="https://linux-hardware.org/" target="_blank" rel="noopener noreferrer" >Linux Hardware Database</a> にある <code>lscpu</code> 等の実行結果によれば SHA_NI 命令もサポートしているはずである。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<blockquote>
+<pre><code> +@item lujiazui
+ +ZHAOXIN lujiazui CPU with x86-64, MOVBE, MMX, SSE, SSE2, SSE3, SSSE3, SSE4.1,
+ +SSE4.2, AVX, POPCNT, AES, PCLMUL, RDRND, XSAVE, XSAVEOPT, FSGSBASE, CX16,
+ +ABM, BMI, BMI2, F16C, FXSR, RDSEED instruction set support.
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gcc.gnu.org/pipermail/gcc-patches/2022-March/592269.html" target="_blank" rel="noopener noreferrer" >[PATCH] [x86_64] Zhaoxin lujiazui enablement</a></cite>
+</div>
+
+</blockquote>
+<h2 id="frontend">フロントエンド部<a href="#frontend" class="head-cur-link"></a></h2>
+<p><em>Lujiazui</em> マイクロアーキテクチャは 3-wide デコーダー (decoder 0/1/2) を持ち、1個の uOp として実行される命令はすべてのデコーダーで 1サイクルで処理できる。<br>
+ロード/ストア命令と組み合わされるような、2個の uOp に分解、実行される命令は decoder 0/1 のみで処理可能という制限があるが、1サイクルという点は変わらない。<br>
+マイクロコードで実装されている一部の複雑な命令は decoder 0 のみで処理可能であり、不特定数のサイクルを必要とする。</p>
+<blockquote>
+<pre><code> +;; The rules for the decoder are simple:
+ +;;  - an instruction with 1 uop can be decoded by any of the three
+ +;;    decoders in one cycle.
+ +;;  - an instruction with 2 uops can be decoded by decoder 0 or decoder 1
+ +;;    but still in only one cycle.
+ +;;  - a complex (microcode) instruction can only be decoded by
+ +;;    decoder 0, and this takes an unspecified number of cycles.
+ +;;
+ +;; The goal is to schedule such that we have a few-one-two uops sequence
+ +;; in each cycle, to decode as many instructions per cycle as possible.
+ +(define_cpu_unit &quot;lua_decoder0&quot; &quot;lujiazui_decoder&quot;)
+ +(define_cpu_unit &quot;lua_decoder1&quot; &quot;lujiazui_decoder&quot;)
+ +(define_cpu_unit &quot;lua_decoder2&quot; &quot;lujiazui_decoder&quot;)
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gcc.gnu.org/pipermail/gcc-patches/2022-March/592269.html" target="_blank" rel="noopener noreferrer" >[PATCH] [x86_64] Zhaoxin lujiazui enablement</a></cite>
+</div>
+
+</blockquote>
+<h2 id="backend">バックエンド部<a href="#backend" class="head-cur-link"></a></h2>
+<p><em>Lujiazui</em> マイクロアーキテクチャは Out-of-Order 実行が実装されている。<br>
+6本の実行パイプラインを備え、内 2本 (Port 4/5) は AGU (Address Generation Unit)、Load/Store Unit となっている。</p>
+<blockquote>
+<pre><code> +;; The out-of-order core has six pipelines.
+ +;; Port 4, 5 are responsible for address calculations, load or store.
+ +;; Port 0, 1, 2, 3 for everything else.
+ +
+ +(define_cpu_unit &quot;lua_p0,lua_p1,lua_p2,lua_p3&quot; &quot;lujiazui_core&quot;)
+ +(define_cpu_unit &quot;lua_p4,lua_p5&quot; &quot;lujiazui_agu&quot;)
+ +
+ +(define_reservation &quot;lua_p03&quot; &quot;lua_p0|lua_p3&quot;)
+ +(define_reservation &quot;lua_p12&quot; &quot;lua_p1|lua_p2&quot;)
+ +(define_reservation &quot;lua_p1p2&quot; &quot;lua_p1+lua_p2&quot;)
+ +(define_reservation &quot;lua_p45&quot; &quot;lua_p4|lua_p5&quot;)
+ +(define_reservation &quot;lua_p4p5&quot; &quot;lua_p4+lua_p5&quot;)
+ +(define_reservation &quot;lua_p0p1p2p3&quot; &quot;lua_p0+lua_p1+lua_p2+lua_p3&quot;)
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gcc.gnu.org/pipermail/gcc-patches/2022-March/592269.html" target="_blank" rel="noopener noreferrer" >[PATCH] [x86_64] Zhaoxin lujiazui enablement</a></cite>
+</div>
+
+</blockquote>
+<p><code>lujiazui_cost</code> には以下のような記述があるが、4コアごとに L2キャッシュ 4MB を持つ構成になっているのかもしれない。AMD Zen の CCX よりかは、Intel Atom のモジュール構成が近いと言える。</p>
+<blockquote>
+<pre><code> +  32,				  	/* size of l1 cache.  */
+ +  4096,					/* size of l2 cache.  */
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gcc.gnu.org/pipermail/gcc-patches/2022-March/592269.html" target="_blank" rel="noopener noreferrer" >[PATCH] [x86_64] Zhaoxin lujiazui enablement</a></cite>
+</div>
+
+</blockquote>
+<p>また、3-wide デコーダー、実行パイプライン 6本、その内 2本が AGU というマイクロアーキテクチャ規模だけで言えば、Intel Atom Goldmont Plus あたりが近いかもしれない。AVX命令や各ビット操作命令をサポートするという違いはあるが。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a></h3>
+<ul>
+<li><a href="https://ja.wikipedia.org/wiki/%E5%85%86%E8%8A%AF" target="_blank" rel="noopener noreferrer" >兆芯 - Wikipedia</a></li>
+<li><a href="https://www.anandtech.com/show/13388/zhaoxin-shows-x86-compatible-kaixian-kx6000" target="_blank" rel="noopener noreferrer" >Zhaoxin Displays x86-Compatible KaiXian KX-6000: 8 Cores, 3 GHz, 16 nm FinFET</a></li>
+<li><a href="https://www.zhaoxin.com/prod_view.aspx?nid=3&typeid=129&id=327" target="_blank" rel="noopener noreferrer" >开先® KX-6000系列处理器 - 开先®KX-6000系列处理器 - 好用的电脑芯！</a></li>
+<li><a href="https://www.zhaoxin.com/prod_view.aspx?nid=3&typeid=95&id=322" target="_blank" rel="noopener noreferrer" >开胜® KH-30000系列处理器 - 开胜®KH-30000处理器 - 好用的电脑芯！</a></li>
+<li><a href="https://linux-hardware.org/?probe=7fe4a3390b&log=cpuinfo" target="_blank" rel="noopener noreferrer" >HW probe of Shanghai Zhaoxin Semiconductor ZXE CRB #7fe4a3390b: cpuinfo</a></li>
+</ul>
+</section>
+
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://linux-hardware.org/?probe=7fe4a3390b&log=cpuinfo" target="_blank" rel="noopener noreferrer" >HW probe of Shanghai Zhaoxin Semiconductor ZXE CRB #7fe4a3390b: cpuinfo</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/lujiazui" class="bottom-tag-link"  title="Lujiazui">#Lujiazui</a></nav><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/03/27/zhaoxin-lujiazui.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><details class="amzn delay-page">
+  <summary class="amzn_head">Amazonアソシエイト</summary>
+  <div class="amzn_links">
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/34I6X4d" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonギフト券 チャージタイプ</a></div></div>
+</details></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.2</a>
+</aside>
+
+</footer>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/menu.min.css"><aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/zhaoxin/" class="menu-cat-tag-lower">Zhaoxin</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/lujiazui/" class="menu-cat-tag-lower">Lujiazui</a>
+</nav></nav>
+<aside class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.92.2</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide">
+  <input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+  <label class="menu-open-label" for="open-menu"></label>
+  <input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input" checked="">
+  <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+    <a href="https://www.coelacanth-dream.com/categories/zhaoxin/" class="menu-cat-tag-lower">Zhaoxin</a>
+</nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a>
+    <a href="https://www.coelacanth-dream.com/tags/lujiazui/" class="menu-cat-tag-lower">Lujiazui</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/toast.min.css">
+    <div id="msg"></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+  </body>
+</html>
