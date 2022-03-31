@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/03/31/intel-gpu-driver-non-x86/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>x86-64 CPU 以外のサポートを進める Intel GPUドライバー | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="x86-64 CPU 以外のサポートを進める Intel GPUドライバー | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="x86-64 CPU 以外のサポートを進める Intel GPUドライバー | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/03/31/intel-gpu-driver-non-x86/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/03/31/intel-gpu-driver-non-x86/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/03/31/intel-gpu-driver-non-x86/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="Hardware, CPU, GPU, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/footer.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/menu.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/toast.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/page_misc.min.css" as="style">
+
+    <style>html{background:#0d4555 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;vertical-align:bottom;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content;display:none}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:4px;height:4px;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(18,98,120,.8)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#fff2 0%,#0000 76%,#0000 95%,#100 99%)50%/contain fixed no-repeat,linear-gradient(#0000 32%,#1114 50%,#0000 68%)50%/100% .72rem fixed repeat-y,linear-gradient(to right,rgba(128,0,128,.133333) 0%,#f002 16.5%,#0f02 49.5%,#00f2 82.5%,rgba(128,0,128,.133333) 100%)50%/.24rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:2px solid #115b70;border-color:#126278 #0d4555 #0d4555 #126278;border-radius:.1rem;background-color:#115b70}.sb:active{background-color:#205260}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/200px .2rem .6rem auto 16px;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:180px;top:1vh;left:0;padding:0 .5rem 0 1rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(18,98,120,.8)#0000}footer{display:none}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/share.min.js" as="script">
+
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "x86-64 CPU 以外のサポートを進める Intel GPUドライバー",
+  "headline" : "x86-64 CPU 以外のサポートを進める Intel GPUドライバー",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-03-31",
+    "datePublished" : "2022-03-31",
+    "dateModified"  : "2022-03-31",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page_misc.min.css">
+
+    <main class="text"><h1 class="page-title">x86-64 CPU 以外のサポートを進める Intel GPUドライバー</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav></aside><aside class="article-time">
+    <time datetime="2022-03-31 04:11 +0900">Post: 2022/03/31 04:11 &#43;0900</time>
+    <aside class="update">Update: 2022/03/31 23:18 &#43;0900</aside>
+  </aside><p>Intel dGPU 単体の市場への投入が近付くにつれ、Intel GPUドライバーでは x86(-64) 以外の CPU を採用するプラットフォームへの対応が進められている。</p>
+<p>dGPU 単体としてはすでに Intel DG1 /Iris Xe MAX /SG1 (<span class="xe-gpu-arch">X<sup>e</sup>-LP</span>) がいるが、それらはほとんどが限定したプラットフォームでのリリースであり、また専用の UEFI/BIOS をインストールしたシステム (CPU+M/B) を必要としていた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>
+そのため当時は、x86(-64) 以外の対応は優先事項ではなかったと思われる。<br>
+また専用の UEFI/BIOS を必要することについて、DG1 の PCI OpROM と VBIOS のイメージレイアウト、Intel の Subrata Banik 氏より Coreboot に投稿された、dGPUカード内部に埋め込まれた PCI OpROM への対応が関係しているのではないかと考えているが、公式にはっきりと説明されている訳ではなく、確証はない。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a></h2>
+<ul>
+<li><a href="#fence"  >対応における課題</a></li>
+</ul>
+</section>
+
+<blockquote>
+<pre><code> +/**
+ + *	+        DASH+G OPROM IMAGE LAYOUT           +
+ + *	+--------+-------+---------------------------+
+ + *	| Offset | Value |   ROM Header Fields       +-----&gt; Image 1 (CSS)
+ + *	+--------------------------------------------+
+ + *	|    0h  |  55h  |   ROM Signature Byte1     |
+ + *	|    1h  |  AAh  |   ROM Signature Byte2     |
+ + *	|    2h  |  xx   |        Reserved           |
+ + *	|  18+19h|  xx   |  Ptr to PCI DataStructure |
+ + *	+----------------+---------------------------+
+ + *	|           PCI Data Structure               |
+ + *	+--------------------------------------------+
+ + *	|    .       .             .                 |
+ + *	|    .       .             .                 |
+ + *	|    10  +  xx   +     Image Length          |
+ + *	|    14  +  xx   +     Code Type             |
+ + *	|    15  +  xx   +  Last Image Indicator     |
+ + *	|    .       .             .                 |
+ + *	+--------------------------------------------+
+ + *	|               MEU BLOB                     |
+ + *	+--------------------------------------------+
+ + *	|              CPD Header                    |
+ + *	|              CPD Entry                     |
+ + *	|              Reserved                      |
+ + *	|           SignedDataPart1                  |
+ + *	|              PublicKey                     |
+ + *	|            RSA Signature                   |
+ + *	|           SignedDataPart2                  |
+ + *	|            IFWI Metadata                   |
+ + *	+--------+-------+---------------------------+
+ + *	|    .   |   .   |         .                 |
+ + *	|    .   |   .   |         .                 |
+ + *	+--------------------------------------------+
+ + *	| Offset | Value |   ROM Header Fields       +-----&gt; Image 2 (Config Data) (Offset: 0x800)
+ + *	+--------------------------------------------+
+ + *	|    0h  |  55h  |   ROM Signature Byte1     |
+ + *	|    1h  |  AAh  |   ROM Signature Byte2     |
+ + *	|    2h  |  xx   |        Reserved           |
+ + *	|  18+19h|  xx   |  Ptr to PCI DataStructure |
+ + *	+----------------+---------------------------+
+ + *	|           PCI Data Structure               |
+ + *	+--------------------------------------------+
+ + *	|    .       .             .                 |
+ + *	|    .       .             .                 |
+ + *	|    10  +  xx   +     Image Length          |
+ + *	|    14  +  xx   +      Code Type            |
+ + *	|    15  +  xx   +   Last Image Indicator    |
+ + *	|    .       .             .                 |
+ + *	|    1A  +  3C   + Ptr to Opregion Signature |
+ + *	|    .       .             .                 |
+ + *	|    .       .             .                 |
+ + *	|   83Ch + IntelGraphicsMem                  | &lt;---+ Opregion Signature
+ + *	+--------+-----------------------------------+
+ + *
+ + * intel_oprom_verify_signature() verify OPROM signature.
+ + * @opreg: pointer to opregion buffer output.
+ + * @opreg_size: pointer to opregion size output.
+ + * @dev_priv: i915 device.
+ + */
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/intel-gfx/2020-November/254123.html" target="_blank" rel="noopener noreferrer" >[Intel-gfx] [RFC PATCH 120/162] drm/i915/oprom: Basic sanitization</a></cite>
+</div>
+
+</blockquote>
+<h2 id="fence">対応における課題<a href="#fence" class="head-cur-link"></a></h2>
+<p>現時点で、x86(-64) 以外のプラットフォームへのサポートを進める Intel GPUドライバーと関連ライブラリには、Mesa3D、IGC (Intel Graphics Compiler)、gmmlib (Graphics Memory Management Library) が確認できる。<br>
+サポートに追加される対象は主に ARM64 (aarch64) となっている。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/15309" target="_blank" rel="noopener noreferrer" >intel: Support compiling on non-x86 (!15309) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://github.com/intel/gmmlib/commit/32f4cfc294f8342f6e0e1bae2ef430c3971d50c6" target="_blank" rel="noopener noreferrer" >Introduce ARM64 Support for the Library (#91) · intel/gmmlib@32f4cfc</a></li>
+<li><a href="https://github.com/intel/intel-graphics-compiler/commit/eda4042be98cf1edd6cabf45104f4e1050a3bbfb" target="_blank" rel="noopener noreferrer" >Enable ARM build · intel/intel-graphics-compiler@eda4042</a></li>
+</ul>
+<p>まだ正式に対応してないため作業途中 (WIP) と思われるが、内容としては主に x86(-64) 固有の命令を直接使っている部分を、複数のアーキテクチャに対応したライブラリに置き換えるか、マクロで制御しコードを分ける、といった対応を取っている。<br>
+対応が必要な命令として挙げられているものには、主に <code>SSE/2/3/4.1/4.2</code>,<code>CLFLUSH</code>, <code>CPUID</code> がある。<br>
+<code>SSE</code> は SIMD命令として CPU側の計算や変換処理、<code>CLFLUSH</code> はキャッシュラインをメモリにフラッシュし、同期を取るため、<code>CPUID</code> は CPU の拡張命令、機能の対応フラグの取得に使われている。</p>
+<p>gmmlib では <a href="https://github.com/DLTcollab/sse2neon/" target="_blank" rel="noopener noreferrer" >sse2neon</a> を導入することで SSE系命令を Arm NEON 命令に置き換えている。<br>
+Mesa3D では、一度最低限の対応を行うマージリクエストが開設されたが、将来的に non x86(-64) + Intel dGPU というプラットフォームが出てくる可能性は非常に高いとしつつも、まだ Intel dGPU、Intel Arc Aシリーズはリリースされていないため、今は閉じられている。<br>
+また、私見ではあるが、PCIeスロットが実装された non x86(-64) プラットフォームには Ampere eMAG (ARM64/aarch64)<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> や Raptor Talos II (POWER9) <sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> 存在するが、一般的に普及しているものではない。<br>
+また、Intel Arc Aシリーズのリリース後もしばらくはそちらの対応にリソースを割きたいという考えもドライバー開発者にはあるのではないかと思われる。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a></h3>
+<ul>
+<li>DG1
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-March/293151.html" target="_blank" rel="noopener noreferrer" >[Intel-gfx] [PATCH 0/2] Splitting intel-gtt calls for non-x86 platforms</a>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-March/293152.html" target="_blank" rel="noopener noreferrer" >[Intel-gfx] [PATCH 1/2] drm/i915: Require INTEL_GTT to depend on X86</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-March/293153.html" target="_blank" rel="noopener noreferrer" >[Intel-gfx] [PATCH 2/2] drm/i915/gt: Split intel-gtt functions by arch</a></li>
+</ul>
+</li>
+<li><a href="https://www.legitreviews.com/intel-iris-xe-discrete-card-will-only-work-with-select-cpus-and-motherboards_225470" target="_blank" rel="noopener noreferrer" >Intel Iris Xe Discrete Card Will Only Work With Select CPUs and Motherboards - Legit Reviews</a></li>
+</ul>
+</li>
+</ul>
+</section>
+
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.legitreviews.com/intel-iris-xe-discrete-card-will-only-work-with-select-cpus-and-motherboards_225470" target="_blank" rel="noopener noreferrer" >Intel Iris Xe Discrete Card Will Only Work With Select CPUs and Motherboards - Legit Reviews</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://review.coreboot.org/c/coreboot/+/49016" target="_blank" rel="noopener noreferrer" >device: Add new Kconfig VGA_ROM_RUN_DEFAULT for mainboard user (Iecb2fcdb) · Gerrit Code Review</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3" role="doc-endnote">
+<p><a href="https://www.anandtech.com/show/15733/ampere-emag-system-a-32core-arm64-workstation/7" target="_blank" rel="noopener noreferrer" >Conclusion - All Eyes on an Altra System - Avantek&rsquo;s Arm Workstation: Ampere eMAG 8180 32-core Arm64 Review</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4" role="doc-endnote">
+<p><a href="https://www.raptorcs.com/TALOSII/" target="_blank" rel="noopener noreferrer" >Raptor Computing Systems::Talos™ II Secure Workstation</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/03/31/intel-gpu-driver-non-x86.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><details class="amzn delay-page">
+  <summary class="amzn_head">Amazonアソシエイト</summary>
+  <div class="amzn_links">
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/370TEcp" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">プロセッサを支える技術　－－果てしなくスピードを追求する世界 (WEB+DB PRESS plus) | Hisa Ando</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3IvR1QU" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">コンピュータアーキテクチャ技術入門 ――高速化の追求×消費電力の壁 WEB+DB PRESS plus</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/34I6X4d" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonギフト券 チャージタイプ</a></div></div>
+</details></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/footer.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a><a href="https://www.coelacanth-dream.com/tags/" class="foot-cat-tag-title">Tag</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.95.0</a>
+</aside>
+
+</footer>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/menu.min.css"><aside class="side">
+  <aside class="side-block" id="side-menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+</nav></nav>
+<aside class="menu-share">
+  <button type="button" class="share-copy-button sb cp-url" onclick="copy_url(&#34;url&#34;)"></button>
+  <button type="button" class="share-copy-button sb cp-url-title" onclick="copy_url(&#34;title_url&#34;)"></button></aside><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+, Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.95.0</a>
+</aside>
+
+  </aside>
+</aside>
+<aside class="slide"><input type="radio" name="menu-open-close" id="open-menu" value="open" class="menu-open-input">
+    <label class="menu-open-label" for="open-menu"></label><input type="radio" name="menu-open-close" id="close-menu" value="close" class="menu-close-input"checked>
+    <label class="menu-close-label" for="close-menu"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a>
+    <a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+    <a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+    <a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+</nav></nav><nav class="rss-block"><a href="https://www.coelacanth-dream.com/posts/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Home</a><a href="https://www.coelacanth-dream.com/lastmod/index.xml" class="rss sb" target="_blank" tabindex="0" role="button">RSS: Updated</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/toast.min.css"><div id="msg"></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/share.min.js"></script>
+  </body>
+</html>
