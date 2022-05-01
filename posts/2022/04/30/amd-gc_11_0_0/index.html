@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/04/30/amd-gc_11_0_0/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>次世代 GPU IPブロックのサポートが進む AMDGPUドライバー | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="次世代 GPU IPブロックのサポートが進む AMDGPUドライバー | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="次世代 GPU IPブロックのサポートが進む AMDGPUドライバー | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/04/30/amd-gc_11_0_0/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/04/30/amd-gc_11_0_0/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/04/30/amd-gc_11_0_0/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="Linux Kernel, GFX11, Coelacanth&#39;s Dream">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4252 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,102,127,.9)#0000}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content;display:none}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:.5rem;height:.5rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,102,127,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(90% 60%,#eee2 0%,#0000 76%,#0000 95%,#111 97%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 50%,#1116 50%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#8003 33.4%,#0803 33.4%,#0803 66.8%,#0083 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f586d;border-color:#105f76 #0b4252 #0b4252 #105f76;border-radius:.1rem;background-color:#0f586d}.sb:active{background-color:#0c495b}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}.rss::before{content:"RSS: " attr(data-rss-name)}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/calc(160px + 1.2rem).2rem .6rem auto .2rem;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-2}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:160px;top:1vh;left:0;padding:0 .6rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(17,102,127,.9)#0000}footer{display:none}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "次世代 GPU IPブロックのサポートが進む AMDGPUドライバー",
+  "headline" : "次世代 GPU IPブロックのサポートが進む AMDGPUドライバー",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-04-30",
+    "datePublished" : "2022-04-30",
+    "dateModified"  : "2022-05-01",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">次世代 GPU IPブロックのサポートが進む AMDGPUドライバー</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share ">
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button>
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav></aside><aside class="article-time">
+    <time datetime="2022-04-30 18:16 +0900">Post: 2022/04/30 18:16 &#43;0900</time>
+    <aside class="update">Update: 2022/05/01 11:39 &#43;0900</aside>
+  </aside><p>先日の <em>SoC21</em> に続き、次世代 AMD GPU に採用されるであろう IPブロックのサポートに向けたパッチが、AMD の Alex Deucher 氏より amd-gfx メーリングリストに投稿されている。<br>
+詳細は後述するが、AMDGPUドライバーでは IPブロックごとのサポートに移行したのに加え、GPU 情報がよりハードウェア側のバイナリ部分から読み取れるようになったことで、ソースコードから得られる情報は少なくなりつつある。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078410.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 00/73] MES support"
+>[PATCH 00/73] MES support</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078485.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 00/29] Add support for GC 11.0"
+>[PATCH 00/29] Add support for GC 11.0</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078213.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 01/11] drm/amdgpu: update latest IP discovery table structures"
+>[PATCH 01/11] drm/amdgpu: update latest IP discovery table structures</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078399.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 1/2] drm/amdgpu: add GC v11_0_0 family id"
+>[PATCH 1/2] drm/amdgpu: add GC v11_0_0 family id</a>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078398.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 2/2] drm/amdgpu/discovery: Set GC family for GC 11.0 IP"
+>[PATCH 2/2] drm/amdgpu/discovery: Set GC family for GC 11.0 IP</a></li>
+</ul>
+</li>
+</ul>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
+</h2>
+<ul>
+<li><a href="#gc_11"
+  
+  title="GC 11.0"
+>GC 11.0</a>
+<ul>
+<li><a href="#mes"
+  
+  title="MES"
+>MES</a></li>
+<li><a href="#imu"
+  
+  title="IMU"
+>IMU</a></li>
+<li><a href="#other"
+  
+  title="Other"
+>Other</a></li>
+</ul>
+</li>
+<li><a href="#ip"
+  
+  title="IP discovery"
+>IP discovery</a>
+<ul>
+<li><a href="#cache_info"
+  
+  title="Cache info"
+>Cache info</a></li>
+</ul>
+</li>
+</ul>
+</section>
+
+<h2 id="gc_11">GC 11.0<a href="#gc_11" class="head-cur-link"></a>
+</h2>
+<p><em>GC 11.0/GFX11</em> の特徴として、GFX, SDMA, Compute の HWスケジューリングエンジンとして MES 11.0 (Micro Engine Scheduler) を採用すること、<br>
+新たに電力管理ユニットとして、IMU を採用することが挙げられる。</p>
+<h3 id="mes">MES<a href="#mes" class="head-cur-link"></a>
+</h3>
+<p>MES は従来の HWS (HardWare Scheduler) に近い機能を持つ。<br>
+用語の解説を挟むと、まず AMD GPU にはハードウェアブロックとして CP (Command Processor) があり、CP は多数のマイクロコントローラーで構成されている。その一部が MEC (MicroEngine Compute) であり、HWS は MEC内に位置する。<br>
+MES は MEC を置き換えるものと思われるが、パッチ内などで明言はされていない。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078410.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 00/73] MES support"
+>[PATCH 00/73] MES support</a></li>
+</ul>
+<p>MES は <em>RDNA 1/GFX10</em> 世代から搭載されていたが、デフォルトでは無効化されていた。AMDGPUドライバー側のサポートが進んでいなかったことが理由の一つにあると思われる。<br>
+今回のパッチでサポートが進んだものの、デフォルトでは無効化されている点は変更されていない。</p>
+<blockquote>
+<pre><code> /**
+  * DOC: mes (int)
+  * Enable Micro Engine Scheduler. This is a new hw scheduling engine for gfx, sdma, and compute.
+  * (0 = disabled (default), 1 = enabled)
+  */
+ MODULE_PARM_DESC(mes,
+ 	&quot;Enable Micro Engine Scheduler (0 = disabled (default), 1 = enabled)&quot;);
+ module_param_named(mes, amdgpu_mes, int, 0444);
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/f95af4a9236695caed24fe6401256bb974e8f2a7/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c#L630-L637"
+  target="_blank" rel="noopener noreferrer"
+  title="linux/amdgpu_drv.c at f95af4a9236695caed24fe6401256bb974e8f2a7 · torvalds/linux"
+>linux/amdgpu_drv.c at f95af4a9236695caed24fe6401256bb974e8f2a7 · torvalds/linux</a></cite>
+</div>
+
+</blockquote>
+<h3 id="imu">IMU<a href="#imu" class="head-cur-link"></a>
+</h3>
+<p>IMU が何の略語なのかは触れられていないが、パッチのコメントから GFXコア部のみを対象に絞った電力管理ブロック/ユニットであることが考えられる。<br>
+<em>RDNA 2/GFX10.3</em> 世代では、CU数が非対称な ShaderArray における電力効率を向上させる機能が追加されるなど、以前から GFXコア部を対象にした電力管理機能が強化されている節はあった。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/09/23/rdna_2-note-2020-09-23/#shader-array"
+  
+  title="AMD RDNA 2 ノート　―― 非対称な ShaderArray、gpu_info、XSS 【2020/09/23】 | Coelacanth&rsquo;s Dream"
+>AMD RDNA 2 ノート　―― 非対称な ShaderArray、gpu_info、XSS 【2020/09/23】 | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<blockquote>
+<pre><code> Add support to initialize imu for gfx v11.
+ IMU is a new power management block for
+ gfx which manages gfx power.
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078500.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 19/29] drm/amdgpu: support imu for gfx11"
+>[PATCH 19/29] drm/amdgpu: support imu for gfx11</a></cite>
+</div>
+
+</blockquote>
+<h3 id="other">Other<a href="#other" class="head-cur-link"></a>
+</h3>
+<p><em>GC 11.0/GFX11</em> 世代では最大 ShaderEngine 8基 (ShaderArray 16基) の構成に対応し、一部無効化された CU を示すマスクも 16基分が想定されている。<br>
+<em>RDNA 1/RDNA 2</em> 世代における同様の処理は <code>gfx_v10_0.c</code> に記述されているが、それらの世代では最大 ShaderEngine 4基 (ShaderArray 8基) までの対応となっている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<blockquote>
+<pre><code> +static int gfx_v11_0_get_cu_info(struct amdgpu_device *adev,
+ +				 struct amdgpu_cu_info *cu_info)
+ +{
+ +	int i, j, k, counter, active_cu_number = 0;
+ +	u32 mask, bitmap;
+ +	unsigned disable_masks[8 * 2];
+ +
+ +	if (!adev || !cu_info)
+ +		return -EINVAL;
+ +
+ +	amdgpu_gfx_parse_disable_cu(disable_masks, 8, 2);
+ +
+ +	mutex_lock(&amp;adev-&gt;grbm_idx_mutex);
+ +	for (i = 0; i &lt; adev-&gt;gfx.config.max_shader_engines; i++) {
+ +		for (j = 0; j &lt; adev-&gt;gfx.config.max_sh_per_se; j++) {
+ +			mask = 1;
+ +			counter = 0;
+ +			gfx_v11_0_select_se_sh(adev, i, j, 0xffffffff);
+ +			if (i &lt; 8 &amp;&amp; j &lt; 2)
+ +				gfx_v11_0_set_user_wgp_inactive_bitmap_per_sh(
+ +					adev, disable_masks[i * 2 + j]);
+ +			bitmap = gfx_v11_0_get_cu_active_bitmap_per_sh(adev);
+ +
+ +			/**
+ +			 * GFX11 could support more than 4 SEs, while the bitmap
+ +			 * in cu_info struct is 4x4 and ioctl interface struct
+ +			 * drm_amdgpu_info_device should keep stable.
+ +			 * So we use last two columns of bitmap to store cu mask for
+ +			 * SEs 4 to 7, the layout of the bitmap is as below:
+ +			 *    SE0: {SH0,SH1} --&gt; {bitmap[0][0], bitmap[0][1]}
+ +			 *    SE1: {SH0,SH1} --&gt; {bitmap[1][0], bitmap[1][1]}
+ +			 *    SE2: {SH0,SH1} --&gt; {bitmap[2][0], bitmap[2][1]}
+ +			 *    SE3: {SH0,SH1} --&gt; {bitmap[3][0], bitmap[3][1]}
+ +			 *    SE4: {SH0,SH1} --&gt; {bitmap[0][2], bitmap[0][3]}
+ +			 *    SE5: {SH0,SH1} --&gt; {bitmap[1][2], bitmap[1][3]}
+ +			 *    SE6: {SH0,SH1} --&gt; {bitmap[2][2], bitmap[2][3]}
+ +			 *    SE7: {SH0,SH1} --&gt; {bitmap[3][2], bitmap[3][3]}
+ +			 */
+ +			cu_info-&gt;bitmap[i % 4][j + (i / 4) * 2] = bitmap;
+ +
+ +			for (k = 0; k &lt; adev-&gt;gfx.config.max_cu_per_sh; k++) {
+ +				if (bitmap &amp; mask)
+ +					counter++;
+ +
+ +				mask &lt;&lt;= 1;
+ +			}
+ +			active_cu_number += counter;
+ +		}
+ +	}
+ +	gfx_v11_0_select_se_sh(adev, 0xffffffff, 0xffffffff, 0xffffffff);
+ +	mutex_unlock(&amp;adev-&gt;grbm_idx_mutex);
+ +
+ +	cu_info-&gt;number = active_cu_number;
+ +	cu_info-&gt;simd_per_cu = NUM_SIMD_PER_CU;
+ +
+ +	return 0;
+ +}
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078513.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 21/29] drm/amdgpu: add init support for GFX11 (v2)"
+>[PATCH 21/29] drm/amdgpu: add init support for GFX11 (v2)</a></cite>
+</div>
+
+</blockquote>
+<p>CU内の SIMDユニットに関する記述もある。ここでは <code>navi10_enum.h</code> ファイルを include しているため、<code>NUM_SIMD_PER_CU</code> には <em>RDNA 1/RDNA 2</em> 世代と同じ <code>0x2</code> が入る。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<blockquote>
+<pre><code> +	cu_info-&gt;number = active_cu_number;
+ +	cu_info-&gt;simd_per_cu = NUM_SIMD_PER_CU;
+ +
+ +	return 0;
+ +}
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078513.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 21/29] drm/amdgpu: add init support for GFX11 (v2)"
+>[PATCH 21/29] drm/amdgpu: add init support for GFX11 (v2)</a></cite>
+</div>
+
+</blockquote>
+<h2 id="ip">IP discovery<a href="#ip" class="head-cur-link"></a>
+</h2>
+<p>AMD GPU では <em>Vega/GFX9</em> 世代から、電源投入時に PSP (Platform Security Processor) が内部的に GPU 情報を出力する IP discovery table に対応している。<br>
+IP discovery table は世代ごとに拡張されており、AMDGPUドライバーでは最近になって、GPU あたりの GL2キャッシュ、ShaderArray あたりの GL1キャッシュ の数とサイズ等の情報が追加された <code>gc_info_v1_2</code> に対応するパッチが投稿されている。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078213.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 01/11] drm/amdgpu: update latest IP discovery table structures"
+>[PATCH 01/11] drm/amdgpu: update latest IP discovery table structures</a></li>
+</ul>
+<blockquote>
+<pre><code> +struct gc_info_v1_2 {
+ +	struct gpu_info_header header;
+ +	uint32_t gc_num_se;
+ +	uint32_t gc_num_wgp0_per_sa;
+ +	uint32_t gc_num_wgp1_per_sa;
+ +	uint32_t gc_num_rb_per_se;
+ +	uint32_t gc_num_gl2c;
+ +	uint32_t gc_num_gprs;
+ +	uint32_t gc_num_max_gs_thds;
+ +	uint32_t gc_gs_table_depth;
+ +	uint32_t gc_gsprim_buff_depth;
+ +	uint32_t gc_parameter_cache_depth;
+ +	uint32_t gc_double_offchip_lds_buffer;
+ +	uint32_t gc_wave_size;
+ +	uint32_t gc_max_waves_per_simd;
+ +	uint32_t gc_max_scratch_slots_per_cu;
+ +	uint32_t gc_lds_size;
+ +	uint32_t gc_num_sc_per_se;
+ +	uint32_t gc_num_sa_per_se;
+ +	uint32_t gc_num_packer_per_sc;
+ +	uint32_t gc_num_gl2a;
+ +	uint32_t gc_num_tcp_per_sa;
+ +	uint32_t gc_num_sdp_interface;
+ +	uint32_t gc_num_tcps;
+ +	uint32_t gc_num_tcp_per_wpg;
+ +	uint32_t gc_tcp_l1_size;
+ +	uint32_t gc_num_sqc_per_wgp;
+ +	uint32_t gc_l1_instruction_cache_size_per_sqc;
+ +	uint32_t gc_l1_data_cache_size_per_sqc;
+ +	uint32_t gc_gl1c_per_sa;
+ +	uint32_t gc_gl1c_size_per_instance;
+ +	uint32_t gc_gl2c_per_gpu;
+ +};
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078213.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 01/11] drm/amdgpu: update latest IP discovery table structures"
+>[PATCH 01/11] drm/amdgpu: update latest IP discovery table structures</a></cite>
+</div>
+
+</blockquote>
+<p><em>RDNA 2/GFX10.3</em> 世代ではキャッシュ情報がソースコード内にハードコードされていたが、<code>gc_info_v1_2</code> への対応によりその必要がなくなる。ソースコードから得られる AMD GPU の情報は少なくなるが、その方がドライバーとしては効率的である。</p>
+<p>その他にも、<em>MALL/Infinity Cache</em> と VCN の構成情報を取得することが可能になった。<br>
+<em>MALL/Infinity Cache</em> では、メモリチャネルあたりのキャッシュサイズ (<code>mall_size_per_m</code>)、その倍のサイズ、もしくは半分のみを使用可能とするかのフラグ (<code>m_s_present, m_half_use</code>) といった情報が出力される。<br>
+今後はメモリチャネル数は変えずに <em>MALL/Infinity Cache</em> のサイズを変更した SKU も可能になると思われるが、実際に計画されているかは当然不明。</p>
+<blockquote>
+<pre><code> +struct mall_info_v1_0 {
+ +	struct mall_info_header header;
+ +	uint32_t mall_size_per_m;
+ +	uint32_t m_s_present;
+ +	uint32_t m_half_use;
+ +	uint32_t m_mall_config;
+ +	uint32_t reserved[5];
+ +};
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078213.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 01/11] drm/amdgpu: update latest IP discovery table structures"
+>[PATCH 01/11] drm/amdgpu: update latest IP discovery table structures</a></cite>
+</div>
+
+<pre><code> +	case 1:
+ +		mall_size = 0;
+ +		mall_size_per_umc = le32_to_cpu(mall_info-&gt;v1.mall_size_per_m);
+ +		m_s_present = le32_to_cpu(mall_info-&gt;v1.m_s_present);
+ +		half_use = le32_to_cpu(mall_info-&gt;v1.m_half_use);
+ +		for (u = 0; u &lt; adev-&gt;gmc.num_umc; u++) {
+ +			if (m_s_present &amp; (1 &lt;&lt; u))
+ +				mall_size += mall_size_per_umc * 2;
+ +			else if (half_use &amp; (1 &lt;&lt; u))
+ +				mall_size += mall_size_per_umc / 2;
+ +			else
+ +				mall_size += mall_size_per_umc;
+ +		}
+ +		adev-&gt;gmc.mall_size = mall_size;
+ +		break;
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078220.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 07/11] drm/amdgpu/discovery: add a function to get the mall_size"
+>[PATCH 07/11] drm/amdgpu/discovery: add a function to get the mall_size</a></cite>
+</div>
+
+</blockquote>
+<p>VCN では、インスタンス数と、恐らくはどの対応コーディックが無効化されているか、といった情報が出力される。エンコーダーの有無等の情報は現時点では見当たらない。</p>
+<blockquote>
+<pre><code> +#define VCN_INFO_TABLE_MAX_NUM_INSTANCES 4
+ +
+ +struct vcn_info_header {
+ +    uint32_t table_id; /* table ID */
+ +    uint16_t version_major; /* table version */
+ +    uint16_t version_minor; /* table version */
+ +    uint32_t size_bytes; /* size of the entire header+data in bytes */
+ +};
+ +
+ +struct vcn_instance_info_v1_0
+ +{
+ +	uint32_t instance_num; /* VCN IP instance number. 0 - VCN0; 1 - VCN1 etc*/
+ +	union _fuse_data {
+ +		struct {
+ +			uint32_t av1_disabled : 1;
+ +			uint32_t vp9_disabled : 1;
+ +			uint32_t hevc_disabled : 1;
+ +			uint32_t h264_disabled : 1;
+ +			uint32_t reserved : 28;
+ +		} bits;
+ +		uint32_t all_bits;
+ +	} fuse_data;
+ +	uint32_t reserved[2];
+ +};
+ +
+ +struct vcn_info_v1_0 {
+ +	struct vcn_info_header header;
+ +	uint32_t num_of_instances; /* number of entries used in instance_info below*/
+ +	struct vcn_instance_info_v1_0 instance_info[VCN_INFO_TABLE_MAX_NUM_INSTANCES];
+ +	uint32_t reserved[4];
+ +};
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078213.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 01/11] drm/amdgpu: update latest IP discovery table structures"
+>[PATCH 01/11] drm/amdgpu: update latest IP discovery table structures</a></cite>
+</div>
+
+</blockquote>
+<h3 id="cache_info">Cache info<a href="#cache_info" class="head-cur-link"></a>
+</h3>
+<p>以下引用部は、IP discovery table からキャッシュ情報を読み取った場合の処理となる。<br>
+まず、CU ごとに持つプライベートキャッシュ (TCP, Texture Cache per Pipe) だが、共有する CU数を示す <code>num_cu_shared</code> には WGP あたりの数を 2 で割っている。<br>
+このことから WGP あたりの CU数は 2 で変わらないことが考えられる。<br>
+ソースコード中では WGP ではなく、&ldquo;WPG&rdquo; になっているが、ここでは一旦誤字とする。</p>
+<p>複数の CU で共有される SQC (Sequencer Cache)、スカラ L1データ/命令キャッシュも、WGP あたりの SQC数に CU数だろう 2 を掛けている。</p>
+<blockquote>
+<pre><code> +static int kfd_fill_gpu_cache_info_from_gfx_config(struct kfd_dev *kdev,
+ +						   struct kfd_gpu_cache_info *pcache_info)
+ +{
+ +	struct amdgpu_device *adev = kdev-&gt;adev;
+ +	int i = 0;
+ +
+ +	/* TCP L1 Cache per CU */
+ +	if (adev-&gt;gfx.config.gc_tcp_l1_size) {
+ +		pcache_info[i].cache_size = adev-&gt;gfx.config.gc_tcp_l1_size;
+ +		pcache_info[i].cache_level = 1;
+ +		pcache_info[i].flags = (CRAT_CACHE_FLAGS_ENABLED |
+ +					CRAT_CACHE_FLAGS_DATA_CACHE |
+ +					CRAT_CACHE_FLAGS_SIMD_CACHE);
+ +		pcache_info[0].num_cu_shared = adev-&gt;gfx.config.gc_num_tcp_per_wpg / 2;
+ +		i++;
+ +	}
+ +	/* Scalar L1 Instruction Cache per SQC */
+ +	if (adev-&gt;gfx.config.gc_l1_instruction_cache_size_per_sqc) {
+ +		pcache_info[i].cache_size =
+ +			adev-&gt;gfx.config.gc_l1_instruction_cache_size_per_sqc;
+ +		pcache_info[i].cache_level = 1;
+ +		pcache_info[i].flags = (CRAT_CACHE_FLAGS_ENABLED |
+ +					CRAT_CACHE_FLAGS_INST_CACHE |
+ +					CRAT_CACHE_FLAGS_SIMD_CACHE);
+ +		pcache_info[i].num_cu_shared = adev-&gt;gfx.config.gc_num_sqc_per_wgp * 2;
+ +		i++;
+ +	}
+ +	/* Scalar L1 Data Cache per SQC */
+ +	if (adev-&gt;gfx.config.gc_l1_data_cache_size_per_sqc) {
+ +		pcache_info[i].cache_size = adev-&gt;gfx.config.gc_l1_data_cache_size_per_sqc;
+ +		pcache_info[i].cache_level = 1;
+ +		pcache_info[i].flags = (CRAT_CACHE_FLAGS_ENABLED |
+ +					CRAT_CACHE_FLAGS_DATA_CACHE |
+ +					CRAT_CACHE_FLAGS_SIMD_CACHE);
+ +		pcache_info[i].num_cu_shared = adev-&gt;gfx.config.gc_num_sqc_per_wgp * 2;
+ +		i++;
+ +	}
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078217.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 11/11] drm/amdkfd: add helper to generate cache info from gfx config"
+>[PATCH 11/11] drm/amdkfd: add helper to generate cache info from gfx config</a></cite>
+</div>
+
+</blockquote>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+</h3>
+<ul>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu/driver-core.html#gpu-hardware-structure"
+  target="_blank" rel="noopener noreferrer"
+  title="Core Driver Infrastructure — The Linux Kernel documentation"
+>Core Driver Infrastructure — The Linux Kernel documentation</a></li>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu/amdgpu-glossary.html"
+  target="_blank" rel="noopener noreferrer"
+  title="AMDGPU Glossary — The Linux Kernel documentation"
+>AMDGPU Glossary — The Linux Kernel documentation</a></li>
+<li><a href="http://old.gem5.org/wiki/images/1/19/AMD_gem5_APU_simulator_isca_2018_gem5_wiki.pdf"
+  target="_blank" rel="noopener noreferrer"
+  title="AMD gem5 APU Simulator ISCA 2018 - AMD_gem5_APU_simulator_isca_2018_gem5_wiki.pdf"
+>AMD gem5 APU Simulator ISCA 2018 - AMD_gem5_APU_simulator_isca_2018_gem5_wiki.pdf</a></li>
+</ul>
+</section>
+
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/blob/96f2b7a3571618a1c8aed694c9e668014c70898b/drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c#L9636-L9690"
+  target="_blank" rel="noopener noreferrer"
+  title="linux/gfx_v10_0.c at 96f2b7a3571618a1c8aed694c9e668014c70898b · torvalds/linux"
+>linux/gfx_v10_0.c at 96f2b7a3571618a1c8aed694c9e668014c70898b · torvalds/linux</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://github.com/torvalds/linux/blob/aa6158112645aae514982ad8d56df64428fcf203/drivers/gpu/drm/amd/include/navi10_enum.h"
+  target="_blank" rel="noopener noreferrer"
+  title="linux/navi10_enum.h at aa6158112645aae514982ad8d56df64428fcf203 · torvalds/linux"
+>linux/navi10_enum.h at aa6158112645aae514982ad8d56df64428fcf203 · torvalds/linux</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/linux_kernel" class="bottom-tag-link"  title="Linux_Kernel">#Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/gfx11" class="bottom-tag-link"  title="GFX11">#GFX11</a></nav><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/04/30/amd-gc_11_0_0.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><details class="amzn delay-page">
+  <summary class="amzn_head">Amazonアソシエイト</summary>
+  <div class="amzn_links">
+  <div class="amzn_link_block"><a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonカスタム検索: 「Radeon」</a><div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/38cGs8h" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">ゲーム制作者になるための3Dグラフィックス技術 改訂3版 Kindle版</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/34I6X4d" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonギフト券 チャージタイプ</a></div></div>
+</details></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.96.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+  </nav></nav>
+<aside class="menu-share ">
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button>
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button></aside><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.96.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+    <label class="menu-open-label" for="menu-open"></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+    <label class="menu-close-label" for="menu-close"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<div id="msg" hidden></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+  </body>
+</html>
