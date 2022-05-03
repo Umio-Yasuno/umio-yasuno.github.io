@@ -38,7 +38,7 @@
   },
     "dateCreated"   : "2022-04-30",
     "datePublished" : "2022-04-30",
-    "dateModified"  : "2022-05-01",
+    "dateModified"  : "2022-05-03",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -86,7 +86,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-04-30 18:16 +0900">Post: 2022/04/30 18:16 &#43;0900</time>
-    <aside class="update">Update: 2022/05/01 19:31 &#43;0900</aside>
+    <aside class="update">Update: 2022/05/03 14:30 &#43;0900</aside>
   </aside><p>先日の <em>SoC21</em> に続き、次世代 AMD GPU に採用されるであろう IPブロックのサポートに向けたパッチが、AMD の Alex Deucher 氏より amd-gfx メーリングリストに投稿されている。<br>
 詳細は後述するが、AMDGPUドライバーでは IPブロックごとのサポートに移行したのに加え、GPU 情報がよりハードウェア側のバイナリ部分から読み取れるようになったことで、ソースコードから得られる情報は少なくなりつつある。</p>
 <ul>
@@ -285,6 +285,34 @@ MES は MEC を置き換えるものと思われるが、今の所パッチ内�
 </div>
 
 </blockquote>
+<p>以下の引用部から、WGP 1基あたりの CU数は 2基という構成は <em>GC 11.0/GFX11</em> でも変わらないと考えられる。</p>
+<blockquote>
+<pre><code> +static u32 gfx_v11_0_get_cu_active_bitmap_per_sh(struct amdgpu_device *adev)
+ +{
+ +	u32 wgp_idx, wgp_active_bitmap;
+ +	u32 cu_bitmap_per_wgp, cu_active_bitmap;
+ +
+ +	wgp_active_bitmap = gfx_v11_0_get_wgp_active_bitmap_per_sh(adev);
+ +	cu_active_bitmap = 0;
+ +
+ +	for (wgp_idx = 0; wgp_idx &lt; 16; wgp_idx++) {
+ +		/* if there is one WGP enabled, it means 2 CUs will be enabled */
+ +		cu_bitmap_per_wgp = 3 &lt;&lt; (2 * wgp_idx);
+ +		if (wgp_active_bitmap &amp; (1 &lt;&lt; wgp_idx))
+ +			cu_active_bitmap |= cu_bitmap_per_wgp;
+ +	}
+ +
+ +	return cu_active_bitmap;
+ +}
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-April/078513.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 21/29] drm/amdgpu: add init support for GFX11 (v2)"
+>[PATCH 21/29] drm/amdgpu: add init support for GFX11 (v2)</a></cite>
+</div>
+
+</blockquote>
 <p>CU内の SIMDユニットに関する記述もある。ここでは <code>navi10_enum.h</code> ファイルを include しているため、<code>NUM_SIMD_PER_CU</code> には <em>RDNA 1/RDNA 2</em> 世代と同じ <code>0x2</code> が入る。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <blockquote>
 <pre><code> +	cu_info-&gt;number = active_cu_number;
@@ -444,7 +472,6 @@ IP discovery table は世代ごとに拡張されており、AMDGPUドライバ�
 まず、CU ごとに持つプライベートキャッシュ (TCP, Texture Cache per Pipe) だが、共有する CU数を示す <code>num_cu_shared</code> には WGP あたりの数を 2 で割っている。<br>
 このことから WGP あたりの CU数は 2 で変わらないことが考えられる。<br>
 ソースコード中では WGP ではなく、&ldquo;WPG&rdquo; になっているが、ここでは一旦誤字とする。</p>
-<p>複数の CU で共有される SQC (Sequencer Cache)、スカラ L1データ/命令キャッシュも、WGP あたりの SQC数に CU数だろう 2 を掛けている。</p>
 <blockquote>
 <pre><code> +static int kfd_fill_gpu_cache_info_from_gfx_config(struct kfd_dev *kdev,
  +						   struct kfd_gpu_cache_info *pcache_info)
