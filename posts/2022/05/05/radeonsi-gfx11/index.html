@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="GFX11, RadeonSI, NGG, Coelacanth&#39;s Dream">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4252 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,102,127,.9)#0000}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content;display:none}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:.5rem;height:.5rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,102,127,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(90% 60%,#eee2 0%,#0000 76%,#0000 95%,#111 97%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 50%,#1116 50%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#8002 33.4%,#0802 33.4%,#0802 66.8%,#0082 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f586d;border-color:#105f76 #0b4252 #0b4252 #105f76;border-radius:.1rem;background-color:#0f586d}.sb:active{background-color:#0c495b}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}.rss::before{content:"RSS: " attr(data-rss-name)}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/calc(160px + 1.2rem).2rem .6rem auto .8rem;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:160px;top:1vh;left:0;padding:0 .6rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(17,102,127,.9)#0000}footer{display:none}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "RadeonSI ドライバーで GFX11 のサポートが進められる",
+  "headline" : "RadeonSI ドライバーで GFX11 のサポートが進められる",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-05-05",
+    "datePublished" : "2022-05-05",
+    "dateModified"  : "2022-05-08",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">RadeonSI ドライバーで GFX11 のサポートが進められる</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share ">
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button>
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav></aside><aside class="article-time">
+    <time datetime="2022-05-05 12:48 +0900">Post: 2022/05/05 12:48 &#43;0900</time>
+    <aside class="update">Update: 2022/05/08 03:29 &#43;0900</aside>
+  </aside><p>AMD の Marek Olšák 氏より、<em>RadeonSI (OpenGL)</em> ドライバーに <em>GFX11</em> 世代のサポートを追加するマージリクエストが投稿、公開されている。<br>
+内容としては <em>GFX11</em> で従来から変更のあった部分、機能の改良や拡張、あるいは廃止になった部分に対するものが主であり、<em>GFX11</em> で実装される新機能のサポートといったものはまだ公開されていないように見えた。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/16328"
+  target="_blank" rel="noopener noreferrer"
+  title="amd: add gfx11 support (!16328) · Merge requests · Mesa / mesa · GitLab"
+>amd: add gfx11 support (!16328) · Merge requests · Mesa / mesa · GitLab</a></li>
+</ul>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
+</h2>
+<ul>
+<li><a href="#inst-cache-line-size"
+  
+  title="命令キャッシュラインサイズ"
+>命令キャッシュラインサイズ</a></li>
+<li><a href="#ngg"
+  
+  title="NGG"
+>NGG</a></li>
+<li><a href="#vrs"
+  
+  title="VRS"
+>VRS</a></li>
+<li><a href="#dcc"
+  
+  title="DCC"
+>DCC</a></li>
+<li><a href="#vcn4"
+  
+  title="VCN4"
+>VCN4</a></li>
+<li><a href="#chip_family"
+  
+  title="Chip, Family"
+>Chip, Family</a></li>
+</ul>
+</section>
+
+<h2 id="inst-cache-line-size">命令キャッシュラインサイズ<a href="#inst-cache-line-size" class="head-cur-link"></a>
+</h2>
+<p><em>GFX11</em> 世代では命令キャッシュラインサイズの変更が行われ、<em>RDNA 1/2</em> 世代の 64 bytes から 128 bytes に拡大された。<br>
+命令キャッシュは SQC (Sequencer Cache) であり、複数の CU で共有される。</p>
+<p>キャッシュラインサイズは、<em>Aldebaran/gfx90a/MI200</em> を除いた <em>GFX9/Vega</em> 世代では、命令キャッシュとスカラデータキャッシュが 32 bytes、L1ベクタキャッシュと L2キャッシュが 64 Bytes、<br>
+<em>RDNA 1/2</em> 世代ではそこから、命令キャッシュとスカラデータキャッシュが 64 bytes、L0ベクタキャッシュと GL1キャッシュ、GL2キャッシュが 128 bytes となった。</p>
+<blockquote>
+<pre><code> +   if (prefetch_distance) {
+ +      if (i.info-&gt;chip_class &gt;= GFX11)
+ +         binary-&gt;rx_size = align(binary-&gt;rx_size + prefetch_distance * 64, 128);
+ +      else
+ +         binary-&gt;rx_size = align(binary-&gt;rx_size + prefetch_distance * 64, 64);
+ +   }
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/841d76145f51ac33ca181cc5a74d3b6f1ab090e8?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: instruction cache line size is 128 bytes (841d7614) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: instruction cache line size is 128 bytes (841d7614) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<p><em>GFX11</em> では L2キャッシュ (TCC, Texture Cache Channel) のラインサイズは 128 bytes とされており<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、SQC である L1命令キャッシュ (それと恐らくは L1スカラデータキャッシュも) のラインサイズのみを拡大した形となっている。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Cache Line Size</th>
+<th style="text-align:center">L1i</th>
+<th style="text-align:center">L1k</th>
+<th style="text-align:center">L1d</th>
+<th style="text-align:center">GL1</th>
+<th style="text-align:center">GL2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">GFX9/Vega (without Aldebaran)</td>
+<td style="text-align:center">32B</td>
+<td style="text-align:center">32B</td>
+<td style="text-align:center">64B</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">64B</td>
+</tr>
+<tr>
+<td style="text-align:left">GFX10/RDNA 1, GFX10.3/RDNA 2</td>
+<td style="text-align:center">64B</td>
+<td style="text-align:center">64B</td>
+<td style="text-align:center">128B</td>
+<td style="text-align:center">128B</td>
+<td style="text-align:center">128B</td>
+</tr>
+<tr>
+<td style="text-align:left">GFX11</td>
+<td style="text-align:center">128B</td>
+<td style="text-align:center">128B?</td>
+<td style="text-align:center">128B?</td>
+<td style="text-align:center">128B?</td>
+<td style="text-align:center">128B</td>
+</tr>
+</tbody>
+</table>
+<h2 id="ngg">NGG<a href="#ngg" class="head-cur-link"></a>
+</h2>
+<p><em>GFX11</em> では <em>GFX9/Vega</em> までのレガシーなグラフィクスパイプラインが廃され、NGG (Next Generation Geometry) のみをサポートする。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/b2669445aa29d6ce34e3e4ee92324ada40f69f7c?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: add assert in legacy vs path (b2669445) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: add assert in legacy vs path (b2669445) · Commits · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/4e9915b5e5c9ecc3c354a6dda916253aaf07138d?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: enable NGG-only draw paths (4e9915b5) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: enable NGG-only draw paths (4e9915b5) · Commits · Mesa / mesa · GitLab</a></li>
+</ul>
+<p>NGG は <em>GFX10/RDNA 1</em> からデフォルトで有効化されているが、 <em>Navi14 (GFX10/RDNA 1)</em> では無効化されており、またデバッグオプションによって切替可能な機能だった。<br>
+<em>GFX10.3/RDNA 2</em> 世代ではすべてのチップでデフォルトで有効化されるという段階を踏み、<em>GFX11</em> 世代でレガシーグラフィクスパイプラインを廃し、NGG への完全な置き換えに至った。<br>
+またこれまでは無効化されていた NGG Stream-Out (transform feedback) も <em>GFX11</em> ではデフォルトで有効化される。</p>
+<p>現時点で <em>GFX11</em> の NGG Culling はデフォルトで無効化されているが、これは <em>GFX10/RDNA 1</em> 以上の世代でも、RenderBackend (RB) が 2基以上という条件がデフォルトで有効化する条件に含まれており、GPU の規模によって効果に違いがあることが理由だろう。<br>
+内部での検証が進めば変わると思われる。</p>
+<blockquote>
+<pre><code> +   if (sscreen-&gt;info.chip_class &gt;= GFX11) {
+ +      sscreen-&gt;use_ngg = true;
+ +      sscreen-&gt;use_ngg_streamout = true;
+ +      /* TODO: Disable for now. Investigate if it helps.  */
+ +      sscreen-&gt;use_ngg_culling = (sscreen-&gt;debug_flags &amp; DBG(ALWAYS_NGG_CULLING_ALL)) &amp;&amp;
+ +                                 !(sscreen-&gt;debug_flags &amp; DBG(NO_NGG_CULLING));
+ +   } else {
+ +      sscreen-&gt;use_ngg = !(sscreen-&gt;debug_flags &amp; DBG(NO_NGG)) &amp;&amp;
+ +                         sscreen-&gt;info.chip_class &gt;= GFX10 &amp;&amp;
+ +                         (sscreen-&gt;info.family != CHIP_NAVI14 ||
+ +                          sscreen-&gt;info.is_pro_graphics);
+ +      sscreen-&gt;use_ngg_streamout = false;
+ +      sscreen-&gt;use_ngg_culling = sscreen-&gt;use_ngg &amp;&amp;
+ +                                 sscreen-&gt;info.max_render_backends &gt;= 2 &amp;&amp;
+ +                                 !(sscreen-&gt;debug_flags &amp; DBG(NO_NGG_CULLING)) &amp;&amp;
+ +                                 LLVM_VERSION_MAJOR &gt;= 12; /* hangs on 11, see #4874 */
+ +   }
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/4e9915b5e5c9ecc3c354a6dda916253aaf07138d?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: enable NGG-only draw paths (4e9915b5) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: enable NGG-only draw paths (4e9915b5) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<h2 id="vrs">VRS<a href="#vrs" class="head-cur-link"></a>
+</h2>
+<p><em>GFX10.3/RDNA 2</em> 世代における VRS (Variable Rate Shading) は、粒度 (coarse) 4 pixels (2x2) までのサポートだったが、<em>GFX11</em> では 16 pixels (4x4) に対応する。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/18a560dd45ae3157b2283cb35f86b9e3303565c7?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: VRS changes (18a560dd) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: VRS changes (18a560dd) · Commits · Mesa / mesa · GitLab</a></li>
+</ul>
+<h2 id="dcc">DCC<a href="#dcc" class="head-cur-link"></a>
+</h2>
+<p><em>GFX11</em> では DCC (Delta Color Compression) が改良され、これまではフォーマットのサポートが部分的だったが <em>GFX11</em> ですべてのフォーマットをサポートするようになった。<br>
+また、<code>always_allow_dcc_stores</code> フラグは、dGPU では性能低下のリスクがあることから、<em>GFX10.3/RDNA 2</em> 世代の APU でのみデフォルトで有効化されていたが、<em>GFX11</em> では dGPU, APU 問わずデフォルトで有効化される。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/f81dafdb75081b2af260f5d3082d7601e2a941a1?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: always allow DCC stores (f81dafdb) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: always allow DCC stores (f81dafdb) · Commits · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/2ea6b5253516aea3945aa11c5200d6eedbd32a41?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: enable arbitrary DCC format reinterpretation (2ea6b525) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: enable arbitrary DCC format reinterpretation (2ea6b525) · Commits · Mesa / mesa · GitLab</a></li>
+</ul>
+<blockquote>
+<pre><code>    /* DCC stores have 50% performance of uncompressed stores and sometimes
+     * even less than that. It's risky to enable on dGPUs.
+     */
+    sscreen-&gt;always_allow_dcc_stores = !(sscreen-&gt;debug_flags &amp; DBG(NO_DCC_STORE)) &amp;&amp;
+                                       (sscreen-&gt;debug_flags &amp; DBG(DCC_STORE) ||
+                                        sscreen-&gt;info.chip_class &gt;= GFX11 || /* always enabled on gfx11 */
+                                        (sscreen-&gt;info.chip_class &gt;= GFX10_3 &amp;&amp;
+                                         !sscreen-&gt;info.has_dedicated_vram));
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/f81dafdb75081b2af260f5d3082d7601e2a941a1/src/gallium/drivers/radeonsi/si_pipe.c#L1294-1301"
+  target="_blank" rel="noopener noreferrer"
+  title="src/gallium/drivers/radeonsi/si_pipe.c · f81dafdb75081b2af260f5d3082d7601e2a941a1 · Mesa / mesa · GitLab"
+>src/gallium/drivers/radeonsi/si_pipe.c · f81dafdb75081b2af260f5d3082d7601e2a941a1 · Mesa / mesa · GitLab</a></cite>
+</div>
+
+<pre><code> +   /* All formats are compatible on GFX11. */
+ +   if (sscreen-&gt;info.chip_class &gt;= GFX11)
+ +      return true;
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/2ea6b5253516aea3945aa11c5200d6eedbd32a41?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: enable arbitrary DCC format reinterpretation (2ea6b525) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: enable arbitrary DCC format reinterpretation (2ea6b525) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<h2 id="vcn4">VCN4<a href="#vcn4" class="head-cur-link"></a>
+</h2>
+<p>VCN4 では MPEG1/2, MPEG4, VC1 の HWデコードをサポートをしないため、それぞれの部分に <code>chip_class</code> が <em>GFX11</em> 以上の場合は <code>false</code> を返す記述が追加されている。</p>
+<blockquote>
+<pre><code>        case PIPE_VIDEO_FORMAT_MPEG12:
+ -         return profile != PIPE_VIDEO_PROFILE_MPEG1;
+ +         if (sscreen-&gt;info.chip_class &gt;= GFX11)
+ +            return false;
+ +         else
+ +            return profile != PIPE_VIDEO_PROFILE_MPEG1;
+        case PIPE_VIDEO_FORMAT_MPEG4:
+ -         return 1;
+ +         if (sscreen-&gt;info.chip_class &gt;= GFX11)
+ +            return false;
+ +         else
+ +            return true;
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/b8b88fb0c2490452ff230548c555bda2b61895d4?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: update codec support for gfx11 (b8b88fb0) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: update codec support for gfx11 (b8b88fb0) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+<pre><code>        case PIPE_VIDEO_FORMAT_VC1:
+ -         return true;
+ +         if (sscreen-&gt;info.chip_class &gt;= GFX11)
+ +            return false;
+ +         else
+ +            return true;
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/b8b88fb0c2490452ff230548c555bda2b61895d4?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: update codec support for gfx11 (b8b88fb0) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: update codec support for gfx11 (b8b88fb0) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<p>だがそれよりも上の部分で、<code>[MPEG12, MPEG4, VC1]</code> かつ <code>family</code> が <em>Beige Goby/Navi24</em> 以上 (<em>Beige Goby/Navi24, Yellow Carp/Rembrandt, GFX1036</em>) の場合 <code>false</code> を返すようになっているため、不要な気もする。</p>
+<blockquote>
+<pre><code>    switch (param) {
+    case PIPE_VIDEO_CAP_SUPPORTED:
+       if (codec &lt; PIPE_VIDEO_FORMAT_MPEG4_AVC &amp;&amp;
+           sscreen-&gt;info.family &gt;= CHIP_BEIGE_GOBY)
+          return false;
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/b8b88fb0c2490452ff230548c555bda2b61895d4/src/gallium/drivers/radeonsi/si_get.c#L604-613"
+  target="_blank" rel="noopener noreferrer"
+  title="src/gallium/drivers/radeonsi/si_get.c · b8b88fb0c2490452ff230548c555bda2b61895d4 · Mesa / mesa · GitLab"
+>src/gallium/drivers/radeonsi/si_get.c · b8b88fb0c2490452ff230548c555bda2b61895d4 · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<p>VCN4 では AV1デコーダー部が従来のものからアップデートされたような記述がある。<br>
+ただ、AMDGPUドライバーへの VCN4 に関するパッチによれば、現時点ではデコーダーが対応するピクセルサイズは VCN3 から変更はない。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<blockquote>
+<pre><code> +#define RDECODE_AV1_VER_0  0
+ +#define RDECODE_AV1_VER_1  1
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/88e842002b6f02ae891f93bc4e21553ed20c7657?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/vcn: update av1 decoding to support vcn4 (88e84200) · Commits · Mesa / mesa · GitLab"
+>radeonsi/vcn: update av1 decoding to support vcn4 (88e84200) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+<pre><code>     case CHIP_GFX1102:
+        dec-&gt;jpg.direct_reg = true;
+        dec-&gt;addr_gfx_mode = RDECODE_ARRAY_MODE_ADDRLIB_SEL_GFX11;
+ +      dec-&gt;av1_version = RDECODE_AV1_VER_1;
+        break;
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/88e842002b6f02ae891f93bc4e21553ed20c7657?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/vcn: update av1 decoding to support vcn4 (88e84200) · Commits · Mesa / mesa · GitLab"
+>radeonsi/vcn: update av1 decoding to support vcn4 (88e84200) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<h2 id="chip_family">Chip, Family<a href="#chip_family" class="head-cur-link"></a>
+</h2>
+<p>GC (Graphics Compute) IP のバージョンと、LLVM 等で用いられる GPU/GFX/TargetID は近いフォーマットながら一致は以前からしていなかったが、この世代でもそれは同様らしい。</p>
+<p>現時点で AMDGPUドライバーには <em>GC 11.0.{0, 1, 2}</em> のサポートを追加するパッチが投稿されているが、対応する GFX ID の対応は以下の表のようになっている。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">GC IP ver</th>
+<th style="text-align:center">GFX ID</th>
+<th style="text-align:center"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">11.0.0</td>
+<td style="text-align:center">gfx1100</td>
+<td style="text-align:center">dGPU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.1</td>
+<td style="text-align:center">gfx1103</td>
+<td style="text-align:center">APU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.2</td>
+<td style="text-align:center">gfx1102</td>
+<td style="text-align:center">dGPU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.3?</td>
+<td style="text-align:center">gfx1101?</td>
+<td style="text-align:center">dGPU?</td>
+</tr>
+</tbody>
+</table>
+<p>下引用部で、チップの判定に使われる <code>eRevisionId</code> の範囲がそのままの並びになっていないが、<em>RadeonSI</em> では GFX ID をベースにした名前を用いていることと、先に書いたように GC IP と GFX IP が必ず一致はしないことが関係していると考えられる。</p>
+<blockquote>
+<pre><code> +#define AMDGPU_GFX1100_RANGE    0x01, 0x10
+ +#define AMDGPU_GFX1101_RANGE    0x20, 0xFF
+ +#define AMDGPU_GFX1102_RANGE    0x10, 0x20
+ +
+ +#define AMDGPU_GFX1103_RANGE    0x01, 0xFF
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/16328/diffs?commit_id=8e6d599238881bc63590457813dc8532cb5462ad"
+  target="_blank" rel="noopener noreferrer"
+  title="amd: add gfx11 support (!16328) · Merge requests · Mesa / mesa · GitLab"
+>amd: add gfx11 support (!16328) · Merge requests · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+</h3>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-May/078624.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH] drm/amdkfd: add asic support for GC 11.0.2"
+>[PATCH] drm/amdkfd: add asic support for GC 11.0.2</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-May/078624.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH] drm/amdkfd: add asic support for GC 11.0.2"
+>[PATCH] drm/amdkfd: add asic support for GC 11.0.2</a></li>
+<li><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf"
+  target="_blank" rel="noopener noreferrer"
+  title="AMD PowerPoint- White Template - RDNA_Architecture_public.pdf"
+>AMD PowerPoint- White Template - RDNA_Architecture_public.pdf</a></li>
+</ul>
+</section>
+
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/16328/diffs?commit_id=c0b87b6d33f86f735af2c77f947aaa89d4d734c4"
+  target="_blank" rel="noopener noreferrer"
+  title="amd: add gfx11 support (!16328) · Merge requests · Mesa / mesa · GitLab"
+>amd: add gfx11 support (!16328) · Merge requests · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2" role="doc-endnote">
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-May/078569.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH 10/11] drm/amdgpu: add vcn_4_0_0 video codec query"
+>[PATCH 10/11] drm/amdgpu: add vcn_4_0_0 video codec query</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/gfx11" class="bottom-tag-link"  title="GFX11">#GFX11</a><a href="https://www.coelacanth-dream.com/tags/radeonsi" class="bottom-tag-link"  title="RadeonSI">#RadeonSI</a><a href="https://www.coelacanth-dream.com/tags/ngg" class="bottom-tag-link"  title="NGG">#NGG</a></nav><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/05/05/radeonsi-gfx11.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><details class="amzn delay-page">
+  <summary class="amzn_head">Amazonアソシエイト</summary>
+  <div class="amzn_links">
+  <div class="amzn_link_block"><a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonカスタム検索: 「Radeon」</a><div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/38cGs8h" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">ゲーム制作者になるための3Dグラフィックス技術 改訂3版 Kindle版</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/34I6X4d" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonギフト券 チャージタイプ</a></div></div>
+</details></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.96.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/ngg/" class="menu-cat-tag-lower">NGG</a><a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a>
+  </nav></nav>
+<aside class="menu-share ">
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button>
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button></aside><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.96.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+    <label class="menu-open-label" for="menu-open"></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+    <label class="menu-close-label" for="menu-close"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/ngg/" class="menu-cat-tag-lower">NGG</a><a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<div id="msg" hidden></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+  </body>
+</html>
