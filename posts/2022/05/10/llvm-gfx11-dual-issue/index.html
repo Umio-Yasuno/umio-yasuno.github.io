@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/05/10/llvm-gfx11-dual-issue/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/05/10/llvm-gfx11-dual-issue/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/05/10/llvm-gfx11-dual-issue/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/05/10/llvm-gfx11-dual-issue/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="GFX11, LLVM, Coelacanth&#39;s Dream">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4252 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,102,127,.9)#0000}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content;display:none}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:.5rem;height:.5rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,102,127,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(90% 60%,#eee2 0%,#0000 76%,#0000 95%,#111 97%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 50%,#1114 50%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#8002 33.4%,#0802 33.4%,#0802 66.8%,#0082 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f586d;border-color:#105f76 #0b4252 #0b4252 #105f76;border-radius:.1rem;background-color:#0f586d}.sb:active{background-color:#0c495b}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}.rss::before{content:"RSS: " attr(data-rss-name)}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/calc(160px + 1.2rem).2rem .6rem auto .8rem;gap:.2rem 0}.text{grid-row:auto;grid-column:3/-1}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:160px;top:1vh;left:0;padding:0 .6rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(17,102,127,.9)#0000}footer{display:none}}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}h1{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32",
+  "headline" : "GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-05-10",
+    "datePublished" : "2022-05-10",
+    "dateModified"  : "2022-05-10",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share ">
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button>
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav></aside><aside class="article-time">
+    <time datetime="2022-05-10 12:14 +0900">Post: 2022/05/10 12:14 &#43;0900</time>
+    <aside class="update">Update: 2022/05/10 13:54 &#43;0900</aside>
+  </aside><p>AMD の Joe Nash 氏より、LLVM への <em>GFX11</em> のサポートに向けたさらなるパッチが投稿、公開されている。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/04/28/llvm-gfx11/"
+  
+  title="LLVM で GFX11 のサポートが進み始める | Coelacanth&rsquo;s Dream"
+>LLVM で GFX11 のサポートが進み始める | Coelacanth&rsquo;s Dream</a></span>
+
+今回のパッチには <em>GFX11</em> で追加される新機能のサポートも一部含まれている。<br>
+しかし、新機能のフラグ管理と <em>GFX11</em> のテストファイル追加が主であり、新機能の詳細、新機能が有効になっていることで分岐する部分のコード等は追加されていない。<br>
+そのため、機能の詳細については推測がほとんどとなる。</p>
+<ul>
+<li><a href="https://reviews.llvm.org/D125261"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests"
+>⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests</a></li>
+</ul>
+<h2 id="gfx11">FeatureGFX11<a href="#gfx11" class="head-cur-link"></a>
+</h2>
+<p><em>GFX11</em> がサポートする機能、命令の情報が <code>AMDGPU.td</code> に追加された。<br>
+<em>GFX11</em> での新機能には <code>FeatureTrue16BitInsts</code>, <code>FeatureDot8Insts</code>, <code>FeatureVOPD</code> が挙げられる。</p>
+<blockquote>
+<pre><code> +def FeatureGFX11 : GCNSubtargetFeatureGeneration&lt;&quot;GFX11&quot;,
+ +  &quot;gfx11&quot;,
+ +  [FeatureFP64, FeatureLocalMemorySize65536, FeatureMIMG_R128,
+ +   FeatureFlatAddressSpace, Feature16BitInsts,
+ +   FeatureInv2PiInlineImm, FeatureApertureRegs,
+ +   FeatureCIInsts, FeatureGFX8Insts, FeatureGFX9Insts, FeatureGFX10Insts,
+ +   FeatureGFX10_AEncoding, FeatureGFX10_BEncoding, FeatureGFX10_3Insts,
+ +   FeatureGFX11Insts, FeatureVOP3P, FeatureVOPD, FeatureTrue16BitInsts,
+ +   FeatureMovrel, FeatureFastFMAF32, FeatureDPP, FeatureIntClamp,
+ +   FeatureFlatInstOffsets, FeatureFlatGlobalInsts, FeatureFlatScratchInsts,
+ +   FeatureAddNoCarryInsts, FeatureFmaMixInsts,
+ +   FeatureNoSdstCMPX, FeatureVscnt,
+ +   FeatureVOP3Literal, FeatureDPP8, FeatureExtendedImageInsts,
+ +   FeatureNoDataDepHazard, FeaturePkFmacF16Inst,
+ +   FeatureGFX10A16, FeatureFastDenormalF32, FeatureG16,
+ +   FeatureUnalignedBufferAccess, FeatureUnalignedDSAccess
+ +  ]
+ +&gt;;
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://reviews.llvm.org/D125261"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests"
+>⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests</a></cite>
+</div>
+
+</blockquote>
+<h3 id="true16">True16Bit<a href="#true16" class="head-cur-link"></a>
+</h3>
+<p><code>True16Bit</code> については <code>True 16 bit operand instructions</code> という説明があるのみで、どういった命令がそこに含まれるかは今回明かされていない。</p>
+<p>以前からサポートされている機能として、他に <code>Feature16BitInsts</code> があるが、これは i16/f16 フォーマットを扱う命令となる。<br>
+後述の <code>Dot8Insts</code> により、<em>GFX11</em> では bf16 フォーマットに対応するため、i16/f16 以外の 16-bit 精度フォーマットに対応することを示す機能フラグであることが考えられる。</p>
+<blockquote>
+<pre><code> +def FeatureTrue16BitInsts : SubtargetFeature&lt;&quot;true16&quot;,
+ +  &quot;HasTrue16BitInsts&quot;,
+ +  &quot;true&quot;,
+ +  &quot;True 16 bit operand instructions&quot;
+ +&gt;;
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://reviews.llvm.org/D125261"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests"
+>⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests</a></cite>
+</div>
+
+</blockquote>
+<h3 id="dot8">Dot8Insts<a href="#dot8" class="head-cur-link"></a>
+</h3>
+<p><em>GFX11</em> で新たに <code>Dot8Insts</code> をサポートすることは以前のパッチで明かされていたが、今回でそこに含まれる命令が公開された。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/04/28/llvm-gfx11/"
+  
+  title="LLVM で GFX11 のサポートが進み始める | Coelacanth&rsquo;s Dream"
+>LLVM で GFX11 のサポートが進み始める | Coelacanth&rsquo;s Dream</a></span>
+
+これまで bf16 フォーマットには、<em>CDNA 系アーキテクチャ</em> の行列演算命令でしかネイティブでサポートされていなかったが、<em>GFX11</em> ではドット積命令の一部でサポートされる。<br>
+また入力と出力の精度を同じにすると思われる <code>v_dot2_f16_f16, v_dot2_bf16_bf16</code> が追加されている。 (<code>D.f16 = S0.f16[0] * S1.f16[0] + S0.f16[1] * S1.f16[1] + S2.f16</code>)</p>
+<blockquote>
+<pre><code> +def FeatureDot8Insts : SubtargetFeature&lt;&quot;dot8-insts&quot;,
+ +  &quot;HasDot8Insts&quot;,
+ +  &quot;true&quot;,
+ +  &quot;Has v_dot2_f16_f16, v_dot2_bf16_bf16, v_dot2_f32_bf16, &quot;
+ +  &quot;v_dot4_i32_iu8, v_dot8_i32_iu4 instructions&quot;
+ +&gt;;
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://reviews.llvm.org/D125261"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests"
+>⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests</a></cite>
+</div>
+
+</blockquote>
+<p>前回のパッチで <em>GFX11</em> は、<em>GFX10.3/RDNA 2</em> 世代と比較して、<code>Dot2Insts</code> のサポートが外され、<code>Dot8Insts</code> が追加されるという形だったが、<br>
+今回のパッチでは、<code>Dot[1, 2, 6]Insts</code> が外され、<code>Dot8Insts</code> のサポートが追加される形になっている。<br>
+それぞれに含まれる命令は、<code>Dot1Insts</code> は <code>v_dot4_i32_i8, v_dot8_i32_i4</code> 、<code>Dot2Insts</code> は <code>v_dot2_i32_i16, v_dot2_u32_u16</code>、<code>Dot6Insts</code> は <code>v_dot4c_i32_i8</code> となる。<br>
+<code>Dot1Insts</code> の範囲については、<code>Dot8Insts</code> 中の <code>v_dot4_i32_iu8, v_dot8_i32_iu4</code> で置き換え可能と思われる。</p>
+<blockquote>
+<pre><code> +def FeatureISAVersion11_Common : FeatureSet&lt;
+ +  [FeatureGFX11,
+ +   FeatureLDSBankCount32,
+ +   FeatureDLInsts,
+ +   FeatureDot5Insts,
+ +   FeatureDot7Insts,
+ +   FeatureDot8Insts,
+ +   FeatureNSAEncoding,
+ +   FeatureNSAMaxSize5,
+ +   FeatureWavefrontSize32,
+ +   FeatureShaderCyclesRegister,
+ +   FeatureArchitectedFlatScratch,
+ +   FeatureAtomicFaddRtnInsts,
+ +   FeatureAtomicFaddNoRtnInsts,
+ +   FeatureImageInsts,
+ +   FeaturePackedTID,
+ +   FeatureVcmpxPermlaneHazard]&gt;;
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://reviews.llvm.org/D125261"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests"
+>⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests</a></cite>
+</div>
+
+</blockquote>
+<h3 id="vopd">Dual issue wave32<a href="#vopd" class="head-cur-link"></a>
+</h3>
+<p><em>GFX11</em> では <code>FeatureVOPD</code>、<code>Has VOPD dual issue wave32 instructions</code> と説明される命令をサポートする。 この機能もまた、それ以上の詳細は今回明かされていない。<br>
+推測するならば、1個の命令から 2x Wave32 分のスレッドを発行する機能と思われるが、ただ SIMDユニットに対応する Wave Controller に 2x Wave32 がスタックされるだけなのか、<br>
+または Wave Controller と SIMDユニットの構成が変更され、一部の <code>FeatureVOPD</code> に含まれる命令は従来の 2x レートで処理できるのか、等は不明。<br>
+自分の推測がすべて外れている可能性も高い。</p>
+<blockquote>
+<pre><code> +def FeatureVOPD : SubtargetFeature&lt;&quot;vopd&quot;,
+ +  &quot;HasVOPDInsts&quot;,
+ +  &quot;true&quot;,
+ +  &quot;Has VOPD dual issue wave32 instructions&quot;
+ +&gt;;
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://reviews.llvm.org/D125261"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests"
+>⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests</a></cite>
+</div>
+
+</blockquote>
+<figure>
+  <a href="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-simd.webp" target="_blank"  >
+  <img src="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-simd.webp"
+      alt="画像出典: amd-cdna-whitepaper.pdf (Page 6), Introduction - rdna-whitepaper.pdf (Page 9)"/>
+</a><figcaption>
+      <h4 class="fig-title">CDNA/RDNA SIMD</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf"
+  target="_blank" rel="noopener noreferrer"
+  title="amd-cdna-whitepaper.pdf"
+>amd-cdna-whitepaper.pdf</a> (Page 6), <br>  <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf"
+  target="_blank" rel="noopener noreferrer"
+  title="Introduction - rdna-whitepaper.pdf"
+>Introduction - rdna-whitepaper.pdf</a> (Page 9)</p>
+  </figcaption>
+</figure>
+
+<h3 id="gpuid">GPU ID<a href="#gpuid" class="head-cur-link"></a>
+</h3>
+<p><em>gfx1100 (dGPU), gfx1101 (dGPU)</em> と <em>gfx1102 (dGPU), gfx1103 (APU)</em> でサポートする機能は、<code>FeatureISAVersion11_0</code> と <code>FeatureISAVersion11_0_2</code> で分かれているが、現時点で違いは特にない。</p>
+<blockquote>
+<pre><code> +
+ +//===----------------------------------------------------------------------===//
+ +// GCN GFX11.
+ +//===----------------------------------------------------------------------===//
+ +
+ +def : ProcessorModel&lt;&quot;gfx1100&quot;, GFX11SpeedModel,
+ +  FeatureISAVersion11_0.Features
+ +&gt;;
+ +
+ +def : ProcessorModel&lt;&quot;gfx1101&quot;, GFX11SpeedModel,
+ +  FeatureISAVersion11_0.Features
+ +&gt;;
+ +
+ +def : ProcessorModel&lt;&quot;gfx1102&quot;, GFX11SpeedModel,
+ +  FeatureISAVersion11_0_2.Features
+ +&gt;;
+ +
+ +def : ProcessorModel&lt;&quot;gfx1103&quot;, GFX11SpeedModel,
+ +  FeatureISAVersion11_0_2.Features
+ +&gt;;
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://reviews.llvm.org/D125261"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests"
+>⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests</a></cite>
+</div>
+
+<pre><code> +// Features for GFX 11.0.0 and 11.0.1
+ +def FeatureISAVersion11_0 : FeatureSet&lt;
+ +  !listconcat(FeatureISAVersion11_Common.Features,
+ +    [])&gt;;
+ +
+ +def FeatureISAVersion11_0_2 : FeatureSet&lt;
+ +  !listconcat(FeatureISAVersion11_Common.Features,
+ +    [])&gt;;
+ +
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://reviews.llvm.org/D125261"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests"
+>⚙ D125261 [AMDGPU] gfx11 subtarget features & early tests</a></cite>
+</div>
+
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">GC IP ver</th>
+<th style="text-align:center">GFX ID</th>
+<th style="text-align:center"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">11.0.0</td>
+<td style="text-align:center">gfx1100</td>
+<td style="text-align:center">dGPU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.1</td>
+<td style="text-align:center">gfx1103</td>
+<td style="text-align:center">APU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.2</td>
+<td style="text-align:center">gfx1102</td>
+<td style="text-align:center">dGPU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.3?</td>
+<td style="text-align:center">gfx1101?</td>
+<td style="text-align:center">dGPU?</td>
+</tr>
+</tbody>
+</table>
+<p>それ以外にも <code>GCNSubtarget.h</code> には <em>GFX11</em> でサポートされる機能フラグに関するコードが追加されている。</p>
+<blockquote>
+<pre><code> +  bool hasVOP3DPP() const { return getGeneration() &gt;= GFX11; }
+ +
+ +  bool hasLdsDirect() const { return getGeneration() &gt;= GFX11; }
+ +
+ +  bool hasVALUPartialForwardingHazard() const {
+ +    return getGeneration() &gt;= GFX11;
+ +  }
+ +
+ +  bool hasVALUTransUseHazard() const { return getGeneration() &gt;= GFX11; }
+ +
+</code></pre>
+</blockquote>
+<p><em>GFX11</em> では <em>NGG (Next Generation Geometry)</em> パイプラインのみをサポートし、レガシーなパイプラインはサポートしない、というのは <em>RadeonSI</em> ドライバーの内容と一致している。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/"
+  
+  title="RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&rsquo;s Dream"
+>RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<blockquote>
+<pre><code> +  // \returns true if the target supports the pre-NGG legacy geometry path.
+ +  bool hasLegacyGeometry() const { return getGeneration() &lt; GFX11; }
+ +
+</code></pre>
+</blockquote>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+</h3>
+<ul>
+<li><a href="https://pc.watch.impress.co.jp/docs/column/kaigai/1125383.html"
+  target="_blank" rel="noopener noreferrer"
+  title="【後藤弘茂のWeekly海外ニュース】Armの新世代フラグシップGPU「Mali-G76」 - PC Watch"
+>【後藤弘茂のWeekly海外ニュース】Armの新世代フラグシップGPU「Mali-G76」 - PC Watch</a></li>
+</ul>
+</section>
+
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/gfx11" class="bottom-tag-link"  title="GFX11">#GFX11</a><a href="https://www.coelacanth-dream.com/tags/llvm" class="bottom-tag-link"  title="LLVM">#LLVM</a></nav><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/05/10/llvm-gfx11-dual-issue.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside><details class="amzn delay-page">
+  <summary class="amzn_head">Amazonアソシエイト</summary>
+  <div class="amzn_links">
+  <div class="amzn_link_block"><a href="https://amzn.to/2NnZYVD" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonカスタム検索: 「Radeon」</a><div class="amzn_link_desc">出品者: Amazon.co.jp のみ、ソート: 最新商品</div></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/2VanQw0" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">serial experiments lainを観る | Prime Video</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/3vpqQ8L" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">[増補改訂]GPUを支える技術 ――超並列ハードウェアの快進撃[技術基礎] (WEB+DB PRESS plus)</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/38cGs8h" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">ゲーム制作者になるための3Dグラフィックス技術 改訂3版 Kindle版</a></div>
+  <div class="amzn_link_block"><a href="https://amzn.to/34I6X4d" class="amzn_link_main" target="_blank" rel="noopener noreferrer sponsored nofollow">Amazonギフト券 チャージタイプ</a></div></div>
+</details></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.96.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/llvm/" class="menu-cat-tag-lower">LLVM</a>
+  </nav></nav>
+<aside class="menu-share ">
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button>
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button></aside><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.96.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+    <label class="menu-open-label" for="menu-open"></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+    <label class="menu-close-label" for="menu-close"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/llvm/" class="menu-cat-tag-lower">LLVM</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<div id="msg" hidden></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+  </body>
+</html>
