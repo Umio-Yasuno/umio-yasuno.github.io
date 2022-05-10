@@ -38,7 +38,7 @@
   },
     "dateCreated"   : "2022-05-05",
     "datePublished" : "2022-05-05",
-    "dateModified"  : "2022-05-08",
+    "dateModified"  : "2022-05-10",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -86,7 +86,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-05-05 12:48 +0900">Post: 2022/05/05 12:48 &#43;0900</time>
-    <aside class="update">Update: 2022/05/08 03:29 &#43;0900</aside>
+    <aside class="update">Update: 2022/05/10 14:06 &#43;0900</aside>
   </aside><p>AMD の Marek Olšák 氏より、<em>RadeonSI (OpenGL)</em> ドライバーに <em>GFX11</em> 世代のサポートを追加するマージリクエストが投稿、公開されている。<br>
 内容としては <em>GFX11</em> で従来から変更のあった部分、機能の改良や拡張、あるいは廃止になった部分に対するものが主であり、<em>GFX11</em> で実装される新機能のサポートといったものはまだ公開されていないように見えた。</p>
 <ul>
@@ -202,7 +202,13 @@
 <em>GFX10.3/RDNA 2</em> 世代ではすべてのチップでデフォルトで有効化されるという段階を踏み、<em>GFX11</em> 世代でレガシーグラフィクスパイプラインを廃し、NGG への完全な置き換えに至った。<br>
 またこれまでは無効化されていた NGG Stream-Out (transform feedback) も <em>GFX11</em> ではデフォルトで有効化される。</p>
 <p>現時点で <em>GFX11</em> の NGG Culling はデフォルトで無効化されているが、これは <em>GFX10/RDNA 1</em> 以上の世代でも、RenderBackend (RB) が 2基以上という条件がデフォルトで有効化する条件に含まれており、GPU の規模によって効果に違いがあることが理由だろう。<br>
-内部での検証が進めば変わると思われる。</p>
+NGGカリングのようなシェーダーベースのカリング処理は、効率が Pixel Shader のスループットに依存するとされている。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc"
+  
+  title="RADV &#43; RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth&rsquo;s Dream"
+>RADV + RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
+
+内部での検証が進み、効果があると分かれば切り替えられると思われる。</p>
 <blockquote>
 <pre><code> +   if (sscreen-&gt;info.chip_class &gt;= GFX11) {
  +      sscreen-&gt;use_ngg = true;
@@ -226,6 +232,19 @@
   target="_blank" rel="noopener noreferrer"
   title="radeonsi/gfx11: enable NGG-only draw paths (4e9915b5) · Commits · Mesa / mesa · GitLab"
 >radeonsi/gfx11: enable NGG-only draw paths (4e9915b5) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<p>Pixel Shader への入出力用バッファ、パラメーターキャッシュ (Parameter Cache, PC) の規模は 1024、<em>Sienna Cichlid/Navi21</em> 等と同じ規模となっている。</p>
+<blockquote>
+<pre><code> +   if (info-&gt;chip_class &gt;= GFX11) {
+ +      info-&gt;pc_lines = 1024;
+ +      info-&gt;pbb_max_alloc_count = 255; /* minimum is 2, maximum is 256 */
+</code></pre>
+<div class="quote-source">引用元<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/9fecac091f3159eb50a3e3dea2312218bb87d8c1?merge_request_iid=16328"
+  target="_blank" rel="noopener noreferrer"
+  title="radeonsi/gfx11: scattered register deltas (9fecac09) · Commits · Mesa / mesa · GitLab"
+>radeonsi/gfx11: scattered register deltas (9fecac09) · Commits · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
