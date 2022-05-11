@@ -38,7 +38,7 @@
   },
     "dateCreated"   : "2022-05-10",
     "datePublished" : "2022-05-10",
-    "dateModified"  : "2022-05-10",
+    "dateModified"  : "2022-05-11",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -86,7 +86,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-05-10 12:14 +0900">Post: 2022/05/10 12:14 &#43;0900</time>
-    <aside class="update">Update: 2022/05/10 18:42 &#43;0900</aside>
+    <aside class="update">Update: 2022/05/11 14:33 &#43;0900</aside>
   </aside><p>AMD の Joe Nash 氏より、LLVM への <em>GFX11</em> のサポートに向けたさらなるパッチが投稿、公開されている。<br>
 <span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/04/28/llvm-gfx11/"
   
@@ -243,9 +243,16 @@
 <h3 id="vopd">Dual issue wave32<a href="#vopd" class="head-cur-link"></a>
 </h3>
 <p><em>GFX11</em> では <code>FeatureVOPD</code>、<code>Has VOPD dual issue wave32 instructions</code> と説明される命令をサポートする。 この機能もまた、それ以上の詳細は今回明かされていない。<br>
-推測するならば、1個の命令から 2x Wave32 分のスレッドを発行する機能と思われるが、ただ SIMDユニットに対応する Wave Controller に 2x Wave32 がスタックされるだけなのか、<br>
-または Wave Controller と SIMDユニットの構成が変更され、一部の <code>FeatureVOPD</code> に含まれる命令は従来の 2x レートで処理できるのか、等は不明。<br>
-自分の推測がすべて外れている可能性も高い。</p>
+推測するならば、1個の命令から 2x Wave32 分のスレッドを発行する機能と思われるが、ただ SIMDユニットに対応する Wave Controller (Buffer) に 2x Wave32 がスタックされるだけなのか、<br>
+または Wave Controller と SIMDユニットの構成が変更され、一部の <code>FeatureVOPD</code> に含まれる命令は従来の 2x レートで処理できるのか、等は不明。</p>
+<p>前者は、<em>GFX10/RDNA 1</em> 世代からソフトウェアで実装されている Sub-Vector Mode に近い。Sub-Vector Mode では、Wave64 をベクタレジスタを共有する 2x Wave32 に分解して実行する。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/#consider"
+  
+  title="RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&rsquo;s Dream"
+>RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&rsquo;s Dream</a></span>
+
+後者は、Wave Controller に対して SIMDユニットを増やした可能性が考えられる。ただ一部の命令に限られるとすると効率が気になる所ではある。<br>
+CU 内部の構造が大きく変わっている可能性、自分の推測がすべて外れている可能性も高い。</p>
 <blockquote>
 <pre><code> +def FeatureVOPD : SubtargetFeature&lt;&quot;vopd&quot;,
  +  &quot;HasVOPDInsts&quot;,
