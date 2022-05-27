@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/05/27/ampere-1-arch/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Ampere-1 のマイクロアーキテクチャを見る | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Ampere-1 のマイクロアーキテクチャを見る | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Ampere-1 のマイクロアーキテクチャを見る | Coelacanth&#39;s Dream">
+  <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/05/27/ampere-1-arch/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/05/27/ampere-1-arch/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/05/27/ampere-1-arch/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="Arm, Coelacanth&#39;s Dream">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4050 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(6,auto)3rem/.5vw 1vw auto 2vw;gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}header{grid-row:1;grid-column:3/-2;margin:1vh 0 0;contain:layout}.site-title{font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/4;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;visibility:hidden;contain:content;display:none}.side{visibility:visible}footer{visibility:hidden;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1a847b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:.5rem;height:.5rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:linear-gradient(to bottom,#0000 60%,#8882 60%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#8002 33.4%,#0802 33.4%,#0802 66.8%,#0082 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f566b;border-color:#105d74 #0b4050 #0b4050 #105d74;border-radius:.1rem;background-color:#0f566b}.sb:active{background-color:#0c4759}.cp-url::before{content:'Copy URL'}.cp-url-title::before{content:'Copy Title & URL'}.rss::before{content:"RSS: " attr(data-rss-name)}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/calc(160px + 1.2rem).2rem .6rem auto .8rem;gap:.2rem 0}.text{grid-row:auto;grid-column:2/-1}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:160px;top:1vh;left:0;padding:0 .6rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}footer{display:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:hidden;grid-column:2/-1}.text{gap:1.2rem 0}datalist{display:none}.page-main{font-size:.96rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Ampere-1 のマイクロアーキテクチャを見る",
+  "headline" : "Ampere-1 のマイクロアーキテクチャを見る",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-05-27",
+    "datePublished" : "2022-05-27",
+    "dateModified"  : "2022-05-28",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">Ampere-1 のマイクロアーキテクチャを見る</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share ">
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button>
+
+  <button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+  ></button><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav></aside><aside class="article-time">
+    <time datetime="2022-05-27 22:21 +0900">Post: 2022/05/27 22:21 &#43;0900</time>
+    <aside class="update">Update: 2022/05/28 07:15 &#43;0900</aside>
+  </aside><p>クラウド、エッジーサーバー向けに性能、電力効率、コストに優れたプロセッサを開発、提供する Ampere は、先日公開した「Ampere Strategy &amp; Product Roadmap Update, 2022」にて、独自設計のコアを採用する <em>AmpereOne</em> を発表した。</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=rxPt7bpXGSk"
+  target="_blank" rel="noopener noreferrer"
+  title="Ampere Strategy & Product Roadmap Update, 2022 - YouTube"
+>Ampere Strategy & Product Roadmap Update, 2022 - YouTube</a></li>
+<li><a href="https://www.nextplatform.com/2022/05/27/ampere-roadmap-has-four-future-arm-server-chips/"
+  target="_blank" rel="noopener noreferrer"
+  title="Ampere Roadmap Has Four Future Arm Server Chips"
+>Ampere Roadmap Has Four Future Arm Server Chips</a></li>
+<li><a href="https://www.phoronix.com/scan.php?page=news_item&amp;px=AmpereOne"
+  target="_blank" rel="noopener noreferrer"
+  title="AmpereOne Announced As Ampere&rsquo;s In-House AArch64 Cloud Native Processor Design - Phoronix"
+>AmpereOne Announced As Ampere&rsquo;s In-House AArch64 Cloud Native Processor Design - Phoronix</a></li>
+</ul>
+<p>Ampere は最大 80コアの <em>Altra</em> と最大 128コアの <em>Altra Max</em> を既に提供しており、どちらもコアは <em>Arm Neoverse-N1</em> ベースであり、DDR4-3200 8ch、PCIe Gen4 128-Lanes をサポートしている。製造プロセスは TSMC 7nm。<br>
+今回発表された <em>AmpereOne</em> は DDR5、PCIe Gen5 をサポートし、TSMC 5nmプロセスで製造される。</p>
+<p><em>AmpereOne</em> が採用しているであろう <em>Ampere-1</em> マイクロアーキテクチャの最適化情報は既に LLVM、GCC に追加されており、そこから読み取れるマイクロアーキテクチャを <em>Arm Neoverse-N1</em> と比較してみる。</p>
+<h2 id="n1">Neoverse-N1<a href="#n1" class="head-cur-link"></a>
+</h2>
+<p>先に <em>Neoverse-N1</em> アーキテクチャに触れると、ISA は Armv8.2、デコード幅は 4命令、L1命令キャッシュサイズは 64KB。<br>
+リネームユニットはデコードされた命令 (micro-ops, uops, Mop) を最大 4命令受け取り、re-order buffer (ROB) は 128エントリ持つ。<br>
+バックエンド部には、Integer ALU 3ポート、ASIMD (FP, SIMD) 2ポート、AGU (Adress Generation Unit, Load/Store) 2ポート、Branchユニット 1ポートを持ち、計 8ポートを備える。パイプラインは 11段。<br>
+L1データキャッシュサイズは 64KB、コアごとに L2キャッシュを持ち、512 KB と 1MB の構成が選択可能。<em>Ampere Altra/Altra Max</em> は 1MB の構成を取っている。</p>
+<ul>
+<li><a href="https://www.arm.com/ja/products/silicon-ip-cpu/neoverse/neoverse-n1"
+  target="_blank" rel="noopener noreferrer"
+  title="Neoverse N1 – Arm®"
+>Neoverse N1 – Arm®</a></li>
+<li><a href="https://en.wikichip.org/wiki/arm_holdings/microarchitectures/neoverse_n1"
+  target="_blank" rel="noopener noreferrer"
+  title="Neoverse N1 - Microarchitectures - ARM - WikiChip"
+>Neoverse N1 - Microarchitectures - ARM - WikiChip</a></li>
+<li><a href="https://hc33.hotchips.org/assets/program/conference/day1/20210818_Hotchips_NeoverseN2.pdf"
+  target="_blank" rel="noopener noreferrer"
+  title="An interactive guide to the CPU roadmap - 20210818_Hotchips_NeoverseN2.pdf"
+>An interactive guide to the CPU roadmap - 20210818_Hotchips_NeoverseN2.pdf</a></li>
+</ul>
+<h2 id="ampere-1">Ampere-1<a href="#ampere-1" class="head-cur-link"></a>
+</h2>
+<ul>
+<li><a href="https://gcc.gnu.org/pipermail/gcc-patches/2021-November/583030.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH v1] aarch64: enable Ampere-1 CPU"
+>[PATCH v1] aarch64: enable Ampere-1 CPU</a></li>
+<li><a href="https://github.com/llvm/llvm-project/commit/64816e68f4419a9e14c23be8aa96fa412bed7e12"
+  target="_blank" rel="noopener noreferrer"
+  title="[AArch64] Support for Ampere1 core · llvm/llvm-project@64816e6"
+>[AArch64] Support for Ampere1 core · llvm/llvm-project@64816e6</a>
+<ul>
+<li><a href="https://github.com/llvm/llvm-project/blob/64816e68f4419a9e14c23be8aa96fa412bed7e12/llvm/lib/Target/AArch64/AArch64SchedAmpere1.td"
+  target="_blank" rel="noopener noreferrer"
+  title="llvm-project/AArch64SchedAmpere1.td at 64816e68f4419a9e14c23be8aa96fa412bed7e12 · llvm/llvm-project"
+>llvm-project/AArch64SchedAmpere1.td at 64816e68f4419a9e14c23be8aa96fa412bed7e12 · llvm/llvm-project</a></li>
+<li><a href="https://github.com/llvm/llvm-project/blob/731f0e27ec110443aa5faaceda4b20adafbddcc7/llvm/lib/Target/AArch64/AArch64.td"
+  target="_blank" rel="noopener noreferrer"
+  title="llvm-project/AArch64.td at 731f0e27ec110443aa5faaceda4b20adafbddcc7 · llvm/llvm-project"
+>llvm-project/AArch64.td at 731f0e27ec110443aa5faaceda4b20adafbddcc7 · llvm/llvm-project</a></li>
+</ul>
+</li>
+</ul>
+<p><em>Ampere-1</em> アーキテクチャの ISA は Armv8.6-A、デコード幅は 4命令。このデコード幅について、GCC へのパッチ内で Philipp Tomsich 氏は、最新のマイクロアーキテクチャと同様に、最大ディスパッチレートとスケジューラに発行される micro-ops の最大レートの中間、妥協点だと語っている。<br>
+また SVE (Scalable Vector Extension) はサポートしない。</p>
+<blockquote>
+<pre><code> The Ampere-1 implements the ARMv8.6 architecture in A64 mode and is
+ modelled as a 4-wide issue (as with all modern micro-architectures,
+ the chosen issue rate is a compromise between the maximum dispatch
+ rate and the maximum rate of uops issued to the scheduler).
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gcc.gnu.org/pipermail/gcc-patches/2021-November/583030.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH v1] aarch64: enable Ampere-1 CPU"
+>[PATCH v1] aarch64: enable Ampere-1 CPU</a></cite>
+</div>
+
+</blockquote>
+<p>リネームユニットへの発行レート (issue rate) も <em>Neoverse-N1</em> と同じ 4命令とされる。<br>
+ROB は 172エントリとなり、<em>Neoverse-N1</em> と比較して x1.5 の規模となる。</p>
+<blockquote>
+<pre><code> // The Ampere-1 core is an out-of-order micro-architecture.  The front
+ // end has branch prediction, with a 10-cycle recovery time from a
+ // mispredicted branch.  Instructions coming out of the front end are
+ // decoded into internal micro-ops (uops).
+	
+ def Ampere1Model : SchedMachineModel {
+   let IssueWidth            =   4;  // 4-way decode and dispatch
+   let MicroOpBufferSize     = 174;  // micro-op re-order buffer size
+   let LoadLatency           =   4;  // Optimistic load latency
+   let MispredictPenalty     =  10;  // Branch mispredict penalty
+   let LoopMicroOpBufferSize =  32;  // Instruction queue size
+   let CompleteModel = 1;
+	
+   list&lt;Predicate&gt; UnsupportedFeatures = !listconcat(SVEUnsupported.F,
+                                                     SMEUnsupported.F);
+ }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/64816e68f4419a9e14c23be8aa96fa412bed7e12/llvm/lib/Target/AArch64/AArch64SchedAmpere1.td#L14-L29"
+  target="_blank" rel="noopener noreferrer"
+  title="llvm-project/AArch64SchedAmpere1.td at 64816e68f4419a9e14c23be8aa96fa412bed7e12 · llvm/llvm-project"
+>llvm-project/AArch64SchedAmpere1.td at 64816e68f4419a9e14c23be8aa96fa412bed7e12 · llvm/llvm-project</a></cite>
+</div>
+
+</blockquote>
+<p>バックエンド部には Integer ALU 4ポート、AGU (Load/Store) 2ポート、ASIMD (SIMD, FP, Cypto) 2ポートを備える。<br>
+計 8ポートと、<em>Neoverse-N1</em> と同じポート数であり、AGU と ASIMD は基本的に同じ構成と思われるが、Integer ALU の構成は異なっているように見える。</p>
+<blockquote>
+<pre><code> //===----------------------------------------------------------------------===//
+ // Define each kind of processor resource and number available on Ampere-1.
+ // Ampere-1 has 12 pipelines that 8 independent scheduler (4 integer, 2 FP,
+ // and 2 memory) issue into.  The integer and FP schedulers can each issue
+ // one uop per cycle, while the memory schedulers can each issue one load
+ // and one store address calculation per cycle.
+	
+ def Ampere1UnitA  : ProcResource&lt;2&gt;;  // integer single-cycle, branch, and flags r/w
+ def Ampere1UnitB  : ProcResource&lt;2&gt;;  // integer single-cycle, and complex shifts
+ def Ampere1UnitBS : ProcResource&lt;1&gt;;  // integer multi-cycle
+ def Ampere1UnitL  : ProcResource&lt;2&gt;;  // load
+ def Ampere1UnitS  : ProcResource&lt;2&gt;;  // store address calculation
+ def Ampere1UnitX  : ProcResource&lt;1&gt;;  // FP and vector operations, and flag write
+ def Ampere1UnitY  : ProcResource&lt;1&gt;;  // FP and vector operations, and crypto
+ def Ampere1UnitZ  : ProcResource&lt;1&gt;;  // FP store data and FP-to-integer moves
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/64816e68f4419a9e14c23be8aa96fa412bed7e12/llvm/lib/Target/AArch64/AArch64SchedAmpere1.td#L33-L47"
+  target="_blank" rel="noopener noreferrer"
+  title="llvm-project/AArch64SchedAmpere1.td at 64816e68f4419a9e14c23be8aa96fa412bed7e12 · llvm/llvm-project"
+>llvm-project/AArch64SchedAmpere1.td at 64816e68f4419a9e14c23be8aa96fa412bed7e12 · llvm/llvm-project</a></cite>
+</div>
+
+</blockquote>
+<p>基本的な算術演算命令は最大 4ポート (2x UnitA, 2x UnitB) で実行可能であり、Branch命令は最大 2ポート (2x UnitA)、除算命令のような複数サイクルを必要とする複雑な命令は 1ポート (1x UnitBS {UnitB?}) で実行される。</p>
+<blockquote>
+<pre><code> // For basic arithmetic, we have more flexibility for short shifts (LSL shift &lt;= 4),
+ // which are a single uop, and for extended registers, which have full flexibility
+ // across Unit A or B for both uops.
+ def Ampere1Write_Arith : SchedWriteVariant&lt;[
+                                 SchedVar&lt;RegExtendedPred, [Ampere1Write_2cyc_2AB]&gt;,
+                                 SchedVar&lt;AmpereCheapLSL,  [Ampere1Write_1cyc_1AB]&gt;,
+                                 SchedVar&lt;NoSchedPred,     [Ampere1Write_2cyc_1B_1AB]&gt;]&gt;;
+	
+ def Ampere1Write_ArithFlagsetting : SchedWriteVariant&lt;[
+                                 SchedVar&lt;RegExtendedPred, [Ampere1Write_2cyc_1AB_1A]&gt;,
+                                 SchedVar&lt;AmpereCheapLSL,  [Ampere1Write_1cyc_1A]&gt;,
+                                 SchedVar&lt;NoSchedPred,     [Ampere1Write_2cyc_1B_1A]&gt;]&gt;;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/64816e68f4419a9e14c23be8aa96fa412bed7e12/llvm/lib/Target/AArch64/AArch64SchedAmpere1.td#L567-L578"
+  target="_blank" rel="noopener noreferrer"
+  title="llvm-project/AArch64SchedAmpere1.td at 64816e68f4419a9e14c23be8aa96fa412bed7e12 · llvm/llvm-project"
+>llvm-project/AArch64SchedAmpere1.td at 64816e68f4419a9e14c23be8aa96fa412bed7e12 · llvm/llvm-project</a></cite>
+</div>
+
+</blockquote>
+<p>GCC 内の最適化情報では、<em>Ampere-1</em> の L2キャッシュサイズは 2048KB となっている。<br>
+これがコアごとのサイズであれば、<em>Neoverse-N1</em> ベースの <em>Altra/Altra Max</em> から倍のサイズとなる。</p>
+<blockquote>
+<pre><code> +static const cpu_prefetch_tune ampere1_prefetch_tune =
+ +{
+ +  0,			/* num_slots  */
+ +  64,			/* l1_cache_size  */
+ +  64,			/* l1_cache_line_size  */
+ +  2048,			/* l2_cache_size  */
+ +  true,			/* prefetch_dynamic_strides */
+ +  -1,			/* minimum_stride */
+ +  -1			/* default_opt_level  */
+ +};
+ +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gcc.gnu.org/pipermail/gcc-patches/2021-November/583030.html"
+  target="_blank" rel="noopener noreferrer"
+  title="[PATCH v1] aarch64: enable Ampere-1 CPU"
+>[PATCH v1] aarch64: enable Ampere-1 CPU</a></cite>
+</div>
+
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Arm</th>
+<th style="text-align:center">Neoverse-N1</th>
+<th style="text-align:center">Ampere-1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Decode width</td>
+<td style="text-align:center">4</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td style="text-align:left">ROB</td>
+<td style="text-align:center">128</td>
+<td style="text-align:center">174</td>
+</tr>
+<tr>
+<td style="text-align:left">Pipeline Depth</td>
+<td style="text-align:center">10</td>
+<td style="text-align:center">12</td>
+</tr>
+<tr>
+<td style="text-align:left">ALU</td>
+<td style="text-align:center">3 (+1 Branch)</td>
+<td style="text-align:center">4</td>
+</tr>
+<tr>
+<td style="text-align:left">AGU</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:left">ASIMD (SIMD,FP)</td>
+<td style="text-align:center">2</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td style="text-align:left">Cache Line size</td>
+<td style="text-align:center">64</td>
+<td style="text-align:center">64</td>
+</tr>
+<tr>
+<td style="text-align:left">L2 cache</td>
+<td style="text-align:center">512/1024 KB</td>
+<td style="text-align:center">2048 KB</td>
+</tr>
+</tbody>
+</table>
+<p><em>Ampere-1</em> アーキテクチャは全体的に見て ROB や L2キャッシュサイズの増加といった実行効率の向上を目的としたと思われる点が目立ち、デコード幅やバックエンド部は <em>Neoverse-N1</em> と比較して増やしていない。<br>
+<em>Ampere Altra/Altra Max</em> 同様に電力効率やソケットあたりのコア数を重視した結果ではないかと思われる。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+</h3>
+<ul>
+<li><a href="https://amperecomputing.com/press/2020-03-03/ampere-altra---industrys-first-80-core-server-processor-unveiled.html"
+  target="_blank" rel="noopener noreferrer"
+  title="Press Release Details"
+>Press Release Details</a></li>
+</ul>
+</section>
+
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/arm" class="bottom-tag-link"  title="Arm">#Arm</a></nav><aside class="article-bottom-misc delay-page"><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/05/27/ampere-1-arch.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.96.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/ampere/" class="menu-cat-tag-lower">Ampere</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/arm/" class="menu-cat-tag-lower">Arm</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.96.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+    <label class="menu-open-label" for="menu-open"></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+    <label class="menu-close-label" for="menu-close"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/ampere/" class="menu-cat-tag-lower">Ampere</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/arm/" class="menu-cat-tag-lower">Arm</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<div id="msg" hidden></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+  </body>
+</html>
