@@ -3,21 +3,21 @@
   <head><meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <meta name="format-detection" content="telephone=no, address=no, email=no">
-  <base href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/">
+  <base href="https://www.coelacanth-dream.com/posts/2022/06/07/bios-resizable-bar-option-effect/">
   <meta property="og:site_name" content="Coelacanth&#39;s Dream">
   <meta name="twitter:card" content="summary">
   <meta property="og:type" content="article">
-  <title>RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&#39;s Dream</title>
-  <meta property="og:title" content="RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&#39;s Dream">
-  <meta name="twitter:title" content="RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/">
+  <title>UEFI/BIOS の Resizable BAR オプションが与える影響 | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="UEFI/BIOS の Resizable BAR オプションが与える影響 | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="UEFI/BIOS の Resizable BAR オプションが与える影響 | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/06/07/bios-resizable-bar-option-effect/">
   <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
   <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
-  <meta name="url" content="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/">
-  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/06/07/bios-resizable-bar-option-effect/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/06/07/bios-resizable-bar-option-effect/">
   <meta property="og:locale" content="ja_JP">
   <meta name="author" content="Umio Yasuno">
   <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
-  <meta name="keywords" content="RadeonSI, Smart Access Memory, RADV, Coelacanth&#39;s Dream">
+  <meta name="keywords" content="Smart Access Memory, Coelacanth&#39;s Dream">
 
     <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4050 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(4,auto)2rem/.5vw 1vw auto 2vw;gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:3/-2;margin:1vh 0 0;contain:layout;font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/3;grid-column:1/-1;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;contain:content;display:none}.slide{visibility:hidden}footer{visibility:hidden;grid-row:3/4;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1e958b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:.5rem;height:.5rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:linear-gradient(to bottom,#0000 60%,#8882 60%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#8002 33.4%,#0802 33.4%,#0802 66.8%,#0082 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f566b;border-color:#105d74 #0b4050 #0b4050 #105d74;border-radius:.1rem;background-color:#0f566b}.sb:active{background-color:#0c4759}.cp-url::before,.cp-url-title::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/calc(160px + 1.2rem).2rem .6rem auto .8rem}.text{grid-row:auto;grid-column:2/-1}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:160px;top:1vh;left:0;padding:0 .6rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}footer{display:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:hidden;grid-column:2/-1}.text{gap:1.2rem 0}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
 
@@ -27,14 +27,14 @@
     <script type="application/ld+json">{
   "@context" : "https://schema.org/",
   "@type" : "Article",
-  "name"     : "RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる",
-  "headline" : "RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる",
+  "name"     : "UEFI/BIOS の Resizable BAR オプションが与える影響",
+  "headline" : "UEFI/BIOS の Resizable BAR オプションが与える影響",
   "author" : {
     "@type" : "Person",
     "name"  : "Umio Yasuno"
   },
-    "dateCreated"   : "2020-12-07",
-    "datePublished" : "2020-12-07",
+    "dateCreated"   : "2022-06-07",
+    "datePublished" : "2022-06-07",
     "dateModified"  : "2022-06-08",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
@@ -45,7 +45,7 @@
 </header>
 <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 
-    <main class="text"><h1 class="page-title">RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる</h1>
+    <main class="text"><h1 class="page-title">UEFI/BIOS の Resizable BAR オプションが与える影響</h1>
 
 
   <article class="page-main delay-page">
@@ -80,52 +80,113 @@
     data-rss-name="Updated"
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
-    <time datetime="2020-12-07 05:32 +0900">Post: 2020/12/07 05:32 &#43;0900</time>
+    <time datetime="2022-06-07 21:48 +0900">Post: 2022/06/07 21:48 &#43;0900</time>
     <aside class="update">Update: 2022/06/08 01:28 &#43;0900</aside>
-  </aside><p>AMD GPU のオープンソース OpenGL ドライバー <strong>RadeonSI</strong> に、<em>Smart Access Memory / Resizeable PCI BAR</em> に向けた最適化パッチが投稿された。<br>
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7951/commits"
+  </aside><p>AMDGPUドライバーのバグを報告するレポジトリである <a href="https://gitlab.freedesktop.org/drm/amd"
   target="_blank" rel="noopener noreferrer"
-  title="ac,radeonsi: optimizations for Smart Access Memory (all VRAM visible) (!7951) · Merge Requests · Mesa / mesa · GitLab"
->ac,radeonsi: optimizations for Smart Access Memory (all VRAM visible) (!7951) · Merge Requests · Mesa / mesa · GitLab</a></span>
+  title="drm / amd · GitLab"
+>drm / amd · GitLab</a> に、System UEFI/BIOS の設定によって BAR (Base Address Register) への書き込みが遅くなる問題が報告されている。<br>
+報告者の <a href="https://github.com/ishitatsuyuki"
+  target="_blank" rel="noopener noreferrer"
+  title="Tatsuyuki Ishi"
+>Tatsuyuki Ishi</a> 氏はベンダー非依存な NVIDIA Reflex の代替ミドルウェア <a href="https://github.com/ishitatsuyuki/LatencyFleX"
+  target="_blank" rel="noopener noreferrer"
+  title="LatencyFleX"
+>LatencyFleX</a> の開発者であり、Mesa3D RADVドライバーを始め多くの OSSプロジェクトに参加、開発を行っている。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/drm/amd/-/issues/1864"
+  target="_blank" rel="noopener noreferrer"
+  title="BAR writes are slow with certain machine configurations (#1864) · Issues · drm / amd · GitLab"
+>BAR writes are slow with certain machine configurations (#1864) · Issues · drm / amd · GitLab</a></li>
+</ul>
+<h2 id="term">Above 4G Decoding, Resizable BAR, Smart Access Memory &hellip;<a href="#term" class="head-cur-link"></a>
+</h2>
+<p>先に用語整理。<br>
+<code>Above 4G Decoding</code> は 4GB を超える MMIO (Memory Mapped IO) を許可、可能にする機能。<br>
+<code>Resizable BAR</code> は PCIe の仕様にある機能であり、BAR のサイズを 64-bitアドレス範囲で指定、また可変させられるようになる。(基本 GPU VRAM、デバイスのローカルメモリに合わせられる)<br>
+<code>Smart Access Memory</code> はほとんど AMD のマーケティング用語であり、CPU から VRAM がすべて見えている状態、BAR のサイズが VRAM 以上の状態を指している。<br>
+ただ Mesa3D (RadeonSI/RADV) においては <code>Resizable BAR</code> 向けの最適化オプションを有効化した状態を <code>Smart Access Memory</code> と呼んでもいる。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/"
+  
+  title="RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&rsquo;s Dream"
+>RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<p>パッチを投稿した AMD の <a href="https://gitlab.freedesktop.org/mareko"
+<p>AMD AM4プラットフォームの UEFI/BIOS (AMD AGESA &gt;1.1.0.0) では、<code>Above 4G Decoding [Enabled/Disabled]</code> と <code>Resizable BAR [Auto/Enabled/Disabled]</code> のオプションがある。<br>
+<code>Above 4G Decoding [Enabled]</code> だけでも <code>Smart Access Memory</code> の状態になるが、AMD 公式サイトでは <code>Resizable BAR [Enabled]</code> も <code>Smart Access Memory</code> の有効に必要だとしている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+正直 <code>Resizable BAR</code> オプションで何が変更されるのかは不明だが、このオプションが結果的に BAR への書き込み速度に影響する。</p>
+<h2 id="bar-write">BAR への書き込み速度<a href="#bar-write" class="head-cur-link"></a>
+</h2>
+<p>Tatsuyuki Ishi 氏は Vulkan API を用いて、BAR の領域に書き込むようにしたベンチマークを開発し、検証した結果、<code>Resizable BAR [Enabled]</code> では遅くなることを報告している。<br>
+ベンチマークのソースコードは以下のリンク先で公開されている。自分の理解では、と前置くと、当該ベンチマークではメモリタイプに <code>DEVICE_LOCAL | HOST_COHERENT</code> のフラグを立てることで BAR の領域を使うようにし、8MiB ごとに書き込み (zero fill)、その速度を測定している。<br>
+ベンチマークでは VRAM の 90% を使うことを想定しており、実行するにはソースコードの Line 31 を変更して搭載 GPU の VRAM サイズに合わせる必要があると氏はコメントしている。2048 は 16GB (2048 * 8MiB) を想定した値となる。</p>
+<ul>
+<li><a href="https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc"
   target="_blank" rel="noopener noreferrer"
-  title="Marek Olšák"
->Marek Olšák</a> 氏は、CPU から一度に GPU VRAM へのアクセスが可能な (CPU から見えている) 状態を <em>Smart Access Memory</em> としている。<br>
-既に各メディア、テクニカルライターへの AMD による説明から、PCI Express の仕様に存在する <em>Resizeable PCI BAR</em> を利用したものという話が出ていたが、それは Linux環境においても同様で、<em>Smart Access Memory</em> 自体は <em>Resizeable PCI BAR</em> 以上に特別なことはしていないと捉えてよさそうだ。</p>
-<p>今回 <strong>RadeonSI</strong> ドライバーには、一度に最大 256MB までしかアクセスできない状況を想定した、バッファを確保するコードを <em>Smart Access Memory / Resizeable PCI BAR</em> が有効な場合はスキップするといった最適化が行なわれている。</p>
-<p>以前検証を行なった時は、Vulkan API を用いるソフトウェアのみを試したが、OpenGL API でもある程度の効果はあるのだろう。<br>
-一連のパッチがメインラインに組み込まれた時は再度検証するつもりだが、やっぱり Linux でも動作する OpenGLベンチマークというのは少なかったりする。</p>
-<p>その後 <strong>RADV (Vulkan)</strong> ドライバーにも同様の最適化パッチが投稿された。<br>
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7979"
+  title="https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc"
+>https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc</a></li>
+</ul>
+<p>Tatsuyuki Ishi 氏の GIGABYTE X570 AORUS ELITE + Ryzen 3 3700X + RX 5700 XT を用いた検証では、速い状態で ~1.5ms、遅い状態で ~20ms。UEFI/BIOS アップデート後に多少改善され、遅い状態で ~10ms となったが、まだまだ充分な速度ではないとしている。<br>
+Tatsuyuki Ishi 氏は、X370 + RDNA 2 を用いた他のユーザーの検証でも同じ問題が再現できたことを報告している。<br>
+自環境 (GIGABYTE A520 S2H + Ryzen 5 5600G + RX 560 4GB) で検証したところでは、速い状態 (<code>Resizable BAR [Disbaled]</code>) で ~2ms、遅い状態 (<code>Resizable BAR [Auto]</code>) で ~15ms という結果になった。RX 560 (Polaris11) という数世代前の AMDGPU でも再現できたことになる。</p>
+<p>Tatsuyuki Ishi 氏はこの問題に関して、AMDGPUドライバーのソースコードも調査している。<br>
+氏の調査によれば <code>amdgpu_device_resize_fb_bar</code> 関数内の以下引用部にパッチを当てることで (恐らくは無効化、コメントアウトするものと思われる)、Linux Kernel側で BAR のリサイズ、移動処理が行われ、問題が回避できる。<br>
+System UEFI/BIOS で既に Resizable BAR (large BAR) が有効化、マッピングされている場合は、Linux Kernel側の処理をスキップするようになっている。<br>
+また先に書いたように、UEFI/BIOS に <code>Resizable BAR [Disabled]</code> を設定することでも回避できる。<br>
+自環境でも <code>Resizable BAR [Disabled]</code> の場合に、<code>pci_release_resource, pci_assign_unassigned_bus_resources</code> 関数が呼ばれたことによるログメッセージが出力されていることが確認できた。</p>
+<blockquote>
+<pre><code> 	/* skip if the bios has already enabled large BAR */
+ 	if (adev-&gt;gmc.real_vram_size &amp;&amp;
+ 	    (pci_resource_len(adev-&gt;pdev, 0) &gt;= adev-&gt;gmc.real_vram_size))
+ 		return 0;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=v5.18.2#n1199"
   target="_blank" rel="noopener noreferrer"
-  title="radv: Use VRAM for CS & upload buffer if all VRAM is CPU-visible. (!7979) · Merge Requests · Mesa / mesa · GitLab"
->radv: Use VRAM for CS & upload buffer if all VRAM is CPU-visible. (!7979) · Merge Requests · Mesa / mesa · GitLab</a></span>
-</p>
-<p><strong>RADV</strong> の開発者である <a href="https://gitlab.freedesktop.org/bnieuwenhuizen"
-  target="_blank" rel="noopener noreferrer"
-  title="Bas Nieuwenhuizen"
->Bas Nieuwenhuizen</a> 氏は検証も行なっており、Basemark では +3%、SotTR (Shadow of the Tomb Raider) では +1fps (0-4%) の性能向上を確認できたとコメントしている。</p>
+  title="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=v5.18.2#n1199"
+>https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=v5.18.2#n1199</a></cite>
+</div>
+
+</blockquote>
+<p><code>Resizable BAR [Enabled]</code> によって System UEFI/BIOS 側でマッピングされている場合に BAR への書き込み速度は遅くなり、<code>Resizable BAR [Disabled]</code> によって Linux Kernel側でリサイズ、再マッピング処理が行われた場合は速くなる。<br>
+問題が発生する条件は最低限判明しているが、何故発生するかは不明。<br>
+AMD の Alex Deucher 氏は当該 issue 内で、System UEFI/BIOS が誤った CPUキャッシュマッピングを設定しているのでは、とコメントしているが、原因の判明にはまだ時間が掛かるものと思われる。</p>
+<p>この問題がゲームのような実アプリケーションの性能にどれだけ影響するかも不明。<br>
+BAR への書き込み速度と同様の影響があるのであれば、もっと以前から他で話題になっていいように思う。<br>
+また Tatsuyuki Ishi 氏の環境も自環境も GIGABYTE M/B を用いており、この問題が他ベンダーの M/B、<code>Resizable BAR [Auto/Enabled/Disabled]</code> オプションを備える AMD AGESA &gt;1.1.0.0 の UEFI/BIOS でも発生するのかは判然としない。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
-<li><a href="https://ascii.jp/elem/000/004/034/4034588/2/"
+<li><a href="https://asawicki.info/news_1740_vulkan_memory_types_on_pc_and_how_to_use_them"
   target="_blank" rel="noopener noreferrer"
-  title="ASCII.jp：「Radeon RX 6800 XT/6800」で強いRadeonが久々に戻ってきた！【前編】 (2/7)"
->ASCII.jp：「Radeon RX 6800 XT/6800」で強いRadeonが久々に戻ってきた！【前編】 (2/7)</a></li>
-<li><a href="https://www.4gamer.net/games/461/G046171/20201124135/"
+  title="Vulkan Memory Types on PC and How to Use Them"
+>Vulkan Memory Types on PC and How to Use Them</a></li>
+<li><a href="https://gpuopen.com/learn/vulkan-device-memory/"
   target="_blank" rel="noopener noreferrer"
-  title="西川善司の3DGE：「Radeon RX 6000」詳報。高性能の鍵となる「Infinity Cache」と「Smart Access Memory」の仕組みとは"
->西川善司の3DGE：「Radeon RX 6000」詳報。高性能の鍵となる「Infinity Cache」と「Smart Access Memory」の仕組みとは</a></li>
+  title="Using Vulkan® Device Memory - GPUOpen"
+>Using Vulkan® Device Memory - GPUOpen</a></li>
+<li><a href="https://old.reddit.com/r/linux_gaming/comments/v58ts5/quick_heads_up_about_something_i_discovered/"
+  target="_blank" rel="noopener noreferrer"
+  title="Quick Heads up about something I discovered relating to Resizable BAR, you might be missing out on a huge performance uplift : linux_gaming"
+>Quick Heads up about something I discovered relating to Resizable BAR, you might be missing out on a huge performance uplift : linux_gaming</a></li>
 </ul>
 </section>
 
-</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/radeonsi" class="bottom-tag-link"  title="RadeonSI">#RadeonSI</a><a href="https://www.coelacanth-dream.com/tags/smart_access_memory" class="bottom-tag-link"  title="Smart_Access_Memory">#Smart Access Memory</a><a href="https://www.coelacanth-dream.com/tags/radv" class="bottom-tag-link"  title="RADV">#RADV</a></nav><aside class="article-bottom-misc delay-page">
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.amd.com/en/technologies/smart-access-memory"
+  target="_blank" rel="noopener noreferrer"
+  title="AMD Smart Access Memory | AMD"
+>AMD Smart Access Memory | AMD</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/smart_access_memory" class="bottom-tag-link"  title="Smart_Access_Memory">#Smart Access Memory</a></nav><aside class="article-bottom-misc delay-page">
 
 <a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 
 
-<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/12/07/radeonsi-sam-optimization.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/06/07/bios-resizable-bar-option-effect.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
 </aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
   <a href="https://www.coelacanth-dream.com/">Home</a>
   <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
@@ -149,7 +210,7 @@
   <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
   <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
 <nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
-  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a><a href="https://www.coelacanth-dream.com/tags/radv/" class="menu-cat-tag-lower">RADV</a><a href="https://www.coelacanth-dream.com/tags/smart_access_memory/" class="menu-cat-tag-lower">Smart Access Memory</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/smart_access_memory/" class="menu-cat-tag-lower">Smart Access Memory</a>
   </nav></nav><nav class="rss-block"><a
     href="https://www.coelacanth-dream.com/posts/index.xml"
     class="rss sb"
@@ -212,7 +273,7 @@
   <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
   <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
 <nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
-  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a><a href="https://www.coelacanth-dream.com/tags/radv/" class="menu-cat-tag-lower">RADV</a><a href="https://www.coelacanth-dream.com/tags/smart_access_memory/" class="menu-cat-tag-lower">Smart Access Memory</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/smart_access_memory/" class="menu-cat-tag-lower">Smart Access Memory</a>
   </nav></nav><nav class="rss-block"><a
     href="https://www.coelacanth-dream.com/posts/index.xml"
     class="rss sb"
