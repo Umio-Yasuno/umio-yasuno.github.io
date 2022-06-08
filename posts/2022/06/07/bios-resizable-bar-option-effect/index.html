@@ -81,7 +81,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-06-07 21:48 +0900">Post: 2022/06/07 21:48 &#43;0900</time>
-    <aside class="update">Update: 2022/06/08 01:28 &#43;0900</aside>
+    <aside class="update">Update: 2022/06/08 11:49 &#43;0900</aside>
   </aside><p>AMDGPUドライバーのバグを報告するレポジトリである <a href="https://gitlab.freedesktop.org/drm/amd"
   target="_blank" rel="noopener noreferrer"
   title="drm / amd · GitLab"
@@ -113,26 +113,27 @@
 </p>
 <p>AMD AM4プラットフォームの UEFI/BIOS (AMD AGESA &gt;1.1.0.0) では、<code>Above 4G Decoding [Enabled/Disabled]</code> と <code>Resizable BAR [Auto/Enabled/Disabled]</code> のオプションがある。<br>
 <code>Above 4G Decoding [Enabled]</code> だけでも <code>Smart Access Memory</code> の状態になるが、AMD 公式サイトでは <code>Resizable BAR [Enabled]</code> も <code>Smart Access Memory</code> の有効に必要だとしている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
-正直 <code>Resizable BAR</code> オプションで何が変更されるのかは不明だが、このオプションが結果的に BAR への書き込み速度に影響する。</p>
+正直 <code>Resizable BAR</code> オプションで何が変更されるのかは不明であり、AMD や M/Bベンダーも詳細を公開していないが、このオプションが結果的に BAR への書き込み速度に影響する。</p>
 <h2 id="bar-write">BAR への書き込み速度<a href="#bar-write" class="head-cur-link"></a>
 </h2>
-<p>Tatsuyuki Ishi 氏は Vulkan API を用いて、BAR の領域に書き込むようにしたベンチマークを開発し、検証した結果、<code>Resizable BAR [Enabled]</code> では遅くなることを報告している。<br>
-ベンチマークのソースコードは以下のリンク先で公開されている。自分の理解では、と前置くと、当該ベンチマークではメモリタイプに <code>DEVICE_LOCAL | HOST_COHERENT</code> のフラグを立てることで BAR の領域を使うようにし、8MiB ごとに書き込み (zero fill)、その速度を測定している。<br>
-ベンチマークでは VRAM の 90% を使うことを想定しており、実行するにはソースコードの Line 31 を変更して搭載 GPU の VRAM サイズに合わせる必要があると氏はコメントしている。2048 は 16GB (2048 * 8MiB) を想定した値となる。</p>
+<p>Tatsuyuki Ishi 氏は Vulkan API を用いて BAR の領域に書き込むようにしたベンチマークを開発し、検証した結果、<code>Resizable BAR [Enabled]</code> 設定時に書き込み速度が明確に遅くなることを報告している。</p>
+<p>ベンチマークのソースコードは以下のリンク先で公開されている。自分の理解では、と前置くと、当該ベンチマークではメモリタイプに <code>DEVICE_LOCAL | HOST_COHERENT</code> のフラグを立てることで BAR の領域を使うようにし、8MiB ごとに書き込み (zero fill)、その速度を測定している。<br>
+ベンチマークでは VRAM の 90% を使うことを想定しており、実行するにはソースコードの Line 31 を変更して搭載 GPU の VRAM サイズに合わせる必要があると氏はコメントしている。2048 は 16GiB (2048 * 8MiB) を想定した値となる。</p>
 <ul>
 <li><a href="https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc"
   target="_blank" rel="noopener noreferrer"
   title="https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc"
 >https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc</a></li>
 </ul>
-<p>Tatsuyuki Ishi 氏の GIGABYTE X570 AORUS ELITE + Ryzen 3 3700X + RX 5700 XT を用いた検証では、速い状態で ~1.5ms、遅い状態で ~20ms。UEFI/BIOS アップデート後に多少改善され、遅い状態で ~10ms となったが、まだまだ充分な速度ではないとしている。<br>
+<p>Tatsuyuki Ishi 氏の GIGABYTE X570 AORUS ELITE + Ryzen 3 3700X + RX 5700 XT を用いた検証では、速い状態で ~1.5ms、遅い状態で ~20ms と、書き込み速度に約 10倍の違いが出ている。UEFI/BIOS アップデート後に多少改善され、遅い状態で ~10ms となったが、まだまだ充分な速度ではないとしている。<br>
 Tatsuyuki Ishi 氏は、X370 + RDNA 2 を用いた他のユーザーの検証でも同じ問題が再現できたことを報告している。<br>
 自環境 (GIGABYTE A520 S2H + Ryzen 5 5600G + RX 560 4GB) で検証したところでは、速い状態 (<code>Resizable BAR [Disbaled]</code>) で ~2ms、遅い状態 (<code>Resizable BAR [Auto]</code>) で ~15ms という結果になった。RX 560 (Polaris11) という数世代前の AMDGPU でも再現できたことになる。</p>
 <p>Tatsuyuki Ishi 氏はこの問題に関して、AMDGPUドライバーのソースコードも調査している。<br>
-氏の調査によれば <code>amdgpu_device_resize_fb_bar</code> 関数内の以下引用部にパッチを当てることで (恐らくは無効化、コメントアウトするものと思われる)、Linux Kernel側で BAR のリサイズ、移動処理が行われ、問題が回避できる。<br>
+氏の調査によれば <code>amdgpu_device_resize_fb_bar</code> 関数内の以下引用部にパッチを当てることで (恐らくは無効化、コメントアウトするものと思われる)、Linux Kernel側で BAR のリサイズ、再マッピングが行われ、問題が回避できる。<br>
 System UEFI/BIOS で既に Resizable BAR (large BAR) が有効化、マッピングされている場合は、Linux Kernel側の処理をスキップするようになっている。<br>
 また先に書いたように、UEFI/BIOS に <code>Resizable BAR [Disabled]</code> を設定することでも回避できる。<br>
-自環境でも <code>Resizable BAR [Disabled]</code> の場合に、<code>pci_release_resource, pci_assign_unassigned_bus_resources</code> 関数が呼ばれたことによるログメッセージが出力されていることが確認できた。</p>
+自環境でも <code>Resizable BAR [Disabled]</code> の場合に、<code>pci_release_resource, pci_assign_unassigned_bus_resources</code> 関数が呼ばれたことによるログメッセージが出力されていることが確認できた。<br>
+<code>Resizable BAR [Auto]</code> の場合は <code>(pci_resource_len(adev-&gt;pdev, 0) &gt;= adev-&gt;gmc.real_vram_size)</code> が <code>true</code> になり、スキップされてしまうのだとは思うが、それ以上の詳細は自分には分からない。</p>
 <blockquote>
 <pre><code> 	/* skip if the bios has already enabled large BAR */
  	if (adev-&gt;gmc.real_vram_size &amp;&amp;
@@ -147,11 +148,15 @@ System UEFI/BIOS で既に Resizable BAR (large BAR) が有効化、マッピン
 
 </blockquote>
 <p><code>Resizable BAR [Enabled]</code> によって System UEFI/BIOS 側でマッピングされている場合に BAR への書き込み速度は遅くなり、<code>Resizable BAR [Disabled]</code> によって Linux Kernel側でリサイズ、再マッピング処理が行われた場合は速くなる。<br>
-問題が発生する条件は最低限判明しているが、何故発生するかは不明。<br>
-AMD の Alex Deucher 氏は当該 issue 内で、System UEFI/BIOS が誤った CPUキャッシュマッピングを設定しているのでは、とコメントしているが、原因の判明にはまだ時間が掛かるものと思われる。</p>
+問題が発生する条件は最低限判明しているが、何故発生するかは不明。</p>
+<p>Tatsuyuki Ishi 氏は Windows環境でも問題が再現できるとしている。<br>
+また、氏は Linux Kernel にパッチを適用し、BAR が問題無い範囲で自由にマッピングできるようにした調査を行ない、アドレス範囲が <code>0xfc00000000..0xfdffffffff</code> では上位半分のみが遅く、<code>0xfe00000000..0xffffffffff</code> では全体が遅くなることを発見している。<br>
+このことから、マッピングのコンフリクトか PCIコントローラのバグではないかと氏は推測している。<br>
+AMD の Alex Deucher 氏は当該 issue 内で、System UEFI/BIOS が誤った CPUキャッシュマッピングを設定しているのではと推測、プラットフォームベンダーに報告するとコメントしている。<br>
+原因の判明にはもう少し時間が掛かるものと思われる。</p>
 <p>この問題がゲームのような実アプリケーションの性能にどれだけ影響するかも不明。<br>
 BAR への書き込み速度と同様の影響があるのであれば、もっと以前から他で話題になっていいように思う。<br>
-また Tatsuyuki Ishi 氏の環境も自環境も GIGABYTE M/B を用いており、この問題が他ベンダーの M/B、<code>Resizable BAR [Auto/Enabled/Disabled]</code> オプションを備える AMD AGESA &gt;1.1.0.0 の UEFI/BIOS でも発生するのかは判然としない。</p>
+また Tatsuyuki Ishi 氏の環境も自環境も GIGABYTE M/B を用いており、この問題が他ベンダーの M/B、<code>Resizable BAR [Auto/Enabled/Disabled]</code> オプションを備える AMD AGESA &gt;1.1.0.0 の UEFI/BIOS すべてでも発生するのかは判然としない。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
