@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/06/14/vangogh_lite/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>VanGogh_LITE (Mariner, Gopher) 向け AMDGPU ドライバーのソースコードを読んでみる | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="VanGogh_LITE (Mariner, Gopher) 向け AMDGPU ドライバーのソースコードを読んでみる | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="VanGogh_LITE (Mariner, Gopher) 向け AMDGPU ドライバーのソースコードを読んでみる | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/06/14/vangogh_lite/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/06/14/vangogh_lite/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/06/14/vangogh_lite/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="VanGogh, RDNA 2, VanGogh LITE, Coelacanth&#39;s Dream">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4050 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(4,auto)2rem/.5vw 1vw auto 2vw .5rem;gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:3/-2;margin:1vh 0 0;contain:layout;font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/3;grid-column:1/-2;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;contain:content;display:none}.slide{visibility:hidden}footer{visibility:hidden;grid-row:3/4;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1e958b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:.5rem;height:.5rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:linear-gradient(to bottom,#0000 60%,#8882 60%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#8002 33.4%,#0802 33.4%,#0802 66.8%,#0082 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f566b;border-color:#105d74 #0b4050 #0b4050 #105d74;border-radius:.1rem;background-color:#0f566b}.sb:active{background-color:#0c4759}.cp-url::before,.cp-url-title::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/calc(160px + 1.2rem).2rem .6rem auto 0 .5rem}.text{grid-row:auto;grid-column:2/-2}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:160px;top:1vh;left:0;padding:0 .6rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}footer{display:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:hidden;grid-column:2/-1}.text{gap:1.2rem 0}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "VanGogh_LITE (Mariner, Gopher) 向け AMDGPU ドライバーのソースコードを読んでみる",
+  "headline" : "VanGogh_LITE (Mariner, Gopher) 向け AMDGPU ドライバーのソースコードを読んでみる",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-06-14",
+    "datePublished" : "2022-06-14",
+    "dateModified"  : "2022-06-14",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">VanGogh_LITE (Mariner, Gopher) 向け AMDGPU ドライバーのソースコードを読んでみる</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share "><button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL"
+  ></button><button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL &amp; Title"
+  ></button><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav></aside><aside class="article-time">
+    <time datetime="2022-06-14 01:47 +0900">Post: 2022/06/14 01:47 &#43;0900</time>
+    <aside class="update">Update: 2022/06/14 07:34 &#43;0900</aside>
+  </aside><p>Samsung Exynos 2200 SoC は GPU に <em>AMD RDNA 2 アーキテクチャ</em> ベースの <em>Xclipse 920</em> を採用している。<br>
+そして Exynos 2200 SoC を搭載する Samsung Galaxy S22 Ultra は Android OS を採用しており、その関係で Linux Kernel と <em>Xclipse 920</em> 向けの AMDGPU ドライバーのソースコードが公開されているため読んでみた。<br>
+ソースコードは <a href="https://opensource.samsung.com/uploadList"
+  target="_blank" rel="noopener noreferrer"
+  title="Samsung Open Source"
+>Samsung Open Source</a> からダウンロードでき、<em>SM-S908B</em> で検索すると出てくる。<br>
+今回参照したソースコードのバージョンは <code>S908BXXU2AVEH</code> となる。</p>
+<p>通常の AMDGPU ドライバーのソースコードは <code>drivers/gpu/drm/amd/</code> 下に置いてあるが、<em>Xclipse 920</em> 向けのドライバーは AMDGPU ドライバーをベースにしながら <code>drivers/gpu/samsung/{include, sgpu}/</code> 下に置かれている。</p>
+<h2 id="vgh_lite">VanGogh Lite<a href="#vgh_lite" class="head-cur-link"></a>
+</h2>
+<p><em>Xclipse 920</em> の <code>ASIC Type/Family</code> は <em>VanGogh_LITE</em> とされている。<br>
+<code>_LITE</code> は恐らくカスタム GPU に付けられるもので、過去には <em>Cyan Skilfish/Skillfish</em> に関連する GPU に <em>Navi10_LITE, Navi12_LITE</em> があった。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/02/05/cyan_skilfish-robin-apu/"
+  
+  title="Cyan Skilfishシリーズ、Navi10_LITE、Navi12_LITE に Robin に Ariel | Coelacanth&rsquo;s Dream"
+>Cyan Skilfishシリーズ、Navi10_LITE、Navi12_LITE に Robin に Ariel | Coelacanth&rsquo;s Dream</a></span>
+
+GC (Graphics, Compute) の IPバージョンは <code>10.4.0</code> とされる。</p>
+<p><em>Xclipse 920</em> のフルスペックは不明だが、ターゲットに合わせた <code>eval_mode</code> を指定し、最大 WGP (CU) 数を制限しダウングレードするカーネルパラメータが追加されている。<br>
+ShaderEngine 1基、RenderBackend 3基という設定は共通するが、<code>eval_mode=1</code> の場合は WGP 3基、<code>eval_mode=2</code> の場合は WGP 4基に再設定される。</p>
+<blockquote>
+<pre><code> /**
+  * DOC: eval_mode (int)
+  * Specify evaluation target.
+  * 0: disable evalation mode by default.
+  * 1: evaluation target is GC10.4(3RB, 3WGP, 1SE)
+  * 2: evaluation target is GC40.1(3RB, 4WGP, 1SE)
+  * it can be extended for other projects
+  */
+ int amdgpu_eval_mode = 0;
+ MODULE_PARM_DESC(eval_mode, &quot;Evaluate gpu performace. 0:disable 1:GC10.4 2:GC40.1&quot;);
+ module_param_named(eval_mode, amdgpu_eval_mode, int, 0444);
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/amdgpu_drv.c</cite>
+</div>
+
+</blockquote>
+<p>また、<code>eval_mode=1</code> には <code>M0</code>、<code>eval_mode=2</code> には <code>M1</code> という識別子も付けられている。</p>
+<blockquote>
+<pre><code>  enum eval_mode_config {
+ 	eval_mode_config_disabled           = 0,
+ 	eval_mode_config_gc_10_4            = 1, /* M0 */
+ 	eval_mode_config_gc_40_1            = 2, /* M1 */
+ 	eval_mode_config_end
+ };
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/amdgpu.h</cite>
+</div>
+
+</blockquote>
+<p>再設定を行う部分のコードにおいて、ShaderEngine あたりの ShaderArray 数は 1基とされており、これは <em>VanGogh</em> と同様の構成となる。<br>
+<em>RDNA 1/2 アーキテクチャ</em> では基本 ShaderEngine あたり ShaderArray 2基という構成を採っており、片方のみを無効化する設定も可能だが、<em>VanGogh</em> では最初から ShaderArray 1基のみを搭載する構成を採っている。<br>
+ShaderArray ごとに GL1キャッシュを持つため、1基の場合 GL1キャッシュが減ることになるが、その分ダイ面積を減らすことができる。</p>
+<blockquote>
+<pre><code> static struct gc_down_config gc_cfg_tb[] = {
+ 	{
+ 		eval_mode_config_disabled, // config_mode
+ 		false,                        // change_adapter_info
+ 		0,                            // wgps_per_sa
+ 		0,                            // rbs_per_sa
+ 		0,                            // se_count
+ 		0,                            // sas_per_se
+ 		0,                            // packers_per_sc
+ 		0,                            // num_scs
+ 		false,                        // write_shader_array_config
+ 		false,                        // use_reset_lowest_vgt_fw
+ 		true,                         // force_gl1_miss
+ 	},
+ 	{
+ 		eval_mode_config_gc_10_4, // config_mode M0
+ 		true,                     // change_adapter_info
+ 		3,                        // wgps_per_sa
+ 		3,                        // rbs_per_sa
+ 		1,                        // se_count
+ 		1,                        // sas_per_se
+ 		2,                        // packers_per_sc
+ 		1,                        // num_scs
+ 		true,                     // write_shader_array_config
+ 		true,                     // use_reset_lowest_vgt_fw
+ 		false,                    // force_gl1_miss
+ 	},
+ 	{
+ 		eval_mode_config_gc_40_1, // config_mode M1
+ 		true,                     // change_adapter_info
+ 		4,                        // wgps_per_sa
+ 		3,                        // rbs_per_sa
+ 		1,                        // se_count
+ 		1,                        // sas_per_se
+ 		2,                        // packers_per_sc
+ 		1,                        // num_scs
+ 		true,                     // write_shader_array_config
+ 		true,                     // use_reset_lowest_vgt_fw
+ 		false,                    // force_gl1_miss
+ 	},
+	
+ };
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/gfx_v10_0.c</cite>
+</div>
+
+</blockquote>
+<p><em>VanGogh_LITE</em> の ME (GFX Ring) と MEC (MicroEngine Compute, Compute Ring) の設定は、ME/MEC 共に 1基、ME/MEC あたり 1パイプ、パイプあたり 4キューとなっている。<br>
+これは他 <em>RDNA 1/2 アーキテクチャ</em> ベースの GPU の設定と異なる。<em>RDNA 1/2 アーキテクチャ</em> では ME 1基、ME あたり 1パイプ、パイプあたり 1キュー、MEC は 2基、MEC あたり 4パイプ、<em>RDNA 1 アーキテクチャ</em> はパイプあたり 8キュー、<em>RDNA 2 アーキテクチャ</em> は 4キューとなっている。<br>
+しかし最新の AMDGPU ドライバー内の設定と異なるというだけで、その意図までは読めない。またこのバージョンでは <em>Navi14</em> だけが ME 4基という設定になっているが、これも最新のバージョンとは異なる。</p>
+<blockquote>
+<pre><code> 	case CHIP_VANGOGH_LITE:
+ 		/* 4 queues on pipe0 of me */
+ 		adev-&gt;gfx.me.num_me = 1;
+ 		adev-&gt;gfx.me.num_pipe_per_me = 1;
+ 		adev-&gt;gfx.me.num_queue_per_pipe = 4;
+ 		/* 4 queues on pipe0 of mec0 */
+ 		adev-&gt;gfx.mec.num_mec = 1;
+ 		adev-&gt;gfx.mec.num_pipe_per_mec = 1;
+ 		adev-&gt;gfx.mec.num_queue_per_pipe = 4;
+ 		break;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/gfx_v10_0.c</cite>
+</div>
+
+</blockquote>
+<h3 id="mgfx">MGFX0, MGFX1<a href="#mgfx" class="head-cur-link"></a>
+</h3>
+<p><code>GRBM_CHIP_REVISION</code> の値から <code>MGFX0, MGFX1</code> のどちらかを判定するコードがあり、それによって返される AMDGPU Family が変わる。<code>MGFX0</code> の場合は <code>AMDGPU_FAMILY_VGH</code> が、<code>MGFX1</code> の場合は <code>AMDGPU_FAMILY_MGFX</code> となる。<br>
+しかし <code>AMDGPU_FAMILY_MGFX</code> でファイルを検索すると、一部関数で早期リターンが行われており、<code>MGFX1</code> はサポート途中もしくは中止されたモデルではないかと思われる。</p>
+<blockquote>
+<pre><code> /* GRBM_CHIP_REVISION definition
+  * [7:0], minor ID
+  * [15:8], Major/EVT ID
+  * [23:16], Model ID, 0x60 is 'Premium'
+  * [31:24], Generation ID
+  */
+ #define MGFX_GEN(gcr) (((gcr) &amp; 0xFF000000) &gt;&gt; 24)
+ #define MGFX_MOD(gcr) (((gcr) &amp; 0xFF0000) &gt;&gt; 16)
+ #define MGFX_EVT(gcr) (((gcr) &amp; 0xFF00) &gt;&gt; 8)
+ #define MGFX_MINOR(gcr) (((gcr) &amp; 0xFF) &gt;&gt; 0)
+ #define AMDGPU_IS_MGFX0(gcr) ((MGFX_MOD(gcr) == 0x60) &amp;&amp; (MGFX_GEN(gcr) == 0))
+ #define AMDGPU_IS_MGFX1(gcr) ((MGFX_MOD(gcr) == 0x60) &amp;&amp; (MGFX_GEN(gcr) == 1))
+ #define AMDGPU_IS_EVT0(gcr) ((MGFX_MOD(gcr) == 0x60) &amp;&amp; (MGFX_EVT(gcr) == 1))
+ #define AMDGPU_IS_EVT1(gcr) ((MGFX_MOD(gcr) == 0x60) &amp;&amp; (MGFX_EVT(gcr) == 2) &amp;&amp; (MGFX_MINOR(gcr) == 0))
+ #define AMDGPU_IS_EVT1_1(gcr) ((MGFX_MOD(gcr) == 0x60) &amp;&amp; (MGFX_EVT(gcr) == 2) &amp;&amp; (MGFX_MINOR(gcr) == 1))
+ #define AMDGPU_IS_MGFX0_EVT0(gcr) (AMDGPU_IS_MGFX0(gcr) &amp;&amp; AMDGPU_IS_EVT0(gcr))
+ #define AMDGPU_IS_MGFX0_EVT1(gcr) (AMDGPU_IS_MGFX0(gcr) &amp;&amp; AMDGPU_IS_EVT1(gcr))
+ #define AMDGPU_IS_MGFX0_EVT1_1(gcr) (AMDGPU_IS_MGFX0(gcr) &amp;&amp; AMDGPU_IS_EVT1_1(gcr))
+ #define AMDGPU_IS_MGFX1_EVT0(gcr) (AMDGPU_IS_MGFX1(gcr) &amp;&amp; AMDGPU_IS_EVT0(gcr))
+ #define AMDGPU_IS_MGFX1_EVT1(gcr) (AMDGPU_IS_MGFX1(gcr) &amp;&amp; AMDGPU_IS_EVT1(gcr))
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/amdgpu.h</cite>
+</div>
+
+<pre><code> static uint32_t amdgpu_get_family_mgfx(struct amdgpu_device *adev)
+ {
+ 	if (AMDGPU_IS_MGFX1(adev-&gt;grbm_chip_rev))
+ 		return AMDGPU_FAMILY_MGFX;
+ 	else if (AMDGPU_IS_MGFX0(adev-&gt;grbm_chip_rev))
+ 		return AMDGPU_FAMILY_VGH;
+ 	else
+ 		return AMDGPU_FAMILY_UNKNOWN;
+ }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/nv.c</cite>
+</div>
+
+</blockquote>
+<p>モデル名が <code>MGFX0</code> は <em>Xclipse 920</em>、<code>MGFX1</code> は <em>Xclipse 930</em> とされているが、Exynos 2200 の GPU は <em>Xclipse 920</em> であるため、<code>MGFX0</code> が主なサポート対象と考えられる。<br>
+また Khronos Group の Conformant Products に登録されているのも <em>Xclipse 920</em> のみであり、<em>Xclipse 930</em> は登録されていない。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<blockquote>
+<pre><code> static ssize_t gpu_model_show(struct kobject *kobj,
+ 			      struct kobj_attribute *attr, char *buf)
+ {
+ 	const char *product = NULL;
+ 	ssize_t count = 0;
+	
+ 	if (AMDGPU_IS_MGFX0(p_adev-&gt;grbm_chip_rev))
+ 		product = &quot;920&quot;;
+ 	else if (AMDGPU_IS_MGFX1(p_adev-&gt;grbm_chip_rev))
+ 		product = &quot;930&quot;;
+	
+ 	count = scnprintf(buf, PAGE_SIZE, &quot;Samsung Xclipse %s\n&quot;, product);
+	
+ 	return count;
+ }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/exynos_gpu_interface.c</cite>
+</div>
+
+</blockquote>
+<h3 id="mariner_gopher">Mariner, Gopher<a href="#mariner_gopher" class="head-cur-link"></a>
+</h3>
+<p><code>VANGOGH_LITE</code> とは別に <em>Mariner</em> と <em>Gopher</em> というコードネームが付けられている。</p>
+<blockquote>
+<pre><code> enum amd_reset_method {
+ 	AMD_RESET_METHOD_LEGACY = 0,
+ 	AMD_RESET_METHOD_MODE0,
+ 	AMD_RESET_METHOD_MODE1,
+ 	AMD_RESET_METHOD_MODE2,
+ 	AMD_RESET_METHOD_BACO,
+ 	AMD_RESET_METHOD_MARINER_GOPHER
+ };
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/amdgpu.h</cite>
+</div>
+
+</blockquote>
+<p>以下引用部では <em>Mariner</em> の DeviceID (PCI ID) は <code>0x73A0</code> と <em>Navi21/Sienna Cichlid</em> と同じ ID が割り当てられているが、別の部分で <code>CHIP_VANGOGH_LITE</code> の場合は DeviceID を <code>0x73A0</code> に上書きするコードがあるため、実際の DeviceID ではないと思われる。</p>
+<blockquote>
+<pre><code> 	/* Mariner */
+ 	{0x1002, 0x73A0, PCI_ANY_ID, PCI_ANY_ID, 0, 0, CHIP_VANGOGH_LITE},
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/amdgpu_drv.c</cite>
+</div>
+
+<pre><code> 	/* TODO: assign PCI device ID */
+ 	if ((flags &amp; AMD_ASIC_MASK) == CHIP_VANGOGH_LITE)
+ 		adev-&gt;device_id = 0x73A0;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/amdgpu_drv.c</cite>
+</div>
+
+</blockquote>
+<p><em>Mariner</em> と <em>Gopher</em> の違いだが、<em>Mariner</em> は <code>eval_mode=1, M0, mobile0, MGFX0</code>、<em>Gopher</em> は <code>eval_mode=2, M1, mobile1, MGFX1</code> に対応している記述が見られることから、有効 WGP 数が主な違いと思われる。<br>
+<em>Mariner</em> は <em>Xclipse 920</em>、<em>Gopher</em> は <em>Xclipse 930</em> だとも言える。</p>
+<p>先に書いたように、<em>Gopher/Xclipse 930</em> はコードの内容や現時点で未発表なことを合わせるに、開発されていたが中止されたモデルである可能性が高い。<br>
+仮の DeviceID ではあるが <em>Mariner/Xclipse 920</em> の ID は記述されているのに対し、<em>Gopher/Xclipse 930</em> のはない。</p>
+<blockquote>
+<pre><code> int emu_soc_asic_init(struct amdgpu_device *adev)
+ {
+ 	if (sgpu_no_hw_access != 0)
+ 		return 0;
+ 	else if (AMDGPU_IS_MGFX0_EVT1(adev-&gt;grbm_chip_rev))
+ 		emu_mobile0_asic_init(adev);
+ 	else if (AMDGPU_IS_MGFX1(adev-&gt;grbm_chip_rev))
+ 		emu_mobile1_asic_init(adev);
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/emu_soc.c</cite>
+</div>
+
+</blockquote>
+<blockquote>
+<pre><code> /* From the mobile1 Gopher build, cl72071 */
+ struct __reg_setting_m1 emu_mobile1_setting_cl72071[] = {
+ 	{0x000098F8, 0x00000142},
+ 	{0x00033440, 0x0000008D},
+ 	{0x00033640, 0x0000008D},
+ 	{0x00009508, 0x010B0000},
+ 	{0x00009510, 0x00000000},
+ 	{0x0003380C, 0xFFFFFFF3},
+ 	{0x00033884, 0xFFFFFFF3},
+ 	{0x00033894, 0x32103210},
+ 	{0x00033898, 0x32103210},
+ 	{0x00009F80, 0x00000500},
+ };
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/emu_mobile1_asic_init.h</cite>
+</div>
+
+</blockquote>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+</h3>
+<ul>
+<li><a href="https://opensource.samsung.com/uploadList"
+  target="_blank" rel="noopener noreferrer"
+  title="Samsung Open Source"
+>Samsung Open Source</a>
+<ul>
+<li><a href="https://opensource.samsung.com/uploadList?menuItem=mobile&amp;classification1=mobile_phone"
+  target="_blank" rel="noopener noreferrer"
+  title="https://opensource.samsung.com/uploadList?menuItem=mobile&classification1=mobile_phone"
+>https://opensource.samsung.com/uploadList?menuItem=mobile&classification1=mobile_phone</a></li>
+</ul>
+</li>
+<li><a href="https://semiconductor.samsung.com/processor/mobile-processor/exynos-2200/"
+  target="_blank" rel="noopener noreferrer"
+  title="Exynos 2200 Mobile Processor | Specs | Samsung Semiconductor Global"
+>Exynos 2200 Mobile Processor | Specs | Samsung Semiconductor Global</a></li>
+<li><a href="https://semiconductor.samsung.com/newsroom/tech-blog/exynos-2200-playtime-is-over/"
+  target="_blank" rel="noopener noreferrer"
+  title="Exynos 2200: Playtime is over | Samsung Semiconductor Global"
+>Exynos 2200: Playtime is over | Samsung Semiconductor Global</a></li>
+</ul>
+</section>
+
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://www.khronos.org/conformance/adopters/conformant-products/vulkan#submission_649"
+  target="_blank" rel="noopener noreferrer"
+  title="https://www.khronos.org/conformance/adopters/conformant-products/vulkan#submission_649"
+>https://www.khronos.org/conformance/adopters/conformant-products/vulkan#submission_649</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/vangogh" class="bottom-tag-link"  title="VanGogh">#VanGogh</a><a href="https://www.coelacanth-dream.com/tags/rdna_2" class="bottom-tag-link"  title="RDNA_2">#RDNA 2</a><a href="https://www.coelacanth-dream.com/tags/vangogh_lite" class="bottom-tag-link"  title="VanGogh_LITE">#VanGogh LITE</a></nav><aside class="article-bottom-misc delay-page">
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/06/14/vangogh_lite.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.96.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a><a href="https://www.coelacanth-dream.com/tags/vangogh/" class="menu-cat-tag-lower">VanGogh</a><a href="https://www.coelacanth-dream.com/tags/vangogh_lite/" class="menu-cat-tag-lower">VanGogh LITE</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.96.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+
+    <label
+      class="menu-open-label menu-label"
+      data-label="MENU"
+      for="menu-open"
+    ></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+
+    <label
+      class="menu-close-label menu-label"
+      data-label="X"
+      for="menu-close"
+    ></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a><a href="https://www.coelacanth-dream.com/tags/vangogh/" class="menu-cat-tag-lower">VanGogh</a><a href="https://www.coelacanth-dream.com/tags/vangogh_lite/" class="menu-cat-tag-lower">VanGogh LITE</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<div id="msg" hidden></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+  </body>
+</html>
