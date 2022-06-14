@@ -81,7 +81,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-06-14 01:47 +0900">Post: 2022/06/14 01:47 &#43;0900</time>
-    <aside class="update">Update: 2022/06/14 07:34 &#43;0900</aside>
+    <aside class="update">Update: 2022/06/14 10:45 &#43;0900</aside>
   </aside><p>Samsung Exynos 2200 SoC は GPU に <em>AMD RDNA 2 アーキテクチャ</em> ベースの <em>Xclipse 920</em> を採用している。<br>
 そして Exynos 2200 SoC を搭載する Samsung Galaxy S22 Ultra は Android OS を採用しており、その関係で Linux Kernel と <em>Xclipse 920</em> 向けの AMDGPU ドライバーのソースコードが公開されているため読んでみた。<br>
 ソースコードは <a href="https://opensource.samsung.com/uploadList"
@@ -90,6 +90,39 @@
 >Samsung Open Source</a> からダウンロードでき、<em>SM-S908B</em> で検索すると出てくる。<br>
 今回参照したソースコードのバージョンは <code>S908BXXU2AVEH</code> となる。</p>
 <p>通常の AMDGPU ドライバーのソースコードは <code>drivers/gpu/drm/amd/</code> 下に置いてあるが、<em>Xclipse 920</em> 向けのドライバーは AMDGPU ドライバーをベースにしながら <code>drivers/gpu/samsung/{include, sgpu}/</code> 下に置かれている。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+</h3>
+<ul>
+<li><a href="#vgh_lite"
+  
+  title="VanGogh Lite"
+>VanGogh Lite</a>
+<ul>
+<li><a href="#m0_m1"
+  
+  title="GC10.4 (M0), GC40.1 (M1)"
+>GC10.4 (M0), GC40.1 (M1)</a></li>
+<li><a href="#me_mec"
+  
+  title="ME/MEC"
+>ME/MEC</a></li>
+<li><a href="#wgp_gating"
+  
+  title="AMDGPU_WGP_GATING"
+>AMDGPU_WGP_GATING</a></li>
+<li><a href="#mgfx"
+  
+  title="MGFX0, MGFX1"
+>MGFX0, MGFX1</a></li>
+<li><a href="#mariner_gopher"
+  
+  title="Mariner, Gopher"
+>Mariner, Gopher</a></li>
+</ul>
+</li>
+</ul>
+</section>
+
 <h2 id="vgh_lite">VanGogh Lite<a href="#vgh_lite" class="head-cur-link"></a>
 </h2>
 <p><em>Xclipse 920</em> の <code>ASIC Type/Family</code> は <em>VanGogh_LITE</em> とされている。<br>
@@ -100,6 +133,8 @@
 >Cyan Skilfishシリーズ、Navi10_LITE、Navi12_LITE に Robin に Ariel | Coelacanth&rsquo;s Dream</a></span>
 
 GC (Graphics, Compute) の IPバージョンは <code>10.4.0</code> とされる。</p>
+<h3 id="m0_m1">GC10.4 (M0), GC40.1 (M1)<a href="#m0_m1" class="head-cur-link"></a>
+</h3>
 <p><em>Xclipse 920</em> のフルスペックは不明だが、ターゲットに合わせた <code>eval_mode</code> を指定し、最大 WGP (CU) 数を制限しダウングレードするカーネルパラメータが追加されている。<br>
 ShaderEngine 1基、RenderBackend 3基という設定は共通するが、<code>eval_mode=1</code> の場合は WGP 3基、<code>eval_mode=2</code> の場合は WGP 4基に再設定される。</p>
 <blockquote>
@@ -119,7 +154,7 @@ ShaderEngine 1基、RenderBackend 3基という設定は共通するが、<code>
 </div>
 
 </blockquote>
-<p>また、<code>eval_mode=1</code> には <code>M0</code>、<code>eval_mode=2</code> には <code>M1</code> という識別子も付けられている。</p>
+<p>また、<code>eval_mode=1</code> には <code>M0</code> と <code>GC10.4</code>、<code>eval_mode=2</code> には <code>M1</code> と <code>GC40.1</code> という識別子も付けられている。</p>
 <blockquote>
 <pre><code>  enum eval_mode_config {
  	eval_mode_config_disabled           = 0,
@@ -183,6 +218,8 @@ ShaderArray ごとに GL1キャッシュを持つため、1基の場合 GL1キ�
 </div>
 
 </blockquote>
+<h3 id="me_mec">ME/MEC<a href="#me_mec" class="head-cur-link"></a>
+</h3>
 <p><em>VanGogh_LITE</em> の ME (GFX Ring) と MEC (MicroEngine Compute, Compute Ring) の設定は、ME/MEC 共に 1基、ME/MEC あたり 1パイプ、パイプあたり 4キューとなっている。<br>
 これは他 <em>RDNA 1/2 アーキテクチャ</em> ベースの GPU の設定と異なる。<em>RDNA 1/2 アーキテクチャ</em> では ME 1基、ME あたり 1パイプ、パイプあたり 1キュー、MEC は 2基、MEC あたり 4パイプ、<em>RDNA 1 アーキテクチャ</em> はパイプあたり 8キュー、<em>RDNA 2 アーキテクチャ</em> は 4キューとなっている。<br>
 しかし最新の AMDGPU ドライバー内の設定と異なるというだけで、その意図までは読めない。またこのバージョンでは <em>Navi14</em> だけが ME 4基という設定になっているが、これも最新のバージョンとは異なる。</p>
@@ -199,6 +236,56 @@ ShaderArray ごとに GL1キャッシュを持つため、1基の場合 GL1キ�
  		break;
 </code></pre>
 <div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/gfx_v10_0.c</cite>
+</div>
+
+</blockquote>
+<h3 id="wgp_gating">AMDGPU_WGP_GATING<a href="#wgp_gating" class="head-cur-link"></a>
+</h3>
+<p>アップストリームには取り込まれていない <em>VanGogh_LITE</em> 向けの機能に <code>AMDGPU_WGP_GATING</code> が確認できる。<br>
+WGP ごとにクロックゲーティングを設定する機能と思われ、モバイル向け APU/SoC よりさらに省電力性が求められるスマートフォン向け APU/SoC には必要な機能なのだろう。</p>
+<blockquote>
+<pre><code> /* not upstream */
+ #define DRM_AMDGPU_WGP_GATING		0x5e
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">include/uapi/drm/amdgpu_drm.h</cite>
+</div>
+
+</blockquote>
+<blockquote>
+<pre><code> static int amdgpu_wgp_gating_ioctl(struct drm_device *dev, void *data,
+ 				       struct drm_file *filp)
+ {
+ 	int r = 0;
+ 	struct amdgpu_device *adev = drm_to_adev(dev);
+ 	union drm_amdgpu_wgp_gating *wgp = data;
+	
+ 	switch (wgp-&gt;in.op) {
+ 	case AMDGPU_WGP_GATING_WGP_CLOCK_ON:
+ 		r = amdgpu_gfx_set_num_clock_on_wgp(adev, wgp-&gt;in.value);
+ 		wgp-&gt;out.wgp_clock_on.number = adev-&gt;gfx.num_clock_on_wgp;
+ 		break;
+ 	case AMDGPU_WGP_GATING_WGP_AON:
+ 		r = amdgpu_gfx_set_num_aon_wgp(adev, wgp-&gt;in.value);
+ 		wgp-&gt;out.wgp_aon.number = adev-&gt;gfx.num_aon_wgp;
+ 		memcpy(&amp;wgp-&gt;out.wgp_aon.bitmap[0][0],
+ 			&amp;adev-&gt;gfx.wgp_aon_bitmap[0][0],
+ 			sizeof(adev-&gt;gfx.wgp_aon_bitmap));
+ 		break;
+ 	case AMDGPU_WGP_GATING_WGP_STATUS:
+ 		amdgpu_gfx_read_status_static_wgp(adev);
+ 		memcpy(&amp;wgp-&gt;out.wgp_status.bitmap[0][0],
+ 			&amp;adev-&gt;gfx.wgp_status_bitmap[0][0],
+ 			sizeof(adev-&gt;gfx.wgp_status_bitmap));
+ 		break;
+ 	default:
+ 		DRM_DEBUG_KMS(&quot;Invalid request %d\n&quot;, wgp-&gt;in.op);
+ 		return -EINVAL;
+ 	}
+	
+ 	return r;
+ }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">drivers/gpu/drm/samsung/sgpu/amdgpu_kms.c</cite>
 </div>
 
 </blockquote>
