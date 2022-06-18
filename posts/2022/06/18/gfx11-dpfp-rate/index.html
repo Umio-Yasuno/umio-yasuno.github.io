@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="GFX11, Coelacanth&#39;s Dream">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4050 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(4,auto)2rem/.5vw 1vw auto 2vw .5rem;gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:3/-2;margin:1vh 0 0;contain:layout;font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/3;grid-column:1/-2;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;contain:content;display:none}.slide{visibility:hidden}footer{visibility:hidden;grid-row:3/4;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1e958b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:.5rem;height:.5rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:linear-gradient(to bottom,#0000 60%,#0002 60%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#d001 33.4%,#0d01 33.4%,#0d01 66.8%,#00d1 66.8%)50%/.2rem 100% fixed repeat-x;background:radial-gradient(#eee1 0%,#0000 76%,#0000 95%,#111 99%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 60%,#0002 60%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#d001 33.4%,#0d01 33.4%,#0d01 66.8%,#00d1 66.8%)50%/.2rem 100% fixed repeat-x;opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f566b;border-color:#105d74 #0b4050 #0b4050 #105d74;border-radius:.1rem;background-color:#0f566b}.sb:active{background-color:#0c4759}.cp-url::before,.cp-url-title::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/calc(160px + 1.2rem).2rem .6rem auto 0 .5rem}.text{grid-row:auto;grid-column:2/-2}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:160px;top:1vh;left:0;padding:0 .6rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}footer{display:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:hidden;grid-column:2/-1}.text{gap:1.2rem 0}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.2rem 0;color:#0ad1c1;font:.95rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "GFX11 では FP64 演算性能が FP32 の 1/32 に",
+  "headline" : "GFX11 では FP64 演算性能が FP32 の 1/32 に",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-06-18",
+    "datePublished" : "2022-06-18",
+    "dateModified"  : "2022-06-18",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">GFX11 では FP64 演算性能が FP32 の 1/32 に</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share "><button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL"
+  ></button><button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL &amp; Title"
+  ></button><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav></aside><aside class="article-time">
+    <time datetime="2022-06-18 21:33 +0900">Post: 2022/06/18 21:33 &#43;0900</time>
+    <aside class="update">Update: 2022/06/18 22:39 &#43;0900</aside>
+  </aside><p>AMD の Jay Foad 氏より LLVM に投稿されたパッチから、<em>GFX11</em> では FP32:FP64 の演算性能レートが変更され、従来の 16:1 から 32:1 になることがわかった。<br>
+パッチはそれを確認するテストを追加するためのものとなっている。</p>
+<blockquote>
+<pre><code> This mostly just tests that DPFP is 1/32 rate on GFX11, instead of 1/16
+ rate as on GFX10.
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/d393538c7f85a564f6f1c702aa2895b41f025da3"
+  target="_blank" rel="noopener noreferrer"
+  title="[AMDGPU] Add a GFX11 MCA test · llvm/llvm-project@d393538"
+>[AMDGPU] Add a GFX11 MCA test · llvm/llvm-project@d393538</a></cite>
+</div>
+
+</blockquote>
+<ul>
+<li><a href="https://github.com/llvm/llvm-project/commit/d393538c7f85a564f6f1c702aa2895b41f025da3"
+  target="_blank" rel="noopener noreferrer"
+  title="[AMDGPU] Add a GFX11 MCA test · llvm/llvm-project@d393538"
+>[AMDGPU] Add a GFX11 MCA test · llvm/llvm-project@d393538</a></li>
+<li><a href="https://reviews.llvm.org/rGd393538c7f85a564f6f1c702aa2895b41f025da3"
+  target="_blank" rel="noopener noreferrer"
+  title="https://reviews.llvm.org/rGd393538c7f85a564f6f1c702aa2895b41f025da3"
+>https://reviews.llvm.org/rGd393538c7f85a564f6f1c702aa2895b41f025da3</a></li>
+</ul>
+<p><em>RDNA 1/GFX10 アーキテクチャ</em>、<em>RDNA 2/GFX10.3 アーキテクチャ</em> では FP32:FP64 の演算性能レートは 16:1 となっていた。<em>Vega20/gfx906</em> のような一部のサーバー向け GPU や <em>Carrizo/gfx801</em> APU の FP32:FP64 = 2:1 となっているアーキテクチャを除けば、<em>RDNA 1/2</em> の演算性能レートは <em>GCN 系アーキテクチャ</em> と基本同じである。</p>
+<figure>
+  <a href="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-simd.webp" target="_blank"  >
+  <img src="https://www.coelacanth-dream.com/image/2020/11/17/amd-cdna-rdna-simd.webp"
+      alt="画像出典: amd-cdna-whitepaper.pdf (Page 6), Introduction - rdna-whitepaper.pdf (Page 9)"/>
+</a><figcaption>
+      <h4 class="fig-title">CDNA/RDNA SIMD</h4><p>画像出典: <a href="https://www.amd.com/system/files/documents/amd-cdna-whitepaper.pdf"
+  target="_blank" rel="noopener noreferrer"
+  title="amd-cdna-whitepaper.pdf"
+>amd-cdna-whitepaper.pdf</a> (Page 6), <br>  <a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf"
+  target="_blank" rel="noopener noreferrer"
+  title="Introduction - rdna-whitepaper.pdf"
+>Introduction - rdna-whitepaper.pdf</a> (Page 9)</p>
+  </figcaption>
+</figure>
+
+<p><em>RDNA 1/2</em> はゲーミング向けのアーキテクチャという言葉から、コンピュート性能は低いと見られることがあるが、演算性能レートについては変わらなかった。<br>
+それが <em>RDNA 3</em> と目される <em>GFX11</em> では変更される。変更には、より FP32 演算性能を重視し、WGP (CU) の実装面積を減らす目的があるのではないかと考えられる。<br>
+一方 <em>CDNA 系アーキテクチャ</em> では <em>CDNA 2/Aldebaran/gfx90a</em> からは <code>FullRateFP64</code> に対応し、FP32:FP64 = 1:1 となっている。<br>
+<em>CDNA</em> と <em>RDNA</em> の大きな違いには、HWレイトレーシングの有無、行列演算命令 (MFMA, MAI) の有無、FP64 演算性能があるが、次世代では FP64演算性能の違いがさらに広がることとなる。</p>
+<p>他社のグラフィクス、ゲーミング向け GPU では、NVIDIA TU102 では FP32:FP64 = 32:1<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、NVIDIA GA102 では FP32:FP64 = 64:1<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> となっている。<br>
+Intel GPU では、<em>Gen9 アーキテクチャ</em> では FP32:FP64 = 4:1、<em>Gen11 アーキテクチャ</em> からはネイティブでの対応が外され、ソフトウェアエミュレートでの対応となっている。<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span> もエミュレートでの対応となっているが、<span class="xe-gpu-arch">X<sup>e</sup>-HP/HPC</span> ではネイティブで対応している。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.nvidia.com/content/PDF/nvidia-ampere-ga-102-gpu-architecture-whitepaper-v2.pdf"
+  target="_blank" rel="noopener noreferrer"
+  title="nvidia-ampere-ga-102-gpu-architecture-whitepaper-v2.pdf"
+>nvidia-ampere-ga-102-gpu-architecture-whitepaper-v2.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://developer.nvidia.com/blog/nvidia-turing-architecture-in-depth/"
+  target="_blank" rel="noopener noreferrer"
+  title="NVIDIA Turing Architecture In-Depth | NVIDIA Technical Blog"
+>NVIDIA Turing Architecture In-Depth | NVIDIA Technical Blog</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://www.coelacanth-dream.com/posts/2021/09/16/intel-xe_hpg-icache/"
+  
+  title="Xe-LP/HP より大きな命令キャッシュを持つ Xe-HPG | Coelacanth&rsquo;s Dream"
+>Xe-LP/HP より大きな命令キャッシュを持つ Xe-HPG | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/gfx11" class="bottom-tag-link"  title="GFX11">#GFX11</a></nav><aside class="article-bottom-misc delay-page">
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/06/18/gfx11-dpfp-rate.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.100.2</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.100.2</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+
+    <label
+      class="menu-open-label menu-label"
+      data-label="MENU"
+      for="menu-open"
+    ></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+
+    <label
+      class="menu-close-label menu-label"
+      data-label="X"
+      for="menu-close"
+    ></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<div id="msg" hidden></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+  </body>
+</html>
