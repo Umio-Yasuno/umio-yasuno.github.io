@@ -35,7 +35,7 @@
   },
     "dateCreated"   : "2021-09-28",
     "datePublished" : "2021-09-28",
-    "dateModified"  : "2021-12-19",
+    "dateModified"  : "2022-06-19",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -81,7 +81,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2021-09-28 02:53 +0900">Post: 2021/09/28 02:53 &#43;0900</time>
-    <aside class="update">Update: 2021/12/19 10:50 &#43;0900</aside>
+    <aside class="update">Update: 2022/06/19 02:26 &#43;0900</aside>
   </aside><p>約 1年前に AMD GPU における、各世代の FMA, MAD 命令の性能について記事を書いたが、最近になってまた調べ直した結果、分かったことがあったため Part2 を書くことにした。<br>
 <span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/09/16/amd-gcn-rdna-fma-mad/"
   
@@ -89,6 +89,31 @@
 >AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <p>AMD GPU アーキテクチャにおいて、初期の GCN から <em>Polaris1x /VegaM</em> までを含む <em>GFX6-8</em> では FMA の処理が MAD の 4倍遅く、<em>Vega, Navi</em> の世代である <em>GFX9-10</em> では FMA も MAD も同じ処理性能であり、<em>RDNA 2 /GFX10.3</em> では MAD をサポートせず、MUL と ADD 2つに分けて処理するため遅くなり、FMA を使う方が速くなるとされる。</p>
+<blockquote>
+<pre><code>       /*        |---------------------------------- Performance &amp; Availability --------------------------------|
+        *        |MAD/MAC/MADAK/MADMK|MAD_LEGACY|MAC_LEGACY|    FMA     |FMAC/FMAAK/FMAMK|FMA_LEGACY|PK_FMA_F16,|Best choice
+        * Arch   |    F32,F16,F64    | F32,F16  | F32,F16  |F32,F16,F64 |    F32,F16     | F32,F16  |PK_FMAC_F16|F16,F32,F64
+        * ------------------------------------------------------------------------------------------------------------------
+        * gfx6,7 |     1 , - , -     |  1 , -   |  1 , -   |1/4, - ,1/16|     - , -      |  - , -   |   - , -   | - ,MAD,FMA
+        * gfx8   |     1 , 1 , -     |  1 , -   |  - , -   |1/4, 1 ,1/16|     - , -      |  - , -   |   - , -   |MAD,MAD,FMA
+        * gfx9   |     1 , 1 , -     |  1 , -   |  1 , -   | 1 , 1 ,1/16|     - , -      |  - , 1   |   2 , -   |FMA,MAD,FMA
+        * gfx10  |     1 , 1 , -     |  1 , -   |  1 , -   | 1 , 1 ,1/16|     1 , 1      |  - , -   |   2 , 2   |FMA,MAD,FMA
+        * gfx10.3|     - , - , -     |  - , -   |  - , -   | 1 , 1 ,1/16|     1 , 1      |  1 , -   |   2 , 2   |  all FMA
+        *
+        * Tahiti, Hawaii, Carrizo, Vega20: FMA_F32 is full rate, FMA_F64 is 1/4
+        *
+        * gfx8 prefers MAD for F16 because of MAC/MADAK/MADMK.
+        * gfx9 and newer prefer FMA for F16 because of the packed instruction.
+        * gfx10 and older prefer MAD for F32 because of the legacy instruction.
+        */
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/f1284505f0fae78dee2af06e2d8a194d1bc5b442/src/gallium/drivers/radeonsi/si_get.c#L940-955"
+  target="_blank" rel="noopener noreferrer"
+  title="https://gitlab.freedesktop.org/mesa/mesa/-/blob/f1284505f0fae78dee2af06e2d8a194d1bc5b442/src/gallium/drivers/radeonsi/si_get.c#L940-955"
+>https://gitlab.freedesktop.org/mesa/mesa/-/blob/f1284505f0fae78dee2af06e2d8a194d1bc5b442/src/gallium/drivers/radeonsi/si_get.c#L940-955</a></cite>
+</div>
+
+</blockquote>
 <section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
 </h2>
 <ul>
