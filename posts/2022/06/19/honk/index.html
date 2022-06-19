@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/06/19/honk/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Go言語製 ActivityPub サーバーの最小実装 honk を立ててみた | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Go言語製 ActivityPub サーバーの最小実装 honk を立ててみた | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Go言語製 ActivityPub サーバーの最小実装 honk を立ててみた | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/06/19/honk/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/06/19/honk/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/06/19/honk/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="Hardware, CPU, GPU, Coelacanth&#39;s Dream">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4050 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:repeat(4,auto)2rem/.5vw 1vw auto 2vw .5rem;gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:3/-2;margin:1vh 0 0;contain:layout;font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{grid-row:2/3;grid-column:1/-2;color:#fffefe;line-height:1.6;display:grid;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;contain:content;display:none}.slide{visibility:hidden}footer{visibility:hidden;grid-row:3/4;grid-column:1/-1;contain:content}.head-cat-tag{grid-row:auto;grid-column:3/-1;border:1px solid #17736b;border:0;max-width:max-content;margin:0;margin:0 0 0 auto;padding:.4rem .2rem;padding:0;font:.96rem/1 monospace;color:#1e958b;display:flex;flex-flow:column nowrap;gap:.4rem 0}.head-cat-tag-type{color:#00e0e0;padding:0 .4rem}.head-cat-tag-block{display:flex;flex-flow:row wrap;gap:.3rem 0}.head-cat-tag-lower{margin:0 .1rem;padding:0 .5rem}.head-cat-tag-type:hover,.head-cat-tag-lower:hover{text-decoration:underline}::-webkit-scrollbar{width:.5rem;height:.5rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:linear-gradient(to bottom,#0000 60%,#0002 60%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#d001 33.4%,#0d01 33.4%,#0d01 66.8%,#00d1 66.8%)50%/.2rem 100% fixed repeat-x;background:radial-gradient(#eee1 0%,#0000 76%,#0000 95%,#111 99%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 60%,#0002 60%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#d001 33.4%,#0d01 33.4%,#0d01 66.8%,#00d1 66.8%)50%/.2rem 100% fixed repeat-x;opacity:.4;width:100%;height:100%;position:fixed;top:0;left:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f566b;border-color:#105d74 #0b4050 #0b4050 #105d74;border-radius:.1rem;background-color:#0f566b}.sb:active{background-color:#0c4759}.cp-url::before,.cp-url-title::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}@media(min-width:840px){body{display:grid;grid-template:repeat(5,auto)6vh/calc(160px + 1.2rem).2rem .6rem auto 0 .5rem}.text{grid-row:auto;grid-column:2/-2}.head-cat-tag{grid-column:2/-1}.side{display:initial;height:98vh;width:160px;top:1vh;left:0;padding:0 .6rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}footer{display:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:hidden;grid-column:2/-1}.text{gap:1.2rem 0}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:hidden}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Go言語製 ActivityPub サーバーの最小実装 honk を立ててみた",
+  "headline" : "Go言語製 ActivityPub サーバーの最小実装 honk を立ててみた",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-06-19",
+    "datePublished" : "2022-06-19",
+    "dateModified"  : "2022-06-19",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">Go言語製 ActivityPub サーバーの最小実装 honk を立ててみた</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share "><button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL"
+  ></button><button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL &amp; Title"
+  ></button><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav></aside><aside class="article-time">
+    <time datetime="2022-06-19 02:30 +0900">Post: 2022/06/19 02:30 &#43;0900</time>
+    <aside class="update">Update: 2022/06/19 09:39 &#43;0900</aside>
+  </aside><p>タイトル通り、個人用に <code>honk</code> を立ててみたからその紹介。<br>
+セットアップの流れ等は、<code>nginx</code> 周りの知識が必要だが簡易でありドキュメントに従えば問題は無く、また自分自身そこまで詳しい訳でもないため省く。<br>
+<code>honk</code> のユニークな部分をメインに紹介していきたい。</p>
+<h2 id="honk">honk<a href="#honk" class="head-cur-link"></a>
+</h2>
+<p><code>honk</code> は <a href="https://www.openbsd.org/"
+  target="_blank" rel="noopener noreferrer"
+  title="OpenBSD"
+>OpenBSD</a> の開発者として知られる Ted Unangst 氏が開発した Go言語製の ActivityPub サーバーの最小実装。データベースには SQLite を使用する。<br>
+フォロー数やアカウント数等の接続規模、画像処理時で変わるとは思うが、最小実装のためメモリ使用量は小さい。</p>
+<ul>
+<li><a href="https://humungus.tedunangst.com/r/honk"
+  target="_blank" rel="noopener noreferrer"
+  title="https://humungus.tedunangst.com/r/honk"
+>https://humungus.tedunangst.com/r/honk</a></li>
+</ul>
+<p><code>honk</code> は ActivityPub に対応し、Fediverse に参加可能なソフトウェアでありながら、SNS らしい機能を一部削っていることも特徴と言える。<br>
+その時々で意味合いは変わるが、<code>honk</code> で <em>Like</em> に対応していない。このことは特に強調されており、ドキュメントには <em>&ldquo;Don&rsquo;t be ridiculous.&rdquo;</em> と書いてあるくらいだ。<br>
+フォロワー情報を <code>honk</code> の WebUI 上からは確認できない。<br>
+通知機能も自アカウントに対するリプライのみに限られている。</p>
+<p><code>honk</code> の WebUI 上では一週間以内の投稿だけ通常表示され、長い間表示させたい場合は <code>/longago</code> から投稿する必要がある。<br>
+ユーザーごとに RSS を出力する機能があるが、これも一週間以内の投稿が表示される。<br>
+<code>saved</code> アクションで投稿単体を保存することができ、<code>/saved</code> から確認できる。<br>
+<code>saved</code> していない古い投稿を探す時には検索機能が使える。</p>
+<p>投稿には Markdown記法を使うことができ、<code>honk</code> の WebUI 上では対応する HTMLタグが反映されて表示される。他サーバーの WebUI、クライアントから見た場合は、そこでの HTMLタグの対応状況による。<br>
+ハッシュタグ機能に対応しており、そしてサーバー内のハッシュタグ一覧が <code>/o</code> に表示されるため、<code>honk</code> はアーカイブ寄りのマイクロブログとしての運用に向いていると思っている。</p>
+<p><code>honk</code> は Twitter と Mastodon、それぞれからエクスポートされた投稿データをインポートする機能を持っている。<br>
+Mastodon からのインポートではフォローリストに対応しているが、フォロワーは引き継げない。Mastodon のアカウント引っ越し機能と異なるため、<code>honk</code> に移行する場合は注意が必要となる。<br>
+tweet を引用する機能があり、<code>hoot:</code> の後に投稿への URL を付けることで引用として投稿内に含めることができる。tweet への反応を投稿する方法がはっきりしており、個人的にかなり便利な機能だと思っている。<br>
+他サーバーとの連携関連で言えば、<code>honk</code> では投稿内のリンクすべてに <code>class=&quot;mention u-url&quot;</code> を付与するが、これは意図的なものであり、他 ActivityPub サーバーからのリンクプレビュー生成、それに伴うプリフェッチを防ぐための処置となる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>カスタマイズ要素に少し触れると、<code>./honk admin</code> からページに表示される固定メッセージの変更と、生成されるアバターアイコンに用いられる 4色を設定できる。<br>
+色は 32-bit hex colors、<code>RRGGBBAA</code> の形式で記述する必要がある。末尾 <code>AA</code> は省略可能。</p>
+<h2 id="感想">感想<a href="#%e6%84%9f%e6%83%b3" class="head-cur-link"></a>
+</h2>
+<p>立ててから一ヶ月近く経ったが、以前からの Mastodon アカウントが別にあるため、そこまで使い込んでいる感覚はない。<br>
+それでも、誰にも反応されず、反応があってもそれを知ることができない、ただ趣味に関するつぶやきを投稿する場というのはそれなりに居心地が良いと感じる。<br>
+このブログも同じような場となっているが、投稿の手間は <code>honk</code> の方がずっと手軽だ。<br>
+上で書いたように、ハッシュタグや検索機能を用いたアーカイブ寄りの使い方にも向いている。</p>
+<p>先に書いたことから少し外れるが、リプライで反応がもらえれば通知も来るため、こちらから反応を返すことができる。メインのブログに対する反応をこちらでもらえると自分が喜ぶ。<br>
+試しで立てたため数ヶ月の命かもしれないが、他にも活用方法を探っていきたい。</p>
+<ul>
+<li><a href="https://fisherman.coelacanth-dream.com/u/coelacanth"
+  target="_blank" rel="noopener noreferrer"
+  title="https://fisherman.coelacanth-dream.com/u/coelacanth"
+>https://fisherman.coelacanth-dream.com/u/coelacanth</a></li>
+</ul>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://humungus.tedunangst.com/r/honk/v/fb1d23b65fb0"
+  target="_blank" rel="noopener noreferrer"
+  title="https://humungus.tedunangst.com/r/honk/v/fb1d23b65fb0"
+>https://humungus.tedunangst.com/r/honk/v/fb1d23b65fb0</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><aside class="article-bottom-misc delay-page">
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/06/19/honk.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a><a href="https://www.coelacanth-dream.com/tags/" class="foot-cat-tag-title">Tag</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.100.2</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.100.2</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+
+    <label
+      class="menu-open-label menu-label"
+      data-label="MENU"
+      for="menu-open"
+    ></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+
+    <label
+      class="menu-close-label menu-label"
+      data-label="X"
+      for="menu-close"
+    ></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<div id="msg" hidden></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+  </body>
+</html>
