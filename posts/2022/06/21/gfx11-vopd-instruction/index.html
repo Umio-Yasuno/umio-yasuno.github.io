@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/06/21/gfx11-vopd-instruction/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>GFX11 でサポートされる VOPD (Dual issue wave32) 命令のリスト | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="GFX11 でサポートされる VOPD (Dual issue wave32) 命令のリスト | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="GFX11 でサポートされる VOPD (Dual issue wave32) 命令のリスト | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/06/21/gfx11-vopd-instruction/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/06/21/gfx11-vopd-instruction/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/06/21/gfx11-vopd-instruction/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="GFX11, Coelacanth&#39;s Dream">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4050 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/.5vw 1vw auto 2vw .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:3/-2;margin:1vh 0 0;contain:layout;font:2rem/1.1 monospace;word-spacing:100vw;text-align:end;word-break:keep-all;overflow-wrap:normal;isolation:isolate;text-shadow:0 .2em 1.1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-32deg)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}.side,.slide{position:fixed;contain:content}.side{display:none}.slide{display:grid;visibility:var(--slide-vis,hidden)}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 0%,#0000 76%,#0000 95%,#111 99%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 50%,#0002 50%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#d001 33.4%,#0d01 33.4%,#0d01 66.8%,#00d1 66.8%)50%/.2rem 100% fixed repeat-x;opacity:.4;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f566b;background-color:var(--sb-bg,#0f566b)}.sb:active{--sb-bg:#0c4759}.cp-url::before,.cp-url-title::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1.2rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{display:initial;height:98vh;width:160px;inset:1vh 0 0;padding:0 .6rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}.text{gap:1.2rem 0}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "GFX11 でサポートされる VOPD (Dual issue wave32) 命令のリスト",
+  "headline" : "GFX11 でサポートされる VOPD (Dual issue wave32) 命令のリスト",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-06-21",
+    "datePublished" : "2022-06-21",
+    "dateModified"  : "2022-06-21",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">GFX11 でサポートされる VOPD (Dual issue wave32) 命令のリスト</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share "><button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL"
+  ></button><button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL &amp; Title"
+  ></button><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav></aside><aside class="article-time">
+    <time datetime="2022-06-21 05:57 +0900">Post: 2022/06/21 05:57 &#43;0900</time>
+    <aside class="update">Update: 2022/06/21 07:29 &#43;0900</aside>
+  </aside><p>AMD の Joe Nash 氏より、<em>GFX11</em> に追加される <code>VOPD (Dual issue wave32)</code> 命令を LLVM MC (Machine Code) でサポートするパッチが投稿されている。</p>
+<ul>
+<li><a href="https://reviews.llvm.org/D128218"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support"
+>⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></li>
+</ul>
+<p>以前のパッチで <code>HasVOPDInsts (VOPD dual issue wave32)</code> の機能フラグは出てきており、今回のパッチでさらなる詳細が明かされた。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/05/10/llvm-gfx11-dual-issue/#vopd"
+  
+  title="GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth&rsquo;s Dream"
+>GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<h2 id="vopd">VOPD (Dual issue wave32)<a href="#vopd" class="head-cur-link" title="VOPD (Dual issue wave32)"></a>
+</h2>
+<p>今回のパッチから <code>VOPD (Dual issue wave32)</code> 命令の機能は、対応する一部の命令から最大 2種類を同時に発行、実行するものではないかと推測される。<br>
+<em>GFX11</em> への対応が進むまで、<em>GFX11</em> の VGPR (Vector general-purpose registe) 数を 128、従来の半分に制限するパッチが別に投稿されているが、これも <code>VOPD</code> 命令への対応とそれによる設計変更に影響するものと思われる。<br>
+<em>GFX11</em> ではオペランドのエンコードが変更され、従来は VGPR 128..255 が v128..v255 に対応していたのが、v0.hi..v127.hi に対応するようになる。</p>
+<blockquote>
+<pre><code>  unsigned getAddressableNumVGPRs(const MCSubtargetInfo *STI) {
+ +  if (LimitTo128VGPRs.getNumOccurrences() ? LimitTo128VGPRs
+ +                                          : isGFX11Plus(*STI)) {
+ +    // GFX11 changes the encoding of 16-bit operands in VOP1/2/C instructions
+ +    // such that values 128..255 no longer mean v128..v255, they mean
+ +    // v0.hi..v127.hi instead. Until the compiler understands this, it is not
+ +    // safe to use v128..v255.
+ +    // TODO-GFX11: Remove this when full 16-bit codegen is implemented.
+ +    return 128;
+ +  }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/7050d5b98c0952b24b61f88653de86443cbabd7c"
+  target="_blank" rel="noopener noreferrer"
+  title="[AMDGPU] Limit GFX11 to using 128 VGPRs · llvm/llvm-project@7050d5b"
+>[AMDGPU] Limit GFX11 to using 128 VGPRs · llvm/llvm-project@7050d5b</a></cite>
+</div>
+
+</blockquote>
+<p>なお、個人の推測であり、公式のドキュメント等からではなく、パッチ内容から読み取った結果であるため外れている可能性は当然ある。</p>
+<p>以下は <code>VOPD</code> 命令でサポートされる擬似的な命令のリストであり、実際の命令名は <code>V_DUAL_*</code> の形式となる。<br>
+倍精度 (64-bit) 向け命令や半精度 (16-bit) 向けのパックド命令は含まれず、単精度 (32-bit) 向けの命令のみがサポートされている。<br>
+命令の種類としては、基本的な演算命令 <code>(ADD, SUB, MUL)</code>、FMA (<code>FMA{C,AK,MK}</code>) 命令、データの移動命令 (<code>MOV</code>)、比較命令 (<code>MAX, MIN</code>)、条件命令 (<code>CNDMASK</code>)、ビット演算命令 (<code>LSHLREV, AND</code>) となる。ビット演算命令に <code>OR, XOR</code> は含まれていない。<br>
+また、ドット積命令に唯一 <code>DOT2C_F32_F16 (D.f32 = S0.f16[0] * S1.f16[0] + S0.f16[1] * S1.f16[1] + D.f32)</code> 命令がサポートされている。</p>
+<blockquote>
+<pre><code> // V_DUAL_DOT2ACC_F32_BF16  is a legal instruction, but V_DOT2ACC_F32_BF16 is not.
+ // Since we generate the DUAL form by converting from the normal form we will
+ // never generate it.
+ defvar VOPDYPseudos = [
+   &quot;V_FMAC_F32_e32&quot;, &quot;V_FMAAK_F32&quot;, &quot;V_FMAMK_F32&quot;, &quot;V_MUL_F32_e32&quot;,
+   &quot;V_ADD_F32_e32&quot;, &quot;V_SUB_F32_e32&quot;, &quot;V_SUBREV_F32_e32&quot;, &quot;V_MUL_LEGACY_F32_e32&quot;,
+   &quot;V_MOV_B32_e32&quot;, &quot;V_CNDMASK_B32_e32&quot;, &quot;V_MAX_F32_e32&quot;, &quot;V_MIN_F32_e32&quot;,
+   &quot;V_DOT2C_F32_F16_e32&quot;, &quot;V_ADD_U32_e32&quot;, &quot;V_LSHLREV_B32_e32&quot;, &quot;V_AND_B32_e32&quot;
+ ];
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D128218"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support"
+>⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></cite>
+</div>
+
+</blockquote>
+<p>今回のパッチで追加されたテストファイルの内容から、最大 2種類の <code>VOPD</code> 命令を組み合わせ、同時に発行、実行するものと推測した。</p>
+<blockquote>
+<pre><code> # W32: v_dual_add_f32 v5, 0xaf123456, v2 :: v_dual_fmaak_f32 v6, v3, v1, 0xaf123456 ; encoding: [0xff,0x04,0x02,0xc9,0x03,0x03,0x06,0x05,0x56,0x34,0x12,0xaf]
+ 0xff,0x04,0x02,0xc9,0x03,0x03,0x06,0x05,0x56,0x34,0x12,0xaf
+	
+ # W32: v_dual_cndmask_b32 v20, v21, v22 :: v_dual_mov_b32 v41, v42 ; encoding: [0x15,0x2d,0x50,0xca,0x2a,0x01,0x28,0x14]
+ 0x15,0x2d,0x50,0xca,0x2a,0x01,0x28,0x14
+	
+ # W32: v_dual_fmaak_f32 v122, s74, v161, 0x402f6c8b :: v_dual_and_b32 v247, v160, v98 ; encoding: [0x4a,0x42,0x65,0xc8,0xa0,0xc5,0xf6,0x7a,0x8b,0x6c,0x2f,0x40]
+ 0x4a,0x42,0x65,0xc8,0xa0,0xc5,0xf6,0x7a,0x8b,0x6c,0x2f,0x40
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D128218"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support"
+>⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></cite>
+</div>
+
+</blockquote>
+<p><code>VOPD</code> 命令のメリットとしては、単純にすれば <em>RDNA 1/GFX10.1 アーキテクチャ</em>、<em>RDNA 2/GFX10.3 アーキテクチャ</em> では 2x Wave32 に処理に 2サイクル掛かっていたが、対応命令であれば 1サイクルで済むようになることが考えられる。<br>
+デメリットとしては、限られた範囲の命令とはいえ、組み合わせた命令を生成しなければならないため、コンパイラへの負担が大きくなることが予想される。<br>
+最大 2種類であり、同じ命令の組み合わせに対応しているため、これも単純に考えれば、同じ命令を実行する Wave が続く場合における性能向上が期待できそうだが、依存関係の判定が複雑になるように思われる。</p>
+<blockquote>
+<pre><code> v_dual_mul_f32 v0, v0, v2 :: v_dual_mul_f32 v1, v1, v3
+ // GFX11: encoding: [0x00,0x05,0xc6,0xc8,0x01,0x07,0x00,0x00]
+ // W64-ERR: :[[@LINE-2]]:{{[0-9]+}}: error
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D128218"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support"
+>⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></cite>
+</div>
+
+</blockquote>
+<p>AMDGPU 向けのコンパイラバックエンドには LLVM の他に、<em>RADV (Vulkan)</em> ドライバーに採用されている <a href="https://www.coelacanth-dream.com/tags/aco"
+  target="_blank" rel="noopener noreferrer"
+  title="ACO"
+>ACO</a> がある。<br>
+それらコンパイラバックエンドにおいて、どのように <code>VOPD</code> 命令への対応、最適化が行われるかは興味深いポイントではないかと思う。</p>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/gfx11" class="bottom-tag-link"  title="GFX11">#GFX11</a></nav><aside class="article-bottom-misc delay-page">
+
+<a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+
+
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/06/21/gfx11-vopd-instruction.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.100.2</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by 
+
+<a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by 
+
+<a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.100.2</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+
+    <label
+      class="menu-open-label menu-label"
+      data-label="MENU"
+      for="menu-open"
+    ></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+
+    <label
+      class="menu-close-label menu-label"
+      data-label="X"
+      for="menu-close"
+    ></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Archive</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav><a class="s-search" href="https://www.coelacanth-dream.com/gh-search/">Site Search by Github (Beta)</a>
+<nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<div id="msg" hidden></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+  </body>
+</html>
