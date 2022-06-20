@@ -81,7 +81,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-06-21 05:57 +0900">Post: 2022/06/21 05:57 &#43;0900</time>
-    <aside class="update">Update: 2022/06/21 07:29 &#43;0900</aside>
+    <aside class="update">Update: 2022/06/21 07:52 &#43;0900</aside>
   </aside><p>AMD の Joe Nash 氏より、<em>GFX11</em> に追加される <code>VOPD (Dual issue wave32)</code> 命令を LLVM MC (Machine Code) でサポートするパッチが投稿されている。</p>
 <ul>
 <li><a href="https://reviews.llvm.org/D128218"
@@ -142,7 +142,9 @@
 </div>
 
 </blockquote>
-<p>今回のパッチで追加されたテストファイルの内容から、最大 2種類の <code>VOPD</code> 命令を組み合わせ、同時に発行、実行するものと推測した。</p>
+<p>今回のパッチで追加されたテストファイルの内容から、最大 2種類の <code>VOPD</code> 命令を組み合わせ、同時に発行、実行するものと推測した。<br>
+<code>Dual issue wave32</code> とあるように、対応するのは Wave32 の場合のみとなる。<br>
+<em>GFX11</em> における Wave64 の処理方法がどのようになっているかはまだ不明。<em>RDNA 1/GFX10.1, RDNA 2/GFX10.3</em> では Wave64 を、VGPR を共有する 2x Wave32 に分けて処理する方式を取っていた。</p>
 <blockquote>
 <pre><code> # W32: v_dual_add_f32 v5, 0xaf123456, v2 :: v_dual_fmaak_f32 v6, v3, v1, 0xaf123456 ; encoding: [0xff,0x04,0x02,0xc9,0x03,0x03,0x06,0x05,0x56,0x34,0x12,0xaf]
  0xff,0x04,0x02,0xc9,0x03,0x03,0x06,0x05,0x56,0x34,0x12,0xaf
@@ -160,7 +162,7 @@
 </div>
 
 </blockquote>
-<p><code>VOPD</code> 命令のメリットとしては、単純にすれば <em>RDNA 1/GFX10.1 アーキテクチャ</em>、<em>RDNA 2/GFX10.3 アーキテクチャ</em> では 2x Wave32 に処理に 2サイクル掛かっていたが、対応命令であれば 1サイクルで済むようになることが考えられる。<br>
+<p><code>VOPD</code> 命令のメリットとしては、単純にすれば <em>RDNA 1/GFX10.1, RDNA 2/GFX10.3</em> では 2x Wave32 に処理に 2サイクル掛かっていたが、対応命令であれば 1サイクルで済むようになることが考えられる。<br>
 デメリットとしては、限られた範囲の命令とはいえ、組み合わせた命令を生成しなければならないため、コンパイラへの負担が大きくなることが予想される。<br>
 最大 2種類であり、同じ命令の組み合わせに対応しているため、これも単純に考えれば、同じ命令を実行する Wave が続く場合における性能向上が期待できそうだが、依存関係の判定が複雑になるように思われる。</p>
 <blockquote>
