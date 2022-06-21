@@ -81,7 +81,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-06-21 05:57 +0900">Post: 2022/06/21 05:57 &#43;0900</time>
-    <aside class="update">Update: 2022/06/21 08:16 &#43;0900</aside>
+    <aside class="update">Update: 2022/06/21 17:45 &#43;0900</aside>
   </aside><p>AMD の Joe Nash 氏より、<em>GFX11</em> に追加される <code>VOPD (Dual issue wave32)</code> 命令を LLVM MC (Machine Code) でサポートするパッチが投稿されている。</p>
 <ul>
 <li><a href="https://reviews.llvm.org/D128218"
@@ -97,7 +97,7 @@
 </p>
 <h2 id="vopd">VOPD (Dual issue wave32)<a href="#vopd" class="head-cur-link" title="VOPD (Dual issue wave32)"></a>
 </h2>
-<p>今回のパッチから <code>VOPD (Dual issue wave32)</code> 命令の機能は、対応する一部の命令から最大 2種類を同時に発行、実行するものではないかと推測される。<br>
+<p>今回のパッチから <code>VOPD (Dual issue wave32)</code> 命令の機能は、対応する一部の命令から最大 2種類を同時に発行、実行することで性能と効率を向上させるものではないかと推測される。<br>
 <em>GFX11</em> への対応が進むまで、<em>GFX11</em> の VGPR (Vector general-purpose registe) 数を 128、従来の半分に制限するパッチが別に投稿されているが、これも <code>VOPD</code> 命令への対応とそれによる設計変更に影響するものと思われる。<br>
 <em>GFX11</em> ではオペランドのエンコードが変更され、従来は VGPR 128..255 が v128..v255 に対応していたのが、v0.hi..v127.hi に対応するようになる。</p>
 <blockquote>
@@ -122,7 +122,13 @@
 <p>なお、個人の推測であり、公式のドキュメント等からではなく、パッチ内容から読み取った結果であるため外れている可能性は当然ある。</p>
 <p>以下は <code>VOPD</code> 命令でサポートされる擬似的な命令のリストであり、実際の命令名は <code>V_DUAL_*</code> の形式となる。<br>
 倍精度 (64-bit) 向け命令や半精度 (16-bit) 向けのパックド命令は含まれず、単精度 (32-bit) 向けの命令のみがサポートされている。<br>
-命令の種類としては、基本的な演算命令 <code>(ADD, SUB, MUL)</code>、FMA (<code>FMA{C,AK,MK}</code>) 命令、データの移動命令 (<code>MOV</code>)、比較命令 (<code>MAX, MIN</code>)、条件命令 (<code>CNDMASK</code>)、ビット演算命令 (<code>LSHLREV, AND</code>) となる。ビット演算命令に <code>OR, XOR</code> は含まれていない。<br>
+FP64:FP32 の演算性能レートが 1:32 になったことと合わせ、<em>GFX11</em> では FP32 性能をより重視した設計になっているという印象を受ける。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/"
+  
+  title="GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream"
+>GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<p>命令の種類としては、基本的な演算命令 <code>(ADD, SUB, MUL)</code>、FMA (<code>FMA{C,AK,MK}</code>) 命令、データの移動命令 (<code>MOV</code>)、比較命令 (<code>MAX, MIN</code>)、条件命令 (<code>CNDMASK</code>)、ビット演算命令 (<code>LSHLREV, AND</code>) となる。ビット演算命令に <code>OR, XOR</code> は含まれていない。<br>
 また、ドット積命令に唯一 <code>DOT2C_F32_F16 (D.f32 = S0.f16[0] * S1.f16[0] + S0.f16[1] * S1.f16[1] + D.f32)</code> 命令がサポートされている。</p>
 <blockquote>
 <pre><code> // V_DUAL_DOT2ACC_F32_BF16  is a legal instruction, but V_DOT2ACC_F32_BF16 is not.
@@ -162,7 +168,7 @@
 </div>
 
 </blockquote>
-<p><code>VOPD</code> 命令のメリットとしては、単純にすれば <em>RDNA 1/GFX10.1, RDNA 2/GFX10.3</em> では 2x Wave32 に処理に 2サイクル掛かっていたが、対応命令であれば 1サイクルで済み、ピーク性能が向上することが考えられる。<br>
+<p><code>VOPD</code> 命令のメリットとしては、単純にすれば <em>RDNA 1/GFX10.1, RDNA 2/GFX10.3</em> では 2x Wave32 に処理に 2サイクル掛かっていたが、対応命令であれば 1サイクルで済み、性能と効率が向上することが考えられる。<br>
 デメリットとしては、限られた範囲の命令とはいえ、組み合わせた命令を生成しなければならないため、コンパイラへの負担が大きくなることが予想される。<br>
 最大 2種類であり、同じ命令の組み合わせに対応しているため、これも単純に考えれば、同じ命令を実行する Wave が続く場合における性能向上が期待できるが、依存関係の判定が複雑になるように思われる。<br>
 また、<code>VOPD</code> 命令においても VGPR を共有しているように見えるため、<em>RDNA 1/GFX10.1, RDNA 2/GFX10.3</em> では 2x Wave32 に分けていた Wave64 が、<em>GFX11</em> では 1サイクルで処理できるようになっている可能性もある。<br>
