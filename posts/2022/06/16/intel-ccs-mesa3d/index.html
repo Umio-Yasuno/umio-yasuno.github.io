@@ -107,13 +107,13 @@
 
 </blockquote>
 <p>当初は環境変数 <code>INTEL_DEBUG</code> に <code>c-cs</code> を設定することで有効化される形だったが、色圧縮機能 <code>Color Control Surface</code> と略称が被り<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、また <code>INTEL_DEBUG</code> にそれを無効化する <code>noccs</code> がすでに定義されていたため、<code>INTEL_COMPUTE_CLASS</code> を使う形となった。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
-<h2 id="cs">Command Streamer<a href="#cs" class="head-cur-link" title="Command Streamer"></a>
+<h2 id="cs">Command Streamer<a href="#cs" class="head-cur-link"></a>
 </h2>
 <p>ここでの <em>Compute Engine</em> は実質 <em>Compute Command Streamer</em> を指していると思われる。</p>
 <p>Intel GPU において Command Streamer (CS) は各 Engine への主要なインターフェイスとして機能し、CPU から転送された命令のパース、パイプラインの管理と制御、データのフェッチ、EU へのディスパッチ等を担当している。<br>
 CS の種類には、Render (RCS)、Copy/Blitter (BCS)、Video (VCS)、Video Enhancment (VECS) がある。<br>
 <em>Gen11 アーキテクチャ</em> からカリング処理を行うための POSH (Position Only SHader) パイプライン専用の POCS、<em>Gen12/<span class="xe-gpu-arch">X<sup>e</sup></span> アーキテクチャ</em> から GPGPU/Compute 専用の CCS が追加された。</p>
-<h3 id="posh">POSH, POCS<a href="#posh" class="head-cur-link" title="POSH, POCS"></a>
+<h3 id="posh">POSH, POCS<a href="#posh" class="head-cur-link"></a>
 </h3>
 <p>POSH はカリング処理を目的とした新たなジオメトリパイプラインであり、Cull Pipe、Record Pipe とも呼ばれる。<br>
 POSH では位置のみの (position only) Vertex Shader を先行して実行、カリングテストを行う。テスト結果は圧縮されてメモリに保存され、メインの Render パイプラインはテスト結果を用いて無駄なフェッチやシェーディングを省く。<br>
@@ -130,7 +130,7 @@ POSH パイプラインと POCS は <em>Gen11 アーキテクチャ</em> から�
   </figcaption>
 </figure>
 
-<h3 id="ccs">Compute Command Streamer<a href="#ccs" class="head-cur-link" title="Compute Command Streamer"></a>
+<h3 id="ccs">Compute Command Streamer<a href="#ccs" class="head-cur-link"></a>
 </h3>
 <p>RCS/Render Engine は 3D、GPGPU (Compute)、シェーダーを用いたメディア処理に使われる命令をサポートしている。<br>
 CCS/Compute Engine はそこから GPGPU (Compute) の命令のみをサポートする、RCS/Render Engine のサブセットとなる。<br>
@@ -140,7 +140,7 @@ CCS/Compute Engine はそこから GPGPU (Compute) の命令のみをサポー�
 また、<em>Xe_HP SDV</em> と <em>Ponte Vecchio</em> は RCS/Render Engine、3Dパイプラインを持たず、CCS/Compute Engine のみを搭載する構成となっている。</p>
 <p><em>Tiger Lake</em> のドキュメントに CCS/Compute Engine の記述があり、またダイアグラムには CCS 1基分が描かれているが、Linux Kernel における Intel GPU ドライバー、i915 では <code>platform_engine_mask</code> に <code>CSS{0..4}</code> のビットが設定されているのは <em>Xe_HP SDV, DG2/Alchemist, Ponte Vecchio</em> のみであるため、こちらも <em>Tiger Lake</em> GPU では無効化されていると思われる。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
 <p>そのため、今回 Intel Iris (OpenGL) / ANV (Vulkan) ドライバーに追加された CCS/Compute Engine のサポートは <em>Xe_HP SDV, DG2/Alchemist, Ponte Vecchio</em> に向けたものとも見れる。</p>
-<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" title="参考リンク"></a>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
 <li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-March/291525.html"

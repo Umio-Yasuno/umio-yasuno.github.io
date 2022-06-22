@@ -83,7 +83,7 @@
     <time datetime="2021-12-11 22:16 +0900">Post: 2021/12/11 22:16 &#43;0900</time>
     <aside class="update">Update: 2021/12/22 16:25 &#43;0900</aside>
   </aside><p>サイトテンプレート (HTML/CSS) を全面的に見直して修正した。その記録。</p>
-<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" title="Index"></a>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
 </h2>
 <ul>
 <li><a href="#goldmark"
@@ -130,7 +130,7 @@
 </ul>
 </section>
 
-<h2 id="goldmark">パーサーを goldmark に<a href="#goldmark" class="head-cur-link" title="パーサーを goldmark に"></a>
+<h2 id="goldmark">パーサーを goldmark に<a href="#goldmark" class="head-cur-link"></a>
 </h2>
 <p>Markdownパーサーに、Hugo を使い始めた時のデフォルトだった blackfriday を使い続けてきたが、v0.87.0 からついに非推奨となった。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 そこで仕方なく goldmark に移行したが、苦労する点がいくつかあった。</p>
@@ -143,7 +143,7 @@
 その部分は何の要素にもならないため、レイアウトが崩れることになる。<br>
 これも Markdown側を修正して対応。発生しているのが段落間の調節のために <code>&lt;br&gt;</code> を置いているケースがほとんどだった。</p>
 <p>修正のため、1、2年前のファイルを確認、編集することになったが、その頃は文体とか全体的なテンションに今と違いがあり、それを読まなければならないことの方が辛かった。</p>
-<h3 id="render-hook">Render Hook<a href="#render-hook" class="head-cur-link" title="Render Hook"></a>
+<h3 id="render-hook">Render Hook<a href="#render-hook" class="head-cur-link"></a>
 </h3>
 <p>goldmark では 一部 Markdownレンダリングを上書きする Render Hook が使えるのだが、外部リンクへの <code>target=&quot;_blank&quot;</code> 等を設定するためにリンク部分 (<code>render-link.html</code>) は必ず用意しなければならない。blackfriday では設定部分で切り替えできていた。<br>
 とはいえ Hugo の公式サイトに例が用意されてあり、それで十分事足りる。</p>
@@ -169,9 +169,9 @@ Goテンプレートでは <code>{{ }}</code> で変数、関数にアクセス�
 <p>それと Shortcode 内では今まで Markdown からの変換に <code>markdownify</code> を使っていたが、goldmark ではその場合 Render Hook が適用されない。適用したい場合は <code>.Page.RenderString</code> を使う必要がある。</p>
 <p>今の所 goldmark への移行で発生した問題で目に付いたものは修正できているが、他にも気付いていない問題があるように思える。<br>
 移行にあたって予想される問題とその対応方法を記したガイドなんかがあったりはしないため、手探りで進めなければならないのも対応を難しくしている。</p>
-<h2 id="css">CSS<a href="#css" class="head-cur-link" title="CSS"></a>
+<h2 id="css">CSS<a href="#css" class="head-cur-link"></a>
 </h2>
-<h3 id="color">色の統一<a href="#color" class="head-cur-link" title="色の統一"></a>
+<h3 id="color">色の統一<a href="#color" class="head-cur-link"></a>
 </h3>
 <p>テキスト、ボーダー、背景……それらの色を出来る限り統一し、1つの SCSSファイルにまとめた変数で管理するようにした。<br>
 色もまずベースの色を決めて、そこから SASS/SCSS のビルトイン関数 <code>lighten(), darken()</code> 等を使って調整するようにした。<br>
@@ -179,23 +179,23 @@ Goテンプレートでは <code>{{ }}</code> で変数、関数にアクセス�
 ファイル自体も <code>@import</code> で用途別に分割して管理するようにした。</p>
 <p>SASS/SCSS を使う人にとっては当然のことなのかもしれないが、勉強しながら継ぎ足していったこともあり、無駄な部分は多かった。<br>
 大体のレイアウトはほとんど変えていないが、細かい部分で最適化している、できているはず。</p>
-<h3 id="effect">エフェクト<a href="#effect" class="head-cur-link" title="エフェクト"></a>
+<h3 id="effect">エフェクト<a href="#effect" class="head-cur-link"></a>
 </h3>
 <p>このサイトではそれっぽさを出すために、CSS で走査線っぽいエフェクトと中央部をわずかに明るく見せるエフェクトを追加している。<br>
 これがないと全体がのっぺりしたものになるため、個人的には重要な部分なのだが、一時期スクロールが遅い原因になっていた。<br>
 デスクトップでは感じないが、モバイルだと明らかに遅く、アドブロッカーを使ってエフェクトを適用している要素を消すと解消した。<br>
 削除以外の解決方法を探すのに時間が掛かったが、結局原因は <code>mix-blend-mode</code> を指定していながら、<code>isolation</code> は指定していないことが原因だった。<br>
 <code>mix-blend-mode</code> はエフェクトを重ねる上で色に影響を与えるが、自分の使い方では影響が小さかったため、そのプロパティ自体を消した。値を調節するのを面倒に感じていたのもある。</p>
-<h2 id="other">その他<a href="#other" class="head-cur-link" title="その他"></a>
+<h2 id="other">その他<a href="#other" class="head-cur-link"></a>
 </h2>
-<h3 id="site-search">サイト内検索<a href="#site-search" class="head-cur-link" title="サイト内検索"></a>
+<h3 id="site-search">サイト内検索<a href="#site-search" class="head-cur-link"></a>
 </h3>
 <p>Github API を利用したサイト内検索を実装した。ログを確認したところ公開したのは 2021/07 だが、未だに (Beta) を付けている。</p>
 <p>中身としては、Github Pages のレポジトリとは別に管理している Markdownファイルのレポジトリに検索を掛けて結果を JSON形式で受け取る。そしてパスをキーに、Hugoテンプレートとして用意、出力した JSONファイルから記事のタイトルと時刻を取得し、検索結果として表示している。</p>
-<h3 id="rss">RSS<a href="#rss" class="head-cur-link" title="RSS"></a>
+<h3 id="rss">RSS<a href="#rss" class="head-cur-link"></a>
 </h3>
 <p>最初はサイトマップ同様にすべての記事分を出力させていたが、参考に他のサイトの RSS を見たところ最近の記事のみを出力しており、そこでようやく更新チェックならすべては必要ないことに気付いた。今は 10記事分だけ出力するようにしている。</p>
-<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" title="参考リンク"></a>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
 <li><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/mix-blend-mode"

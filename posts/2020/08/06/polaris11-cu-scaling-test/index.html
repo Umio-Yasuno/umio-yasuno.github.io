@@ -83,7 +83,7 @@
     <time datetime="2020-08-06 19:21 +0900">Post: 2020/08/06 19:21 &#43;0900</time>
     <aside class="update">Update: 2020/12/04 22:27 &#43;0900</aside>
   </aside><p>今回、Linux Kernel における AMDGPUドライバーのある機能を使って、<strong>RX 560</strong> の一部有効 Compute Unit を無効化し、CU数がどれだけ GPU性能に影響を与えるのかを調査してみた。</p>
-<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" title="Index"></a>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
 </h2>
 <ul>
 <li><a href="#motive"
@@ -150,7 +150,7 @@
 </ul>
 </section>
 
-<h2 id="motive">動機<a href="#motive" class="head-cur-link" title="動機"></a>
+<h2 id="motive">動機<a href="#motive" class="head-cur-link"></a>
 </h2>
 <p>今回の調査を行なったきっかけは、<a href="https://www.coelacanth-dream.com/tags/renoir"
   target="_blank" rel="noopener noreferrer"
@@ -164,7 +164,7 @@
 <p>しかし、真面目に考えれば、同じ GPU ASIC をベースにした製品、モデルであっても、基本 CU数の変更だけでなく、クロックの調整やメモリバス幅、L2cacheサイズの削減によって製品間の差別化が為されるため、CU数が性能にどれだけ影響を与えるかは測れない。<br>
 また、同種の GPU ASIC であっても、それぞれ異なる電圧特性を持つ。</p>
 <p>そのため、同じ GPU で CU数だけを変えるということでしか性能への影響を測ることは難しく、その調査を実施することに意義があるのではないかと考える。</p>
-<h2 id="disable_cu">disable_cu=0.0.0,0.0.1,1.0.0,1.0.1&hellip;&hellip;&hellip;<a href="#disable_cu" class="head-cur-link" title="disable_cu=0.0.0,0.0.1,1.0.0,1.0.1&hellip;&hellip;&hellip;"></a>
+<h2 id="disable_cu">disable_cu=0.0.0,0.0.1,1.0.0,1.0.1&hellip;&hellip;&hellip;<a href="#disable_cu" class="head-cur-link"></a>
 </h2>
 <p>一部 CU の無効化は、AMDGPUドライバーの <code>disable_cu</code> というモジュールパラメーターに値をセットすることで可能となる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 値には、無効化したい CU を <code>se(ShaderEngine).sh(ShaderArray).cu(Compute Unit)</code> のフォーマットで指定する。<br>
@@ -195,9 +195,9 @@
   target="_blank" rel="noopener noreferrer"
   title="RDNA世代 /GFX10"
 >RDNA世代 /GFX10</a> はサポートされていない。WGP(2CU)構成では片方の CU を無効化した際に問題が出るのだろうか。</p>
-<h2 id="env">調査環境<a href="#env" class="head-cur-link" title="調査環境"></a>
+<h2 id="env">調査環境<a href="#env" class="head-cur-link"></a>
 </h2>
-<h3 id="use-software">使用ソフトウェア<a href="#use-software" class="head-cur-link" title="使用ソフトウェア"></a>
+<h3 id="use-software">使用ソフトウェア<a href="#use-software" class="head-cur-link"></a>
 </h3>
 <p>調査の際に実行するソフトウェアには 3つ選んだ。<br>
 <a href="https://www.coelacanth-dream.com/tags/aco"
@@ -219,7 +219,7 @@ OpenCL で実行され、メモリ帯域と各精度の浮動小数点演算を�
 GPU の検証、調査にはうってつけと言えるだろう。<br>
 <code>vkmark</code> は、読み込むテクスチャやモデル数は少なく、3Dゲーム等の環境とは少し離れているが、オープンソースで開発され、プロプライエタリなベンチマークソフトのように結果の出力が制限されることもない。解像度は 1920x1080 に設定した。<br>
 <code>clpeak</code> は、GPU のメモリ帯域を測定できるオープンソースなベンチマークが <code>clpeak</code> くらいしか見つからなかったということと、ほぼ純粋な浮動小数点演算という CU数でスケールしやすいものが調査においては必要と思い、選択した。</p>
-<h3 id="system">システム環境<a href="#system" class="head-cur-link" title="システム環境"></a>
+<h3 id="system">システム環境<a href="#system" class="head-cur-link"></a>
 </h3>
 <table>
 <thead>
@@ -260,7 +260,7 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
 自分が所持する <strong>RX 560</strong> は最大消費電力が 48W に設定されており、ベンチマークの中にはこれにギリギリまで近づいたものがあるため、固定してしまうと CU数の違いによる消費電力と発熱、そこからの GPUクロック選択が正常に行なわれない可能性がある。<br>
 デフォルトの PowerTable は以下。</p>
 <blockquote>
-<h4 id="rx-560">RX 560<a href="#rx-560" class="head-cur-link" title="RX 560"></a>
+<h4 id="rx-560">RX 560<a href="#rx-560" class="head-cur-link"></a>
 </h4>
 <pre><code> OD_SCLK:
  0:        214MHz        715mV
@@ -281,11 +281,11 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
  VDDC:     700mV        1150mV
 </code></pre>
 </blockquote>
-<h2 id="result">結果<a href="#result" class="head-cur-link" title="結果"></a>
+<h2 id="result">結果<a href="#result" class="head-cur-link"></a>
 </h2>
-<h3 id="perf">性能<a href="#perf" class="head-cur-link" title="性能"></a>
+<h3 id="perf">性能<a href="#perf" class="head-cur-link"></a>
 </h3>
-<h4 id="ncnn">ncnn  ( Vulkan Compute )<a href="#ncnn" class="head-cur-link" title="ncnn  ( Vulkan Compute )"></a>
+<h4 id="ncnn">ncnn  ( Vulkan Compute )<a href="#ncnn" class="head-cur-link"></a>
 </h4>
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/08/06/ncnn-result.webp" target="_blank"  >
@@ -660,7 +660,7 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
 </tr>
 </tbody>
 </table>
-<h4 id="vkmark">vkmark  ( Vulkan Graphics )<a href="#vkmark" class="head-cur-link" title="vkmark  ( Vulkan Graphics )"></a>
+<h4 id="vkmark">vkmark  ( Vulkan Graphics )<a href="#vkmark" class="head-cur-link"></a>
 </h4>
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/08/06/vkmark-result.webp" target="_blank"  >
@@ -682,7 +682,7 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
 | 16 CU | 4908 |
 
 -->
-<h4 id="clpeak-compute">clpeak  ( OpenCL Compute )<a href="#clpeak-compute" class="head-cur-link" title="clpeak  ( OpenCL Compute )"></a>
+<h4 id="clpeak-compute">clpeak  ( OpenCL Compute )<a href="#clpeak-compute" class="head-cur-link"></a>
 </h4>
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/08/06/clpeak-compute-result.webp" target="_blank"  >
@@ -729,7 +729,7 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
 </tr>
 </tbody>
 </table>
-<h4 id="clpeak-mbw">clpeak  ( Global memory bandwidth )<a href="#clpeak-mbw" class="head-cur-link" title="clpeak  ( Global memory bandwidth )"></a>
+<h4 id="clpeak-mbw">clpeak  ( Global memory bandwidth )<a href="#clpeak-mbw" class="head-cur-link"></a>
 </h4>
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2020/08/06/clpeak-mbw-result.webp" target="_blank"  >
@@ -792,7 +792,7 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
 </tr>
 </tbody>
 </table>
-<h3 id="consider">考察<a href="#consider" class="head-cur-link" title="考察"></a>
+<h3 id="consider">考察<a href="#consider" class="head-cur-link"></a>
 </h3>
 <p><code>clpeek (OpenCL Compute)</code> の結果から考えるが、まず half(半精度)、float(単精度)、double(倍精度)の後に続く数字は要素数を表す。<br>
 そして、<em>2CU</em> と <em>16CU</em> の結果を比較すると、<code>half16</code> で 7.96倍、<code>float16</code> で 7.90倍、<code>double16</code> で 7.62倍と、目論見通り? に CU数に従って綺麗に結果がスケールしている。<br>
@@ -808,7 +808,7 @@ GPUクロックに関しては、固定はせず、デフォルトの PowerTable
 <code>4CU</code> ずつ増やした結果では、<em>4CU -&gt; 8CU</em> と同等(±0.05)、またはそれよりも大きい性能向上を <em>8CU -&gt; 12CU</em> で得ているネットワークモデルは 6個程確認できる。これらはまだメモリ性能がボトルネックにはなっておらず、コンピュート性能(CU数)が結果に反映されているものと思われる。<br>
 しかし、<em>12CU -&gt; 16CU</em> からは <em>8CU -&gt; 12CU</em> と同等以上の性能向上を得られているネットワークモデルはない。ここはコンピュート性能に対し、メモリ性能が追い付かなくなったものと推察される。<br>
 <code>alexnet</code> に関しては、<em>12CU -&gt; 16CU</em> で劇的に性能向上しているように見えるが、<em>8CU</em> から <em>12CU</em> で見るとかえって性能が悪化しているため、何らかの理由で <em>12CU</em> での結果が特別悪化したものと思われる。</p>
-<h2 id="general">総論<a href="#general" class="head-cur-link" title="総論"></a>
+<h2 id="general">総論<a href="#general" class="head-cur-link"></a>
 </h2>
 <p>実際の使用感に近い <code>ncnn (Vulkan Compute)</code> と <code>vkmark (Vulkan Graphics)</code> の結果から、ある程度の CU数からさらに CU数を増やしても単純に性能は向上せず、メモリ性能がボトルネックになっているものと考えられる。<br>
 GPU において、帯域あたりの電力効率に優れる HBM2 への取り組みがどれだけ重要か窺える。<br>
