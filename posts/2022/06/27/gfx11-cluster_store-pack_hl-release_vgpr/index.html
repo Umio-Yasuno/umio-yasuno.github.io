@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/06/27/gfx11-cluster_store-pack_hl-release_vgpr/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>GFX11 で有効化、サポートされる機能 ―― ReleaseVGPR, S_PACK_HL, Cluster stores | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="GFX11 で有効化、サポートされる機能 ―― ReleaseVGPR, S_PACK_HL, Cluster stores | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="GFX11 で有効化、サポートされる機能 ―― ReleaseVGPR, S_PACK_HL, Cluster stores | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/06/27/gfx11-cluster_store-pack_hl-release_vgpr/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/06/27/gfx11-cluster_store-pack_hl-release_vgpr/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/06/27/gfx11-cluster_store-pack_hl-release_vgpr/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="GFX11, LLVM, Coelacanth&#39;s Dream">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4050 fixed no-repeat;font-size:.925rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1.1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em 0 1em #e5ebea}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .4em .2em;background-color:#0003;clip-path:circle(.5em);transform:rotateZ(-24deg)}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 0%,#0000 76%,#0000 95%,#111 99%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 50%,#0002 50%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#d001 33.4%,#0d01 33.4%,#0d01 66.8%,#00d1 66.8%)50%/.2rem 100% fixed repeat-x;opacity:.4;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f566b;background-color:var(--sb-bg,#0f566b)}.sb:active{--sb-bg:#0c4759}.cp-url::before,.cp-url-title::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}.text{gap:1.2rem 0}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0;margin-top:.5rem}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "GFX11 で有効化、サポートされる機能 ―― ReleaseVGPR, S_PACK_HL, Cluster stores",
+  "headline" : "GFX11 で有効化、サポートされる機能 ―― ReleaseVGPR, S_PACK_HL, Cluster stores",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-06-27",
+    "datePublished" : "2022-06-27",
+    "dateModified"  : "2022-06-28",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">GFX11 で有効化、サポートされる機能 ―― ReleaseVGPR, S_PACK_HL, Cluster stores</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share "><button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL"
+  ></button><button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL &amp; Title"
+  ></button><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav></aside><aside class="article-time">
+    <time datetime="2022-06-27 12:13 +0900">Post: 2022/06/27 12:13 &#43;0900</time>
+    <aside class="update">Update: 2022/06/28 00:54 &#43;0900</aside>
+  </aside><p>LLVM において <em>GFX11</em> で有効化あるいはサポートされる機能のメモ。</p>
+<h2 id="dealloc_vgpr">Automatically Release VGPRs<a href="#dealloc_vgpr" class="head-cur-link"></a>
+</h2>
+<p>AMDGPU からホスト CPU にメッセージ (割り込み) を送信する命令として <code>S_SENDMSG</code> があるが、<em>GFX11</em> ではメッセージの種類に新しく <code>MSG_DEALLOC_VGPRS</code> をサポートする。<br>
+AMD の Jay Foad 氏により LLVM にパッチが投稿されている。</p>
+<ul>
+<li><a href="https://reviews.llvm.org/D128442"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D128442 [AMDGPU] GFX11: automatically release VGPRs at the end of the shader"
+>⚙ D128442 [AMDGPU] GFX11: automatically release VGPRs at the end of the shader</a></li>
+</ul>
+<p><code>MSG_DEALLOC_VGPRS</code> はシェーダーの VGPR (ベクタレジスタ、Vector general-purpose register) の解放に使用できる。<br>
+通常はシェーダーの最後に呼ばれる <code>S_ENDPGM</code> 命令で VGPR が解放されるが、<code>S_ENDPGM</code> の前に <code>MSG_DEALLOC_VGPRS</code> を送信することで、<code>S_ENDPGM</code> の段で VMEM (Vector Memory) への Store 処理の完了を待機する必要がある場合に、<code>MSG_DEALLOC_VGPRS</code> によって先に VGPR を解放できるため、システム全体のパフォーマンスが向上するとしている。</p>
+<h2 id="s_pack_hl">S_PACK_HL<a href="#s_pack_hl" class="head-cur-link"></a>
+</h2>
+<p><em>GFX11</em> では SALU (Scalar ALU) がサポートする命令に <code>S_PACK_HL</code> が追加される。<br>
+<code>S_PACK</code> 系の命令では 2つのソースレジスタの上位 (H, High) 16-bit か下位 (Low, L) 16-bit をそれぞれ指定して、1つのレジスタに詰め込む (パック) する。<br>
+<em>RDNA 2/GFX10.3</em> 世代では <code>S_PACK_{LL,LH,HH}</code> をサポートしており、<em>GFX11</em> 世代でサポートしていなかった <code>S_PACK_HL</code> が追加される形となる。</p>
+<ul>
+<li><a href="https://reviews.llvm.org/D128527"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D128527 [AMDGPU] Use GFX11 S_PACK_HL instruction in more cases"
+>⚙ D128527 [AMDGPU] Use GFX11 S_PACK_HL instruction in more cases</a></li>
+</ul>
+<blockquote>
+<pre><code> +  /// Return true if the target has the S_PACK_HL_B32_B16 instruction.
+ +  bool hasSPackHL() const { return GFX11Insts; }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c"
+  target="_blank" rel="noopener noreferrer"
+  title="[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279"
+>[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279</a></cite>
+</div>
+
+</blockquote>
+<h2 id="cluster-store">Cluster stores<a href="#cluster-store" class="head-cur-link"></a>
+</h2>
+<p>これまで AMDGPU 向けには Cluster loads のみが有効化されていたが、<em>GFX11</em> では Cluster stores も有効化される。</p>
+<ul>
+<li><a href="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c"
+  target="_blank" rel="noopener noreferrer"
+  title="[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279"
+>[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279</a></li>
+<li><a href="https://reviews.llvm.org/D128517"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D128517 [AMDGPU] Cluster stores as well as loads for GFX11"
+>⚙ D128517 [AMDGPU] Cluster stores as well as loads for GFX11</a></li>
+</ul>
+<blockquote>
+<pre><code> +
+ +  // \returns true if it's beneficial on this subtarget for the scheduler to
+ +  // cluster stores as well as loads.
+ +  bool shouldClusterStores() const { return getGeneration() &gt;= GFX11; }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c"
+  target="_blank" rel="noopener noreferrer"
+  title="[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279"
+>[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279</a></cite>
+</div>
+
+</blockquote>
+<p>Cluster loads/stores は LLVM側のスケジューリングに関する機能であり、レジスタ使用量を増やすことで、キャッシュ効率の向上、Load/Store 命令後のスケジューリングにおける自由度の向上を目的とした機能と思われる。</p>
+<p>Cluster stores は一度 AMDGPU 向けに有効化されたが<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、利点がほとんど無いとして、その後に無効化された経緯がある。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+その時 AMD の Jay Foad 氏は、Cluster loads はキャッシングにおける利点があるが、Cluster stores はレジスタプレッシャーによりスケジューリングの自由度が下がる傾向にあると語っている。</p>
+<p>詳細はまだ不明だが、<em>GFX11</em> では Load/Store 周りに何かしらの改良が加えられたものと思われる。<br>
+Cluster stores を無効化するパッチは 2020/08/07 に投稿されており、<em>GFX11</em> で再度有効化される背景には SW開発チームから HW開発チームへのフィードバックがあったのかもしれない。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+</h3>
+<ul>
+<li><a href="https://developer.amd.com/resources/developer-guides-manuals/"
+  target="_blank" rel="noopener noreferrer"
+  title="Developer Guides, Manuals & ISA Documents - AMD"
+>Developer Guides, Manuals & ISA Documents - AMD</a>
+<ul>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf"
+  target="_blank" rel="noopener noreferrer"
+  title="&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf"
+>&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf</a></li>
+</ul>
+</li>
+</ul>
+</section>
+
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://reviews.llvm.org/D26414"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D26414 AMDGPU: Enable store clustering"
+>⚙ D26414 AMDGPU: Enable store clustering</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://reviews.llvm.org/D85530"
+  target="_blank" rel="noopener noreferrer"
+  title="⚙ D85530 [AMDGPU] Don&rsquo;t cluster stores"
+>⚙ D85530 [AMDGPU] Don&rsquo;t cluster stores</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/gfx11" class="bottom-tag-link"  title="GFX11">#GFX11</a><a href="https://www.coelacanth-dream.com/tags/llvm" class="bottom-tag-link"  title="LLVM">#LLVM</a></nav><aside class="article-bottom-misc delay-page"><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/06/27/gfx11-cluster_store-pack_hl-release_vgpr.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.100.2</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/llvm/" class="menu-cat-tag-lower">LLVM</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.100.2</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+
+    <label
+      class="menu-open-label menu-label"
+      data-label="MENU"
+      for="menu-open"
+    ></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+
+    <label
+      class="menu-close-label menu-label"
+      data-label="X"
+      for="menu-close"
+    ></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/llvm/" class="menu-cat-tag-lower">LLVM</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+
+    </nav>
+  </nav>
+</aside>
+<div id="msg" hidden></div>
+    <div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+  </body>
+</html>
