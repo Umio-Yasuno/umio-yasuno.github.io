@@ -81,7 +81,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-06-29 05:49 +0900">Post: 2022/06/29 05:49 &#43;0900</time>
-    <aside class="update">Update: 2022/06/29 07:01 &#43;0900</aside>
+    <aside class="update">Update: 2022/06/29 08:00 &#43;0900</aside>
   </aside><p>最近になって AMD の開発者より LLVM に <em>GFX11</em> の新機能、新命令のサポートを追加するパッチが続いて投稿されている。<br>
 そして今回、AMD の Joe Nash 氏より、<em>GFX11</em> の新命令として <code>WMMA (Wave Matrix Multiply-accumulate)</code> のサポートを追加するパッチが投稿された。</p>
 <ul>
@@ -146,7 +146,9 @@
 </blockquote>
 <p>NVIDIA GPU 向けの CUDA にも Tesor Core が対応する命令、それを利用するための API として <code>WMMA (Warp Matrix Multiply Accumulate)</code> はあり、言葉としては Warp か Wave かの違いとなる。<br>
 AMDGPU <em>GFX11</em> における <code>WMMA</code> は現状行列のサイズが 16x16x16 で固定されているのに対し、NVIDIA CUDA における <code>WMMA</code> はアーキテクチャにもよるが、16x16x16 以外に 32x8x16 や 8x8x4 (FP64)、8x8x128 (B1) にも対応するといった違いもある。</p>
-<p>機能や名称から、NVIDIA GPU をある程度意識して追加された命令のように思える。<br>
+<p>Intel GPU では、<code>DPAS (Dot Product Accumulate Systolic)</code> 命令、XMX (<span class="xe-gpu-arch">X<sup>e</sup></span> Matrix eXtension) とも呼ぶユニットが NVIDIA Tensor Core に相当する。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+Fused EU 構成を採用する <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span></em> では内部的に行列ブロックを 2つ分解して実行する <code>DPASW (Wide)</code> 命令もサポートしている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>機能や名称から、<em>GFX11</em> の <code>WMMA</code> 命令は NVIDIA GPU をある程度意識して追加された命令のように思える。<br>
 <em>CDNA 系アーキテクチャ</em> がサポートする <code>MFMA</code> 命令は miSIMD (Machine Intelligence SIMD) で実行する方式だったが、<em>GFX11</em> でも同様のユニットを用いるかは不明。<br>
 ただ今回のパッチでは通常のベクタレジスタ (VGPR) を指定しているため、miSIMD と専用の AccVGPR を用いる <em>CDNA 系アーキテクチャ</em> とは異なる方式であることが可能性として考えられる。<br>
 <em>CDNA 1/gfx908/MI100/Arcturus</em> では SIMD と VGPR、miSIMD と AccVGPR が分けて実装されている。<br>
@@ -174,6 +176,23 @@ AMDGPU <em>GFX11</em> における <code>WMMA</code> は現状行列のサイズ
 </ul>
 </section>
 
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.intel.com/content/www/us/en/develop/documentation/oneapi-gpu-optimization-guide/top/xe-arch.html"
+  target="_blank" rel="noopener noreferrer"
+  title="Intel® Iris® Xe GPU Architecture"
+>Intel® Iris® Xe GPU Architecture</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/01/16/xe_hpg-hpc-eu-inst/#dpas_w"
+  
+  title="DG2-G12, DG2 L3 banks, SIMD width | Coelacanth&rsquo;s Dream"
+>DG2-G12, DG2 L3 banks, SIMD width | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
 </article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/gfx11" class="bottom-tag-link"  title="GFX11">#GFX11</a><a href="https://www.coelacanth-dream.com/tags/llvm" class="bottom-tag-link"  title="LLVM">#LLVM</a></nav><aside class="article-bottom-misc delay-page"><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/06/29/gfx11-wmma-inst.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
 </aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
