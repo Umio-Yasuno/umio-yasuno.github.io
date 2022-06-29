@@ -81,7 +81,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-06-29 05:49 +0900">Post: 2022/06/29 05:49 &#43;0900</time>
-    <aside class="update">Update: 2022/06/29 19:09 &#43;0900</aside>
+    <aside class="update">Update: 2022/06/29 20:29 &#43;0900</aside>
   </aside><p>最近になって AMD の開発者より LLVM に <em>GFX11</em> の新機能、新命令のサポートを追加するパッチが続いて投稿されている。<br>
 そして今回、AMD の Joe Nash 氏より、<em>GFX11</em> の新命令として <code>WMMA (Wave Matrix Multiply-accumulate)</code> のサポートを追加するパッチが投稿された。</p>
 <ul>
@@ -108,7 +108,7 @@
 </blockquote>
 <p><code>WMMA</code> 命令には以下の 6個が存在する。<br>
 <em>CDNA 系アーキテクチャ</em> でサポートされている <code>MFMA (Matrix-Fused-Multiply-Add)</code> 命令と同様のフォーマットとすると、<code>V_WMMA_{CD}_{M}x{N}x{K}_{AB}</code> と置いた場合、<code>{AB}</code> は入力データフォーマット、<code>{CD}</code> は加算する行列と最終的な出力データフォーマットを、<code>{M,N,K}</code> は行列のサイズを示す。<br>
-<em>GFX11</em> の <code>WMMA</code> 命令は、入力データフォーマットに <code>F16,BF16,IU8,IU4</code>、出力データフォーマットに <code>F32,F16,BF16,I32</code> をサポートしていると考えられる。<br>
+<em>GFX11</em> の <code>WMMA</code> 命令は、入力データフォーマットに <code>F16,BF16,IU8,IU4</code>、出力データフォーマットに <code>F32,F16,BF16,I32</code> をサポートしている。<br>
 命令ごとの対応関係は <code>F16-&gt;F32, BF16-&gt;F32, F16-&gt;F16, BF16-&gt;BF16, IU8-&gt;I32, IU4-&gt;I32</code> となる。</p>
 <blockquote>
 <pre><code> defm V_WMMA_F32_16X16X16_F16   : VOP3P_Real_WMMA &lt;0x040&gt;;
@@ -126,7 +126,7 @@
 
 </blockquote>
 <p><code>MFMA</code> と <code>WMMA</code> の違いには、<code>MFMA</code> は入出力に <code>F64</code> フォーマットをサポートし、<code>WMMA</code> は <code>F64</code> をサポートしないが入力データフォーマットに <code>IU4</code> をサポートしている点、<br>
-<code>MFMA</code> は複数の行列サイズに対応するが <code>WMMA</code> は 16x16x16 に固定されている点が挙げられる。<br>
+<code>MFMA</code> は複数の行列レイアウトに対応するが <code>WMMA</code> は 16x16x16 に固定されている点が挙げられる。<br>
 ここでの <code>MFMA</code> 命令は <em>CDNA 2/gfx90a/MI200/Aldebaran</em> がサポートしている範囲を指している。</p>
 <table>
 <thead>
@@ -153,7 +153,7 @@
 <td style="text-align:center">F32, F16, BF16, I32</td>
 </tr>
 <tr>
-<td style="text-align:left">Matrix size</td>
+<td style="text-align:left">Matrix layout</td>
 <td style="text-align:center">{4,16,32}x{4,16,32}x{2,4,8,16}</td>
 <td style="text-align:center">16x16x16</td>
 </tr>
