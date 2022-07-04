@@ -84,35 +84,23 @@
   </aside><ins datetime="2020-05-27:00+09:00">
   <span class="insbegin">（追記 2020/05/27）</span>
   <section class="ins-content">
-    ビルドプロセスが改良されて別に ncnn をビルドして、パスを指定する必要がなくなった。<br>
-<a href="https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source"
-  target="_blank" rel="noopener noreferrer"
-  title="https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source"
->https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source</a>
+    <p>ビルドプロセスが改良されて別に ncnn をビルドして、パスを指定する必要がなくなった。<br>
+<a href="https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source" target="_blank" rel="noopener noreferrer" title="https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source">https://github.com/nihui/waifu2x-ncnn-vulkan#build-from-source</a></p>
+
   </section>
   <span class="insend">（追記終了）</span>
 </ins>
-<br>
 
 <p>Vulkan Computeで演算するため、Linux + Radeon 環境でもローカルで実行可能な画像高解像度ソフトウェア、waifu2x-ncnn-vulkan をビルドする方法のメモ。</p>
 <ul>
-<li><a href="#ncnn"
-  
-  title="ncnn のビルド方法"
->ncnn のビルド方法</a></li>
-<li><a href="#waifu2x-ncnn-vulkan"
-  
-  title="waifu2x-ncnn-vulkan のビルド方法"
->waifu2x-ncnn-vulkan のビルド方法</a></li>
+<li><a href="#ncnn"  title="ncnn のビルド方法">ncnn のビルド方法</a></li>
+<li><a href="#waifu2x-ncnn-vulkan"  title="waifu2x-ncnn-vulkan のビルド方法">waifu2x-ncnn-vulkan のビルド方法</a></li>
 </ul>
 <h2 id="ncnn">ncnn のビルド方法<a href="#ncnn" class="head-cur-link"></a>
 </h2>
 <p>waifu2x-ncnn-vulkan をビルドするには、まず ncnn をビルドする必要があるのだが、<br>
 <del>最新版ではビルド時にエラーが出るため、ncnn を <code>git clone</code> した後、waifu2x-ncnn-vulkan のページにあるリンクのコミット時に切り替えるのがいい。<br>
-<span class="thread-link"><a href="https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86"
-  target="_blank" rel="noopener noreferrer"
-  title="https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86"
->https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86</a></span>
+<span class="thread-link"><a href="https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86" target="_blank" rel="noopener noreferrer" title="https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86">https://github.com/Tencent/ncnn/wiki/how-to-build#build-for-linux-x86</a></span>
 </p>
 <pre><code>$ git clone https://github.com/Tencent/ncnn
 $ cd ncnn
@@ -134,7 +122,6 @@ $ git checkout 8c537069875a28d5380c6bdcbf7964d73803b7b3
   </section>
   <span class="insend">（追記終了）</span>
 </ins>
-<br>
 
 <p><del>ncnn の wiki には VulkanSDK をダウンロード、展開し、環境変数 <code>VULKAN_SDK</code> をそこにセットするようにとあるが、CMake がそれを見つけてくれないため、CMake 実行時、別に指定する必要がある。</del></p>
 <p><del>まずビルド用のディレクトリを作成。下記のコマンドはディレクトリ名に日付を入れるようにしているが、名前であるから何でもいい。<br>
@@ -150,10 +137,7 @@ $ git checkout 8c537069875a28d5380c6bdcbf7964d73803b7b3
 <h2 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan のビルド方法<a href="#waifu2x-ncnn-vulkan" class="head-cur-link"></a>
 </h2>
 <p>waifu2x-ncnn-vulkan のバージョンは問わず、最新版でも問題ないが、ここでは version 20200414 を前提とする。<br>
-<span class="thread-link"><a href="https://github.com/nihui/waifu2x-ncnn-vulkan/releases/tag/20200414"
-  target="_blank" rel="noopener noreferrer"
-  title="Release version 20200414 · nihui/waifu2x-ncnn-vulkan"
->Release version 20200414 · nihui/waifu2x-ncnn-vulkan</a></span>
+<span class="thread-link"><a href="https://github.com/nihui/waifu2x-ncnn-vulkan/releases/tag/20200414" target="_blank" rel="noopener noreferrer" title="Release version 20200414 · nihui/waifu2x-ncnn-vulkan">Release version 20200414 · nihui/waifu2x-ncnn-vulkan</a></span>
 </p>
 <p>まずは waifu2x-ncnn-vulkan-20200414 の src ディレクトリへ。<br>
 そして先程同様にビルド用のディレクトリを作成、移動。</p>
@@ -177,17 +161,13 @@ $ git checkout 8c537069875a28d5380c6bdcbf7964d73803b7b3
   </section>
   <span class="insend">（追記終了）</span>
 </ins>
-<br>
 
 <pre><code> $ cmake ../
  $ make -j$(grep -c processor /proc/cpuinfo)
 </code></pre>
 <p><code>&lt;build dir&gt;</code> に waifu2x-ncnn-vulkan のバイナリが生成されるため、それを実行すればいいが、推論に用いるモデルは <code>&lt;build dir&gt;</code> 下ではなく、waifu2x-ncnn-vulkan 下にあるため注意。</p>
 <p>ビルドに失敗する時は、以下で質問して頂ければ助けになれるかもしれません。<br>
-<span class="thread-link"><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/issues"
-  target="_blank" rel="noopener noreferrer"
-  title="Issues · Umio-Yasuno/umio-yasuno.github.io"
->Issues · Umio-Yasuno/umio-yasuno.github.io</a></span>
+<span class="thread-link"><a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io/issues" target="_blank" rel="noopener noreferrer" title="Issues · Umio-Yasuno/umio-yasuno.github.io">Issues · Umio-Yasuno/umio-yasuno.github.io</a></span>
 </p>
 </article><aside class="article-bottom-misc delay-page"><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/04/26/how-to-build-waifu2x-ncnn-vulkan-for-linux.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>

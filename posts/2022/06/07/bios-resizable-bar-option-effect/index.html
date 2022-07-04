@@ -81,22 +81,10 @@
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-06-07 21:48 +0900">Post: 2022/06/07 21:48 &#43;0900</time>
     <aside class="update">Update: 2022/07/03 10:26 &#43;0900</aside>
-  </aside><p>AMDGPUドライバーのバグを報告するレポジトリである <a href="https://gitlab.freedesktop.org/drm/amd"
-  target="_blank" rel="noopener noreferrer"
-  title="drm / amd · GitLab"
->drm / amd · GitLab</a> に、System UEFI/BIOS の設定によって BAR (Base Address Register) 領域への書き込みが遅くなる問題が報告されている。<br>
-報告者の <a href="https://github.com/ishitatsuyuki"
-  target="_blank" rel="noopener noreferrer"
-  title="Tatsuyuki Ishi"
->Tatsuyuki Ishi</a> 氏はベンダー非依存な NVIDIA Reflex の代替ミドルウェア <a href="https://github.com/ishitatsuyuki/LatencyFleX"
-  target="_blank" rel="noopener noreferrer"
-  title="LatencyFleX"
->LatencyFleX</a> の開発者であり、Mesa3D RADVドライバーを始め多くの OSSプロジェクトに参加、開発を行っている。</p>
+  </aside><p>AMDGPUドライバーのバグを報告するレポジトリである <a href="https://gitlab.freedesktop.org/drm/amd" target="_blank" rel="noopener noreferrer" title="drm / amd · GitLab">drm / amd · GitLab</a> に、System UEFI/BIOS の設定によって BAR (Base Address Register) 領域への書き込みが遅くなる問題が報告されている。<br>
+報告者の <a href="https://github.com/ishitatsuyuki" target="_blank" rel="noopener noreferrer" title="Tatsuyuki Ishi">Tatsuyuki Ishi</a> 氏はベンダー非依存な NVIDIA Reflex の代替ミドルウェア <a href="https://github.com/ishitatsuyuki/LatencyFleX" target="_blank" rel="noopener noreferrer" title="LatencyFleX">LatencyFleX</a> の開発者であり、Mesa3D RADVドライバーを始め多くの OSSプロジェクトに参加、開発を行っている。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/drm/amd/-/issues/1864"
-  target="_blank" rel="noopener noreferrer"
-  title="BAR writes are slow with certain machine configurations (#1864) · Issues · drm / amd · GitLab"
->BAR writes are slow with certain machine configurations (#1864) · Issues · drm / amd · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/drm/amd/-/issues/1864" target="_blank" rel="noopener noreferrer" title="BAR writes are slow with certain machine configurations (#1864) · Issues · drm / amd · GitLab">BAR writes are slow with certain machine configurations (#1864) · Issues · drm / amd · GitLab</a></li>
 </ul>
 <h2 id="term">Above 4G Decoding, Resizable BAR, Smart Access Memory &hellip;<a href="#term" class="head-cur-link"></a>
 </h2>
@@ -105,10 +93,7 @@
 <code>Resizable BAR</code> は PCIe の仕様にある機能であり、BAR のサイズを 64-bitアドレス範囲で指定、また可変させられるようになる。(基本 GPU VRAM、デバイスのローカルメモリに合わせられる)<br>
 <code>Smart Access Memory</code> はほとんど AMD のマーケティング用語であり、CPU から VRAM がすべて見えている状態、BAR のサイズが VRAM 以上の状態を指している。<br>
 ただ Mesa3D (RadeonSI/RADV) においては <code>Resizable BAR</code> 向けの最適化オプションを有効化した状態を <code>Smart Access Memory</code> と呼んでもいる。<br>
-<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/"
-  
-  title="RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&rsquo;s Dream"
->RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/"  title="RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&rsquo;s Dream">RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <p>AMD AM4プラットフォームの UEFI/BIOS (AMD AGESA &gt;1.1.0.0) では、<code>Above 4G Decoding [Enabled/Disabled]</code> と <code>Resizable BAR [Auto/Enabled/Disabled]</code> のオプションがある。<br>
 <code>Above 4G Decoding [Enabled]</code> だけでも <code>Smart Access Memory</code> の状態になるが、AMD 公式サイトでは <code>Resizable BAR [Enabled]</code> も <code>Smart Access Memory</code> の有効に必要だとしている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
@@ -119,10 +104,7 @@
 <p>ベンチマークのソースコードは以下のリンク先で公開されている。自分の理解では、と前置くと、当該ベンチマークではメモリタイプに <code>DEVICE_LOCAL | HOST_COHERENT</code> のフラグを立てることで BAR 領域を使うようにし、8MiB ごとに書き込み (zero fill)、その速度を測定している。<br>
 ベンチマークでは VRAM の 90% を使うことを想定しており、実行するにはソースコードの Line 31 を変更して搭載 GPU の VRAM サイズに合わせる必要があると氏はコメントしている。2048 は 16GiB (2048 * 8MiB) を想定した値となる。</p>
 <ul>
-<li><a href="https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc"
-  target="_blank" rel="noopener noreferrer"
-  title="https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc"
->https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc</a></li>
+<li><a href="https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc" target="_blank" rel="noopener noreferrer" title="https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc">https://gist.github.com/ishitatsuyuki/e86aa70879a8de8ed5b398b68b1ddfbc</a></li>
 </ul>
 <p>Tatsuyuki Ishi 氏の GIGABYTE X570 AORUS ELITE + Ryzen 3 3700X + RX 5700 XT を用いた検証では、速い状態で ~1.5ms、遅い状態で ~20ms と、書き込み速度に約 10倍の違いが出ている。UEFI/BIOS アップデート後に多少改善され、遅い状態で ~10ms となったが、まだまだ充分な速度ではないとしている。<br>
 Tatsuyuki Ishi 氏は、X370 + RDNA 2 を用いた他のユーザーの検証でも同じ問題が再現できたことを報告している。<br>
@@ -139,10 +121,7 @@ System UEFI/BIOS で既に Resizable BAR (large BAR) が有効化、マッピン
  	    (pci_resource_len(adev-&gt;pdev, 0) &gt;= adev-&gt;gmc.real_vram_size))
  		return 0;
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=v5.18.2#n1199"
-  target="_blank" rel="noopener noreferrer"
-  title="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=v5.18.2#n1199"
->https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=v5.18.2#n1199</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=v5.18.2#n1199" target="_blank" rel="noopener noreferrer" title="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=v5.18.2#n1199">https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=v5.18.2#n1199</a></cite>
 </div>
 
 </blockquote>
@@ -160,18 +139,9 @@ BAR への書き込み速度と同様の影響があるのであれば、もっ�
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
-<li><a href="https://asawicki.info/news_1740_vulkan_memory_types_on_pc_and_how_to_use_them"
-  target="_blank" rel="noopener noreferrer"
-  title="Vulkan Memory Types on PC and How to Use Them"
->Vulkan Memory Types on PC and How to Use Them</a></li>
-<li><a href="https://gpuopen.com/learn/vulkan-device-memory/"
-  target="_blank" rel="noopener noreferrer"
-  title="Using Vulkan® Device Memory - GPUOpen"
->Using Vulkan® Device Memory - GPUOpen</a></li>
-<li><a href="https://old.reddit.com/r/linux_gaming/comments/v58ts5/quick_heads_up_about_something_i_discovered/"
-  target="_blank" rel="noopener noreferrer"
-  title="Quick Heads up about something I discovered relating to Resizable BAR, you might be missing out on a huge performance uplift : linux_gaming"
->Quick Heads up about something I discovered relating to Resizable BAR, you might be missing out on a huge performance uplift : linux_gaming</a></li>
+<li><a href="https://asawicki.info/news_1740_vulkan_memory_types_on_pc_and_how_to_use_them" target="_blank" rel="noopener noreferrer" title="Vulkan Memory Types on PC and How to Use Them">Vulkan Memory Types on PC and How to Use Them</a></li>
+<li><a href="https://gpuopen.com/learn/vulkan-device-memory/" target="_blank" rel="noopener noreferrer" title="Using Vulkan® Device Memory - GPUOpen">Using Vulkan® Device Memory - GPUOpen</a></li>
+<li><a href="https://old.reddit.com/r/linux_gaming/comments/v58ts5/quick_heads_up_about_something_i_discovered/" target="_blank" rel="noopener noreferrer" title="Quick Heads up about something I discovered relating to Resizable BAR, you might be missing out on a huge performance uplift : linux_gaming">Quick Heads up about something I discovered relating to Resizable BAR, you might be missing out on a huge performance uplift : linux_gaming</a></li>
 </ul>
 </section>
 
@@ -179,10 +149,7 @@ BAR への書き込み速度と同様の影響があるのであれば、もっ�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.amd.com/en/technologies/smart-access-memory"
-  target="_blank" rel="noopener noreferrer"
-  title="AMD Smart Access Memory | AMD"
->AMD Smart Access Memory | AMD</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.amd.com/en/technologies/smart-access-memory" target="_blank" rel="noopener noreferrer" title="AMD Smart Access Memory | AMD">AMD Smart Access Memory | AMD</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

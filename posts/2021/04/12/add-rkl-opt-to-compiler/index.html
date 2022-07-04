@@ -85,14 +85,8 @@
 <p><em>Rocket Lake</em> が対応する x86命令範囲について、GCC へのパッチでは、<em>Ice Lake (client)</em> をベースに SGX (Software Guard Extensions) を引いたものだと説明されている。<br>
 SGX については ark.intel.com によると、モバイル向け <em>Tiger Lake (Family: 0x6, Model: 0x8c)</em> でもサポートされていない。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <ul>
-<li><a href="https://gcc.gnu.org/pipermail/gcc-patches/2021-April/567894.html"
-  target="_blank" rel="noopener noreferrer"
-  title="[PATCH] Add rocketlake to gcc."
->[PATCH] Add rocketlake to gcc.</a></li>
-<li><a href="https://reviews.llvm.org/D100085"
-  target="_blank" rel="noopener noreferrer"
-  title="⚙ D100085 [X86] Support -march=rocketlake"
->⚙ D100085 [X86] Support -march=rocketlake</a></li>
+<li><a href="https://gcc.gnu.org/pipermail/gcc-patches/2021-April/567894.html" target="_blank" rel="noopener noreferrer" title="[PATCH] Add rocketlake to gcc.">[PATCH] Add rocketlake to gcc.</a></li>
+<li><a href="https://reviews.llvm.org/D100085" target="_blank" rel="noopener noreferrer" title="⚙ D100085 [X86] Support -march=rocketlake">⚙ D100085 [X86] Support -march=rocketlake</a></li>
 </ul>
 <h2 id="clwb">CLWB命令には対応せず<a href="#clwb" class="head-cur-link"></a>
 </h2>
@@ -101,46 +95,22 @@ SGX については ark.intel.com によると、モバイル向け <em>Tiger La
 キャッシュラインをそのまま保持することも可能であり、キャッシュミスが発生する可能性を減らす最適化にも用いられる。<br>
 また、<code>CLWB</code> 命令は不揮発性メモリにおけるデータの永続化のためにも使われる。</p>
 <p>不揮発性メモリ (Intel Optane Persistent Memory) をサポートする関係か、Intel CPU では <em>Skylake (server)</em> から <code>CLWB</code> 命令はサポートされている。<br>
-ただし <em>Cannon Lake</em> ではサポートせず、<em>Ice Lake (client)</em> がコンシューマ向けとしては初めてサポートするとされ、<a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html"
-  target="_blank" rel="noopener noreferrer"
-  title="Intel® 64 and IA-32 Architectures Optimization Reference Manual (May 2020)"
->Intel® 64 and IA-32 Architectures Optimization Reference Manual (May 2020)</a> でも <em>Ice Lake (client)</em> での新機能として紹介されているが、<br>
+ただし <em>Cannon Lake</em> ではサポートせず、<em>Ice Lake (client)</em> がコンシューマ向けとしては初めてサポートするとされ、<a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" target="_blank" rel="noopener noreferrer" title="Intel® 64 and IA-32 Architectures Optimization Reference Manual (May 2020)">Intel® 64 and IA-32 Architectures Optimization Reference Manual (May 2020)</a> でも <em>Ice Lake (client)</em> での新機能として紹介されているが、<br>
 実際にはサポートしていないらしく、それを反映させたのがリンク先のパッチとなる。機能的に持たないのか、それとも無効化されているのかは不明。</p>
-<p><em>Ice Lake (client)</em> の <code>CLWB</code> 命令の非サポートについては、GCC には 2020/06 <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、Intel が公開している x86命令のエンコーダー/デコーダー <a href="https://github.com/intelxed/xed"
-  target="_blank" rel="noopener noreferrer"
-  title="intelxed/xed"
->intelxed/xed</a> には 2020/11 にそのことを反映させるパッチが投稿されており<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、LLVM だけ何故か遅れている状況にあった。<br>
+<p><em>Ice Lake (client)</em> の <code>CLWB</code> 命令の非サポートについては、GCC には 2020/06 <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、Intel が公開している x86命令のエンコーダー/デコーダー <a href="https://github.com/intelxed/xed" target="_blank" rel="noopener noreferrer" title="intelxed/xed">intelxed/xed</a> には 2020/11 にそのことを反映させるパッチが投稿されており<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、LLVM だけ何故か遅れている状況にあった。<br>
 <em>Tremont</em> (Atom系アーキテクチャ) と <em>Tiger Lake</em> では正式に <code>CLWB</code> 命令をサポートしている。<em>Ice Lake</em> という括りでも、サーバー向けである <em>Ice Lake (server)</em> では当然サポートされている。<br>
 ただ不思議なことに <em>Ice Lake (client)</em> と同じマイクロアーキテクチャのコア (<em>Sunny Cove</em>) と <em>Tremont</em> を搭載するハイブリッドプロセッサ <em>Lakefield</em> でもサポートされているようだ。 (Source: InstLatx64) <sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
 <ul>
-<li><a href="https://github.com/llvm/llvm-project/commit/5cb47be4104558b2a69dc3df667dbe046bdcce6d"
-  target="_blank" rel="noopener noreferrer"
-  title="[X86] Remove FeatureCLWB from FeaturesICLClient · llvm/llvm-project@5cb47be"
->[X86] Remove FeatureCLWB from FeaturesICLClient · llvm/llvm-project@5cb47be</a></li>
-<li><a href="https://github.com/gcc-mirror/gcc/commit/c422e5f81f42a0fc197f0715f4fcd81f1be90bff"
-  target="_blank" rel="noopener noreferrer"
-  title="x96: Remove PTA_CLWB from PTA_ICELAKE_CLIENT · gcc-mirror/gcc@c422e5f"
->x96: Remove PTA_CLWB from PTA_ICELAKE_CLIENT · gcc-mirror/gcc@c422e5f</a></li>
+<li><a href="https://github.com/llvm/llvm-project/commit/5cb47be4104558b2a69dc3df667dbe046bdcce6d" target="_blank" rel="noopener noreferrer" title="[X86] Remove FeatureCLWB from FeaturesICLClient · llvm/llvm-project@5cb47be">[X86] Remove FeatureCLWB from FeaturesICLClient · llvm/llvm-project@5cb47be</a></li>
+<li><a href="https://github.com/gcc-mirror/gcc/commit/c422e5f81f42a0fc197f0715f4fcd81f1be90bff" target="_blank" rel="noopener noreferrer" title="x96: Remove PTA_CLWB from PTA_ICELAKE_CLIENT · gcc-mirror/gcc@c422e5f">x96: Remove PTA_CLWB from PTA_ICELAKE_CLIENT · gcc-mirror/gcc@c422e5f</a></li>
 </ul>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
-<li><a href="https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html"
-  target="_blank" rel="noopener noreferrer"
-  title="x86 Options (Using the GNU Compiler Collection (GCC))"
->x86 Options (Using the GNU Compiler Collection (GCC))</a></li>
-<li><a href="https://github.com/torvalds/linux/commit/d9dc64f30abe42f71bc7e9eb9d38c41006cf39f9"
-  target="_blank" rel="noopener noreferrer"
-  title="x86/asm: Add support for the CLWB instruction · torvalds/linux@d9dc64f"
->x86/asm: Add support for the CLWB instruction · torvalds/linux@d9dc64f</a></li>
-<li><a href="https://simplecore-gar.intel.com/swdevconf-jp/wp-content/uploads/sites/10/2017/10/Japan-Dev-Con_naoyuki-mori_Track-C_-1610.pdf"
-  target="_blank" rel="noopener noreferrer"
-  title="https://simplecore-gar.intel.com/swdevconf-jp/wp-content/uploads/sites/10/2017/10/Japan-Dev-Con_naoyuki-mori_Track-C_-1610.pdf"
->https://simplecore-gar.intel.com/swdevconf-jp/wp-content/uploads/sites/10/2017/10/Japan-Dev-Con_naoyuki-mori_Track-C_-1610.pdf</a></li>
-<li><a href="https://www.isus.jp/others/gen2-xeon-processor-scalable-family-technical-overview/"
-  target="_blank" rel="noopener noreferrer"
-  title="第 2 世代インテル® Xeon® スケーラブル・プロセッサーの技術概要 | iSUS"
->第 2 世代インテル® Xeon® スケーラブル・プロセッサーの技術概要 | iSUS</a></li>
+<li><a href="https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html" target="_blank" rel="noopener noreferrer" title="x86 Options (Using the GNU Compiler Collection (GCC))">x86 Options (Using the GNU Compiler Collection (GCC))</a></li>
+<li><a href="https://github.com/torvalds/linux/commit/d9dc64f30abe42f71bc7e9eb9d38c41006cf39f9" target="_blank" rel="noopener noreferrer" title="x86/asm: Add support for the CLWB instruction · torvalds/linux@d9dc64f">x86/asm: Add support for the CLWB instruction · torvalds/linux@d9dc64f</a></li>
+<li><a href="https://simplecore-gar.intel.com/swdevconf-jp/wp-content/uploads/sites/10/2017/10/Japan-Dev-Con_naoyuki-mori_Track-C_-1610.pdf" target="_blank" rel="noopener noreferrer" title="https://simplecore-gar.intel.com/swdevconf-jp/wp-content/uploads/sites/10/2017/10/Japan-Dev-Con_naoyuki-mori_Track-C_-1610.pdf">https://simplecore-gar.intel.com/swdevconf-jp/wp-content/uploads/sites/10/2017/10/Japan-Dev-Con_naoyuki-mori_Track-C_-1610.pdf</a></li>
+<li><a href="https://www.isus.jp/others/gen2-xeon-processor-scalable-family-technical-overview/" target="_blank" rel="noopener noreferrer" title="第 2 世代インテル® Xeon® スケーラブル・プロセッサーの技術概要 | iSUS">第 2 世代インテル® Xeon® スケーラブル・プロセッサーの技術概要 | iSUS</a></li>
 </ul>
 </section>
 
@@ -148,28 +118,16 @@ SGX については ark.intel.com によると、モバイル向け <em>Tiger La
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://ark.intel.com/content/www/us/en/ark/products/208664/intel-core-i7-1185g7-processor-12m-cache-up-to-4-80-ghz-with-ipu.html"
-  target="_blank" rel="noopener noreferrer"
-  title="Intel® Core™ i7-1185G7 Processor (12M Cache, up to 4.80 GHz, with IPU) Product Specifications"
->Intel® Core™ i7-1185G7 Processor (12M Cache, up to 4.80 GHz, with IPU) Product Specifications</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://ark.intel.com/content/www/us/en/ark/products/208664/intel-core-i7-1185g7-processor-12m-cache-up-to-4-80-ghz-with-ipu.html" target="_blank" rel="noopener noreferrer" title="Intel® Core™ i7-1185G7 Processor (12M Cache, up to 4.80 GHz, with IPU) Product Specifications">Intel® Core™ i7-1185G7 Processor (12M Cache, up to 4.80 GHz, with IPU) Product Specifications</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://gcc.gnu.org/pipermail/gcc-patches/2020-June/548857.html"
-  target="_blank" rel="noopener noreferrer"
-  title="[PATCH] x96: Remove PTA_CLWB from PTA_ICELAKE_CLIENT"
->[PATCH] x96: Remove PTA_CLWB from PTA_ICELAKE_CLIENT</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gcc.gnu.org/pipermail/gcc-patches/2020-June/548857.html" target="_blank" rel="noopener noreferrer" title="[PATCH] x96: Remove PTA_CLWB from PTA_ICELAKE_CLIENT">[PATCH] x96: Remove PTA_CLWB from PTA_ICELAKE_CLIENT</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://github.com/intelxed/xed/commit/b47f2b480492d0a58595e3a2bd9879ae4f3a6332"
-  target="_blank" rel="noopener noreferrer"
-  title="ICL: update CLWB availability · intelxed/xed@b47f2b4"
->ICL: update CLWB availability · intelxed/xed@b47f2b4</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/intelxed/xed/commit/b47f2b480492d0a58595e3a2bd9879ae4f3a6332" target="_blank" rel="noopener noreferrer" title="ICL: update CLWB availability · intelxed/xed@b47f2b4">ICL: update CLWB availability · intelxed/xed@b47f2b4</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4">
-<p><a href="https://github.com/InstLatx64/InstLatx64/blob/e833cd79ce0aab79df0d2879b14e01d4edd359b7/GenuineIntel/GenuineIntel00806A1_Lakefield_LC_InstLatX64.txt#L8"
-  target="_blank" rel="noopener noreferrer"
-  title="InstLatx64/GenuineIntel00806A1_Lakefield_LC_InstLatX64.txt at e833cd79ce0aab79df0d2879b14e01d4edd359b7 · InstLatx64/InstLatx64"
->InstLatx64/GenuineIntel00806A1_Lakefield_LC_InstLatX64.txt at e833cd79ce0aab79df0d2879b14e01d4edd359b7 · InstLatx64/InstLatx64</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/InstLatx64/InstLatx64/blob/e833cd79ce0aab79df0d2879b14e01d4edd359b7/GenuineIntel/GenuineIntel00806A1_Lakefield_LC_InstLatX64.txt#L8" target="_blank" rel="noopener noreferrer" title="InstLatx64/GenuineIntel00806A1_Lakefield_LC_InstLatX64.txt at e833cd79ce0aab79df0d2879b14e01d4edd359b7 · InstLatx64/InstLatx64">InstLatx64/GenuineIntel00806A1_Lakefield_LC_InstLatX64.txt at e833cd79ce0aab79df0d2879b14e01d4edd359b7 · InstLatx64/InstLatx64</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

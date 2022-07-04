@@ -84,35 +84,23 @@
   </aside><p>雑記。<br>
 <em>Yellow Carp/Rembrandt APU</em> に搭載されたメディアエンジン (VCN, Video Core Next) の対応コーデック情報について、過去に何度か触れてきた。<br>
 対応コーデック情報は AMD 公式サイト、RadeonFeature、オープンソースドライバーのコード等から得られるが、<em>Yellow Carp/Rembrandt APU</em> の情報はそれぞれでわずかに食い違っていた。主に MPEG2, MPEG4, VC1, AV1 のデコード対応について。<br>
-その点を <a href="https://gitlab.freedesktop.org/drm/amd"
-  target="_blank" rel="noopener noreferrer"
-  title="drm / amd"
->drm / amd</a> レポジトリに issue を送ったところ、AMD の Alex Deucher 氏より実質的な回答となるパッチが返ってきた。</p>
+その点を <a href="https://gitlab.freedesktop.org/drm/amd" target="_blank" rel="noopener noreferrer" title="drm / amd">drm / amd</a> レポジトリに issue を送ったところ、AMD の Alex Deucher 氏より実質的な回答となるパッチが返ってきた。</p>
 <p>結論から言えば、実際の動作については何の問題も無かったし、このパッチによる影響も特に無い。</p>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-May/079667.html"
-  target="_blank" rel="noopener noreferrer"
-  title="[PATCH] drm/amdgpu: update VCN codec support for Yellow Carp"
->[PATCH] drm/amdgpu: update VCN codec support for Yellow Carp</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-May/079667.html" target="_blank" rel="noopener noreferrer" title="[PATCH] drm/amdgpu: update VCN codec support for Yellow Carp">[PATCH] drm/amdgpu: update VCN codec support for Yellow Carp</a></li>
 </ul>
 <blockquote>
 <pre><code> Supports AV1.  Mesa already has support for this and
  doesn't rely on the kernel caps for yellow carp, so
  this was already working from an application perspective.
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-May/079667.html"
-  target="_blank" rel="noopener noreferrer"
-  title="[PATCH] drm/amdgpu: update VCN codec support for Yellow Carp"
->[PATCH] drm/amdgpu: update VCN codec support for Yellow Carp</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-May/079667.html" target="_blank" rel="noopener noreferrer" title="[PATCH] drm/amdgpu: update VCN codec support for Yellow Carp">[PATCH] drm/amdgpu: update VCN codec support for Yellow Carp</a></cite>
 </div>
 
 </blockquote>
 <p>まず、Linux Kernel側の AMDGPUドライバーに記述されているコーデック情報は、libdrm uAPI の <code>amdgpu_query_video_caps_info</code> が呼ばれたときにコーデック自体への対応と対応サイズを返すのに使われる。<br>
 <code>amdgpu_query_video_caps_info</code> を使うのは基本 UMD (User Mode Driver) である Mesa3D のみとなる。そして、以前にも触れたが、Mesa3D では取得した対応コーデック情報の内、サイズのみを使用している。<br>
-<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/01/05/amd-ces-2022/#av1-dec"
-  
-  title="AMD CES 2022 個人的まとめ | Coelacanth&rsquo;s Dream"
->AMD CES 2022 個人的まとめ | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/01/05/amd-ces-2022/#av1-dec"  title="AMD CES 2022 個人的まとめ | Coelacanth&rsquo;s Dream">AMD CES 2022 個人的まとめ | Coelacanth&rsquo;s Dream</a></span>
 
 libdrm のバージョン違い等で <code>amdgpu_query_video_caps_info</code> に対応していない場合でも、AMD APU/GPU ファミリーを元に対応サイズが返される。</p>
 <blockquote>
@@ -132,43 +120,22 @@ libdrm のバージョン違い等で <code>amdgpu_query_video_caps_info</code> 
           }
        }
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/244305493240ee9e0fc08a9b3da806d47a5cf257/src/gallium/drivers/radeonsi/si_get.c#L671-685"
-  target="_blank" rel="noopener noreferrer"
-  title="src/gallium/drivers/radeonsi/si_get.c · 244305493240ee9e0fc08a9b3da806d47a5cf257 · Mesa / mesa · GitLab"
->src/gallium/drivers/radeonsi/si_get.c · 244305493240ee9e0fc08a9b3da806d47a5cf257 · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/244305493240ee9e0fc08a9b3da806d47a5cf257/src/gallium/drivers/radeonsi/si_get.c#L671-685" target="_blank" rel="noopener noreferrer" title="src/gallium/drivers/radeonsi/si_get.c · 244305493240ee9e0fc08a9b3da806d47a5cf257 · Mesa / mesa · GitLab">src/gallium/drivers/radeonsi/si_get.c · 244305493240ee9e0fc08a9b3da806d47a5cf257 · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
 <p>同時に RadeonFeature の情報も更新され、<em>Yellow Carp/Rembrandt APU</em> 、VCN 3.1 は MPEG4_AVC, HEVC, AV1 のデコードに対応し、MPEG2, MPEG4, VC1 のデコードには非対応ということが確定した。</p>
 <ul>
-<li><a href="https://www.x.org/wiki/RadeonFeature/#radeonvcnvideocorenexthardware"
-  target="_blank" rel="noopener noreferrer"
-  title="RadeonFeature"
->RadeonFeature</a></li>
+<li><a href="https://www.x.org/wiki/RadeonFeature/#radeonvcnvideocorenexthardware" target="_blank" rel="noopener noreferrer" title="RadeonFeature">RadeonFeature</a></li>
 </ul>
 <p>AMD 公式サイトの <strong>AMD Ryzen 5 6600U / 7 6800U</strong> の Max Video Decode Bandwidth には MPEG2, VC1 が記載されているが、搭載製品が出回る頃には修正されると思う、多分。</p>
 <ul>
-<li><a href="https://www.amd.com/en/product/11596"
-  target="_blank" rel="noopener noreferrer"
-  title="AMD Ryzen™ 5 6600U | AMD"
->AMD Ryzen™ 5 6600U | AMD</a></li>
-<li><a href="https://www.amd.com/en/product/11591"
-  target="_blank" rel="noopener noreferrer"
-  title="AMD Ryzen™ 7 6800U | AMD"
->AMD Ryzen™ 7 6800U | AMD</a></li>
+<li><a href="https://www.amd.com/en/product/11596" target="_blank" rel="noopener noreferrer" title="AMD Ryzen™ 5 6600U | AMD">AMD Ryzen™ 5 6600U | AMD</a></li>
+<li><a href="https://www.amd.com/en/product/11591" target="_blank" rel="noopener noreferrer" title="AMD Ryzen™ 7 6800U | AMD">AMD Ryzen™ 7 6800U | AMD</a></li>
 </ul>
 <p>結局の所、問題も影響も無い自分の中の話題だったが、確かな情報を得たいときに RadeonFeature やオープンソースドライバーのコードを確認する自分にとってはコーデック情報が明確になって良かったと思う。<br>
-<a href="https://www.amd.com/en/support/tech-docs?keyword=&amp;page=0"
-  target="_blank" rel="noopener noreferrer"
-  title="Tech Docs | AMD"
->Tech Docs | AMD</a> からダウンロードできるドキュメントは公開されるまで時間が掛かり、公式サイトのスペックページは正直に言って不確かであることがそれなりにあるからだ。<br>
-それに質問や報告する場が、<a href="https://gitlab.freedesktop.org/drm/amd"
-  target="_blank" rel="noopener noreferrer"
-  title="https://gitlab.freedesktop.org/drm/amd"
->https://gitlab.freedesktop.org/drm/amd</a> や <a href="https://gitlab.freedesktop.org/mesa/mesa/-/issues"
-  target="_blank" rel="noopener noreferrer"
-  title="https://gitlab.freedesktop.org/mesa/mesa/-/issues"
->https://gitlab.freedesktop.org/mesa/mesa/-/issues</a> のようにちゃんとあるのだから、まず聞いてみることが一番だと思った、オープンソースドライバーの情報を嘘だとか &ldquo;釣り&rdquo; として扱う前に。</p>
+<a href="https://www.amd.com/en/support/tech-docs?keyword=&amp;page=0" target="_blank" rel="noopener noreferrer" title="Tech Docs | AMD">Tech Docs | AMD</a> からダウンロードできるドキュメントは公開されるまで時間が掛かり、公式サイトのスペックページは正直に言って不確かであることがそれなりにあるからだ。<br>
+それに質問や報告する場が、<a href="https://gitlab.freedesktop.org/drm/amd" target="_blank" rel="noopener noreferrer" title="https://gitlab.freedesktop.org/drm/amd">https://gitlab.freedesktop.org/drm/amd</a> や <a href="https://gitlab.freedesktop.org/mesa/mesa/-/issues" target="_blank" rel="noopener noreferrer" title="https://gitlab.freedesktop.org/mesa/mesa/-/issues">https://gitlab.freedesktop.org/mesa/mesa/-/issues</a> のようにちゃんとあるのだから、まず聞いてみることが一番だと思った、オープンソースドライバーの情報を嘘だとか &ldquo;釣り&rdquo; として扱う前に。</p>
 </article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/yellow_carp" class="bottom-tag-link"  title="Yellow_Carp">#Yellow Carp</a><a href="https://www.coelacanth-dream.com/tags/rembrandt" class="bottom-tag-link"  title="Rembrandt">#Rembrandt</a></nav><aside class="article-bottom-misc delay-page"><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/05/29/yc-vcn-codec.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
 </aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">

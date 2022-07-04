@@ -84,26 +84,14 @@
   </aside><p>オープンソースドライバーである <strong>RadeonSI (OpenGL)</strong> 、<strong>RADV (Vulkan)</strong> は、<em>RDNA /GFX10</em> 世代からの GPU に実装されている <em>NGG (Next Generation Geometry)/プリミティブシェーダー</em> をサポートし、一部を除いたほとんどはデフォルトで有効にされる。<br>
 <em>RDNA 2 / GFX10.3</em> 世代の GPU を持つ <em>VanGogh APU</em> はこれまでその一部に含まれ、専用 VRAM を持つかどうかの判定で弾かれてドライバー部分では無効化されていたが、<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 その判定を取り払い、<em>VanGogh APU</em> でもデフォルトで <em>NGG</em> を有効にするパッチが投稿されている。この変更は <strong>RadeonSI (OpenGL)</strong> 、<strong>RADV (Vulkan)</strong> 両方に適用されている。<br>
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/9f0133d961fe44f3057821b596c58c71557ab595?merge_request_iid=7769"
-  target="_blank" rel="noopener noreferrer"
-  title="radv: enable NGG on GFX10.3 APUs by default (9f0133d9) · Commits · Mesa / mesa · GitLab"
->radv: enable NGG on GFX10.3 APUs by default (9f0133d9) · Commits · Mesa / mesa · GitLab</a></span>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/9f0133d961fe44f3057821b596c58c71557ab595?merge_request_iid=7769" target="_blank" rel="noopener noreferrer" title="radv: enable NGG on GFX10.3 APUs by default (9f0133d9) · Commits · Mesa / mesa · GitLab">radv: enable NGG on GFX10.3 APUs by default (9f0133d9) · Commits · Mesa / mesa · GitLab</a></span>
 
-<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7721/diffs?commit_id=de799b2270f5342c2c108488c2c694412b06c945"
-  target="_blank" rel="noopener noreferrer"
-  title="radeonsi: tiny miscellaneous changes, NGG enabled on VanGogh, 1 optimization for dead PS outputs (!7721) · Merge Requests · Mesa / mesa · GitLab"
->radeonsi: tiny miscellaneous changes, NGG enabled on VanGogh, 1 optimization for dead PS outputs (!7721) · Merge Requests · Mesa / mesa · GitLab</a></span>
+<span class="thread-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7721/diffs?commit_id=de799b2270f5342c2c108488c2c694412b06c945" target="_blank" rel="noopener noreferrer" title="radeonsi: tiny miscellaneous changes, NGG enabled on VanGogh, 1 optimization for dead PS outputs (!7721) · Merge Requests · Mesa / mesa · GitLab">radeonsi: tiny miscellaneous changes, NGG enabled on VanGogh, 1 optimization for dead PS outputs (!7721) · Merge Requests · Mesa / mesa · GitLab</a></span>
 </p>
 <p><em>NGG</em> については以下。<br>
-<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/"
-  
-  title="ACOバックエンドでも NGG をサポートする動き | Coelacanth&rsquo;s Dream"
->ACOバックエンドでも NGG をサポートする動き | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/10/04/aco-ngg-gfx10/"  title="ACOバックエンドでも NGG をサポートする動き | Coelacanth&rsquo;s Dream">ACOバックエンドでも NGG をサポートする動き | Coelacanth&rsquo;s Dream</a></span>
 
-<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/10/17/gfx103-default-ngg-culling/"
-  
-  title="RadeonSIドライバー &#43; RDNA 2 では NGGカリング/プリミティブシェーダー がデフォルトで有効に | Coelacanth&rsquo;s Dream"
->RadeonSIドライバー + RDNA 2 では NGGカリング/プリミティブシェーダー がデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/10/17/gfx103-default-ngg-culling/"  title="RadeonSIドライバー &#43; RDNA 2 では NGGカリング/プリミティブシェーダー がデフォルトで有効に | Coelacanth&rsquo;s Dream">RadeonSIドライバー + RDNA 2 では NGGカリング/プリミティブシェーダー がデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
 
 詳細はそれら記事に書いてあるが、<em>NGG</em> を有効にすることで、これまでのグラフィクスパイプラインは必要だった、ジオメトリシェーダーの結果を一度 VRAM に出力する手間を減らすことができる。<br>
 dGPU と比べてメモリ帯域がずっと狭い APU では、このことによる性能向上への効果がより期待できるのではないかと思う。<br>
@@ -114,20 +102,14 @@ dGPU と比べてメモリ帯域がずっと狭い APU では、このことに�
 <blockquote>
 <pre><code>      NGG, /* Primitive shader, used to implement VS, TES, GS. */
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/34bc9477de18a92e76ea7c536940a631323a83b6/src/amd/compiler/aco_ir.h#L1537"
-  target="_blank" rel="noopener noreferrer"
-  title="src/amd/compiler/aco_ir.h · 34bc9477de18a92e76ea7c536940a631323a83b6 · Mesa / mesa · GitLab"
->src/amd/compiler/aco_ir.h · 34bc9477de18a92e76ea7c536940a631323a83b6 · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/34bc9477de18a92e76ea7c536940a631323a83b6/src/amd/compiler/aco_ir.h#L1537" target="_blank" rel="noopener noreferrer" title="src/amd/compiler/aco_ir.h · 34bc9477de18a92e76ea7c536940a631323a83b6 · Mesa / mesa · GitLab">src/amd/compiler/aco_ir.h · 34bc9477de18a92e76ea7c536940a631323a83b6 · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
 <h2 id="魅力の多い-vangogh-apu">魅力の多い VanGogh APU<a href="#%e9%ad%85%e5%8a%9b%e3%81%ae%e5%a4%9a%e3%81%84-vangogh-apu" class="head-cur-link"></a>
 </h2>
 <p><em>VanGogh</em> は LPDDR4/xメモリよりも高速かつ省電力な LPDDR5メモリをサポートするとされている。<em>VanGogh</em> が LPDDR5-5500 128-bit をサポートすると <em>仮定</em> して、<em>Renoir</em> と比較すると、ピークメモリ帯域は約 1.3倍となる。(88.0 GB/s vs 68.3 GB/s)<br>
-<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/09/26/amd-vgh-linux-kernel-patch/"
-  
-  title="Linux Kernel に AMD の次世代 APU &ldquo;VanGogh&rdquo; をサポートするパッチが投稿される | Coelacanth&rsquo;s Dream"
->Linux Kernel に AMD の次世代 APU &ldquo;VanGogh&rdquo; をサポートするパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/09/26/amd-vgh-linux-kernel-patch/"  title="Linux Kernel に AMD の次世代 APU &ldquo;VanGogh&rdquo; をサポートするパッチが投稿される | Coelacanth&rsquo;s Dream">Linux Kernel に AMD の次世代 APU &ldquo;VanGogh&rdquo; をサポートするパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
 
 また、<em>VanGogh</em> は <em>Vega /GFX9</em> 世代以降の GPU を搭載する <span class="complement">Xbox Series X|S、PS5 のゲーム機向け APU を除けば</span>
  初の APU である。 APU は <em>Raven</em> からしばらく、GPU の世代は <em>Vega /GFX9</em> から進まなかった。<br>
@@ -138,10 +120,7 @@ dGPU と比べてメモリ帯域がずっと狭い APU では、このことに�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.coelacanth-dream.com/posts/2020/09/23/amd-vangogh-dimgrey_cavefish/"
-  
-  title="新たな AMD RDNA 2 GPU、&ldquo;Dimgrey Cavefish&rdquo; & &ldquo;VanGogh&rdquo; | Coelacanth&rsquo;s Dream"
->新たな AMD RDNA 2 GPU、&ldquo;Dimgrey Cavefish&rdquo; & &ldquo;VanGogh&rdquo; | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2020/09/23/amd-vangogh-dimgrey_cavefish/"  title="新たな AMD RDNA 2 GPU、&ldquo;Dimgrey Cavefish&rdquo; & &ldquo;VanGogh&rdquo; | Coelacanth&rsquo;s Dream">新たな AMD RDNA 2 GPU、&ldquo;Dimgrey Cavefish&rdquo; & &ldquo;VanGogh&rdquo; | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

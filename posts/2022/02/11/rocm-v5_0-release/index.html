@@ -84,25 +84,16 @@
   </aside><p>ROCm v5.0 がリリースされた。<br>
 ついに <em>RDNA 2</em> GPU のサポートが正式に追加されたが、<em>Sienna Cichlid/Navi21 (gfx1030)</em> をベースにする <em>Radeon Pro V620/W6800</em> のみのサポートとなる。</p>
 <ul>
-<li><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x"
-  target="_blank" rel="noopener noreferrer"
-  title="RadeonOpenCompute/ROCm at roc-5.0.x"
->RadeonOpenCompute/ROCm at roc-5.0.x</a></li>
+<li><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x" target="_blank" rel="noopener noreferrer" title="RadeonOpenCompute/ROCm at roc-5.0.x">RadeonOpenCompute/ROCm at roc-5.0.x</a></li>
 </ul>
 <p>HIP (Heterogeneous-Compute Interface for Portability) における統合メモリ (CPU+GPU) のサポートが強化され、<code>__managed__</code> キーワードが新たにサポートされた。<br>
 変数の前に <code>__managed__</code> を宣言することで、CPU、GPU の両方で単一のポインタを使用してアクセスするようになる。<br>
 メモリの割り当ては Linux Kernel の AMDGPUドライバーに実装された HMM (Heterogeneous Memory Management) によって行われる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <p>ROCM-SMI ツールでは、異なる <em>Infinity Fabric/XGMI (Global Memory Interconnect)</em> 帯域を持つトポロジに対応した。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 <em>MI250X</em> はパッケージ内の GCD 2基と、異なるパッケージ間、どちらも XGMI で接続されるが帯域は異なるため、それを意識した対応ではないかと思われる。<br>
-<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/01/14/olcf-crusher/"
-  
-  title="OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 &#43; 4x MI250X | Coelacanth&rsquo;s Dream"
->OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 + 4x MI250X | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/01/14/olcf-crusher/"  title="OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 &#43; 4x MI250X | Coelacanth&rsquo;s Dream">OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 + 4x MI250X | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<p><a href="https://github.com/RadeonOpenCompute/ROCR-Runtime"
-  target="_blank" rel="noopener noreferrer"
-  title="ROCR-Runtime"
->ROCR-Runtime</a> では新たな環境変数 <code>HSA_COOP_CU_COUNT</code> が追加された。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
+<p><a href="https://github.com/RadeonOpenCompute/ROCR-Runtime" target="_blank" rel="noopener noreferrer" title="ROCR-Runtime">ROCR-Runtime</a> では新たな環境変数 <code>HSA_COOP_CU_COUNT</code> が追加された。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 これは同期などの集合的な処理を行う単位となるスレッドグループ (Cooperative Groups) に対し、正しい使用可能な CU数を取得するためのものと思われる。<br>
 <code>HSA_COOP_CU_COUNT</code> が 1 の場合、ROCr-Rutime は <code>hsa_agent_get_info()</code> の <code>HSA_AMD_AGENT_INFO_COOPERATIVE_COMPUTE_UNIT_COUNT</code> 属性を通して、Cooperative Groups用の正しい CU数を返す。<br>
 1 以外か未設定の場合は、<code>HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT</code> と同じ CU数、おそらくは全体の CU数を返す。<br>
@@ -121,32 +112,20 @@ GPUID は <code>gfx{Major, Minor, Stepping}</code> のフォーマットで表�
        }
         return GetInfo((hsa_agent_info_t)HSA_AMD_AGENT_INFO_COMPUTE_UNIT_COUNT, value);
 </code></pre>
-<cite class="bq-source-link">引用元: <a href="https://github.com/RadeonOpenCompute/ROCR-Runtime/blob/83b46ab91086e10edbc6100d5e55cac11c9b5d7a/src/core/runtime/amd_gpu_agent.cpp#L1013-L1023"
-  target="_blank" rel="noopener noreferrer"
-  title="ROCR-Runtime/amd_gpu_agent.cpp at 83b46ab91086e10edbc6100d5e55cac11c9b5d7a · RadeonOpenCompute/ROCR-Runtime"
->ROCR-Runtime/amd_gpu_agent.cpp at 83b46ab91086e10edbc6100d5e55cac11c9b5d7a · RadeonOpenCompute/ROCR-Runtime</a></cite></blockquote>
+<cite class="bq-source-link">引用元: <a href="https://github.com/RadeonOpenCompute/ROCR-Runtime/blob/83b46ab91086e10edbc6100d5e55cac11c9b5d7a/src/core/runtime/amd_gpu_agent.cpp#L1013-L1023" target="_blank" rel="noopener noreferrer" title="ROCR-Runtime/amd_gpu_agent.cpp at 83b46ab91086e10edbc6100d5e55cac11c9b5d7a · RadeonOpenCompute/ROCR-Runtime">ROCR-Runtime/amd_gpu_agent.cpp at 83b46ab91086e10edbc6100d5e55cac11c9b5d7a · RadeonOpenCompute/ROCR-Runtime</a></cite></blockquote>
 
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
-<li><a href="https://images.nvidia.com/content/pdf/tesla/Volta-Architecture-Whitepaper-v1.1-jp.pdf"
-  target="_blank" rel="noopener noreferrer"
-  title="Volta-Architecture-Whitepaper-v1.1-jp.pdf"
->Volta-Architecture-Whitepaper-v1.1-jp.pdf</a></li>
+<li><a href="https://images.nvidia.com/content/pdf/tesla/Volta-Architecture-Whitepaper-v1.1-jp.pdf" target="_blank" rel="noopener noreferrer" title="Volta-Architecture-Whitepaper-v1.1-jp.pdf">Volta-Architecture-Whitepaper-v1.1-jp.pdf</a></li>
 </ul>
 </section>
 
 <p>ROCm v5.0 では <em>CDNA 2/MI200/Aldebaran (gfx90a)</em> を意識した変更点がいくつかあるものの、サポートリストには追加されていない。</p>
-<p>それと、ROCm から少し外れるが、HIP/CUDA API を動的に読み込み、実行時に API を切り替え可能な <a href="https://github.com/GPUOpen-LibrariesAndSDKs/Orochi"
-  target="_blank" rel="noopener noreferrer"
-  title="Orochi"
->Orochi</a> が Apache License 2.0 下で公開された。<br>
+<p>それと、ROCm から少し外れるが、HIP/CUDA API を動的に読み込み、実行時に API を切り替え可能な <a href="https://github.com/GPUOpen-LibrariesAndSDKs/Orochi" target="_blank" rel="noopener noreferrer" title="Orochi">Orochi</a> が Apache License 2.0 下で公開された。<br>
 Orochi を使うことで、CUDAコードを HIPコードに変換してからコンパイルする必要がなくなり、単一のバイナリを維持することができる。</p>
 <ul>
-<li><a href="https://github.com/GPUOpen-LibrariesAndSDKs/Orochi"
-  target="_blank" rel="noopener noreferrer"
-  title="GPUOpen-LibrariesAndSDKs/Orochi"
->GPUOpen-LibrariesAndSDKs/Orochi</a></li>
+<li><a href="https://github.com/GPUOpen-LibrariesAndSDKs/Orochi" target="_blank" rel="noopener noreferrer" title="GPUOpen-LibrariesAndSDKs/Orochi">GPUOpen-LibrariesAndSDKs/Orochi</a></li>
 </ul>
 <h2 id="support">曖昧なサポート状況<a href="#support" class="head-cur-link"></a>
 </h2>
@@ -154,20 +133,11 @@ Orochi を使うことで、CUDAコードを HIPコードに変換してから�
 <p>以前、ROCm v4.5 から OpenCLランタイムが <em>Polaris (gfx803)</em> をサポートしなくなったことに触れたが、ROCm v5.0 でこれといった進展は無かった。<br>
 ROCmSupportアカウントは、意図的に (gfx803 に関する) コードを削除していないが変更した可能性はあると回答しているものの、探したところ ROCclr (Radeon Open Compute Common Language Runtime) に <em>GFX8</em> 世代の OpenCL サポートを無効化するコミットがあった。</p>
 <ul>
-<li><a href="https://github.com/RadeonOpenCompute/ROCm/issues/1659"
-  target="_blank" rel="noopener noreferrer"
-  title="RX 470,480,570,580 no longer supports OpenCL on ROCm 4.5 · Issue #1659 · RadeonOpenCompute/ROCm"
->RX 470,480,570,580 no longer supports OpenCL on ROCm 4.5 · Issue #1659 · RadeonOpenCompute/ROCm</a></li>
-<li><a href="https://github.com/ROCm-Developer-Tools/ROCclr/commit/16044d1b30b822bb135a389c968b8365630da452"
-  target="_blank" rel="noopener noreferrer"
-  title="SWDEV-1 - Disable OpenCL support for gfx8 in ROCm path · ROCm-Developer-Tools/ROCclr@16044d1"
->SWDEV-1 - Disable OpenCL support for gfx8 in ROCm path · ROCm-Developer-Tools/ROCclr@16044d1</a></li>
+<li><a href="https://github.com/RadeonOpenCompute/ROCm/issues/1659" target="_blank" rel="noopener noreferrer" title="RX 470,480,570,580 no longer supports OpenCL on ROCm 4.5 · Issue #1659 · RadeonOpenCompute/ROCm">RX 470,480,570,580 no longer supports OpenCL on ROCm 4.5 · Issue #1659 · RadeonOpenCompute/ROCm</a></li>
+<li><a href="https://github.com/ROCm-Developer-Tools/ROCclr/commit/16044d1b30b822bb135a389c968b8365630da452" target="_blank" rel="noopener noreferrer" title="SWDEV-1 - Disable OpenCL support for gfx8 in ROCm path · ROCm-Developer-Tools/ROCclr@16044d1">SWDEV-1 - Disable OpenCL support for gfx8 in ROCm path · ROCm-Developer-Tools/ROCclr@16044d1</a></li>
 </ul>
 <p>また、<em>Vega10 (gfx900)</em> ベースのサーバー向け SKU <em>Instinct MI25</em> が EOL (End of Life) に達し、ROCm v4.5 が <em>Instinct MI25</em> をサポートする最後の公式リリースになるとされていたが、ROCm v5.0 でも何故かサポートリストに入ったままになっている。<br>
-<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2021/10/30/rocm-4_5-release/#polaris-rdna"
-  
-  title="ROCm v4.5 がリリース ―― CPU&#43;GPU の統合メモリをサポート、RDNA系のサポートは v5.0 に？ | Coelacanth&rsquo;s Dream"
->ROCm v4.5 がリリース ―― CPU+GPU の統合メモリをサポート、RDNA系のサポートは v5.0 に？ | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2021/10/30/rocm-4_5-release/#polaris-rdna"  title="ROCm v4.5 がリリース ―― CPU&#43;GPU の統合メモリをサポート、RDNA系のサポートは v5.0 に？ | Coelacanth&rsquo;s Dream">ROCm v4.5 がリリース ―― CPU+GPU の統合メモリをサポート、RDNA系のサポートは v5.0 に？ | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <p>ROCm v5.0 では既知の問題 (Known Issues) として、dGPU の VBIOS を上書きする AMDVBFlashツールが挙げられているが、自分が知っている限り Linux環境向けの AMDVBFlash は公開されていない。そして ROCm は現在 Linux系 OS しかサポートしていない。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
 <p>全体的にサポート状況が曖昧という印象を受け、開発者とサポーターの間で正しく情報共有が行われていないのではないかという気がする。<br>
@@ -177,28 +147,16 @@ ROCm は複数のライブラリ、ソフトウェアから構成されるプラ
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#managed-memory-allocation"
-  target="_blank" rel="noopener noreferrer"
-  title="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#managed-memory-allocation"
->https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#managed-memory-allocation</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#managed-memory-allocation" target="_blank" rel="noopener noreferrer" title="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#managed-memory-allocation">https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#managed-memory-allocation</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#display-xgmi-bandwidth-between-nodes"
-  target="_blank" rel="noopener noreferrer"
-  title="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#display-xgmi-bandwidth-between-nodes"
->https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#display-xgmi-bandwidth-between-nodes</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#display-xgmi-bandwidth-between-nodes" target="_blank" rel="noopener noreferrer" title="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#display-xgmi-bandwidth-between-nodes">https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#display-xgmi-bandwidth-between-nodes</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#new-environment-variable"
-  target="_blank" rel="noopener noreferrer"
-  title="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#new-environment-variable"
->https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#new-environment-variable</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#new-environment-variable" target="_blank" rel="noopener noreferrer" title="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#new-environment-variable">https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#new-environment-variable</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4">
-<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#incorrect-dgpu-behavior-when-using-amdvbflash-tool"
-  target="_blank" rel="noopener noreferrer"
-  title="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#incorrect-dgpu-behavior-when-using-amdvbflash-tool"
->https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#incorrect-dgpu-behavior-when-using-amdvbflash-tool</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#incorrect-dgpu-behavior-when-using-amdvbflash-tool" target="_blank" rel="noopener noreferrer" title="https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#incorrect-dgpu-behavior-when-using-amdvbflash-tool">https://github.com/RadeonOpenCompute/ROCm/tree/roc-5.0.x#incorrect-dgpu-behavior-when-using-amdvbflash-tool</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

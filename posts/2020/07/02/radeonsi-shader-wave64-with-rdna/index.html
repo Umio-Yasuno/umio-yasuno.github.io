@@ -83,28 +83,16 @@
     <aside class="update">Update: 2021/11/27 17:09 &#43;0900</aside>
   </aside><p>オープンソースで開発される AMD GPU向け OpenGLドライバー <strong>RadeonSI</strong> への最新コミットの中で、ネイティブで Wave32モードに対応する <em>RDNA /Navi1x GPU</em> も Wave64モードで各シェーダーを実行するように変更が行なわれた。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/90cf741d316d231bdc8a67dce8ef1c84a80eeec8"
-  target="_blank" rel="noopener noreferrer"
-  title="radeonsi: always use Wave64 for HS/GS/VS shader stages (except GS fast launch) (90cf741d) · Commits · Mesa / mesa · GitLab"
->radeonsi: always use Wave64 for HS/GS/VS shader stages (except GS fast launch) (90cf741d) · Commits · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/90cf741d316d231bdc8a67dce8ef1c84a80eeec8" target="_blank" rel="noopener noreferrer" title="radeonsi: always use Wave64 for HS/GS/VS shader stages (except GS fast launch) (90cf741d) · Commits · Mesa / mesa · GitLab">radeonsi: always use Wave64 for HS/GS/VS shader stages (except GS fast launch) (90cf741d) · Commits · Mesa / mesa · GitLab</a></li>
 </ul>
 <p>Wave は コンピュートユニット(CU) 内の SIMDユニットが実行するスレッドの塊を意味し、後の数字はスレッドの数を意味する。Wavefront とも呼ぶ。</p>
 <section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
 </h2>
 <ul>
-<li><a href="#gcn-rdna-wave-diff"
-  
-  title="GCN と RDNA の両アーキテクチャにおける Wave の違い"
->GCN と RDNA の両アーキテクチャにおける Wave の違い</a></li>
-<li><a href="#why-wave64"
-  
-  title="Wave64 で実行する理由"
->Wave64 で実行する理由</a>
+<li><a href="#gcn-rdna-wave-diff"  title="GCN と RDNA の両アーキテクチャにおける Wave の違い">GCN と RDNA の両アーキテクチャにおける Wave の違い</a></li>
+<li><a href="#why-wave64"  title="Wave64 で実行する理由">Wave64 で実行する理由</a>
 <ul>
-<li><a href="#consider"
-  
-  title="考察的な"
->考察的な</a></li>
+<li><a href="#consider"  title="考察的な">考察的な</a></li>
 </ul>
 </li>
 </ul>
@@ -119,14 +107,8 @@
 <h2 id="why-wave64">Wave64 で実行する理由<a href="#why-wave64" class="head-cur-link"></a>
 </h2>
 <p>以前より、通常 Pixel Shader は Wave64、Vertex/Tess/Geometry Shader は Wave32 で実行するようにしていたのを、後者も Wave64 で実行するようにしたのが今回の変更点となる。<br>
-また、<a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf"
-  target="_blank" rel="noopener noreferrer"
-  title="RDNA_Architecture_public.pdf"
->RDNA_Architecture_public.pdf</a> には Compute Shader は Wave32 とあるが、何か問題が発生するらしく、<strong>RadeonSI</strong> では Wave64 となっている。</p>
-<p>Vertex/Tess/Geometry Shader も Wave64 で実行する方が良いと考える理由に、GPUドライバーの開発者である <a href="https://gitlab.freedesktop.org/mareko"
-  target="_blank" rel="noopener noreferrer"
-  title="Marek Olšák"
->Marek Olšák</a> 氏は以下の項目をあげている。</p>
+また、<a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener noreferrer" title="RDNA_Architecture_public.pdf">RDNA_Architecture_public.pdf</a> には Compute Shader は Wave32 とあるが、何か問題が発生するらしく、<strong>RadeonSI</strong> では Wave64 となっている。</p>
+<p>Vertex/Tess/Geometry Shader も Wave64 で実行する方が良いと考える理由に、GPUドライバーの開発者である <a href="https://gitlab.freedesktop.org/mareko" target="_blank" rel="noopener noreferrer" title="Marek Olšák">Marek Olšák</a> 氏は以下の項目をあげている。</p>
 <blockquote>
 <ul>
 <li>greater chance of L0 cache hits, because more threads are assigned to the same CU</li>
@@ -134,10 +116,7 @@
 <li>VGPR allocation granularity is half of Wave32, so 1 Wave64 can sometimes use fewer VGPRs than 2 Wave32</li>
 <li>TessMark X64 with NGG culling is faster with Wave64</li>
 </ul>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5524"
-  target="_blank" rel="noopener noreferrer"
-  title="ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge Requests · Mesa / mesa · GitLab"
->ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5524" target="_blank" rel="noopener noreferrer" title="ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge Requests · Mesa / mesa · GitLab">ac,radeonsi: use Wave64 for HS/GS/VS, gpu_info fix (!5524) · Merge Requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
@@ -157,10 +136,7 @@
   <img src="https://www.coelacanth-dream.com/image/2020/07/02/rdna-wgp.webp"
       alt="画像出典: Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf"/>
 </a><figcaption>
-      <h4 class="fig-title">RDNA WGP (Work Group Processor)</h4><p>画像出典: <cite><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf"
-  target="_blank" rel="noopener noreferrer"
-  title="Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf"
->Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></cite></p>
+      <h4 class="fig-title">RDNA WGP (Work Group Processor)</h4><p>画像出典: <cite><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" target="_blank" rel="noopener noreferrer" title="Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf">Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></cite></p>
   </figcaption>
 </figure>
 
@@ -174,10 +150,7 @@
   <img src="https://www.coelacanth-dream.com/image/2020/07/02/rdna-sub-vector-mode.webp"
       alt="画像出典: https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf"/>
 </a><figcaption>
-      <h4 class="fig-title">RDNA Sub-Vector Mode</h4><p>画像出典: <cite><a href="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf"
-  target="_blank" rel="noopener noreferrer"
-  title="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf"
->https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf</a></cite></p>
+      <h4 class="fig-title">RDNA Sub-Vector Mode</h4><p>画像出典: <cite><a href="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf" target="_blank" rel="noopener noreferrer" title="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf">https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf</a></cite></p>
   </figcaption>
 </figure>
 
@@ -196,30 +169,12 @@
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
-<li><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf"
-  target="_blank" rel="noopener noreferrer"
-  title="Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf"
->Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></li>
-<li><a href="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf"
-  target="_blank" rel="noopener noreferrer"
-  title="7nm “Navi” GPU"
->7nm “Navi” GPU</a></li>
-<li><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf"
-  target="_blank" rel="noopener noreferrer"
-  title="RDNA_Architecture_public.pdf"
->RDNA_Architecture_public.pdf</a></li>
-<li><a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf"
-  target="_blank" rel="noopener noreferrer"
-  title="Introduction - rdna-whitepaper.pdf"
->Introduction - rdna-whitepaper.pdf</a></li>
-<li><a href="https://news.mynavi.jp/article/20191023-912850/"
-  target="_blank" rel="noopener noreferrer"
-  title="AMDのRDNAアーキテクチャの「Navi GPU」を読み解く - Hot Chips 31 | マイナビニュース"
->AMDのRDNAアーキテクチャの「Navi GPU」を読み解く - Hot Chips 31 | マイナビニュース</a></li>
-<li><a href="https://news.mynavi.jp/article/architecture-366/"
-  target="_blank" rel="noopener noreferrer"
-  title="コンピュータアーキテクチャの話(366) GCNのスカラユニットとベクトル演算 | マイナビニュース"
->コンピュータアーキテクチャの話(366) GCNのスカラユニットとベクトル演算 | マイナビニュース</a></li>
+<li><a href="http://gpuopen.com/wp-content/uploads/slides/GPUOpen_Let%E2%80%99sBuild2020_Optimizing%20for%20the%20Radeon%20RDNA%20Architecture.pdf" target="_blank" rel="noopener noreferrer" title="Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf">Optimizing for the Radeon RDNA architecture - GPUOpen_Let’sBuild2020_Optimizing for the Radeon RDNA Architecture.pdf</a></li>
+<li><a href="https://www.hotchips.org/hc31/HC31_2.13_AMD_final.pdf" target="_blank" rel="noopener noreferrer" title="7nm “Navi” GPU">7nm “Navi” GPU</a></li>
+<li><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener noreferrer" title="RDNA_Architecture_public.pdf">RDNA_Architecture_public.pdf</a></li>
+<li><a href="https://www.amd.com/system/files/documents/rdna-whitepaper.pdf" target="_blank" rel="noopener noreferrer" title="Introduction - rdna-whitepaper.pdf">Introduction - rdna-whitepaper.pdf</a></li>
+<li><a href="https://news.mynavi.jp/article/20191023-912850/" target="_blank" rel="noopener noreferrer" title="AMDのRDNAアーキテクチャの「Navi GPU」を読み解く - Hot Chips 31 | マイナビニュース">AMDのRDNAアーキテクチャの「Navi GPU」を読み解く - Hot Chips 31 | マイナビニュース</a></li>
+<li><a href="https://news.mynavi.jp/article/architecture-366/" target="_blank" rel="noopener noreferrer" title="コンピュータアーキテクチャの話(366) GCNのスカラユニットとベクトル演算 | マイナビニュース">コンピュータアーキテクチャの話(366) GCNのスカラユニットとベクトル演算 | マイナビニュース</a></li>
 </ul>
 </section>
 

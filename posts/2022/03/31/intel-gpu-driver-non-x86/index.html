@@ -88,10 +88,7 @@
 <section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
 </h2>
 <ul>
-<li><a href="#fence"
-  
-  title="対応における課題"
->対応における課題</a></li>
+<li><a href="#fence"  title="対応における課題">対応における課題</a></li>
 </ul>
 </section>
 
@@ -156,10 +153,7 @@
  + * @dev_priv: i915 device.
  + */
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/intel-gfx/2020-November/254123.html"
-  target="_blank" rel="noopener noreferrer"
-  title="[Intel-gfx] [RFC PATCH 120/162] drm/i915/oprom: Basic sanitization"
->[Intel-gfx] [RFC PATCH 120/162] drm/i915/oprom: Basic sanitization</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/intel-gfx/2020-November/254123.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [RFC PATCH 120/162] drm/i915/oprom: Basic sanitization">[Intel-gfx] [RFC PATCH 120/162] drm/i915/oprom: Basic sanitization</a></cite>
 </div>
 
 </blockquote>
@@ -168,30 +162,15 @@
 <p>現時点で、x86(-64) 以外のプラットフォームへのサポートを進める Intel GPUドライバーと関連ライブラリには、Mesa3D、IGC (Intel Graphics Compiler)、gmmlib (Graphics Memory Management Library)、Compute Runtime が確認できる。<br>
 サポートに追加される対象は主に ARM64 (aarch64) となっている。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/15309"
-  target="_blank" rel="noopener noreferrer"
-  title="intel: Support compiling on non-x86 (!15309) · Merge requests · Mesa / mesa · GitLab"
->intel: Support compiling on non-x86 (!15309) · Merge requests · Mesa / mesa · GitLab</a></li>
-<li><a href="https://github.com/intel/gmmlib/commit/32f4cfc294f8342f6e0e1bae2ef430c3971d50c6"
-  target="_blank" rel="noopener noreferrer"
-  title="Introduce ARM64 Support for the Library (#91) · intel/gmmlib@32f4cfc"
->Introduce ARM64 Support for the Library (#91) · intel/gmmlib@32f4cfc</a></li>
-<li><a href="https://github.com/intel/intel-graphics-compiler/commit/eda4042be98cf1edd6cabf45104f4e1050a3bbfb"
-  target="_blank" rel="noopener noreferrer"
-  title="Enable ARM build · intel/intel-graphics-compiler@eda4042"
->Enable ARM build · intel/intel-graphics-compiler@eda4042</a></li>
-<li><a href="https://github.com/intel/compute-runtime/commit/cf906030ac0da5799d6a8ee7878f64bb20fa8b9c"
-  target="_blank" rel="noopener noreferrer"
-  title="Add neon intrinsics for aarch64 · intel/compute-runtime@cf90603"
->Add neon intrinsics for aarch64 · intel/compute-runtime@cf90603</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/15309" target="_blank" rel="noopener noreferrer" title="intel: Support compiling on non-x86 (!15309) · Merge requests · Mesa / mesa · GitLab">intel: Support compiling on non-x86 (!15309) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://github.com/intel/gmmlib/commit/32f4cfc294f8342f6e0e1bae2ef430c3971d50c6" target="_blank" rel="noopener noreferrer" title="Introduce ARM64 Support for the Library (#91) · intel/gmmlib@32f4cfc">Introduce ARM64 Support for the Library (#91) · intel/gmmlib@32f4cfc</a></li>
+<li><a href="https://github.com/intel/intel-graphics-compiler/commit/eda4042be98cf1edd6cabf45104f4e1050a3bbfb" target="_blank" rel="noopener noreferrer" title="Enable ARM build · intel/intel-graphics-compiler@eda4042">Enable ARM build · intel/intel-graphics-compiler@eda4042</a></li>
+<li><a href="https://github.com/intel/compute-runtime/commit/cf906030ac0da5799d6a8ee7878f64bb20fa8b9c" target="_blank" rel="noopener noreferrer" title="Add neon intrinsics for aarch64 · intel/compute-runtime@cf90603">Add neon intrinsics for aarch64 · intel/compute-runtime@cf90603</a></li>
 </ul>
 <p>まだ正式に対応してないため作業途中 (WIP) と思われるが、内容としては主に x86(-64) 固有の命令を直接使っている部分を、複数のアーキテクチャに対応したライブラリに置き換えるか、マクロで制御しコードを分ける、といった対応を取っている。<br>
 対応が必要な命令として挙げられているものには、主に <code>SSE/2/3/4.1/4.2</code>,<code>CLFLUSH</code>, <code>CPUID</code> がある。<br>
 <code>SSE</code> は SIMD命令として CPU側の計算や変換処理、<code>CLFLUSH</code> はキャッシュラインをメモリにフラッシュし、同期を取るため、<code>CPUID</code> は CPU の拡張命令、機能の対応フラグの取得に使われている。</p>
-<p>gmmlib では <a href="https://github.com/DLTcollab/sse2neon/"
-  target="_blank" rel="noopener noreferrer"
-  title="sse2neon"
->sse2neon</a> を導入することで SSE系命令を Arm NEON 命令に置き換えている。<br>
+<p>gmmlib では <a href="https://github.com/DLTcollab/sse2neon/" target="_blank" rel="noopener noreferrer" title="sse2neon">sse2neon</a> を導入することで SSE系命令を Arm NEON 命令に置き換えている。<br>
 Mesa3D では、一度最低限の対応を行うマージリクエストが開設されたが、将来的に non x86(-64) + Intel dGPU というプラットフォームが出てくる可能性は非常に高いとしつつも、まだ Intel dGPU、Intel Arc Aシリーズはリリースされていないため、今は閉じられている。<br>
 また、私見ではあるが、PCIeスロットが実装された non x86(-64) プラットフォームには Ampere eMAG (ARM64/aarch64)<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> や Raptor Talos II (POWER9) <sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup> 存在するが、一般的に普及しているものではない。<br>
 また、Intel Arc Aシリーズのリリース後もしばらくはそちらの対応にリソースを割きたいという考えもドライバー開発者にはあるのではないかと思われる。</p>
@@ -200,25 +179,13 @@ Mesa3D では、一度最低限の対応を行うマージリクエストが開�
 <ul>
 <li>DG1
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-March/293151.html"
-  target="_blank" rel="noopener noreferrer"
-  title="[Intel-gfx] [PATCH 0/2] Splitting intel-gtt calls for non-x86 platforms"
->[Intel-gfx] [PATCH 0/2] Splitting intel-gtt calls for non-x86 platforms</a>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-March/293151.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [PATCH 0/2] Splitting intel-gtt calls for non-x86 platforms">[Intel-gfx] [PATCH 0/2] Splitting intel-gtt calls for non-x86 platforms</a>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-March/293152.html"
-  target="_blank" rel="noopener noreferrer"
-  title="[Intel-gfx] [PATCH 1/2] drm/i915: Require INTEL_GTT to depend on X86"
->[Intel-gfx] [PATCH 1/2] drm/i915: Require INTEL_GTT to depend on X86</a></li>
-<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-March/293153.html"
-  target="_blank" rel="noopener noreferrer"
-  title="[Intel-gfx] [PATCH 2/2] drm/i915/gt: Split intel-gtt functions by arch"
->[Intel-gfx] [PATCH 2/2] drm/i915/gt: Split intel-gtt functions by arch</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-March/293152.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [PATCH 1/2] drm/i915: Require INTEL_GTT to depend on X86">[Intel-gfx] [PATCH 1/2] drm/i915: Require INTEL_GTT to depend on X86</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-March/293153.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [PATCH 2/2] drm/i915/gt: Split intel-gtt functions by arch">[Intel-gfx] [PATCH 2/2] drm/i915/gt: Split intel-gtt functions by arch</a></li>
 </ul>
 </li>
-<li><a href="https://www.legitreviews.com/intel-iris-xe-discrete-card-will-only-work-with-select-cpus-and-motherboards_225470"
-  target="_blank" rel="noopener noreferrer"
-  title="Intel Iris Xe Discrete Card Will Only Work With Select CPUs and Motherboards - Legit Reviews"
->Intel Iris Xe Discrete Card Will Only Work With Select CPUs and Motherboards - Legit Reviews</a></li>
+<li><a href="https://www.legitreviews.com/intel-iris-xe-discrete-card-will-only-work-with-select-cpus-and-motherboards_225470" target="_blank" rel="noopener noreferrer" title="Intel Iris Xe Discrete Card Will Only Work With Select CPUs and Motherboards - Legit Reviews">Intel Iris Xe Discrete Card Will Only Work With Select CPUs and Motherboards - Legit Reviews</a></li>
 </ul>
 </li>
 </ul>
@@ -228,28 +195,16 @@ Mesa3D では、一度最低限の対応を行うマージリクエストが開�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.legitreviews.com/intel-iris-xe-discrete-card-will-only-work-with-select-cpus-and-motherboards_225470"
-  target="_blank" rel="noopener noreferrer"
-  title="Intel Iris Xe Discrete Card Will Only Work With Select CPUs and Motherboards - Legit Reviews"
->Intel Iris Xe Discrete Card Will Only Work With Select CPUs and Motherboards - Legit Reviews</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.legitreviews.com/intel-iris-xe-discrete-card-will-only-work-with-select-cpus-and-motherboards_225470" target="_blank" rel="noopener noreferrer" title="Intel Iris Xe Discrete Card Will Only Work With Select CPUs and Motherboards - Legit Reviews">Intel Iris Xe Discrete Card Will Only Work With Select CPUs and Motherboards - Legit Reviews</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://review.coreboot.org/c/coreboot/&#43;/49016"
-  target="_blank" rel="noopener noreferrer"
-  title="device: Add new Kconfig VGA_ROM_RUN_DEFAULT for mainboard user (Iecb2fcdb) · Gerrit Code Review"
->device: Add new Kconfig VGA_ROM_RUN_DEFAULT for mainboard user (Iecb2fcdb) · Gerrit Code Review</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://review.coreboot.org/c/coreboot/&#43;/49016" target="_blank" rel="noopener noreferrer" title="device: Add new Kconfig VGA_ROM_RUN_DEFAULT for mainboard user (Iecb2fcdb) · Gerrit Code Review">device: Add new Kconfig VGA_ROM_RUN_DEFAULT for mainboard user (Iecb2fcdb) · Gerrit Code Review</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://www.anandtech.com/show/15733/ampere-emag-system-a-32core-arm64-workstation/7"
-  target="_blank" rel="noopener noreferrer"
-  title="Conclusion - All Eyes on an Altra System - Avantek&rsquo;s Arm Workstation: Ampere eMAG 8180 32-core Arm64 Review"
->Conclusion - All Eyes on an Altra System - Avantek&rsquo;s Arm Workstation: Ampere eMAG 8180 32-core Arm64 Review</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.anandtech.com/show/15733/ampere-emag-system-a-32core-arm64-workstation/7" target="_blank" rel="noopener noreferrer" title="Conclusion - All Eyes on an Altra System - Avantek&rsquo;s Arm Workstation: Ampere eMAG 8180 32-core Arm64 Review">Conclusion - All Eyes on an Altra System - Avantek&rsquo;s Arm Workstation: Ampere eMAG 8180 32-core Arm64 Review</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4">
-<p><a href="https://www.raptorcs.com/TALOSII/"
-  target="_blank" rel="noopener noreferrer"
-  title="Raptor Computing Systems::Talos™ II Secure Workstation"
->Raptor Computing Systems::Talos™ II Secure Workstation</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.raptorcs.com/TALOSII/" target="_blank" rel="noopener noreferrer" title="Raptor Computing Systems::Talos™ II Secure Workstation">Raptor Computing Systems::Talos™ II Secure Workstation</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

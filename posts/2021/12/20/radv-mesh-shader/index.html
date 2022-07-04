@@ -82,42 +82,21 @@
     <time datetime="2021-12-20 00:00 +0900">Post: 2021/12/20 00:00 &#43;0900</time>
     <aside class="update">Update: 2022/01/16 06:06 &#43;0900</aside>
   </aside><p>オープンソースで開発されている AMD GPU向け Vulkanドライバー <em>RADV</em> 、そのバックエンドである <em>ACO</em> で Mesh Shader への対応が進められている。<br>
-<a href="https://gitlab.freedesktop.org/Venemo"
-  target="_blank" rel="noopener noreferrer"
-  title="Timur Kristóf"
->Timur Kristóf</a> 氏は該当マージリクエスト内で、Mesh Shader と Vulkan における拡張機能 <code>NV_mesh_shader</code>、そして RADV/ACO での実装について詳細を語っている。</p>
+<a href="https://gitlab.freedesktop.org/Venemo" target="_blank" rel="noopener noreferrer" title="Timur Kristóf">Timur Kristóf</a> 氏は該当マージリクエスト内で、Mesh Shader と Vulkan における拡張機能 <code>NV_mesh_shader</code>、そして RADV/ACO での実装について詳細を語っている。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13466"
-  target="_blank" rel="noopener noreferrer"
-  title="nir, spirv: Mesh Shader I/O fixes (!13466) · Merge requests · Mesa / mesa · GitLab"
->nir, spirv: Mesh Shader I/O fixes (!13466) · Merge requests · Mesa / mesa · GitLab</a></li>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13580"
-  target="_blank" rel="noopener noreferrer"
-  title="radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab"
->radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab</a></li>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/14193"
-  target="_blank" rel="noopener noreferrer"
-  title="radv: Add VRS support for mesh shaders. (!14193) · Merge requests · Mesa / mesa · GitLab"
->radv: Add VRS support for mesh shaders. (!14193) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13466" target="_blank" rel="noopener noreferrer" title="nir, spirv: Mesh Shader I/O fixes (!13466) · Merge requests · Mesa / mesa · GitLab">nir, spirv: Mesh Shader I/O fixes (!13466) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13580" target="_blank" rel="noopener noreferrer" title="radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab">radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/14193" target="_blank" rel="noopener noreferrer" title="radv: Add VRS support for mesh shaders. (!14193) · Merge requests · Mesa / mesa · GitLab">radv: Add VRS support for mesh shaders. (!14193) · Merge requests · Mesa / mesa · GitLab</a></li>
 </ul>
 <section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
 </h2>
 <ul>
-<li><a href="#ms"
-  
-  title="Mesh Shader"
->Mesh Shader</a>
+<li><a href="#ms"  title="Mesh Shader">Mesh Shader</a>
 <ul>
-<li><a href="#nv-ms"
-  
-  title="VK_NV_mesh_shader"
->VK_NV_mesh_shader</a></li>
+<li><a href="#nv-ms"  title="VK_NV_mesh_shader">VK_NV_mesh_shader</a></li>
 </ul>
 </li>
-<li><a href="#ngg"
-  
-  title="NGG"
->NGG</a></li>
+<li><a href="#ngg"  title="NGG">NGG</a></li>
 </ul>
 </section>
 
@@ -132,10 +111,7 @@ Mesh Shader では、頂点数によらず、指定された数の Workgroup (Th
 クロスベンダーバージョンの拡張機能がリリースされ次第、<code>VK_NV_mesh_shader</code> のサポートは取り除く予定だとしているが、リリースがいつになるかは不明。<br>
 以下の issue で議論されているが、進展については特に報告されていない。</p>
 <ul>
-<li><a href="https://github.com/KhronosGroup/Vulkan-Docs/issues/1423"
-  target="_blank" rel="noopener noreferrer"
-  title="Cross-vendor version of VK_NV_mesh_shader · Issue #1423 · KhronosGroup/Vulkan-Docs"
->Cross-vendor version of VK_NV_mesh_shader · Issue #1423 · KhronosGroup/Vulkan-Docs</a></li>
+<li><a href="https://github.com/KhronosGroup/Vulkan-Docs/issues/1423" target="_blank" rel="noopener noreferrer" title="Cross-vendor version of VK_NV_mesh_shader · Issue #1423 · KhronosGroup/Vulkan-Docs">Cross-vendor version of VK_NV_mesh_shader · Issue #1423 · KhronosGroup/Vulkan-Docs</a></li>
 </ul>
 <p>Timur Kristóf 氏は RADV/ACO で <code>VK_NV_mesh_shader</code> を公式にサポートしない理由として、AMD GPU上では性能が低いことが挙げている。<br>
 同時に、<code>VK_NV_mesh_shader</code> には D3D12 (Direct3D 12) と比較して、以下のような問題があることを指摘している。<br>
@@ -146,10 +122,7 @@ Mesh Shader では、頂点数によらず、指定された数の Workgroup (Th
 <li>Any shader invocation can read the output of any other which is not possible in D3D12.</li>
 <li>The NV indirect command buffer format is not supported by the hardware, so we have to emit several copy packets to make it work. Note that D3D12 uses 3D dispatches without an offset: (x, y, z) but NV_mesh_shader uses an 1D dispatch with offset: (taskCount, firstTask).</li>
 </ul>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13580"
-  target="_blank" rel="noopener noreferrer"
-  title="radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab"
->radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13580" target="_blank" rel="noopener noreferrer" title="radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab">radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
@@ -173,10 +146,7 @@ Mesh Shader では、頂点数によらず、指定された数の Workgroup (Th
  +   assert(!mesh_shading || ctx.program-&gt;chip_class &gt;= GFX10_3);
  +
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13580/diffs?commit_id=c2667723a588e14615a6d0cf28a5936ce69e0ff8#diff-content-d0488ddd1da2786fc08fb3c5c5c0b5b0329dc0cd"
-  target="_blank" rel="noopener noreferrer"
-  title="radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab"
->radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13580/diffs?commit_id=c2667723a588e14615a6d0cf28a5936ce69e0ff8#diff-content-d0488ddd1da2786fc08fb3c5c5c0b5b0329dc0cd" target="_blank" rel="noopener noreferrer" title="radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab">radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
@@ -199,36 +169,18 @@ Pixel Shader はこれまでと変わらず、PC から入力を読み込み、�
  +|            with task:   | TS    | MS    | FS | `task_cs`, `mesh_ngg`, `fragment_fs` |
  +
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13580/diffs?commit_id=1b27d018a03656021a273280e9bd3d26a945dee9"
-  target="_blank" rel="noopener noreferrer"
-  title="radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab"
->radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13580/diffs?commit_id=1b27d018a03656021a273280e9bd3d26a945dee9" target="_blank" rel="noopener noreferrer" title="radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab">radv: Experimental support for Mesh Shaders. (!13580) · Merge requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
-<li><a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VK_NV_mesh_shader.html"
-  target="_blank" rel="noopener noreferrer"
-  title="VK_NV_mesh_shader(3)"
->VK_NV_mesh_shader(3)</a></li>
-<li><a href="https://xdc2020.x.org/event/9/contributions/612/"
-  target="_blank" rel="noopener noreferrer"
-  title="X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico"
->X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico</a></li>
-<li><a href="https://microsoft.github.io/DirectX-Specs/d3d/MeshShader.html"
-  target="_blank" rel="noopener noreferrer"
-  title="Mesh Shader | DirectX-Specs"
->Mesh Shader | DirectX-Specs</a></li>
-<li><a href="https://devblogs.microsoft.com/directx/coming-to-directx-12-mesh-shaders-and-amplification-shaders-reinventing-the-geometry-pipeline/"
-  target="_blank" rel="noopener noreferrer"
-  title="Coming to DirectX 12— Mesh Shaders and Amplification Shaders: Reinventing the Geometry Pipeline   - DirectX Developer Blog"
->Coming to DirectX 12— Mesh Shaders and Amplification Shaders: Reinventing the Geometry Pipeline   - DirectX Developer Blog</a></li>
-<li><a href="https://gpuopen.com/wp-content/uploads/slides/AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf"
-  target="_blank" rel="noopener noreferrer"
-  title="PowerPoint Presentation - AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf"
->PowerPoint Presentation - AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf</a></li>
+<li><a href="https://www.khronos.org/registry/vulkan/specs/1.2-extensions/man/html/VK_NV_mesh_shader.html" target="_blank" rel="noopener noreferrer" title="VK_NV_mesh_shader(3)">VK_NV_mesh_shader(3)</a></li>
+<li><a href="https://xdc2020.x.org/event/9/contributions/612/" target="_blank" rel="noopener noreferrer" title="X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico">X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico</a></li>
+<li><a href="https://microsoft.github.io/DirectX-Specs/d3d/MeshShader.html" target="_blank" rel="noopener noreferrer" title="Mesh Shader | DirectX-Specs">Mesh Shader | DirectX-Specs</a></li>
+<li><a href="https://devblogs.microsoft.com/directx/coming-to-directx-12-mesh-shaders-and-amplification-shaders-reinventing-the-geometry-pipeline/" target="_blank" rel="noopener noreferrer" title="Coming to DirectX 12— Mesh Shaders and Amplification Shaders: Reinventing the Geometry Pipeline   - DirectX Developer Blog">Coming to DirectX 12— Mesh Shaders and Amplification Shaders: Reinventing the Geometry Pipeline   - DirectX Developer Blog</a></li>
+<li><a href="https://gpuopen.com/wp-content/uploads/slides/AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf" target="_blank" rel="noopener noreferrer" title="PowerPoint Presentation - AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf">PowerPoint Presentation - AMD_RDNA2_DirectX12_Ultimate_SamplerFeedbackMeshShaders.pdf</a></li>
 </ul>
 </section>
 
@@ -236,10 +188,7 @@ Pixel Shader はこれまでと変わらず、PC から入力を読み込み、�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://xdc2020.x.org/event/9/contributions/612/"
-  target="_blank" rel="noopener noreferrer"
-  title="X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico"
->X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://xdc2020.x.org/event/9/contributions/612/" target="_blank" rel="noopener noreferrer" title="X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico">X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

@@ -84,10 +84,7 @@
   </aside><p>AMD ROCm v4.5 がリリースされた。<br>
 今リリースの大きな変更点としては、HIP (Heterogeneous-Compute Interface for Portability) において CPU+GPU の統合メモリをサポートしたことが挙げられる。</p>
 <ul>
-<li><a href="https://github.com/RadeonOpenCompute/ROCm/tree/f088317e4483b8f75ec55ac3bb040f23e5abd2d4"
-  target="_blank" rel="noopener noreferrer"
-  title="RadeonOpenCompute/ROCm at f088317e4483b8f75ec55ac3bb040f23e5abd2d4"
->RadeonOpenCompute/ROCm at f088317e4483b8f75ec55ac3bb040f23e5abd2d4</a></li>
+<li><a href="https://github.com/RadeonOpenCompute/ROCm/tree/f088317e4483b8f75ec55ac3bb040f23e5abd2d4" target="_blank" rel="noopener noreferrer" title="RadeonOpenCompute/ROCm at f088317e4483b8f75ec55ac3bb040f23e5abd2d4">RadeonOpenCompute/ROCm at f088317e4483b8f75ec55ac3bb040f23e5abd2d4</a></li>
 </ul>
 <p>統合メモリは <em>Vega/GFX9</em> 世代とそれ以降の世代の GPU でサポートされ、<em>Polaris</em> や <em>Fiji</em> といった <em>GFX8</em> 世代の GPU ではサポートされない。<br>
 これは、そもそも ROCm v4.0 から <em>GFX8</em> 世代は、動作はするが公式的に完全なサポートは保証しないことが明言されており、また <em>GFX8</em> 世代では 49-bitアドレッシングもサポートしていないことが関係していると思われる。</p>
@@ -96,73 +93,37 @@ XNACK-disabled では、GPU が使うメモリすべてが GPU側のページテ
 XNACK-enabled では GPU がページフォールトとページ移行の処理を行うことができるため、CPU+GPU の統合メモリにおいては XNACK-enabled の方が有利だと考えられる。</p>
 <p>しかしコンパイラは XNACK-enabled/disabled でそれぞれ別のコードを生成するため、現時点では XNACK-enabled は実験的なサポートとしている。<br>
 XNACK を有効としてコンパイルされたコードを、XNACK が無効化されている GPU で実行すると、正しく実行されない、実行されても性能が低下する恐れがある。<br>
-<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2021/01/07/add-svm-to-amdgpu-kfd/"
-  
-  title="Linux Kernel に CPU &#43; GPU の統合メモリ空間をサポートする最初のパッチが投稿される | Coelacanth&rsquo;s Dream"
->Linux Kernel に CPU + GPU の統合メモリ空間をサポートする最初のパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2021/01/07/add-svm-to-amdgpu-kfd/"  title="Linux Kernel に CPU &#43; GPU の統合メモリ空間をサポートする最初のパッチが投稿される | Coelacanth&rsquo;s Dream">Linux Kernel に CPU + GPU の統合メモリ空間をサポートする最初のパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <h2 id="polaris-rdna">外されつつある Polaris と追加されつつある RDNA<a href="#polaris-rdna" class="head-cur-link"></a>
 </h2>
 <p>上で既に公式的なサポートから <em>GFX8</em> 世代が外れていることには触れたが、一部 ROCmソフトウェア/ライブラリからは <em>Polaris (gfx803)</em> のサポートを <em>取り除く</em> 動きも見られる。</p>
 <ul>
-<li><a href="https://github.com/ROCmSoftwarePlatform/rocSOLVER/pull/288"
-  target="_blank" rel="noopener noreferrer"
-  title="Drop gfx803 from default build architectures by cgmb · Pull Request #288 · ROCmSoftwarePlatform/rocSOLVER"
->Drop gfx803 from default build architectures by cgmb · Pull Request #288 · ROCmSoftwarePlatform/rocSOLVER</a></li>
-<li><a href="https://github.com/ROCmSoftwarePlatform/rocSOLVER/pull/330"
-  target="_blank" rel="noopener noreferrer"
-  title="Revert &ldquo;Drop gfx803 from default build architectures&rdquo; by cgmb · Pull Request #330 · ROCmSoftwarePlatform/rocSOLVER"
->Revert &ldquo;Drop gfx803 from default build architectures&rdquo; by cgmb · Pull Request #330 · ROCmSoftwarePlatform/rocSOLVER</a></li>
-<li><a href="https://github.com/ROCmSoftwarePlatform/pytorch/pull/835"
-  target="_blank" rel="noopener noreferrer"
-  title="Remove gfx803; Add gfx90a and gfx1030 by jithunnair-amd · Pull Request #835 · ROCmSoftwarePlatform/pytorch"
->Remove gfx803; Add gfx90a and gfx1030 by jithunnair-amd · Pull Request #835 · ROCmSoftwarePlatform/pytorch</a></li>
-<li><a href="https://github.com/tensorflow/tensorflow/commit/a67c9b9a30815f7d602eb10563d1831e5863e062"
-  target="_blank" rel="noopener noreferrer"
-  title="[ROCm] Updating Dockerfile.rocm to drop support for gfx803 · tensorflow/tensorflow@a67c9b9"
->[ROCm] Updating Dockerfile.rocm to drop support for gfx803 · tensorflow/tensorflow@a67c9b9</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/rocSOLVER/pull/288" target="_blank" rel="noopener noreferrer" title="Drop gfx803 from default build architectures by cgmb · Pull Request #288 · ROCmSoftwarePlatform/rocSOLVER">Drop gfx803 from default build architectures by cgmb · Pull Request #288 · ROCmSoftwarePlatform/rocSOLVER</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/rocSOLVER/pull/330" target="_blank" rel="noopener noreferrer" title="Revert &ldquo;Drop gfx803 from default build architectures&rdquo; by cgmb · Pull Request #330 · ROCmSoftwarePlatform/rocSOLVER">Revert &ldquo;Drop gfx803 from default build architectures&rdquo; by cgmb · Pull Request #330 · ROCmSoftwarePlatform/rocSOLVER</a></li>
+<li><a href="https://github.com/ROCmSoftwarePlatform/pytorch/pull/835" target="_blank" rel="noopener noreferrer" title="Remove gfx803; Add gfx90a and gfx1030 by jithunnair-amd · Pull Request #835 · ROCmSoftwarePlatform/pytorch">Remove gfx803; Add gfx90a and gfx1030 by jithunnair-amd · Pull Request #835 · ROCmSoftwarePlatform/pytorch</a></li>
+<li><a href="https://github.com/tensorflow/tensorflow/commit/a67c9b9a30815f7d602eb10563d1831e5863e062" target="_blank" rel="noopener noreferrer" title="[ROCm] Updating Dockerfile.rocm to drop support for gfx803 · tensorflow/tensorflow@a67c9b9">[ROCm] Updating Dockerfile.rocm to drop support for gfx803 · tensorflow/tensorflow@a67c9b9</a></li>
 </ul>
 <p>再度サポートが有効化されたり、プルリクエストが取り込まれなかったりでほとんどは <em>Polaris (gfx803)</em> のサポートを継続しているが、今後サポートする AMD GPU が増えた場合には今度こそ取り除かれると思われる。</p>
 <p><em>Vega10 (gfx900)</em> についてもサポートから外される予兆を見せており、<em>Vega10</em> ベースのサーバー向け SKU <em>Instint MI25</em> は EOL (End of Life) に達し、ROCm v4.5 がサポートする最後の公式リリースになるとしている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 <em>Vega64</em> に対しては触れられていないが、ROCm のメインターゲットであるサーバー向け SKU が EOL に入った以上、同様にサポートから外されることが考えられる。</p>
-<p>今リリースでサポートに追加された AMD GPU は無いが、<a href="https://rocmdocs.amd.com/en/latest/Installation_Guide/Installation_new.html"
-  target="_blank" rel="noopener noreferrer"
-  title="ROCm Installation Guide"
->ROCm Installation Guide</a> では対応リストに <em>Sienna Cichlid/Navi21 (gfx1030)</em> ベースの <em>Radeon Pro W6800</em> がさり気なく追加されており、ROCmソフトウェア/ライブラリも <em>gfx1030</em> に対応している。</p>
+<p>今リリースでサポートに追加された AMD GPU は無いが、<a href="https://rocmdocs.amd.com/en/latest/Installation_Guide/Installation_new.html" target="_blank" rel="noopener noreferrer" title="ROCm Installation Guide">ROCm Installation Guide</a> では対応リストに <em>Sienna Cichlid/Navi21 (gfx1030)</em> ベースの <em>Radeon Pro W6800</em> がさり気なく追加されており、ROCmソフトウェア/ライブラリも <em>gfx1030</em> に対応している。</p>
 <ul>
-<li><a href="https://rocmdocs.amd.com/en/latest/Installation_Guide/Installation_new.html#confirm-you-have-a-rocm-capable-gpu"
-  target="_blank" rel="noopener noreferrer"
-  title="ROCm Installation Guide v4.5 — ROCm Documentation 1.0.0 documentation"
->ROCm Installation Guide v4.5 — ROCm Documentation 1.0.0 documentation</a></li>
+<li><a href="https://rocmdocs.amd.com/en/latest/Installation_Guide/Installation_new.html#confirm-you-have-a-rocm-capable-gpu" target="_blank" rel="noopener noreferrer" title="ROCm Installation Guide v4.5 — ROCm Documentation 1.0.0 documentation">ROCm Installation Guide v4.5 — ROCm Documentation 1.0.0 documentation</a></li>
 </ul>
-<p>余談に近いが、<em>Radeon Pro W6800</em> には <code>DeviceID: 0x73A3</code> が割り当てられている。だが <a href="https://github.com/ROCmSoftwarePlatform/Tensile"
-  target="_blank" rel="noopener noreferrer"
-  title="Tensile"
->Tensile</a> 等ではまた別の <em>Navi21/Sienna Cichlid</em> の <code>DeviceID: 0x73A2</code>、まだリリースされていない SKU を対象としている。<br>
+<p>余談に近いが、<em>Radeon Pro W6800</em> には <code>DeviceID: 0x73A3</code> が割り当てられている。だが <a href="https://github.com/ROCmSoftwarePlatform/Tensile" target="_blank" rel="noopener noreferrer" title="Tensile">Tensile</a> 等ではまた別の <em>Navi21/Sienna Cichlid</em> の <code>DeviceID: 0x73A2</code>、まだリリースされていない SKU を対象としている。<br>
 これが間違いでなければ、<em>Radeon Pro W6800</em> 以外に <em>Navi21/Sienna Cichlid</em> ベースのワークステーション向け、あるいはサーバー向けの SKU を計画しているのかもしれない。</p>
-<p>以前には <em>RDNA/GFX10</em> 系 GPU のサポートを 2021年に追加する予定があると述べられており、それが一応達成されたことにはなるが、<a href="https://github.com/ROCmSupport"
-  target="_blank" rel="noopener noreferrer"
-  title="ROCmSupport"
->ROCmSupport</a> アカウントは ROCm v5.0 で <em>RDNA/GFX10</em> 系の公式サポートについて良いニュースがあるかもしれない、とコメントしている。</p>
+<p>以前には <em>RDNA/GFX10</em> 系 GPU のサポートを 2021年に追加する予定があると述べられており、それが一応達成されたことにはなるが、<a href="https://github.com/ROCmSupport" target="_blank" rel="noopener noreferrer" title="ROCmSupport">ROCmSupport</a> アカウントは ROCm v5.0 で <em>RDNA/GFX10</em> 系の公式サポートについて良いニュースがあるかもしれない、とコメントしている。</p>
 <ul>
-<li><a href="https://github.com/RadeonOpenCompute/ROCm/issues/1180#issuecomment-942101147"
-  target="_blank" rel="noopener noreferrer"
-  title="https://github.com/RadeonOpenCompute/ROCm/issues/1180#issuecomment-942101147"
->https://github.com/RadeonOpenCompute/ROCm/issues/1180#issuecomment-942101147</a></li>
+<li><a href="https://github.com/RadeonOpenCompute/ROCm/issues/1180#issuecomment-942101147" target="_blank" rel="noopener noreferrer" title="https://github.com/RadeonOpenCompute/ROCm/issues/1180#issuecomment-942101147">https://github.com/RadeonOpenCompute/ROCm/issues/1180#issuecomment-942101147</a></li>
 </ul>
 <p><em>ROCm Installation Guide</em> に <em>Radeon Pro W6800</em> が載ってるのはミスで、正式なサポートは ROCm v5.0 で追加するつもりなのだろうか。<br>
 ただ他 <em>RDNA 2/GFX10.3</em> 世代の GPU がサポートされるか、<em>RDNA 1/GFX10.1</em> 世代もサポートされるかは不透明なまま。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
-<li><a href="https://www.amd.com/en/products/server-accelerators/amd-radeon-pro-v520#product-specs"
-  target="_blank" rel="noopener noreferrer"
-  title="AMD Radeon™ Pro V520 Graphics | AMD"
->AMD Radeon™ Pro V520 Graphics | AMD</a></li>
-<li><a href="https://www.amd.com/en/products/professional-graphics/instinct-mi25#product-specs"
-  target="_blank" rel="noopener noreferrer"
-  title="Radeon Instinct™ MI25 Accelerator | Server Accelerators| AMD"
->Radeon Instinct™ MI25 Accelerator | Server Accelerators| AMD</a></li>
+<li><a href="https://www.amd.com/en/products/server-accelerators/amd-radeon-pro-v520#product-specs" target="_blank" rel="noopener noreferrer" title="AMD Radeon™ Pro V520 Graphics | AMD">AMD Radeon™ Pro V520 Graphics | AMD</a></li>
+<li><a href="https://www.amd.com/en/products/professional-graphics/instinct-mi25#product-specs" target="_blank" rel="noopener noreferrer" title="Radeon Instinct™ MI25 Accelerator | Server Accelerators| AMD">Radeon Instinct™ MI25 Accelerator | Server Accelerators| AMD</a></li>
 </ul>
 </section>
 
@@ -170,10 +131,7 @@ XNACK を有効としてコンパイルされたコードを、XNACK が無効�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/f088317e4483b8f75ec55ac3bb040f23e5abd2d4#Deprecations"
-  target="_blank" rel="noopener noreferrer"
-  title="RadeonOpenCompute/ROCm at f088317e4483b8f75ec55ac3bb040f23e5abd2d4"
->RadeonOpenCompute/ROCm at f088317e4483b8f75ec55ac3bb040f23e5abd2d4</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/RadeonOpenCompute/ROCm/tree/f088317e4483b8f75ec55ac3bb040f23e5abd2d4#Deprecations" target="_blank" rel="noopener noreferrer" title="RadeonOpenCompute/ROCm at f088317e4483b8f75ec55ac3bb040f23e5abd2d4">RadeonOpenCompute/ROCm at f088317e4483b8f75ec55ac3bb040f23e5abd2d4</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
