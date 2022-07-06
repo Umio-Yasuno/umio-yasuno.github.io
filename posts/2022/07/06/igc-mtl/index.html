@@ -34,7 +34,7 @@
   },
     "dateCreated"   : "2022-07-06",
     "datePublished" : "2022-07-06",
-    "dateModified"  : "2022-07-06",
+    "dateModified"  : "2022-07-07",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -80,7 +80,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-07-06 15:50 +0900">Post: 2022/07/06 15:50 &#43;0900</time>
-    <aside class="update">Update: 2022/07/06 23:08 &#43;0900</aside>
+    <aside class="update">Update: 2022/07/07 00:17 &#43;0900</aside>
   </aside><p>Intel の Pete Chou 氏より、<a href="https://github.com/intel/intel-graphics-compiler" target="_blank" rel="noopener noreferrer" title="Intel Graphics Compiler (IGC)">Intel Graphics Compiler (IGC)</a> のサポートターゲットに <em>Meteor Lake</em> を追加するコミットが追加されている。</p>
 <ul>
 <li><a href="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17" target="_blank" rel="noopener noreferrer" title="vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5">vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5</a></li>
@@ -144,9 +144,13 @@ XMXユニットは主に推論処理の高速化を目的としており、用�
 </div>
 
 </blockquote>
-<p>実行パイプは従来の FPパイプや Longパイプ (<span class="xe-gpu-arch">X<sup>e</sup>-HP/HPC</span>)とは異なり、<em>Meteor Lake GPU</em> では複雑な関数を実行する EM (Extend Math) パイプとされる。そのため FP64演算性能は限定的と思われる。<br>
+<p>実行パイプは複雑な関数を実行する EM (Extend Math) パイプとされ、<span class="xe-gpu-arch">X<sup>e</sup>-HP/HPC</span> のように専用の Longパイプは持たない。<br>
+また、<em>Gen9 アーキテクチャ</em> のドキュメントによれば、<em>Gen9</em> においても FP64 演算は EMパイプで実行されていた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>そのため、FP64 演算に関しては <em>Meteor Lake GPU</em> で従来の方式に戻したとも見られる。<br>
 グラフィクス性能の最適化から <em>Gen11 アーキテクチャ</em> でハードウェアから対応を外したが、互換性の問題などからハードウェアの対応はやはり必要と判断したのだろうか。<br>
 同様の変更が dGPU においても <em>DG2/Alchemist</em> の次世代で適用される可能性が考えられる。</p>
+<p>FP64 演算性能について、<em>Gen9</em> では使用可能な FPパイプ (SIMD4) が片方 1基であり、スループットが半分ということから、FP32 演算性能に対して 1/4 のピーク性能となっていた。<br>
+<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> では FP/INTパイプ が SIMD8 なのに対し、EMパイプは SIMD2 となっており、この構成を引き継いでいるとすると、<em>Meteor Lake GPU</em> では FP32 演算性能に対して 1/8 の FP64演算性能になるのではないかと思われる。<br>
+なおスループットに関しては 1/2 以外である可能性もある。</p>
 <blockquote>
 <pre><code>          ThreeDistPipe         = 2, // XeHP/XeHPG: 3 distance pipe
           FourDistPipe          = 3, // XeHPC (early variant): 4 distance pipes
@@ -164,9 +168,18 @@ XMXユニットは主に推論処理の高速化を目的としており、用�
 <li><a href="https://www.intel.co.jp/content/www/jp/ja/products/docs/arc-discrete-graphics/xess.html" target="_blank" rel="noopener noreferrer" title="インテル® Arc™ - Xe スーパーサンプリング">インテル® Arc™ - Xe スーパーサンプリング</a></li>
 <li><a href="https://www.intel.com/content/www/us/en/developer/articles/guide/lp-api-developer-optimization-guide.html" target="_blank" rel="noopener noreferrer" title="Intel® Processor Graphics Xᵉ-LP API Developer and Optimization Guide">Intel® Processor Graphics Xᵉ-LP API Developer and Optimization Guide</a></li>
 <li><a href="https://community.intel.com/t5/Graphics/What-processors-have-an-internal-Gen11-GPU-with-FP64-double/m-p/691217" target="_blank" rel="noopener noreferrer" title="Re: What processors have an internal Gen11 GPU with FP64 (double precision) enabled? - Intel Communities">Re: What processors have an internal Gen11 GPU with FP64 (double precision) enabled? - Intel Communities</a></li>
+<li><a href="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf" target="_blank" rel="noopener noreferrer" title="the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf">the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf</a></li>
 </ul>
 </section>
 
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf" target="_blank" rel="noopener noreferrer" title="the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf">the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
 </article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/meteor_lake" class="bottom-tag-link"  title="Meteor_Lake">#Meteor Lake</a><a href="https://www.coelacanth-dream.com/tags/xe-hpg" class="bottom-tag-link"  title="Xe-HPG">#Xe-HPG</a></nav><aside class="article-bottom-misc delay-page"><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/07/06/igc-mtl.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
 </aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
