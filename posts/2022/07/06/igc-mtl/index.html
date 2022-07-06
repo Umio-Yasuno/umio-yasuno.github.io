@@ -80,7 +80,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-07-06 15:50 +0900">Post: 2022/07/06 15:50 &#43;0900</time>
-    <aside class="update">Update: 2022/07/07 00:17 &#43;0900</aside>
+    <aside class="update">Update: 2022/07/07 08:02 &#43;0900</aside>
   </aside><p>Intel の Pete Chou 氏より、<a href="https://github.com/intel/intel-graphics-compiler" target="_blank" rel="noopener noreferrer" title="Intel Graphics Compiler (IGC)">Intel Graphics Compiler (IGC)</a> のサポートターゲットに <em>Meteor Lake</em> を追加するコミットが追加されている。</p>
 <ul>
 <li><a href="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17" target="_blank" rel="noopener noreferrer" title="vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5">vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5</a></li>
@@ -125,9 +125,7 @@ XMXユニットは主に推論処理の高速化を目的としており、用�
 <h3 id="fp64">FP64 に部分的に対応<a href="#fp64" class="head-cur-link"></a>
 </h3>
 <p>Intel GPU では <em>Gen11 アーキテクチャ</em> から Int64/FP64 の対応がハードウェア的には外され、ソフトウェアエミュレータでの対応となり、これは <em>DG2/Alchemist</em> にも引き継がれているが、<em>Meteor Lake GPU</em> では FP64 に部分的ではあるが再度ハードウェアが対応する様子を見せている。<br>
-<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/"  title="GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream">GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream</a></span>
-
-<a href="https://github.com/intel/intel-graphics-compiler/blob/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17/visa/HWCaps.inc" target="_blank" rel="noopener noreferrer" title="visa/HWCaps.inc">visa/HWCaps.inc</a> において、<code>noInt64()</code> の判定部に <code>Xe_MTL</code> が追加されているが、<code>noFP64()</code> には追加されていない。</p>
+<a href="https://github.com/intel/intel-graphics-compiler/blob/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17/visa/HWCaps.inc" target="_blank" rel="noopener noreferrer" title="visa/HWCaps.inc">visa/HWCaps.inc</a> において、<code>noInt64()</code> の判定部に <code>Xe_MTL</code> が追加されているが、<code>noFP64()</code> には追加されていない。FP64 にのみ対応し、Int64 には対応しないものと思われる。</p>
 <blockquote>
 <pre><code>     bool noInt64() const
      {
@@ -161,6 +159,9 @@ XMXユニットは主に推論処理の高速化を目的としており、用�
 </div>
 
 </blockquote>
+<p>GPU の FP32:FP64 演算性能レートは、AMD GPU では FP64演算性能を高めたサーバー向けを除けば <em>RDNA 2/GFX10.3 アーキテクチャ</em> までの長い間 16:1 を保っていたが、<em>RDNA 3/GFX11</em> では 32:1 になることが明らかにされている。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/"  title="GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream">GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream</a></span>
+</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
 </h3>
 <ul>
