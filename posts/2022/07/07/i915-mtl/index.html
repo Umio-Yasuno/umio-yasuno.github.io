@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/07/07/i915-mtl/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>Intel GFX ドライバーに Meteor Lake をサポートする最初のパッチが投稿される ―― Gen12.7, Xe_LPD&#43;, Xe_LPM&#43; | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="Intel GFX ドライバーに Meteor Lake をサポートする最初のパッチが投稿される ―― Gen12.7, Xe_LPD&#43;, Xe_LPM&#43; | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="Intel GFX ドライバーに Meteor Lake をサポートする最初のパッチが投稿される ―― Gen12.7, Xe_LPD&#43;, Xe_LPM&#43; | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/07/07/i915-mtl/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/07/07/i915-mtl/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/07/07/i915-mtl/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="Linux Kernel, Meteor Lake, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4050 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em 0 .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em monospace;margin:0 -.2em 0 -.1em;padding:0 .3em .2em;background-color:#0004;clip-path:circle(.45em);transform:rotate(-24deg)}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 0%,#0000 76%,#0000 95%,#111 99%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 50%,#0002 50%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#d001 33.4%,#0d01 33.4%,#0d01 66.8%,#00d1 66.8%)50%/.2rem 100% fixed repeat-x;opacity:.4;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0f566b;background-color:var(--sb-bg,#0f566b);contain:content}.sb:active{--sb-bg:#0c4759}.cp-url::before,.cp-url-title::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}.text{gap:1.2rem 0}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;justify-content:flex-end;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "Intel GFX ドライバーに Meteor Lake をサポートする最初のパッチが投稿される ―― Gen12.7, Xe_LPD&#43;, Xe_LPM&#43;",
+  "headline" : "Intel GFX ドライバーに Meteor Lake をサポートする最初のパッチが投稿される ―― Gen12.7, Xe_LPD&#43;, Xe_LPM&#43;",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-07-07",
+    "datePublished" : "2022-07-07",
+    "dateModified"  : "2022-07-07",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">Intel GFX ドライバーに Meteor Lake をサポートする最初のパッチが投稿される ―― Gen12.7, Xe_LPD+, Xe_LPM+</h1>
+
+
+  <article class="page-main delay-page">
+<aside class="article-share "><button
+    type="button"
+    class="share-copy-button sb cp-url"
+    onclick="copy_url({ url: true, title: false })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL"
+  ></button><button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL &amp; Title"
+  ></button><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav></aside><aside class="article-time">
+    <time datetime="2022-07-07 11:57 +0900">Post: 2022/07/07 11:57 &#43;0900</time>
+    <aside class="update">Update: 2022/07/07 13:04 &#43;0900</aside>
+  </aside><p>Intel の <a href="https://www.linkedin.com/in/rkinvictus" target="_blank" rel="noopener noreferrer" title="Radhakrishna Sripada">Radhakrishna Sripada</a> 氏より、Linux Kernel における Intel GPU/GFX ドライバー <code>i915</code> に <em>Meteor Lake-M/P</em> のサポートを追加する最初のパッチが投稿されている。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-July/301011.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [PATCH 0/2] i915: Introduce Meteorlake">[Intel-gfx] [PATCH 0/2] i915: Introduce Meteorlake</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-July/301009.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [PATCH 1/2] drm/i915/mtl: Add MeteorLake platform info">[Intel-gfx] [PATCH 1/2] drm/i915/mtl: Add MeteorLake platform info</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-July/301010.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [PATCH 2/2] drm/i915/mtl: Add MeteorLake PCI IDs">[Intel-gfx] [PATCH 2/2] drm/i915/mtl: Add MeteorLake PCI IDs</a></li>
+</ul>
+<p><em>Meteor Lake-M/P</em> の各 IP バージョンは、GraphicsIP は <code>12.70</code>、DisplayIP は <code>14 (Xe_LPD+)</code>、MediaIP は <code>13 (Xe_LPM+)</code> とされている。<br>
+<em>Xe_LPD+</em> の新機能に関するパッチはまだ投稿されていない。<em>Xe_LPD+</em> では <em>Xe_LPD (ver13)</em> でサポートする機能に加えて <code>has_cdclk_crawl</code> のフラグが有効化されているが、これは <em>Alder Lake-P</em> でもサポートされている。<br>
+<em>Xe_LPD (ver13)</em> IP は <em>DG2/Alchemist</em> でも採用されているが、こちらは <code>has_cdclk_crawl</code> が有効化されていない。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p><code>platform_engine_mask</code> に <code>CCS0</code> のビットがセットされていることから、<em>Meteor Lake-M/P</em> では <em>Compute Engine (Compute Command Streamer)</em> を 1基搭載しているものと思われる。<br>
+<em>Xe_HP SDV, DG2/Alchemist, Ponte Vecchio</em> では 4基搭載されているため、それよりも小さい規模となる。<br>
+公開されているドキュメントでは <em>Tiger Lake</em> でも CCS 1基を搭載しているとされているが、i915 ドライバーでは何らかの理由で有効化されていないものと思われる。<br>
+<em>Rocket Lake, Alder Lake-N/M/P/S</em> でも同様のため、iGPU では <em>Meteor Lake-M/P</em> で CCS がようやく有効化されることとなる。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/06/16/intel-ccs-mesa3d/"  title="Intel OSS OpenGL/Vulkan ドライバーが &ldquo;Compute Engine&rdquo; に対応 | Coelacanth&rsquo;s Dream">Intel OSS OpenGL/Vulkan ドライバーが &ldquo;Compute Engine&rdquo; に対応 | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<blockquote>
+<pre><code> +#define XE_LPDP_FEATURES	\
+ +	XE_LPD_FEATURES,	\
+ +	.display.ver = 14,	\
+ +	.display.has_cdclk_crawl = 1
+ +
+ +__maybe_unused
+ +static const struct intel_device_info mtl_info = {
+ +	XE_HP_FEATURES,
+ +	XE_LPDP_FEATURES,
+ +	/*
+ +	 * Real graphics IP version will be obtained from hardware GMD_ID
+ +	 * register.  Value provided here is just for sanity checking.
+ +	 */
+ +	.graphics.ver = 12,
+ +	.graphics.rel = 70,
+ +	.media.ver = 13,
+ +	.memory_regions = REGION_SMEM | REGION_STOLEN_LMEM,
+ +	PLATFORM(INTEL_METEORLAKE),
+ +	.platform_engine_mask = BIT(RCS0) | BIT(BCS0) | BIT(CCS0),
+ +	.require_force_probe = 1,
+ +	.has_flat_ccs = 0,
+ +	.has_snoop = 1,
+ +	.display.has_modular_fia = 1,
+ +};
+ +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-July/301009.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [PATCH 1/2] drm/i915/mtl: Add MeteorLake platform info">[Intel-gfx] [PATCH 1/2] drm/i915/mtl: Add MeteorLake platform info</a></cite>
+</div>
+
+</blockquote>
+<p><em>Alder Lake-M/P</em> では GPU部は IPバージョン、規模ともに同じであったため、ドライバーではまとめて管理していたが、<em>Meteor Lake-M/P</em> では DeviceID、<code>SUBPLATFORM</code> で分けて管理されるようになる。<br>
+<code>SUBPLATFORM</code> はプラットフォームの判定やハードウェア側のバグに対する回避策 (ワークアラウンド) の設定の際にも使われている。<br>
+<em>Meteor Lake</em> ではタイルアーキテクチャを採用すると発表されているが、<em>-M</em> と <em>-P</em> でアーキテクチャは同じだが、パッケージの違いから規模が異なる GPUタイルを採用することが考えられる。</p>
+<blockquote>
+<pre><code> +/* MTL */
+ +#define INTEL_MTL_M_IDS(info) \
+ +	INTEL_VGA_DEVICE(0x7D40, info), \
+ +	INTEL_VGA_DEVICE(0x7D43, info), \
+ +	INTEL_VGA_DEVICE(0x7DC0, info)
+ +
+ +#define INTEL_MTL_P_IDS(info) \
+ +	INTEL_VGA_DEVICE(0x7D45, info), \
+ +	INTEL_VGA_DEVICE(0x7D47, info), \
+ +	INTEL_VGA_DEVICE(0x7D55, info), \
+ +	INTEL_VGA_DEVICE(0x7D60, info), \
+ +	INTEL_VGA_DEVICE(0x7DC5, info), \
+ +	INTEL_VGA_DEVICE(0x7DD5, info), \
+ +	INTEL_VGA_DEVICE(0x7DE0, info)
+ +
+ +#define INTEL_MTL_IDS(info) \
+ +	INTEL_MTL_M_IDS(info), \
+ +	INTEL_MTL_P_IDS(info)
+ +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-July/301010.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [PATCH 2/2] drm/i915/mtl: Add MeteorLake PCI IDs">[Intel-gfx] [PATCH 2/2] drm/i915/mtl: Add MeteorLake PCI IDs</a></cite>
+</div>
+
+</blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Intel GPU ({ver}.{release_ver})</th>
+<th style="text-align:center">Graphics IP ver</th>
+<th style="text-align:center">Display IP ver</th>
+<th style="text-align:center">Media IP ver</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Tiger Lake, Rocket Lake?</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">12</td>
+</tr>
+<tr>
+<td style="text-align:left">DG1</td>
+<td style="text-align:center">12.1</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">12</td>
+</tr>
+<tr>
+<td style="text-align:left">Alder Lake-S</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">12.2</td>
+</tr>
+<tr>
+<td style="text-align:left">Alder Lake-P</td>
+<td style="text-align:center">12</td>
+<td style="text-align:center">13 (XE_LPD)</td>
+<td style="text-align:center">12.2</td>
+</tr>
+<tr>
+<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
+<td style="text-align:center">12.5</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">12.5</td>
+</tr>
+<tr>
+<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></td>
+<td style="text-align:center">12.55</td>
+<td style="text-align:center">13 (XE_LPD)</td>
+<td style="text-align:center">12.55</td>
+</tr>
+<tr>
+<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></td>
+<td style="text-align:center">12.6</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">12.6</td>
+</tr>
+<tr>
+<td style="text-align:left">Meteor Lake</td>
+<td style="text-align:center">12.7</td>
+<td style="text-align:center">14 (XE_LPD+)</td>
+<td style="text-align:center">13 (XE_LPM)</td>
+</tr>
+</tbody>
+</table>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/i915/i915_pci.c?h=next-20220706#n983" target="_blank" rel="noopener noreferrer" title="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/i915/i915_pci.c?h=next-20220706#n983">https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/i915/i915_pci.c?h=next-20220706#n983</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/linux_kernel" class="bottom-tag-link"  title="Linux_Kernel">#Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/meteor_lake" class="bottom-tag-link"  title="Meteor_Lake">#Meteor Lake</a></nav><aside class="article-bottom-misc delay-page"><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/07/07/i915-mtl.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button
+    type="button"
+    class="sb"
+    onclick="random_page()"
+    tabindex=""
+  >Random</button>
+</nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.100.2</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button
+    type="button"
+    class="sb"
+    onclick="random_page()"
+    tabindex=""
+  >Random</button>
+</nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="menu-cat-tag-lower">Meteor Lake</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.100.2</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+
+    <label
+      class="menu-open-label menu-label"
+      data-label="MENU"
+      for="menu-open"
+    ></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+
+    <label
+      class="menu-close-label menu-label"
+      data-label="X"
+      for="menu-close"
+    ></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button
+    type="button"
+    class="sb"
+    onclick="random_page()"
+    tabindex=""
+  >Random</button>
+</nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="menu-cat-tag-lower">Meteor Lake</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
