@@ -80,7 +80,7 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-07-07 11:57 +0900">Post: 2022/07/07 11:57 &#43;0900</time>
-    <aside class="update">Update: 2022/07/07 13:04 &#43;0900</aside>
+    <aside class="update">Update: 2022/07/07 14:48 &#43;0900</aside>
   </aside><p>Intel の <a href="https://www.linkedin.com/in/rkinvictus" target="_blank" rel="noopener noreferrer" title="Radhakrishna Sripada">Radhakrishna Sripada</a> 氏より、Linux Kernel における Intel GPU/GFX ドライバー <code>i915</code> に <em>Meteor Lake-M/P</em> のサポートを追加する最初のパッチが投稿されている。</p>
 <ul>
 <li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-July/301011.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [PATCH 0/2] i915: Introduce Meteorlake">[Intel-gfx] [PATCH 0/2] i915: Introduce Meteorlake</a></li>
@@ -88,8 +88,10 @@
 <li><a href="https://lists.freedesktop.org/archives/intel-gfx/2022-July/301010.html" target="_blank" rel="noopener noreferrer" title="[Intel-gfx] [PATCH 2/2] drm/i915/mtl: Add MeteorLake PCI IDs">[Intel-gfx] [PATCH 2/2] drm/i915/mtl: Add MeteorLake PCI IDs</a></li>
 </ul>
 <p><em>Meteor Lake-M/P</em> の各 IP バージョンは、GraphicsIP は <code>12.70</code>、DisplayIP は <code>14 (Xe_LPD+)</code>、MediaIP は <code>13 (Xe_LPM+)</code> とされている。<br>
-<em>Xe_LPD+</em> の新機能に関するパッチはまだ投稿されていない。<em>Xe_LPD+</em> では <em>Xe_LPD (ver13)</em> でサポートする機能に加えて <code>has_cdclk_crawl</code> のフラグが有効化されているが、これは <em>Alder Lake-P</em> でもサポートされている。<br>
-<em>Xe_LPD (ver13)</em> IP は <em>DG2/Alchemist</em> でも採用されているが、こちらは <code>has_cdclk_crawl</code> が有効化されていない。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+ただ GraphicsIP については、あくまでもドライバー内で区別するためのバージョンであり、実際のバージョンはハードウェアの <code>GMD_ID</code> レジスタから読み取れる。<br>
+また、<a href="https://github.com/intel/gmmlib" target="_blank" rel="noopener noreferrer" title="intel/gmmlib">intel/gmmlib</a> などでは、<code>PRODUCT_FAMILY</code> や <code>GFXCORE_FAMILY</code> としては <code>IGFX_DG2 = 1270</code> (ver12.7) を割り当てているが、Intel GFX ドライバーでは <em>DG2/Alchemist</em> の GraphicsIP は ver12.55 とされており、それぞれバージョン番号は近いが意味する所は異なっている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p><em>Xe_LPD+</em> の新機能に関するパッチはまだ投稿されていない。<em>Xe_LPD+</em> では <em>Xe_LPD (ver13)</em> でサポートする機能に加えて <code>has_cdclk_crawl</code> のフラグが有効化されているが、これは <em>Alder Lake-P</em> でもサポートされている。<br>
+同様に <em>Xe_LPD (ver13)</em> IP を採用する <em>DG2/Alchemist</em> では <code>has_cdclk_crawl</code> が有効化されておらず、<em>Xe_LPD (ver13)</em> においては分離していた部分だった。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p><code>platform_engine_mask</code> に <code>CCS0</code> のビットがセットされていることから、<em>Meteor Lake-M/P</em> では <em>Compute Engine (Compute Command Streamer)</em> を 1基搭載しているものと思われる。<br>
 <em>Xe_HP SDV, DG2/Alchemist, Ponte Vecchio</em> では 4基搭載されているため、それよりも小さい規模となる。<br>
 公開されているドキュメントでは <em>Tiger Lake</em> でも CCS 1基を搭載しているとされているが、i915 ドライバーでは何らかの理由で有効化されていないものと思われる。<br>
@@ -219,7 +221,10 @@
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/i915/i915_pci.c?h=next-20220706#n983" target="_blank" rel="noopener noreferrer" title="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/i915/i915_pci.c?h=next-20220706#n983">https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/i915/i915_pci.c?h=next-20220706#n983</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/intel/gmmlib/blob/c70167bee652c7f4cc656d651a1705ffb6bcc0c9/Source/inc/common/igfxfmid.h#L69-L82" target="_blank" rel="noopener noreferrer" title="gmmlib/igfxfmid.h at c70167bee652c7f4cc656d651a1705ffb6bcc0c9 · intel/gmmlib">gmmlib/igfxfmid.h at c70167bee652c7f4cc656d651a1705ffb6bcc0c9 · intel/gmmlib</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/i915/i915_pci.c?h=next-20220706#n983" target="_blank" rel="noopener noreferrer" title="https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/i915/i915_pci.c?h=next-20220706#n983">https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/i915/i915_pci.c?h=next-20220706#n983</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
