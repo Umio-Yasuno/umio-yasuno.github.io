@@ -34,7 +34,7 @@
   },
     "dateCreated"   : "2022-07-09",
     "datePublished" : "2022-07-09",
-    "dateModified"  : "2022-07-09",
+    "dateModified"  : "2022-07-10",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -80,8 +80,8 @@
     aria-label="RSS: Updated"
   ></a></nav></aside><aside class="article-time">
     <time datetime="2022-07-09 21:01 +0900">Post: 2022/07/09 21:01 &#43;0900</time>
-    <aside class="update">Update: 2022/07/09 23:41 &#43;0900</aside>
-  </aside><p>AMD の Alex Deucher 氏より、AMDGPU ドライバーに <em>RDNA 3/GFX11 APU</em> で採用されるディスプレイエンジン <em>:DCN 3.1.4</em> のサポートを追加するパッチが amd-gfx メーリングリストに投稿されている。<br>
+    <aside class="update">Update: 2022/07/10 21:58 &#43;0900</aside>
+  </aside><p>AMD の Alex Deucher 氏より、AMDGPU ドライバーに <em>RDNA 3/GFX11 APU</em> で採用されるディスプレイエンジン <em>DCN 3.1.4</em> のサポートを追加するパッチが amd-gfx メーリングリストに投稿されている。<br>
 例によってレジスタヘッダはパッチサイズが巨大となるため、メーリングリストには投稿されていない。補足すると、最近追加された <code>dcn_3_2_0_sh_mask.h (drivers/gpu/drm/amd/include/asic_reg/dcn/)</code> はファイル単体で 23.9MiB もある。<br>
 以前は <code>nbio_7_2_0_sh_mask.h (drivers/gpu/drm/amd/include/asic_reg/nbio/)</code> が 15.9MiB で最大だったと思うのだが、一気に最大ファイルサイズが更新されたようだ。<br>
 もはや余談だが、こうした自動生成された巨大なレジスタヘッダについて、Linus Torvalds 氏は以下のようにコメントしている。</p>
@@ -155,7 +155,7 @@
 <table>
 <thead>
 <tr>
-<th style="text-align:left">GC IP ver</th>
+<th style="text-align:left">GC (Graphics Compute) IP ver</th>
 <th style="text-align:center">GFX ID</th>
 <th style="text-align:center">AMDGPU_FAMILY</th>
 <th style="text-align:center">Type</th>
@@ -220,6 +220,17 @@
  +};
 </code></pre>
 <div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-July/081245.html" target="_blank" rel="noopener noreferrer" title="[PATCH 4/9] drm/amd/display: Add DCN314 DC resources">[PATCH 4/9] drm/amd/display: Add DCN314 DC resources</a></cite>
+</div>
+
+</blockquote>
+<p>WaterMark Table には LPDDR5用と DDR5用があり、<em>GC 11.0.1 APU</em> ではメモリにそれらをサポートしていると考えられる。</p>
+<blockquote>
+<pre><code> +		if (ctx-&gt;dc_bios-&gt;integrated_info-&gt;memory_type == LpDdr5MemType)
+ +			dcn314_bw_params.wm_table = lpddr5_wm_table;
+ +		else
+ +			dcn314_bw_params.wm_table = ddr5_wm_table;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-July/081238.html" target="_blank" rel="noopener noreferrer" title="[PATCH 3/9] drm/amd/display: Add DCN314 clock manager">[PATCH 3/9] drm/amd/display: Add DCN314 clock manager</a></cite>
 </div>
 
 </blockquote>
