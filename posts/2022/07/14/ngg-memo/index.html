@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="format-detection" content="telephone=no, address=no, email=no">
+  <base href="https://www.coelacanth-dream.com/posts/2022/07/14/ngg-memo/">
+  <meta property="og:site_name" content="Coelacanth&#39;s Dream">
+  <meta name="twitter:card" content="summary">
+  <meta property="og:type" content="article">
+  <title>NGG に関するメモ ―― Vega/GFX9 世代の NGG, Mesh Shader | Coelacanth&#39;s Dream</title>
+  <meta property="og:title" content="NGG に関するメモ ―― Vega/GFX9 世代の NGG, Mesh Shader | Coelacanth&#39;s Dream">
+  <meta name="twitter:title" content="NGG に関するメモ ―― Vega/GFX9 世代の NGG, Mesh Shader | Coelacanth&#39;s Dream"><link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/07/14/ngg-memo/">
+  <meta property="og:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="twitter:image" content="https://www.coelacanth-dream.com/image/coelacanth_dream.png">
+  <meta name="url" content="https://www.coelacanth-dream.com/posts/2022/07/14/ngg-memo/">
+  <meta property="og:url" content="https://www.coelacanth-dream.com/posts/2022/07/14/ngg-memo/">
+  <meta property="og:locale" content="ja_JP">
+  <meta name="author" content="Umio Yasuno">
+  <meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+  <meta name="keywords" content="NGG, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>html{background:#0b4050 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em 0 .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#d4dedc}.lain-e{display:inline-block;font:700 .7em monospace;margin:0 -.2em 0 -.1em;padding:0 .3em .2em;background-color:#0004;clip-path:circle(.45em);transform:rotate(-24deg)}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.6rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 0%,#0000 76%,#0000 95%,#111 99%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 50%,#0002 50%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#d001 33.4%,#0d01 33.4%,#0d01 66.8%,#00d1 66.8%)50%/.2rem 100% fixed repeat-x;opacity:.4;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0d4e62;border-color:#105d74 #09323e #09323e #105d74;border-radius:.1rem;text-decoration:none;background-color:var(--sb-bg,#0d4e62);contain:content}.sb:active{--sb-bg:#0b4050}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .1rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}.text{gap:1.2rem 0}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}</style>
+
+    <link rel="icon" href="https://www.coelacanth-dream.com/favicon.ico">
+    <link rel="icon" type="image/png" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png">
+    <link rel="apple-touch-icon" sizes="196x196" href="https://www.coelacanth-dream.com/image/coelacanth_dream-196x196.png"><link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{
+  "@context" : "https://schema.org/",
+  "@type" : "Article",
+  "name"     : "NGG に関するメモ ―― Vega/GFX9 世代の NGG, Mesh Shader",
+  "headline" : "NGG に関するメモ ―― Vega/GFX9 世代の NGG, Mesh Shader",
+  "author" : {
+    "@type" : "Person",
+    "name"  : "Umio Yasuno"
+  },
+    "dateCreated"   : "2022-07-14",
+    "datePublished" : "2022-07-14",
+    "dateModified"  : "2022-07-14",
+  "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
+}
+</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">NGG に関するメモ ―― Vega/GFX9 世代の NGG, Mesh Shader</h1>
+
+
+  <article class="page-main delay-page"><aside class="share-block">
+<button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL &amp; Title"
+  ></button><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></aside><aside class="article-time">
+    <time datetime="2022-07-14 16:22 +0900">Post: 2022/07/14 16:22 &#43;0900</time>
+    <aside class="update">Update: 2022/07/14 21:02 &#43;0900</aside>
+  </aside><p>AMD GPU 向け Vulkan ドライバー <strong>RADV</strong> とそのコンパイラバックエンドに採用されている <strong>ACO</strong> の開発者として知られる Timur Kristóf 氏が、ブログにて <em>RDNA 1/GFX10</em> 世代から有効化されている <em>NGG パイプライン</em> とドライバー側で行われる <em>NGG カリング</em> について解説した記事を公開している。</p>
+<ul>
+<li><a href="https://timur.hu/blog/2022/what-is-ngg" target="_blank" rel="noopener noreferrer" title="What is NGG and shader culling on AMD RDNA GPUs? | Timur’s blog">What is NGG and shader culling on AMD RDNA GPUs? | Timur’s blog</a></li>
+</ul>
+<p><em>NGG</em> に関する情報は <strong>ACO バックエンド</strong> のドキュメント<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> や各種ドライバーへのパッチで公開されてきたが、それらは断片的であり、また AMD 公式的には <em>Vega/GFX9</em> 世代に <em>NGG/Primitive Shader</em> を <em>大々的</em> に宣伝していたが、<em>RDNA 1/GFX10.1</em> 世代からはあまり情報を公開しなくなった。<br>
+そのため、GPU ドライバー開発者の視点から <em>NGG</em> を体系的にまとめた Timur Kristóf 氏の記事は、AMD GPU のグラフィクスパイプラインの沿革を知る上でとても価値のあるものだと言える。</p>
+<p>この記事自体は Timur Kristóf 氏の記事を紹介することと、あとは個人的なメモが目的のものとなる。</p>
+<h2 id="ngg-gfx9">NGG on Vega/GFX9<a href="#ngg-gfx9" class="head-cur-link"></a>
+</h2>
+<p><em>NGG/Primitive Shader</em> と呼ばれる機能は <em>Vega/GFX9</em> 世代にも実装されていたが、Kernel Mode Driver (KMD) である AMDGPU ドライバーでは一部対応が進められていたものの、User Mode Driver (UMD) がそれを活用することはなく、実質封印された機能となった。<br>
+AMDGPU ドライバー側の実装も 2019-09 に関連コードを削除するパッチが AMD の Marek Olšák 氏によって投稿されている。<br>
+<em>Vega/GFX9</em> 世代での <em>NGG</em> にそれ以上対応しないことはそれよりも早く、2018-08 の時点で AMD の Jin, Jian-Rong 氏より語られていた。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2018-August/025320.html" target="_blank" rel="noopener noreferrer" title="Making a GDS Allocation for NGG">Making a GDS Allocation for NGG</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040254.html" target="_blank" rel="noopener noreferrer" title="[PATCH] drm/amdgpu: remove gfx9 NGG">[PATCH] drm/amdgpu: remove gfx9 NGG</a></li>
+</ul>
+<p><em>RDNA 1/GFX10.1</em> 世代からの <em>NGG</em> は新たに設計されたもので、<em>Vega/GFX9</em> 世代とは互換性がないものとされている。<br>
+また、Marek Olšák 氏は <a href="https://www.phoronix.com" target="_blank" rel="noopener noreferrer" title="Phoronix">Phoronix</a> のフォーラムにて、<em>「Vega/GFX9 で NGG が (利点が得られつつ) 機能するチャンスはまだありますか？」</em> というコメントに対して、はっきりと <em>「ない、まったく異なり (筆者補足: RDNA 1/GFX10 世代とは?) 、むしろ遅くなる。」</em> と返答している。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>現在は削除されている AMDGPU ドライバー側の実装から、<em>Vega/GFX9</em> 世代の <em>NGG</em> は Primitive/Position/Control Sideband Buffer を VRAM側に、GDS (Global Data Share) も一部を <em>NGG</em> 用に確保する仕様となっていた。<br>
+推測だが、こうした仕様が性能上のボトルネックになっていた可能性はある。</p>
+<h3 id="perf">NGG 有効時の性能<a href="#perf" class="head-cur-link"></a>
+</h3>
+<p><em>RDNA 1/GFX10.1</em> 世代からの <em>NGG</em> を用いた場合の性能について、Timur Kristóf 氏の言ではただ従来のパイプラインから <em>NGG</em> に切り替えるだけでは性能は特に変わらない。<br>
+先に書いたように <em>Vega/GFX9</em> 世代において <em>NGG</em> は大々的に宣伝されていたため、Timur Kristóf 氏はこの結果に非常に驚いたと語っている。<br>
+しかしこれは <em>NGG</em> でも従来と同じようにシェーダーをコンパイルしていたため、<em>NGG</em> の新機能を一切用いていなかった。後に <em>NGG カリング</em> を実装したことで、<em>NGG</em> 有効時の性能は向上した。</p>
+<p>カリング機能は無駄を省くことで、実性能を向上させる手法であるため、性能の向上幅はアプリケーションに依存する。アプリケーション側にすでにそうした機能が実装されている場合、<em>NGG カリング</em> は効果がないか、かえって性能を低下させることも考えられる。</p>
+<p>こうしたことから Timur Kristóf 氏は、<em>NGG</em> はゲーミング性能を向上させる銀の弾丸ではなく、ドライバーへの新機能や新しいプログラミングモデルの実装を可能にするイネーブラだと語っている。</p>
+<p>しかし、<strong>RadeonSI (OpenGL)</strong> も <strong>RADV (Vulkan)</strong> も環境変数から <em>NGG カリング</em> の有効無効を切り替えられるため、実際に <em>NGG カリング</em> の有効で性能が顕著に低下するアプリケーションがあっても <code>drirc</code> の設定によって簡単に対処できると思われる。</p>
+<p>現状 <em>NGG カリング</em> がデフォルトで有効化される条件は、<strong>RadeonSI (OpenGL)</strong> では <em>RDNA 1/GFX10.1</em> 世代以上かつ RB (RenderBackend) 2基以上の場合に、<strong>RADV (Vulkan)</strong> では RB数は <strong>RadeonSI (OpenGL)</strong> と同じ条件だが、世代は <em>RDNA 2/GFX10.3</em> 世代以上の場合となっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
+また、<em>RDNA 1/GFX10.1</em> 世代であっても <em>Navi14 (gfx1012)</em> はハードウェア側にバグがあるため、<em>NGG</em> を有効化することができない。<br>
+<em>Cyan Skilfish/Skillfish APU (gfx1013)</em> も <em>RDNA 1/GFX10.1</em> 世代だが、UMD側では対応が行われていないため、詳細は不明。</p>
+<p><em>VanGogh APU</em> は GPU部が <em>RDNA 2/GFX10.3</em> 世代であり、<em>NGG</em> と <em>NGG カリング</em> が有効可能だが、<em>NGG カリング</em> による性能向上幅は dGPU よりも低くなっているという。<br>
+これについては、Timur Kristóf 氏が以前にパッチ内で語った、<em>NGG カリング</em> の効率は Pixel Shader のスループットに依存するということと、APU では PS へのオンチップバッファ Parameter Cache (PC) の規模が dGPU より小さいことで説明できる。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc"  title="RADV &#43; RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth&rsquo;s Dream">RADV + RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
+
+他の <em>RDNA 2/GFX10.3 APU</em>、<em>Yellow Carp/Rembrandt APU</em> や <em>GC 10.3.7/Sabrina APU</em> でも同様の傾向が見られるのではないかと思われる。</p>
+<h2 id="ms">NGG と Mesh Shader<a href="#ms" class="head-cur-link"></a>
+</h2>
+<p>Timur Kristóf 氏は XDC2020 にて <strong>ACO</strong> の今後の計画について発表した際、<em>NGG</em> で Mesh Shader を実行できる <em>可能性</em> について触れていたが、今回の記事内でプリミティブごとの出力機能などが <em>RDNA 1/GFX10</em> 世代の <em>NGG</em> には実装されていないため、<em>NGG</em> が有効であっても Mesh Shader への対応は <em>RDNA 2/GFX10.3</em> 世代からに限定されると語っている。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/09/19/xdc2020-aco/#ms-on-ngg"  title="【XDC2020】 ACOバックエンドの今後の計画 ―― RDNA 2, RT, Mesh Shader | Coelacanth&rsquo;s Dream">【XDC2020】 ACOバックエンドの今後の計画 ―― RDNA 2, RT, Mesh Shader | Coelacanth&rsquo;s Dream</a></span>
+
+<em>NGG パイプライン</em> として基本的な部分は共通しつつも、一部の機能は世代によって異なることとなる。<br>
+<em>RDNA 3?/GFX11</em> 世代ではついに従来のパイプラインは廃され、<em>NGG</em> のみの実装となるが、こうしたことから新機能や最適化に関わる部分が変更されている可能性がある。<br>
+<span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/#ngg"  title="RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&rsquo;s Dream">RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&rsquo;s Dream</a></span>
+</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/amd/compiler/README.md#supported-shader-stages" target="_blank" rel="noopener noreferrer" title="src/amd/compiler/README.md · main · Mesa / mesa · GitLab">src/amd/compiler/README.md · main · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1328443-amd-lands-a-number-of-radeonsi-rdna-ngg-fixes-ahead-of-rdna3-enabling?p=1328449#post1328449" target="_blank" rel="noopener noreferrer" title="https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1328443-amd-lands-a-number-of-radeonsi-rdna-ngg-fixes-ahead-of-rdna3-enabling?p=1328449#post1328449">https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1328443-amd-lands-a-number-of-radeonsi-rdna-ngg-fixes-ahead-of-rdna3-enabling?p=1328449#post1328449</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/a1763ad4b362c9f3a1fd12b6d06009b17fac3d24/src/gallium/drivers/radeonsi/si_pipe.c#L1301-1309" target="_blank" rel="noopener noreferrer" title="src/gallium/drivers/radeonsi/si_pipe.c · a1763ad4b362c9f3a1fd12b6d06009b17fac3d24 · Mesa / mesa · GitLab">src/gallium/drivers/radeonsi/si_pipe.c · a1763ad4b362c9f3a1fd12b6d06009b17fac3d24 · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/9035408d62f411aabc4df017a77969fca85ad9b9/src/amd/vulkan/radv_device.c#L793-797" target="_blank" rel="noopener noreferrer" title="src/amd/vulkan/radv_device.c · 9035408d62f411aabc4df017a77969fca85ad9b9 · Mesa / mesa · GitLab">src/amd/vulkan/radv_device.c · 9035408d62f411aabc4df017a77969fca85ad9b9 · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/ngg" class="bottom-tag-link"  title="NGG">#NGG</a></nav><aside class="article-bottom-misc delay-page"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/07/14/ngg-memo.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
+    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
+    type="button"
+    class="sb"
+    onclick="random_page()"
+    tabindex=""
+  >Random</button>
+</nav>
+<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+<a href="#" class="pagetop">Page Top</a></nav>
+
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.101.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button
+    type="button"
+    class="sb"
+    onclick="random_page()"
+    tabindex=""
+  >Random</button>
+</nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/ngg/" class="menu-cat-tag-lower">NGG</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.101.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-open"
+      value="open"
+      class="menu-open-input"
+      ZgotmplZ
+    >
+
+    <label
+      class="menu-open-label menu-label"
+      data-label="MENU"
+      for="menu-open"
+    ></label><input
+      type="radio"
+      name="menu-open-close"
+      id="menu-close"
+      value="close"
+      class="menu-close-input"
+      checked
+    >
+
+    <label
+      class="menu-close-label menu-label"
+      data-label="X"
+      for="menu-close"
+    ></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button
+    type="button"
+    class="sb"
+    onclick="random_page()"
+    tabindex=""
+  >Random</button>
+</nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/ngg/" class="menu-cat-tag-lower">NGG</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
