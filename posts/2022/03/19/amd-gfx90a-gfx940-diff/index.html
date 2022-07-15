@@ -77,7 +77,7 @@
 それらパッチによれば、<em>gfx940</em> では行列演算命令、MFMA (Matrix-Fused-Multiply-Add) 系命令として新たな命令がいくつか追加され、またいくつかは <em>Aldebaran/gfx90a/CDNA 2</em> からサポートが外される。</p>
 <p>前提情報として、AMD GPU における MFMA命令名は <code>V_MFMA_{CD}_{M}x{N}x{K}_{AB}</code> のフォーマットからなり、<code>{AB}</code> は入力データフォーマット、<code>{CD}</code> は一時的な結果と最終的な出力データフォーマットを示し、<code>{M,N,K}</code> は行列のサイズを示す。<br>
 <code>{M,N}</code> は値に {4,16,32} のどれかを取り、<code>{K}</code> は {1,2,4,8,16,32} から取る。</p>
-<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
 <li><a href="#removed"  title="削除される MFMA系命令">削除される MFMA系命令</a></li>
@@ -91,7 +91,7 @@
 </ul>
 </section>
 
-<h2 id="removed">削除される MFMA系命令<a href="#removed" class="head-cur-link"></a>
+<h2 id="removed">削除される MFMA系命令<a href="#removed" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em>gfx940</em> では MFMA系命令の従来の対応範囲から、<code>V_MFMA_I32_{32X32X8,16X16X16}_I8</code> と <code>V_MFMA_F32_{*}_BF16</code> が外される。<br>
 それら命令は <em>Arcturus/gfx908/CDNA 1</em> の世代からサポートされていた。<br>
@@ -99,7 +99,7 @@
 <ul>
 <li><a href="https://github.com/llvm/llvm-project/commit/4570527e7210b4f379f20af36ba4026ddafd852f" target="_blank" rel="noopener noreferrer" title="[AMDGPU] Disable some MFMA instructions on gfx940 · llvm/llvm-project@4570527">[AMDGPU] Disable some MFMA instructions on gfx940 · llvm/llvm-project@4570527</a></li>
 </ul>
-<h2 id="added">追加される MFMA系命令<a href="#added" class="head-cur-link"></a>
+<h2 id="added">追加される MFMA系命令<a href="#added" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em>gfx940</em> では新たに 4個の MFMA命令、<code>V_MFMA_I32_{32X32X16,16X16X32}_I8</code> と <code>V_MFMA_F32_{32X32X4,16X16X8}_XF32</code> に対応する。<br>
 また、行列演算命令 (MAI, Matrix Arithmetic Instructions) として新たに SMFMAC 命令が追加された。</p>
@@ -107,7 +107,7 @@
 <li><a href="https://github.com/llvm/llvm-project/commit/27439a764230e5eb54568b2fc053a20c9005970f" target="_blank" rel="noopener noreferrer" title="[AMDGPU] New gfx940 mfma instructions · llvm/llvm-project@27439a7">[AMDGPU] New gfx940 mfma instructions · llvm/llvm-project@27439a7</a></li>
 <li><a href="https://github.com/llvm/llvm-project/commit/6e3e14f600afa1fa64a699df97c8bbac6d0f8b5a" target="_blank" rel="noopener noreferrer" title="[AMDGPU] Support gfx940 smfmac instructions · llvm/llvm-project@6e3e14f">[AMDGPU] Support gfx940 smfmac instructions · llvm/llvm-project@6e3e14f</a></li>
 </ul>
-<h3 id="xf32">XF32<a href="#xf32" class="head-cur-link"></a>
+<h3 id="xf32">XF32<a href="#xf32" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>命令名の XF32 サフィックスは TF32 データフォーマットであることを示す。<br>
 TF32 そのままを命令名に使用しなかった理由には、ハードウェア仕様によるものと Stanislav Mekhanoshin 氏は説明している。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
@@ -117,7 +117,7 @@ TF32 は 19-bits 長のデータフォーマットであり、データのダイ
 <span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2021/10/29/xe-hpc-onednn/#icache"  title="Xe-HPC のサポートが intel-graphics-compiler、oneDNN に追加される | Coelacanth&rsquo;s Dream">Xe-HPC のサポートが intel-graphics-compiler、oneDNN に追加される | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <p><em>Aldebaran/gfx90a/CDNA 2</em> では TF32 データフォーマットへのサポートが行われなかったが、<em>gfx940</em> でサポートされ、他社 GPU と揃うことが明らかとなった。</p>
-<h3 id="smfmac">SMFMAC<a href="#smfmac" class="head-cur-link"></a>
+<h3 id="smfmac">SMFMAC<a href="#smfmac" class="head-cur-link" aria-hidden></a>
 </h3>
 <p><em>gfx940</em> でサポートされる SMFMAC 命令には、<code>V_SMFMAC_F32_{16X16X32,32X32X16}_F16</code>、<code>V_SMFMAC_F32_{16X16X32,32X32X16}_BF16</code>、<code>V_SMFMAC_I32_{16X16X64,32X32X32}_I8</code> の 6個がある。<br>
 ただ正直、SMFMAC 命令が具体的にどういった命令で、MFMA 命令とどう異なるのかは、自分ではまだ読み取れていない。MFMA 命令から <code>idx</code> を指定する入力オペランドが追加されてはいるが。</p>
@@ -141,7 +141,7 @@ TF32 は 19-bits 長のデータフォーマットであり、データのダイ
 </div>
 
 </blockquote>
-<h2 id="v_mov_b64">V_MOV_B64<a href="#v_mov_b64" class="head-cur-link"></a>
+<h2 id="v_mov_b64">V_MOV_B64<a href="#v_mov_b64" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em>gfx940</em> には <code>V_MOV_B64</code> 命令のサポートも追加されている。<br>
 <code>V_MOV_{*}</code> 命令はデータの移動を行う基本的な命令であり、命令名のサフィックスはデータのサイズ (ビット幅) を示す。<br>
@@ -152,7 +152,7 @@ TF32 は 19-bits 長のデータフォーマットであり、データのダイ
 <p>まだ <em>gfx940</em> のサポートは途中だが、<em>RDNA 2/GFX10.3</em> 世代と同様に <code>FeatureMadMacF32Insts</code> (<code>V_{MAD,MAC,MADAK,MADMK}_F32</code>) の削除が行われていることと合わせ、対応命令の追加だけでなく整理も <em>gfx940</em> で行われているような印象を受ける。<br>
 <span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/03/01/llvm-gfx940/"  title="新たな CDNA系の GPUID 「gfx940」 | Coelacanth&rsquo;s Dream">新たな CDNA系の GPUID 「gfx940」 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://community.intel.com/t5/Blogs/Products-and-Solutions/HPC/Accelerating-the-Convergence-of-HPC-and-AI-at-Exascale/post/1334987" target="_blank" rel="noopener noreferrer" title="Accelerating the Convergence of HPC and AI at Exascale - Intel Communities">Accelerating the Convergence of HPC and AI at Exascale - Intel Communities</a></li>
@@ -190,20 +190,10 @@ TF32 は 19-bits 長のデータフォーマットであり、データのダイ
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/03/19/amd-gfx90a-gfx940-diff.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>

@@ -33,7 +33,7 @@
   },
     "dateCreated"   : "2022-07-14",
     "datePublished" : "2022-07-14",
-    "dateModified"  : "2022-07-14",
+    "dateModified"  : "2022-07-15",
   "image" : "https://www.coelacanth-dream.com/image/coelacanth_dream.png"
 }
 </script>
@@ -72,15 +72,15 @@
     aria-label="RSS: Updated"
   ></a></aside><aside class="article-time">
     <time datetime="2022-07-14 16:22 +0900">Post: 2022/07/14 16:22 &#43;0900</time>
-    <aside class="update">Update: 2022/07/14 21:02 &#43;0900</aside>
-  </aside><p>AMD GPU 向け Vulkan ドライバー <strong>RADV</strong> とそのコンパイラバックエンドに採用されている <strong>ACO</strong> の開発者として知られる Timur Kristóf 氏が、ブログにて <em>RDNA 1/GFX10</em> 世代から有効化されている <em>NGG パイプライン</em> とドライバー側で行われる <em>NGG カリング</em> について解説した記事を公開している。</p>
+    <aside class="update">Update: 2022/07/15 00:39 &#43;0900</aside>
+  </aside><p>AMD GPU 向け Vulkan ドライバー <strong>RADV</strong> とそのコンパイラバックエンドに採用されている <strong>ACO</strong> の開発者として知られる Timur Kristóf 氏が、ブログにて <em>RDNA 1/GFX10</em> 世代から有効化されている <em>NGG (Next Generation Geometry) /NGG パイプライン</em> とドライバー側で行われる <em>NGG カリング</em> について解説した記事を公開している。</p>
 <ul>
 <li><a href="https://timur.hu/blog/2022/what-is-ngg" target="_blank" rel="noopener noreferrer" title="What is NGG and shader culling on AMD RDNA GPUs? | Timur’s blog">What is NGG and shader culling on AMD RDNA GPUs? | Timur’s blog</a></li>
 </ul>
 <p><em>NGG</em> に関する情報は <strong>ACO バックエンド</strong> のドキュメント<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> や各種ドライバーへのパッチで公開されてきたが、それらは断片的であり、また AMD 公式的には <em>Vega/GFX9</em> 世代に <em>NGG/Primitive Shader</em> を <em>大々的</em> に宣伝していたが、<em>RDNA 1/GFX10.1</em> 世代からはあまり情報を公開しなくなった。<br>
 そのため、GPU ドライバー開発者の視点から <em>NGG</em> を体系的にまとめた Timur Kristóf 氏の記事は、AMD GPU のグラフィクスパイプラインの沿革を知る上でとても価値のあるものだと言える。</p>
 <p>この記事自体は Timur Kristóf 氏の記事を紹介することと、あとは個人的なメモが目的のものとなる。</p>
-<h2 id="ngg-gfx9">NGG on Vega/GFX9<a href="#ngg-gfx9" class="head-cur-link"></a>
+<h2 id="ngg-gfx9">NGG on Vega/GFX9<a href="#ngg-gfx9" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em>NGG/Primitive Shader</em> と呼ばれる機能は <em>Vega/GFX9</em> 世代にも実装されていたが、Kernel Mode Driver (KMD) である AMDGPU ドライバーでは一部対応が進められていたものの、User Mode Driver (UMD) がそれを活用することはなく、実質封印された機能となった。<br>
 AMDGPU ドライバー側の実装も 2019-09 に関連コードを削除するパッチが AMD の Marek Olšák 氏によって投稿されている。<br>
@@ -92,8 +92,9 @@ AMDGPU ドライバー側の実装も 2019-09 に関連コードを削除する�
 <p><em>RDNA 1/GFX10.1</em> 世代からの <em>NGG</em> は新たに設計されたもので、<em>Vega/GFX9</em> 世代とは互換性がないものとされている。<br>
 また、Marek Olšák 氏は <a href="https://www.phoronix.com" target="_blank" rel="noopener noreferrer" title="Phoronix">Phoronix</a> のフォーラムにて、<em>「Vega/GFX9 で NGG が (利点が得られつつ) 機能するチャンスはまだありますか？」</em> というコメントに対して、はっきりと <em>「ない、まったく異なり (筆者補足: RDNA 1/GFX10 世代とは?) 、むしろ遅くなる。」</em> と返答している。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p>現在は削除されている AMDGPU ドライバー側の実装から、<em>Vega/GFX9</em> 世代の <em>NGG</em> は Primitive/Position/Control Sideband Buffer を VRAM側に、GDS (Global Data Share) も一部を <em>NGG</em> 用に確保する仕様となっていた。<br>
-推測だが、こうした仕様が性能上のボトルネックになっていた可能性はある。</p>
-<h3 id="perf">NGG 有効時の性能<a href="#perf" class="head-cur-link"></a>
+推測だが、こうした仕様が性能上のボトルネックになっていた可能性はある。<br>
+<em>RDNA 1/GFX10.1</em> 世代からの <em>NGG</em> にそうした KMD側のバッファ確保等は必要なく、UMD側ですべて制御可能となっている。</p>
+<h3 id="perf">NGG 有効時の性能<a href="#perf" class="head-cur-link" aria-hidden></a>
 </h3>
 <p><em>RDNA 1/GFX10.1</em> 世代からの <em>NGG</em> を用いた場合の性能について、Timur Kristóf 氏の言ではただ従来のパイプラインから <em>NGG</em> に切り替えるだけでは性能は特に変わらない。<br>
 先に書いたように <em>Vega/GFX9</em> 世代において <em>NGG</em> は大々的に宣伝されていたため、Timur Kristóf 氏はこの結果に非常に驚いたと語っている。<br>
@@ -109,7 +110,7 @@ AMDGPU ドライバー側の実装も 2019-09 に関連コードを削除する�
 <span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc"  title="RADV &#43; RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth&rsquo;s Dream">RADV + RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
 
 他の <em>RDNA 2/GFX10.3 APU</em>、<em>Yellow Carp/Rembrandt APU</em> や <em>GC 10.3.7/Sabrina APU</em> でも同様の傾向が見られるのではないかと思われる。</p>
-<h2 id="ms">NGG と Mesh Shader<a href="#ms" class="head-cur-link"></a>
+<h2 id="ms">NGG と Mesh Shader<a href="#ms" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>Timur Kristóf 氏は XDC2020 にて <strong>ACO</strong> の今後の計画について発表した際、<em>NGG</em> で Mesh Shader を実行できる <em>可能性</em> について触れていたが、今回の記事内でプリミティブごとの出力機能などが <em>RDNA 1/GFX10</em> 世代の <em>NGG</em> には実装されていないため、<em>NGG</em> が有効であっても Mesh Shader への対応は <em>RDNA 2/GFX10.3</em> 世代からに限定されると語っている。<br>
 <span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2020/09/19/xdc2020-aco/#ms-on-ngg"  title="【XDC2020】 ACOバックエンドの今後の計画 ―― RDNA 2, RT, Mesh Shader | Coelacanth&rsquo;s Dream">【XDC2020】 ACOバックエンドの今後の計画 ―― RDNA 2, RT, Mesh Shader | Coelacanth&rsquo;s Dream</a></span>
@@ -153,20 +154,10 @@ AMDGPU ドライバー側の実装も 2019-09 に関連コードを削除する�
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/07/14/ngg-memo.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>

@@ -76,7 +76,7 @@
   </aside><p>Linux Kenrel 部に含まれる AMDGPUドライバーには AMD GPUハードウェアのクロック、電圧を調節する機能があり、今記事はその機能の使い方の紹介。<br>
 普段は新しい情報ばかり取り扱ってるけど、こういった布教?活動的なものも大事だと感じた次第。</p>
 <p><strong>GPU のクロック、電圧をデフォルトから変更することは故障する危険が伴うものであり、完全自己責任の元で行なってください。</strong></p>
-<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
 <li><a href="#ppfeaturemask"  title="amdgpu.ppfeaturemsk">amdgpu.ppfeaturemsk</a></li>
@@ -90,7 +90,7 @@
 </ul>
 </section>
 
-<h2 id="ppfeaturemask">amdgpu.ppfeaturemask<a href="#ppfeaturemask" class="head-cur-link"></a>
+<h2 id="ppfeaturemask">amdgpu.ppfeaturemask<a href="#ppfeaturemask" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>クロック、電圧を手動で調節する機能を有効にするにはまず、Kernelパラメーターに <code>amdgpu.ppfeaturemask=0xffffffff</code> を渡す必要がある。<br>
 具体的な方法としては、適当なテキストエディアで <code>/etc/default/grub</code> を開き、<code>GRUB_CMDLINE_LINUX_DEFAULT</code> にその値を追加する。下記では <code>amdgpu.ppfeaturemask</code> の値しかないが、実際には起動時のログメッセージ表示を抑制する <code>quiet</code> パラメーター等が他にあると思う。あっても AMD GPU の機能を有効とする上で問題となるものは殆ど無いので気にしなくていい。</p>
@@ -100,7 +100,7 @@
 デフォルトの状態でも機能のほとんどが有効にされているが、ただクロック、電圧の上書き (OverDrive, OD) だけは無効化されているため、特別 Kernelパラメーターを渡す必要がある。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p><code>/etc/default/grub</code> の内容を変更しても、<code>update-grub</code> コマンドを実行しないと反映されないため注意。<br>
 また、ここまでの GRUB 関連の設定変更、コマンド実行にはスーパーユーザー権限が必要となる。</p>
-<h2 id="clk-volt-od">クロック、電圧の調節、上書き<a href="#clk-volt-od" class="head-cur-link"></a>
+<h2 id="clk-volt-od">クロック、電圧の調節、上書き<a href="#clk-volt-od" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>上記設定を適用した状態でシステムを起動させた後は、sysfs API を介した操作で調節、上書きが可能となる。</p>
 <p>まず、以下のコマンドを実行し、クロック、電圧を変更できる状態にする。これもスーパーユーザー権限が必要となる。</p>
@@ -115,7 +115,7 @@ PCIバスでもそれは可能で、その場合、<code>/sys/class/drm/card0/de
 、それ以前の GPU と、<br>
 <a href="https://www.coelacanth-dream.com/tags/vega20" target="_blank" rel="noopener noreferrer" title="Vega20">Vega20</a> <span class="complement">こちらは Radeon VII 等のベース</span>
  とそれ以降 (<a href="https://www.coelacanth-dream.com/tags/navi10" target="_blank" rel="noopener noreferrer" title="Navi10">Navi10</a>, <a href="https://www.coelacanth-dream.com/tags/navi14" target="_blank" rel="noopener noreferrer" title="Navi14">Navi14</a>等) とで異なる。</p>
-<h3 id="vega10-and-pre">Vega10 とそれ以前の AMD GPU の場合<a href="#vega10-and-pre" class="head-cur-link"></a>
+<h3 id="vega10-and-pre">Vega10 とそれ以前の AMD GPU の場合<a href="#vega10-and-pre" class="head-cur-link" aria-hidden></a>
 </h3>
 <p><code>pp_od_clk_voltage</code> に値を渡すことでクロック、電圧を調節が行なえる。<br>
 <em>Vega10</em> とそれ以前の AMD GPU の場合、<code>pp_od_clk_voltage</code> の中身は以下のようになっている。以下の例は、自分が使ってるシステム内でずっと働いてくれている <strong>RX 560 (Polaris11)</strong> 場合。</p>
@@ -151,18 +151,18 @@ PCIバスでもそれは可能で、その場合、<code>/sys/class/drm/card0/de
 </code></pre>
 <p>MCLK (Memory Clock) も変更することは可能だが、変更には厳しいものがあり、少し変更しただけでディスプレイに現代アートが描かれる、ということがよくあるためオススメはしない。</p>
 <p><code>OD_RANGE</code> はそのままの意味で、クロック、電圧 (VDDC) をそこから外れた値に設定することはできない。</p>
-<h3 id="vega20-and-next">Vega20 とそれ以降の AMD GPU の場合<a href="#vega20-and-next" class="head-cur-link"></a>
+<h3 id="vega20-and-next">Vega20 とそれ以降の AMD GPU の場合<a href="#vega20-and-next" class="head-cur-link" aria-hidden></a>
 </h3>
 <p><em>Vega10</em> とそれ以前の場合と操作は特に変わらないが、<code>pp_od_clk_voltage</code> の内容が異なる。<br>
 SCLK は最低/最高クロックの 2つのみが設定でき、MCLK はデフォルトでは最高クロックのみだが、最低クロックを追加することができる。<br>
 電圧については、<code>OD_VDDC_CURVE</code> が追加され、そこで 3つのクロック、電圧のポイントを設定することとなる。 (最低 - 中間 - 最高)<br>
 ユーザー側から弄ることのできる範囲は減ったが、ハードウェア側のクロック、電圧の調節機能がそれだけ優秀になったということだろう。</p>
-<h2 id="end">終わりに<a href="#end" class="head-cur-link"></a>
+<h2 id="end">終わりに<a href="#end" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>思ってたよりも長ったらしいものになったが、各操作は単純であるため、一度設定を詰めてしまえば、後は適当なシェルスクリプトを書いて、それを自動で実行するようにしておくだけでいい。</p>
 <p>上で自環境の <strong>RX 560</strong> のデフォルト設定を載せたが、クロック、電圧を調整し、最高で 1080MHz 850mV となるように設定した省電力運用となっている。<br>
 GPU性能を必要とする場面が多くないため、消費電力、発熱が小さい方が自分としては嬉しいものがある。</p>
-<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html" target="_blank" rel="noopener noreferrer" title="drm/amdgpu AMDgpu driver — The Linux Kernel documentation">drm/amdgpu AMDgpu driver — The Linux Kernel documentation</a></li>
@@ -199,20 +199,10 @@ GPU性能を必要とする場面が多くないため、消費電力、発熱�
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/27/linux-amdgpu-clock-setting.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>

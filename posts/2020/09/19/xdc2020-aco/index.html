@@ -79,7 +79,7 @@
 <li><a href="https://www.youtube.com/watch?v=FxFPFsT1wDw&amp;t=1736s" target="_blank" rel="noopener noreferrer" title="XDC 2020 - Day 2 - September 17, 2020 - YouTube">XDC 2020 - Day 2 - September 17, 2020 - YouTube</a></li>
 <li><a href="https://xdc2020.x.org/event/9/contributions/612/" target="_blank" rel="noopener noreferrer" title="X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico">X.Org Developers Conference 2020 (16-18 September 2020): A year of ACO: from prototype to default · Indico</a></li>
 </ul>
-<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
 <li><a href="#future-plan"  title="今後の計画と機能">今後の計画と機能</a>
@@ -94,32 +94,32 @@
 </ul>
 </section>
 
-<h2 id="future-plan">今後の計画と機能<a href="#future-plan" class="head-cur-link"></a>
+<h2 id="future-plan">今後の計画と機能<a href="#future-plan" class="head-cur-link" aria-hidden></a>
 </h2>
-<h3 id="rdna_2-support">RDNA 2/GFX10.3 サポート<a href="#rdna_2-support" class="head-cur-link"></a>
+<h3 id="rdna_2-support">RDNA 2/GFX10.3 サポート<a href="#rdna_2-support" class="head-cur-link" aria-hidden></a>
 </h3>
 <p><em>RDNA 2 /GFX10.3</em> のサポートは進行中だが、次世代 GPU であるためまだ公式のISAドキュメントがリリースされておらず、AMD の開発者が公式にパッチを投稿する <em>RadeonSI (OpenGL)</em> ドライバーや LLVM の変更に追従する形を取っているとのこと。(Page51)</p>
-<h3 id="radeonsi-aco">RadeonSI(OpenGL) でも ACOバックエンドをサポート<a href="#radeonsi-aco" class="head-cur-link"></a>
+<h3 id="radeonsi-aco">RadeonSI(OpenGL) でも ACOバックエンドをサポート<a href="#radeonsi-aco" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>現在 <em>ACOバックエンド</em> は <em>RADV(Vulkan)</em> ドライバーのみをサポートしているが、<em>RadeonSI(OpenGL)</em> のサポートも計画されている。(Page52)<br>
 それに向けたコードのシェーダーの引数部の統合、I/O操作部の統合作業は始まっているが、元は <em>RADV(Vulkan)</em> への実装だったこともあり、サポートまで長い道のりであると述べている。</p>
-<h3 id="rt">レイトレーシング<a href="#rt" class="head-cur-link"></a>
+<h3 id="rt">レイトレーシング<a href="#rt" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>Vulkan API でレイトレーシングをサポートする拡張仕様はドラフト(草稿)の段階にあり、<a href="https://www.coelacanth-dream.com/posts/2020/09/17/llvm-amd-gfx1030-rt-inst/"  title="先日">先日</a>には、<em>RDNA 2 /GFX10.3</em> がサポートするレイトレーシング関連の命令が LLVM に追加されているため、<em>ACO</em> でもサポートされる日はそう遠くない……が肝心のハードウェア、<em>RDNA 2 /GFX10.3</em> GPU そのものがまだリリースされていない。</p>
-<h3 id="ms-on-ngg">Mesh Shader は NGG で実行可能か<a href="#ms-on-ngg" class="head-cur-link"></a>
+<h3 id="ms-on-ngg">Mesh Shader は NGG で実行可能か<a href="#ms-on-ngg" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>NVIDIA が Turing 世代で新設したプログラムシェーダー、Mesh Shader だが、スライド内にて <em>RDNA /GFX10</em> からハードウェア側でサポートされている NGG(Next Generation Geometry) で実行できる <em>可能性</em> があると述べている。(Page54)<br>
 まだ Vulkan API での拡張機能がリリースされていないため実装、テストは行なわれていないが、<br>
 もし実行可能であるならば、次世代コンソール機でサポートが分かれていた、PS5 のプリミティブシェーダー、Xbox Series X/S でサポートされている Mesh Shader が、ハードウェア側としてはどちらも NGG によって実行されている可能性が考えられる。</p>
 <p>NGG 自体は <em>Vega /GFX9</em> から始まったものだが、<em>RDNA /GFX10</em> で設計が変更され、<em>Vega /GFX9</em> でのサポートは廃止された<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>という背景がある。<br>
 これはあくまでも個人の推測であるが、<em>RDNA /GFX10</em> で NGG の設計変更を行なった理由の1つに、Mesh Shader のサポートが含まれていたのかもしれない。</p>
-<h3 id="more-optim">さらなる最適化<a href="#more-optim" class="head-cur-link"></a>
+<h3 id="more-optim">さらなる最適化<a href="#more-optim" class="head-cur-link" aria-hidden></a>
 </h3>
 <p><em>ACOバックエンド</em> のさらなる性能向上を実現する手立てに、Rapid-packed math(FP16をFP32の倍のレートで実行する機能、GFX9からサポートされている)、NGG GS への最適化、さらに進んだレジスタ割り付けスケジューラーの実装をあげている。</p>
 <!--
    [WIP aco: rapid packed math (!6680) · Merge Requests · Mesa / mesa · GitLab](https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/6680)
 -->
-<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://www.4gamer.net/games/990/G999027/20200319173/" target="_blank" rel="noopener noreferrer" title="西川善司の3DGE：Mark Cerny氏のPS5技術解説プレゼンテーションを読み解く(前編)。ここまで分かったPS5のSSDとGPUの詳細">西川善司の3DGE：Mark Cerny氏のPS5技術解説プレゼンテーションを読み解く(前編)。ここまで分かったPS5のSSDとGPUの詳細</a></li>
@@ -152,20 +152,10 @@
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/19/xdc2020-aco.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>

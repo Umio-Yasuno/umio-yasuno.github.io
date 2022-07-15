@@ -79,7 +79,7 @@
 </p>
 <p>堅い特許文書を自分なりに噛み砕いているため、誤解釈等が含まれている可能性があります。<br>
 もし誤解釈があれば、気軽に連絡下さると嬉しいです。</p>
-<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
 <li><a href="#summary"  title="概要">概要</a>
@@ -93,11 +93,11 @@
 </ul>
 </section>
 
-<h2 id="summary">概要<a href="#summary" class="head-cur-link"></a>
+<h2 id="summary">概要<a href="#summary" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>まず、特許の内容としては、規模(性能、電力効率)、対応命令範囲の異なる 2種類の CPUコアに対し、
 どのようにスレッドを実行する CPUコアを切り替えるか、というものとなっている。</p>
-<h3 id="high-low-processor">High-Feature, Low-Feature<a href="#high-low-processor" class="head-cur-link"></a>
+<h3 id="high-low-processor">High-Feature, Low-Feature<a href="#high-low-processor" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>文書では、2種類の CPUコアを <code>HIGH-FEATURE</code> 、<code>LOW-FEATURE</code> に分けており、この記事では便宜上 <code>High</code>コア/高機能コア、<code>Low</code>コア/低機能(省電力)コアとする。</p>
 <p><code>High</code>コアと <code>Low</code>コアではコア構成が異なり、例えば、キャッシュメモリの容量、キャッシュ階層、分岐予測機構、実行ユニット、In-Order 実行か Out-Of-Order 実行か、投機的実行に対応するかしないか等の点で異なる。<br>
@@ -106,7 +106,7 @@
 <p><code>High</code>コアは性能に優れるが、消費電力も大きく、専有するダイエリアも大きい。<br>
 <code>Low</code>コアは性能こそ低く、対応する機能も少ないが、消費電力は小さく、電力効率に優れ、必要とするダイエリアも小さい。</p>
 <p>この特徴の異なる <code>High</code>コア、<code>Low</code>コアをワークロード、アプリケーションに応じて如何に切り替えるかが肝となる。</p>
-<h3 id="switch-exec-core">実行コアの切り替え方法<a href="#switch-exec-core" class="head-cur-link"></a>
+<h3 id="switch-exec-core">実行コアの切り替え方法<a href="#switch-exec-core" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>まず、あるスレッドを <code>Low</code>コアで実行していたとして、<code>Low</code>コアがサポートしていない機能/命令が検出された時、例外処理を通知し、<code>Low</code>コアでの実行を停止する。<br>
 そして、<code>High</code>コアに切り替えると同時に、<code>High</code>コアと<code>Low</code>コアで共有するキャッシュメモリスレッドの状態をセーブ。<br>
@@ -119,7 +119,7 @@
 恐らく、電力管理機能と合わせて、性能が必要な際に <code>Low</code>コアから<code>High</code>コアに切り替えたり、逆にそこまで性能を必要としない際、<code>High</code>コアから<code>Low</code>コアに切り替えるのだろう。<br>
 <code>low power mode</code> 時ではまず <code>Low</code>コアで実行されるが、最初から <code>High</code>コアで実行するモードも存在すると思われる。</p>
 <p>SMT機能に関しては、スレッドの状態をセーブするのに必要なキャッシュメモリ量が増えるが、可能である <em>かもしれない</em> 。</p>
-<h3 id="merit-demerit">利点と欠点<a href="#merit-demerit" class="head-cur-link"></a>
+<h3 id="merit-demerit">利点と欠点<a href="#merit-demerit" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>この構成の利点と欠点だが、Intel <a href="https://www.coelacanth-dream.com/tags/lakefield" target="_blank" rel="noopener noreferrer" title="Lakefield">Lakefield</a>と比較して見ていく。</p>
 <p>利点としては、まず<a href="https://www.coelacanth-dream.com/tags/lakefield" target="_blank" rel="noopener noreferrer" title="Lakefield">Lakefield</a> のように、AVX命令のような片方のコア(<em>Core /SunnyCove</em>) が対応していて、もう片方(<em>Atom /Tremont</em>) は対応していないような命令を、プロセッサ全体では非対応とする必要がないことがあげられる。<br>
@@ -130,7 +130,7 @@
 ここはハイブリッドコア技術における、Intel と AMD のわかりやすい違いと言えるのではないだろうか。<br>
 また、<code>Low</code>コアが対応していない機能/命令も <code>High</code>コアに切り替えて実行可能だが、その分対応命令は対称的な <a href="https://www.coelacanth-dream.com/tags/lakefield" target="_blank" rel="noopener noreferrer" title="Lakefield">Lakefield</a>よりも切り替え数は増えることが考えられる。<br>
 これを L2cache を介すことでどれだけ補えるか。</p>
-<h2 id="aside">余談<a href="#aside" class="head-cur-link"></a>
+<h2 id="aside">余談<a href="#aside" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>近い技術として Arm の <code>big.LITTLE</code> が持ち出されたりするが、それでは <code>big</code> コアと <code>LITTLE</code> コアが同じ命令セットに対応していたのに対し、AMD の実装では高性能コアと省電力コアとで対応する命令セットが異なり、省電力コアの方が機能としては少なくなる。<br>
 厳密に言えばその点で Arm <code>big.LITTLE</code> とは異なり、<br>
@@ -156,20 +156,10 @@
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/08/11/amd-hybrid-core-for-low-power.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>

@@ -78,7 +78,7 @@
 
 <em>AMD Smart Access Memory</em> は、従来の Windows OS をベースとするシステムでは、CPU から GPU VRAM へは一度に 256MB までしかアクセス出来なかったが、その制限を取り払うことでボトルネックを減らし、ゲームにおける性能を高めるというもの。AMD が示している結果では、API に Vulkan または DX12 を用いるゲームで 5〜11% の性能向上となっている。</p>
 <p>その時はついに公開された <em>RDNA 2 / GFX10.3</em> の方に興味が集中していたため、ほとんどスルーしていたが、後に面白いことが判明した。</p>
-<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
 <li><a href="#already"  title="Linux では既にサポート済み">Linux では既にサポート済み</a>
@@ -96,7 +96,7 @@
 </ul>
 </section>
 
-<h2 id="already">Linux では既にサポート済み<a href="#already" class="head-cur-link"></a>
+<h2 id="already">Linux では既にサポート済み<a href="#already" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>以下は Linux Kenrel の AMD GPU ドライバーの開発者である <a href="https://gitlab.freedesktop.org/agd5f" target="_blank" rel="noopener noreferrer" title="Alex Deucher">Alex Deucher</a> 氏が <a href="https://www.phoronix.com/scan.php?page=home" target="_blank" rel="noopener noreferrer" title="Phoronix">Phoronix</a> の記事に投稿したコメント。</p>
 <blockquote>
@@ -107,7 +107,7 @@
 </blockquote>
 <p><em>AMD Smart Access Memory</em> はリサイズ可能な BAR (Base Address Register) であり、この機能は既に何年も前から Linux 上ではサポートされているが、Windows では比較的新しい機能であるとのこと。<br>
 また、古いシステムでは BIOS の <code>&gt;4GB MMIO</code> といった名前のオプションによって有効化されていると氏は述べている。</p>
-<h3 id="enable">いざ有効化<a href="#enable" class="head-cur-link"></a>
+<h3 id="enable">いざ有効化<a href="#enable" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>まず、CPU から GPU VRAM へ一度にアクセスできるサイズは、ユーザーモードドライバーである <strong>RadeonSI (OpenGL) / RADV (Vulkan)</strong> のデバッグ機能で確認できる。</p>
 <p><strong>RadeonSI</strong> の場合は <code>AMD_DEBUG=info</code> を環境変数にセットした状態で (実行コマンドの前の記述するだけでいい)、OpenGL API を用いるソフトウェアを実行、<br>
@@ -138,7 +138,7 @@
 </code></pre>
 </blockquote>
 <p><a href="https://gitlab.freedesktop.org/agd5f" target="_blank" rel="noopener noreferrer" title="Alex Deucher">Alex Deucher</a> 氏のコメント通り、Linux環境では既にサポートされており、<strong>Ryzen 5 2600 (Zen+)</strong> と <strong>RX 560</strong> という構成でも有効化が可能だった。</p>
-<h2 id="effect">効果の程は<a href="#effect" class="head-cur-link"></a>
+<h2 id="effect">効果の程は<a href="#effect" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>有効化できたとして、その効果が気になる所だが、まず検証環境に問題がある。</p>
 <p>AMD が示している <strong>AMD Smart Access Memory</strong> 機能による性能向上は、<strong>Ryzen 9 5900X</strong> と <strong>RX 6800 XT</strong> というハードウェア構成で、現実的な使用状況、Vulkan/DX12 のゲームを 4K Ultra 設定で実行している。<br>
@@ -147,7 +147,7 @@
 自分は Linux でも動作する Vulkan ゲームなんて所有しておらず、現実的な使用状況を高度に再現できる Vulkan ベンチマークソフトというのもない。</p>
 <p>それでも一応、VRAM をそれなりに使うソフトとしては <a href="https://github.com/nihui/waifu2x-ncnn-vulkan" target="_blank" rel="noopener noreferrer" title="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan</a> が思い浮かんだため、試してはみた。waifu2x-ncnn-vulkan は <strong>RX 560</strong> の VRAM 4GB をちゃんと使い切ってくれる。<br>
 それと、グラフィクス系として vkmark (1920x1080) を実行したが、vkmark はあまり VRAM を使わないため、CPU からアクセスすることもあまり無いのではないかと思われる。</p>
-<h4 id="env">環境<a href="#env" class="head-cur-link"></a>
+<h4 id="env">環境<a href="#env" class="head-cur-link" aria-hidden></a>
 </h4>
 <table>
 <thead>
@@ -183,7 +183,7 @@
 </tr>
 </tbody>
 </table>
-<h4 id="how">計測方法<a href="#how" class="head-cur-link"></a>
+<h4 id="how">計測方法<a href="#how" class="head-cur-link" aria-hidden></a>
 </h4>
 <p>実行コマンド:</p>
 <pre><code>  waifu2x-ncnn-vulkan:
@@ -196,7 +196,7 @@
 実行コマンドも変わらず、/tmp 下に置いた入力用の画像 5枚を収めたディレクトリを指定し、出力画像も /tmp 下に作成したディレクトリを指定している。</p>
 <p>waifu2x-ncnn-vulkan の設定はデノイズレベルは 1、拡大率は 2x、tile-size はデフォルトの 400、load:proc:save もデフォルトの 1:2:2。
 使用画像の解像度は全て 1136x640。</p>
-<h4 id="result">結果<a href="#result" class="head-cur-link"></a>
+<h4 id="result">結果<a href="#result" class="head-cur-link" aria-hidden></a>
 </h4>
 <table>
 <thead>
@@ -277,20 +277,10 @@ AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、�
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/11/05/linux-amd-smart-access-memory.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>

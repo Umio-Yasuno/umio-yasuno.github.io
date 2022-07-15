@@ -74,7 +74,7 @@
     <time datetime="2022-06-27 12:13 +0900">Post: 2022/06/27 12:13 &#43;0900</time>
     <aside class="update">Update: 2022/06/28 00:54 &#43;0900</aside>
   </aside><p>LLVM において <em>GFX11</em> で有効化あるいはサポートされる機能のメモ。</p>
-<h2 id="dealloc_vgpr">Automatically Release VGPRs<a href="#dealloc_vgpr" class="head-cur-link"></a>
+<h2 id="dealloc_vgpr">Automatically Release VGPRs<a href="#dealloc_vgpr" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>AMDGPU からホスト CPU にメッセージ (割り込み) を送信する命令として <code>S_SENDMSG</code> があるが、<em>GFX11</em> ではメッセージの種類に新しく <code>MSG_DEALLOC_VGPRS</code> をサポートする。<br>
 AMD の Jay Foad 氏により LLVM にパッチが投稿されている。</p>
@@ -83,7 +83,7 @@ AMD の Jay Foad 氏により LLVM にパッチが投稿されている。</p>
 </ul>
 <p><code>MSG_DEALLOC_VGPRS</code> はシェーダーの VGPR (ベクタレジスタ、Vector general-purpose register) の解放に使用できる。<br>
 通常はシェーダーの最後に呼ばれる <code>S_ENDPGM</code> 命令で VGPR が解放されるが、<code>S_ENDPGM</code> の前に <code>MSG_DEALLOC_VGPRS</code> を送信することで、<code>S_ENDPGM</code> の段で VMEM (Vector Memory) への Store 処理の完了を待機する必要がある場合に、<code>MSG_DEALLOC_VGPRS</code> によって先に VGPR を解放できるため、システム全体のパフォーマンスが向上するとしている。</p>
-<h2 id="s_pack_hl">S_PACK_HL<a href="#s_pack_hl" class="head-cur-link"></a>
+<h2 id="s_pack_hl">S_PACK_HL<a href="#s_pack_hl" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em>GFX11</em> では SALU (Scalar ALU) がサポートする命令に <code>S_PACK_HL</code> が追加される。<br>
 <code>S_PACK</code> 系の命令では 2つのソースレジスタの上位 (H, High) 16-bit か下位 (Low, L) 16-bit をそれぞれ指定して、1つのレジスタに詰め込む (パック) する。<br>
@@ -99,7 +99,7 @@ AMD の Jay Foad 氏により LLVM にパッチが投稿されている。</p>
 </div>
 
 </blockquote>
-<h2 id="cluster-store">Cluster stores<a href="#cluster-store" class="head-cur-link"></a>
+<h2 id="cluster-store">Cluster stores<a href="#cluster-store" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>これまで AMDGPU 向けには Cluster loads のみが有効化されていたが、<em>GFX11</em> では Cluster stores も有効化される。</p>
 <ul>
@@ -121,7 +121,7 @@ AMD の Jay Foad 氏により LLVM にパッチが投稿されている。</p>
 その時 AMD の Jay Foad 氏は、Cluster loads はキャッシングにおける利点があるが、Cluster stores はレジスタプレッシャーによりスケジューリングの自由度が下がる傾向にあると語っている。</p>
 <p>詳細はまだ不明だが、<em>GFX11</em> では Load/Store 周りに何かしらの改良が加えられたものと思われる。<br>
 Cluster stores を無効化するパッチは 2020/08/07 に投稿されており、<em>GFX11</em> で再度有効化される背景には SW開発チームから HW開発チームへのフィードバックがあったのかもしれない。</p>
-<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://developer.amd.com/resources/developer-guides-manuals/" target="_blank" rel="noopener noreferrer" title="Developer Guides, Manuals & ISA Documents - AMD">Developer Guides, Manuals & ISA Documents - AMD</a>
@@ -161,20 +161,10 @@ Cluster stores を無効化するパッチは 2020/08/07 に投稿されてお�
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/06/27/gfx11-cluster_store-pack_hl-release_vgpr.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>

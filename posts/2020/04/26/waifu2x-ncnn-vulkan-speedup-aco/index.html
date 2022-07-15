@@ -74,7 +74,7 @@
     <time datetime="2020-04-26 00:04 +0900">Post: 2020/04/26 00:04 &#43;0900</time>
     <aside class="update">Update: 2020/12/04 22:27 &#43;0900</aside>
   </aside><p>Radeonの性能をさらに引き出す <em>ACO</em> だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。</p>
-<h2 id="インデックス">インデックス<a href="#%e3%82%a4%e3%83%b3%e3%83%87%e3%83%83%e3%82%af%e3%82%b9" class="head-cur-link"></a>
+<h2 id="インデックス">インデックス<a href="#%e3%82%a4%e3%83%b3%e3%83%87%e3%83%83%e3%82%af%e3%82%b9" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
 <li><a href="#aco"  title="ACOとは">ACOとは</a></li>
@@ -86,7 +86,7 @@
 <li><a href="#issue"  title="課題">課題</a></li>
 <li><a href="#shinning-radeon"  title="最適化で Radeon はさらに輝く">最適化で Radeon はさらに輝く</a></li>
 </ul>
-<h2 id="aco">ACOとは<a href="#aco" class="head-cur-link"></a>
+<h2 id="aco">ACOとは<a href="#aco" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>オープンソースのAMDGPU向けVulkanドライバー、RADVの新たなシェーダーコンパイラバックエンド。<br>
 <em>ACO</em> の IR(Intermediate Representaions, 中間言語)<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>は完全に SSA(Static Single Assignment form, 静的単一代入)<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>ベースであり、<br>
@@ -104,7 +104,7 @@ Just-in-timeコンパイルを念頭に置いてに記述されており、反�
 <p>最新ドライバーのビルド方法は別記事で。<br>
 <span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/"  title="Radeon向けMesaビルド方法 | Coelacanth&rsquo;s Dream">Radeon向けMesaビルド方法 | Coelacanth&rsquo;s Dream</a></span>
 </p>
-<h2 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan<a href="#waifu2x-ncnn-vulkan" class="head-cur-link"></a>
+<h2 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan<a href="#waifu2x-ncnn-vulkan" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>高性能なニューラルネットワークの推論フレームワーク、<a href="https://github.com/Tencent/ncnn" target="_blank" rel="noopener noreferrer" title="ncnn">ncnn</a>を用いた画像の高解像度化ソフトウェア。<br>
 Vulkan APIでGPGPU処理を行なうため、広いプラットフォームに対応しており、Intel / AMD / NVIDIA GPUで実行できることが特徴。<br>
@@ -115,7 +115,7 @@ Vulkan APIでGPGPU処理を行なうため、広いプラットフォームに�
 </p>
 <p>ncnn はVulkan拡張 <code>VK_KHR_shader_float16_int8</code> に対応しているのだが、RADV/LLVM ではそれが有効となっているのに対し、RADV/ACO では無効とされていた。<br>
 そのため比較検証を見送っていたが、先日 RADV/ACO での対応が mesa の masterリポジトリに組み込まれたため、検証が可能となった。<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup></p>
-<h2 id="env">環境<a href="#env" class="head-cur-link"></a>
+<h2 id="env">環境<a href="#env" class="head-cur-link" aria-hidden></a>
 </h2>
 <table>
 <thead>
@@ -155,7 +155,7 @@ Vulkan APIでGPGPU処理を行なうため、広いプラットフォームに�
 </tr>
 </tbody>
 </table>
-<h3 id="how">計測方法<a href="#how" class="head-cur-link"></a>
+<h3 id="how">計測方法<a href="#how" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>実行コマンド:</p>
 <pre><code>RADV/ACO:
@@ -170,7 +170,7 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 <p>使用画像もここに掲載しようと思ったのだが、面倒くさいことを避けるべく、画像に関しては解像度 1136x640、そしてソフトウェア名に似合った感じであることだけを記す。<br>
 さすがに二次元系でパブリック・ドメインな画像は見つからなかった。</p>
 <p>それぞれ3回実行し、timeコマンドで得られる現実にかかった時間を平均し、結果とする。</p>
-<h2 id="result">結果<a href="#result" class="head-cur-link"></a>
+<h2 id="result">結果<a href="#result" class="head-cur-link" aria-hidden></a>
 </h2>
 <table>
 <thead>
@@ -206,19 +206,19 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 </table>
 <p>RADV/ACO は、RADV(LLVM) より <code>models-cunet</code> では 1.48倍、<code>models-upconv_7_anime_style_art_rgb</code> では 3.42倍も高速という結果となった。<br>
 同じモデル、同じパラメーター、そこまで高精度なデータタイプは用いないため、出力結果の画像に違いはなかった。</p>
-<h3 id="guess">推測<a href="#guess" class="head-cur-link"></a>
+<h3 id="guess">推測<a href="#guess" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>まず、どちらも RADV/ACO の方が高速という結果となったが、これは <em>ACO</em> の正確なレジスタ割り付けが効いているものと思われる。<br>
 レジスタあふれの頻度が減ったことで、そのままメモリにアクセスする頻度も減り、効率的な実行が可能となった。<br>
 そして、Vulkan の Compute Shader で実行される waifu2x-ncnn-vulkan では、CU(Compute Unit)以外のユニットに性能が左右されにくく、<em>ACO</em> の利点が最大限発揮されたはずだ。</p>
 <p>また、<code>models-upconv_7_anime_style_art_rgb</code> では差が <code>models-cunet</code> よりも大きくついているが、これはモデルのサイズが前者の方が 1.1MBと半分近く( <code>models-cunet</code> は 2.6MB)小さく、レイヤー数も少ないため、その分キャッシュヒットしやすく、さらにメモリアクセスが少なくなったのではないだろうか。</p>
-<h4 id="issue">課題<a href="#issue" class="head-cur-link"></a>
+<h4 id="issue">課題<a href="#issue" class="head-cur-link" aria-hidden></a>
 </h4>
 <p>何ともぼやけた推測となってしまった。<br>
 AMD が提供する <a href="https://github.com/GPUOpen-Tools/radeon_gpu_analyzer" target="_blank" rel="noopener noreferrer" title="RGA (Radeon GPU Analyzer)">RGA (Radeon GPU Analyzer)</a>や<a href="https://github.com/GPUOpen-Tools/radeon_gpu_profiler" target="_blank" rel="noopener noreferrer" title="Radeon™ GPU Profiler">Radeon™ GPU Profiler</a>といったツールを使いこなせれば、詳細な分析ができたのかもしれないが、<br>
 それらツールでモニタやプロファイル生成することもうまくいかず、<br>
 RADV にあるシェーダーや SPIR-V をダンプする機能から作成したファイルを使おうにもうまくいかず、断念した。</p>
-<h2 id="shinning-radeon">最適化で Radeon はさらに輝く<a href="#shinning-radeon" class="head-cur-link"></a>
+<h2 id="shinning-radeon">最適化で Radeon はさらに輝く<a href="#shinning-radeon" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em>ACO</em> によって <strong>Radeon</strong> の性能はより引き出される。<br>
 ゲームといったグラフィック処理では RADV(LLVM) から 1.1倍(+10%)近い性能向上を確認でき、この 10%というのは同一ダイベースの製品の性能差に設定されることが多い。Polari10ベースの RX 570 と RX 580、Navi10ベースの RX 5700 と RX 5700 XT 等がそうだ。<sup id="fnref:9"><a href="#fn:9" class="footnote-ref" role="doc-noteref">9</a></sup><br>
@@ -227,7 +227,7 @@ RADV にあるシェーダーや SPIR-V をダンプする機能から作成し�
 こうなるともう最高という言葉では足りない。</p>
 <p>OSS で高性能なGPU性能を得られる。これこそ <strong>AMD Radeon</strong> の魅力の1つであり、何よりも勝っている点だろう。</p>
 <p>あと願わくば、Vulkan APIを用いたクロスプラットフォームなソフトウェアの増加と普及を……</p>
-<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://lists.freedesktop.org/archives/mesa-dev/2019-July/221006.html" target="_blank" rel="noopener noreferrer" title="[Mesa-dev] [RFC] ACO: A New Compiler Backend for RADV">[Mesa-dev] [RFC] ACO: A New Compiler Backend for RADV</a></li>
@@ -288,20 +288,10 @@ RADV にあるシェーダーや SPIR-V をダンプする機能から作成し�
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>

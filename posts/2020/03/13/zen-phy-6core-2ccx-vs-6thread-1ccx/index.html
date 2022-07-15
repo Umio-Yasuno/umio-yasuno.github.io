@@ -75,7 +75,7 @@
     <aside class="update">Update: 2020/12/04 22:27 &#43;0900</aside>
   </aside><p>今更 Ryzen 5 2600 を使って <em>Zen/+</em> の検証。<br>
 試したい、というだけの理由で <em>Zen 2</em> を買える程のお金がない。さらに言うと、2666MHzでCL1も安定しないような<del>クソ</del>メモリを使っている。</p>
-<h2 id="前提">前提<a href="#%e5%89%8d%e6%8f%90" class="head-cur-link"></a>
+<h2 id="前提">前提<a href="#%e5%89%8d%e6%8f%90" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><a href="https://www.coelacanth-dream.com/posts/2020/03/12/private-conkyrc/"  title="1つ前の記事">1つ前の記事</a>で、「なんか1CCXで処理が回されやすいっぽい」とか書いたが、それがどの程度性能に影響を与えるのか気になった。<br>
 6スレッドで処理するとして考えられるパターンは主に、1CCX内の3-Core/6-Thread、それと2CCXに跨る6-Coreの2つがある。<br>
@@ -100,7 +100,7 @@
 </tbody>
 </table>
 <p>lps (Lines Per Second)は1秒あたりの実行回数を表す。</p>
-<h3 id="cpu">CPU<a href="#cpu" class="head-cur-link"></a>
+<h3 id="cpu">CPU<a href="#cpu" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>まず、Ryzen 5 2600のトポロジは以下のようになっている。<br>
 <figure>
@@ -114,7 +114,7 @@
 </p>
 <p>L3キャッシュ 8MBに 3-Core/6-Thread が付く形となり、それがZenアーキテクチャにおけるCCXを構成している。<br>
 Zen/+は本来ならCCXあたり4-Core/8-Threadを構成しているが、Ryzen 5 2600では2CCXそれぞれのCPUコアを1個ずつ無効化し、製品としている。</p>
-<h2 id="方法">方法<a href="#%e6%96%b9%e6%b3%95" class="head-cur-link"></a>
+<h2 id="方法">方法<a href="#%e6%96%b9%e6%b3%95" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>CPUコアの番号はまず物理コア、SMTによる論理コアの順番に割り振っている。<br>
 そしてLinuxでは <code>taskset</code> コマンド<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>で起動中のプロセス、または新たなコマンドを実行するCPUコアを指定することができ、Ryzen 5 2600のトポロジを参考にすると、</p>
@@ -125,11 +125,11 @@ Zen/+は本来ならCCXあたり4-Core/8-Threadを構成しているが、Ryzen 
 </code></pre>
 <p>で <em>6-Thread 1CCX</em> を指定して実行させられる。</p>
 <p>また、省電力機能による誤差を減らすため、CPUクロックは3.6GHzで固定して計測を行なう。</p>
-<h3 id="ベンチマークソフト">ベンチマークソフト<a href="#%e3%83%99%e3%83%b3%e3%83%81%e3%83%9e%e3%83%bc%e3%82%af%e3%82%bd%e3%83%95%e3%83%88" class="head-cur-link"></a>
+<h3 id="ベンチマークソフト">ベンチマークソフト<a href="#%e3%83%99%e3%83%b3%e3%83%81%e3%83%9e%e3%83%bc%e3%82%af%e3%82%bd%e3%83%95%e3%83%88" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>ベンチマークソフトには、歴史ある<a href="https://github.com/kdlucas/byte-unixbench" target="_blank" rel="noopener noreferrer" title="byte-unixbench">byte-unixbench</a> の一部、それとOpenMPを有効にした<a href="https://github.com/sudden6/m-queens" target="_blank" rel="noopener noreferrer" title="m-queens">m-queens</a>、レイテンシの測定に <a href="https://github.com/akopytov/sysbench" target="_blank" rel="noopener noreferrer" title="sysbench">sysbench</a> を採用した。<br>
 出来る限り上述したようなテストとは違うものを選んだつもりだが、やはり現実的なベンチマークというのは難しく、他に適したベンチマークソフトがあれば教えて頂けると嬉しい。それがLinuxに対応しており、計測が特別難しくなければ試すつもりでいる。</p>
-<h4 id="byte-unixbench">byte-unixbench<a href="#byte-unixbench" class="head-cur-link"></a>
+<h4 id="byte-unixbench">byte-unixbench<a href="#byte-unixbench" class="head-cur-link" aria-hidden></a>
 </h4>
 <p>テストする項目の詳細。</p>
 <ul>
@@ -155,14 +155,14 @@ Zen/+は本来ならCCXあたり4-Core/8-Threadを構成しているが、Ryzen 
 </li>
 </ul>
 <p><a href="https://github.com/kdlucas/byte-unixbench/blob/master/README.md" target="_blank" rel="noopener noreferrer" title="https://github.com/kdlucas/byte-unixbench/blob/master/README.md">https://github.com/kdlucas/byte-unixbench/blob/master/README.md</a></p>
-<h4 id="m-queens">m-queens<a href="#m-queens" class="head-cur-link"></a>
+<h4 id="m-queens">m-queens<a href="#m-queens" class="head-cur-link" aria-hidden></a>
 </h4>
 <p>Phoronix Test Suiteのプロファイルを参考に、以下のコマンドでビルドした。</p>
 <pre><code>CFLAGS=&quot;-O2 -march=znver1&quot; g++-8 -fopenmp main.c -o m-queens.bin
 </code></pre>
 <p><a href="https://openbenchmarking.org/innhold/707926477c5cf3e3b33d1b9375523aee5f3d2020" target="_blank" rel="noopener noreferrer" title="OpenBenchmarking.org - m-queens v1.1.0 Test [m-queens]">OpenBenchmarking.org - m-queens v1.1.0 Test [m-queens]</a><br>
 N(クイーンの数)は17とし、計測結果5回の平均をスコアとする。</p>
-<h2 id="環境">環境<a href="#%e7%92%b0%e5%a2%83" class="head-cur-link"></a>
+<h2 id="環境">環境<a href="#%e7%92%b0%e5%a2%83" class="head-cur-link" aria-hidden></a>
 </h2>
 <table>
 <thead>
@@ -198,7 +198,7 @@ N(クイーンの数)は17とし、計測結果5回の平均をスコアとす�
 </tr>
 </tbody>
 </table>
-<h2 id="結果">結果<a href="#%e7%b5%90%e6%9e%9c" class="head-cur-link"></a>
+<h2 id="結果">結果<a href="#%e7%b5%90%e6%9e%9c" class="head-cur-link" aria-hidden></a>
 </h2>
 <table>
 <thead>
@@ -287,7 +287,7 @@ N(クイーンの数)は17とし、計測結果5回の平均をスコアとす�
 </tr>
 </tbody>
 </table>
-<h2 id="考察">考察<a href="#%e8%80%83%e5%af%9f" class="head-cur-link"></a>
+<h2 id="考察">考察<a href="#%e8%80%83%e5%af%9f" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>正直、少し意外な結果だった。あんなメモリを使っているため、CCX間通信のオーバーヘッドが大きく、<em>6-Thread 1CCX</em> のが勝つのではないかと思っていた。レイテンシだけではなく一部性能でももしかしたらと。<br>
 だが <em>6-Core 2CCX</em> が勝った。やはり物理コアは正義か。</p>
@@ -301,7 +301,7 @@ CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの�
 <p>sysbench では <em>6-Thread 1CCX</em> がレイテンシにおいて、<code>max</code>、<code>95th percentile</code> の値が <em>6-Core 2CCX</em> より小さいが、 <code>events/s</code> では <em>6-Thread 1CCX</em> が負けている。<br>
 1CCX内に収まることで、確かにレイテンシが短くなったが、性能に影響が出る程ではない、またはリソースの競合が発生したか。</p>
 <p>それと気をつけたいのは、今回の検証はCCXを跨ぐ場合のオーバーヘッドがどれだけあるかを確かめるのが主であり、SMTの効果の検証ではないということだ。それなら <em>6-Core/6-Thread</em> と <em>6-Core/12-Thread</em> を比較するのが適当だろう。</p>
-<h2 id="結論">結論<a href="#%e7%b5%90%e8%ab%96" class="head-cur-link"></a>
+<h2 id="結論">結論<a href="#%e7%b5%90%e8%ab%96" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>結論として、CCX間通信にオーバーヘッドがあっても、それはSMTによる論理コアで処理するより性能への影響はずっと小さく、物理コアに割り振るメリットで容易にカバーが可能と言える。<br>
 ただし、メモリ帯域に関してはその限りではない。</p>
@@ -333,20 +333,10 @@ CCXを跨ぐことでメモリ帯域に影響があるが、具体的にどの�
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/03/13/zen-phy-6core-2ccx-vs-6thread-1ccx.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>

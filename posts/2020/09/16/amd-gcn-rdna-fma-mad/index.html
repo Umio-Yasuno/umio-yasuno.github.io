@@ -93,13 +93,13 @@
 そして AMD の次世代 GPU <em>RDNA 2 /GFX10.3</em> では MAD が存在せず(実装されていない？)、2つに分けて処理するため、FMA を使うとしている。</p>
 <p>こうした話は初耳であり、特に <em>GFX6-8</em> の FMA の処理が MAD の 4倍遅いというのは衝撃的だ。<br>
 そこで自分なりに調べ、上記コメントを読み解いてみた。</p>
-<h2 id="fma-mad-diff">FMA と MAD の違い<a href="#fma-mad-diff" class="head-cur-link"></a>
+<h2 id="fma-mad-diff">FMA と MAD の違い<a href="#fma-mad-diff" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>FMA(Fused Multiply Add) も MAD(Multiply Add) はどちらも 3つのオペランドを必要とする積和演算だが、MAD は乗算の結果を、掛けた値と同じビット数に丸めてから加算の処理を行なうが、<br>
 FMA は乗算の結果を掛けた値の倍のビット長で保持してから加算を行なうため、FMA の方が計算精度が高くなる、という違いがある<br>
 <span class="thread-link">参考: <link><a href="https://news.mynavi.jp/article/20091007-nvidia_fermi/2" target="_blank" rel="noopener noreferrer" title="科学技術計算向け演算能力が引き上げられたGPUアーキテクチャ「Fermi」 (2) 科学技術計算向けのさまざまな工夫 | マイナビニュース">科学技術計算向け演算能力が引き上げられたGPUアーキテクチャ「Fermi」 (2) 科学技術計算向けのさまざまな工夫 | マイナビニュース</a></link></span>
 </p>
-<h2 id="微妙な仕様と世代ごとの違い">微妙な仕様？と世代ごとの違い<a href="#%e5%be%ae%e5%a6%99%e3%81%aa%e4%bb%95%e6%a7%98%e3%81%a8%e4%b8%96%e4%bb%a3%e3%81%94%e3%81%a8%e3%81%ae%e9%81%95%e3%81%84" class="head-cur-link"></a>
+<h2 id="微妙な仕様と世代ごとの違い">微妙な仕様？と世代ごとの違い<a href="#%e5%be%ae%e5%a6%99%e3%81%aa%e4%bb%95%e6%a7%98%e3%81%a8%e4%b8%96%e4%bb%a3%e3%81%94%e3%81%a8%e3%81%ae%e9%81%95%e3%81%84" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>まず、冒頭で引用したコメント部分が追加され、影響を受けるのは、シェーダーを GPU が実行する中間コードに変換するシェーダーコンパイラの部分である。</p>
 <p>そして、<em>GFX6-8</em> では FMA が MAD の 4倍遅くなることについて過去のパッチにヒントがあった。<br>
@@ -113,7 +113,7 @@ FMA は乗算の結果を掛けた値の倍のビット長で保持してから�
 コード中では、まだ <em>RDNA 2 /GFX10.3</em> で十分に検証が行なえないため、<em>RDNA /GFX10.1</em> から MAD ではなく FMA で処理するようになっている。<br>
 オープンソースで開発されているドライバーは、企業内部でテストに使われているハードウェアよりも多くのユーザーが手にしているハードウェアを対象とした方が開発がスムーズに進むのだろう。<br>
 <em>RDNA 2 /GFX10.3</em> で MAD 演算器が省かれた(であろう) 理由については、WGP(2CU) の実装密度を引き上げるためと考えられるが、正しさを保証することはできない。AMD から詳細を解説してくれれば嬉しいが。</p>
-<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://news.mynavi.jp/article/20091007-nvidia_fermi/2" target="_blank" rel="noopener noreferrer" title="科学技術計算向け演算能力が引き上げられたGPUアーキテクチャ「Fermi」 (2) 科学技術計算向けのさまざまな工夫 | マイナビニュース">科学技術計算向け演算能力が引き上げられたGPUアーキテクチャ「Fermi」 (2) 科学技術計算向けのさまざまな工夫 | マイナビニュース</a></li>
@@ -149,20 +149,10 @@ FMA は乗算の結果を掛けた値の倍のビット長で保持してから�
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2020/09/16/amd-gcn-rdna-fma-mad.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>

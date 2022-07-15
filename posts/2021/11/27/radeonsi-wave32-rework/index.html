@@ -93,7 +93,7 @@
 </div>
 
 </blockquote>
-<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link"></a>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
 <li><a href="#wave32"  title="Wave32">Wave32</a>
@@ -107,7 +107,7 @@
 </ul>
 </section>
 
-<h2 id="wave32">Wave32<a href="#wave32" class="head-cur-link"></a>
+<h2 id="wave32">Wave32<a href="#wave32" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>各シェーダーステージを Wave64 で実行するようにした際、<a href="https://gitlab.freedesktop.org/mareko" target="_blank" rel="noopener noreferrer" title="Marek Olšák">Marek Olšák</a> 氏 Wave32 より性能面で優れていると考えた理由として以下の項目を挙げていた。</p>
 <blockquote>
@@ -122,7 +122,7 @@
 
 </blockquote>
 <p>これはコード内にコメントで残されていたが、今回のリワークに伴い、実際のところは正しくなかった (<em>The big comment was not really true.</em>) として削除されている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
-<h3 id="cs">Compute Shader<a href="#cs" class="head-cur-link"></a>
+<h3 id="cs">Compute Shader<a href="#cs" class="head-cur-link" aria-hidden></a>
 </h3>
 <p><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener noreferrer" title="RDNA_Architecture_public.pdf">RDNA_Architecture_public.pdf</a> では元より Compute Shader は通常 Wave32 を選択されるとしていたが、Wave32 で実行すると OpenGL のテストスイートである <a href="https://gitlab.freedesktop.org/mesa/piglit" target="_blank" rel="noopener noreferrer" title="piglit">piglit</a> が失敗することから <em>RadeonSI</em> では Wave64 で実行するようになっていた。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
 <p>それが今回、Workgroup のサイズが小さい場合は Wave32 で実行するように変更された。<br>
@@ -140,7 +140,7 @@ Workgroup が十分に大きく、かつ Waveサイズを指定するデバッ�
 </div>
 
 </blockquote>
-<h3 id="ps">Pixel Shader<a href="#ps" class="head-cur-link"></a>
+<h3 id="ps">Pixel Shader<a href="#ps" class="head-cur-link" aria-hidden></a>
 </h3>
 <p><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener noreferrer" title="RDNA_Architecture_public.pdf">RDNA_Architecture_public.pdf</a> では Pixel Shader のみ、通常 Wave64 が選択されるとしていたが、今回で一部は Pixel Shader も Wave32 で実行されるようになった。</p>
 <p>LLVM 13/14 では、ピクセルの廃棄処理 (discard) を含む Pixel Shader を Wave32モードでコンパイルすると、エラーを起こすバグがあるため、Wave64 で実行するとしている。<br>
@@ -172,7 +172,7 @@ Workgroup が十分に大きく、かつ Waveサイズを指定するデバッ�
 </div>
 
 </blockquote>
-<h3 id="divergent">Divergent loops<a href="#divergent" class="head-cur-link"></a>
+<h3 id="divergent">Divergent loops<a href="#divergent" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>次の部分は少し複雑で、自分には追いつけない部分がある。<br>
 Tessellation Control Shader または Geometry Shader を実行するが、結果を GS copy shader で Pixel Shader に渡すことはしない場合を <code>merged_shader (true)</code> とし、<br>
@@ -206,7 +206,7 @@ Wave32 ではアイドリング状態になる半分を排除でき、次の Wav
 <em>RDNA系 アーキテクチャ</em> では Wave64モードで実行する場合、命令を 2つの Wave32 に分割して実行する。<br>
 命令をある程度ブロックにまとめ、それを low と high に分割し、最初の low 群を実行、次に high 群を実行する Sub-Vectorモードも <em>RDNA系 アーキテクチャ</em> ではサポートされている。<br>
 2つの Wave32 に分割されるといっても、スカラ命令は 1回のみとなる。また Workgroup の最大サイズはスレッド (work-item) 数で決まっているため、Workgroup 内の Wave数は Wave32 の場合は 32 Wave、Wave64 の場合は 16 Wave となる。</p>
-<h3 id="shader-profile">Shader Profile<a href="#shader-profile" class="head-cur-link"></a>
+<h3 id="shader-profile">Shader Profile<a href="#shader-profile" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>シェーダープロファイルによる Wave サイズの選択も、現時点では SPECviewperfベンチマークのみが対象だが、実装されている。<br>
 <a href="https://www.spec.org/gwpg/gpc.static/energy-02.html" target="_blank" rel="noopener noreferrer" title="Viewperf/Energy">Viewperf/Energy</a> は Pixel Shader の部で挙げた Discard処理を含む Pixel Shader のコンパイルエラーが起きないため Wave32 で実行され、<br>
@@ -250,7 +250,7 @@ Wave32 ではアイドリング状態になる半分を排除でき、次の Wav
 </div>
 
 </blockquote>
-<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link"></a>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" target="_blank" rel="noopener noreferrer" title="RDNA_Architecture_public.pdf">RDNA_Architecture_public.pdf</a></li>
@@ -295,20 +295,10 @@ Wave32 ではアイドリング状態になる半分を排除でき、次の Wav
     aria-label="RSS: Updated"
   ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
 <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/11/27/radeonsi-wave32-rework.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
-</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr><nav class="foot-links">
-  <a href="https://www.coelacanth-dream.com/">Home</a>
-  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
-  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
-  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
-  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><a href="https://www.coelacanth-dream.com/categories/">Category</a>
-    <a href="https://www.coelacanth-dream.com/tags/">Tag</a><button
-    type="button"
-    class="sb"
-    onclick="random_page()"
-    tabindex=""
-  >Random</button>
-</nav>
-<nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a>
