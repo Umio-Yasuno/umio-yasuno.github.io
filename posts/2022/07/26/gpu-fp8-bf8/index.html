@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta property="og:type" content="article">
+<title>FP8 と BF8 に対応する AMD GFX940/CDNA 3 と BF8 に対応する Intel Xe-HPC | Coelacanth&#39;s Dream</title>
+<meta property="og:title" content="FP8 と BF8 に対応する AMD GFX940/CDNA 3 と BF8 に対応する Intel Xe-HPC | Coelacanth&#39;s Dream">
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/07/26/gpu-fp8-bf8/">
+
+
+  <meta property="og:image" content="https://www.coelacanth-dream.com/icon.png">
+
+<meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="gfx940, CDNA 3, Xe-HPC, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#0b4050 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em 0 .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em monospace;margin:0 -.2em 0 -.1em;padding:0 .3em .2em;background-color:#0004;clip-path:circle(.45em);transform:rotate(-24deg)}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 0%,#0000 76%,#0000 95%,#111 99%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 50%,#0002 50%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#d001 33.4%,#0d01 33.4%,#0d01 66.8%,#00d1 66.8%)50%/.2rem 100% fixed repeat-x;opacity:.5;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0d4e62;border-color:#105d74 #09323e #09323e #105d74;border-radius:.1rem;text-decoration:none;background-color:var(--sb-bg,#0d4e62);contain:content}.sb:active{--sb-bg:#0b4050}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .1rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-07-26","dateModified":"2022-07-26","datePublished":"2022-07-26","headline":"FP8 と BF8 に対応する AMD GFX940/CDNA 3 と BF8 に対応する Intel Xe-HPC","image":"https://www.coelacanth-dream.com/icon.png","name":"FP8 と BF8 に対応する AMD GFX940/CDNA 3 と BF8 に対応する Intel Xe-HPC"}</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">FP8 と BF8 に対応する AMD GFX940/CDNA 3 と BF8 に対応する Intel Xe-HPC</h1>
+
+
+  <article class="page-main delay-page"><aside class="share-block">
+<button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL &amp; Title"
+  ></button><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></aside><aside class="article-time">
+    <time datetime="2022-07-26 13:37 +0900">Post: 2022/07/26 13:37 &#43;0900</time>
+    <aside class="update">Update: 2022/07/26 18:28 &#43;0900</aside>
+  </aside><p>AMD の Stanislav Mekhanoshin (rampitec) 氏により、<em>GFX940/CDNA 3</em> で追加された FP8/BF8 フォーマット命令の対応を LLVM に追加するパッチが投稿された。パッチはすでに <a href="https://github.com/llvm/llvm-project" target="_blank" rel="noopener noreferrer" title="llvm/llvm-project">llvm/llvm-project</a> の main ブランチに取り込まれている。</p>
+<ul>
+<li><a href="https://github.com/llvm/llvm-project/commit/9fa5a6b7e8a292ec91b844a622836d2990ef5796" target="_blank" rel="noopener noreferrer" title="[AMDGPU] Support for gfx940 fp8 conversions · llvm/llvm-project@9fa5a6b">[AMDGPU] Support for gfx940 fp8 conversions · llvm/llvm-project@9fa5a6b</a></li>
+<li><a href="https://github.com/llvm/llvm-project/commit/2695f0a688e9d26fcb0f3a4b686a2783f2eb145c" target="_blank" rel="noopener noreferrer" title="[AMDGPU] Support for gfx940 fp8 mfma · llvm/llvm-project@2695f0a">[AMDGPU] Support for gfx940 fp8 mfma · llvm/llvm-project@2695f0a</a></li>
+<li><a href="https://github.com/llvm/llvm-project/commit/523a99c0eb0331680905e9ef6fbdd114f4ee7a47" target="_blank" rel="noopener noreferrer" title="[AMDGPU] Support for gfx940 fp8 smfmac · llvm/llvm-project@523a99c">[AMDGPU] Support for gfx940 fp8 smfmac · llvm/llvm-project@523a99c</a></li>
+</ul>
+<p><em>GFX940/CDNA 3</em> の FP8 フォーマット対応自体は AMD Financial Analyst Day にて発表されており、<em>GFX940/CDNA 3</em> は AI学習性能が <em>GFX90A/CDNA 2</em> の 8倍という比較において、用いるデータフォーマットは <em>GFX940/CDNA 3</em> が FP8、<em>GFX90A/CDNA 2</em> は FP16 となっていた。</p>
+<h2 id="fp8-bf8">FP8/BF8<a href="#fp8-bf8" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>FP8/BF8 フォーマットを用いた演算命令は <code>MFMA (Matrix-Fused-Multiply-Add), SMFMAC</code> 命令と miSIMDユニットで対応し、通常の SIMDユニット側では変換命令にのみ対応する。<br>
+FP8/BF8 フォーマットは 8-bit ということはわかるが、指数部 (range, exponent) と仮数部 (precision, mantissa) がそれぞれどうなっているかはパッチ内には記述されていない。<br>
+8-bit の浮動小数点フォーマットには <em>NVIDIA H100 GPU</em> が先に対応しており、そして指数部 5-bit 仮数部 2-bit の E5M2 と指数部 4-bit 仮数部 3-bit の E4M3 の 2種類に対応している。<br>
+<em>GFX940/CDNA 3</em> における <code>FP8/BF8</code> がそれらと同様かはまだ不明だが、仮にそうだとすると、精度を寄った E4M3 は <code>FP8</code> に、ダイナミックレンジを重視した E5M2 は <code>BF8</code> となるだろうか。</p>
+<p>行列のレイアウトは <code>MFMA</code> 命令では <code>16x16x32, 32x32x16</code> に、<code>SMFMAC</code> 命令では <code>16x16x64, 32x32x32</code> に対応している。<br>
+アキュムレータと最終的な出力フォーマットは <code>F32</code> のみに対応する。<br>
+命令名の末尾は <code>_{BF8,FP8}_{BF8,FP8}</code> からなる 4つのパターンがあるが、既存の命令名からそれぞれの入力フォーマットと考えられる。<br>
+<code>MFMA, SMFMAC</code> 命令ではこれまで入力される 2個の行列は同じフォーマットだったが、<code>FP8</code> と <code>BF8</code> に限っては異なる組み合わせに対応するのだろう。</p>
+<blockquote>
+<pre><code> +  defm V_MFMA_F32_16X16X32_BF8_BF8 : MAIInst&lt;&quot;v_mfma_f32_16x16x32_bf8_bf8&quot;, &quot;F32_I64_X32&quot;,    int_amdgcn_mfma_f32_16x16x32_bf8_bf8&gt;;
+ +  defm V_MFMA_F32_16X16X32_BF8_FP8 : MAIInst&lt;&quot;v_mfma_f32_16x16x32_bf8_fp8&quot;, &quot;F32_I64_X32&quot;,    int_amdgcn_mfma_f32_16x16x32_bf8_fp8&gt;;
+ +  defm V_MFMA_F32_16X16X32_FP8_BF8 : MAIInst&lt;&quot;v_mfma_f32_16x16x32_fp8_bf8&quot;, &quot;F32_I64_X32&quot;,    int_amdgcn_mfma_f32_16x16x32_fp8_bf8&gt;;
+ +  defm V_MFMA_F32_16X16X32_FP8_FP8 : MAIInst&lt;&quot;v_mfma_f32_16x16x32_fp8_fp8&quot;, &quot;F32_I64_X32&quot;,    int_amdgcn_mfma_f32_16x16x32_fp8_fp8&gt;;
+ +  defm V_MFMA_F32_32X32X16_BF8_BF8 : MAIInst&lt;&quot;v_mfma_f32_32x32x16_bf8_bf8&quot;, &quot;F32_I64_X16&quot;,    int_amdgcn_mfma_f32_32x32x16_bf8_bf8&gt;;
+ +  defm V_MFMA_F32_32X32X16_BF8_FP8 : MAIInst&lt;&quot;v_mfma_f32_32x32x16_bf8_fp8&quot;, &quot;F32_I64_X16&quot;,    int_amdgcn_mfma_f32_32x32x16_bf8_fp8&gt;;
+ +  defm V_MFMA_F32_32X32X16_FP8_BF8 : MAIInst&lt;&quot;v_mfma_f32_32x32x16_fp8_bf8&quot;, &quot;F32_I64_X16&quot;,    int_amdgcn_mfma_f32_32x32x16_fp8_bf8&gt;;
+ +  defm V_MFMA_F32_32X32X16_FP8_FP8 : MAIInst&lt;&quot;v_mfma_f32_32x32x16_fp8_fp8&quot;, &quot;F32_I64_X16&quot;,    int_amdgcn_mfma_f32_32x32x16_fp8_fp8&gt;;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/2695f0a688e9d26fcb0f3a4b686a2783f2eb145c#diff-547f0be0fdf8fd86523d5e13e9b40af7ff77e1882be85f4836d5374c99a39094" target="_blank" rel="noopener noreferrer" title="[AMDGPU] Support for gfx940 fp8 mfma · llvm/llvm-project@2695f0a">[AMDGPU] Support for gfx940 fp8 mfma · llvm/llvm-project@2695f0a</a></cite>
+</div>
+
+</blockquote>
+<p>変換命令は <code>F32 &lt;-&gt; FP8,BF8</code> の変換に対応し、パックド命令にも対応している。<br>
+それ以外のフォーマット、<code>F16, BF16, F64</code> との変換には対応していない。</p>
+<blockquote>
+<pre><code> +let SubtargetPredicate = HasFP8Insts, mayRaiseFPException = 0,
+ +    SchedRW = [WriteFloatCvt] in {
+ +  let Constraints = &quot;$vdst = $vdst_in&quot;, DisableEncoding = &quot;$vdst_in&quot; in {
+ +    defm V_CVT_PK_FP8_F32 : VOP3Inst&lt;&quot;v_cvt_pk_fp8_f32&quot;, VOP3_CVT_PK_F8_F32_Profile&gt;;
+ +    defm V_CVT_PK_BF8_F32 : VOP3Inst&lt;&quot;v_cvt_pk_bf8_f32&quot;, VOP3_CVT_PK_F8_F32_Profile&gt;;
+ +  }
+ +
+ +  // These instructions have non-standard use of op_sel. In particular they are
+ +  // using op_sel bits 2 and 3 while only having two sources. Therefore dummy
+ +  // src2 is used to hold the op_sel value.
+ +  let Constraints = &quot;$vdst = $src2&quot;, DisableEncoding = &quot;$src2&quot; in {
+ +    defm V_CVT_SR_FP8_F32 : VOP3Inst&lt;&quot;v_cvt_sr_fp8_f32&quot;, VOP3_CVT_SR_F8_F32_Profile&gt;;
+ +    defm V_CVT_SR_BF8_F32 : VOP3Inst&lt;&quot;v_cvt_sr_bf8_f32&quot;, VOP3_CVT_SR_F8_F32_Profile&gt;;
+ +  }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/9fa5a6b7e8a292ec91b844a622836d2990ef5796" target="_blank" rel="noopener noreferrer" title="[AMDGPU] Support for gfx940 fp8 conversions · llvm/llvm-project@9fa5a6b">[AMDGPU] Support for gfx940 fp8 conversions · llvm/llvm-project@9fa5a6b</a></cite>
+</div>
+
+</blockquote>
+<h2 id="xe-hpc">Intel Xe-HPC<a href="#xe-hpc" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><a href="https://github.com/intel/intel-graphics-compiler" target="_blank" rel="noopener noreferrer" title="intel/intel-graphics-compiler">intel/intel-graphics-compiler</a> によれば、Intel GPU も <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span> アーキテクチャ</em> で <code>BF8</code> に対応している。<br>
+<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span> A0</em> が対応するフォーマットとして <code>QF (Quarter Float)</code> も以下引用部にあるが、他の部分の記述から <code>QF</code> のフォーマット名は <code>BF8</code> にリネームされたことがわかる。<br>
+<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> のリビジョン更新と共に <code>QF</code> を <code>BF8</code> に変えた理由は明かされていないが、他ベンダーにおける 8-bit 浮動小数点フォーマットと統一するためという理由が想像できる。<br>
+2022/07/07 付で、AI 向けの IPU (Intelligence Processing Unit) を設計している Graphcore より、AMD と Qualcomm と共に 8-bit 浮動小数点フォーマットの標準化を提案したというリリースが出されており、このことが関係しているのではないかと思われる。</p>
+<ul>
+<li><a href="https://www.graphcore.ai/ja-jp/posts/graphcore-and-amd-propose-8-bit-fp-ai-standard-with-qualcomm-support" target="_blank" rel="noopener noreferrer" title="GraphcoreとAMDがQualcomm Technologiesのサポートを得てAI向け8ビット浮動小数点形式を業界標準として提案">GraphcoreとAMDがQualcomm Technologiesのサポートを得てAI向け8ビット浮動小数点形式を業界標準として提案</a></li>
+</ul>
+<p><em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> では現状 <code>BF8</code> のみの対応とし、<code>FP8</code> の記述はない。<br>
+変換命令については、<em>AMD GFX940/CDNA 3</em> では <code>F32 &lt;-&gt; FP8,BF8</code> のみだったが、<em>Intel <span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> では <code>F16 (HF) &lt;-&gt; BF8 (QF)</code> のみの対応関係となっている。</p>
+<blockquote>
+<pre><code>     GED_DATA_TYPE_nf,      ///&lt; 11, TGL, XE.HP, XE.HPG
+     GED_DATA_TYPE_bf,      ///&lt; XE.HP, XE.HPG, XE.HPC.A, XE.HPC
+     GED_DATA_TYPE_qf,      ///&lt; XE.HPC.A
+     GED_DATA_TYPE_bf8,     ///&lt; XE.HPC
+     GED_DATA_TYPE_tf32,    ///&lt; XE.HPC
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/56e33b2fdf33bfe545ae68fb62f3ec1583f3592a/visa/iga/GEDLibrary/GED_external/build/autogen-ia32/ged_enumerations.h#L146-L150" target="_blank" rel="noopener noreferrer" title="intel-graphics-compiler/ged_enumerations.h at 56e33b2fdf33bfe545ae68fb62f3ec1583f3592a · intel/intel-graphics-compiler">intel-graphics-compiler/ged_enumerations.h at 56e33b2fdf33bfe545ae68fb62f3ec1583f3592a · intel/intel-graphics-compiler</a></cite>
+</div>
+
+<pre><code> // [Deprecated. Use bf8 version instead]
+ // Note: qf is renamed to bf8. Those cvt builtins are the same as
+ //       those cvt builtins between bf8 and hf (qf is deprecated)
+ //       Once all apps/tests move to use bf8 cvt, those can be deleted
+ //
+ // quarter float &lt;--&gt; half float conversion
+ //    qf : no igc type for qf yet. Use char as *opaque* type for it.
+ //
+ // hf -&gt; qf conversion builtins (rte rounding mode)
+ char   __builtin_IB_hftoqf_1 (half   a) __attribute__((const));
+ char2  __builtin_IB_hftoqf_2 (half2  a) __attribute__((const));
+ char3  __builtin_IB_hftoqf_3 (half3  a) __attribute__((const));
+ char4  __builtin_IB_hftoqf_4 (half4  a) __attribute__((const));
+ char8  __builtin_IB_hftoqf_8 (half8  a) __attribute__((const));
+ char16 __builtin_IB_hftoqf_16(half16 a) __attribute__((const));
+	
+ // qf -&gt; hf conversion builtins (precise conversion)
+ half   __builtin_IB_qftohf_1 (char   a) __attribute__((const));
+ half2  __builtin_IB_qftohf_2 (char2  a) __attribute__((const));
+ half3  __builtin_IB_qftohf_3 (char3  a) __attribute__((const));
+ half4  __builtin_IB_qftohf_4 (char4  a) __attribute__((const));
+ half8  __builtin_IB_qftohf_8 (char8  a) __attribute__((const));
+ half16 __builtin_IB_qftohf_16(char16 a) __attribute__((const));
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/fc234c1eb2a9659097a114ce9ca1c71c6e8a0e57/IGC/BiFModule/Implementation/IGCBiF_Intrinsics_Dpas.cl#L457-L481" target="_blank" rel="noopener noreferrer" title="intel-graphics-compiler/IGCBiF_Intrinsics_Dpas.cl at fc234c1eb2a9659097a114ce9ca1c71c6e8a0e57 · intel/intel-graphics-compiler">intel-graphics-compiler/IGCBiF_Intrinsics_Dpas.cl at fc234c1eb2a9659097a114ce9ca1c71c6e8a0e57 · intel/intel-graphics-compiler</a></cite>
+</div>
+
+</blockquote>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://www.coelacanth-dream.com/posts/2022/06/11/amd-financial-analyst-day/"  title="AMD Financial Analyst Day 個人的まとめ | Coelacanth&rsquo;s Dream">AMD Financial Analyst Day 個人的まとめ | Coelacanth&rsquo;s Dream</a></li>
+<li><a href="https://www.4gamer.net/games/623/G062364/20220328110/" target="_blank" rel="noopener noreferrer" title="西川善司の3DGE：Hopper世代のNVIDIA製GPU「GH100」のアーキテクチャを深掘りしてみる">西川善司の3DGE：Hopper世代のNVIDIA製GPU「GH100」のアーキテクチャを深掘りしてみる</a></li>
+<li><a href="https://www.graphcore.ai/ja-jp/posts/graphcore-and-amd-propose-8-bit-fp-ai-standard-with-qualcomm-support" target="_blank" rel="noopener noreferrer" title="GraphcoreとAMDがQualcomm Technologiesのサポートを得てAI向け8ビット浮動小数点形式を業界標準として提案">GraphcoreとAMDがQualcomm Technologiesのサポートを得てAI向け8ビット浮動小数点形式を業界標準として提案</a></li>
+</ul>
+</section>
+
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/gfx940" class="bottom-tag-link"  title="gfx940">#gfx940</a><a href="https://www.coelacanth-dream.com/tags/cdna_3" class="bottom-tag-link"  title="CDNA_3">#CDNA 3</a><a href="https://www.coelacanth-dream.com/tags/xe-hpc" class="bottom-tag-link"  title="Xe-HPC">#Xe-HPC</a></nav><aside class="article-bottom-misc delay-page"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/07/26/gpu-fp8-bf8.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav>
+
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.101.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button
+    type="button"
+    class="sb"
+    onclick="random_page()"
+    tabindex=""
+  >Random</button>
+</nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna_3/" class="menu-cat-tag-lower">CDNA 3</a><a href="https://www.coelacanth-dream.com/tags/gfx940/" class="menu-cat-tag-lower">gfx940</a><a href="https://www.coelacanth-dream.com/tags/xe-hpc/" class="menu-cat-tag-lower">Xe-HPC</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.101.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+    type="checkbox"
+    id="menu-open"
+    checked
+  >
+  <label
+    class="menu-label"
+    for="menu-open"
+  ></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button
+    type="button"
+    class="sb"
+    onclick="random_page()"
+    tabindex=""
+  >Random</button>
+</nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna_3/" class="menu-cat-tag-lower">CDNA 3</a><a href="https://www.coelacanth-dream.com/tags/gfx940/" class="menu-cat-tag-lower">gfx940</a><a href="https://www.coelacanth-dream.com/tags/xe-hpc/" class="menu-cat-tag-lower">Xe-HPC</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
