@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta property="og:type" content="article">
+<title>Versatile Processing Unit を搭載する Intel Meteor Lake | Coelacanth&#39;s Dream</title>
+<meta property="og:title" content="Versatile Processing Unit を搭載する Intel Meteor Lake | Coelacanth&#39;s Dream">
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/07/29/intel-mtl-vpu/">
+
+
+  <meta property="og:image" content="https://www.coelacanth-dream.com/icon.png">
+
+<meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Meteor Lake, Linux Kernel, Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>html{background:#0b4050 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em 0 .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em monospace;margin:0 -.2em 0 -.1em;padding:0 .3em .2em;background-color:#0004;clip-path:circle(.45em);transform:rotate(-24deg)}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 0%,#0000 76%,#0000 95%,#111 99%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 50%,#0002 50%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#d001 33.4%,#0d01 33.4%,#0d01 66.8%,#00d1 66.8%)50%/.2rem 100% fixed repeat-x;opacity:.5;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid #0d4e62;border-color:#105d74 #09323e #09323e #105d74;border-radius:.1rem;text-decoration:none;background-color:var(--sb-bg,#0d4e62);contain:content}.sb:active{--sb-bg:#0b4050}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .1rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}.page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-07-29","dateModified":"2022-07-29","datePublished":"2022-07-29","headline":"Versatile Processing Unit を搭載する Intel Meteor Lake","image":"https://www.coelacanth-dream.com/icon.png","name":"Versatile Processing Unit を搭載する Intel Meteor Lake"}</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text"><h1 class="page-title">Versatile Processing Unit を搭載する Intel Meteor Lake</h1>
+
+
+  <article class="page-main delay-page"><aside class="share-block">
+<button
+    type="button"
+    class="share-copy-button sb cp-url-title"
+    onclick="copy_url({ url: true, title: true })"
+    tabindex="0"
+    aria-label="Copy URL button"
+    data-btn-txt="Copy URL &amp; Title"
+  ></button><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></aside><aside class="article-time">
+    <time datetime="2022-07-29 03:48 +0900">Post: 2022/07/29 03:48 &#43;0900</time>
+    <aside class="update">Update: 2022/07/29 08:13 &#43;0900</aside>
+  </aside><p>Intel の Jacek Lawrynowicz 氏により、Intel クライアント向け第14世代プロセッサ <em>Meteor Lake</em> に搭載される <em>Versatile Processing Unit (VPU)</em> の DRM (Direct Rendering Manager) ドライバーを Linux Kernel に追加するパッチが dri-dev メーリングリストに投稿されている。</p>
+<ul>
+<li><a href="https://lore.kernel.org/dri-devel/20220728131709.1087188-1-jacek.lawrynowicz@linux.intel.com/" target="_blank" rel="noopener noreferrer" title="[PATCH v1 0/7] New DRM driver for Intel VPU - Jacek Lawrynowicz">[PATCH v1 0/7] New DRM driver for Intel VPU - Jacek Lawrynowicz</a></li>
+</ul>
+<p>Jacek Lawrynowicz 氏は VPU の動作は内蔵 GPU に近いとしており、ドライバーを <code>gpu/drm</code> サブシステムの一部としている。DRMドライバーの初期化処理、IOCTL ハンドリング、メモリ管理機能を再利用することで、Linux Kernel 内のコードの重複を抑えることができる。<br>
+User Mode Driver (UMD) は Level Zero API ドライバーと OpenVINOプラグインで構成される予定であり、両方とも 2022Q3 の終わりまでにはオープンソース化されるとしている。<br>
+VPU のファームウェアはクローズドソースなバイナリブロブとして配布される。</p>
+<h2 id="vpu">VPU<a href="#vpu" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>Versatile Processing Unit (VPU)</em> は CPU/SoC に内蔵された、Computer Vision やディープラーニングアプリケーション向けの AI推論処理アクセラレータとなる。</p>
+<p><em>VPU</em> の名は、<em>Myriad X</em> や <em>Keem Bay</em>、<em>Thunder Bay</em> にも使われているが、それらにおける <em>VPU</em> は <em>Vision Processing Unit</em> の略とされている。<br>
+しかしパッチから <em>Meteor Lake</em> に搭載される <em>VPU</em> も、実行エンジンは SHAVE (Streaming Hybrid Architecture Vector Engine) と思われ、意味合いとしては従来の <em>VPU</em> からそれほど変わらないように思う。<br>
+<em>Meteor Lake VPU</em> の IPバージョンは v2.7 とされ、今回のパッチは VPU IP v2.7 をサポート対象としている。</p>
+<blockquote>
+<pre><code> +#define PCI_VENDOR_ID_INTEL 0x8086
+ +#define PCI_DEVICE_ID_MTL   0x7d1d
+ +
+ +#define VPU_GLOBAL_CONTEXT_MMU_SSID 0
+ +#define VPU_CONTEXT_LIMIT	    64
+ +#define VPU_NUM_ENGINES		    2
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/dri-devel/20220728131709.1087188-2-jacek.lawrynowicz@linux.intel.com/" target="_blank" rel="noopener noreferrer" title="[PATCH v1 1/7] drm/vpu: Introduce a new DRM driver for Intel VPU - Jacek Lawrynowicz">[PATCH v1 1/7] drm/vpu: Introduce a new DRM driver for Intel VPU - Jacek Lawrynowicz</a></cite>
+</div>
+
+</blockquote>
+<p>また、<em>Meteor Lake VPU</em> の DeviceID <code>0x7D1D</code> は <a href="https://github.com/openvinotoolkit/vpux-plugin" target="_blank" rel="noopener noreferrer" title="openvinotoolkit/vpux-plugin">openvinotoolkit/vpux-plugin</a> だと <code>VPUX37XX (VPU3720)</code> として管理されている。</p>
+<p><a href="https://github.com/openvinotoolkit/vpux-plugin" target="_blank" rel="noopener noreferrer" title="openvinotoolkit/vpux-plugin">openvinotoolkit/vpux-plugin</a> では、<em>VPU</em> を <code>VPUNN::VPUDevice::*, InferenceEngine::VPUXConfigParams::VPUXPlatform::*, VPU::ArchKind::*</code> でそれぞれ管理しており、<em>Keem Bay</em> は <code>VPUXPlatform::{VPU3400, VPU3700}</code> と <code>ArchKind::VPUX30XX</code>、<em>Thunder Bay</em> は <code>VPUXPlatform::{VPU3800, VPU3900}</code> と <code>ArchKind::VPUX311X</code> され、IPバージョンに相当する <code>VPUDevice</code> は両者 <code>VPU_2_0</code> とされている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+<em>Meteor Lake VPU</em> は <em>Keem Bay</em> と <em>Thunder Bay</em> から世代が進んだアーキテクチャとなる。</p>
+<blockquote>
+<pre><code> //    KMD is setting usDeviceID from VpuFamilyID.h
+ #define IVPU_MYRIADX_DEVICE_ID 0x6200   // MyriadX device
+ #define IVPU_KEEMBAY_DEVICE_ID 0x6240   // KeemBay device
+ #define IVPU_VPUX37XX_DEVICE_ID 0x7D1D  // VPUX37XX device
+ #define IVPU_VPUX4000_DEVICE_ID 0x643E  // VPUX4000 device
+	
+     std::string name;
+     switch (properties.deviceId) {
+     case IVPU_MYRIADX_DEVICE_ID:
+         name = &quot;2700&quot;;
+         break;
+     case IVPU_KEEMBAY_DEVICE_ID:
+         name = &quot;3700&quot;;
+         break;
+     case IVPU_VPUX37XX_DEVICE_ID:
+         name = &quot;3720&quot;;
+         break;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/openvinotoolkit/vpux-plugin/blob/411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7/src/zero_backend/src/zero_device.cpp#L36-L52" target="_blank" rel="noopener noreferrer" title="vpux-plugin/zero_device.cpp at 411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7 · openvinotoolkit/vpux-plugin">vpux-plugin/zero_device.cpp at 411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7 · openvinotoolkit/vpux-plugin</a></cite>
+</div>
+
+</blockquote>
+<p><em>Meteor Lake VPU</em> では <em>Myriad X</em> と同様にマイクロコントローラに RISC系 CPU を採用している。<em>Myriad X</em> では LEON4 SPARC V8 2-Core を採用しており、それらが RTOS のスケジューリングやパイプライン管理、センサー操作を担当していた。<br>
+Memory Management Unit (MMU) は Arm MMU-600 ベースとしている。<br>
+Neural Compute Subsystem (NCS) には実際の処理を行うコンピュートエンジン、コピーエンジンが位置する。<br>
+<em>Keem Bay</em> では DPU (Data Processing Unit) を最大 20基搭載しており、<em>Meteor Lake VPU</em> でも引き続き搭載するものと思われる。DPU について詳細は公開されていないが、<em>Keem Bay</em> 採用製品の情報からニューラルネットワークのスパースや圧縮処理を担当している。</p>
+<p><a href="https://github.com/openvinotoolkit/vpux-plugin" target="_blank" rel="noopener noreferrer" title="openvinotoolkit/vpux-plugin">openvinotoolkit/vpux-plugin</a> によれば、<em>Meteor Lake VPU</em> では新たに BF16フォーマットや混合精度をサポートしている。<br>
+<em>Keem Bay</em> からではあるが、画像認識以外に推論処理も主なターゲットとなったことから、<em>Vison Processing Unit</em> から <em>Versatile Processing Unit</em> に変えたのかもしれない。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> <sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/"  title="Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth&rsquo;s Dream">Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth&rsquo;s Dream</a></li>
+<li><a href="https://docs.luxonis.com/projects/hardware/en/latest/pages/articles/oak-s3.html" target="_blank" rel="noopener noreferrer" title="OAK Series 3 — DepthAI Hardware Documentation 1.0.0 documentation">OAK Series 3 — DepthAI Hardware Documentation 1.0.0 documentation</a></li>
+</ul>
+</section>
+
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://github.com/openvinotoolkit/vpux-plugin/blob/411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7/src/vpux_compiler/src/dialect/VPUIP/dpu_tiler.cpp#L90-L100" target="_blank" rel="noopener noreferrer" title="vpux-plugin/dpu_tiler.cpp at 411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7 · openvinotoolkit/vpux-plugin">vpux-plugin/dpu_tiler.cpp at 411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7 · openvinotoolkit/vpux-plugin</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/openvinotoolkit/vpux-plugin/blob/411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7/src/vpux_compiler/src/compiler.cpp#L55-L71" target="_blank" rel="noopener noreferrer" title="vpux-plugin/compiler.cpp at 411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7 · openvinotoolkit/vpux-plugin">vpux-plugin/compiler.cpp at 411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7 · openvinotoolkit/vpux-plugin</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://github.com/openvinotoolkit/vpux-plugin/blob/411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7/src/vpux_compiler/src/dialect/VPU/nce_invariant.cpp#L23-L31" target="_blank" rel="noopener noreferrer" title="vpux-plugin/nce_invariant.cpp at 411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7 · openvinotoolkit/vpux-plugin">vpux-plugin/nce_invariant.cpp at 411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7 · openvinotoolkit/vpux-plugin</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://github.com/openvinotoolkit/vpux-plugin/blob/411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7/src/vpux_compiler/src/dialect/VPU/nce_sparsity.cpp#L22-L24" target="_blank" rel="noopener noreferrer" title="vpux-plugin/nce_sparsity.cpp at 411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7 · openvinotoolkit/vpux-plugin">vpux-plugin/nce_sparsity.cpp at 411d6bb1e1ff6daa146954b75b149fdc7c1bdcd7 · openvinotoolkit/vpux-plugin</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a href="https://www.coelacanth-dream.com/tags/meteor_lake" class="bottom-tag-link"  title="Meteor_Lake">#Meteor Lake</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel" class="bottom-tag-link"  title="Linux_Kernel">#Linux Kernel</a></nav><aside class="article-bottom-misc delay-page"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a><a href="https://www.coelacanth-dream.com/about/#contact" class="sb" target="_blank" rel="noopener noreferrer">Feedback</a>
+<a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/07/29/intel-mtl-vpu.md" class="changelog sb" target="_blank" rel="noopener noreferrer">Changelog</a>
+</aside></main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+
+
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav>
+
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.101.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button
+    type="button"
+    class="sb"
+    onclick="random_page()"
+    tabindex=""
+  >Random</button>
+</nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a><a href="https://www.coelacanth-dream.com/categories/vpu/" class="menu-cat-tag-lower">VPU</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="menu-cat-tag-lower">Meteor Lake</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" target="_blank" rel="noopener noreferrer">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" target="_blank" rel="noopener noreferrer">Hugo 0.101.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input
+    type="checkbox"
+    id="menu-open"
+    checked
+  >
+  <label
+    class="menu-label"
+    for="menu-open"
+  ></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button
+    type="button"
+    class="sb"
+    onclick="random_page()"
+    tabindex=""
+  >Random</button>
+</nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a><a href="https://www.coelacanth-dream.com/categories/vpu/" class="menu-cat-tag-lower">VPU</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="menu-cat-tag-lower">Meteor Lake</a>
+  </nav></nav><nav class="rss-block"><a
+    href="https://www.coelacanth-dream.com/posts/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Home"
+    aria-label="RSS: Home"
+  ></a><a
+    href="https://www.coelacanth-dream.com/lastmod/index.xml"
+    class="rss sb"
+    target="_blank"
+    tabindex="0"
+    role="button"
+    data-rss-name="Updated"
+    aria-label="RSS: Updated"
+  ></a></nav>
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#activitypub">ActivityPub</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
