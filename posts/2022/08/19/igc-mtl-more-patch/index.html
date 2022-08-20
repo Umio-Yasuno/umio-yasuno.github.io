@@ -29,7 +29,7 @@
   .page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-08-19","dateModified":"2022-08-19","datePublished":"2022-08-19","headline":"Meteor Lake に向けた Intel Graphics Compiler へのさらなるパッチ","image":"https://www.coelacanth-dream.com/icon.png","name":"Meteor Lake に向けた Intel Graphics Compiler へのさらなるパッチ"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-08-19","dateModified":"2022-08-20","datePublished":"2022-08-19","headline":"Meteor Lake に向けた Intel Graphics Compiler へのさらなるパッチ","image":"https://www.coelacanth-dream.com/icon.png","name":"Meteor Lake に向けた Intel Graphics Compiler へのさらなるパッチ"}</script>
   </head>
   <body><header class="site-title" title="Coelacanth&#39;s Dream">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
@@ -65,7 +65,7 @@
     aria-label="RSS: Updated"
   ></a></aside><aside class="article-time">
     <time datetime="2022-08-19 04:51 +0900">Post: 2022/08/19 04:51 &#43;0900</time>
-    <aside class="update">Update: 2022/08/19 06:26 &#43;0900</aside>
+    <aside class="update">Update: 2022/08/20 13:07 &#43;0900</aside>
   </aside><p>以前に Intel の Pete Chou 氏より、<a href="https://github.com/intel/intel-graphics-compiler" target="_blank" rel="noopener noreferrer" title="Intel Graphics Compiler (IGC)">Intel Graphics Compiler (IGC)</a> のサポートターゲット、vISA (virtual ISA) に <em>Meteor Lake</em> を追加するコミットが投稿された。<br>
 そして今回、Intel の Mateusz Borzyszkowski 氏により、<em>Meteor Lake</em> のサポートに向けたさらなるパッチが IGC に投稿されている。<br>
 <span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/07/06/igc-mtl/"  title="Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth&rsquo;s Dream">Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth&rsquo;s Dream</a></span>
@@ -78,7 +78,7 @@
 <p>前回触れたように、<em>Meteor Lake GPU</em> の IGC におけるアーキテクチャ、プラットフォームは <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> とされている。<br>
 <span class="thread-link"><a target="_blank" rel="noopener noreferrer" href="https://www.coelacanth-dream.com/posts/2022/07/06/igc-mtl/"  title="Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth&rsquo;s Dream">Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth&rsquo;s Dream</a></span>
 
-しかし、<em>Alchemist/DG2</em> とまったく同じアーキテクチャ、構成という訳ではなく、<em>Meteor Lake GPU</em> ではレイトレーシングはサポートするが XMXユニットを用いて実行される <code>DPAS (Dot Product Accumulate Systolic)</code> 命令をサポートしないといった違いがある。<br>
+しかし、<em>Alchemist/DG2</em> とまったく同じアーキテクチャ、構成という訳ではなく、<em>Meteor Lake GPU</em> では XMXユニットを用いて実行される <code>DPAS (Dot Product Accumulate Systolic)</code> 命令をサポートしないといった違いがある。<br>
 <em>Meteor Lake GPU</em> では <code>FP64 (DP)</code> のサポートが復活することから、EU の構成もある程度 <em>Alchemist/DG2</em> とは異なると考えられる。</p>
 <blockquote>
 <pre><code>      IGFX_XE_HP_SDV = 1250,
@@ -87,6 +87,18 @@
  +    IGFX_METEORLAKE = 1272,
 </code></pre>
 <div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/commit/2013a0c271b136be2629fe74cb2b4eefffad78c0" target="_blank" rel="noopener noreferrer" title="Add MTL support · intel/intel-graphics-compiler@2013a0c">Add MTL support · intel/intel-graphics-compiler@2013a0c</a></cite>
+</div>
+
+</blockquote>
+<p><em>Meteor Lake GPU</em> の HWレイトレーシングのサポートについては、<code>IGC/AdaptorCommon/RayTracing/PrologueShaders.cpp</code> に <code>IGFX_METEORLAKE</code> が追加されていることからサポートしていると考えられる。<br>
+それ以外の HWレイトレーシングのサポートを判定するコード部においても、変更がないことからも <em>Meteor Lake GPU</em> は <em>Alchemist/DG2</em> と <em>Ponte Vechhio</em> 同様にサポートしていると考えられる。</p>
+<blockquote>
+<pre><code> bool supportRayTracing() const
+ {
+     return isProductChildOf(IGFX_DG2);
+ }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/2013a0c271b136be2629fe74cb2b4eefffad78c0/IGC/Compiler/CISACodeGen/Platform.hpp#L742-L745" target="_blank" rel="noopener noreferrer" title="https://github.com/intel/intel-graphics-compiler/blob/2013a0c271b136be2629fe74cb2b4eefffad78c0/IGC/Compiler/CISACodeGen/Platform.hpp#L742-L745">https://github.com/intel/intel-graphics-compiler/blob/2013a0c271b136be2629fe74cb2b4eefffad78c0/IGC/Compiler/CISACodeGen/Platform.hpp#L742-L745</a></cite>
 </div>
 
 </blockquote>
