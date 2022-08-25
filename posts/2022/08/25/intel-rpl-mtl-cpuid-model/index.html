@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Raptor Lake と Meteor Lake の CPUID Model | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/08/25/intel-rpl-mtl-cpuid-model/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Raptor Lake と Meteor Lake の CPUID Model | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+
+    <style>
+  html{background:#0b4050 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .65em/1 monospace;margin:0 -.2em 0 -.1em;padding:0 .3em .15em;background-color:#0006;clip-path:circle(.45em);transform:rotate(-24deg)}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee2 4%,#0000 96%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 50%,#0002 50%)50%/100% .6rem fixed repeat-y,linear-gradient(to right,#e001 33.4%,#0e01 33.4%,#0e01 66.8%,#00e1 66.8%)50%/.3rem 100% fixed repeat-x;opacity:.6;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#116078);text-decoration:none;background-image:linear-gradient(to bottom,#0d4e62 0%,#0c4759 100%);contain:content}.sb:active{--sb-brdr:#0d4e62}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .1rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}
+  .page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-08-25","dateModified":"2022-08-25","datePublished":"2022-08-25","headline":"Raptor Lake と Meteor Lake の CPUID Model","image":"https://www.coelacanth-dream.com/icon.png","name":"Raptor Lake と Meteor Lake の CPUID Model"}</script>
+  </head>
+  <body><header class="site-title" title="Coelacanth&#39;s Dream">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">Raptor Lake と Meteor Lake の CPUID Model</h1>
+
+  <article class="page-main delay-page"><aside class="share-block">
+<button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2022-08-25 10:51 +0900">Post: 2022/08/25 10:51 &#43;0900</time>
+    <aside class="update">Update: 2022/08/25 12:41 &#43;0900</aside>
+  </aside><p>Intel の Tony Luck 氏により、Linux Kernel (<code>arch/x86/include/asm/intel-family.h</code>) に <em>Raptor Lake-S</em> と <em>Meteor Lake-M/P, S</em> の <code>CPUID Model</code> を追加するパッチが投稿されている。<br>
+<code>CPUID[LEAF=0x1].EAX</code> から取得できる <code>CPUID Family, Model, Stepping</code> は、主にプロセッサやプラットフォームの判定、ステイトの情報や <code>perf</code> ツールのための <code>PMU (Performance Monitoring Unit)</code> 情報をそれぞれに適用するのに用いられる。</p>
+<ul>
+<li><a href="https://lore.kernel.org/all/20220823210129.979394-1-kan.liang@linux.intel.com/" rel="noopener noreferrer" target="_blank" title="[PATCH 1/4] perf/x86: Add new Raptor Lake S support - kan.liang">[PATCH 1/4] perf/x86: Add new Raptor Lake S support - kan.liang</a></li>
+<li><a href="https://lore.kernel.org/all/20220824175718.232384-1-tony.luck@intel.com/T/#u" rel="noopener noreferrer" target="_blank" title="[PATCH] x86/cpu: Add CPU model numbers for Meteor Lake">[PATCH] x86/cpu: Add CPU model numbers for Meteor Lake</a></li>
+</ul>
+<h2 id="rpl">Raptor Lake<a href="#rpl" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>Linux Kernel (<code>arch/x86/include/asm/intel-family.h</code>) にはすでに <code>INTEL_FAM6_RAPTORLAKE (0xB7)</code> と <code>INTEL_FAM6_RAPTORLAKE_P (0xBA)</code> の <code>CPUID Model</code> が追加されていた。<br>
+法則から、接尾辞が付いていない <code>INTEL_FAM6_RAPTORLAKE (0xB7)</code> がデスクトップ向けの <em>Raptor Lake-S</em> だと考えられ、実際 Bootlog でも <em>Raptor Lake-S</em> の <code>CPUID Model</code> は <code>0xB7</code> となっていた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p>それが今回のパッチで <code>INTEL_FAM6_RAPTORLAKE_S (0xBF)</code> が新たに追加された。</p>
+<ul>
+<li><a href="https://lore.kernel.org/all/20220823174819.223941-1-tony.luck@intel.com/" rel="noopener noreferrer" target="_blank" title="[PATCH] x86/cpu: Add new Raptor Lake CPU model number - Tony Luck">[PATCH] x86/cpu: Add new Raptor Lake CPU model number - Tony Luck</a></li>
+</ul>
+<blockquote>
+<pre><code>   *		_X	- regular server parts
+   *		_D	- micro server parts
+   *		_N,_P	- other mobile parts
+ + *		_S	- other client parts
+   *
+   *		Historical OPTDIFFs:
+   *
+ @@ -112,6 +113,7 @@
+	 
+  #define INTEL_FAM6_RAPTORLAKE		0xB7
+  #define INTEL_FAM6_RAPTORLAKE_P		0xBA
+ +#define INTEL_FAM6_RAPTORLAKE_S		0xBF
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/all/20220823174819.223941-1-tony.luck@intel.com/" rel="noopener noreferrer" target="_blank" title="[PATCH] x86/cpu: Add new Raptor Lake CPU model number - Tony Luck">[PATCH] x86/cpu: Add new Raptor Lake CPU model number - Tony Luck</a></cite>
+</div>
+
+</blockquote>
+<p>ここでの接尾辞無しは <code>regular client parts</code> を、<code>_S</code> は <code>other client parts</code> を意味するため、デスクトップ向け <em>Raptor Lake</em> として <code>INTEL_FAM6_RAPTORLAKE{,_S}</code> の 2種類があると考えれば、若干紛らわしくはあるが不自然ではない。</p>
+<p>ただ引っ掛かるのは、<code>CPUID Model: 0xBF</code> は以前に <em>Alder Lake</em> としてドキュメントに記載され<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、コンパイラに追加された <code>CPUID Model</code> でもあることだ。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
+その時は <em>Alder Lake-N (CPUID Model: 0xBE)</em> の typo ではないかと考えたが、今回のパッチで <em>Raptor Lake</em> として追加されたことで、デスクトップ向け <em>Raptor Lake</em> ではあるが実質 <em>Alder Lake</em> であるのが <code>CPUID Model: 0xBF</code> という解釈も可能になる。<br>
+<code>CPUID Model: 0xBF</code> は <code>CPUID Model, Stepping</code> こそ <em>Alder Lake-S</em> と異なるが、構成は <em>Alder Lake-S</em> と同じ、リフレッシュモデルのような立ち位置にあるのかもしれない。</p>
+<p>また、Tony Luck 氏はパッチ内で、ソフトウェア的な観点では <code>RAPTORLAKE*</code> と <code>ALDERLAKE*</code> の機能において、2つの間に異なる点はないとコメントしている。<br>
+ここでの機能はあくまでステイトや <code>PMU</code> のことを指していると思われる。</p>
+<blockquote>
+<pre><code> Note1: Model 0xB7 already claimed the &quot;no suffix&quot; #define for a regular
+ client part, so add (yet another) suffix &quot;S&quot; to distinguish this new
+ part from the earlier one.
+	
+ Note2: the RAPTORLAKE* and ALDERLAKE* processors are very similar from a
+ software enabling point of view.  There are no known features that have
+ model-specific enabling and also differ between the two.  In other words,
+ every single place that list *one* or more RAPTORLAKE* or ALDERLAKE*
+ processors should list all of them.
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/all/20220823174819.223941-1-tony.luck@intel.com/" rel="noopener noreferrer" target="_blank" title="[PATCH] x86/cpu: Add new Raptor Lake CPU model number - Tony Luck">[PATCH] x86/cpu: Add new Raptor Lake CPU model number - Tony Luck</a></cite>
+</div>
+
+</blockquote>
+<h2 id="mtl">Meteor Lake<a href="#mtl" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>Meteor Lake</em> の <code>CPUID Model</code> は、デスクトップ向けと思われる <code>INTEL_FAM6_METEORLAKE (regular client parts)</code> が <code>0xAC</code>、モバイル向けである <code>INTEL_FAM6_METEORLAKE_L</code> が <code>0xAC</code> とされている。</p>
+<p><code>INTEL_FAM6_METEORLAKE</code> については、以前に触れた <a href="https://github.com/intel/dptf" rel="noopener noreferrer" target="_blank" title="intel/dptf ((Intel (R) Dynamic Tuning for Chromium OS)">intel/dptf ((Intel (R) Dynamic Tuning for Chromium OS)</a> にある <code>CPUID_FAMILY_MODEL_MTL_S</code> の情報と異なるが、<code>CPUID_FAMILY_MODEL_MTL_S</code> は <code>CPUID Model</code> が <em>Ice Lake-D</em> と被っているため、今回のパッチが正しい情報だと思われる。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<ul>
+<li><a href="https://lore.kernel.org/all/20220824175718.232384-1-tony.luck@intel.com/T/#u" rel="noopener noreferrer" target="_blank" title="[PATCH] x86/cpu: Add CPU model numbers for Meteor Lake">[PATCH] x86/cpu: Add CPU model numbers for Meteor Lake</a></li>
+</ul>
+<blockquote>
+<pre><code> +#define INTEL_FAM6_METEORLAKE		0xAC
+ +#define INTEL_FAM6_METEORLAKE_L		0xAA
+ +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/all/20220824175718.232384-1-tony.luck@intel.com/" rel="noopener noreferrer" target="_blank" title="[PATCH] x86/cpu: Add CPU model numbers for Meteor Lake - Tony Luck">[PATCH] x86/cpu: Add CPU model numbers for Meteor Lake - Tony Luck</a></cite>
+</div>
+
+</blockquote>
+<p>自分の主観だが、珍しくパッチ内でリリース予定時期と製造プロセスについても触れられている。</p>
+<blockquote>
+<pre><code> ---
+ These are destined for release in 2023 on Intel 4 process node.
+	
+ As is the custom, I'm just adding the model numbers so perf, power
+ etc. teams can added model specific code to their respective subsystems
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/all/20220824175718.232384-1-tony.luck@intel.com/" rel="noopener noreferrer" target="_blank" title="[PATCH] x86/cpu: Add CPU model numbers for Meteor Lake - Tony Luck">[PATCH] x86/cpu: Add CPU model numbers for Meteor Lake - Tony Luck</a></cite>
+</div>
+
+</blockquote>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/01/07/intel-rpl_s-bootlog/"  title="Intel Raptor Lake-S Bootlog | Coelacanth&rsquo;s Dream">Intel Raptor Lake-S Bootlog | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p>Volume 4: Model-Specific Registers - <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html" rel="noopener noreferrer" target="_blank" title="Intel® 64 and IA-32 Architectures Software Developer Manuals">Intel® 64 and IA-32 Architectures Software Developer Manuals</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/01/07/intel-adl-rkl-new-model/"  title="Intel Alder Lake と Rocket Lake に追加される CPUID Model | Coelacanth&rsquo;s Dream">Intel Alder Lake と Rocket Lake に追加される CPUID Model | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://www.coelacanth-dream.com/posts/2021/11/16/coreboot-intel-adl_n/"  title="N バリアントも存在する Alder Lake | Coelacanth&rsquo;s Dream">N バリアントも存在する Alder Lake | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cpuid/" title="CPUID">#CPUID</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/raptor_lake/" title="Raptor_Lake">#Raptor Lake</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/meteor_lake/" title="Meteor_Lake">#Meteor Lake</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/alder_lake/" title="Alder_Lake">#Alder Lake</a></nav><aside class="article-bottom-misc delay-page">
+  <a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a><a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/08/25/intel-rpl-mtl-cpuid-model.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.101.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button class="sb" onclick="random_page()" tabindex="0" type="button">Random</button>
+</nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-cat-tag-lower">Alder Lake</a><a href="https://www.coelacanth-dream.com/tags/cpuid/" class="menu-cat-tag-lower">CPUID</a><a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="menu-cat-tag-lower">Meteor Lake</a><a href="https://www.coelacanth-dream.com/tags/raptor_lake/" class="menu-cat-tag-lower">Raptor Lake</a>
+  </nav></nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.101.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a><button class="sb" onclick="random_page()" tabindex="0" type="button">Random</button>
+</nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-cat-tag-lower">Alder Lake</a><a href="https://www.coelacanth-dream.com/tags/cpuid/" class="menu-cat-tag-lower">CPUID</a><a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="menu-cat-tag-lower">Meteor Lake</a><a href="https://www.coelacanth-dream.com/tags/raptor_lake/" class="menu-cat-tag-lower">Raptor Lake</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
