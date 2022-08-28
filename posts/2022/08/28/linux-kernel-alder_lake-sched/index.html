@@ -42,7 +42,7 @@
   <article class="page-main delay-page"><aside class="share-block">
 <button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-08-28 11:45 +0900">Post: 2022/08/28 11:45 &#43;0900</time>
-    <aside class="update">Update: 2022/08/28 20:02 &#43;0900</aside>
+    <aside class="update">Update: 2022/08/28 20:32 &#43;0900</aside>
   </aside><p>Linux Kernel では現状、Windows11 の Intel Thread Director のような Intel EHFI (Enhanced Hardware Feedback Interface) を活用したハイブリッドアーキテクチャ向けのスケジューリングは実装されていない。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 しかし、<em>Alder Lake</em> 等のハイブリッドアーキテクチャに特化はしていないが、<em>Alder Lake</em> が性能向上の恩恵を受けられるスケジューリングの改善は行われている。</p>
 <h2 id="pse">P-Core, E-Core, P-Core (SMT)<a href="#pse" class="head-cur-link" aria-hidden></a>
@@ -83,11 +83,17 @@
 Linux Kernel のスケジューラーには、ITMT が有効化されているコアの優先度を高くすることで性能を向上させる機能が実装されている。<br>
 だが、そうした ITMT が有効化されたコアの SMT側に低い優先度を割り当てるようにしていたため、状況によっては同コア内で不要なタスク移行が発生していたとパッチ内で Ricardo Neri 氏はコメントしている。<br>
 パッチ (2022/08/25) では、不要なタスク移行を防ぐための修正と、先のパッチ (2021/09/11) で同コア内の両スレッドの状態を確認するようになったことで不要になった部分の削除が行われている。</p>
+<p>Intel Thread Director が実装された Windows11 (/Pro) と各種 Linux ディストリビューションにおける <em>Alder Lake</em> の性能比較を Phoronix の Michael Larabel 氏が行っている。<br>
+2021/11/12 に公開された検証記事では、104個のテスト中 47個 (45.2%) で Windows11 が最速という結果だったが<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、2022/07/08 の検証記事では Windows11 Pro が最速という結果になったのは 103個のテスト中 16個 (15.5%) となっている<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>。<br>
+また、2021/11/12 の検証記事で Windows11 (/Pro) がテストにおいて最遅になったのは 104個中 24個 (23.1%)、2022/07/08 の検証記事では 103個中 74個 (71.8%) になっており、Linux ディストリビューション全体で <em>Alder Lake</em> の性能が向上している。</p>
+<p>Intel Thread Director に近い機能が実装されていない Linux ディストリビューションの方が全体的に性能が高いという結果になったが、OS 自体の特性、実行されたテストのほとんどがレンダリングやエンコードといったクリエイティブ系ということもあり、Windows11 (/Pro) では Intel Thread Director の効果があまり発揮できなかった可能性がある。<br>
+Intel Thread Director はコアの状況やスレッドの種類に応じて適切なスケジューリングを行うことで、性能と電力効率と上げる機能であり、複数の種類のスレッドが動作するアプリケーション、アプリケーションが複数立ち上がっている状況において効果が発揮できると考えられる。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://lore.kernel.org/all/20211204091402.GM16608@worktop.programming.kicks-ass.net/T/#u" rel="noopener noreferrer" target="_blank" title="[PATCH 0/5] Make Cluster Scheduling Configurable">[PATCH 0/5] Make Cluster Scheduling Configurable</a></li>
 <li><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/turbo-boost/turbo-boost-max-technology.html" rel="noopener noreferrer" target="_blank" title="Intel® Turbo Boost Max Technology 3.0">Intel® Turbo Boost Max Technology 3.0</a></li>
+<li><a href="https://www.phoronix.com/review/windows-linux-mid22adl" rel="noopener noreferrer" target="_blank" title="Windows 11 vs. Linux Performance For Intel Core i9 12900K In Mid-2022 - Phoronix">Windows 11 vs. Linux Performance For Intel Core i9 12900K In Mid-2022 - Phoronix</a></li>
 </ul>
 </section>
 
@@ -99,6 +105,12 @@ Linux Kernel のスケジューラーには、ITMT が有効化されている�
 </li>
 <li id="fn:2">
 <p><a href="https://gihyo.jp/admin/serial/01/ubuntu-recipe/0721" rel="noopener noreferrer" target="_blank" title="第721回　新型ベアボーンキットであるDeskMeetと最新CPUであるAlder Lakeで夢のパワフルUbuntuライフ | gihyo.jp">第721回　新型ベアボーンキットであるDeskMeetと最新CPUであるAlder Lakeで夢のパワフルUbuntuライフ | gihyo.jp</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://www.phoronix.com/review/alderlake-windows-linux" rel="noopener noreferrer" target="_blank" title="Windows 11 Better Than Linux Right Now For Intel Alder Lake Performance - Phoronix">Windows 11 Better Than Linux Right Now For Intel Alder Lake Performance - Phoronix</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://www.phoronix.com/review/windows-linux-mid22adl" rel="noopener noreferrer" target="_blank" title="Windows 11 vs. Linux Performance For Intel Core i9 12900K In Mid-2022 - Phoronix">Windows 11 vs. Linux Performance For Intel Core i9 12900K In Mid-2022 - Phoronix</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
