@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L0ベクタキャッシュと GL1データキャッシュが増やされる RDNA 3/GFX11 APU | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/09/02/gfx11-l0c-gl1c/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="L0ベクタキャッシュと GL1データキャッシュが増やされる RDNA 3/GFX11 APU | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+  html{background:#0b4050 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .65em/.7 monospace;transform:rotate(-32deg);padding:0 .2em .2em;vertical-align:bottom;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.67;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee2 4%,#0000 96%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0004 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#8001 33.4%,#0801 33.4%,#0801 66.8%,#0081 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.4;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#116078);text-decoration:none;background-image:linear-gradient(to bottom,#0d4e62 0%,#0c4759 100%);contain:content}.sb:active{--sb-brdr:#0d4e62}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .1rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-09-02","dateModified":"2022-09-02","datePublished":"2022-09-02","headline":"L0ベクタキャッシュと GL1データキャッシュが増やされる RDNA 3/GFX11 APU","image":"https://www.coelacanth-dream.com/icon.png","name":"L0ベクタキャッシュと GL1データキャッシュが増やされる RDNA 3/GFX11 APU"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">L0ベクタキャッシュと GL1データキャッシュが増やされる RDNA 3/GFX11 APU</h1>
+
+  <article class="page-main delay-page"><aside class="share-block">
+<button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2022-09-02 14:42 +0900">Post: 2022/09/02 14:42 &#43;0900</time>
+    <aside class="update">Update: 2022/09/02 15:38 &#43;0900</aside>
+  </aside><p><em>RDNA 3/GFX11</em> では CU ごとに持つ L0ベクタキャッシュと Shader Array (SA) ごとに持つ GL1データキャッシュ (RDNA L1キャッシュ) が、<em>RDNA 2/GFX10.3</em> から倍のサイズに増やされることが AMD の Liu, Aaron 氏によって明かされている。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-September/083698.html" rel="noopener noreferrer" target="_blank" title="[PATCH] drm/amdkfd: Match GC 11.0.1 cache info to yellow carp">[PATCH] drm/amdkfd: Match GC 11.0.1 cache info to yellow carp</a></li>
+</ul>
+<p><em>RDNA 3/GFX11</em> からは IP Discovery Table からキャッシュ情報を読み取るようになり、AMDGPUドライバー中にハードコードされることはなくなったとされている。<br>
+しかし、<em>Phoenix APU (GC 11.0.1, GFX1103)</em> に限ってはキャッシュ情報が含まれておらず、他の <em>RDNA 3/GFX11</em> GPU のように読み取れないため、<em>Yellow Carp/Rembrandt APU</em> のキャッシュ情報を用いるようにするのが当該のパッチとなる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+パッチは AMD の Zhang, Yifan 氏によって投稿されている。</p>
+<p><em>Phoenix APU (GC 11.0.1, GFX1103)</em> と <em>Yellow Carp/Rembrandt APU</em> のキャッシュ情報は完全には一致せず、異なる点が L0ベクタキャッシュ (TCP L1 Cache per CU) と GL1データキャッシュとなる。<br>
+それに触れたのが以下の Liu, Aaron 氏によるコメント。</p>
+<blockquote>
+<pre><code> [Public]
+	
+ Hi Yifan,
+	
+ Yellow carp's cache info cannot be duplicated to GC_11_0_1.
+	
+ Different point to GC_11_0_1:
+ TCP L1  Cache size is 32
+ GL1 Data Cache size per SA is 256
+	
+ Others looks good to me
+	
+ --
+ Best Regards
+ Aaron Liu
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-September/083698.html" rel="noopener noreferrer" target="_blank" title="[PATCH] drm/amdkfd: Match GC 11.0.1 cache info to yellow carp">[PATCH] drm/amdkfd: Match GC 11.0.1 cache info to yellow carp</a></cite>
+</div>
+
+</blockquote>
+<p><em>Phoenix APU (GC 11.0.1, GFX1103)</em> では、L0ベクタキャッシュは 16KiB から 32KiB に、GL1データキャッシュは 128KiB から 256KiB になるとされている。<br>
+他キャッシュは同じとされており、WGP (CU 2基) ごとに持つスカラ命令キャッシュ (L1i) とスカラデータキャッシュ (L1k)、GPU全体で共有する L2データキャッシュのサイズについては <em>Yellow Carp/Rembdrandt APU</em> と変わらない。<br>
+以下は <em>Yellow Carp/Rembrandt APU</em> のキャッシュ情報となり、スカラ命令キャッシュは 32KiB、スカラデータキャッシュは 16KiB、L2データキャッシュは 2048KiB (2MiB) となる。<br>
+それと MALL (Infinity Cache, L3データキャッシュ) に触れられていないことから、やはり APU では MALL を搭載しない方針と思われる。</p>
+<blockquote>
+<pre><code> static struct kfd_gpu_cache_info yellow_carp_cache_info[] = {
+ 	{
+ 		/* TCP L1 Cache per CU */
+ 		.cache_size = 16,
+ 		.cache_level = 1,
+ 		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+ 				CRAT_CACHE_FLAGS_DATA_CACHE |
+ 				CRAT_CACHE_FLAGS_SIMD_CACHE),
+ 		.num_cu_shared = 1,
+ 	},
+ 	{
+ 		/* Scalar L1 Instruction Cache per SQC */
+ 		.cache_size = 32,
+ 		.cache_level = 1,
+ 		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+ 				CRAT_CACHE_FLAGS_INST_CACHE |
+ 				CRAT_CACHE_FLAGS_SIMD_CACHE),
+ 		.num_cu_shared = 2,
+ 	},
+ 	{
+ 		/* Scalar L1 Data Cache per SQC */
+ 		.cache_size = 16,
+ 		.cache_level = 1,
+ 		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+ 				CRAT_CACHE_FLAGS_DATA_CACHE |
+ 				CRAT_CACHE_FLAGS_SIMD_CACHE),
+ 		.num_cu_shared = 2,
+ 	},
+ 	{
+ 		/* GL1 Data Cache per SA */
+ 		.cache_size = 128,
+ 		.cache_level = 1,
+ 		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+ 				CRAT_CACHE_FLAGS_DATA_CACHE |
+ 				CRAT_CACHE_FLAGS_SIMD_CACHE),
+ 		.num_cu_shared = 6,
+ 	},
+ 	{
+ 		/* L2 Data Cache per GPU (Total Tex Cache) */
+ 		.cache_size = 2048,
+ 		.cache_level = 2,
+ 		.flags = (CRAT_CACHE_FLAGS_ENABLED |
+ 				CRAT_CACHE_FLAGS_DATA_CACHE |
+ 				CRAT_CACHE_FLAGS_SIMD_CACHE),
+ 		.num_cu_shared = 6,
+ 	},
+ };
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link">[linux-kernel v5.19] drivers/gpu/drm/amd/amdkfd/kfd_crat.c</cite>
+</div>
+
+</blockquote>
+<p>L0ベクタキャッシュと GL1データキャッシュの変化はあくまでも <em>Phoenix APU (GC 11.0.1, GFX1103)</em> を指定したものではあるが、<em>RDNA 3/GFX11</em> dGPU でも同様の変更を採用していると思われる。<br>
+<em>RDNA 3/GFX11</em> では他にもキャッシュ構成の変更が施されており、スカラ命令キャッシュのキャッシュラインサイズが <em>RDNA 2/GFX10.3</em> の 64Byte から 128Byte に拡大されている。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Cache Line Size</th>
+<th style="text-align:center">L1i</th>
+<th style="text-align:center">L1k</th>
+<th style="text-align:center">L1d</th>
+<th style="text-align:center">GL1</th>
+<th style="text-align:center">GL2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">GFX9/Vega (without Aldebaran)</td>
+<td style="text-align:center">32B</td>
+<td style="text-align:center">32B</td>
+<td style="text-align:center">64B</td>
+<td style="text-align:center">-</td>
+<td style="text-align:center">64B</td>
+</tr>
+<tr>
+<td style="text-align:left">GFX10/RDNA 1, GFX10.3/RDNA 2</td>
+<td style="text-align:center">64B</td>
+<td style="text-align:center">64B</td>
+<td style="text-align:center">128B</td>
+<td style="text-align:center">128B</td>
+<td style="text-align:center">128B</td>
+</tr>
+<tr>
+<td style="text-align:left">GFX11</td>
+<td style="text-align:center">128B</td>
+<td style="text-align:center">128B?</td>
+<td style="text-align:center">128B?</td>
+<td style="text-align:center">128B?</td>
+<td style="text-align:center">128B</td>
+</tr>
+</tbody>
+</table>
+<p><em>RDNA 3/GFX11</em> では <code>VOPD (Dual issue wave32)</code> 命令<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>や <code>WMMA (Wave Matrix Multiply-accumulate)</code> 命令<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>に対応し、WGP (CU) あたりの性能が向上していると考えられ、それに伴って L0ベクタキャッシュのサイズが増やされたと考えられる。<br>
+GL1データキャッシュは Shader Array 内の WGP 以外に RB (Render Backend) のキャッシュにも接続されており、GL1データキャッシュを増やすことでピクセル処理性能の向上を狙ったことも考えられる。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Cache Info</th>
+<th style="text-align:center">Yellow Carp (Rembrandt)</th>
+<th style="text-align:center">Phoenix (GC 11.0.1, GFX1103)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">L1 Vector Data (per CU)</td>
+<td style="text-align:center">16KiB</td>
+<td style="text-align:center"><em>32KiB</em></td>
+</tr>
+<tr>
+<td style="text-align:left">L1 Scalar Inst. (per WGP)</td>
+<td style="text-align:center">32KiB</td>
+<td style="text-align:center">32KiB</td>
+</tr>
+<tr>
+<td style="text-align:left">L1 Scalar Data (per WGP)</td>
+<td style="text-align:center">16KiB</td>
+<td style="text-align:center">16KiB</td>
+</tr>
+<tr>
+<td style="text-align:left">GL1 Data (per SA)</td>
+<td style="text-align:center">128KiB</td>
+<td style="text-align:center"><em>256KiB</em></td>
+</tr>
+<tr>
+<td style="text-align:left">L2 Data</td>
+<td style="text-align:center">2048KiB (2MiB)</td>
+<td style="text-align:center">2048KiB (2MiB)</td>
+</tr>
+<tr>
+<td style="text-align:left">L3 (MALL)</td>
+<td style="text-align:center">N/A</td>
+<td style="text-align:center">N/A</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">GC (Graphics Compute) IP ver</th>
+<th style="text-align:center">GFX ID</th>
+<th style="text-align:center">AMDGPU_FAMILY</th>
+<th style="text-align:center">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">11.0.0</td>
+<td style="text-align:center">gfx1100 (Navi31)<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></td>
+<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
+<td style="text-align:center">dGPU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.1</td>
+<td style="text-align:center">gfx1103 (Phoenix)</td>
+<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)</td>
+<td style="text-align:center">APU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.2</td>
+<td style="text-align:center">gfx1102 (Navi33)</td>
+<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
+<td style="text-align:center">dGPU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.3?</td>
+<td style="text-align:center">gfx1101 (Navi32)?</td>
+<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)?</td>
+<td style="text-align:center">dGPU</td>
+</tr>
+</tbody>
+</table>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="http://localhost:1313/posts/2022/04/30/amd-gc_11_0_0/#ip" rel="noopener noreferrer" target="_blank" title="次世代 GPU IPブロックのサポートが進む AMDGPUドライバー ―― GFX11, GC 11.0, MES 11.0, IMU | Coelacanth&rsquo;s Dream">次世代 GPU IPブロックのサポートが進む AMDGPUドライバー ―― GFX11, GC 11.0, MES 11.0, IMU | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/06/21/gfx11-vopd-instruction/"  title="GFX11 でサポートされる VOPD (Dual issue wave32) 命令の範囲と特徴 | Coelacanth&rsquo;s Dream">GFX11 でサポートされる VOPD (Dual issue wave32) 命令の範囲と特徴 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/06/29/gfx11-wmma-inst/"  title="RDNA 3/GFX11 では行列積和演算命令、WMMA (Wave Matrix Multiply-accumulate) をサポート | Coelacanth&rsquo;s Dream">RDNA 3/GFX11 では行列積和演算命令、WMMA (Wave Matrix Multiply-accumulate) をサポート | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://github.com/ROCmSoftwarePlatform/Tensile/pull/1521/commits/3796d41aec358721fced1ed4337c27f69aeda3bb" rel="noopener noreferrer" target="_blank" title="Support Tensile for gfx11 series platform by TonyYHsieh · Pull Request #1521 · ROCmSoftwarePlatform/Tensile">Support Tensile for gfx11 series platform by TonyYHsieh · Pull Request #1521 · ROCmSoftwarePlatform/Tensile</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx11/" title="GFX11">#GFX11</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/linux_kernel/" title="Linux_Kernel">#Linux Kernel</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/phoenix/" title="Phoenix">#Phoenix</a></nav><aside class="article-bottom-misc delay-page">
+  <a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a><a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/09/02/gfx11-l0c-gl1c.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.101.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/phoenix/" class="menu-cat-tag-lower">Phoenix</a>
+  </nav></nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.101.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/phoenix/" class="menu-cat-tag-lower">Phoenix</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
