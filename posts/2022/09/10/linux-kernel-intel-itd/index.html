@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux Kernel に Intel Thread Director を実装するパッチ | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/09/10/linux-kernel-intel-itd/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux Kernel に Intel Thread Director を実装するパッチ | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style">
+<style>
+  html{background:#0b4050 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(17,100,125,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .65em/.7 monospace;transform:rotate(-32deg);padding:0 .2em .2em;vertical-align:bottom;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.67;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(17,100,125,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee2 4%,#0000 96%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0004 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#8001 33.4%,#0801 33.4%,#0801 66.8%,#0081 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.4;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#116078);text-decoration:none;background-image:linear-gradient(to bottom,#0d4e62 0%,#0c4759 100%);contain:content}.sb:active{--sb-brdr:#0d4e62}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .1rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#0ad1c1;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-09-10","dateModified":"2022-09-11","datePublished":"2022-09-10","headline":"Linux Kernel に Intel Thread Director を実装するパッチ","image":"https://www.coelacanth-dream.com/icon.png","name":"Linux Kernel に Intel Thread Director を実装するパッチ"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Co<span class="lain-e">e</span>lacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">Linux Kernel に Intel Thread Director を実装するパッチ</h1>
+
+  <article class="page-main delay-page"><aside class="share-block">
+<button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2022-09-10 23:07 +0900">Post: 2022/09/10 23:07 &#43;0900</time>
+    <aside class="update">Update: 2022/09/11 01:45 &#43;0900</aside>
+  </aside><p>Intel のソフトウェアエンジニア Ricardo Neri 氏により、Linux Kernel のスケジューラに Intel Thread Director (ITD) を実装するパッチが投稿されている。<br>
+Ricardo Neri 氏はこれまでにも Linux Kernel における <em>Alder Lake</em> のスケジューリングを改善するパッチ<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>や HFI (Hardware Feedback Interface) を活用するパッチを投稿している。<br>
+パッチは RFC (Request for Comments) の段階にあり、現在のパッチがそのまま取り込まれるのではなく、いくつかバージョンを重ねた後にメインラインに取り込まれると思われる。</p>
+<ul>
+<li><a href="https://lore.kernel.org/lkml/20220909231205.14009-1-ricardo.neri-calderon@linux.intel.com/" rel="noopener noreferrer" target="_blank" title="[RFC PATCH 00/23] sched: Introduce classes of tasks for load balance - Ricardo Neri">[RFC PATCH 00/23] sched: Introduce classes of tasks for load balance - Ricardo Neri</a></li>
+</ul>
+<p>用語関係としては、<em>Alder Lake</em> からサポートしている EHFI (Enhanced Hardware Feedback Interface) を活用したスケジューリング機能が ITD と認識していたが、パッチでは EHFI を使わず ITD で統一されている。<br>
+おそらくは先に HFI (Hardware Feedback Interface) を活用するパッチがメインラインに取り込まれているため、HFI との混同を避けるために ITD を使っていると思われる。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+HFI は最初の Intel ハイブリッドプロセッサ <em>Lakefield</em> からサポートされており、スケジューラに対するヒントとして、性能と電力効率それぞれの相対的なレベルを示す値 (8-bits, 0-255) を論理プロセッサ (スレッド数) 分提供する機能となる。<br>
+ITD (EHFI) は HFI から実行中のスレッドや命令の種類を示す Class の情報が追加され、各 Class に性能と電力効率のレベルが存在する。<br>
+Class を自動で分類し、Class ごとに性能と電力効率の状況を示すレベルを出力するまでがハードウェア側の機能となる。<br>
+また実行中の Class は <code>MSR (IA32_THREAD_FEEDBACK_CHAR, 0x17D2)</code> から読み取ることができる。<br>
+現在の Class の分類が、次の Class の分類に影響を与えるのを防ぐため、履歴をリセットする <code>HRESET</code> 命令も用意されている。</p>
+<p>ITD (EHFI) の機能フラグビットは <code>CPUID[LEAF=0x6].EAX[Bit23]</code> となり、サポートしてる Class の数は <code>CPUID[LEAF=0x6].ECX[Bit15-08]</code> から確認することができる。</p>
+<blockquote>
+<pre><code>  #define X86_FEATURE_HFI			(14*32+19) /* Hardware Feedback Interface */
+ +#define X86_FEATURE_ITD			(14*32+23) /* Intel Thread Director */
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/lkml/20220909231205.14009-14-ricardo.neri-calderon@linux.intel.com/" rel="noopener noreferrer" target="_blank" title="[RFC PATCH 13/23] x86/cpufeatures: Add the Intel Thread Director feature definitions - Ricardo Neri">[RFC PATCH 13/23] x86/cpufeatures: Add the Intel Thread Director feature definitions - Ricardo Neri</a></cite>
+</div>
+
+</blockquote>
+<h2 id="itd">Intel Thread Director<a href="#itd" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>パッチは ITD (EHFI) から取得できる Class の概念を導入し、SMT (HTT) における <code>ASYM_PACKING (asymmetric packing)</code> と組み合わせることでロードバランサの改善を目的としたものとなる。<br>
+また、Ricardo Neri 氏は、パッチには ITD を使用した Intel ハイブリッドプロセッサの完全な実装 (full implementation) が含まれているとしている。</p>
+<p>パッチでは各 Class の種類について詳細は書かれていないが、Intel が公開している Optimization Reference Manual によれば、以下のような割り当てとなっている。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Intel Thread Director</th>
+<th style="text-align:center">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Class 0</td>
+<td style="text-align:center">Non-vectorized integer or floating-point code.</td>
+</tr>
+<tr>
+<td style="text-align:left">Class 1</td>
+<td style="text-align:center">Integer or floating-point vectorized code,<br>excluding Intel® Deep Learning Boost (Intel® DL Boost) code.</td>
+</tr>
+<tr>
+<td style="text-align:left">Class 2</td>
+<td style="text-align:center">Intel DL Boost code.</td>
+</tr>
+<tr>
+<td style="text-align:left">Class 3</td>
+<td style="text-align:center">Pause (spin-wait) dominated code.</td>
+</tr>
+</tbody>
+</table>
+<p>Class 0 がベクトル化 (SIMD化) されていない整数演算と浮動小数点演算、Class 1 が VNNI (Vector Neural Network Instructions) 系命令は含まないベクトル化 (SIMD化) された整数演算と浮動小数点演算、Class 2 が VNNI系命令、Class 3 がスピン・ウェイト・ループという割り当てとなる。<br>
+VNNI系命令が Class 1 から分離されているのは、推論処理等を E-Core (Atom, <em>Gracemont</em>) で実行することを想定しているのではないかと思われる。<br>
+Hot Chips 33 における <em>Alder Lake</em> と Intel Thread Directore の発表では、Class 0 が主要なアプリケーション、Class 1/2 が新しいアプリケーション (Emerging application) とされていた。</p>
+<p>ITD (EHFI) の実装によりタスクごとに Class の情報が追加されることで、例えば同 P-Core 内の 2-Threads に異なる Class のタスク (Class 0 [Int] + Class 1/2 [SIMD]) を割り当てることで P-Core あたりのスループットを最大化するといったスケジューリングが可能になると思われる。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li>Volume 3B: <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html#inpage-nav-3" rel="noopener noreferrer" target="_blank" title="Intel® 64 and IA-32 Architectures Software Developer Manuals">Intel® 64 and IA-32 Architectures Software Developer Manuals</a></li>
+<li>Optimization Reference Manual: <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html#inpage-nav-5" rel="noopener noreferrer" target="_blank" title="Intel® 64 and IA-32 Architectures Software Developer Manuals">Intel® 64 and IA-32 Architectures Software Developer Manuals</a></li>
+<li>Alder Lake Architecture: <a href="https://hc33.hotchips.org/assets/program/conference/day1/HC2021.C1.1%20Intel%20Efraim%20Rotem.pdf" rel="noopener noreferrer" target="_blank" title="Title of this template file over multiple lines of text - HC2021.C1.1 Intel Efraim Rotem.pdf">Title of this template file over multiple lines of text - HC2021.C1.1 Intel Efraim Rotem.pdf</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2022/03/04/adl-arch-details/"  title="Intel、SDM に Golden Cove、Gracemont アーキテクチャの詳細を追加 | Coelacanth&rsquo;s Dream">Intel、SDM に Golden Cove、Gracemont アーキテクチャの詳細を追加 | Coelacanth&rsquo;s Dream</a></li>
+</ul>
+</section>
+
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/08/28/linux-kernel-alder_lake-sched/"  title="Linux Kernel における Alder Lake のスケジューリング改善 | Coelacanth&rsquo;s Dream">Linux Kernel における Alder Lake のスケジューリング改善 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/01/02/intel-hfi/"  title="Linux Kernel に Intel HFI をサポートするパッチ | Coelacanth&rsquo;s Dream">Linux Kernel に Intel HFI をサポートするパッチ | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/alder_lake/" title="Alder_Lake">#Alder Lake</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/raptor_lake/" title="Raptor_Lake">#Raptor Lake</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/linux_kernel/" title="Linux_Kernel">#Linux Kernel</a></nav><aside class="article-bottom-misc delay-page">
+  <a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a><a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/09/10/linux-kernel-intel-itd.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.102.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-cat-tag-lower">Alder Lake</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/raptor_lake/" class="menu-cat-tag-lower">Raptor Lake</a>
+  </nav></nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.102.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/alder_lake/" class="menu-cat-tag-lower">Alder Lake</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/raptor_lake/" class="menu-cat-tag-lower">Raptor Lake</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
