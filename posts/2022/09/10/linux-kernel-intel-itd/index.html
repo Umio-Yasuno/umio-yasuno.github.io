@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-09-10","dateModified":"2022-09-11","datePublished":"2022-09-10","headline":"Linux Kernel に Intel Thread Director を実装するパッチ","image":"https://www.coelacanth-dream.com/icon.png","name":"Linux Kernel に Intel Thread Director を実装するパッチ"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-09-10","dateModified":"2022-09-15","datePublished":"2022-09-10","headline":"Linux Kernel に Intel Thread Director を実装するパッチ","image":"https://www.coelacanth-dream.com/icon.png","name":"Linux Kernel に Intel Thread Director を実装するパッチ"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Co<span class="lain-e">e</span>lacanth's Dream</a>
@@ -37,16 +37,33 @@
     <main class="text">
       <h1 class="page-title">Linux Kernel に Intel Thread Director を実装するパッチ</h1>
 
-  <article class="page-main delay-page"><aside class="share-block">
-<button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Copy URL" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-09-10 23:07 +0900">Post: 2022/09/10 23:07 &#43;0900</time>
-    <aside class="update">Update: 2022/09/11 02:13 &#43;0900</aside>
+    <aside class="update">Update: 2022/09/15 18:20 &#43;0900</aside>
   </aside><p>Intel のソフトウェアエンジニア Ricardo Neri 氏により、Linux Kernel のスケジューラに Intel Thread Director (ITD) を実装するパッチが投稿されている。<br>
 Ricardo Neri 氏はこれまでにも Linux Kernel における <em>Alder Lake</em> のスケジューリングを改善するパッチ<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>や HFI (Hardware Feedback Interface) を活用するパッチを投稿している。<br>
 パッチは RFC (Request for Comments) の段階にあり、現在のパッチがそのまま取り込まれるのではなく、いくつかバージョンを重ねた後にメインラインに取り込まれると思われる。</p>
 <ul>
 <li><a href="https://lore.kernel.org/lkml/20220909231205.14009-1-ricardo.neri-calderon@linux.intel.com/" rel="noopener noreferrer" target="_blank" title="[RFC PATCH 00/23] sched: Introduce classes of tasks for load balance - Ricardo Neri">[RFC PATCH 00/23] sched: Introduce classes of tasks for load balance - Ricardo Neri</a></li>
 </ul>
+<blockquote>
+<pre><code> +
+ +config INTEL_THREAD_DIRECTOR
+ +	bool &quot;Intel Thread Director&quot;
+ +	depends on INTEL_HFI_THERMAL
+ +	depends on SMP
+ +	select SCHED_TASK_CLASSES
+ +	help
+ +	  Select this option to enable the Intel Thread Director. If selected,
+ +	  hardware classifies tasks based on the type of instructions they
+ +	  execute. It also provides performance capabilities for each class of
+ +	  task. On hybrid processors, the scheduler uses this data to place
+ +	  tasks of classes of higher performance on higher-performnance CPUs.
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/lkml/20220909231205.14009-18-ricardo.neri-calderon@linux.intel.com/" rel="noopener noreferrer" target="_blank" title="[RFC PATCH 17/23] thermal: intel: hfi: Enable the Intel Thread Director - Ricardo Neri">[RFC PATCH 17/23] thermal: intel: hfi: Enable the Intel Thread Director - Ricardo Neri</a></cite>
+</div>
+
+</blockquote>
 <p>用語関係としては、<em>Alder Lake</em> からサポートしている EHFI (Enhanced Hardware Feedback Interface) を活用したスケジューリング機能が ITD と認識していたが、パッチでは EHFI を使わず ITD で統一されている。<br>
 おそらくは先に HFI (Hardware Feedback Interface) を活用するパッチがメインラインに取り込まれているため、HFI との混同を避けるために ITD を使っていると思われる。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 HFI は最初の Intel ハイブリッドプロセッサ <em>Lakefield</em> からサポートされており、スケジューラに対するヒントとして、性能と電力効率それぞれの相対的なレベルを示す値 (8-bits, 0-255) を論理プロセッサ (スレッド数) 分提供する機能となる。<br>
