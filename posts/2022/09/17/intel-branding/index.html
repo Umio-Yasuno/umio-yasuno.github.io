@@ -28,7 +28,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-09-17","dateModified":"2022-09-20","datePublished":"2022-09-17","headline":"Intel Pentium, Celeron ブランドが簡素化され \"Intel\" ブランドに ―― Alder Lake-N から導入か","image":"https://www.coelacanth-dream.com/icon.png","name":"Intel Pentium, Celeron ブランドが簡素化され \"Intel\" ブランドに ―― Alder Lake-N から導入か"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-09-17","dateModified":"2022-09-22","datePublished":"2022-09-17","headline":"Intel Pentium, Celeron ブランドが簡素化され \"Intel\" ブランドに ―― Alder Lake-N から導入か","image":"https://www.coelacanth-dream.com/icon.png","name":"Intel Pentium, Celeron ブランドが簡素化され \"Intel\" ブランドに ―― Alder Lake-N から導入か"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -40,7 +40,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-09-17 11:57 +0900">Post: 2022/09/17 11:57 &#43;0900</time>
-    <aside class="update">Update: 2022/09/20 22:57 &#43;0900</aside>
+    <aside class="update">Update: 2022/09/22 13:00 &#43;0900</aside>
   </aside><p>Intel は 2022/09/16 付で、<em>Intel Pentium, Celeron</em> ブランドが簡素化され、<em>Intel Processor</em> ブランドに置き換えられる。<br>
 この新しいブランディングは 2023年のノートPC向け製品から適用される予定。</p>
 <ul>
@@ -133,11 +133,49 @@
 </tr>
 </tbody>
 </table>
+<p>以前に Intel の Vidya Gopalakrishnan 氏より投稿された Coreboot へのパッチでは、041 (0 P-Core + 4 E-Core + GPU GT1) の設定は TDP 6W とされ、また <em>Pentium</em> と <em>Celeron</em> の 2種類の設定が確認できる。<br>
+そのためブランドとしては消えても、設定の違いとして実質 <em>Pentium</em> と <em>Celeron</em> との違いが存在し続けることも考えられる。</p>
+<blockquote>
+<pre><code> /*
+  * VR Configurations for IA and GT domains for ADL-N SKU's.
+  * Per doc#646929 ADL N Platform Design Guide -&gt; Power_Map_Rev1p0
+  *
+  * +----------------+-----------+-------+-------+---------+-------------+----------+
+  * |      SKU       | Setting   | AC LL | DC LL | ICC MAX | TDC Current | TDC Time |
+  * |                |           |(mOhms)|(mOhms)|   (A)   |     (A)     |   (msec) |
+  * +----------------+-----------+-------+-------+---------+-------------+----------+
+  * | ADL-N 081(15W) |    IA     |  4.7  |  4.7  |    53   |      22     |  28000   |
+  * +                +-----------+-------+-------+---------+-------------+----------+
+  * |                |    GT     |  6.5  |  6.5  |    29   |      22     |  28000   |
+  * +----------------+-----------+-------+-------+---------+-------------+----------+
+  * | ADL-N 081(7W)  |    IA     |  5.0  |  5.0  |    37   |      14     |  28000   |
+  * +                +-----------+-------+-------+---------+-------------+----------+
+  * |                |    GT     |  6.5  |  6.5  |    29   |      14     |  28000   |
+  * +----------------+-----------+-------+-------+---------+-------------+----------+
+  * | ADL-N 041(6W)  |    IA     |  5.0  |  5.0  |    37   |      12     |  28000   |
+  * +  Pentium       +-----------+-------+-------+---------+-------------+----------+
+  * |                |    GT     |  6.5  |  6.5  |    29   |      12     |  28000   |
+  * +----------------+-----------+-------+-------+---------+-------------+----------+
+  * | ADL-N 041(6W)  |    IA     |  5.0  |  5.0  |    37   |      12     |  28000   |
+  * +  Celeron       +-----------+-------+-------+---------+-------------+----------+
+  * |                |    GT     |  6.5  |  6.5  |    26   |      12     |  28000   |
+  * +----------------+-----------+-------+-------+---------+-------------+----------+
+  * | ADL-N 021(6W)  |    IA     |  5.0  |  5.0  |    27   |      10     |  28000   |
+  * +                +-----------+-------+-------+---------+-------------+----------+
+  * |                |    GT     |  6.5  |  6.5  |    23   |      10     |  28000   |
+  * +----------------+-----------+-------+-------+---------+-------------+----------+
+  */
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/&#43;/63369/6/src/soc/intel/alderlake/vr_config.c" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/&#43;/63369/6/src/soc/intel/alderlake/vr_config.c">https://review.coreboot.org/c/coreboot/+/63369/6/src/soc/intel/alderlake/vr_config.c</a></cite>
+</div>
+
+</blockquote>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://www.itmedia.co.jp/news/articles/2209/17/news052.html" rel="noopener noreferrer" target="_blank" title="Intel、「Intel Pentium」と「Intel Celeron」ブランドはただの「Intel」に　2023年から - ITmedia NEWS">Intel、「Intel Pentium」と「Intel Celeron」ブランドはただの「Intel」に　2023年から - ITmedia NEWS</a></li>
 <li><a href="https://www.coelacanth-dream.com/posts/2022/01/12/adl_n-chromebook-board/"  title="Alder Lake-N を搭載する Chromebookボード 「Nissa, Nivviks, Nereid」 | Coelacanth&rsquo;s Dream">Alder Lake-N を搭載する Chromebookボード 「Nissa, Nivviks, Nereid」 | Coelacanth&rsquo;s Dream</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2022/05/19/adl_n-tdp-pl1-pl2/"  title="Alder Lake-N のコア数と TDP (PL1), PL2 | Coelacanth&rsquo;s Dream">Alder Lake-N のコア数と TDP (PL1), PL2 | Coelacanth&rsquo;s Dream</a></li>
 <li><a href="https://ark.intel.com/content/www/us/en/ark/products/codename/147470/products-formerly-alder-lake.html" rel="noopener noreferrer" target="_blank" title="Products formerly Alder Lake">Products formerly Alder Lake</a></li>
 </ul>
 </section>
