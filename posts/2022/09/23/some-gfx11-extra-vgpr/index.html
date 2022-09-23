@@ -40,7 +40,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-09-23 19:39 +0900">Post: 2022/09/23 19:39 &#43;0900</time>
-    <aside class="update">Update: 2022/09/23 20:57 &#43;0900</aside>
+    <aside class="update">Update: 2022/09/23 21:02 &#43;0900</aside>
   </aside><p>AMD の Jay Foad 氏により公開された LLVM へのパッチから、<em>RDNA 3/GFX11</em> のいくつかは通常の <em>RDNA 1/2/3</em> より 50% 大きい物理ベクタレジスタ (VGPR, Vector general-perpose register) を持つことが明らかにされた。</p>
 <ul>
 <li><a href="https://reviews.llvm.org/D134522" rel="noopener noreferrer" target="_blank" title="⚙ D134522 [AMDGPU] Add GFX11 feature for subtargets with extra VGPRs">⚙ D134522 [AMDGPU] Add GFX11 feature for subtargets with extra VGPRs</a></li>
@@ -83,7 +83,7 @@
 
 </blockquote>
 <p><em>RDNA 1/2 アーキテクチャ</em> のベクタレジスタファイルのサイズは、SIMDユニットあたり 128KiB となっている。<br>
-128KiB の内訳はベクタレジスタ幅 32-bit、レーンあたり 1024本、そして SIMD32 であるから 32x1024x32/8。</p>
+128KiB の内訳はベクタレジスタ幅 32-bit、レーンあたり 1024本、そして SIMD32 であるから 32x1024x32/8 となる。</p>
 <p>今回 Jay Foad 氏より公開されたパッチを見るに、<em>Navi31/gfx1100</em> と <em>Navi32/gfx1101</em> ではレーンあたりのベクタレジスタが +50% 増やされ、1536本 (Wave32) となっている。<br>
 ベクタレジスタ幅に変更がなければ、<em>Navi31/gfx1100</em> と <em>Navi32/gfx1101</em> は SIMDユニットあたり 192KiB のベクタレジスタファイルを持つと考えられる。</p>
 <blockquote>
@@ -136,6 +136,36 @@
 <p><em>RDNA 3/GFX11</em> では部分的に構成が異なる SIMDユニットが 2種類存在することになるが、<em>Navi31/gfx1100</em> と <em>Navi32/gfx1101</em> のみに留まっている理由は今回触れられていない。触れられるとしたら正式発表時か HotChips での発表だろう。<br>
 まず考えられる理由はダイサイズへの影響だが、追加のベクタレジスタの変更で興味深いのは実性能への影響と、そして <em>RDNA 3/GFX11</em> の次世代でも GPU によって分けるのか、それともすべてに追加のベクタレジスタを搭載するのか、という点ではないかと考えている。</p>
 <p><em>RDNA 2/GFX10.3</em> では、Infinity Cache/ L3 Cache (MALL) がメモリチャネルあたり 8MiB か 4MiB、あるいは搭載しないという風に複数のキャッシュメモリ構成があったが、<em>RDNA 3/GFX11</em> ではさらに多様化することとなる。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">VGPR per SIMD Unit</th>
+<th style="text-align:center">RDNA 1</th>
+<th style="text-align:center">RDNA 2</th>
+<th style="text-align:center">RDNA 3<br>(extra VGPR)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">VGPR File Size</td>
+<td style="text-align:center">128KiB</td>
+<td style="text-align:center">128KiB</td>
+<td style="text-align:center">192KiB?</td>
+</tr>
+<tr>
+<td style="text-align:left">VGPR per Lane</td>
+<td style="text-align:center">1024</td>
+<td style="text-align:center">1024</td>
+<td style="text-align:center">1536</td>
+</tr>
+<tr>
+<td style="text-align:left">VGPR Alloc Granularity (Wave32)</td>
+<td style="text-align:center">8</td>
+<td style="text-align:center">16</td>
+<td style="text-align:center">24</td>
+</tr>
+</tbody>
+</table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
