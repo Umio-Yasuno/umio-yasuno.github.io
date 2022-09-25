@@ -28,7 +28,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-09-23","dateModified":"2022-09-23","datePublished":"2022-09-23","headline":"追加のベクタレジスタを持つ Navi31/GFX1100 と Navi32/GFX1101","image":"https://www.coelacanth-dream.com/icon.png","name":"追加のベクタレジスタを持つ Navi31/GFX1100 と Navi32/GFX1101"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-09-23","dateModified":"2022-09-25","datePublished":"2022-09-23","headline":"追加のベクタレジスタを持つ Navi31/GFX1100 と Navi32/GFX1101","image":"https://www.coelacanth-dream.com/icon.png","name":"追加のベクタレジスタを持つ Navi31/GFX1100 と Navi32/GFX1101"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -40,22 +40,23 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-09-23 19:39 +0900">Post: 2022/09/23 19:39 &#43;0900</time>
-    <aside class="update">Update: 2022/09/23 21:30 &#43;0900</aside>
+    <aside class="update">Update: 2022/09/25 14:17 &#43;0900</aside>
   </aside><p>AMD の Jay Foad 氏により公開された LLVM へのパッチから、<em>RDNA 3/GFX11</em> のいくつかは通常の <em>RDNA 1/2/3</em> より 50% 大きい物理ベクタレジスタ (VGPR, Vector general-perpose register) を持つことが明らかにされた。</p>
 <ul>
-<li><a href="https://reviews.llvm.org/D134522" rel="noopener noreferrer" target="_blank" title="⚙ D134522 [AMDGPU] Add GFX11 feature for subtargets with extra VGPRs">⚙ D134522 [AMDGPU] Add GFX11 feature for subtargets with extra VGPRs</a></li>
+<li><a href="https://reviews.llvm.org/D134522" rel="noopener noreferrer" target="_blank" title="⚙ D134522 [AMDGPU] Add GFX11 feature for subtargets with more VGPRs">⚙ D134522 [AMDGPU] Add GFX11 feature for subtargets with more VGPRs</a></li>
 </ul>
 <blockquote>
-<pre><code>    Some GFX11 subtargets have 50% extra physical VGPRs compared to standard
-    GFX10/GFX11. This affects occupancy calculations.
+<pre><code>    The full complement of physical VGPRs for GFX11 is 50% more than GFX10.
+    Some subtargets have this, others stay the same as GFX10. This affects
+    occupancy calculations.
 </code></pre>
 <div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D134522" rel="noopener noreferrer" target="_blank" title="⚙ D134522 [AMDGPU] Add GFX11 feature for subtargets with extra VGPRs">⚙ D134522 [AMDGPU] Add GFX11 feature for subtargets with extra VGPRs</a></cite>
 </div>
 
-<pre><code>    +def FeatureGFX11ExtraVGPRs : SubtargetFeature&lt;&quot;gfx11-extra-vgprs&quot;,
-    +  &quot;HasGFX11ExtraVGPRs&quot;,
+<pre><code>    +def FeatureGFX11FullVGPRs : SubtargetFeature&lt;&quot;gfx11-full-vgprs&quot;,
+    +  &quot;HasGFX11FullVGPRs&quot;,
     +  &quot;true&quot;,
-    +  &quot;GFX11 with 50% extra VGPRs and 50% larger allocation granule&quot;
+    +  &quot;GFX11 with 50% more physical VGPRs and 50% larger allocation granule than GFX10&quot;
     +&gt;;
     +
 </code></pre>
@@ -63,20 +64,18 @@
 </div>
 
 </blockquote>
-<h2 id="extra">Extra VGPR<a href="#extra" class="head-cur-link" aria-hidden></a>
+<h2 id="extra">more VGPR<a href="#extra" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>追加のベクタレジスタを持つことを示す <code>FeatureGFX11ExtraVGPRs</code> フラグは <em>Navi31/gfx1100, Navi32/gfx1101</em> に追加されている。一方、<em>Navi32/gfx1102</em> と <em>Phoenix APU/gfx1103</em> には追加されていない。</p>
 <blockquote>
-<pre><code>     def FeatureISAVersion11_0_0 : FeatureSet&lt;
-       !listconcat(FeatureISAVersion11_Common.Features,
-    -    [FeatureUserSGPRInit16Bug])&gt;;
-    +    [FeatureGFX11ExtraVGPRs,
-    +     FeatureUserSGPRInit16Bug])&gt;;
+<pre><code>    def FeatureISAVersion11_0_0 : FeatureSet&lt;
+      !listconcat(FeatureISAVersion11_Common.Features,
+        [FeatureGFX11FullVGPRs,
+         FeatureUserSGPRInit16Bug])&gt;;
     
-     def FeatureISAVersion11_0_1 : FeatureSet&lt;
-       !listconcat(FeatureISAVersion11_Common.Features,
-    -    [])&gt;;
-    +    [FeatureGFX11ExtraVGPRs])&gt;;
+    def FeatureISAVersion11_0_1 : FeatureSet&lt;
+      !listconcat(FeatureISAVersion11_Common.Features,
+        [FeatureGFX11FullVGPRs])&gt;;
 </code></pre>
 <div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D134522" rel="noopener noreferrer" target="_blank" title="⚙ D134522 [AMDGPU] Add GFX11 feature for subtargets with extra VGPRs">⚙ D134522 [AMDGPU] Add GFX11 feature for subtargets with extra VGPRs</a></cite>
 </div>
@@ -93,7 +92,7 @@
       if (!isGFX10Plus(*STI))
         return 256;
       bool IsWave32 = STI-&gt;getFeatureBits().test(FeatureWavefrontSize32);
-      if (STI-&gt;getFeatureBits().test(FeatureGFX11ExtraVGPRs))
+      if (STI-&gt;getFeatureBits().test(FeatureGFX11FullVGPRs))
         return IsWave32 ? 1536 : 768;
       return IsWave32 ? 1024 : 512;
     }
@@ -102,8 +101,8 @@
 </div>
 
 </blockquote>
-<p>ベクタレジスタの割り当ての粒度も変更され、<code>FeatureGFX11ExtraVGPRs</code> が有効な場合は 24 (Wave32) とされている。<br>
-割り当て粒度は <em>RDNA 1/GFX10.1</em> では 8 (Wave32)、<em>RDNA 2/GFX10.3</em> では 16 (Wave32) と毎世代変更されている。<br>
+<p>ベクタレジスタの割り当ての粒度も変更され、<code>FeatureGFX11ExtraVGPRs</code> が有効な場合は 24 DWords (Wave32) とされている。<br>
+割り当て粒度は <em>RDNA 1/GFX10.1</em> では 8 DWords (Wave32)、<em>RDNA 2/GFX10.3</em> では 16 DWords (Wave32) と毎世代変更されている。<br>
 アドレス可能なベクタレジスタは 256 (v0-v255) のまま保たれているため、命令のフォーマットに大きな変更は無く、互換性は保たれている。</p>
 <blockquote>
 <pre><code>    unsigned getVGPRAllocGranule(const MCSubtargetInfo *STI,
@@ -115,7 +114,7 @@
           *EnableWavefrontSize32 :
           STI-&gt;getFeatureBits().test(FeatureWavefrontSize32);
     
-      if (STI-&gt;getFeatureBits().test(FeatureGFX11ExtraVGPRs))
+      if (STI-&gt;getFeatureBits().test(FeatureGFX11FullVGPRs))
         return IsWave32 ? 24 : 12;
     
       if (hasGFX10_3Insts(*STI))
@@ -131,8 +130,7 @@
 <p>ベクタレジスタを増やすことで、レジスタ溢れが発生してキャッシュへの退避が必要になるケースを減らすことができる。</p>
 <p><em>CDNA 1 アーキテクチャ</em> では <code>MFMA (Matrix-Fused-Multiply-Add)</code> 命令専用の SIMDユニット (miSIMD) と一緒に専用の AccVGPR (Accumulation VGPR) を追加し、<em>CDNA 2 アーキテクチャ</em> では通常の VGPR と AccVGPR を統合した。<br>
 <em>RDNA 3/GFX11</em> では <code>MFMA</code> 命令とは別の行列積和演算命令、<code>WMMA (Wave Matrix Multiply-accumulate)</code> 命令に対応するが、<em>CDNA 1/2 アーキテクチャ</em> のように専用のレジスタファイルは追加していない。<br>
-<em>Navi31/gfx1100</em> と <em>Navi32/gfx1101</em> のみではあるが、レーンあたりのレジスタ本数を増やした背景には <code>WMMA</code> 命令の対応が関係しているのかもしれない。<br>
-また、<em>RDNA 3/GFX11</em> では最大 2種類の命令を同時に発行可能にすると思われる <code>VOPD (Dual issue wave32)</code> 命令にも対応する。</p>
+<em>Navi31/gfx1100</em> と <em>Navi32/gfx1101</em> のみではあるが、レーンあたりのレジスタ本数を増やした背景には <code>WMMA</code> 命令の対応が関係しているのかもしれない。</p>
 <p><em>RDNA 3/GFX11</em> では部分的に構成が異なる SIMDユニットが 2種類存在することになるが、<em>Navi31/gfx1100</em> と <em>Navi32/gfx1101</em> のみに留まっている理由は今回触れられていない。触れられるとしたら正式発表時か HotChips での発表だろう。<br>
 まず考えられる理由はダイサイズへの影響だが、追加のベクタレジスタの変更で興味深いのは実性能への影響と、そして <em>RDNA 3/GFX11</em> の次世代でも GPU によって分けるのか、それともすべてに追加のベクタレジスタを搭載するのか、という点ではないかと考えている。</p>
 <p><em>RDNA 2/GFX10.3</em> では、Infinity Cache/ L3 Cache (MALL) がメモリチャネルあたり 8MiB か 4MiB、あるいは APU では搭載しないといったように複数のキャッシュメモリ構成があったが、<em>RDNA 3/GFX11</em> ではさらに多様化することとなる。</p>
@@ -153,7 +151,7 @@
 <td style="text-align:center">192KiB?</td>
 </tr>
 <tr>
-<td style="text-align:left">VGPR per Lane</td>
+<td style="text-align:left">VGPR per Lane (Wave32)</td>
 <td style="text-align:center">1024</td>
 <td style="text-align:center">1024</td>
 <td style="text-align:center">1536</td>
