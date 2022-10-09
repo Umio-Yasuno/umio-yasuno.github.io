@@ -4,7 +4,7 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Raptor Lake-P の PCIe I/O 構成 | Coelacanth&#39;s Dream</title>
+<title>Intel Raptor Lake-P の PCIe I/O 構成 | Coelacanth&#39;s Dream</title>
 
 <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/10/09/rpl-p-pcie/">
 
@@ -15,7 +15,7 @@
 
 <meta property="og:site_name" content="Coelacanth&#39;s Dream">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Raptor Lake-P の PCIe I/O 構成 | Coelacanth&#39;s Dream">
+<meta property="og:title" content="Intel Raptor Lake-P の PCIe I/O 構成 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
 <meta name="description" content="Raptor Lake-S は Alder Lake-S と CPU部を除いて設計がほとんど共通しており、I/O 部も基本同じとされているが、モバイル向けの Raptor Lake-P は Alder Lake-P から変更される可能性がある。 Alder Lake 世代では Alder Lake-S/P/M で">
   <meta property="og:description" content="Raptor Lake-S は Alder Lake-S と CPU部を除いて設計がほとんど共通しており、I/O 部も基本同じとされているが、モバイル向けの Raptor Lake-P は Alder Lake-P から変更される可能性がある。 Alder Lake 世代では Alder Lake-S/P/M で"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
@@ -28,7 +28,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#ffaa37;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#0ad1c1;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-10-09","dateModified":"2022-10-09","datePublished":"2022-10-09","headline":"Raptor Lake-P の PCIe I/O 構成","image":"https://www.coelacanth-dream.com/icon.png","name":"Raptor Lake-P の PCIe I/O 構成"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-10-09","dateModified":"2022-10-09","datePublished":"2022-10-09","headline":"Intel Raptor Lake-P の PCIe I/O 構成","image":"https://www.coelacanth-dream.com/icon.png","name":"Intel Raptor Lake-P の PCIe I/O 構成"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -36,14 +36,15 @@
 <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 
     <main class="text">
-      <h1 class="page-title">Raptor Lake-P の PCIe I/O 構成</h1>
+      <h1 class="page-title">Intel Raptor Lake-P の PCIe I/O 構成</h1>
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-10-09 12:53 +0900">Post: 2022/10/09 12:53 &#43;0900</time>
-    <aside class="update">Update: 2022/10/09 14:17 &#43;0900</aside>
+    <aside class="update">Update: 2022/10/09 14:32 &#43;0900</aside>
   </aside><p><em>Raptor Lake-S</em> は <em>Alder Lake-S</em> と CPU部を除いて設計がほとんど共通しており、I/O 部も基本同じとされているが、モバイル向けの <em>Raptor Lake-P</em> は <em>Alder Lake-P</em> から変更される可能性がある。</p>
 <p><em>Alder Lake</em> 世代では <em>Alder Lake-S/P/M</em> でそれぞれ CPU 側の PCIe I/O 構成が異なり、デスクトップ向けの <em>Alder Lake-S (8P+8E)</em> では 2x Gen5 8-Lane + 1x Gen4 4-Lane、<em>Alder Lake-P (6+8)</em> では 1x Gen5 8-Lane + 2x Gen4 4-Lane、<em>Alder Lake-M (2+8)</em> では 1x Gen4 4-Lane という構成になっている。<br>
 現状 <em>Alder Lake-P</em> の 1x Gen5 8-Lane は <em>H Series</em> でのみ有効とされているが、Gen5 ではなく Gen4 での利用となっている。これはドキュメント中では TTM (time-to-market, 製品化に掛かる期間) のためだとしている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+搭載するデバイスがほとんど固定されているモバイル向けでは、PCIe Gen5 対応デバイスが少ない中わざわざ Gen5 認証を取るコストに対してリターンが見合わないというのもあるだろう。<br>
 また、CPU部が Atom系 (E-Core) <em>Gracemont</em> のみの <em>Alder Lake-N</em> は CPU側 PCIe I/O を持たない。</p>
 <p>先日、2022/09/28 付で「13th Generation Intel® Core™ Processors Datasheet, Volume 1 of 2」が公開された。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 そのドキュメントによれば、<em>Raptor Lake-S</em> は PCIe Root Port (RP) /Root Complex (RC) に割り当てられた DeviceID は違うが、2x Gen5 4-Lane + 1x Gen4 4-Lane と <em>Alder Lake-S</em> と同様の構成を採っている。<br>
@@ -65,7 +66,8 @@ PCIe RC と DeviceID はそれぞれ <code>PCIe RC 010 G5 (DeviceID: 0xA70D), PC
 
 </blockquote>
 <p>このことから、<em>Raptor Lake-P</em> では <em>Alder Lake-S/Raptor Lake-S</em> と同じ PCIe I/O 構成を採っていると考えられる。<br>
-<em>Raptor Lake-P</em> と <em>Alder Lake-P</em> を比較した時、<em>Raptor Lake-P</em> では Gen5 Lane 数が増えると同時に全体の Lane 数も増えたと見ることができる。</p>
+<em>Raptor Lake-P</em> と <em>Alder Lake-P</em> を比較した時、<em>Raptor Lake-P</em> では Gen5 Lane 数が増えると同時に全体の Lane 数も増えたと見ることができる。<br>
+<em>Alder Lake-S/Raptor Lake-S</em> と同様の構成とすることで、開発期間も短縮することができる。</p>
 <p>しかし、<em>Raptor Lake-P</em> では <em>H Series</em> だけでなく <em>U Series</em> でも追加の PCIe Lane が有効化されるのか、また <em>Alder Lake-P</em> では有効化されなかった Gen5 での利用が可能になるかは不明である。</p>
 <table>
 <thead>
