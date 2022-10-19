@@ -42,7 +42,7 @@
     <aside class="update">Update: 2022/03/05 08:19 &#43;0900</aside>
   </aside><p>AMDGPU におけるコンパイラバックエンドとしても採用されている LLVM に、新たな Target/GPU/GFX ID、<em>gfx940</em> を追加するパッチが投稿されている。</p>
 <ul>
-<li><a href="https://reviews.llvm.org/D120688" rel="noopener noreferrer" target="_blank" title>⚙ D120688 [AMDGPU] Add gfx940 target</a></li>
+<li><a href="https://reviews.llvm.org/D120688" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D120688">⚙ D120688 [AMDGPU] Add gfx940 target</a></li>
 </ul>
 <p>ISA として <em>gfx90a</em> は <em>gfx90a/CDNA 2/Aldebaran</em> とほぼ一致し、その特徴である 行列演算命令 <code>MFMA (Matrix-Fused-Multiply-Add)</code> やフルレートFP64演算 (<code>FullRate64Ops</code>)、パックドFP32演算 (<code>FeaturePackedFP32Ops</code>) をサポートしている。<br>
 そのことから、<em>gfx940</em> は CDNA系列の GPU を示す Target/GPU/GFX ID と考えられる。<br>
@@ -54,7 +54,7 @@ GPU としては、コア部やメモリの規模、I/O部の改良がメイン�
    // hasGFX90AInsts is also true.
    bool hasGFX940Insts() const { return GFX940Insts; }
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D120688" rel="noopener noreferrer" target="_blank" title>⚙ D120688 [AMDGPU] Add gfx940 target</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D120688" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D120688">⚙ D120688 [AMDGPU] Add gfx940 target</a></cite>
 </div>
 
 </blockquote>
@@ -68,14 +68,14 @@ GPU としては、コア部やメモリの規模、I/O部の改良がメイン�
  +                                                                        IDs                             names.
  +
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D120688" rel="noopener noreferrer" target="_blank" title>⚙ D120688 [AMDGPU] Add gfx940 target</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D120688" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D120688">⚙ D120688 [AMDGPU] Add gfx940 target</a></cite>
 </div>
 
 </blockquote>
 <p><em>gfx90a</em> と <em>gfx940</em> がサポートする機能の差分が以下。<br>
 主要な命令、機能としては <code>FeatureMadMacF32Insts</code> が削除され、<code>FeatureArchitectedFlatScratch</code> が追加されている。<br>
 <code>FeatureMadMacF32Insts</code> は <code>V_MAD_F32/V_MAC_F32/V_MADAK_F32/V_MADMK_F32</code> 命令をサポートすることを示す機能フラグとなる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> それら命令は <em>RDNA 2/GFX10.3</em> 世代ではサポートされておらず、より丸め誤差、ULP (Unit of Last Place) が小さい <code>V_FMA_F32</code> 命令に置き換えられた。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/12/18/radeonsi-force-fma32/" title>RadeonSIドライバーに FMA32命令を強制するオプションが追加 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/12/18/radeonsi-force-fma32/" title="/posts/2021/12/18/radeonsi-force-fma32/">RadeonSIドライバーに FMA32命令を強制するオプションが追加 | Coelacanth&rsquo;s Dream</a></span>
 
 <em>gfx90a</em> ではまだサポートが残されていたが、<code>FeatureMadMacF32Insts</code> が削除されたことから <em>gfx940</em> では <em>RDNA 2/GFX10.3</em> に揃えたと見られる。<br>
 他にも <em>gfx940</em> は、<em>RDNA系アーキテクチャ</em> では <em>RDNA 1/GFX10.1</em> から対応していた、ソースオペランドの 1つに定数を用いる <code>V_FMAMK_F32/V_FMAAK_F32</code> に対応する。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
@@ -111,8 +111,8 @@ GPU としては、コア部やメモリの規模、I/O部の改良がメイン�
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf" rel="noopener noreferrer" target="_blank" title>&ldquo;AMD Instinct MI200&rdquo; Instruction Set Architecture: Reference Guide - CDNA2_Shader_ISA_4February2022.pdf</a></li>
-<li><a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="noopener noreferrer" target="_blank" title>&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf">&ldquo;AMD Instinct MI200&rdquo; Instruction Set Architecture: Reference Guide - CDNA2_Shader_ISA_4February2022.pdf</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf">&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf</a></li>
 </ul>
 </section>
 
@@ -120,10 +120,10 @@ GPU としては、コア部やメモリの規模、I/O部の改良がメイン�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://github.com/llvm/llvm-project/blob/a5d4f82b7392630e657fc8f4a46b62bfc25c7962/llvm/lib/Target/AMDGPU/AMDGPU.td#L607-L611" rel="noopener noreferrer" target="_blank" title>llvm-project/AMDGPU.td at a5d4f82b7392630e657fc8f4a46b62bfc25c7962 · llvm/llvm-project</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/llvm/llvm-project/blob/a5d4f82b7392630e657fc8f4a46b62bfc25c7962/llvm/lib/Target/AMDGPU/AMDGPU.td#L607-L611" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/blob/a5d4f82b7392630e657fc8f4a46b62bfc25c7962/llvm/lib/Target/AMDGPU/AMDGPU.td#L607-L611">llvm-project/AMDGPU.td at a5d4f82b7392630e657fc8f4a46b62bfc25c7962 · llvm/llvm-project</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://reviews.llvm.org/D120769" rel="noopener noreferrer" target="_blank" title>⚙ D120769 [AMDGPU] gfx940: support V_FMAMK_F32 and V_FMAAK_F32</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://reviews.llvm.org/D120769" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D120769">⚙ D120769 [AMDGPU] gfx940: support V_FMAMK_F32 and V_FMAAK_F32</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

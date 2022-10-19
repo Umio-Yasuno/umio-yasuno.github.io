@@ -46,7 +46,7 @@
 <p>AMDGPU からホスト CPU にメッセージ (割り込み) を送信する命令として <code>S_SENDMSG</code> があるが、<em>GFX11</em> ではメッセージの種類に新しく <code>MSG_DEALLOC_VGPRS</code> をサポートする。<br>
 AMD の Jay Foad 氏により LLVM にパッチが投稿されている。</p>
 <ul>
-<li><a href="https://reviews.llvm.org/D128442" rel="noopener noreferrer" target="_blank" title>⚙ D128442 [AMDGPU] GFX11: automatically release VGPRs at the end of the shader</a></li>
+<li><a href="https://reviews.llvm.org/D128442" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D128442">⚙ D128442 [AMDGPU] GFX11: automatically release VGPRs at the end of the shader</a></li>
 </ul>
 <p><code>MSG_DEALLOC_VGPRS</code> はシェーダーの VGPR (ベクタレジスタ、Vector general-purpose register) の解放に使用できる。<br>
 通常はシェーダーの最後に呼ばれる <code>S_ENDPGM</code> 命令で VGPR が解放されるが、<code>S_ENDPGM</code> の前に <code>MSG_DEALLOC_VGPRS</code> を送信することで、<code>S_ENDPGM</code> の段で VMEM (Vector Memory) への Store 処理の完了を待機する必要がある場合に、<code>MSG_DEALLOC_VGPRS</code> によって先に VGPR を解放できるため、システム全体のパフォーマンスが向上するとしている。</p>
@@ -56,13 +56,13 @@ AMD の Jay Foad 氏により LLVM にパッチが投稿されている。</p>
 <code>S_PACK</code> 系の命令では 2つのソースレジスタの上位 (H, High) 16-bit か下位 (Low, L) 16-bit をそれぞれ指定して、1つのレジスタに詰め込む (パック) する。<br>
 <em>RDNA 2/GFX10.3</em> 世代では <code>S_PACK_{LL,LH,HH}</code> をサポートしており、<em>GFX11</em> 世代でサポートしていなかった <code>S_PACK_HL</code> が追加される形となる。</p>
 <ul>
-<li><a href="https://reviews.llvm.org/D128527" rel="noopener noreferrer" target="_blank" title>⚙ D128527 [AMDGPU] Use GFX11 S_PACK_HL instruction in more cases</a></li>
+<li><a href="https://reviews.llvm.org/D128527" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D128527">⚙ D128527 [AMDGPU] Use GFX11 S_PACK_HL instruction in more cases</a></li>
 </ul>
 <blockquote>
 <pre><code> +  /// Return true if the target has the S_PACK_HL_B32_B16 instruction.
  +  bool hasSPackHL() const { return GFX11Insts; }
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c" rel="noopener noreferrer" target="_blank" title>[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c">[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279</a></cite>
 </div>
 
 </blockquote>
@@ -70,8 +70,8 @@ AMD の Jay Foad 氏により LLVM にパッチが投稿されている。</p>
 </h2>
 <p>これまで AMDGPU 向けには Cluster loads のみが有効化されていたが、<em>GFX11</em> では Cluster stores も有効化される。</p>
 <ul>
-<li><a href="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c" rel="noopener noreferrer" target="_blank" title>[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279</a></li>
-<li><a href="https://reviews.llvm.org/D128517" rel="noopener noreferrer" target="_blank" title>⚙ D128517 [AMDGPU] Cluster stores as well as loads for GFX11</a></li>
+<li><a href="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c">[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279</a></li>
+<li><a href="https://reviews.llvm.org/D128517" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D128517">⚙ D128517 [AMDGPU] Cluster stores as well as loads for GFX11</a></li>
 </ul>
 <blockquote>
 <pre><code> +
@@ -79,7 +79,7 @@ AMD の Jay Foad 氏により LLVM にパッチが投稿されている。</p>
  +  // cluster stores as well as loads.
  +  bool shouldClusterStores() const { return getGeneration() &gt;= GFX11; }
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c" rel="noopener noreferrer" target="_blank" title>[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/commit/18ed279a3a4aa830830e5cfee3e3824f91c3ca6c">[AMDGPU] gfx11 subtarget features & early tests · llvm/llvm-project@18ed279</a></cite>
 </div>
 
 </blockquote>
@@ -91,9 +91,9 @@ Cluster stores を無効化するパッチは 2020/08/07 に投稿されてお�
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://developer.amd.com/resources/developer-guides-manuals/" rel="noopener noreferrer" target="_blank" title>Developer Guides, Manuals & ISA Documents - AMD</a>
+<li><a href="https://developer.amd.com/resources/developer-guides-manuals/" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/resources/developer-guides-manuals/">Developer Guides, Manuals & ISA Documents - AMD</a>
 <ul>
-<li><a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="noopener noreferrer" target="_blank" title>&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf">&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf</a></li>
 </ul>
 </li>
 </ul>
@@ -103,10 +103,10 @@ Cluster stores を無効化するパッチは 2020/08/07 に投稿されてお�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://reviews.llvm.org/D26414" rel="noopener noreferrer" target="_blank" title>⚙ D26414 AMDGPU: Enable store clustering</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://reviews.llvm.org/D26414" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D26414">⚙ D26414 AMDGPU: Enable store clustering</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://reviews.llvm.org/D85530" rel="noopener noreferrer" target="_blank" title>⚙ D85530 [AMDGPU] Don&rsquo;t cluster stores</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://reviews.llvm.org/D85530" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D85530">⚙ D85530 [AMDGPU] Don&rsquo;t cluster stores</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

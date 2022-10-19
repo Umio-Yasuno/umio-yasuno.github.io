@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMD64 Architecture Programmer’s Manual アップデート、CPUID に非対称トポロジ関連の項目が追加 | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/10/19/amd64-rev3_34-cpuid/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AMD64 Architecture Programmer’s Manual アップデート、CPUID に非対称トポロジ関連の項目が追加 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="AMD が公開している AMD64 Architecture Programmer’s Manual が Revision 3.34 にアップデートされ、CPUID 命令が返す機能フラグや情報の項目が追加された。 CPUID 命令は、実行した CPU の各種情報を">
+  <meta property="og:description" content="AMD が公開している AMD64 Architecture Programmer’s Manual が Revision 3.34 にアップデートされ、CPUID 命令が返す機能フラグや情報の項目が追加された。 CPUID 命令は、実行した CPU の各種情報を"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, CPUID">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.67;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.4;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .1rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-10-19","dateModified":"2022-10-19","datePublished":"2022-10-19","headline":"AMD64 Architecture Programmer’s Manual アップデート、CPUID に非対称トポロジ関連の項目が追加","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD64 Architecture Programmer’s Manual アップデート、CPUID に非対称トポロジ関連の項目が追加"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">AMD64 Architecture Programmer’s Manual アップデート、CPUID に非対称トポロジ関連の項目が追加</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2022-10-19 01:49 +0900">Post: 2022/10/19 01:49 &#43;0900</time>
+    <aside class="update">Update: 2022/10/19 12:14 &#43;0900</aside>
+  </aside><p>AMD が公開している AMD64 Architecture Programmer’s Manual が Revision 3.34 にアップデートされ、<code>CPUID</code> 命令が返す機能フラグや情報の項目が追加された。<br>
+<code>CPUID</code> 命令は、実行した CPU の各種情報を示す値を <code>EAX, EBX, ECX, EDX</code> レジスタに出力する命令であり、内容は実行時の <code>EAX, ECX</code> レジスタの値で異なる。<br>
+実行時の <code>EAX, ECX</code> レジスタは <code>Leaf, Sub-Leaf</code> とも呼ばれる。<br>
+CPU の識別子 (Family, Model, Stepping)、機能フラグ、命令のサポート有無、アドレスサイズ等を確認するのにも使われる基本的な命令。</p>
+<p>主な AMD CPU と Intel CPU とで実装の有無が異なる機能もあるが、機能フラグやシステム部で使うことを想定した機能は基本共通している。<br>
+<strong>AMD64 Architecture Programmer’s Manual Processor</strong> に掲載されていないが、<strong>Intel® Architecture Instruction Set Extensions Programming Reference</strong> では定義されている機能が AMD CPU に実装されていることもある。<br>
+AMD CPU のドキュメントとしては、AMD が別に公開している <strong>Programming Reference Manual</strong> の方が優先される。</p>
+<p><strong>AMD64 Architecture Programmer’s Manual Processor</strong> の内容から、将来の AMD CPU に実装される機能の推測はできるが、それがいつになるかは当然不明であるし、また確実という訳でもないことを留意する必要がある。</p>
+<h2 id="ext-topo">Fn 8000_0026h - Extended CPU Topology<a href="#ext-topo" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>今回のアップデートで CPU トポロジ情報を返す <code>Fn 8000_0026h - Extended CPU Topology</code> が追加された。<br>
+同様の機能は Intel CPU では <code>Fn Bh, Fn 1Fh</code> に実装されている。</p>
+<p><code>Fn 1Fh, Fn 8000_0026h</code> はどちらも <code>Fn Bh</code> をベースにしているが、<code>Fn 8000_0026h</code> では <code>Fn Bh</code> で Reserved (予約部) とされていた部分に定義を追加している。<br>
+また、<code>Fn Bh, Fn 1Fh</code> は主に Intel CPU で実装されてきたこともあり、<code>Fn 1Fh</code> は <code>Fn Bh</code> の上位互換 (super-set) となっており、トポロジのレベルタイプと値の関係を合わせているが、<code>Fn 8000_0026h</code> では異なっている。<br>
+トポロジのレベルタイプは <code>ECX[Bit15:8]</code> に定義されている。</p>
+<p>返す CPU トポロジ情報とそのトポロジのレベルは <code>Sub-Leaf (ECX)</code> によって変わるが、<code>Sub-Leaf (ECX)</code> とトポロジのレベルタイプを示す値が直接一致する訳ではないことに注意。</p>
+<p><code>Fn Bh</code> は <strong>AMD64 Architecture Programmer’s Manual Processor</strong> に載っていないが、AMD CPU では <em>Zen 2 アーキテクチャ</em> の世代から実装されている。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Value(ECX[Bit15:8]) - Level Type</th>
+<th style="text-align:center">Fn Bh</th>
+<th style="text-align:center">Fn 1Fh</th>
+<th style="text-align:center">Fn 8000_0026h</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">0h</td>
+<td style="text-align:center">Reserved</td>
+<td style="text-align:center">Reserved</td>
+<td style="text-align:center">Reserved</td>
+</tr>
+<tr>
+<td style="text-align:left">1h</td>
+<td style="text-align:center">SMT</td>
+<td style="text-align:center">SMT</td>
+<td style="text-align:center">Core</td>
+</tr>
+<tr>
+<td style="text-align:left">2h</td>
+<td style="text-align:center">Core</td>
+<td style="text-align:center">Core</td>
+<td style="text-align:center">Complex</td>
+</tr>
+<tr>
+<td style="text-align:left">3h</td>
+<td style="text-align:center">Reserved</td>
+<td style="text-align:center">Module</td>
+<td style="text-align:center">Die</td>
+</tr>
+<tr>
+<td style="text-align:left">4h</td>
+<td style="text-align:center">Reserved</td>
+<td style="text-align:center">Tile</td>
+<td style="text-align:center">Socket</td>
+</tr>
+<tr>
+<td style="text-align:left">5h</td>
+<td style="text-align:center">Reserved</td>
+<td style="text-align:center">Die</td>
+<td style="text-align:center">Reserved</td>
+</tr>
+</tbody>
+</table>
+<p><code>Fn 8000_0026h</code> では Intel CPU におけるハイブリッドアーキテクチャ、非対称トポロジに関する情報も定義されている。一部は Intel CPU に合わせた仕様になっているが、割り当てられたビット位置、ビット範囲が異なっているものもある。<br>
+ハイブリッドアーキテクチャの情報は、Intel CPU では <code>Fn 1Ah</code> に定義されており、<code>EAX[Bit31:24]</code> が CoreType、<code>EAX[Bit24:0]</code> が NativeModelID と定義されているが、<br>
+<code>Fn 8000_0026</code> では <code>EBX[Bit31-28]</code> が CoreType、<code>EBX[Bit27:24]</code> が NativeModelID と定義されている。<br>
+また <code>Fn 8000_0026</code> では、電力効率のランキング順位を示す PwrEfficiencyRanking が <code>EBX[Bit23:16]</code> に定義されている。PwrEfficiencyRanking の値が低いほど、消費電力と性能が低いことを示す。</p>
+<p>非対称トポロジに関する機能フラグは <code>EAX</code> レジスタに定義されている。<br>
+AsymmetricTopology (<code>EAX[Bit31]</code>) は現在のトポロジレベルにおいて、すべてのトポロジが同じスレッド数 (論理プロセッサ数, NumLogProc) を報告しないことを示す。これはトポロジのレベルタイプに Complex が定義されていることと合わせて、仮定ではあるが 4C/8T と 8C/16T のトポロジが同じ CPU に混在する場合等に立てられるフラグと思われる。<br>
+HeterogeneousCores (<code>EAX[Bit30]</code>) は現在のトポロジレベルに異なる CoreType が存在することを示す。<br>
+実質、ハイブリッドアーキテクチャであることを示す機能フラグと言うことができ、同様の機能フラグは Intel CPU では <code>Fn 7h (EDX[Bit15])</code> に定義されている。<br>
+EfficiencyRankingAvailable (<code>EAX[Bit29]</code>) は先の PwrEfficiencyRanking をサポートしていることを示す機能フラグとなる。</p>
+<h2 id="cpuiduserdis">CpuidUserDis<a href="#cpuiduserdis" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><code>Fn 8000_0021 (EAX[Bit17])</code> に CpuidUserDis の機能フラグが新たに定義された。<br>
+CpuidUserDis は非特権ソフトウェア (CPL &gt; 0) での <code>CPUID</code> 命令無効化をサポートしていることを示すが、<code>CPUID</code> 命令は通常のソフトウェアでも機能フラグの確認のため使われる命令であり、どういったケースを想定しているのかは不明。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://www.amd.com/system/files/TechDocs/24594.pdf" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/system/files/TechDocs/24594.pdf">AMD64 Architecture Programmer’s Manual, Volume 3: General-Purpose and System Instructions, 24594 - 24594.pdf</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/content-details/671368/intel-architecture-instruction-set-extensions-programming-reference.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/content-details/671368/intel-architecture-instruction-set-extensions-programming-reference.html">Intel® Architecture Instruction Set Extensions Programming Reference</a></li>
+</ul>
+</section>
+
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cpuid/" title="CPUID">#CPUID</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/10/19/amd64-rev3_34-cpuid.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.104.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cpuid/" class="menu-cat-tag-lower">CPUID</a>
+  </nav></nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.104.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cpuid/" class="menu-cat-tag-lower">CPUID</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>

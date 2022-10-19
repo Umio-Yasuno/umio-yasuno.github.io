@@ -43,19 +43,19 @@
   </aside><p>オープンソースで開発される Intel GPU のシェーダーコンパイラバックエンドに、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> GPU の ISA (Instruction Set Architecture) をサポートするパッチ (マージリクエスト) が投稿された。<br>
 偶然だが、そのマージリクエストが Mesa3D の Gitlabレポジトリにおける 1000個目のマージリクエストであり、次世代の Intel GPU をサポートするパッチは記念としてぴったりと言えるかもしれない。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000" rel="noopener noreferrer" target="_blank" title>intel: Implement compiler support for XeHP graphics platforms. (!10000) · Merge Requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000">intel: Implement compiler support for XeHP graphics platforms. (!10000) · Merge Requests · Mesa / mesa · GitLab</a></li>
 </ul>
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> は、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> から対応していた <code>DP4A</code> 命令に加え、BFloat16フォーマットや倍精度演算 (DP) に対応した機械学習に最適化されたアーキテクチャである。</p>
 <h2 id="xehp-eu"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span> から拡張される <span class="xe-gpu-arch">X<sup>e</sup>-HP</span> EU<a href="#xehp-eu" class="head-cur-link" aria-hidden></a>
 </h2>
-<p>パッチを投稿した Intel の <a href="https://gitlab.freedesktop.org/currojerez" rel="noopener noreferrer" target="_blank" title>Francisco Jerez</a> 氏によるコメントでは、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> EU は複数の非同期ALUパイプラインを持ち、<br>
+<p>パッチを投稿した Intel の <a href="https://gitlab.freedesktop.org/currojerez" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/currojerez">Francisco Jerez</a> 氏によるコメントでは、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> EU は複数の非同期ALUパイプラインを持ち、<br>
 それら複数のパイプラインは、既存の FPUパイプライン <span class="complement"><em>Tiger Lake</em>, <em>Rocket Lake</em>, <em>Alder Lake</em>, <em>DG1</em> などに採用されている <span class="xe-gpu-arch">X<sup>e</sup>-LP</span> EU のことを指していると思われる</span>
  から複数の非同期パイプラインに分割したとも説明している。<br>
 パイプラインは浮動小数点 (FP)、整数 (Int)、倍精度浮動小数点 (DP) に分けられる。</p>
 <p>また、パイプライン間のデータ依存関係についてはコンパイラ側で制御、管理するとし、そのためのパッチも含まれている。</p>
 <blockquote>
 <p>This MR implements compiler support for the ISA of the Intel XeHP family of GPUs. The most invasive compiler changes relative to previous generations are the result of the preexisting FPU pipeline being split into multiple asynchronous pipelines (a floating-point, integer and long AKA double-precision pipeline), which is highly visible to software because the hardware is not able to guarantee data coherency across instructions (already since TGL), so the compiler is now responsible for keeping track of which pipeline will be executing which instruction and specifying synchronization primitives in order to resolve any cross-pipeline dependencies.</p>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000/" rel="noopener noreferrer" target="_blank" title>intel: Implement compiler support for XeHP graphics platforms. (!10000) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000/" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000/">intel: Implement compiler support for XeHP graphics platforms. (!10000) · Merge Requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 <pre><code>   The execution units of XeHP platforms have multiple asynchronous ALU
@@ -66,18 +66,18 @@
    synchronization annotations whenever necessary, which are encoded as
    some additional bits of the SWSB instruction field.
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000/diffs?commit_id=53af9902f1d9748fe4856e08203a7e4d2129ea72" rel="noopener noreferrer" target="_blank" title>intel: Implement compiler support for XeHP graphics platforms. (!10000) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000/diffs?commit_id=53af9902f1d9748fe4856e08203a7e4d2129ea72" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000/diffs?commit_id=53af9902f1d9748fe4856e08203a7e4d2129ea72">intel: Implement compiler support for XeHP graphics platforms. (!10000) · Merge Requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> EU (Execution Unit) は以下のように、命令を発行する Issue Port 0 は FP/INT演算器を、Port 1 は三角関数等の超越関数を実行する EM (Extended Math)演算器を担当する構成となっている。<br>
-<a href="https://gitlab.freedesktop.org/currojerez" rel="noopener noreferrer" target="_blank" title>Francisco Jerez</a> 氏のコメントと合わせれば、 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> EU では、EM演算器で処理される演算命令を除いて、FP/INT が同一のパイプラインでインオーダー方式に処理するアーキテクチャだったと説明できる。</p>
+<a href="https://gitlab.freedesktop.org/currojerez" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/currojerez">Francisco Jerez</a> 氏のコメントと合わせれば、 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> EU では、EM演算器で処理される演算命令を除いて、FP/INT が同一のパイプラインでインオーダー方式に処理するアーキテクチャだったと説明できる。</p>
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2021/04/02/xe-lp-eu.webp" target="_blank"  >
   <img src="https://www.coelacanth-dream.com/image/2021/04/02/xe-lp-eu.webp"
       alt="画像出典: HotChips2020_GPU_Intel_Xe_David_Blythe.pdf"/>
 </a><figcaption>
-      <h4 class="fig-title">Xe-LP Execution Unit</h4><p>画像出典: <a href="https://www.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Intel_Xe_David_Blythe.pdf" rel="noopener noreferrer" target="_blank" title>HotChips2020_GPU_Intel_Xe_David_Blythe.pdf</a></p>
+      <h4 class="fig-title">Xe-LP Execution Unit</h4><p>画像出典: <a href="https://www.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Intel_Xe_David_Blythe.pdf" rel="noopener noreferrer" target="_blank" title="https://www.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Intel_Xe_David_Blythe.pdf">HotChips2020_GPU_Intel_Xe_David_Blythe.pdf</a></p>
   </figcaption>
 </figure>
 
@@ -101,7 +101,7 @@ Issue Port が増えればその分多く演算命令を発行でき、多くの
     * pipelines is intended.
     */
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000/diffs?commit_id=53af9902f1d9748fe4856e08203a7e4d2129ea72#diff-content-aa711c4d6f41feb214c7f983adc5e0e3e95740e0" rel="noopener noreferrer" target="_blank" title>intel: Implement compiler support for XeHP graphics platforms. (!10000) · Merge Requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000/diffs?commit_id=53af9902f1d9748fe4856e08203a7e4d2129ea72#diff-content-aa711c4d6f41feb214c7f983adc5e0e3e95740e0" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/10000/diffs?commit_id=53af9902f1d9748fe4856e08203a7e4d2129ea72#diff-content-aa711c4d6f41feb214c7f983adc5e0e3e95740e0">intel: Implement compiler support for XeHP graphics platforms. (!10000) · Merge Requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
@@ -136,17 +136,17 @@ Issue Port が増えればその分多く演算命令を発行でき、多くの
 Intel Architecture Day 2020 で披露されたデモでは、1タイル (512EU) 構成の <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> が 1300MHz で動作し、約10.6 TFLOPs というピークFP32演算性能を達成していた。<br>
 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> の同様の 8-wide FPパイプライン 1ポートという構成では、ピークFP32演算性能は約5.3TFLOPs と一致しなかったが、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> で増設された倍精度演算器のパイプラインも単精度演算器として活用していたとすると約10.6TFLOPsというデモの性能と近い数字が出る。<br>
 パイプラインあたりの演算幅を増やした可能性もあるが、今回のパッチで明かされた情報と合わせて上のような推測もできる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu" title>Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu" title="/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth&rsquo;s Dream</a></span>
 
 ゲーミング向け <span class="xe-gpu-arch">X<sup>e</sup></span> アーキテクチャ <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> の存在が明らかにされているが、 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> と <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> どちらの EU構成を踏襲するかはまだ分かっていない。</p>
 <p>パッチでは他に、ハードウェアから整数除算演算器が外されたことや、倍精度演算対応のためと思われる 64-bitレジスタについても触れられている。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://www.eetimes.com/intels-xe-gpus-from-laptops-to-supercomputers/2/" rel="noopener noreferrer" target="_blank" title>Intel’s Xe GPUs — from Laptops to Supercomputers | EE Times</a></li>
-<li><a href="https://www.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Intel_Xe_David_Blythe.pdf" rel="noopener noreferrer" target="_blank" title>HotChips2020_GPU_Intel_Xe_David_Blythe.pdf</a></li>
-<li><a href="https://archive.fosdem.org/2016/schedule/event/i965_nir/attachments/slides/1113/export/events/attachments/i965_nir/slides/1113/nir_vec4_i965_fosdem_2016_rc1.pdf" rel="noopener noreferrer" target="_blank" title>A case for a faster and simpler driverNIR on the Mesa i965 backend</a></li>
-<li><a href="https://andosprocinfo.web.fc2.com/Myweb/wadai20/20201219.htm" rel="noopener noreferrer" target="_blank" title>https://andosprocinfo.web.fc2.com/Myweb/wadai20/20201219.htm</a></li>
+<li><a href="https://www.eetimes.com/intels-xe-gpus-from-laptops-to-supercomputers/2/" rel="noopener noreferrer" target="_blank" title="https://www.eetimes.com/intels-xe-gpus-from-laptops-to-supercomputers/2/">Intel’s Xe GPUs — from Laptops to Supercomputers | EE Times</a></li>
+<li><a href="https://www.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Intel_Xe_David_Blythe.pdf" rel="noopener noreferrer" target="_blank" title="https://www.hotchips.org/assets/program/conference/day1/HotChips2020_GPU_Intel_Xe_David_Blythe.pdf">HotChips2020_GPU_Intel_Xe_David_Blythe.pdf</a></li>
+<li><a href="https://archive.fosdem.org/2016/schedule/event/i965_nir/attachments/slides/1113/export/events/attachments/i965_nir/slides/1113/nir_vec4_i965_fosdem_2016_rc1.pdf" rel="noopener noreferrer" target="_blank" title="https://archive.fosdem.org/2016/schedule/event/i965_nir/attachments/slides/1113/export/events/attachments/i965_nir/slides/1113/nir_vec4_i965_fosdem_2016_rc1.pdf">A case for a faster and simpler driverNIR on the Mesa i965 backend</a></li>
+<li><a href="https://andosprocinfo.web.fc2.com/Myweb/wadai20/20201219.htm" rel="noopener noreferrer" target="_blank" title="https://andosprocinfo.web.fc2.com/Myweb/wadai20/20201219.htm">https://andosprocinfo.web.fc2.com/Myweb/wadai20/20201219.htm</a></li>
 </ul>
 </section>
 
@@ -154,10 +154,10 @@ Intel Architecture Day 2020 で披露されたデモでは、1タイル (512EU) 
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://news.mynavi.jp/article/20191024-912855/" rel="noopener noreferrer" target="_blank" title>NVIDIAのレイトレーシングGPU「Turing」を読み解く - Hot Chips 31 (1) | TECH+</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://news.mynavi.jp/article/20191024-912855/" rel="noopener noreferrer" target="_blank" title="https://news.mynavi.jp/article/20191024-912855/">NVIDIAのレイトレーシングGPU「Turing」を読み解く - Hot Chips 31 (1) | TECH+</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.eetimes.com/intels-xe-gpus-from-laptops-to-supercomputers/2/" rel="noopener noreferrer" target="_blank" title>Intel’s Xe GPUs — from Laptops to Supercomputers | EE Times</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.eetimes.com/intels-xe-gpus-from-laptops-to-supercomputers/2/" rel="noopener noreferrer" target="_blank" title="https://www.eetimes.com/intels-xe-gpus-from-laptops-to-supercomputers/2/">Intel’s Xe GPUs — from Laptops to Supercomputers | EE Times</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

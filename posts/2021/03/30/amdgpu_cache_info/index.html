@@ -44,15 +44,15 @@
 キャッシュ情報が追加されたのは、Kernelドライバーでも KFD (Kernel Fusion Driver) の部分であり、KFD は各種ROCmソフトウェアを動作させるためのドライバーとして機能する。<br>
 これまでは CU ごとに持つプライベートな L1ベクタキャッシュの情報だけだったが、今回のパッチにより、複数の CU で共有するスカラL1データ/命令キャッシュ、L2データキャッシュ、そして <em>RDNA/GFX10</em> 世代から追加された GL1キャッシュ、 <em>RDNA 2/GFX10.3</em> 世代から追加された L3データキャッシュ/Infinity Cache の情報が追加された。</p>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noopener noreferrer" target="_blank" title>[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></li>
 </ul>
 <section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
-<li><a href="#aldebaran" title>Aldebaran のキャッシュ構成</a></li>
-<li><a href="#vgh" title>VanGogh のキャッシュ構成と CU数　―― GL1キャッシュは持つが L3キャッシュは持たず</a></li>
-<li><a href="#dimgrey_cavefish" title>Dimgrey Cavefish/Navi23 のキャッシュ構成　―― 32MiB の L3キャッシュ</a></li>
-<li><a href="#cache-info" title>AMD GPU cache info</a></li>
+<li><a href="#aldebaran" title="#aldebaran">Aldebaran のキャッシュ構成</a></li>
+<li><a href="#vgh" title="#vgh">VanGogh のキャッシュ構成と CU数　―― GL1キャッシュは持つが L3キャッシュは持たず</a></li>
+<li><a href="#dimgrey_cavefish" title="#dimgrey_cavefish">Dimgrey Cavefish/Navi23 のキャッシュ構成　―― 32MiB の L3キャッシュ</a></li>
+<li><a href="#cache-info" title="#cache-info">AMD GPU cache info</a></li>
 </ul>
 </section>
 
@@ -63,7 +63,7 @@
 L2データキャッシュは 8192KiB (8MiB)、CU 14基で共有すると記述されているが、ここでの CU は SE (ShaderEngine) あたりの数であり、全体の規模ではないと思われる。<br>
 しかし、<strong>Radeon Instinct MI50/60</strong> のベースとなる <em>Vega20</em> や <em>CDNA アーキテクチャ</em> を採用する <em>Arcturus/MI100</em> が SE あたりの CU 16基、というバランスを採り続けてきたことを考えると、それよりもわずかに少ない CU 14基となるのは興味深い点ではある。<br>
 それでも、<em>Aldebaran</em> では CU あたりの演算性能が大幅に強化されており、SE あたりの CU数が前世代よりも 2基減ったとしても、SE のような広い範囲で見た演算性能は前世代よりもずっと大きくなる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/" title>LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/" title="/posts/2021/02/19/llvm-gfx90a/">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth&rsquo;s Dream</a></span>
 
 また、スカラL1データ/命令キャッシュは 2基で共有するため、それらキャッシュの総数は他 <em>Vega/GFX9</em> 系よりも増えることになる。</p>
 <blockquote>
@@ -106,14 +106,14 @@ L2データキャッシュは 8192KiB (8MiB)、CU 14基で共有すると記述�
    +	},
    +};
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noopener noreferrer" target="_blank" title>[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
 </div>
 
 </blockquote>
 <p>今回のパッチでは <em>Vega20</em> と <em>Arcturus</em> のキャッシュ情報を共通のものとしており、そのためか <em>Vega20</em> の L2キャッシュサイズが 8192KiB(8MiB) になっているが、<em>Vega20</em> は 4MiB、<em>Arcturus</em> は 8MiB というのが正しいように思われる。</p>
 <p><em>Aldebaran</em> では <em>Arcturus</em> から L2キャッシュサイズが変わらないこととなるが、L2キャッシュラインサイズを変更することは明らかにされており、<em>RDNA/2 アーキテクチャ</em> と同じ 128Byte になる。<br>
 キャッシュラインサイズを大きくすることは、メモリアクセスのデータ単位を大きくすることとなり、少ないメモリリクエストで広いメモリ帯域を活用することができる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/#tcc-line-128B" title>RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/03/04/aldebaran-umd/#tcc-line-128B" title="/posts/2021/03/04/aldebaran-umd/#tcc-line-128B">RadeonSI に Aldebaran GPU のサポートを追加するパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <h2 id="vgh">VanGogh のキャッシュ構成と CU数　―― GL1キャッシュは持つが L3キャッシュは持たず<a href="#vgh" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -136,7 +136,7 @@ L2キャッシュは 1024KiB (1MiB) であり、これは近年の <em>Vega/GFX9
 しかし、L2キャッシュ 1MiB ということから、<em>Vega/GFX9</em> 世代 APU からそう CU数を増やすことはせず、SE あたり SA 1基という構成を採る可能性は考えられる。</p>
 <p>そして、<em>VanGogh APU</em> は GPU部に <em>RDNA 2 アーキテクチャ</em> を採用するが、L3キャッシュ/Infinity Cache は持たない。<br>
 このことはディスプレイエンジン周りのドライバーコードから読み取ることができ、正確な情報と思われる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size" title>Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size" title="/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <p><em>RDNA 2アーキテクチャ</em> でありながら L3キャッシュ/Infinity Cache を持たず、また SE あたり SA 1基という構成 <span class="complement">を採る可能性がある</span>
  からは、コストを重視した APU/SoC という設計思想が窺える。</p>
@@ -189,7 +189,7 @@ L2キャッシュは 1024KiB (1MiB) であり、これは近年の <em>Vega/GFX9
    +	},
    +};
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noopener noreferrer" target="_blank" title>[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
 </div>
 
 </blockquote>
@@ -198,7 +198,7 @@ L2キャッシュは 1024KiB (1MiB) であり、これは近年の <em>Vega/GFX9
 <p><em>Dimgrey Cavefish/Navi23</em> のキャッシュ情報も追加されており、そこからはメモリバス幅が読み取れる。</p>
 <p><em>Dimgrey Cavefish</em> は L2キャッシュ 2048KiB (2MiB)、L3キャッシュ/Infinity Cache 32MiB を持つ。<br>
 L3キャッシュ/Infinity Cache については、ディスプレイエンジン周りのドライバーコードから、メモリチャネルあたり 4MiB ということが読み取れ、他 <em>RDNA 2</em> dGPU同様に GDDR6メモリ (1ch = 16-bit) だとするとメモリバス幅は 128-bit だと考えられる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size" title>Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size" title="/posts/2021/03/04/dimgrey_cavefish-4mb-mall-per-ch/#mall-size">Dimgrey Cavefish/Navi23 の Infinity Cache はメモリチャネルあたり 4MiB | Coelacanth&rsquo;s Dream</a></span>
 
 L2キャッシュ 2MiB からも、他同様に L2キャッシュブロックあたり 256KiB とすると 8ブロック (ch) となり、ここでも 128-bit と考えられる。</p>
 <p>既に製品が出ている <em>RDNA 2</em> dGPU、<em>Sienna Cichlid/Navi21</em> 、<em>Navy Flounder/Navi22</em> では、メモリチャネルあたり 8MiB の L3キャッシュ/Infinity Cache を持ち、<em>Dimgrey Cavefish/Navi23</em> はそれよりも小さいバランスとなるが、これは製造コストを意識した結果、あるいはターゲット帯に必要な性能を考えてのものだろう。<br>
@@ -261,7 +261,7 @@ L2キャッシュ 2MiB からも、他同様に L2キャッシュブロックあ
    +	},
    +};
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noopener noreferrer" target="_blank" title>[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2021-March/061392.html">[PATCH] drm/amdkfd: Update L1 and add L2/3 cache information</a></cite>
 </div>
 
 </blockquote>
@@ -352,7 +352,7 @@ L2キャッシュ 2MiB からも、他同様に L2キャッシュブロックあ
 <p>Texture Channel Cache とされることも&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.coelacanth-dream.com/posts/2021/02/11/raven2-gpu-l2c-size/" title>Raven2 の GPU L2キャッシュは 128KB | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2021/02/11/raven2-gpu-l2c-size/" title="/posts/2021/02/11/raven2-gpu-l2c-size/">Raven2 の GPU L2キャッシュは 128KB | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

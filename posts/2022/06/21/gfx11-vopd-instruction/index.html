@@ -42,10 +42,10 @@
     <aside class="update">Update: 2022/06/21 17:45 &#43;0900</aside>
   </aside><p>AMD の Joe Nash 氏より、<em>GFX11</em> に追加される <code>VOPD (Dual issue wave32)</code> 命令を LLVM MC (Machine Code) でサポートするパッチが投稿されている。</p>
 <ul>
-<li><a href="https://reviews.llvm.org/D128218" rel="noopener noreferrer" target="_blank" title>⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></li>
+<li><a href="https://reviews.llvm.org/D128218" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D128218">⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></li>
 </ul>
 <p>以前のパッチで <code>HasVOPDInsts (VOPD dual issue wave32)</code> の機能フラグは出てきており、今回のパッチでさらなる詳細が明かされた。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/05/10/llvm-gfx11-dual-issue/#vopd" title>GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/05/10/llvm-gfx11-dual-issue/#vopd" title="/posts/2022/05/10/llvm-gfx11-dual-issue/#vopd">GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <h2 id="vopd">VOPD (Dual issue wave32)<a href="#vopd" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -64,7 +64,7 @@
  +    return 128;
  +  }
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/7050d5b98c0952b24b61f88653de86443cbabd7c" rel="noopener noreferrer" target="_blank" title>[AMDGPU] Limit GFX11 to using 128 VGPRs · llvm/llvm-project@7050d5b</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/commit/7050d5b98c0952b24b61f88653de86443cbabd7c" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/commit/7050d5b98c0952b24b61f88653de86443cbabd7c">[AMDGPU] Limit GFX11 to using 128 VGPRs · llvm/llvm-project@7050d5b</a></cite>
 </div>
 
 </blockquote>
@@ -72,7 +72,7 @@
 <p>以下は <code>VOPD</code> 命令でサポートされる擬似的な命令のリストであり、実際の命令名は <code>V_DUAL_*</code> の形式となる。<br>
 倍精度 (64-bit) 向け命令や半精度 (16-bit) 向けのパックド命令は含まれず、単精度 (32-bit) 向けの命令のみがサポートされている。<br>
 FP64:FP32 の演算性能レートが 1:32 になったことと合わせ、<em>GFX11</em> では FP32 性能をより重視した設計になっているという印象を受ける。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/" title>GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/" title="/posts/2022/06/18/gfx11-dpfp-rate/">GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <p>命令の種類としては、基本的な演算命令 <code>(ADD, SUB, MUL)</code>、FMA (<code>FMA{C,AK,MK}</code>) 命令、データの移動命令 (<code>MOV</code>)、比較命令 (<code>MAX, MIN</code>)、条件命令 (<code>CNDMASK</code>)、ビット演算命令 (<code>LSHLREV, AND</code>) となる。ビット演算命令に <code>OR, XOR</code> は含まれていない。<br>
 また、ドット積命令に唯一 <code>DOT2C_F32_F16 (D.f32 = S0.f16[0] * S1.f16[0] + S0.f16[1] * S1.f16[1] + D.f32)</code> 命令がサポートされている。</p>
@@ -87,7 +87,7 @@ FP64:FP32 の演算性能レートが 1:32 になったことと合わせ、<em>
    &quot;V_DOT2C_F32_F16_e32&quot;, &quot;V_ADD_U32_e32&quot;, &quot;V_LSHLREV_B32_e32&quot;, &quot;V_AND_B32_e32&quot;
  ];
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D128218" rel="noopener noreferrer" target="_blank" title>⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D128218" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D128218">⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></cite>
 </div>
 
 </blockquote>
@@ -104,7 +104,7 @@ FP64:FP32 の演算性能レートが 1:32 になったことと合わせ、<em>
  # W32: v_dual_fmaak_f32 v122, s74, v161, 0x402f6c8b :: v_dual_and_b32 v247, v160, v98 ; encoding: [0x4a,0x42,0x65,0xc8,0xa0,0xc5,0xf6,0x7a,0x8b,0x6c,0x2f,0x40]
  0x4a,0x42,0x65,0xc8,0xa0,0xc5,0xf6,0x7a,0x8b,0x6c,0x2f,0x40
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D128218" rel="noopener noreferrer" target="_blank" title>⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D128218" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D128218">⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></cite>
 </div>
 
 </blockquote>
@@ -118,11 +118,11 @@ FP64:FP32 の演算性能レートが 1:32 になったことと合わせ、<em>
  // GFX11: encoding: [0x00,0x05,0xc6,0xc8,0x01,0x07,0x00,0x00]
  // W64-ERR: :[[@LINE-2]]:{{[0-9]+}}: error
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D128218" rel="noopener noreferrer" target="_blank" title>⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://reviews.llvm.org/D128218" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D128218">⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></cite>
 </div>
 
 </blockquote>
-<p>AMDGPU 向けのコンパイラバックエンドには LLVM の他に、<em>RADV (Vulkan)</em> ドライバーに採用されている <a href="https://www.coelacanth-dream.com/tags/aco" rel="noopener noreferrer" target="_blank" title>ACO</a> がある。<br>
+<p>AMDGPU 向けのコンパイラバックエンドには LLVM の他に、<em>RADV (Vulkan)</em> ドライバーに採用されている <a href="https://www.coelacanth-dream.com/tags/aco" rel="noopener noreferrer" target="_blank" title="/tags/aco">ACO</a> がある。<br>
 それらコンパイラバックエンドにおいて、どのように <code>VOPD</code> 命令への対応、最適化が行われるかは興味深いポイントではないかと思う。</p>
 </article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx11/" title="GFX11">#GFX11</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/llvm/" title="LLVM">#LLVM</a></nav><aside class="article-bottom-misc delay-page">
   <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/06/21/gfx11-vopd-instruction.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>

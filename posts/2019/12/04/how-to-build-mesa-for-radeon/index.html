@@ -40,21 +40,21 @@
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2019-12-04 21:00 +0900">Post: 2019/12/04 21:00 &#43;0900</time>
     <aside class="update">Update: 2021/03/30 04:31 &#43;0900</aside>
-  </aside><p><a href="https://dri.freedesktop.org/wiki/Building/" rel="noopener noreferrer" target="_blank" title>https://dri.freedesktop.org/wiki/Building/</a> を元に、なんやかんやである程度確立させたMesaのビルド方法をまとめてみた。<br>
+  </aside><p><a href="https://dri.freedesktop.org/wiki/Building/" rel="noopener noreferrer" target="_blank" title="https://dri.freedesktop.org/wiki/Building/">https://dri.freedesktop.org/wiki/Building/</a> を元に、なんやかんやである程度確立させたMesaのビルド方法をまとめてみた。<br>
 自環境がDebianなため、基本Debian/Ubuntu向けとなる。</p>
 <h2 id="インデックス">インデックス<a href="#%e3%82%a4%e3%83%b3%e3%83%87%e3%83%83%e3%82%af%e3%82%b9" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
-<li><a href="#libdrm" title>libdrm</a></li>
-<li><a href="#mesa" title>Mesa</a></li>
+<li><a href="#libdrm" title="#libdrm">libdrm</a></li>
+<li><a href="#mesa" title="#mesa">Mesa</a></li>
 </ul>
 <h2 id="libdrm">libdrm<a href="#libdrm" class="head-cur-link" aria-hidden></a>
 </h2>
-<p><a href="https://www.coelacanth-dream.com/posts/2019/11/29/radeonsi-enable-gl4_6" title>RadeonSIでOpenGL 4.6がサポート</a>でも書いたが、最新版のMesaをビルドするにはバージョン2.4.99以上のlibdrmが必要となる。<br>
+<p><a href="https://www.coelacanth-dream.com/posts/2019/11/29/radeonsi-enable-gl4_6" title="/posts/2019/11/29/radeonsi-enable-gl4_6">RadeonSIでOpenGL 4.6がサポート</a>でも書いたが、最新版のMesaをビルドするにはバージョン2.4.99以上のlibdrmが必要となる。<br>
 厳密には、mesa-19.2.6では<strong>2.4.99</strong>、git、mesa-19.3.0-rc5では<strong>2.4.100</strong>だが、どうせなら最新版の<strong>2.4.100</strong>をビルド、インストールしてしまった方がいい。<br>
 リリースページからダウンロードしてもいいが、アップデートに追従することを考えると gitレポジトリをクローンした方がいい。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/drm" rel="noopener noreferrer" target="_blank" title>Mesa / drm · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/drm" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/drm">Mesa / drm · GitLab</a></li>
 </ul>
 <p>Debian/Ubuntu では以下のコマンドで libdrm のビルドに必要なパッケージをインストールできる。</p>
 <pre><code># apt build-dep libdrm
@@ -107,7 +107,7 @@ llvm-config = '/usr/local/bin/llvm/llvm-config'
 <pre><code>--native-file custom-llvm.ini
 </code></pre>
 <ul>
-<li><a href="https://www.mesa3d.org/meson.html#advanced" rel="noopener noreferrer" target="_blank" title>Compilation and Installation Using Meson - Mesa3D</a></li>
+<li><a href="https://www.mesa3d.org/meson.html#advanced" rel="noopener noreferrer" target="_blank" title="https://www.mesa3d.org/meson.html#advanced">Compilation and Installation Using Meson - Mesa3D</a></li>
 </ul>
 <p>デバッグ機能は、オプションで buildtype=plain、b_ndebug=trueを追加することで無効化できる。</p>
 <p>ビルドされるものを減らすには、</p>
@@ -122,7 +122,7 @@ llvm-config = '/usr/local/bin/llvm/llvm-config'
 <p>以上を踏まえると、<code>meson</code> の実行時オプションは以下のようになる。</p>
 <pre><code>CC=&quot;clang-X&quot; CXX=&quot;clang++-X&quot; meson [ディレクトリ名] -Dbackend=ninja -Dbuildtype=plain -Ddri-drivers=&quot;r100,r200&quot; -Dgallium-drivers=&quot;radeonsi,r300,r600&quot; -Dvulkan-drivers=&quot;amd&quot; -Dgallium-opencl=disabled --native-file custom-llvm.ini
 </code></pre>
-<p>インストール場所（prefix）だが、<a href="https://dri.freedesktop.org/wiki/Building/" rel="noopener noreferrer" target="_blank" title>https://dri.freedesktop.org/wiki/Building/</a> にあるように、ホームディレクトリ下に適当なディレクトリを作成、 そしてそこにインストールし、各種環境変数を設定する。<br>
+<p>インストール場所（prefix）だが、<a href="https://dri.freedesktop.org/wiki/Building/" rel="noopener noreferrer" target="_blank" title="https://dri.freedesktop.org/wiki/Building/">https://dri.freedesktop.org/wiki/Building/</a> にあるように、ホームディレクトリ下に適当なディレクトリを作成、 そしてそこにインストールし、各種環境変数を設定する。<br>
 この方がトラブルを回避しやすく、気軽に最新バージョンの Mesaドライバー試せる。<br>
 ただ、glxinfo や vainfo の結果を見るだけならスクリプトを書いたり、.bashrc の編集でいいのだが、それではデスクトップ上のメニューからアプリケーションを起動した際に反映されない。<br>
 その場合 .xsessionrc に記述することで環境変数をデスクトップアプリケーションにも反映させることができる。</p>

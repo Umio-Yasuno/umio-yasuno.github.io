@@ -40,26 +40,26 @@
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-01-14 06:18 +0900">Post: 2022/01/14 06:18 &#43;0900</time>
     <aside class="update">Update: 2022/07/15 14:23 &#43;0900</aside>
-  </aside><p>先日に続いて Coreboot に、<a href="https://github.com/felixheld" rel="noopener noreferrer" target="_blank" title>Felix Held</a> 氏より、<em>AMD Sabrina SoC</em> (<code>Family 17h Model A0h (0x008A0F00)</code>) のサポート追加に向けたパッチが投稿されている。</p>
+  </aside><p>先日に続いて Coreboot に、<a href="https://github.com/felixheld" rel="noopener noreferrer" target="_blank" title="https://github.com/felixheld">Felix Held</a> 氏より、<em>AMD Sabrina SoC</em> (<code>Family 17h Model A0h (0x008A0F00)</code>) のサポート追加に向けたパッチが投稿されている。</p>
 <ul>
-<li><a href="https://review.coreboot.org/q/topic:amd-sabrina-soc" rel="noopener noreferrer" target="_blank" title>topic:amd-sabrina-soc · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/q/topic:amd-sabrina-soc" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/q/topic:amd-sabrina-soc">topic:amd-sabrina-soc · Gerrit Code Review</a></li>
 </ul>
 <blockquote>
 <pre><code> #define SABRINA_A0_CPUID	0x008a0f00
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/61087/2/src/soc/amd/sabrina/include/soc/cpu.h#6" rel="noopener noreferrer" target="_blank" title>https://review.coreboot.org/c/coreboot/+/61087/2/src/soc/amd/sabrina/include/soc/cpu.h#6</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/61087/2/src/soc/amd/sabrina/include/soc/cpu.h#6" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/61087/2/src/soc/amd/sabrina/include/soc/cpu.h#6">https://review.coreboot.org/c/coreboot/+/61087/2/src/soc/amd/sabrina/include/soc/cpu.h#6</a></cite>
 </div>
 
 </blockquote>
 <section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
-<li><a href="#chausie" title>AMD Chausie</a>
+<li><a href="#chausie" title="#chausie">AMD Chausie</a>
 <ul>
-<li><a href="#uart" title>UARTコントローラ</a></li>
-<li><a href="#cppc2" title>CPPC2 をサポートせず</a></li>
-<li><a href="#pcie" title>PCIe</a></li>
-<li><a href="#sata" title>SATAコントローラを持たず</a></li>
+<li><a href="#uart" title="#uart">UARTコントローラ</a></li>
+<li><a href="#cppc2" title="#cppc2">CPPC2 をサポートせず</a></li>
+<li><a href="#pcie" title="#pcie">PCIe</a></li>
+<li><a href="#sata" title="#sata">SATAコントローラを持たず</a></li>
 </ul>
 </li>
 </ul>
@@ -68,15 +68,15 @@
 <h2 id="chausie">AMD Chausie<a href="#chausie" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em>Sabrina SoC</em> のメインボード名は <em>AMD Chausie</em>。コードとしては、<em>AMD Chausie</em> ボード部に <em>FP6パッケージ</em> を採用する <em>AMD Majolica</em> を、FSP (Firmware Support Package) も <em>Cezanne SoC</em> をベースにしている。コードファイルのほとんどをコピーし、名前だけを置き換えた形となっている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
-コードファイルを <em>Cezanne</em> 関連からコピーした理由に、<a href="https://github.com/felixheld" rel="noopener noreferrer" target="_blank" title>Felix Held</a> 氏は、ひとまずビルドを成功させることを挙げている。<br>
+コードファイルを <em>Cezanne</em> 関連からコピーした理由に、<a href="https://github.com/felixheld" rel="noopener noreferrer" target="_blank" title="https://github.com/felixheld">Felix Held</a> 氏は、ひとまずビルドを成功させることを挙げている。<br>
 そのためベース部の情報が多く、<em>Sabrina SoC</em> 、<em>AMD Chausie</em> 固有の情報はまだ読みにくいところがある。パッケージも、<em>Cezanne</em> 同様に FP6 が使われるかどうかはまだ判然としない。</p>
 <p>それでも確かな部分を読んでいくと、<em>Sabrina SoC</em> では一部の機能、I/O が削減され、また規模が増やされた部分がわずかに存在する。</p>
 <h3 id="uart">UARTコントローラ<a href="#uart" class="head-cur-link" aria-hidden></a>
 </h3>
 <p><em>Sabrina SoC</em> では UART (Universal Asynchronous Receiver Transmitter) コントローラが、<em>Cezanne</em> から 3基増やされている。</p>
 <ul>
-<li><a href="https://review.coreboot.org/c/coreboot/+/61082/4" rel="noopener noreferrer" target="_blank" title>soc/amd/sabrina/include/aoac_defs: add additional UARTs (Id9876719) · Gerrit Code Review</a></li>
-<li><a href="https://review.coreboot.org/c/coreboot/+/61086/3" rel="noopener noreferrer" target="_blank" title>soc/amd/sabrina: add additional UART controllers (I628b1a7a) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/61082/4" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/61082/4">soc/amd/sabrina/include/aoac_defs: add additional UARTs (Id9876719) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/61086/3" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/61086/3">soc/amd/sabrina: add additional UART controllers (I628b1a7a) · Gerrit Code Review</a></li>
 </ul>
 <p><em>Cezanne</em> 、というより <em>Zen 2/3 APU (Renoir /Lucienne /Cezanne /Barcelo)</em> では UARTコントローラは 2基だったため、合計で 5基となる。<br>
 <em>Zen/+ APU (Raven /Picasso /Raven2 [Dali /Pollock])</em> では 4基だったため、それよりも 1基増やされた。<br>
@@ -89,7 +89,7 @@ CPPC は電源管理機能の 1つであり、CPPC2 ではクロックの選択�
 <p><em>Sabrina SoC</em> は CPUID Family は 17h (23) であり、アーキテクチャは <em>Zen/+/2</em> のどれかと見られるが、CPPC2 をサポートしないことから <em>Zen/+</em> の可能性も充分に考えられるようになった。<br>
 ただ、今になって CPU部が <em>Zen/+ アーキテクチャ</em> の APU/SoC が新規に登場するというのも不自然だが、CPPC2 をサポートしない <em>Zen 2 アーキテクチャ</em> というのもどこかちぐはぐに感じられる。</p>
 <ul>
-<li><a href="https://review.coreboot.org/c/coreboot/+/61096" rel="noopener noreferrer" target="_blank" title>soc/amd/sabrina: drop CPPC code (I71a1b071) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/61096" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/61096">soc/amd/sabrina: drop CPPC code (I71a1b071) · Gerrit Code Review</a></li>
 </ul>
 <h3 id="pcie">PCIe<a href="#pcie" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -119,7 +119,7 @@ CPPC は電源管理機能の 1つであり、CPPC2 ではクロックの選択�
  -/* PCIe GPP Bridge device 2 with up to 7 ports */
  +/* PCIe GPP Bridge device 2 with up to 6 ports */
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/plugins/gitiles/coreboot/+/cfa7f283968621d31a49c5179496e72ec7504ce5%5E%21/#F0" rel="noopener noreferrer" target="_blank" title>Diff - cfa7f283968621d31a49c5179496e72ec7504ce5^! - coreboot - Gitiles</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/plugins/gitiles/coreboot/+/cfa7f283968621d31a49c5179496e72ec7504ce5%5E%21/#F0" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/plugins/gitiles/coreboot/+/cfa7f283968621d31a49c5179496e72ec7504ce5%5E%21/#F0">Diff - cfa7f283968621d31a49c5179496e72ec7504ce5^! - coreboot - Gitiles</a></cite>
 </div>
 
 </blockquote>
@@ -127,7 +127,7 @@ CPPC は電源管理機能の 1つであり、CPPC2 ではクロックの選択�
 </h3>
 <p><em>Sabrisa SoC</em> は SATAコントローラを持たないとされている。<br>
 <em>Raven2 (Pollock)</em> が搭載可能な小型、省電力クラスのパッケージ、<em>FT5</em> では SATAインターフェイスを持たなかったが、それに近い。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/02/12/amd-pollock-ft5/" title>Chromebookに搭載されるPollockはFT5ソケット ――DDR4シングルチャネル、SATA無し | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/02/12/amd-pollock-ft5/" title="/posts/2020/02/12/amd-pollock-ft5/">Chromebookに搭載されるPollockはFT5ソケット ――DDR4シングルチャネル、SATA無し | Coelacanth&rsquo;s Dream</a></span>
 
 だが <em>Raven2 (Pollock)</em> 自体は SATAコントローラを 2基持ち、<em>FT5</em> パッケージの仕様としてインターフェイスを廃した形であるため、SoC 自体に SATAコントローラを持たない <em>Sabrina</em> とは色が異なる。<br>
 最近は NVMe SSD がメインストレージになってきているが、割り切った変更であるようにも思える。<br>
@@ -138,7 +138,7 @@ CPPC は電源管理機能の 1つであり、CPPC2 ではクロックの選択�
  There are no SATA controllers on the Sabrina SoC. The UPD field will be
  removed later as a part of the initial UPD header update.
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/61091/3" rel="noopener noreferrer" target="_blank" title>soc/amd/sabrina/fsp_m_params: drop sata_enable UPD write (Iedefd9f1) · Gerrit Code Review</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/61091/3" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/61091/3">soc/amd/sabrina/fsp_m_params: drop sata_enable UPD write (Iedefd9f1) · Gerrit Code Review</a></cite>
 </div>
 
 </blockquote>
@@ -197,7 +197,7 @@ CPPC は電源管理機能の 1つであり、CPPC2 ではクロックの選択�
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://emb.macnica.co.jp/articles/8191/" rel="noopener noreferrer" target="_blank" title>よく分かる！ シリアル通信基礎講座 | 組込み技術ラボ</a></li>
+<li><a href="https://emb.macnica.co.jp/articles/8191/" rel="noopener noreferrer" target="_blank" title="https://emb.macnica.co.jp/articles/8191/">よく分かる！ シリアル通信基礎講座 | 組込み技術ラボ</a></li>
 </ul>
 </section>
 
@@ -205,7 +205,7 @@ CPPC は電源管理機能の 1つであり、CPPC2 ではクロックの選択�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://review.coreboot.org/c/coreboot/+/61076" rel="noopener noreferrer" target="_blank" title>vc/amd/fsp/sabrina: add as a copy of vc/amd/fsp/cezanne (Ib3bf5059) · Gerrit Code Review</a> <br> <a href="https://review.coreboot.org/c/coreboot/+/61079/3" rel="noopener noreferrer" target="_blank" title>mb/amd/chausie: add mainboard as copy of mb/amd/majolica (Ic7b18f7a) · Gerrit Code Review</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://review.coreboot.org/c/coreboot/+/61076" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/61076">vc/amd/fsp/sabrina: add as a copy of vc/amd/fsp/cezanne (Ib3bf5059) · Gerrit Code Review</a> <br> <a href="https://review.coreboot.org/c/coreboot/+/61079/3" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/61079/3">mb/amd/chausie: add mainboard as copy of mb/amd/majolica (Ic7b18f7a) · Gerrit Code Review</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

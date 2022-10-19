@@ -46,10 +46,10 @@
 <h2 id="インデックス">インデックス<a href="#%e3%82%a4%e3%83%b3%e3%83%87%e3%83%83%e3%82%af%e3%82%b9" class="head-cur-link" aria-hidden></a>
 </h2>
 <ul>
-<li><a href="#ras" title>RAS機能への対応</a></li>
-<li><a href="#vram-per-process" title>プロセスごとのVRAM使用量が取得可能に</a></li>
-<li><a href="#fru-chip" title>FRUチップ</a></li>
-<li><a href="#spm" title>Streaming Performance Monitor</a></li>
+<li><a href="#ras" title="#ras">RAS機能への対応</a></li>
+<li><a href="#vram-per-process" title="#vram-per-process">プロセスごとのVRAM使用量が取得可能に</a></li>
+<li><a href="#fru-chip" title="#fru-chip">FRUチップ</a></li>
+<li><a href="#spm" title="#spm">Streaming Performance Monitor</a></li>
 </ul>
 <h2 id="ras">RAS機能への対応<a href="#ras" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -59,27 +59,27 @@
 BACO は <em>Bus Active, Chip Off</em> の略。</p>
 <h2 id="vram-per-process">プロセスごとのVRAM使用量が取得可能に<a href="#vram-per-process" class="head-cur-link" aria-hidden></a>
 </h2>
-<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-April/048643.html" rel="noopener noreferrer" target="_blank" title>[PATCH] drm/amdkfd: Track GPU memory utilization per process</a></span>
+<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-April/048643.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2020-April/048643.html">[PATCH] drm/amdkfd: Track GPU memory utilization per process</a></span>
 
 <p>AMDは現状、<code>rocm-smi</code> というツールを提供しており、それによってVRAMの使用量を確認できるが、VRAM全体であり、どのプロセスがVRAMを多く消費しているか、といったものを知ることはできない。<br>
 だが上記パッチにより、それが可能になるはずだ。</p>
 <p>/proc/&lt;pid&gt;/ 下に vram_&lt;gpuid&gt; というファイルを生成するようになり、GPUごとに割り振られるIDをファイル名に使うため複数GPUの環境にも対応されている。<br>
 この機能はアプリケーションの最適化にも役立つだろう。</p>
 <p>この機能を、NVIDIAは以前から <code>nvidia-smi</code> <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>で提供しており、ツール面でようやくAMDが追いついてきたと言える。ROCmの開発、スーパーコンピュータ採用等で必要に迫られたのかもしれない。<br>
-一応、AMDは<a href="https://gitlab.freedesktop.org/tomstdenis/umr/-/tree/master" rel="noopener noreferrer" target="_blank" title>umr</a>や<a href="https://github.com/GPUOpen-Tools/radeon_gpu_analyzer" rel="noopener noreferrer" target="_blank" title>Radeon GPU Analuzer</a>、<a href="https://github.com/GPUOpen-Tools/radeon_gpu_profiler" rel="noopener noreferrer" target="_blank" title>Radeon™ GPU Profiler</a>等、レジスタレベル、パイプラインのモニタツールは豊富に提供している。</p>
-<p>また少し前までは、AMDGPUの場合、上記 <code>rocm-smi</code> や <a href="https://github.com/clbr/radeontop" rel="noopener noreferrer" target="_blank" title>radeontop</a> 等のソフトウェアを用いなければ全体でもVRAM容量、使用量を知ることが難しかったが、<br>
+一応、AMDは<a href="https://gitlab.freedesktop.org/tomstdenis/umr/-/tree/master" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/tomstdenis/umr/-/tree/master">umr</a>や<a href="https://github.com/GPUOpen-Tools/radeon_gpu_analyzer" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Tools/radeon_gpu_analyzer">Radeon GPU Analuzer</a>、<a href="https://github.com/GPUOpen-Tools/radeon_gpu_profiler" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Tools/radeon_gpu_profiler">Radeon™ GPU Profiler</a>等、レジスタレベル、パイプラインのモニタツールは豊富に提供している。</p>
+<p>また少し前までは、AMDGPUの場合、上記 <code>rocm-smi</code> や <a href="https://github.com/clbr/radeontop" rel="noopener noreferrer" target="_blank" title="https://github.com/clbr/radeontop">radeontop</a> 等のソフトウェアを用いなければ全体でもVRAM容量、使用量を知ることが難しかったが、<br>
 現在はそれら情報が sysfs へ出力されるようになっているため、VRAM使用量なんかは</p>
 <pre><code>$ cat /sys/class/drm/card0/device/mem_info_vram_used 
 </code></pre>
 <p>を実行するだけで知ることができる。</p>
 <p>ただこの機能、既に組み込まれているがドキュメント類は 2020/04/29 現在、未だにアップデートされていない。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 自分のような一般ユーザにも恩恵があるため、広く周知されてほしい。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/03/12/private-conkyrc/" title>私的conkyrc | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/03/12/private-conkyrc/" title="/posts/2020/03/12/private-conkyrc/">私的conkyrc | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <h2 id="fru-chip">FRUチップ<a href="#fru-chip" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>製品名、製品ナンバー、シリアルナンバーを記録した <em>FRUチップ</em> を読み取るためのパッチが 2020/03/19 より投稿されている。<br>
-<span class="thread-link"><a href="https://patchwork.freedesktop.org/patch/358146/" rel="noopener noreferrer" target="_blank" title>Enable reading FRU chip via I2C v3 - Patchwork</a></span>
+<span class="thread-link"><a href="https://patchwork.freedesktop.org/patch/358146/" rel="noopener noreferrer" target="_blank" title="https://patchwork.freedesktop.org/patch/358146/">Enable reading FRU chip via I2C v3 - Patchwork</a></span>
 
 この <em>FRUチップ</em> によってソフトウェアから問題が発生したハードウェアを特定しやすくなり、大規模なコンピュータにおける障害対応、部品交換を手助けする。</p>
 <p><em>FRUチップ</em> は <em>Vega20</em> の一部SKUにも搭載されているがサーバ向けのみとなっており、ゲーミング向けSKUは <em>FRUチップ</em> を搭載していない。実際コード中でもゲーミング向け製品 <strong>Radeon VII</strong> の DeviceID:&ldquo;0x66AF&rdquo;、Apple専用製品 <strong>Radeon Pro Vega II (Duo)</strong> の DeviceID:&ldquo;0x66A3&rdquo; は判定部に含まれていない。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
@@ -88,14 +88,14 @@ BACO は <em>Bus Active, Chip Off</em> の略。</p>
 <h2 id="spm">Streaming Performance Monitor<a href="#spm" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>先日パッチが投稿されたばかりの機能。<br>
-<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-April/049049.html" rel="noopener noreferrer" target="_blank" title>[PATCH] drm/amd: add Streaming Performance Monitor feature</a></span>
+<span class="thread-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-April/049049.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2020-April/049049.html">[PATCH] drm/amd: add Streaming Performance Monitor feature</a></span>
 
 中身としては、内部バスの利用状況、GPU内部のデータの流れを監視するためのものと読める。</p>
 <p>しかし、後のパッチレビューにて様々な問題点が指摘されており、仮に実装するとしても時間が掛かりそうだ。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://www.amd.com/en/products/exascale-era" rel="noopener noreferrer" target="_blank" title>AMD Powering the Exascale Era with El Capitan | AMD</a></li>
+<li><a href="https://www.amd.com/en/products/exascale-era" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/en/products/exascale-era">AMD Powering the Exascale Era with El Capitan | AMD</a></li>
 </ul>
 </section>
 
@@ -103,22 +103,22 @@ BACO は <em>Bus Active, Chip Off</em> の略。</p>
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html#amdgpu-ras-support" rel="noopener noreferrer" target="_blank" title>https://www.kernel.org/doc/html/latest/gpu/amdgpu.html#amdgpu-ras-support</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html#amdgpu-ras-support" rel="noopener noreferrer" target="_blank" title="https://www.kernel.org/doc/html/latest/gpu/amdgpu.html#amdgpu-ras-support">https://www.kernel.org/doc/html/latest/gpu/amdgpu.html#amdgpu-ras-support</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="http://developer.download.nvidia.com/compute/DCGM/docs/nvidia-smi-367.38.pdf" rel="noopener noreferrer" target="_blank" title>NVIDIA System Management Interface | NVIDIA Developer</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="http://developer.download.nvidia.com/compute/DCGM/docs/nvidia-smi-367.38.pdf" rel="noopener noreferrer" target="_blank" title="http://developer.download.nvidia.com/compute/DCGM/docs/nvidia-smi-367.38.pdf">NVIDIA System Management Interface | NVIDIA Developer</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://github.com/torvalds/linux/blob/v5.7-rc3/Documentation/gpu/amdgpu.rst" rel="noopener noreferrer" target="_blank" title>linux/amdgpu.rst at v5.7-rc3 · torvalds/linux</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/torvalds/linux/blob/v5.7-rc3/Documentation/gpu/amdgpu.rst" rel="noopener noreferrer" target="_blank" title="https://github.com/torvalds/linux/blob/v5.7-rc3/Documentation/gpu/amdgpu.rst">linux/amdgpu.rst at v5.7-rc3 · torvalds/linux</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4">
-<p><a href="https://patchwork.freedesktop.org/patch/360462/" rel="noopener noreferrer" target="_blank" title>drm/amdgpu: Re-enable FRU check for most models v4 - Patchwork</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://patchwork.freedesktop.org/patch/360462/" rel="noopener noreferrer" target="_blank" title="https://patchwork.freedesktop.org/patch/360462/">drm/amdgpu: Re-enable FRU check for most models v4 - Patchwork</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:5">
-<p><a href="https://patchwork.freedesktop.org/patch/360005/" rel="noopener noreferrer" target="_blank" title>drm/amdgpu: Re-enable FRU check for most models v3 - Patchwork</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://patchwork.freedesktop.org/patch/360005/" rel="noopener noreferrer" target="_blank" title="https://patchwork.freedesktop.org/patch/360005/">drm/amdgpu: Re-enable FRU check for most models v3 - Patchwork</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:6">
-<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-April/049061.html" rel="noopener noreferrer" target="_blank" title>[PATCH] drm/amd: add Streaming Performance Monitor feature</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-April/049061.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2020-April/049061.html">[PATCH] drm/amd: add Streaming Performance Monitor feature</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

@@ -42,7 +42,7 @@
     <aside class="update">Update: 2022/07/15 00:39 &#43;0900</aside>
   </aside><p>AMD GPU 向け Vulkan ドライバー <strong>RADV</strong> とそのコンパイラバックエンドに採用されている <strong>ACO</strong> の開発者として知られる Timur Kristóf 氏が、ブログにて <em>RDNA 1/GFX10</em> 世代から有効化されている <em>NGG (Next Generation Geometry) /NGG パイプライン</em> とドライバー側で行われる <em>NGG カリング</em> について解説した記事を公開している。</p>
 <ul>
-<li><a href="https://timur.hu/blog/2022/what-is-ngg" rel="noopener noreferrer" target="_blank" title>What is NGG and shader culling on AMD RDNA GPUs? | Timur’s blog</a></li>
+<li><a href="https://timur.hu/blog/2022/what-is-ngg" rel="noopener noreferrer" target="_blank" title="https://timur.hu/blog/2022/what-is-ngg">What is NGG and shader culling on AMD RDNA GPUs? | Timur’s blog</a></li>
 </ul>
 <p><em>NGG</em> に関する情報は <strong>ACO バックエンド</strong> のドキュメント<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> や各種ドライバーへのパッチで公開されてきたが、それらは断片的であり、また AMD 公式的には <em>Vega/GFX9</em> 世代に <em>NGG/Primitive Shader</em> を <em>大々的</em> に宣伝していたが、<em>RDNA 1/GFX10.1</em> 世代からはあまり情報を公開しなくなった。<br>
 そのため、GPU ドライバー開発者の視点から <em>NGG</em> を体系的にまとめた Timur Kristóf 氏の記事は、AMD GPU のグラフィクスパイプラインの沿革を知る上でとても価値のあるものだと言える。</p>
@@ -53,11 +53,11 @@
 AMDGPU ドライバー側の実装も 2019-09 に関連コードを削除するパッチが AMD の Marek Olšák 氏によって投稿されている。<br>
 <em>Vega/GFX9</em> 世代での <em>NGG</em> にそれ以上対応しないことはそれよりも早く、2018-08 の時点で AMD の Jin, Jian-Rong 氏より語られていた。</p>
 <ul>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2018-August/025320.html" rel="noopener noreferrer" target="_blank" title>Making a GDS Allocation for NGG</a></li>
-<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040254.html" rel="noopener noreferrer" target="_blank" title>[PATCH] drm/amdgpu: remove gfx9 NGG</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2018-August/025320.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2018-August/025320.html">Making a GDS Allocation for NGG</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040254.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2019-September/040254.html">[PATCH] drm/amdgpu: remove gfx9 NGG</a></li>
 </ul>
 <p><em>RDNA 1/GFX10.1</em> 世代からの <em>NGG</em> は新たに設計されたもので、<em>Vega/GFX9</em> 世代とは互換性がないものとされている。<br>
-また、Marek Olšák 氏は <a href="https://www.phoronix.com" rel="noopener noreferrer" target="_blank" title>Phoronix</a> のフォーラムにて、<em>「Vega/GFX9 で NGG が (利点が得られつつ) 機能するチャンスはまだありますか？」</em> というコメントに対して、はっきりと <em>「ない、まったく異なり (筆者補足: RDNA 1/GFX10 世代とは?) 、むしろ遅くなる。」</em> と返答している。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+また、Marek Olšák 氏は <a href="https://www.phoronix.com" rel="noopener noreferrer" target="_blank" title="https://www.phoronix.com">Phoronix</a> のフォーラムにて、<em>「Vega/GFX9 で NGG が (利点が得られつつ) 機能するチャンスはまだありますか？」</em> というコメントに対して、はっきりと <em>「ない、まったく異なり (筆者補足: RDNA 1/GFX10 世代とは?) 、むしろ遅くなる。」</em> と返答している。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p>現在は削除されている AMDGPU ドライバー側の実装から、<em>Vega/GFX9</em> 世代の <em>NGG</em> は Primitive/Position/Control Sideband Buffer を VRAM側に、GDS (Global Data Share) も一部を <em>NGG</em> 用に確保する仕様となっていた。<br>
 推測だが、こうした仕様が性能上のボトルネックになっていた可能性はある。<br>
 <em>RDNA 1/GFX10.1</em> 世代からの <em>NGG</em> にそうした KMD側のバッファ確保等は必要なく、UMD側ですべて制御可能となっている。</p>
@@ -74,32 +74,32 @@ AMDGPU ドライバー側の実装も 2019-09 に関連コードを削除する�
 <em>Cyan Skilfish/Skillfish APU (gfx1013)</em> も <em>RDNA 1/GFX10.1</em> 世代だが、UMD側では対応が行われていないため、詳細は不明。</p>
 <p><em>VanGogh APU</em> は GPU部が <em>RDNA 2/GFX10.3</em> 世代であり、<em>NGG</em> と <em>NGG カリング</em> が有効可能だが、<em>NGG カリング</em> による性能向上幅は dGPU よりも低くなっているという。<br>
 これについては、Timur Kristóf 氏が以前にパッチ内で語った、<em>NGG カリング</em> の効率は Pixel Shader のスループットに依存するということと、APU では PS へのオンチップバッファ Parameter Cache (PC) の規模が dGPU より小さいことで説明できる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc" title>RADV + RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc" title="/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc">RADV + RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
 
 他の <em>RDNA 2/GFX10.3 APU</em>、<em>Yellow Carp/Rembrandt APU</em> や <em>GC 10.3.7/Sabrina APU</em> でも同様の傾向が見られるのではないかと思われる。</p>
 <h2 id="ms">NGG と Mesh Shader<a href="#ms" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>Timur Kristóf 氏は XDC2020 にて <strong>ACO</strong> の今後の計画について発表した際、<em>NGG</em> で Mesh Shader を実行できる <em>可能性</em> について触れていたが、今回の記事内でプリミティブごとの出力機能などが <em>RDNA 1/GFX10</em> 世代の <em>NGG</em> には実装されていないため、<em>NGG</em> が有効であっても Mesh Shader への対応は <em>RDNA 2/GFX10.3</em> 世代からに限定されると語っている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/09/19/xdc2020-aco/#ms-on-ngg" title>【XDC2020】 ACOバックエンドの今後の計画 ―― RDNA 2, RT, Mesh Shader | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/09/19/xdc2020-aco/#ms-on-ngg" title="/posts/2020/09/19/xdc2020-aco/#ms-on-ngg">【XDC2020】 ACOバックエンドの今後の計画 ―― RDNA 2, RT, Mesh Shader | Coelacanth&rsquo;s Dream</a></span>
 
 <em>NGG パイプライン</em> として基本的な部分は共通しつつも、一部の機能は世代によって異なることとなる。<br>
 <em>RDNA 3?/GFX11</em> 世代ではついに従来のパイプラインは廃され、<em>NGG</em> のみの実装となるが、こうしたことから新機能や最適化に関わる部分が変更されている可能性がある。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/#ngg" title>RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/#ngg" title="/posts/2022/05/05/radeonsi-gfx11/#ngg">RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/amd/compiler/README.md#supported-shader-stages" rel="noopener noreferrer" target="_blank" title>src/amd/compiler/README.md · main · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/amd/compiler/README.md#supported-shader-stages" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/amd/compiler/README.md#supported-shader-stages">src/amd/compiler/README.md · main · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1328443-amd-lands-a-number-of-radeonsi-rdna-ngg-fixes-ahead-of-rdna3-enabling?p=1328449#post1328449" rel="noopener noreferrer" target="_blank" title>https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1328443-amd-lands-a-number-of-radeonsi-rdna-ngg-fixes-ahead-of-rdna3-enabling?p=1328449#post1328449</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1328443-amd-lands-a-number-of-radeonsi-rdna-ngg-fixes-ahead-of-rdna3-enabling?p=1328449#post1328449" rel="noopener noreferrer" target="_blank" title="https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1328443-amd-lands-a-number-of-radeonsi-rdna-ngg-fixes-ahead-of-rdna3-enabling?p=1328449#post1328449">https://www.phoronix.com/forums/forum/linux-graphics-x-org-drivers/open-source-amd-linux/1328443-amd-lands-a-number-of-radeonsi-rdna-ngg-fixes-ahead-of-rdna3-enabling?p=1328449#post1328449</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/a1763ad4b362c9f3a1fd12b6d06009b17fac3d24/src/gallium/drivers/radeonsi/si_pipe.c#L1301-1309" rel="noopener noreferrer" target="_blank" title>src/gallium/drivers/radeonsi/si_pipe.c · a1763ad4b362c9f3a1fd12b6d06009b17fac3d24 · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/a1763ad4b362c9f3a1fd12b6d06009b17fac3d24/src/gallium/drivers/radeonsi/si_pipe.c#L1301-1309" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/blob/a1763ad4b362c9f3a1fd12b6d06009b17fac3d24/src/gallium/drivers/radeonsi/si_pipe.c#L1301-1309">src/gallium/drivers/radeonsi/si_pipe.c · a1763ad4b362c9f3a1fd12b6d06009b17fac3d24 · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4">
-<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/9035408d62f411aabc4df017a77969fca85ad9b9/src/amd/vulkan/radv_device.c#L793-797" rel="noopener noreferrer" target="_blank" title>src/amd/vulkan/radv_device.c · 9035408d62f411aabc4df017a77969fca85ad9b9 · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/9035408d62f411aabc4df017a77969fca85ad9b9/src/amd/vulkan/radv_device.c#L793-797" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/blob/9035408d62f411aabc4df017a77969fca85ad9b9/src/amd/vulkan/radv_device.c#L793-797">src/amd/vulkan/radv_device.c · 9035408d62f411aabc4df017a77969fca85ad9b9 · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

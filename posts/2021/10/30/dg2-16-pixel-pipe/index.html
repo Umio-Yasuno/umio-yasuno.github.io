@@ -43,19 +43,19 @@
   </aside><p>まだドラフトで、マージリクエストの段階ではあるが、Intel <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span></em> の Pixel pipe を最適化するパッチがオープンソースドライバー Mesa3D に投稿されている。<br>
 GFXバージョン (<code>GFX_VER</code>) では Gfx12.5、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> も対象に入っているが、パッチのコメントでは主に <em>DG2/<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> を想定している。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569" rel="noopener noreferrer" target="_blank" title>Draft: intel: Pixel pipeline optimizations for XeHP hardware. (!13569) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569">Draft: intel: Pixel pipeline optimizations for XeHP hardware. (!13569) · Merge requests · Mesa / mesa · GitLab</a></li>
 </ul>
 <p>以前にも <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> 向けに Pixel pipe を最適化するパッチが投稿されていた。<br>
 Intel Gen12/<span class="xe-gpu-arch">X<sup>e</sup></span>プラットフォームでは事前に設定された Pixel pipe のハッシュテーブルを用いるが、それはすべての Pixel pipe に等しく EU あるいは Sub-Slice が割り当てられていることを前提としていた。それにより <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> の最大構成 6 Sub-Slice (96 EU) より小さい規模の構成を採る SKU では、アンバランスな割り当てがボトルネックとなり性能が低下することとなっていた。<br>
 パッチではそれを修正し、適切に EU を Pixel pipe に割り当てることを目的としたもので、80 EU (5 Sub-Slice ?) 構成の <em>Tiger Lake</em> において 10%~63% の性能改善を果たしている。</p>
 <ul>
-<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8749" rel="noopener noreferrer" target="_blank" title>intel: Fix pixel-pipe performance bottlenecks on fused Gen12 parts. (!8749) · Merge requests · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8749" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8749">intel: Fix pixel-pipe performance bottlenecks on fused Gen12 parts. (!8749) · Merge requests · Mesa / mesa · GitLab</a></li>
 </ul>
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> は最大で 3本の Pixel pipe、それぞれ ROP 8基相当の Pixel Backend を 3基持っている。</p>
 <blockquote>
 <pre><code> +#define GEN_DEVICE_MAX_PIXEL_PIPES      (3)  /* Maximum on gen12 */
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8749/diffs?commit_id=e2ef1c46760ba6996fd49f5fc56d56e1af8d2220#diff-content-777d253fd71902d8f51ea827069054d0bf1d731a" rel="noopener noreferrer" target="_blank" title>intel: Fix pixel-pipe performance bottlenecks on fused Gen12 parts. (!8749) · Merge requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8749/diffs?commit_id=e2ef1c46760ba6996fd49f5fc56d56e1af8d2220#diff-content-777d253fd71902d8f51ea827069054d0bf1d731a" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/8749/diffs?commit_id=e2ef1c46760ba6996fd49f5fc56d56e1af8d2220#diff-content-777d253fd71902d8f51ea827069054d0bf1d731a">intel: Fix pixel-pipe performance bottlenecks on fused Gen12 parts. (!8749) · Merge requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
@@ -66,7 +66,7 @@ Intel Gen12/<span class="xe-gpu-arch">X<sup>e</sup></span>プラットフォー�
 デモシーンやベンチマーク以外にゲームでも確かな性能向上を果たしており、規模が大きくなった分 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> よりも影響と恩恵が大きいのかもしれない。</p>
 <blockquote>
 <p>This series is part of the XeHP enabling effort.  It&rsquo;s not strictly required for functional correctness, but it improves performance significantly for most non-trivial workloads on all DG2 platforms it&rsquo;s been tested on so far, particularly on fused configurations &ndash; E.g. on DG2-448 it gives us a 20%-40% performance improvement on most interesting workloads:</p>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569" rel="noopener noreferrer" target="_blank" title>Draft: intel: Pixel pipeline optimizations for XeHP hardware. (!13569) · Merge requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569">Draft: intel: Pixel pipeline optimizations for XeHP hardware. (!13569) · Merge requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
@@ -78,7 +78,7 @@ Intel Gen12/<span class="xe-gpu-arch">X<sup>e</sup></span>プラットフォー�
 <blockquote>
 <pre><code> +#define INTEL_DEVICE_MAX_PIXEL_PIPES      (16) /* Maximum on DG2 */
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569/diffs?commit_id=d6f4f19155321dd0895f6c3cb14fc22318585421#diff-content-712a8df50d1196c189650dc493dacd43b7afed44" rel="noopener noreferrer" target="_blank" title>Draft: intel: Pixel pipeline optimizations for XeHP hardware. (!13569) · Merge requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569/diffs?commit_id=d6f4f19155321dd0895f6c3cb14fc22318585421#diff-content-712a8df50d1196c189650dc493dacd43b7afed44" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569/diffs?commit_id=d6f4f19155321dd0895f6c3cb14fc22318585421#diff-content-712a8df50d1196c189650dc493dacd43b7afed44">Draft: intel: Pixel pipeline optimizations for XeHP hardware. (!13569) · Merge requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
@@ -87,7 +87,7 @@ Intel Gen12/<span class="xe-gpu-arch">X<sup>e</sup></span>プラットフォー�
 <blockquote>
 <p>On DG2-128 this seems to improve SynMark2/OglDrvRes by 16.0% ±0.1%,
 n=8.</p>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569/diffs?commit_id=a392fccccfed48400993948d6e8b2b35c86af930" rel="noopener noreferrer" target="_blank" title>Draft: intel: Pixel pipeline optimizations for XeHP hardware. (!13569) · Merge requests · Mesa / mesa · GitLab</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569/diffs?commit_id=a392fccccfed48400993948d6e8b2b35c86af930" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/13569/diffs?commit_id=a392fccccfed48400993948d6e8b2b35c86af930">Draft: intel: Pixel pipeline optimizations for XeHP hardware. (!13569) · Merge requests · Mesa / mesa · GitLab</a></cite>
 </div>
 
 </blockquote>
@@ -130,7 +130,7 @@ n=8.</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/visual-technology/arc-discrete-graphics/xe-hpg-microarchitecture.html" rel="noopener noreferrer" target="_blank" title>Xe-HPG Microarchitecture</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/visual-technology/arc-discrete-graphics/xe-hpg-microarchitecture.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/architecture-and-technology/visual-technology/arc-discrete-graphics/xe-hpg-microarchitecture.html">Xe-HPG Microarchitecture</a></li>
 </ul>
 </section>
 

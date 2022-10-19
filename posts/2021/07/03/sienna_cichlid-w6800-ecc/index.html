@@ -43,19 +43,19 @@
   </aside><p>こうした個人的なデータベースも兼ねたブログをやっていると、そう言えばあれはどうなった？という気掛かりを抱えることがままある。<br>
 その 1つが <em>Sienna Cichlid/Navi21</em> に向けた、ECC機能で検出されたメモリエラーを記録し、レポートする機能を追加するパッチだった。パッチが投稿されたのは 2020/07/27、気付けば 1年近く前だ。  そして、そのパッチにはわずかではあるが HBMメモリに関係する記述があり、下リンク先のようなタイトルを付けた。</p>
 <ul>
-<li><a href="https://www.coelacanth-dream.com/posts/2020/07/27/what-sienna_cichlid-hbm2/" title>Navi21 /Sienna Cichlid のメモリは GDDR6 か HBM2 か、新たに出てきたパッチを読む | Coelacanth&rsquo;s Dream</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2020/07/27/what-sienna_cichlid-hbm2/" title="/posts/2020/07/27/what-sienna_cichlid-hbm2/">Navi21 /Sienna Cichlid のメモリは GDDR6 か HBM2 か、新たに出てきたパッチを読む | Coelacanth&rsquo;s Dream</a></li>
 </ul>
 <p>だが、 <em>Sienna Cichlid/Navi21</em> が対応するメモリタイプは GDDR6 で、実際に発表された製品も GDDR6メモリのみを採用している。</p>
 <p>記憶の片隅に置きながらそれ以上調べることはせず、新しい情報が公開されるのを待っていたが、現地時間 2021/06/08 付で <em>Sienna Cichlid/Navi21</em> をベースに、GDDR6メモリを採用しながら ECC機能に対応した <strong>Radeon PRO W6800</strong> が発表されたことから再度調べてみようという気になった。</p>
 <ul>
-<li><a href="https://ir.amd.com/news-events/press-releases/detail/1008/new-amd-radeon-pro-w6000-series-workstation-graphics-with" rel="noopener noreferrer" target="_blank" title>New AMD Radeon PRO W6000 Series Workstation Graphics with AMD RDNA 2 Architecture and Massive 32GB of Memory to Power Demanding Architectural, Design and Media Workloads :: Advanced Micro Devices, Inc. (AMD)</a></li>
+<li><a href="https://ir.amd.com/news-events/press-releases/detail/1008/new-amd-radeon-pro-w6000-series-workstation-graphics-with" rel="noopener noreferrer" target="_blank" title="https://ir.amd.com/news-events/press-releases/detail/1008/new-amd-radeon-pro-w6000-series-workstation-graphics-with">New AMD Radeon PRO W6000 Series Workstation Graphics with AMD RDNA 2 Architecture and Massive 32GB of Memory to Power Demanding Architectural, Design and Media Workloads :: Advanced Micro Devices, Inc. (AMD)</a></li>
 </ul>
 <p>調べ直した結論から言えば、そのパッチから <em>Sienna Cichlid/Navi21</em> が HBM(2)メモリに対応するといったようなことは読み取れなかった。<br>
 つまりこの記事は、過去の自分に向かってお前は間抜けだと言うためのものとなる。</p>
 <h2 id="unused">使われていない定数<a href="#unused" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em>Sienna Cichlid/Navi21</em> が HBM(2)メモリに対応しているのではないかという考えは、以下引用部の <code>UMC_V8_7_HBM_MEMORY_CHANNEL_WIDTH</code> から起こったが、端的に書くと、この定数は AMD GPU ドライバーのソースコード中のどこにも使われていない。<br>
-同様の定数は <a href="https://www.coelacanth-dream.com/tags/vega20" rel="noopener noreferrer" target="_blank" title>Vega20</a> 、<a href="https://www.coelacanth-dream.com/tags/arcturus" rel="noopener noreferrer" target="_blank" title>Arcturus/MI100</a> に向けたコードにもあるが、そちらも使われていない。<br>
+同様の定数は <a href="https://www.coelacanth-dream.com/tags/vega20" rel="noopener noreferrer" target="_blank" title="/tags/vega20">Vega20</a> 、<a href="https://www.coelacanth-dream.com/tags/arcturus" rel="noopener noreferrer" target="_blank" title="/tags/arcturus">Arcturus/MI100</a> に向けたコードにもあるが、そちらも使われていない。<br>
 恐らく、将来的に使うことを想定して定義したがそのまま使われなかった、あるいは内部で開発中には使っていたのかもしれないが、パッチを公開する段階では使われなくなったものと思われる。<br>
 それをそのまま残し、<em>Sienna Cichlid/Navi21</em> に向けたパッチを作成する時にベースにしたため使われない定数が引き継がれたのだろう。<br>
 また、他の定数に関しても、UMC (Unified Memory Controller) あたりのメモリチャネルインスタンス? を求めるためのもので、GPU全体のメモリチャネル・バス幅・メモリコントローラー数はわからない。</p>
@@ -71,7 +71,7 @@
  /* UMC regiser per channel offset */
  #define UMC_V8_7_PER_CHANNEL_OFFSET_SIENNA	0x400
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/49070c4ea3d97b76c5666466efb35dcc42c6c8fd/drivers/gpu/drm/amd/amdgpu/umc_v8_7.h" rel="noopener noreferrer" target="_blank" title>linux/umc_v8_7.h at 49070c4ea3d97b76c5666466efb35dcc42c6c8fd · torvalds/linux</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/49070c4ea3d97b76c5666466efb35dcc42c6c8fd/drivers/gpu/drm/amd/amdgpu/umc_v8_7.h" rel="noopener noreferrer" target="_blank" title="https://github.com/torvalds/linux/blob/49070c4ea3d97b76c5666466efb35dcc42c6c8fd/drivers/gpu/drm/amd/amdgpu/umc_v8_7.h">linux/umc_v8_7.h at 49070c4ea3d97b76c5666466efb35dcc42c6c8fd · torvalds/linux</a></cite>
 </div>
 
 </blockquote>
@@ -88,7 +88,7 @@
  > 		#define UMC_V6_1_PER_CHANNEL_OFFSET_VG20	0x800
  > 		#define UMC_V6_1_PER_CHANNEL_OFFSET_ARCT	0x400
  >
- > <div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/49070c4ea3d97b76c5666466efb35dcc42c6c8fd/drivers/gpu/drm/amd/amdgpu/umc_v6_1.h" rel="noopener noreferrer" target="_blank" title>linux/umc_v6_1.h at 49070c4ea3d97b76c5666466efb35dcc42c6c8fd · torvalds/linux</a></cite>
+ > <div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/torvalds/linux/blob/49070c4ea3d97b76c5666466efb35dcc42c6c8fd/drivers/gpu/drm/amd/amdgpu/umc_v6_1.h" rel="noopener noreferrer" target="_blank" title="https://github.com/torvalds/linux/blob/49070c4ea3d97b76c5666466efb35dcc42c6c8fd/drivers/gpu/drm/amd/amdgpu/umc_v6_1.h">linux/umc_v6_1.h at 49070c4ea3d97b76c5666466efb35dcc42c6c8fd · torvalds/linux</a></cite>
 </div>
 
 -->
@@ -97,17 +97,17 @@
 この方法では、使用可能なメモリ容量と実効メモリ帯域にオーバーヘッドが発生するはずだが、ドキュメント中では触れられていない。<br>
 また、シングルビットエラーの修正とマルチビットエラーの検出に対応するとしており、SECDEDコードを用いていると思われる。</p>
 <ul>
-<li><a href="https://www.amd.com/system/files/documents/ecc-explained-radeon-pro-W6000.pdf" rel="noopener noreferrer" target="_blank" title>https://www.amd.com/system/files/documents/ecc-explained-radeon-pro-W6000.pdf</a></li>
+<li><a href="https://www.amd.com/system/files/documents/ecc-explained-radeon-pro-W6000.pdf" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/system/files/documents/ecc-explained-radeon-pro-W6000.pdf">https://www.amd.com/system/files/documents/ecc-explained-radeon-pro-W6000.pdf</a></li>
 </ul>
 <p>NVIDIA GPU も Quadro シリーズの一部は ECC機能に対応しているが、採用しているアルゴリズムは明かされていない。</p>
 <p>GPU における ECC機能については、Hisa Ando 氏がマイナビニュースでの連載で詳細に解説しており、大変参考にさせていただいた。</p>
 <ul>
-<li><a href="https://news.mynavi.jp/article/architecture-355/" rel="noopener noreferrer" target="_blank" title>コンピュータアーキテクチャの話(355) GPUにおけるECCの考え方 | TECH+</a></li>
-<li><a href="https://news.mynavi.jp/article/architecture-323/" rel="noopener noreferrer" target="_blank" title>コンピュータアーキテクチャの話(323) GPUで用いられるメモリのエラー検出手法とその訂正手法 | TECH+</a></li>
+<li><a href="https://news.mynavi.jp/article/architecture-355/" rel="noopener noreferrer" target="_blank" title="https://news.mynavi.jp/article/architecture-355/">コンピュータアーキテクチャの話(355) GPUにおけるECCの考え方 | TECH+</a></li>
+<li><a href="https://news.mynavi.jp/article/architecture-323/" rel="noopener noreferrer" target="_blank" title="https://news.mynavi.jp/article/architecture-323/">コンピュータアーキテクチャの話(323) GPUで用いられるメモリのエラー検出手法とその訂正手法 | TECH+</a></li>
 </ul>
 <p>Hisa Ando氏は個人サイトでも、前の週に起こったプロセサ関係の話題を紹介しており、そうした話題に興味がある方にはぜひ薦めたい。</p>
 <ul>
-<li><a href="https://andosprocinfo.web.fc2.com/" rel="noopener noreferrer" target="_blank" title>Ando&rsquo;s Microprocessor Information</a></li>
+<li><a href="https://andosprocinfo.web.fc2.com/" rel="noopener noreferrer" target="_blank" title="https://andosprocinfo.web.fc2.com/">Ando&rsquo;s Microprocessor Information</a></li>
 </ul>
 </article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/sienna_cichlid/" title="Sienna_Cichlid">#Sienna Cichlid</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna_2/" title="RDNA_2">#RDNA 2</a></nav><aside class="article-bottom-misc delay-page">
   <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/07/03/sienna_cichlid-w6800-ecc.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>

@@ -48,14 +48,14 @@
 It could gain better performance for it&rsquo;s faster compared to FP32<br>
 while meets the precision or magnitude requirement. It&rsquo;s availability<br>
 is indicated by CPUID.(EAX=7,ECX=0):EDX[bit 23]</p>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2020/12/7/1443" rel="noopener noreferrer" target="_blank" title>LKML: Kyung Min Park: [PATCH 2/2] x86: Expose AVX512_FP16 for supported CPUID</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lkml.org/lkml/2020/12/7/1443" rel="noopener noreferrer" target="_blank" title="https://lkml.org/lkml/2020/12/7/1443">LKML: Kyung Min Park: [PATCH 2/2] x86: Expose AVX512_FP16 for supported CPUID</a></cite>
 </div>
 
 </blockquote>
 <p>AVX512系命令では、<code>AVX512_VNNI</code> にて精度を下げて複数の要素を扱うことで処理性能を向上させることができ、データ精度 FP32 の場合に対してピーク理論性能が、 Int8 では 4倍、Int16 では 2倍となる。(ただし、メモリ性能がボトルネックとなるため、実際の性能はそれより低くなる可能性がある。)<br>
 <code>AVX512_FP16</code> はこれを拡張したものと思われ、ピーク理論性能は Int16 と同じとなるが、FP16 であれば Int16 よりも数値が広い範囲で保持される。</p>
-<p>AVX512、FP16 というキーワードで、過去にバグ報告プラットフォームである <a href="https://launchpad.net/intel" rel="noopener noreferrer" target="_blank" title>intel in Launchpad</a> にちらと出てきた <code>HFNI</code> 命令が思い出される。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/05/26/intel-adl-spr-new-inst/" title>Intel Alder Lake、Sapphire Rapids にて追加される2つの命令 ――AVX2 VNNI /HFNI | Coelacanth&rsquo;s Dream</a></span>
+<p>AVX512、FP16 というキーワードで、過去にバグ報告プラットフォームである <a href="https://launchpad.net/intel" rel="noopener noreferrer" target="_blank" title="https://launchpad.net/intel">intel in Launchpad</a> にちらと出てきた <code>HFNI</code> 命令が思い出される。<br>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/05/26/intel-adl-spr-new-inst/" title="/posts/2020/05/26/intel-adl-spr-new-inst/">Intel Alder Lake、Sapphire Rapids にて追加される2つの命令 ――AVX2 VNNI /HFNI | Coelacanth&rsquo;s Dream</a></span>
 
 その時のリンク先は消されてしまったが、メールアーカイブには残っていた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 <code>HFNI</code> は AVX512命令において、FP32 の代わりに FP16 を使用し、性能を最大 2倍に引き上げるものと説明されている。<br>
@@ -68,7 +68,7 @@ is indicated by CPUID.(EAX=7,ECX=0):EDX[bit 23]</p>
 </h2>
 <p>CPUマイクロアーキテクチャの違いと併せて、対応範囲が混沌としている AVX512命令群だが、GCC 等コンパイラのドキュメントを頼りに頑張って整理したのが下の表となる。<br>
 プロセッサのコードネームを略称で記載しているが、一応書いておくと、<em>SKX (Skylake server)</em> 、<em>CNL (Cannon Lake)</em> 、<em>CLX (Cascade Lake)</em> 、<em>CPX (Cooper Lake)</em> 、<em>ICL (Ice Lake client)</em> 、<em>ICX (Ice Lake server)</em> 、<em>TGL (Tiger Lake)</em> 、<em>SPR (Sapphire Rapids)</em> 、<em>ADL (Alder Lake)</em> と対応している。<br>
-また、<em>Alder Lake</em> に関しては、<a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html" rel="noopener noreferrer" target="_blank" title>Intel® Architecture Instruction Set Extensions Programming Reference</a> に 「Intel Hybrid Technology は AVX512 をサポートしない」とあり、そのためアーキテクチャ自体がサポートしていない場合と区別してある。</p>
+また、<em>Alder Lake</em> に関しては、<a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html" rel="noopener noreferrer" target="_blank" title="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html">Intel® Architecture Instruction Set Extensions Programming Reference</a> に 「Intel Hybrid Technology は AVX512 をサポートしない」とあり、そのためアーキテクチャ自体がサポートしていない場合と区別してある。</p>
 <p>AVX512命令は <strong>Xeon Phi シリーズ</strong> 、<em>Knight’s Landing</em> 、<em>Knights Mill</em> でも一部サポートされているが、それも含めるとさらに表が肥大化してしまうため省いた。5つの命令をまとめている 2行目を細かく分ける必要が出てしまう。<br>
 それと <em>Rocket Lake</em> も省いているが、その <em>Crypress Cove アーキテクチャ</em> は <em>Ice Lake (client)</em> と同じ機能を備えることから、AVX512命令の範囲も同様と思われる。</p>
 <table>
@@ -188,11 +188,11 @@ is indicated by CPUID.(EAX=7,ECX=0):EDX[bit 23]</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html" rel="noopener noreferrer" target="_blank" title>Intel® Architecture Instruction Set Extensions Programming Reference</a></li>
-<li><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/avx-512-overview.html" rel="noopener noreferrer" target="_blank" title>Intel® Advanced Vector Extensions 512 (Intel® AVX-512) Overview</a></li>
-<li><a href="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/lowering-numerical-precision-increase-deep-learning-performance.html" rel="noopener noreferrer" target="_blank" title>Lowering Numerical Precision to Increase Deep Learning Performance</a></li>
-<li><a href="https://github.com/llvm/llvm-project/commit/756f5978410809530150f5e1cd425e85ad94d1cd" rel="noopener noreferrer" target="_blank" title>[X86] Support Intel avxvnni · llvm/llvm-project@756f597</a></li>
-<li><a href="https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html" rel="noopener noreferrer" target="_blank" title>x86 Options (Using the GNU Compiler Collection (GCC))</a></li>
+<li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html" rel="noopener noreferrer" target="_blank" title="https://software.intel.com/content/www/us/en/develop/download/intel-architecture-instruction-set-extensions-programming-reference.html">Intel® Architecture Instruction Set Extensions Programming Reference</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/avx-512-overview.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/architecture-and-technology/avx-512-overview.html">Intel® Advanced Vector Extensions 512 (Intel® AVX-512) Overview</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/lowering-numerical-precision-increase-deep-learning-performance.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/lowering-numerical-precision-increase-deep-learning-performance.html">Lowering Numerical Precision to Increase Deep Learning Performance</a></li>
+<li><a href="https://github.com/llvm/llvm-project/commit/756f5978410809530150f5e1cd425e85ad94d1cd" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/commit/756f5978410809530150f5e1cd425e85ad94d1cd">[X86] Support Intel avxvnni · llvm/llvm-project@756f597</a></li>
+<li><a href="https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html" rel="noopener noreferrer" target="_blank" title="https://gcc.gnu.org/onlinedocs/gcc/x86-Options.html">x86 Options (Using the GNU Compiler Collection (GCC))</a></li>
 </ul>
 </section>
 
@@ -200,7 +200,7 @@ is indicated by CPUID.(EAX=7,ECX=0):EDX[bit 23]</p>
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.mail-archive.com/ubuntu-bugs@lists.ubuntu.com/msg5786181.html" rel="noopener noreferrer" target="_blank" title>[Bug 1879865] Re: [ADL] Enable 5G ISA (FP16) / HFNI</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.mail-archive.com/ubuntu-bugs@lists.ubuntu.com/msg5786181.html" rel="noopener noreferrer" target="_blank" title="https://www.mail-archive.com/ubuntu-bugs@lists.ubuntu.com/msg5786181.html">[Bug 1879865] Re: [ADL] Enable 5G ISA (FP16) / HFNI</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>

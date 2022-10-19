@@ -40,9 +40,9 @@
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-07-06 15:50 +0900">Post: 2022/07/06 15:50 &#43;0900</time>
     <aside class="update">Update: 2022/08/22 10:16 &#43;0900</aside>
-  </aside><p>Intel の Pete Chou 氏より、<a href="https://github.com/intel/intel-graphics-compiler" rel="noopener noreferrer" target="_blank" title>Intel Graphics Compiler (IGC)</a> のサポートターゲット、vISA (virtual ISA) に <em>Meteor Lake</em> を追加するコミットが投稿されている。</p>
+  </aside><p>Intel の Pete Chou 氏より、<a href="https://github.com/intel/intel-graphics-compiler" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler">Intel Graphics Compiler (IGC)</a> のサポートターゲット、vISA (virtual ISA) に <em>Meteor Lake</em> を追加するコミットが投稿されている。</p>
 <ul>
-<li><a href="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17" rel="noopener noreferrer" target="_blank" title>vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5</a></li>
+<li><a href="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17">vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5</a></li>
 </ul>
 <h2 id="xe-hpg">Xe-HPG<a href="#xe-hpg" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -53,7 +53,7 @@
  +    case Xe_MTL:
           platform = Platform::XE_HPG;
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17" rel="noopener noreferrer" target="_blank" title>vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17">vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5</a></cite>
 </div>
 
 </blockquote>
@@ -62,14 +62,14 @@
 <p>EU あたり 8スレッド、EU あたり 4スレッドにも設定可能であり、その場合スレッドあたりの利用可能レジスタファイルが 256エントリ (8KiB) になるという点は <em>Meteor Lake</em> と <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span></em> と共通する。<br>
 EU のネイティブでの実行サイズが SIMD8 という点も変わらない。<br>
 従来から大幅に設計が見直されたデータポート、LSC (Load Store Cache) も <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG/HPC</span></em> と同様に採用している。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/" title>Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/" title="/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/">Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <p>だが行列積和演算を行う <code>DPAS (Dot Product Accumulate Systolic)</code> 命令、XMX (<span class="xe-gpu-arch">X<sup>e</sup></span> Matrix eXtension) とも呼ばれるユニットの有無を判定する <code>hasDPAS()</code> において <code>getPlatform() != Xe_MTL</code> が追加されている。<br>
 このことから <em>Meteor Lake GPU</em> では XMXユニットが搭載されていないことが考えられる。<br>
 XMXユニットは主に推論処理の高速化を目的としており、用途の一つに Intel はアップスケーリング技術 <span class="xe-gpu-arch">X<sup>e</sup></span>SS (Super Sampling) を挙げている。<br>
 <span class="xe-gpu-arch">X<sup>e</sup></span>SS は DP4a (INT8) にも対応しているため、タイルアーキテクチャを採用するとはいえ iGPU としてダイ面積、面積あたりの性能を <em>Meteor Lake GPU</em> で重視した結果、XMXユニットを搭載しなかったのではないかと考えられる。<br>
 <em>Meteor Lake</em> は VPU (Vision Processing Unit) を搭載するとされているため、GPU との連携が重要な推論処理以外は VPU で実行することができる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/" title>Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/" title="/posts/2022/01/11/intel-kmb-thb/">Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <blockquote>
 <pre><code>      bool hasDPAS() const
@@ -78,14 +78,14 @@ XMXユニットは主に推論処理の高速化を目的としており、用�
  +        return getPlatform() &gt;= Xe_XeHPSDV &amp;&amp; getPlatform() != Xe_MTL;
       }
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17" rel="noopener noreferrer" target="_blank" title>vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17">vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5</a></cite>
 </div>
 
 </blockquote>
 <h3 id="fp64">FP64 に部分的に対応<a href="#fp64" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>Intel GPU では <em>Gen11 アーキテクチャ</em> から Int64/FP64 の対応がハードウェア的には外され、ソフトウェアエミュレータでの対応となり、これは <em>DG2/Alchemist</em> にも引き継がれているが、<em>Meteor Lake GPU</em> では FP64 に部分的ではあるが再度ハードウェアが対応する様子を見せている。<br>
-<a href="https://github.com/intel/intel-graphics-compiler/blob/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17/visa/HWCaps.inc" rel="noopener noreferrer" target="_blank" title>visa/HWCaps.inc</a> において、<code>noInt64()</code> の判定部に <code>Xe_MTL</code> が追加されているが、<code>noFP64()</code> には追加されていない。FP64 にのみ対応し、Int64 には対応しないものと思われる。</p>
+<a href="https://github.com/intel/intel-graphics-compiler/blob/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17/visa/HWCaps.inc" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/blob/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17/visa/HWCaps.inc">visa/HWCaps.inc</a> において、<code>noInt64()</code> の判定部に <code>Xe_MTL</code> が追加されているが、<code>noFP64()</code> には追加されていない。FP64 にのみ対応し、Int64 には対応しないものと思われる。</p>
 <blockquote>
 <pre><code>     bool noInt64() const
      {
@@ -98,7 +98,7 @@ XMXユニットは主に推論処理の高速化を目的としており、用�
          return getPlatform() == GENX_ICLLP || isXeLP() || getPlatform() == Xe_DG2;
      }
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17/visa/HWCaps.inc#L514-L523" rel="noopener noreferrer" target="_blank" title>intel-graphics-compiler/HWCaps.inc at 20ef9c5a42f4154c9e18c65cafd55e8af5f67c17 · intel/intel-graphics-compiler</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17/visa/HWCaps.inc#L514-L523" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/blob/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17/visa/HWCaps.inc#L514-L523">intel-graphics-compiler/HWCaps.inc at 20ef9c5a42f4154c9e18c65cafd55e8af5f67c17 · intel/intel-graphics-compiler</a></cite>
 </div>
 
 </blockquote>
@@ -115,21 +115,21 @@ XMXユニットは主に推論処理の高速化を目的としており、用�
           FourDistPipeReduction = 6, // XeHPC variation: 4 distance pipes with Long pipe reduction
  +        ThreeDistPipeDPMath   = 7, // MTL: 3 distance pipe with DP operations in Math pipe
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17" rel="noopener noreferrer" target="_blank" title>vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/commit/20ef9c5a42f4154c9e18c65cafd55e8af5f67c17">vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5</a></cite>
 </div>
 
 </blockquote>
 <p>GPU の FP32:FP64 演算性能レートは、AMD GPU では FP64演算性能を高めたサーバー向けを除けば <em>RDNA 2/GFX10.3 アーキテクチャ</em> までの長い間 16:1 を保っていたが、<em>RDNA 3/GFX11</em> では 32:1 になることが明らかにされている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/" title>GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/" title="/posts/2022/06/18/gfx11-dpfp-rate/">GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream</a></span>
 </p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://www.intel.com/content/www/us/en/develop/documentation/oneapi-gpu-optimization-guide/top/xe-arch.html" rel="noopener noreferrer" target="_blank" title>Intel® Iris® Xe GPU Architecture</a></li>
-<li><a href="https://www.intel.co.jp/content/www/jp/ja/products/docs/arc-discrete-graphics/xess.html" rel="noopener noreferrer" target="_blank" title>インテル® Arc™ - Xe スーパーサンプリング</a></li>
-<li><a href="https://www.intel.com/content/www/us/en/developer/articles/guide/lp-api-developer-optimization-guide.html" rel="noopener noreferrer" target="_blank" title>Intel® Processor Graphics Xᵉ-LP API Developer and Optimization Guide</a></li>
-<li><a href="https://community.intel.com/t5/Graphics/What-processors-have-an-internal-Gen11-GPU-with-FP64-double/m-p/691217" rel="noopener noreferrer" target="_blank" title>Re: What processors have an internal Gen11 GPU with FP64 (double precision) enabled? - Intel Communities</a></li>
-<li><a href="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf" rel="noopener noreferrer" target="_blank" title>the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/develop/documentation/oneapi-gpu-optimization-guide/top/xe-arch.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/develop/documentation/oneapi-gpu-optimization-guide/top/xe-arch.html">Intel® Iris® Xe GPU Architecture</a></li>
+<li><a href="https://www.intel.co.jp/content/www/jp/ja/products/docs/arc-discrete-graphics/xess.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.co.jp/content/www/jp/ja/products/docs/arc-discrete-graphics/xess.html">インテル® Arc™ - Xe スーパーサンプリング</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/guide/lp-api-developer-optimization-guide.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/developer/articles/guide/lp-api-developer-optimization-guide.html">Intel® Processor Graphics Xᵉ-LP API Developer and Optimization Guide</a></li>
+<li><a href="https://community.intel.com/t5/Graphics/What-processors-have-an-internal-Gen11-GPU-with-FP64-double/m-p/691217" rel="noopener noreferrer" target="_blank" title="https://community.intel.com/t5/Graphics/What-processors-have-an-internal-Gen11-GPU-with-FP64-double/m-p/691217">Re: What processors have an internal Gen11 GPU with FP64 (double precision) enabled? - Intel Communities</a></li>
+<li><a href="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf">the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf</a></li>
 </ul>
 </section>
 
@@ -137,7 +137,7 @@ XMXユニットは主に推論処理の高速化を目的としており、用�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf" rel="noopener noreferrer" target="_blank" title>the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf">the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
