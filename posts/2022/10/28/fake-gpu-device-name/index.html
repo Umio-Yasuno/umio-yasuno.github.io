@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux 環境で GPU デバイス名を偽装する | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/10/28/fake-gpu-device-name/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 環境で GPU デバイス名を偽装する | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="Chips and Cheese に MrFreak 氏と clamchowder 氏による、ベンチマークの結果に含まれるハードウェア情報が信用できない理由と CPUID 命令の結果を偽装する方法を紹介した記事が掲載されている。 Why you can’">
+  <meta property="og:description" content="Chips and Cheese に MrFreak 氏と clamchowder 氏による、ベンチマークの結果に含まれるハードウェア情報が信用できない理由と CPUID 命令の結果を偽装する方法を紹介した記事が掲載されている。 Why you can’"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.68;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.4;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .1rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-10-28","dateModified":"2022-10-28","datePublished":"2022-10-28","headline":"Linux 環境で GPU デバイス名を偽装する","image":"https://www.coelacanth-dream.com/icon.png","name":"Linux 環境で GPU デバイス名を偽装する"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">Linux 環境で GPU デバイス名を偽装する</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2022-10-28 19:27 +0900">Post: 2022/10/28 19:27 &#43;0900</time>
+    <aside class="update">Update: 2022/10/28 20:22 &#43;0900</aside>
+  </aside><p>Chips and Cheese に MrFreak 氏と clamchowder 氏による、ベンチマークの結果に含まれるハードウェア情報が信用できない理由と <code>CPUID</code> 命令の結果を偽装する方法を紹介した記事が掲載されている。</p>
+<ul>
+<li><a href="https://chipsandcheese.com/2022/10/27/why-you-cant-trust-cpuid/" rel="noopener noreferrer" target="_blank" title="https://chipsandcheese.com/2022/10/27/why-you-cant-trust-cpuid/">Why you can’t trust CPUID – Chips and Cheese</a></li>
+</ul>
+<p>本記事は Chips and Cheese の記事にインスパイアされたもので、GPU デバイス名を書き換える方法を紹介したい。</p>
+<p>前提的なことを書くと、ある API のドライバーがオープンソースで公開され、開発されている以上、その API を経由して取得される情報を書き換えるのは非常に容易である。<br>
+<code>CPUID</code> 命令の偽装とは異なり、一部レジスタの書き換えや仮想環境を用いる必要もない。<br>
+今回は一部パッチを当てたドライバーのビルドとインストールをして実証したが、コードの変更もビルドもそこまで手間は掛からない。ビルド時間も最近の 6/8-Core CPU であれば 5分程度で終わると思われる。<br>
+そして GPU デバイス名を書き換えることによるメリットは、全く無いと個人的には思っている。こうした偽装する方法が広まることで、ベンチマーク結果から出てきた怪しい情報による騒ぎがインターネットから少しでも減れば良いなとは思うが。</p>
+<p>以下は Basemark GPU での実証。</p>
+<figure>
+  <a href="../fake_vk.jpg" target="_blank"  >
+  <img src="../fake_vk.jpg"
+      alt="fake_vk"/>
+</a>
+</figure>
+
+<p>まず GPU デバイス名、あるいはそれに近い情報を得る方法として、基本的に OpenGL では <code>glGetString(GL_RENDERER)</code>、Vulkan では <code>VkPhysicalDeviceProperties</code> の <code>deviceName</code> が使われると思う。<br>
+Mesa3D RadeonSI (OpenGL) と RADV (Vulkan)、2つのオープンソースドライバーではそこに <code>libdrm</code> API 経由で取得できる <code>marketing_name</code> を用いている。<br>
+そして <code>libdrm</code> は AMD GPU の DeviceID と RevisionID から一致する <code>marketing_name</code> を <code>amdgpu.ids</code> のテーブルから探し、見つかった場合はそれを返す。<br>
+そのため GPU デバイス名を書き換えたい場合は、ローカル環境にインストールされている <code>amdgpu.ids</code> を適切に編集するだけで済む。<br>
+しかし、RadeonSI と RADV ではデバイス名の後にソフトウェア情報やチップ情報を追加する。具体的には <code>(polaris11, LLVM ..., DRM ...)</code> や <code>(RADV POLARIS11)</code> のような文字列がデバイス名の後に続く。<br>
+先に書いたパッチは、その部分を削除するためのものとなる。<br>
+パッチを当てれば、後は <code>amdgpu.ids</code> を編集するだけで余計な情報が付いていないデバイス名を偽装できる。</p>
+<p>環境が無いため検証できていないが、Mesa3D における Intel GPU ドライバーでも DeviceID を元にデバイス名を返す実装になっているため、その部分を書き換えれば目的を達成できると思われる。<br>
+NVIDIA GPU ドライバーはほとんどプロプライエタリではあるが、最近 (2022/05/12) に公開されたオープンソースな Linux Kernel モジュールに <code>DeviceID, SubSystemID, SubSystemVendorID, DeviceName</code> のテーブルが含まれており、同様にテーブル部を書き換えることで偽装できる可能性はある。<br>
+Windows 向けドライバーがどうなっているかは知らないが、同様のテーブルを参照する方法であれば可能かもしれない。</p>
+<ul>
+<li><a href="https://github.com/NVIDIA/open-gpu-kernel-modules/blob/main/src/nvidia/generated/g_nv_name_released.h" rel="noopener noreferrer" target="_blank" title="https://github.com/NVIDIA/open-gpu-kernel-modules/blob/main/src/nvidia/generated/g_nv_name_released.h">open-gpu-kernel-modules/g_nv_name_released.h at main · NVIDIA/open-gpu-kernel-modules</a></li>
+</ul>
+<p><code>CPUID</code> 命令から様々な情報を取得できる CPU と異なり、GPU ではキャッシュ構成等を API から取得できるようになっていないため、デバイス名を偽装することの効果は CPU よりも大きいと考えられる。<br>
+ベンチマークソフト側の対策としては、デバイス名だけでなく、DeviceID 等も結果に含めることで偽装を見破る方法をユーザーに対して増やすことができるように思う。</p>
+<p>ベンチマークスコアまで騙し切ることは難しいと思うが、初期サンプリングだからとか、ドライバーの成熟が進んでいないからだとか、次世代のローエンド帯かミドル帯の GPU だろうといった雑な推測で誤魔化されてしまうのではないかと思ってしまう。</p>
+</article><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/10/28/fake-gpu-device-name.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.104.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a></nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.104.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
