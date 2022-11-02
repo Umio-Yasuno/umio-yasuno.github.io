@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.6rem 0}.page-main>p{margin:.3rem 0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-10-28","dateModified":"2022-10-28","datePublished":"2022-10-28","headline":"Linux 環境で GPU デバイス名を偽装する","image":"https://www.coelacanth-dream.com/icon.png","name":"Linux 環境で GPU デバイス名を偽装する"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-10-28","dateModified":"2022-11-02","datePublished":"2022-10-28","headline":"Linux 環境で GPU デバイス名を偽装する","image":"https://www.coelacanth-dream.com/icon.png","name":"Linux 環境で GPU デバイス名を偽装する"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-10-28 19:27 +0900">Post: 2022/10/28 19:27 &#43;0900</time>
-    <aside class="update">Update: 2022/10/28 20:22 &#43;0900</aside>
+    <aside class="update">Update: 2022/11/02 18:18 &#43;0900</aside>
   </aside><p>Chips and Cheese に MrFreak 氏と clamchowder 氏による、ベンチマークの結果に含まれるハードウェア情報が信用できない理由と <code>CPUID</code> 命令の結果を偽装する方法を紹介した記事が掲載されている。</p>
 <ul>
 <li><a href="https://chipsandcheese.com/2022/10/27/why-you-cant-trust-cpuid/" rel="noopener noreferrer" target="_blank" title="https://chipsandcheese.com/2022/10/27/why-you-cant-trust-cpuid/">Why you can’t trust CPUID – Chips and Cheese</a></li>
@@ -63,15 +63,17 @@ Mesa3D RadeonSI (OpenGL) と RADV (Vulkan)、2つのオープンソースドラ�
 そのため GPU デバイス名を書き換えたい場合は、ローカル環境にインストールされている <code>amdgpu.ids</code> を適切に編集するだけで済む。<br>
 しかし、RadeonSI と RADV ではデバイス名の後にソフトウェア情報やチップ情報を追加する。具体的には <code>(polaris11, LLVM ..., DRM ...)</code> や <code>(RADV POLARIS11)</code> のような文字列がデバイス名の後に続く。<br>
 先に書いたパッチは、その部分を削除するためのものとなる。<br>
-パッチを当てれば、後は <code>amdgpu.ids</code> を編集するだけで余計な情報が付いていないデバイス名を偽装できる。</p>
-<p>環境が無いため検証できていないが、Mesa3D における Intel GPU ドライバーでも DeviceID を元にデバイス名を返す実装になっているため、その部分を書き換えれば目的を達成できると思われる。<br>
+パッチを当てれば、後は <code>amdgpu.ids</code> を編集するだけで余計な情報が付いていないデバイス名を偽装できる。<br>
+今回は偽装を分かりやすくするために削除したが、うまく書き換えれば偽装のレベルを上げられる。コード内の文字列部分を書き換えるだけであるため、それも手間はほとんど掛からない。</p>
+<p>環境が無いため検証できていないが、Mesa3D における Intel GPU ドライバーでも DeviceID を元にテーブルを参照してデバイス名を返す実装になっているため、その部分を書き換えれば偽装できると思われる。<br>
 NVIDIA GPU ドライバーはほとんどプロプライエタリではあるが、最近 (2022/05/12) に公開されたオープンソースな Linux Kernel モジュールに <code>DeviceID, SubSystemID, SubSystemVendorID, DeviceName</code> のテーブルが含まれており、同様にテーブル部を書き換えることで偽装できる可能性はある。<br>
 Windows 向けドライバーがどうなっているかは知らないが、同様のテーブルを参照する方法であれば可能かもしれない。</p>
 <ul>
 <li><a href="https://github.com/NVIDIA/open-gpu-kernel-modules/blob/main/src/nvidia/generated/g_nv_name_released.h" rel="noopener noreferrer" target="_blank" title="https://github.com/NVIDIA/open-gpu-kernel-modules/blob/main/src/nvidia/generated/g_nv_name_released.h">open-gpu-kernel-modules/g_nv_name_released.h at main · NVIDIA/open-gpu-kernel-modules</a></li>
 </ul>
 <p><code>CPUID</code> 命令から様々な情報を取得できる CPU と異なり、GPU ではキャッシュ構成等を API から取得できるようになっていないため、デバイス名を偽装することの効果は CPU よりも大きいと考えられる。<br>
-ベンチマークソフト側の対策としては、デバイス名だけでなく、DeviceID 等も結果に含めることで偽装を見破る方法をユーザーに対して増やすことができるように思う。</p>
+ベンチマークソフト側の対策としては、デバイス名だけでなく、DeviceID 等も結果に含めることで偽装を見破る方法をユーザーに対して増やすことができるように思う。<br>
+Vulkan であれば <code>VkPhysicalDeviceProperties</code> に <code>deviceID</code> も含まれている。</p>
 <p>ベンチマークスコアまで騙し切ることは難しいと思うが、初期サンプリングだからとか、ドライバーの成熟が進んでいないからだとか、次世代のローエンド帯かミドル帯の GPU だろうといった雑な推測で誤魔化されてしまうのではないかと思ってしまう。</p>
 </article><aside class="article-bottom-misc delay-page">
   <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/10/28/fake-gpu-device-name.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
@@ -84,7 +86,7 @@ Windows 向けドライバーがどうなっているかは知らないが、同
 <a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
 <a href="#" class="pagetop sb">Page Top</a>
-  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
 </aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.104.3</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
@@ -97,7 +99,7 @@ Windows 向けドライバーがどうなっているかは知らないが、同
   <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
   <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
 <nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
-  </nav><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a></nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+  </nav><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a></nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 
     <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
