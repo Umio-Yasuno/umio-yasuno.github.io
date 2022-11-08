@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-11-07","dateModified":"2022-11-07","datePublished":"2022-11-07","headline":"Intel Emerald Rapids の CPUID Model と Granite Rapids のセグメント","image":"https://www.coelacanth-dream.com/icon.png","name":"Intel Emerald Rapids の CPUID Model と Granite Rapids のセグメント"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-11-07","dateModified":"2022-11-09","datePublished":"2022-11-07","headline":"Intel Emerald Rapids の CPUID Model と Granite Rapids のセグメント","image":"https://www.coelacanth-dream.com/icon.png","name":"Intel Emerald Rapids の CPUID Model と Granite Rapids のセグメント"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-11-07 08:51 +0900">Post: 2022/11/07 08:51 &#43;0900</time>
-    <aside class="update">Update: 2022/11/07 12:49 &#43;0900</aside>
+    <aside class="update">Update: 2022/11/09 03:11 &#43;0900</aside>
   </aside><p>Intel の Tony Luck 氏により、Linux Kernel に Intel の次世代サーバー向けプロセッサ <em>Emerald Rapids, Granite Rapids, Sierra Forest, Grand Ridge</em> の CPUID Model 情報を追加するパッチが投稿されている。<br>
 <code>CPUID[LEAF=0x1].EAX</code> から取得できる CPUID Family, Model, Stepping は、主にプロセッサの識別に用いられる。</p>
 <p>追加された CPUID Model の一部は、<em>Intel® Architecture Instruction Set Extensions Programming Reference: Revision -046</em> で先に公開されていたが、今回のパッチでは <em>Emerald Rapids</em> の CPUID Model と <em>Granite Rapids</em> のマーケットセグメントの情報が追加されている。</p>
@@ -58,10 +58,10 @@
 
 </blockquote>
 <p>サーバー向け Atom プロセッサとなる <em>Sierra Forest</em> の CPUID Model は <code>0xAF (175)</code>、<em>Grand Ridge</em> は <code>0xB6 (182)</code>。<br>
-何気に今回のパッチで <em>Grand Ridge</em> が Atom 系であることが明言された形となる。<br>
 だが <em>Grand Ridge</em> がどのマーケットセグメントに位置するかは情報が無い。また、<em>Grand Ridge</em> は現状 Intel が公開しているロードマップ上には現れていない。<br>
-<em>Ridge</em> 系のコードネームからは、<em>Snow Ridge (Tremont)</em> のようにマイクロサーバー向けという印象を受けるが。<br>
-Intel のサイトを検索したところでは、ISA ドキュメントの他に <em>Grand Ridge</em> と FPGA を組み合わせた例のダイアグラムが引っ掛かるくらいだった。</p>
+<em>Ridge</em> 系のコードネームからは、<em>Snow Ridge (Tremont)</em> のようにマイクロサーバー向け (<code>_D</code>) という印象を受けるが。<br>
+Intel のサイトを検索したところでは、ISA ドキュメントの他に <em>Grand Ridge</em> と FPGA を組み合わせた例のダイアグラムが引っ掛かるくらいだった。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+また、今回のパッチや LLVM へのパッチの中で <em>Grand Ridge</em> が Atom 系であることが一応明言されている。</p>
 <p><em>Grand Ridge</em> では <em>Sierra Forest</em> の対応命令範囲に加え、<code>ADD/AND/OR/XOR</code> 命令に Atomic 操作を追加した <code>RAD-INT</code> 命令に対応することから、<em>Sierra Forest</em> と <em>Grand Ridge</em> は異なるマイクロアーキテクチャを採用する可能性が考えられる。</p>
 <blockquote>
 <pre><code>    +#define INTEL_FAM6_SIERRAFOREST_X	0xAF
@@ -93,9 +93,19 @@ Intel のサイトを検索したところでは、ISA ドキュメントの他�
 </h3>
 <ul>
 <li><a href="https://www.coelacanth-dream.com/posts/2022/10/04/intel-ise-rev_46/" title="/posts/2022/10/04/intel-ise-rev_46/">Intel Sierra Forest, Grand Ridge, Granite Rapids でサポートされる新命令 | Coelacanth&rsquo;s Dream</a></li>
+<li><a href="https://gcc.gnu.org/pipermail/gcc-patches/2022-November/605144.html" rel="noopener noreferrer" target="_blank" title="https://gcc.gnu.org/pipermail/gcc-patches/2022-November/605144.html">[PATCH 0/2] Intel Grand Ridge Support</a></li>
+<li><a href="https://reviews.llvm.org/D137153" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D137153">⚙ D137153 [WIP][X86] Support -march=sierraforest, grandridge, graniterapids.</a></li>
 </ul>
 </section>
 
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.intel.com/content/www/us/en/docs/programmable/736108/22-3-1-2-0/ethernet-bridge-inline-macsec.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/docs/programmable/736108/22-3-1-2-0/ethernet-bridge-inline-macsec.html">1.2.2.2. Ethernet Bridge + Inline MACsec</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
 </article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cpuid/" title="CPUID">#CPUID</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/emerald_rapids/" title="Emerald_Rapids">#Emerald Rapids</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/granite_rapids/" title="Granite_Rapids">#Granite Rapids</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/sierra_forest/" title="Sierra_Forest">#Sierra Forest</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/grand_ridge/" title="Grand_Ridge">#Grand Ridge</a></nav><aside class="article-bottom-misc delay-page">
   <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/11/07/intel-emr-cpuid-model.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
 </aside>

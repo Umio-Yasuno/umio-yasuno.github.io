@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RDNA 3 アーキテクチャの CU の若干の考察 | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/11/09/rdna_3-cu-consider/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RDNA 3 アーキテクチャの CU の若干の考察 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="オープンソースドライバーや LLVM のコードから、まだ詳細が公開されていない RDNA 3 アーキテクチャ の CU に関する若干の考察を個人的にしてみる。 当然ながら、AMD よりホワイトペ">
+  <meta property="og:description" content="オープンソースドライバーや LLVM のコードから、まだ詳細が公開されていない RDNA 3 アーキテクチャ の CU に関する若干の考察を個人的にしてみる。 当然ながら、AMD よりホワイトペ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, GFX11, RadeonSI, RADV">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.68;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .1rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{--f-disp:none}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1.1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-11-09","dateModified":"2022-11-09","datePublished":"2022-11-09","headline":"RDNA 3 アーキテクチャの CU の若干の考察","image":"https://www.coelacanth-dream.com/icon.png","name":"RDNA 3 アーキテクチャの CU の若干の考察"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">RDNA 3 アーキテクチャの CU の若干の考察</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2022-11-09 00:04 +0900">Post: 2022/11/09 00:04 &#43;0900</time>
+    <aside class="update">Update: 2022/11/09 03:11 &#43;0900</aside>
+  </aside><p>オープンソースドライバーや LLVM のコードから、まだ詳細が公開されていない <em>RDNA 3 アーキテクチャ</em> の CU に関する若干の考察を個人的にしてみる。<br>
+当然ながら、AMD よりホワイトペーパーといった <em>RDNA 3 アーキテクチャ</em> の詳細を記述した資料が公開された場合、ここでの考察は否定される可能性がある。<br>
+また、<em>RadeonSI (OpenGL)</em> ドライバーや LLVM は AMD の開発者が直接開発を進め、パッチを公開しており、公式資料以外では少ない信頼できる情報源だと考えているが、同時にコードは更新し続けるものであるため、あくまでも現時点での情報を用いた考察となる。</p>
+<h2 id="cu">Unified Compute Unit<a href="#cu" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>先日マージされた AMD の Marek Olšák 氏によるパッチの中で、ピーク FP32 性能 (GFlops) の計算が以下のように変更された。<br>
+ここでのピーク FP32 性能は、主にプロファイラ向けの情報となる。</p>
+<blockquote>
+<pre><code>    -   info-&gt;max_gflops = info-&gt;num_cu * 128 * info-&gt;max_gpu_freq_mhz / 1000;
+    +   info-&gt;max_gflops = (info-&gt;gfx_level &gt;= GFX11 ? 256 : 128) * info-&gt;num_cu * info-&gt;max_gpu_freq_mhz / 1000;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d">amd: add cosmetic gfx10 and gfx11 changes (8b66c0ac) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<p>ピーク FP32 性能 (GFlops) は CU 数とピーク動作クロック (GHz, MHz/1000)、そして CU あたりの SIMDレーン数あるいは SP (Shader Processor) 数と FMA (ADD+MUL) の 2 ops を乗算して求められる。<br>
+この変更から言えるのは、まず <em>RDNA 3 アーキテクチャ</em> の <code>libdrm</code> API 経由で返される CU 数は製品仕様と同じ数であること。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+それと CU あたりの演算性能 (Flops) は、従来の倍となる 256 Flops となるということだろう。</p>
+<p>しかし、<strong>RX 7900 XTX</strong> の製品仕様で Stream Processors 数は、CU あたり 64基とした SP 6144基となっている。<br>
+また一方で、同ソースファイル (<code>src/amd/common/ac_gpu_info.c</code>) 内の、CU あたりの SIMDユニット数 (<code>num_simd_per_compute_unit</code>) や Workgroup あたりの LDS (Local Data Share) サイズ (<code>lds_size_per_workgroup</code>) は変更されずに据え置かれている。<br>
+CU あたりの SIMDユニット数については LLVM でも <em>RDNA 系アーキテクチャ</em> は 2基となっている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<blockquote>
+<pre><code>       info-&gt;num_simd_per_compute_unit = info-&gt;gfx_level &gt;= GFX10 ? 2 : 4;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d/src/amd/common/ac_gpu_info.c#L1319" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/blob/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d/src/amd/common/ac_gpu_info.c#L1319">src/amd/common/ac_gpu_info.c · 8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d · Mesa / mesa · GitLab</a></cite>
+</div>
+
+<pre><code>       /* LDS is 64KB per CU (4 SIMDs), which is 16KB per SIMD (usage above
+        * 16KB makes some SIMDs unoccupied).
+        *
+        * LDS is 128KB in WGP mode and 64KB in CU mode. Assume the WGP mode is used.
+        */
+       info-&gt;lds_size_per_workgroup = info-&gt;gfx_level &gt;= GFX10 ? 128 * 1024 : 64 * 1024;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d/src/amd/common/ac_gpu_info.c#L1319" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/blob/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d/src/amd/common/ac_gpu_info.c#L1319">src/amd/common/ac_gpu_info.c · 8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<p>CU あたりの SIMDユニット数は 2基のままで、CU あたりの演算性能は従来の倍になっている。<br>
+そうなると、ベクタレジスタは SIMDユニットごとに持つため、演算性能に対するベクタレジスタは減っていることとなる。<br>
+<em>Navi31/gfx1100</em> と <em>Navi32/gfx1101</em> は、SIMDユニットあたりでは従来から 1.5倍のベクタレジスタを持つが、これは減った分を補うためのものという見方もできる。<br>
+また、<em>Navi33/gfx1102</em> と <em>Phoenix APU/gfx1103</em> は追加のベクタレジスタを持たないため、演算性能に対するベクタレジスタは従来の半分となる。</p>
+<blockquote>
+<pre><code>       if (info-&gt;family == CHIP_GFX1100 || info-&gt;family == CHIP_GFX1101)
+          info-&gt;num_physical_wave64_vgprs_per_simd = 768;
+       else if (info-&gt;gfx_level &gt;= GFX10)
+          info-&gt;num_physical_wave64_vgprs_per_simd = 512;
+       else
+          info-&gt;num_physical_wave64_vgprs_per_simd = 256;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d/src/amd/common/ac_gpu_info.c#L1313-1318" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/blob/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d/src/amd/common/ac_gpu_info.c#L1313-1318">src/amd/common/ac_gpu_info.c · 8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<p><em>RDNA 1/2 アーキテクチャ</em> における LDS には、WGP 内の CU 2基で LDS 128KB (2x64KB) を共有し、ある CU から見た時に近い LDS と遠い LDS が存在する WGP mode と、CU 内の LDS 64KB のみを使う CU mode がある。<br>
+<em>RDNA 3 アーキテクチャ</em> で LDS と WGP/CU mode がどうなっているかは不明であり、発表時にも LDS には触れられていなかった。</p>
+<p>先に amd-gfx メーリングリストの中で AMD の Liu, Aaron 氏によって明かされていたが<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、AMD の Marek Olšák 氏によるパッチでは <em>RDNA 3 アーキテクチャ</em> の L1ベクタキャッシュ (RDNA L0ベクタキャッシュ) を 32KiB、GL1データキャッシュ (RDNA L1データキャッシュ) を 256KiB としている。<br>
+ベクタレジスタと異なり、それらキャッシュサイズは <em>RDNA 3 アーキテクチャ</em> 全体で共通するのだろう。</p>
+<blockquote>
+<pre><code>    +   if (info-&gt;gfx_level &gt;= GFX11)
+    +      info-&gt;l1_cache_size = 32768;
+    +   else
+    +      info-&gt;l1_cache_size = 16384;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d">amd: add cosmetic gfx10 and gfx11 changes (8b66c0ac) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+<pre><code>        if (info-&gt;gfx_level &gt;= GFX10) {
+           fprintf(f, &quot;    l0_cache_size = %i KB\n&quot;, DIV_ROUND_UP(info-&gt;l1_cache_size, 1024));
+    -      fprintf(f, &quot;    l1_cache_size = %i KB\n&quot;, 128);
+    +      fprintf(f, &quot;    l1_cache_size = %i KB\n&quot;, info-&gt;gfx_level &gt;= GFX11 ? 256 : 128);
+        } else {
+           fprintf(f, &quot;    l1_cache_size = %i KB\n&quot;, DIV_ROUND_UP(info-&gt;l1_cache_size, 1024));
+        }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/8b66c0ac7605b1f0e0f7af4cff1c8e0381b16b4d">amd: add cosmetic gfx10 and gfx11 changes (8b66c0ac) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<h3 id="vopd">VOPD (Dual issue wave32)<a href="#vopd" class="head-cur-link" aria-hidden></a>
+</h3>
+<p><em>RDNA 3 アーキテクチャ</em> では <code>VOPD (Dual issue wave32)</code> 命令に対応し、イベントでは <em>64 Dual Issue Stream Processors</em>, <em>Dual issue SIMD units</em> として発表していた。<br>
+各レーンあるいは SP は Dual issue に対応し、4 Flops 相当の演算性能を持つと考えれば、SP数と演算性能については説明が付く。<br>
+CU あたりの SIMDユニット数も合わせて考えると、<em>64 Dual Issue Stream Processors</em> と発表されていたが、CU 内部は <em>2x Dual issue SIMD32 units</em> となっているのではないだろうか。</p>
+<p>ここで疑問に思うのは Wave モードの違いである。LLVM へのパッチによれば <code>VOPD</code> 命令は Wave32 にのみ対応し、Wave64 ではサポートしない。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
+また <code>VOPD</code> 命令は限られた範囲の対応する命令を最大 2種類組み合わせる方式であるため、すべての命令を <code>VOPD</code> 命令に変換するといったこともできないように思われる。<br>
+また、これはコンパイラ側の対応で対処が可能であるため実際に問題になることは少ないと思うが、<code>VOPD</code> 命令以外を Wave32 で発行した場合は Dual issue SIMD unit の実質半分は休んだ状態となるのだろうか。</p>
+<p><em>RDNA 1/2 アーキテクチャ</em> では Wave64 を 2xWave32 に分割する方式を用いていたが、<em>RDNA 3 アーキテクチャ</em> も同様かは不明。<br>
+仮に <em>Dual issue SIMD unit</em> が Wave64 を 1サイクルで発行可能とすると、Wave64 に対する Wave32 (Dual issue) の利点はさらなる実行レイテンシの削減と言えるかもしれない。<br>
+<em>RDNA 1 アーキテクチャ</em> で新たに Wave32 に対応したことについて、AMD は利点の 1つとして低レイテンシをアピールしていた。<br>
+<em>RDNA 1/2 アーキテクチャ</em> の Wave64 を 2xWave32 に分割する方式では、発行可能なスカラ命令は 1回に制限していたため、<em>RDNA 3 アーキテクチャ</em> で Wave64 を 1サイクルで発行可能としても実行方式の変更による影響は小さいように思える。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://www.4gamer.net/games/660/G066019/20221104001/" rel="noopener noreferrer" target="_blank" title="https://www.4gamer.net/games/660/G066019/20221104001/">AMD，新世代GPU「Radeon RX 7000」シリーズを発表。第1弾製品はRadeon RX 7900 XTXとRadeon RX 7900 XTで12月13日発売</a></li>
+<li><a href="https://ascii.jp/elem/000/004/111/4111884/" rel="noopener noreferrer" target="_blank" title="https://ascii.jp/elem/000/004/111/4111884/">ASCII.jp：AMD「Radeon RX 7000シリーズ」の発表内容を、もう少し深く読み解く (1/5)</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/19288" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/19288">radv: Speculatively tune RT pipelines for GFX11. (!19288) · Merge requests · Mesa / mesa · GitLab</a></li>
+</ul>
+</section>
+
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.amd.com/en/products/graphics/amd-radeon-rx-7900xtx#product-specs" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/en/products/graphics/amd-radeon-rx-7900xtx#product-specs">AMD Radeon™ RX 7900 XTX | AMD</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/llvm/llvm-project/blob/7425077e31c9b505103a98299a728bc496bd933c/llvm/lib/Target/AMDGPU/Utils/AMDGPUBaseInfo.cpp#L780-L789" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/blob/7425077e31c9b505103a98299a728bc496bd933c/llvm/lib/Target/AMDGPU/Utils/AMDGPUBaseInfo.cpp#L780-L789">llvm-project/AMDGPUBaseInfo.cpp at 7425077e31c9b505103a98299a728bc496bd933c · llvm/llvm-project</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/09/02/gfx11-l0c-gl1c/" title="/posts/2022/09/02/gfx11-l0c-gl1c/">L0ベクタキャッシュと GL1データキャッシュが増やされる RDNA 3/GFX11 APU | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/06/21/gfx11-vopd-instruction/" title="/posts/2022/06/21/gfx11-vopd-instruction/">GFX11 でサポートされる VOPD (Dual issue wave32) 命令の範囲と特徴 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx11/" title="GFX11">#GFX11</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/radeonsi/" title="RadeonSI">#RadeonSI</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/radv/" title="RADV">#RADV</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/11/09/rdna_3-cu-consider.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.105.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a><a href="https://www.coelacanth-dream.com/tags/radv/" class="menu-cat-tag-lower">RADV</a>
+  </nav></nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav><aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.105.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+  <a href="https://www.coelacanth-dream.com/">Home</a>
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+  <a href="https://www.coelacanth-dream.com/categories/database/">Database</a>
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a><a href="https://www.coelacanth-dream.com/tags/radv/" class="menu-cat-tag-lower">RADV</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
