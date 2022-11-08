@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-11-09 00:04 +0900">Post: 2022/11/09 00:04 &#43;0900</time>
-    <aside class="update">Update: 2022/11/09 03:15 &#43;0900</aside>
+    <aside class="update">Update: 2022/11/09 04:19 &#43;0900</aside>
   </aside><p>オープンソースドライバーや LLVM のコードから、まだ詳細が公開されていない <em>RDNA 3 アーキテクチャ</em> の CU に関する若干の考察を個人的にしてみる。<br>
 当然ながら、AMD よりホワイトペーパーといった <em>RDNA 3 アーキテクチャ</em> の詳細を記述した資料が公開された場合、ここでの考察は否定される可能性がある。<br>
 また、<em>RadeonSI (OpenGL)</em> ドライバーや LLVM は AMD の開発者が直接開発を進め、パッチを公開しており、公式資料以外では少ない信頼できる情報源だと考えているが、同時にコードは更新し続けるものであるため、あくまでも現時点での情報を用いた考察となる。</p>
@@ -95,7 +95,7 @@ CU あたりの SIMDユニット数については LLVM でも <em>RDNA 系ア�
 
 </blockquote>
 <p><em>RDNA 1/2 アーキテクチャ</em> における LDS には、WGP 内の CU 2基で LDS 128KB (2x64KB) を共有し、ある CU から見た時に近い LDS と遠い LDS が存在する WGP mode と、CU 内の LDS 64KB のみを使う CU mode がある。<br>
-<em>RDNA 3 アーキテクチャ</em> で LDS と WGP/CU mode がどうなっているかは不明であり、発表時にも LDS には触れられていなかった。</p>
+<em>RDNA 3 アーキテクチャ</em> で LDS と WGP/CU mode がどうなっているかは不明であり、発表時にも LDS には触れていなかった。</p>
 <h3 id="cache">Cache<a href="#cache" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>先に amd-gfx メーリングリストの中で AMD の Liu, Aaron 氏によって明かされていたが<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、AMD の Marek Olšák 氏によるパッチでは <em>RDNA 3 アーキテクチャ</em> の L1ベクタキャッシュ (RDNA L0ベクタキャッシュ) を 32KiB、GL1データキャッシュ (RDNA L1データキャッシュ) を 256KiB としている。<br>
@@ -134,6 +134,7 @@ CU あたりの SIMDユニット数も合わせて考えると、<em>64 Dual Iss
 仮に <em>Dual issue SIMD unit</em> が Wave64 を 1サイクルで発行可能とすると、Wave64 に対する Wave32 (Dual issue) の利点はさらなる実行レイテンシの削減と言えるかもしれない。<br>
 <em>RDNA 1 アーキテクチャ</em> で新たに Wave32 に対応したことについて、AMD は利点の 1つとして低レイテンシをアピールしていた。<br>
 <em>RDNA 1/2 アーキテクチャ</em> の Wave64 を 2xWave32 に分割する方式では、発行可能なスカラ命令は 1回に制限していたため、<em>RDNA 3 アーキテクチャ</em> で Wave64 を 1サイクルで発行可能としても実行方式の変更による影響は小さいように思える。</p>
+<p><code>VOPD</code> 命令は、基本的な演算命令 <code>(ADD, SUB, MUL)</code>、FMA (<code>FMA{C,AK,MK}</code>) 命令、データの移動命令 (<code>MOV</code>)、比較命令 (<code>MAX, MIN</code>)、条件命令 (<code>CNDMASK</code>)、ビット演算命令 (<code>LSHLREV, AND</code>)、ドット積命令 (<code>DOT2C_F32_F16 (D.f32 = S0.f16[0] * S1.f16[0] + S0.f16[1] * S1.f16[1] + D.f32)</code>) をサポートしており、それらの命令でピーク性能が高くなればと割り切った可能性もある。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
