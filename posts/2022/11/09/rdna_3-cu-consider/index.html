@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-11-09 00:04 +0900">Post: 2022/11/09 00:04 &#43;0900</time>
-    <aside class="update">Update: 2022/11/09 04:19 &#43;0900</aside>
+    <aside class="update">Update: 2022/11/09 04:41 &#43;0900</aside>
   </aside><p>オープンソースドライバーや LLVM のコードから、まだ詳細が公開されていない <em>RDNA 3 アーキテクチャ</em> の CU に関する若干の考察を個人的にしてみる。<br>
 当然ながら、AMD よりホワイトペーパーといった <em>RDNA 3 アーキテクチャ</em> の詳細を記述した資料が公開された場合、ここでの考察は否定される可能性がある。<br>
 また、<em>RadeonSI (OpenGL)</em> ドライバーや LLVM は AMD の開発者が直接開発を進め、パッチを公開しており、公式資料以外では少ない信頼できる情報源だと考えているが、同時にコードは更新し続けるものであるため、あくまでも現時点での情報を用いた考察となる。</p>
@@ -129,12 +129,13 @@ L1ベクタキャッシュは CU ごとに持ち、GL1データキャッシュ�
 CU あたりの SIMDユニット数も合わせて考えると、<em>64 Dual Issue Stream Processors</em> と発表されていたが、CU 内部は <em>2x Dual issue SIMD32 units</em> となっているのではないだろうか。</p>
 <p>ここで疑問に思うのは Wave モードの違いである。LLVM へのパッチによれば <code>VOPD</code> 命令は Wave32 にのみ対応し、Wave64 ではサポートしない。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
 また <code>VOPD</code> 命令は限られた範囲の対応する命令を最大 2種類組み合わせる方式であるため、すべての命令を <code>VOPD</code> 命令に変換するといったこともできないように思われる。<br>
-また、これはコンパイラ側の対応で対処が可能であるため実際に問題になることは少ないと思うが、<code>VOPD</code> 命令以外を Wave32 で発行した場合は Dual issue SIMD unit の実質半分は休んだ状態となるのだろうか。</p>
+また、これはコンパイラ側の対応で対処が可能であるため実際に問題になることは少ないと思うが、<code>VOPD</code> 命令以外を Wave32 で発行した場合は Dual issue SIMD unit の実質半分は休んだ状態となるのだろうか。<br>
+<code>VOPD</code> 命令は、基本的な演算命令 <code>(ADD, SUB, MUL)</code>、FMA (<code>FMA{C,AK,MK}</code>) 命令、データの移動命令 (<code>MOV</code>)、比較命令 (<code>MAX, MIN</code>)、条件命令 (<code>CNDMASK</code>)、ビット演算命令 (<code>LSHLREV, AND</code>)、ドット積命令 (<code>DOT2C_F32_F16 (D.f32 = S0.f16[0] * S1.f16[0] + S0.f16[1] * S1.f16[1] + D.f32)</code>) をサポートしており、それらの命令でピーク性能が高くなればと割り切った可能性もある。<br>
+割り切った場合でもピーク演算性能は FMA を基準にするため問題はなく、また汎用的な SP 数をカウントしたとすれば <strong>RX 7900 XTX</strong> の CU数と SP数の関係も説明が付く。</p>
 <p><em>RDNA 1/2 アーキテクチャ</em> では Wave64 を 2xWave32 に分割する方式を用いていたが、<em>RDNA 3 アーキテクチャ</em> も同様かは不明。<br>
 仮に <em>Dual issue SIMD unit</em> が Wave64 を 1サイクルで発行可能とすると、Wave64 に対する Wave32 (Dual issue) の利点はさらなる実行レイテンシの削減と言えるかもしれない。<br>
 <em>RDNA 1 アーキテクチャ</em> で新たに Wave32 に対応したことについて、AMD は利点の 1つとして低レイテンシをアピールしていた。<br>
 <em>RDNA 1/2 アーキテクチャ</em> の Wave64 を 2xWave32 に分割する方式では、発行可能なスカラ命令は 1回に制限していたため、<em>RDNA 3 アーキテクチャ</em> で Wave64 を 1サイクルで発行可能としても実行方式の変更による影響は小さいように思える。</p>
-<p><code>VOPD</code> 命令は、基本的な演算命令 <code>(ADD, SUB, MUL)</code>、FMA (<code>FMA{C,AK,MK}</code>) 命令、データの移動命令 (<code>MOV</code>)、比較命令 (<code>MAX, MIN</code>)、条件命令 (<code>CNDMASK</code>)、ビット演算命令 (<code>LSHLREV, AND</code>)、ドット積命令 (<code>DOT2C_F32_F16 (D.f32 = S0.f16[0] * S1.f16[0] + S0.f16[1] * S1.f16[1] + D.f32)</code>) をサポートしており、それらの命令でピーク性能が高くなればと割り切った可能性もある。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
