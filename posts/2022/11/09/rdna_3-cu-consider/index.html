@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-11-09 00:04 +0900">Post: 2022/11/09 00:04 &#43;0900</time>
-    <aside class="update">Update: 2022/11/09 04:41 &#43;0900</aside>
+    <aside class="update">Update: 2022/11/09 10:17 &#43;0900</aside>
   </aside><p>オープンソースドライバーや LLVM のコードから、まだ詳細が公開されていない <em>RDNA 3 アーキテクチャ</em> の CU に関する若干の考察を個人的にしてみる。<br>
 当然ながら、AMD よりホワイトペーパーといった <em>RDNA 3 アーキテクチャ</em> の詳細を記述した資料が公開された場合、ここでの考察は否定される可能性がある。<br>
 また、<em>RadeonSI (OpenGL)</em> ドライバーや LLVM は AMD の開発者が直接開発を進め、パッチを公開しており、公式資料以外では少ない信頼できる情報源だと考えているが、同時にコードは更新し続けるものであるため、あくまでも現時点での情報を用いた考察となる。</p>
@@ -55,7 +55,7 @@
 </div>
 
 </blockquote>
-<p>ピーク FP32 性能 (GFlops) は CU 数とピーク動作クロック (GHz, MHz/1000)、そして CU あたりの SIMDレーン数あるいは SP (Shader Processor) 数と FMA (ADD+MUL) の 2 ops を乗算して求められる。<br>
+<p>ピーク FP32 性能 (GFlops) は CU 数とピーク動作クロック (GHz, MHz/1000)、そして CU あたりの SIMDレーン数あるいは SP (Shader Processor) 数と FMA の 2 ops を乗算して求められる。<br>
 この変更から言えるのは、まず <em>RDNA 3 アーキテクチャ</em> の <code>libdrm</code> API 経由で返される CU 数は製品仕様と同じ数であること。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 それと CU あたりの演算性能 (Flops) は、従来の倍となる 256 Flops となるということだろう。</p>
 <p>しかし、<strong>RX 7900 XTX</strong> の製品仕様で Stream Processors 数は、CU あたり 64基とした SP 6144基となっている。<br>
@@ -135,7 +135,8 @@ CU あたりの SIMDユニット数も合わせて考えると、<em>64 Dual Iss
 <p><em>RDNA 1/2 アーキテクチャ</em> では Wave64 を 2xWave32 に分割する方式を用いていたが、<em>RDNA 3 アーキテクチャ</em> も同様かは不明。<br>
 仮に <em>Dual issue SIMD unit</em> が Wave64 を 1サイクルで発行可能とすると、Wave64 に対する Wave32 (Dual issue) の利点はさらなる実行レイテンシの削減と言えるかもしれない。<br>
 <em>RDNA 1 アーキテクチャ</em> で新たに Wave32 に対応したことについて、AMD は利点の 1つとして低レイテンシをアピールしていた。<br>
-<em>RDNA 1/2 アーキテクチャ</em> の Wave64 を 2xWave32 に分割する方式では、発行可能なスカラ命令は 1回に制限していたため、<em>RDNA 3 アーキテクチャ</em> で Wave64 を 1サイクルで発行可能としても実行方式の変更による影響は小さいように思える。</p>
+<em>RDNA 1/2 アーキテクチャ</em> の Wave64 を 2xWave32 に分割する方式では、発行可能なスカラ命令は 1回に制限していたため、<em>RDNA 3 アーキテクチャ</em> で Wave64 を 1サイクルで発行可能としても実行方式の変更による影響は小さいように思える。<br>
+しかし実際の所は AMD が技術詳細を公開するまでは不明であり、<em>RADV</em> ドライバーのバックエンド <em>ACO</em> も <code>VOPD</code> 命令への対応はまだ進んでいない。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
