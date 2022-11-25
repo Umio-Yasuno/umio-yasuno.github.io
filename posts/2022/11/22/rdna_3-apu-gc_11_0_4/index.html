@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-11-22T20:26:56+09:00">Post: 2022-11-22 20:26:56</time>
-    <aside class="update">Update: 2022-11-25 04:16:16</aside>
+    <aside class="update">Update: 2022-11-25 20:37:39</aside>
   </aside><p>AMD の Yifan Zhang 氏により、Linux Kernel における AMDGPU ドライバーに <em>GC 11.0.1 (gfx1103, Phoenix APU)</em> に続く RDNA 3 APU IP、<em>GC 11.0.4</em> のサポートを追加するパッチが投稿されている。</p>
 <ul>
 <li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-November/086807.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2022-November/086807.html">[PATCH 01/19] drm/amdgpu/discovery: enable soc21 common for GC 11.0.4</a></li>
@@ -54,7 +54,50 @@
 </div>
 
 </blockquote>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">GC (Graphics Compute) IP ver</th>
+<th style="text-align:center">GFX ID</th>
+<th style="text-align:center">AMDGPU_FAMILY</th>
+<th style="text-align:center">Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">11.0.0</td>
+<td style="text-align:center">gfx1100 (Navi31)<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></td>
+<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
+<td style="text-align:center">dGPU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.1</td>
+<td style="text-align:center">gfx1103 (Phoenix)</td>
+<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)</td>
+<td style="text-align:center">APU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.2</td>
+<td style="text-align:center">gfx1102 (Navi33)</td>
+<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
+<td style="text-align:center">dGPU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.3?</td>
+<td style="text-align:center">gfx1101 (Navi32)?</td>
+<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)?</td>
+<td style="text-align:center">dGPU</td>
+</tr>
+<tr>
+<td style="text-align:left">11.0.4</td>
+<td style="text-align:center">gfx1103?</td>
+<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)</td>
+<td style="text-align:center">APU</td>
+</tr>
+</tbody>
+</table>
 <p><em>GC 11.0.4</em> は現時点では基本 <em>GC 11.0.1</em> と共通したコードパスを用いており、AMDGPUファミリーには <code>AMDGPU_FAMILY_GC_11_0_1</code>、GPU ID には <em>gfx1103</em> が設定されている。<br>
+補足すると、GPU ID は主にコンパイラやライブラリが機能の有無等を判定するために用いられるため、複数の AMD GPU に同じ GPU ID が割り当てられることもあれば、必要に応じて別の GPU ID が割り当てられることもある。<br>
 同時に <em>SMU IP v13.0.11</em> と <em>PSP IP v13.0.11</em> をサポートするパッチも投稿されているが、異なるのはレジスタのオフセット値などで、他 IP バージョンとの機能的な違いは今の所見られない。</p>
 <blockquote>
 <pre><code>     	case IP_VERSION(11, 0, 1):
@@ -75,7 +118,7 @@
 </div>
 
 </blockquote>
-<p>AMD は 2023年のモバイル向けプロセッサに、<strong>Ryzen 7040 Series</strong> として <em>Phoenix APU</em> を、<strong>Ryzen 7045 Series</strong> に <em>Dragon Range APU</em> を投入することを発表している。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+<p>AMD は 2023年のモバイル向けプロセッサに、<strong>Ryzen 7040 Series</strong> として <em>Phoenix APU</em> を、<strong>Ryzen 7045 Series</strong> に <em>Dragon Range APU</em> を投入することを発表している。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 今回パッチが投稿された <em>GC 11.0.4</em> はその <em>Dragon Range APU</em> の GPU IP という可能性が考えられる。</p>
 <p><em>Phoenix APU</em> は TDP 35-45W、モバイル用途と薄型ゲーミング PC 向け、<em>Dragon Range</em> は TDP 55W+、最高の性能を求めるゲーミング PC 向けという位置付けになっている。<br>
 メモリは <em>Phoenix APU</em> が LPDDR5 メモリをサポートし、<em>Dragon Range APU</em> は DDR5 メモリをサポートするとしている。<br>
@@ -92,7 +135,10 @@
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985" rel="noopener noreferrer" target="_blank" title="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985">Announcing New Model Numbers for 2023+ Mobile Proc&hellip; - AMD Community</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/ROCmSoftwarePlatform/Tensile/pull/1521/commits/3796d41aec358721fced1ed4337c27f69aeda3bb" rel="noopener noreferrer" target="_blank" title="https://github.com/ROCmSoftwarePlatform/Tensile/pull/1521/commits/3796d41aec358721fced1ed4337c27f69aeda3bb">Support Tensile for gfx11 series platform by TonyYHsieh · Pull Request #1521 · ROCmSoftwarePlatform/Tensile</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985" rel="noopener noreferrer" target="_blank" title="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985">Announcing New Model Numbers for 2023+ Mobile Proc&hellip; - AMD Community</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
