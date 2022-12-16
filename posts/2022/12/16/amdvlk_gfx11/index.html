@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMDVLK ドライバーが RDNA 3/GFX11, Navi31 に対応 | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/12/16/amdvlk_gfx11/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AMDVLK ドライバーが RDNA 3/GFX11, Navi31 に対応 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="2022-12-15 付で、RDNA 3/GFX11、Navi31 に対応した AMDVLK ドライバー v-2022.Q4.4 がリリースされた。 AMDVLK を構成する各種ライブラリも同時に更新され、Navi31 に対応するコミット">
+  <meta property="og:description" content="2022-12-15 付で、RDNA 3/GFX11、Navi31 に対応した AMDVLK ドライバー v-2022.Q4.4 がリリースされた。 AMDVLK を構成する各種ライブラリも同時に更新され、Navi31 に対応するコミット"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, GFX11, GPUOpen">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.68;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-12-16","dateModified":"2022-12-16","datePublished":"2022-12-16","headline":"AMDVLK ドライバーが RDNA 3/GFX11, Navi31 に対応","image":"https://www.coelacanth-dream.com/icon.png","name":"AMDVLK ドライバーが RDNA 3/GFX11, Navi31 に対応"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">AMDVLK ドライバーが RDNA 3/GFX11, Navi31 に対応</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2022-12-16T15:18:52+09:00">Post: 2022-12-16 15:18:52</time>
+    <aside class="update">Update: 2022-12-16 18:37:17</aside>
+  </aside><p>2022-12-15 付で、<em>RDNA 3/GFX11</em>、<em>Navi31</em> に対応した AMDVLK ドライバー v-2022.Q4.4 がリリースされた。<br>
+AMDVLK を構成する各種ライブラリも同時に更新され、<em>Navi31</em> に対応するコミットが公開されている。<br>
+AMDVLK ドライバーは AMD が公式にオープンソースで開発しており、ハードウェアに密接した情報がコードやコメントの形で公開されることがある。そうして得られた情報が Mesa3D RADV (Vulkan) ドライバーに取り込まれることもある。</p>
+<p>ここではその中から自分でもある程度読み取れる部分だけを取り上げる。</p>
+<ul>
+<li><a href="https://github.com/GPUOpen-Drivers/AMDVLK/releases/tag/v-2022.Q4.4" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/AMDVLK/releases/tag/v-2022.Q4.4">Release v-2022.Q4.4 · GPUOpen-Drivers/AMDVLK</a>
+<ul>
+<li><a href="https://github.com/GPUOpen-Drivers/llpc/commit/37dcb2e5cedb00bb025c84238d816f19c93b3060" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/llpc/commit/37dcb2e5cedb00bb025c84238d816f19c93b3060">Update llpc from commit 427fb590e · GPUOpen-Drivers/llpc@37dcb2e</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/xgl/commit/8aa0e76a110fa264608ee1b4e412aa8fb40286d3" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/xgl/commit/8aa0e76a110fa264608ee1b4e412aa8fb40286d3">Update xgl from commit 79803ba8 · GPUOpen-Drivers/xgl@8aa0e76</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e">Update pal from commit 1cecbdfb · GPUOpen-Drivers/pal@287ef68</a></li>
+<li><a href="https://github.com/GPUOpen-Drivers/gpurt/commit/1f0c4f7e9cea22452e5e20a6cdfc4a84a2bf5bac" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/gpurt/commit/1f0c4f7e9cea22452e5e20a6cdfc4a84a2bf5bac">Update gpurt from commit 682bcc39 · GPUOpen-Drivers/gpurt@1f0c4f7</a></li>
+</ul>
+</li>
+</ul>
+<section class="page-index"><h2 id="page-index">Index<a href="#page-index" class="head-cur-link" aria-hidden></a>
+</h2>
+<ul>
+<li><a href="#ms" title="#ms">Mesh Shader</a></li>
+<li><a href="#rtip2_0" title="#rtip2_0">RT IP 2.0</a></li>
+<li><a href="#interleave" title="#interleave">DispatchInterleaveSize</a></li>
+<li><a href="#misc" title="#misc">misc</a></li>
+</ul>
+</section>
+
+<h2 id="ms">Mesh Shader<a href="#ms" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>RDNA 3 アーキテクチャ</em> では Mesh Shader に関する改良も施され、Mesh Shader パイプラインで必要とする WorkgroupID を SGPR (スカラレジスタ) を介してハードウェアから返すことが可能になったため、<em>RDNA 2 アーキテクチャ</em> で必要としていた追加のエミュレーション処理を省くことができる。</p>
+<blockquote>
+<pre><code>    +#if LLPC_BUILD_GFX11
+    +  // NOTE: For GFX11+, HW will provide workgroup ID via SGPRs. We don't need flat workgroup ID to do emulation.
+    +  if (pipelineState-&gt;getTargetInfo().getGfxIpVersion().major &gt;= 11)
+    +    return false;
+    +#endif
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/llpc/commit/37dcb2e5cedb00bb025c84238d816f19c93b3060" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/llpc/commit/37dcb2e5cedb00bb025c84238d816f19c93b3060">Update llpc from commit 427fb590e · GPUOpen-Drivers/llpc@37dcb2e</a></cite>
+</div>
+
+</blockquote>
+<h2 id="rtip2_0">RT IP 2.0<a href="#rtip2_0" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>AMD GPU の RayTracing Unit には、<em>RDNA 2 アーキテクチャ</em> では <em>RT IP 1.1</em> が採用されていたが、<em>RDNA 3 アーキテクチャ</em> ではバージョンが進んだ <em>RT IP 2.0</em> が採用されている。<br>
+<em>RT IP 2.0</em> では BoxSort 機能への [Largest, MidPoint, LargestFirstOrClosest, LargestFirstOrClosestMidPoint] の追加、DXR Ray Flag に準拠したポインターフラグ機能が追加されている。<br>
+RayTracing 関連では、BVH ノードスタックの管理を最適化する <code>ds_bvh_stack_rtn</code> 命令が追加されている。(<code>ds_</code> から始まる命令は共有メモリ {LDS/GDS} にデータを転送するための命令。)</p>
+<blockquote>
+<pre><code>         RtIp1_0 = 0x1,     ///&lt; First Implementation of HW RT
+         RtIp1_1 = 0x2,     ///&lt; Added computation of triangle barycentrics into HW
+    +#if PAL_BUILD_GFX11
+    +    RtIp2_0 = 0x3,     ///&lt; Added more Hardware RayTracing features, such as BoxSort, PointerFlag, etc
+    +#endif
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e">Update pal from commit 1cecbdfb · GPUOpen-Drivers/pal@287ef68</a></cite>
+</div>
+
+<pre><code>     enum class BoxSortHeuristic : uint32
+     {
+         Closest = 0x0,
+    +#if GPURT_BUILD_RTIP2
+    +    Largest = 0x1,
+    +    MidPoint = 0x2,
+    +#endif
+         Disabled = 0x3,
+    +#if GPURT_BUILD_RTIP2
+    +    LargestFirstOrClosest = 0x4,
+    +    LargestFirstOrClosestMidPoint = 0x5,
+    +#endif
+         DisabledOnAcceptFirstHit = 0x6
+     };
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/gpurt/commit/1f0c4f7e9cea22452e5e20a6cdfc4a84a2bf5bac" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/gpurt/commit/1f0c4f7e9cea22452e5e20a6cdfc4a84a2bf5bac">Update gpurt from commit 682bcc39 · GPUOpen-Drivers/gpurt@1f0c4f7</a></cite>
+</div>
+
+<pre><code>    +#if GPURT_BUILD_RTIP2
+    +//=====================================================================================================================
+    +// Instance base pointer layout from the HW raytracing IP 2.0 spec:
+    +// Zero                         [ 2: 0]
+    +// Tree Base Address (64B index)[53: 3]
+    +// Force Opaque                 [   54]
+    +// Force Non-Opaque             [   55]
+    +// Disable Triangle Cull        [   56]
+    +// Flip Facedness               [   57]
+    +// Cull Back Facing Triangles   [   58]
+    +// Cull Front Facing Triangles  [   59]
+    +// Cull Opaque                  [   60]
+    +// Cull Non-Opaque              [   61]
+    +// Skip Triangles               [   62]
+    +// Skip Procedural              [   63]
+    +//
+    +// Since GPU VAs can only be 48 bits, only 42 bits of the Tree Base Address field are used:
+    +// Used Address                 [44: 3]
+    +// Unused Address               [53:45]
+    +#endif
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/gpurt/commit/1f0c4f7e9cea22452e5e20a6cdfc4a84a2bf5bac" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/gpurt/commit/1f0c4f7e9cea22452e5e20a6cdfc4a84a2bf5bac">Update gpurt from commit 682bcc39 · GPUOpen-Drivers/gpurt@1f0c4f7</a></cite>
+</div>
+
+</blockquote>
+<h2 id="interleave">DispatchInterleaveSize<a href="#interleave" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>ShaderEngine (SE) に送る Thread-group (Work-group) を制御する機能が <em>RDNA 3 アーキテクチャ</em> では追加されている。<br>
+この機能は Compute Shader, Task Shader 用の機能とされ、グラフィクスパイプラインでは Task Shader が使用されていない場合は無視される。</p>
+<blockquote>
+<pre><code>    +#if PAL_BUILD_GFX11
+    +/// Constant used for dispactch shader engine interleave. Value is the number of thread groups sent to one SE before
+    +/// switching to another.  Default is 64. Other programmable values are: 128, 256, or 512. You can also disable
+    +/// interleaving altogether.
+    +enum class DispatchInterleaveSize : uint32
+    +{
+    +    Default = 0x0,
+    +    Disable = 0x1,
+    +    _128    = 0x2,
+    +    _256    = 0x3,
+    +    _512    = 0x4,
+    +    Count
+    +};
+    +#endif
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e">Update pal from commit 1cecbdfb · GPUOpen-Drivers/pal@287ef68</a></cite>
+</div>
+
+<pre><code>    +#if PAL_BUILD_GFX11
+    +    DispatchInterleaveSize    taskInterleaveSize; ///&lt; Ignored for pipelines without a task shader. For pipelines with
+    +                                                  ///  a task shader, controls how many thread groups are sent to one
+    +                                                  ///  SE before switching to the next one.
+    +#endif
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e">Update pal from commit 1cecbdfb · GPUOpen-Drivers/pal@287ef68</a></cite>
+</div>
+
+</blockquote>
+<h2 id="misc">misc<a href="#misc" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>一部の Atomic 操作が <em>RDNA 3 アーキテクチャ</em> では削除されたらしいが理由は不明。</p>
+<blockquote>
+<pre><code>    +#if PAL_BUILD_GFX11
+    +    else if (IsGfx11(pInfo-&gt;gfxLevel))
+    +    {
+    +        pInfo-&gt;gfx9.supportAddrOffsetDumpAndSetShPkt = 1;
+    +        pInfo-&gt;gfx9.supportAddrOffsetSetSh256Pkt     = (cpUcodeVersion &gt;= Gfx10UcodeVersionSetShRegOffset256B);
+    +        pInfo-&gt;gfx9.supportPostDepthCoverage         = 1;
+    +
+    +        //       FP32 image atomic operations are removed in Gfx11
+    +        pInfo-&gt;gfxip.supportFloat32BufferAtomics     = 1;
+    +        pInfo-&gt;gfxip.supportFloat32ImageAtomics      = 0;
+    +        //       FP64 atomic operations are removed from GL2 in Gfx11
+    +        pInfo-&gt;gfx9.supportFloat64Atomics            = 0;
+    +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e">Update pal from commit 1cecbdfb · GPUOpen-Drivers/pal@287ef68</a></cite>
+</div>
+
+</blockquote>
+<p>Mesa3D の RadeonSI (OpenGL) ドライバーでは <em>RDNA 3 アーキテクチャ</em>、<em>Navi31/33, Phoenix APU</em> の A0 リビジョンのいくつかでは命令のプリフェッチ機能が無効化するようにされているが<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、AMDVLK ではそうした回避策が見られない。<br>
+RadeonSI ドライバーでは正確には GPU の内部レジスタから読み出せる <code>rev_id</code> を参照し、<code>rev_id</code> が 0 の場合に無効化しているため、条件に当てはまらない <em>Navi31/33, Phoenix</em> もあるということだろうか。<br>
+<code>rev_id</code> の値は RadeonSI (OpenGL) ドライバーであれば <code>AMD_DEBUG=info glxinfo -B</code> といったコマンドで確認することができる。</p>
+<blockquote>
+<pre><code>    +        pInfo-&gt;gfxip.shaderPrefetchBytes    = 3 * ShaderICacheLineSize;
+    +        pInfo-&gt;gfxip.supportsSwStrmout      = 1;
+    +        pInfo-&gt;gfxip.supportsHwVs           = 0;
+    +
+    +        pInfo-&gt;gfxip.gl1cSizePerSa          = 256_KiB;
+    +
+    +    }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e" rel="noopener noreferrer" target="_blank" title="https://github.com/GPUOpen-Drivers/pal/commit/287ef684bc36a86af55d4ed1c4c4f4c35577e21e">Update pal from commit 1cecbdfb · GPUOpen-Drivers/pal@287ef68</a></cite>
+</div>
+
+</blockquote>
+<p><em>RDNA 3</em> のハードウェアに存在するバグについて、自分なりに公開されている範囲で触れると、まず SGPR (スカラレジスタ) の初期化処理に関するバグは <em>Navi31 (GFX1100), Navi33 (GFX1102)</em> が影響を受ける。<br>
+<code>V_MAD_U64/I64</code> 命令のフォワーディングに関するバグは現状 <em>RDNA 3</em> 全体で影響を受けるとしている。</p>
+<blockquote>
+<pre><code>    def FeatureISAVersion11_0_0 : FeatureSet&lt;
+      !listconcat(FeatureISAVersion11_Common.Features,
+        [FeatureGFX11FullVGPRs,
+         FeatureUserSGPRInit16Bug])&gt;;
+    
+    def FeatureISAVersion11_0_1 : FeatureSet&lt;
+      !listconcat(FeatureISAVersion11_Common.Features,
+        [FeatureGFX11FullVGPRs])&gt;;
+    
+    def FeatureISAVersion11_0_2 : FeatureSet&lt;
+      !listconcat(FeatureISAVersion11_Common.Features,
+        [FeatureUserSGPRInit16Bug])&gt;;
+    
+    def FeatureISAVersion11_0_3 : FeatureSet&lt;
+      !listconcat(FeatureISAVersion11_Common.Features,
+        [])&gt;;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/e58b116843315085363207f0c1be841b4da1b496/llvm/lib/Target/AMDGPU/AMDGPU.td#L1311-L1326" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/blob/e58b116843315085363207f0c1be841b4da1b496/llvm/lib/Target/AMDGPU/AMDGPU.td#L1311-L1326">llvm-project/AMDGPU.td at e58b116843315085363207f0c1be841b4da1b496 · llvm/llvm-project</a></cite>
+</div>
+
+<pre><code>     def FeatureUserSGPRInit16Bug : SubtargetFeature&lt;&quot;user-sgpr-init16-bug&quot;,
+      &quot;UserSGPRInit16Bug&quot;,
+      &quot;true&quot;,
+      &quot;Bug requiring at least 16 user+system SGPRs to be enabled&quot;
+    &gt;;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/e58b116843315085363207f0c1be841b4da1b496/llvm/lib/Target/AMDGPU/AMDGPU.td#L180-L184" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/blob/e58b116843315085363207f0c1be841b4da1b496/llvm/lib/Target/AMDGPU/AMDGPU.td#L180-L184">llvm-project/AMDGPU.td at e58b116843315085363207f0c1be841b4da1b496 · llvm/llvm-project</a></cite>
+</div>
+
+<pre><code>    def FeatureMADIntraFwdBug : SubtargetFeature&lt;&quot;mad-intra-fwd-bug&quot;,
+      &quot;HasMADIntraFwdBug&quot;,
+      &quot;true&quot;,
+      &quot;MAD_U64/I64 intra instruction forwarding bug&quot;
+    &gt;;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/blob/e58b116843315085363207f0c1be841b4da1b496/llvm/lib/Target/AMDGPU/AMDGPU.td#L282-L286" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/blob/e58b116843315085363207f0c1be841b4da1b496/llvm/lib/Target/AMDGPU/AMDGPU.td#L282-L286">llvm-project/AMDGPU.td at e58b116843315085363207f0c1be841b4da1b496 · llvm/llvm-project</a></cite>
+</div>
+
+</blockquote>
+<p>RadeonSI ドライバーで公開されているものでは、おそらくは最終的な色の出力機能に関するバグ (<code>export_conflict_bug</code>) があり、これも <em>RDNA 3</em> 全体が影響を受けるとしている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+しかし、程度の差はあれどハードウェア的なバグは基本どの世代でも存在し、バグとそれに対するソフトウェア側の回避策が実性能にどれだけ影響するかはそれぞれ異なる。<br>
+オープンソースソフトウェアの範囲で公開されている上記のバグが、どれだけ影響するかも不明である。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://news.mynavi.jp/article/20221114-2512523/" rel="noopener noreferrer" target="_blank" title="https://news.mynavi.jp/article/20221114-2512523/">RDNA 3 / Radeon RX 7000シリーズ Deep Dive - 新情報を基に内部構造と性能を解剖してみる | マイナビニュース</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/direct3d12/ray_flag" rel="noopener noreferrer" target="_blank" title="https://learn.microsoft.com/en-us/windows/win32/direct3d12/ray_flag">RAY_FLAG enumeration - Win32 apps | Microsoft Learn</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/2ed9eb1b633f214ff8900ab3be9e639f87cebaef" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/2ed9eb1b633f214ff8900ab3be9e639f87cebaef">radeonsi/gfx11: enable shader prefetch except for initial chip revisions (2ed9eb1b) · Commits · Mesa / mesa · GitLab</a></li>
+<li><a href="https://reviews.llvm.org/D133012" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D133012">⚙ D133012 [AMDGPU] Add subtarget feature for MAD_U64/I64 bug on GFX11</a></li>
+</ul>
+</section>
+
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/2ed9eb1b633f214ff8900ab3be9e639f87cebaef" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/2ed9eb1b633f214ff8900ab3be9e639f87cebaef">radeonsi/gfx11: enable shader prefetch except for initial chip revisions (2ed9eb1b) · Commits · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/17864/diffs?commit_id=f129db911bdd58a0f02a2161b34b38d93ce54ab9" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/17864/diffs?commit_id=f129db911bdd58a0f02a2161b34b38d93ce54ab9">ac,radeonsi: many changes incl. gfx11, some fixes (reviewed commits from !17782) (!17864) · Merge requests · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx11/" title="GFX11">#GFX11</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gpuopen/" title="GPUOpen">#GPUOpen</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/12/16/amdvlk_gfx11.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.105.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="menu-cat-tag-lower">GPUOpen</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/gpuopen/" class="menu-cat-tag-lower">GPUOpen</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
