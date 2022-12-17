@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux 環境上で AMD GPU の情報を確認する方法 | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/12/18/amd-debug-info/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 環境上で AMD GPU の情報を確認する方法 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="タイトル通り、Linux 環境上で AMD GPU の各種スペックや ID、チップリビジョンといった情報を確認する方法。 話をさっさと進めると、RadeonSI ドライバーのデバッグ">
+  <meta property="og:description" content="タイトル通り、Linux 環境上で AMD GPU の各種スペックや ID、チップリビジョンといった情報を確認する方法。 話をさっさと進めると、RadeonSI ドライバーのデバッグ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, RadeonSI">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.68;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-12-18","dateModified":"2022-12-18","datePublished":"2022-12-18","headline":"Linux 環境上で AMD GPU の情報を確認する方法","image":"https://www.coelacanth-dream.com/icon.png","name":"Linux 環境上で AMD GPU の情報を確認する方法"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">Linux 環境上で AMD GPU の情報を確認する方法</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2022-12-18T05:17:56+09:00">Post: 2022-12-18 05:17:56</time>
+    <aside class="update">Update: 2022-12-18 05:53:04</aside>
+  </aside><p>タイトル通り、Linux 環境上で AMD GPU の各種スペックや ID、チップリビジョンといった情報を確認する方法。<br>
+話をさっさと進めると、RadeonSI ドライバーのデバッグ情報を出力する方法が一番手軽かつ多くの情報が得られると思っている。他にアプリケーションをインストールする必要もない。<br>
+一応書いておくと、RadeonSI ドライバーは Mesa3D ライブラリの AMD GPU 向け OpenGL ドライバーであり、最小構成の環境でなければインストールされているように思う。<br>
+各種ファームウェアのバージョン情報等も出力されるため、バグを報告する際にも役立つ。</p>
+<p><code>rocminfo</code> といったコマンドもあるが、RadeonSI ドライバーより得られる情報は少ない上、あくまで ROCm 環境がインストールされているか、そして有効かを確かめるためのコマンドであるため、目的には合わないと考えている。</p>
+<p>RadeonSI ドライバーのデバッグ情報を出力するには、環境変数 <code>AMD_DEBUG=info</code> を付けて OpenGL API を呼ぶアプリケーション、コマンドを実行すればいい。<br>
+個人的には <code>glxinfo -B</code> がオススメで、OpenGL API を呼びながら新たにウィンドウを生成せず、コマンド自体が出力するメッセージも短めだ。<br>
+最終的なコマンドは <code>AMD_DEBUG=info glxinfo -B</code> となる。</p>
+<ul>
+<li><a href="https://docs.mesa3d.org/envvars.html#radeonsi-driver-environment-variables" rel="noopener noreferrer" target="_blank" title="https://docs.mesa3d.org/envvars.html#radeonsi-driver-environment-variables">Environment Variables — The Mesa 3D Graphics Library latest documentation</a></li>
+</ul>
+<p>結果としては、以下のようなデバッグ情報が出力される。<br>
+また、デバッグ情報を出力する部分のソースファイルは <a href="https://gitlab.freedesktop.org/mesa/mesa/blob/main/src/amd/common/ac_gpu_info.c" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/blob/main/src/amd/common/ac_gpu_info.c">src/amd/common/ac_gpu_info.c · main · Mesa / mesa · GitLab</a> となる。</p>
+<p><code>num_se</code> は有効な ShaderEngine 数、<code>num_rb</code> は RB (RenderBackend) 数、<code>num_cu</code> は CU 数を示す。<br>
+CU 数やピーク GPUクロック (<code>max_gpu_freq</code>) から求められるピーク FP32 演算性能 (<code>max_gflops</code>)、メモリ速度 (<code>memory_freq</code>) やメモリバス幅 (<code>memory_bus_width</code>) から求められるピークメモリ帯域 (<code>memory_bandwidth</code>) といった情報も出力される。</p>
+<p>項目 <code>Identification</code> の <code>family, gfx_level, family_id, chip_external_rev</code> は主にドライバー中で必要とする値をそのまま出力しているため、ユーザー側で必要になる機会はほとんどない。<br>
+<code>chip_rev</code> はチップリビジョンを示す値となる。<br>
+<code>all_vram_visible</code> は Resizable BAR、Smart Access Memory が有効かを示すフラグ。<code>smart_access_memory</code> は <code>all_vram_visible</code> が有効な環境向けの最適化が有効かを示すフラグとなっている。</p>
+<blockquote>
+<pre><code>    name of display: :0.0
+    Device info:
+        name = POLARIS11
+        marketing_name = AMD Radeon RX 560 Series
+        num_se = 2
+        num_rb = 4
+        num_cu = 16
+        max_gpu_freq = 1196 MHz
+        max_gflops = 2449 GFLOPS
+        l1_cache_size = 16 KB
+        l2_cache_size = 1024 KB
+        memory_channels = 4 (TCC blocks)
+        memory_size = 4 GB (4096 MB)
+        memory_freq = 7 GHz
+        memory_bus_width = 128 bits
+        memory_bandwidth = 112 GB/s
+        clock_crystal_freq = 25000 KHz
+        IP GFX      8.0 	queues:1
+        IP COMP     8.0 	queues:4
+        IP SDMA     3.1 	queues:2
+        IP UVD      6.3 	queues:1
+        IP VCE      3.4 	queues:1
+        IP UVD_ENC  6.3 	queues:1
+    Identification:
+        pci (domain:bus:dev.func): 0000:01:00.0
+        pci_id = 0x67ff
+        pci_rev_id = 0xcf
+        family = 64
+        gfx_level = 10
+        family_id = 130
+        chip_external_rev = 91
+        chip_rev = 1
+    Flags:
+        is_pro_graphics = 0
+        has_graphics = 1
+        has_clear_state = 1
+        has_distributed_tess = 1
+        has_dcc_constant_encode = 0
+        has_rbplus = 0
+        rbplus_allowed = 0
+        has_load_ctx_reg_pkt = 1
+        has_out_of_order_rast = 1
+        cpdma_prefetch_writes_memory = 1
+        has_gfx9_scissor_bug = 0
+        has_tc_compat_zrange_bug = 1
+        has_msaa_sample_loc_bug = 1
+        has_ls_vgpr_init_bug = 0
+        has_32bit_predication = 0
+        has_3d_cube_border_color_mipmap = 1
+        never_stop_sq_perf_counters = 0
+        has_sqtt_rb_harvest_bug = 0
+        has_sqtt_auto_flush_mode_bug = 0
+        never_send_perfcounter_stop = 0
+        discardable_allows_big_page = 0
+    Display features:
+        use_display_dcc_unaligned = 0
+        use_display_dcc_with_retile_blit = 0
+    Memory info:
+        pte_fragment_size = 2097152
+        gart_page_size = 4096
+        gart_size = 7938 MB
+        vram_size = 4096 MB
+        vram_vis_size = 4096 MB
+        vram_type = 5
+        max_heap_size_kb = 4096 MB
+        min_alloc_size = 256
+        address32_hi = 0x0
+        has_dedicated_vram = 1
+        all_vram_visible = 1
+        smart_access_memory = 0
+        max_tcc_blocks = 4
+        tcc_cache_line_size = 64
+        tcc_rb_non_coherent = 0
+        pc_lines = 0
+        lds_size_per_workgroup = 65536
+        lds_alloc_granularity = 512
+        lds_encode_granularity = 512
+        max_memory_clock = 1750 MHz
+    CP info:
+        gfx_ib_pad_with_type2 = 0
+        ib_alignment = 1024
+        me_fw_version = 167
+        me_fw_feature = 49
+        mec_fw_version = 730
+        mec_fw_feature = 49
+        pfp_fw_version = 254
+        pfp_fw_feature = 49
+    Multimedia info:
+        vce_encode = 1
+        vcn_decode = 0
+        vcn_encode = 0
+        uvd_fw_version = 25300992
+        vce_fw_version = 890897152
+        vce_harvest_config = 2
+    Kernel &amp; winsys capabilities:
+        drm = 3.48.0
+        has_userptr = 1
+        has_syncobj = 1
+        has_timeline_syncobj = 1
+        has_fence_to_handle = 1
+        has_local_buffers = 0
+        has_bo_metadata = 1
+        has_eqaa_surface_allocator = 1
+        has_sparse_vm_mappings = 1
+        has_stable_pstate = 1
+        has_scheduled_fence_dependency = 1
+        mid_command_buffer_preemption_enabled = 0
+        has_tmz_support = 0
+    Shader core info:
+        cu_mask[SE0][SA0] = 0xff 	(8)	CU_EN = 0xff
+        cu_mask[SE1][SA0] = 0xff 	(8)	CU_EN = 0xff
+        spi_cu_en_has_effect = 0
+        max_good_cu_per_sa = 8
+        min_good_cu_per_sa = 8
+        max_se = 2
+        max_sa_per_se = 1
+        max_wave64_per_simd = 8
+        num_physical_sgprs_per_simd = 800
+        num_physical_wave64_vgprs_per_simd = 256
+        num_simd_per_compute_unit = 4
+        min_sgpr_alloc = 16
+        max_sgpr_alloc = 104
+        sgpr_alloc_granularity = 16
+        min_wave64_vgpr_alloc = 4
+        max_vgpr_alloc = 256
+        wave64_vgpr_alloc_granularity = 4
+        max_scratch_waves = 512
+    Render backend info:
+        pa_sc_tile_steering_override = 0x0
+        max_render_backends = 4
+        num_tile_pipes = 4
+        pipe_interleave_bytes = 256
+        enabled_rb_mask = 0xf
+        max_alignment = 262144
+        pbb_max_alloc_count = 0
+    GB_ADDR_CONFIG: 0x22011002
+        num_pipes = 4
+        pipe_interleave_size = 256
+        bank_interleave_size = 1
+        num_shader_engines = 2
+        shader_engine_tile_size = 32
+        num_gpus = 0 (raw)
+        multi_gpu_tile_size = 2 (raw)
+        row_size = 4096
+        num_lower_pipes = 0 (raw)
+</code></pre>
+</blockquote>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/radeonsi/" title="RadeonSI">#RadeonSI</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/12/18/amd-debug-info.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.105.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
