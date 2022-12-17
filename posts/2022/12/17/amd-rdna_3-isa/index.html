@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-12-17","dateModified":"2022-12-17","datePublished":"2022-12-17","headline":"AMD、RDNA 3 Instruction Set Architecture: Reference Guide を公開","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD、RDNA 3 Instruction Set Architecture: Reference Guide を公開"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-12-17","dateModified":"2022-12-18","datePublished":"2022-12-17","headline":"AMD、RDNA 3 Instruction Set Architecture: Reference Guide を公開","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD、RDNA 3 Instruction Set Architecture: Reference Guide を公開"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -39,9 +39,16 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-12-17T16:33:02+09:00">Post: 2022-12-17 16:33:02</time>
-    <aside class="update">Update: 2022-12-17 18:15:28</aside>
+    <aside class="update">Update: 2022-12-18 02:32:59</aside>
   </aside><p>AMD は 2022-12-16 付で 「&ldquo;RDNA3&rdquo; Instruction Set Architecture: Reference Guide」 (以下、ドキュメント) を公開した。<br>
 その内容から自分が気になったものをピックアップしていく。</p>
+<ul>
+<li><a href="https://developer.amd.com/resources/developer-guides-manuals/" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/resources/developer-guides-manuals/">Developer Guides, Manuals & ISA Documents - AMD</a>
+<ul>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA3_Shader_ISA_December2022.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/RDNA3_Shader_ISA_December2022.pdf">&ldquo;RDNA3&rdquo; Instruction Set Architecture: Reference Guide - RDNA3_Shader_ISA_December2022.pdf</a></li>
+</ul>
+</li>
+</ul>
 <h2 id="gds">GDS<a href="#gds" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>すべての ShaderEngine、CU からアクセス可能なスクラッチメモリ、GDS (Global Data Share) のサイズが変更され、<em>RDNA 2 アーキテクチャ</em> では 64KiB だったのが、<em>RDNA 3 アーキテクチャ</em> では 4KiB に減らされている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
@@ -69,6 +76,12 @@
 </h2>
 <p>オプションの命令として、依存関係を持つ命令を同時に発行することを避けることを目的として、ALU への命令発行を遅らせる <code>S_DELAY_ALU</code> 命令が <em>RDNA 3 アーキテクチャ</em> では追加された。<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup><br>
 Dual issue VALU/Wave32 と併せて、<em>RDNA 3 アーキテクチャ</em> ではコンパイラ側での最適化余地が増えたが、同時に負担も大きくなっているように思う。</p>
+<h2 id="cache">SLC, GLC, DLC<a href="#cache" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>RDNA 1/2/3 アーキテクチャ</em> ではスカラ、ベクタ共にメモリ命令 (load, store, atomic) ではキャッシュポリシー指定用のフラグビット <code>SLC, GLC, DLC</code> が用意されているが、<em>RDNA 3</em> ではそれぞれの意味が変更され、MALL (Memory-Attached Last-Level cache, Infinity Cache) のキャッシュコントロールが可能になった。<sup id="fnref:8"><a href="#fn:8" class="footnote-ref" role="doc-noteref">8</a></sup><br>
+<em>RDNA 2 アーキテクチャ</em> では、<code>GLC (Globally Coherent)</code> は CU 内の L0キャッシュ、<code>DLC (Device Level Coherent)</code> と <code>SLC (System Level Coherent)</code> は L2キャッシュのコントロールビットとなっていたa。<code>DLC</code> と <code>SLC</code> のパターンでキャッシュポリシーは変わる。<br>
+<em>RDNA 3 アーキテクチャ</em> では <code>GLC</code> は GL1 (first-level cache)、<code>SLC</code> は GL2 (L2キャッシュ)、<code>DLC</code> は MALL 用と再定義された。<br>
+また、SRD (Shader Resouce Descriptor) 部に <code>LLC NoAlloc</code> 2-bits が用意されており、その部分の値でも MALL に対するキャッシュポリシーは変わる。</p>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
@@ -92,6 +105,9 @@ Dual issue VALU/Wave32 と併せて、<em>RDNA 3 アーキテクチャ</em> で�
 </li>
 <li id="fn:7">
 <p>RDNA3_Shader_ISA_December2022.pdf: Page 44&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:8">
+<p>RDNA3_Shader_ISA_December2022.pdf: Page 35&#160;<a href="#fnref:8" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
