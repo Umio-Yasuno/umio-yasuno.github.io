@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMD、RDNA 3 Instruction Set Architecture: Reference Guide を公開 | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/12/17/amd-rdna_3-isa/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AMD、RDNA 3 Instruction Set Architecture: Reference Guide を公開 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="AMD は 2022-12-16 付で 「&ldquo;RDNA3&rdquo; Instruction Set Architecture: Reference Guide」 (以下、ドキュメント) を公開した。 その内容から自分が気になったものをピックアップしていく。">
+  <meta property="og:description" content="AMD は 2022-12-16 付で 「&ldquo;RDNA3&rdquo; Instruction Set Architecture: Reference Guide」 (以下、ドキュメント) を公開した。 その内容から自分が気になったものをピックアップしていく。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, GFX11">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.68;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-12-17","dateModified":"2022-12-17","datePublished":"2022-12-17","headline":"AMD、RDNA 3 Instruction Set Architecture: Reference Guide を公開","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD、RDNA 3 Instruction Set Architecture: Reference Guide を公開"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">AMD、RDNA 3 Instruction Set Architecture: Reference Guide を公開</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2022-12-17T16:33:02+09:00">Post: 2022-12-17 16:33:02</time>
+    <aside class="update">Update: 2022-12-17 18:15:28</aside>
+  </aside><p>AMD は 2022-12-16 付で 「&ldquo;RDNA3&rdquo; Instruction Set Architecture: Reference Guide」 (以下、ドキュメント) を公開した。<br>
+その内容から自分が気になったものをピックアップしていく。</p>
+<h2 id="gds">GDS<a href="#gds" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>すべての ShaderEngine、CU からアクセス可能なスクラッチメモリ、GDS (Global Data Share) のサイズが変更され、<em>RDNA 2 アーキテクチャ</em> では 64KiB だったのが、<em>RDNA 3 アーキテクチャ</em> では 4KiB に減らされている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+同様の変更は <em>CDNA 1/2 アーキテクチャ</em> でも見られ、<em>CDNA 1/MI100/Arcturus</em> では 4KiB、<em>CDNA 2/MI200/Aldebaran</em> では GDS 自体が削除されている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+1つの GPU に搭載される ShaderEngine、CU 数が増えるにつれ、Atomic 操作周りの実装コストが高くなっているのだろうか。<br>
+<em>RDNA 3 アーキテクチャ</em> では最大 ShaderEngine 数が 6基と、<em>RDNA 2 アーキテクチャ</em> の 4基から増えている。</p>
+<h2 id="wave64">Wave64<a href="#wave64" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>AMD は <em>RDNA 3 アーキテクチャ</em> における Wave (スレッドの塊、SIMD ユニットにおいて同時に実行される単位) の発行について、Wave64 を 1クロックで発行すると説明していたが<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、
+ドキュメントでは通常 2回に分けて命令が発行される、あるいは 2x Wave32 に分けて発行される <em>場合</em> があるとしている。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
+<em>RDNA 2 アーキテクチャ</em> では 2x Wave32 に分けて発行されるとはっきり書いていた文章部に、<em>may</em> が追加されて曖昧になってもいる。<br>
+ドキュメント公開前の説明では、<code>FMA</code> 命令を例に用いていたことから、Dual Issue Wave32 に対応する一部の命令と同様の場合に限って、Wave64 を 1クロックで発行可能という可能性も考えられる。</p>
+<p><em>RDNA 1/2 アーキテクチャ</em> では Wave64 を low と high に分けて実行し、またいくつかの Wave64 をまとめて low 群と high 群に分け、先に low 群を実行することでメモリ効率を向上させる Subvector Execution に対応していた。(<code>s_subvector_loop_begin, s_subvector_loop_end</code>)<br>
+それが <em>RDNA 3 アーキテクチャ</em> ではドキュメントから Subvector Execution の記述が無くなっている。</p>
+<h2 id="vopd">Dual issue VALU/Wave32, VOPD<a href="#vopd" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>Dual issue VALU/Wave32, <code>VOPD</code> 命令は対応する命令を最大 2種類同時に発行することができるが、ドキュメントによれば選択可能な命令は X側と Y側で異なり、<code>V_DUAL_ADD_NC_U32, V_DUAL_LSHLREV_B32, V_DUAL_AND_B32</code> 命令は Y側でのみ選択できる。<br>
+また <code>VOPD</code> 命令として <code>V_DUAL_DOT2ACC_F32_BF16</code> が実装されているが、通常の命令として <code>V_DOT2ACC_F32_BF16</code> はサポートされていないため、
+元になる命令から <code>VOPD</code> 命令を生成する方針を取る LLVM では <code>V_DUAL_DOT2ACC_F32_BF16</code> には対応しない。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></p>
+<h2 id="wmma">WMMA<a href="#wmma" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>事前の発表と同様に <code>WMMA (Wave Matrix Multiply Accumulate)</code> 命令は内部的には複数のドット積命令を発行するとドキュメントで説明されている。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
+<code>WMMA</code> 命令の性能を出す上で、ソースオペランドに指定された行列 A, B のデータにおいて lane 0-15 が lane 16-31 に複製されるように配置する必要があるとしている。</p>
+<h2 id="s_delay_alu">S_DELAY_ALU<a href="#s_delay_alu" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>オプションの命令として、依存関係を持つ命令を同時に発行することを避けることを目的として、ALU への命令発行を遅らせる <code>S_DELAY_ALU</code> 命令が <em>RDNA 3 アーキテクチャ</em> では追加された。<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup><br>
+Dual issue VALU/Wave32 と併せて、<em>RDNA 3 アーキテクチャ</em> ではコンパイラ側での最適化余地が増えたが、同時に負担も大きくなっているように思う。</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>RDNA3_Shader_ISA_December2022.pdf: Page 7&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://www.coelacanth-dream.com/posts/2021/11/20/cdna_2-isa/" title="/posts/2021/11/20/cdna_2-isa/">AMD Instinct MI200/CDNA2 Instruction Set Architecture が公開される | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://pc.watch.impress.co.jp/img/pcw/docs/1455/417/html/005_o.jpg.html" rel="noopener noreferrer" target="_blank" title="https://pc.watch.impress.co.jp/img/pcw/docs/1455/417/html/005_o.jpg.html">[画像] 【笠原一輝のユビキタス情報局】新演算器とチップレットで電力効率と性能を引き上げたRadeon RX 7000の詳細 (5/31) - PC Watch</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p>RDNA3_Shader_ISA_December2022.pdf: Page 9, Page 61&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5">
+<p><a href="https://reviews.llvm.org/D128218" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D128218">⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6">
+<p>RDNA3_Shader_ISA_December2022.pdf: Page 73&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7">
+<p>RDNA3_Shader_ISA_December2022.pdf: Page 44&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx11/" title="GFX11">#GFX11</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/12/17/amd-rdna_3-isa.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.105.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
