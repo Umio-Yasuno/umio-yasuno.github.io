@@ -39,19 +39,20 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-12-18T05:17:56+09:00">Post: 2022-12-18 05:17:56</time>
-    <aside class="update">Update: 2022-12-18 05:53:04</aside>
+    <aside class="update">Update: 2022-12-18 14:30:28</aside>
   </aside><p>タイトル通り、Linux 環境上で AMD GPU の各種スペックや ID、チップリビジョンといった情報を確認する方法。<br>
 話をさっさと進めると、RadeonSI ドライバーのデバッグ情報を出力する方法が一番手軽かつ多くの情報が得られると思っている。他にアプリケーションをインストールする必要もない。<br>
 一応書いておくと、RadeonSI ドライバーは Mesa3D ライブラリの AMD GPU 向け OpenGL ドライバーであり、最小構成の環境でなければインストールされているように思う。<br>
 各種ファームウェアのバージョン情報等も出力されるため、バグを報告する際にも役立つ。</p>
-<p><code>rocminfo</code> といったコマンドもあるが、RadeonSI ドライバーより得られる情報は少ない上、あくまで ROCm 環境がインストールされているか、そして有効かを確かめるためのコマンドであるため、目的には合わないと考えている。</p>
+<p><code>rocminfo</code> といったコマンドもあるが、RadeonSI ドライバーより得られる情報は少ない上、どちらかと言えば ROCm 環境が正常にインストールされているかを確かめるためのコマンドであるため、今回の目的には合わないと考えている。</p>
 <p>RadeonSI ドライバーのデバッグ情報を出力するには、環境変数 <code>AMD_DEBUG=info</code> を付けて OpenGL API を呼ぶアプリケーション、コマンドを実行すればいい。<br>
 個人的には <code>glxinfo -B</code> がオススメで、OpenGL API を呼びながら新たにウィンドウを生成せず、コマンド自体が出力するメッセージも短めだ。<br>
-最終的なコマンドは <code>AMD_DEBUG=info glxinfo -B</code> となる。</p>
+最終的なコマンドは <code>AMD_DEBUG=info glxinfo -B</code> となる。<br>
+一応書いておくと、<code>RADV_DEBUG=info</code> を付けて Vulkan API を呼ぶコマンドを実行しても同様の情報が出力される。</p>
 <ul>
 <li><a href="https://docs.mesa3d.org/envvars.html#radeonsi-driver-environment-variables" rel="noopener noreferrer" target="_blank" title="https://docs.mesa3d.org/envvars.html#radeonsi-driver-environment-variables">Environment Variables — The Mesa 3D Graphics Library latest documentation</a></li>
 </ul>
-<p>結果としては、以下のようなデバッグ情報が出力される。<br>
+<p>結果としては、記事下部のようなデバッグ情報が出力される。<br>
 また、デバッグ情報を出力する部分のソースファイルは <a href="https://gitlab.freedesktop.org/mesa/mesa/blob/main/src/amd/common/ac_gpu_info.c" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/blob/main/src/amd/common/ac_gpu_info.c">src/amd/common/ac_gpu_info.c · main · Mesa / mesa · GitLab</a> となる。</p>
 <p><code>num_se</code> は有効な ShaderEngine 数、<code>num_rb</code> は RB (RenderBackend) 数、<code>num_cu</code> は CU 数を示す。<br>
 CU 数やピーク GPUクロック (<code>max_gpu_freq</code>) から求められるピーク FP32 演算性能 (<code>max_gflops</code>)、メモリ速度 (<code>memory_freq</code>) やメモリバス幅 (<code>memory_bus_width</code>) から求められるピークメモリ帯域 (<code>memory_bandwidth</code>) といった情報も出力される。</p>
@@ -213,7 +214,6 @@ CU 数やピーク GPUクロック (<code>max_gpu_freq</code>) から求めら�
   <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
-<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
 <a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
 <a href="#" class="pagetop sb">Page Top</a>
@@ -237,7 +237,6 @@ CU 数やピーク GPUクロック (<code>max_gpu_freq</code>) から求めら�
     <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
-<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
 <a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
 </nav>
@@ -259,7 +258,6 @@ CU 数やピーク GPUクロック (<code>max_gpu_freq</code>) から求めら�
     <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
 <a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
 <a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
-<a href="https://www.coelacanth-dream.com/about/#matrix">Matrix</a>
 <a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
 <a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
 
