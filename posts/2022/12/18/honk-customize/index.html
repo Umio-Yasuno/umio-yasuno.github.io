@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ActivityPub サーバー、honk をカスタマイズしてみる | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2022/12/18/honk-customize/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ActivityPub サーバー、honk をカスタマイズしてみる | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="最近の Twitter の情勢を受けて、他の SNS、特に Mastodon サーバーに移行または独自のサーバーを構築する人が増えている。 加えて自分の観測範囲では、以前に紹介した Ted Unangst 氏による Go言">
+  <meta property="og:description" content="最近の Twitter の情勢を受けて、他の SNS、特に Mastodon サーバーに移行または独自のサーバーを構築する人が増えている。 加えて自分の観測範囲では、以前に紹介した Ted Unangst 氏による Go言"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, Honk">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2022-12-18","dateModified":"2022-12-20","datePublished":"2022-12-18","headline":"ActivityPub サーバー、honk をカスタマイズしてみる","image":"https://www.coelacanth-dream.com/icon.png","name":"ActivityPub サーバー、honk をカスタマイズしてみる"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">ActivityPub サーバー、honk をカスタマイズしてみる</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2022-12-18T16:47:07+09:00">Post: 2022-12-18 16:47:07</time>
+    <aside class="update">Update: 2022-12-20 03:22:50</aside>
+  </aside><p>最近の Twitter の情勢を受けて、他の SNS、特に Mastodon サーバーに移行または独自のサーバーを構築する人が増えている。<br>
+加えて自分の観測範囲では、以前に紹介した Ted Unangst 氏による Go言語製の ActivityPub サーバーの最小実装、<code>honk</code> を構築する人が増えている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+<code>honk</code> は省メモリであるため、メモリ 512MB の VPS でも快適に動作する。<br>
+メインでも予備でも、個人で運用可能な ActivityPub サーバーが欲しい人にとって <code>honk</code> は有力な選択肢になると思う。<br>
+また、最小実装ということが手伝い、カスタマイズ、それによる再ビルドと再起動に必要とするコストは小さい。<br>
+そこで、個人的に <code>honk</code> を運用しながらカスタマイズしていって得た知見を共有することで、誰かの <code>honk</code> を構築し、カスタマイズする切っ掛けになればと思い、この記事を書いている。</p>
+<p>カスタマイズにあたって先にオープンソースライセンス周りの話に触れると、有名な ActivityPub サーバー、Mastodon, Pleroma, Misskey, Pixelfed, PeerTube では AGPLv3 が採用されているが、<code>honk</code> では ISCライセンスが採用されている。<br>
+ライセンスについて詳しい訳ではないため雑な解説となるが、AGPLv3 ではソフトウェアの利用にあたってコピーレフトが適用されるが、ISCライセンスにコピーレフト条項はない。<br>
+こうした点でも <code>honk</code> はカスタマイズが容易だと言えるかもしれない。</p>
+<h2 id="custom">Customization<a href="#custom" class="head-cur-link" aria-hidden></a>
+</h2>
+<h3 id="css">CSS<a href="#css" class="head-cur-link" aria-hidden></a>
+</h3>
+<p>まず一番簡単な <code>honk</code> のカスタマイズは CSS による配色の変更だろう。<br>
+<code>honk</code> では <code>{datadir}/views/</code> 下に <code>local.css</code> がある場合に追加で読み込むため、ソースファイルを編集しなくとも、<code>local.css</code> を追加するだけで CSS は変更できる。<br>
+<code>honk</code> では主に使う色を <code>views/style.css</code> で CSS 変数を使って指定しており、CSS 変数には <code>--bg-page, --bg-dark, --fg, --hl, --fg-subtle, --fg-limitied</code> が宣言されている。<br>
+<code>--bg-page</code> は背景色、<code>--bg-dark</code> は一部の要素に使われる背景色、<code>--fg</code> はテキストやボーダー、アウトラインの色、<code>--hl</code> はボタン要素等を強調するのに使われる色、<code>--fg-subtle</code> はリプライ等に使われる色、<code>--fg-limited</code> はパブリックではない投稿に使われる色となっている。<br>
+合わせて、<code>honk</code> では上記 CSS 変数を上書きするための <code>local.css</code> を追加するだけで独自の配色、テーマを適用することができる。</p>
+<p>自分の <code>honk</code> サーバーでは以下の内容だけの <code>local.css</code> を追加して、このブログと近い配色にしている。</p>
+<blockquote>
+<pre><code>    html {
+      --bg-page: #145;
+      --fg: #ffe;
+      --hl: #fa3;
+      --bg-dark: #023;
+    }
+</code></pre>
+</blockquote>
+<p>他には <code>views/style.css</code> を編集してマージン、フォントサイズ、ボーダーのスタイルを変更しているが、これも <code>local.css</code> にルールを上書きする形で記述すれば適用される。</p>
+<h3 id="html-template">HTMLテンプレート<a href="#html-template" class="head-cur-link" aria-hidden></a>
+</h3>
+<p><code>honk</code> では <code>html/template</code> <sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> パッケージを採用しており、<code>{viewdir}</code> にある HTMLテンプレートを起動時に読み込む。<br>
+少し注意が必要なのが、HTMLテンプレートは <code>{viewdir}</code> 下にあるものを読み込むが、<code>local.css, local.js</code> は <code>{datadir}/views/</code> 下にあるものを読み込む点となる。<br>
+また、HTMLテンプレートの変更には golang の <code>text/template, html/template</code> に関する知識が必要になる。と言っても、変数や分岐の概念が追加されるだけで、後はほとんど HTML/CSS/JS がそのまま使われている。<br>
+それと、あまり悪く言うつもりはないのだが、<code>honk</code> の HTMLテンプレートでは <code>&lt;p&gt;</code> 要素をスペース目的で使っていたり、<code>&lt;p&gt;</code> 要素の閉じる前に他のブロックレベル要素が見つかった場合は自動で閉じる仕様を活用した部分が多く、<code>&lt;/p&gt;</code> が HTMLテンプレート内になかったり、そしてインデントがほとんどされていないため、正直読みにくかった。<br>
+HTMLテンプレートを変更する際は、まず好みのコードフォーマットを適用することをオススメする。</p>
+<p>HTMLテンプレートの変更は、それを前提とした CSS セレクタや JavaScript コードの動作に影響を与える可能性があるため、ブラウザの開発者ツールで確認しながら試し、それから HTMLテンプレートに変更を適用することを推奨。</p>
+<h3 id="js">JavaScript<a href="#js" class="head-cur-link" aria-hidden></a>
+</h3>
+<p><code>honk</code> の WebUI では JavaScript が使われており、例えば投稿に対する Boost (<code>bonk</code>)、リプライ (<code>honk back</code>)、削除 (<code>bonk</code>)、編集 (<code>edit</code>)、ブックマーク (<code>save</code>) をサーバーにリクエストする部分に JavaScript が使われている。<br>
+主な JavaScript コードは <code>views/honkpage.js</code> にまとめられているが、グローバル変数は HTMLテンプレート <code>views/honkpage.html</code> に記述されている。</p>
+<h3 id="go-code">Go Code<a href="#go-code" class="head-cur-link" aria-hidden></a>
+</h3>
+<p>見た目だけでなく処理部分もカスタマイズしようとすると Go で書かれたソースコードの変更が必要となる。<br>
+<code>honk</code> の各ソースコードファイルの短い説明は <code>docs/vim.3</code> にまとめられている。<br>
+自分は <code>honk</code> のソースコードを読み込んでいる訳ではないが、カスタマイズし、自分の fork を作っていく中で触れた部分について簡単な解説を書いていく。</p>
+<p><code>activity.go</code> には ActivityPub 形式との変換、他 ActivityPub 実装との相互運用のための処理がまとめられている。</p>
+<p><code>fun.go</code> は <em>All sorts of fun stuff.</em> とあるように、投稿に対する色々な処理がまとめられてある。<br>
+具体的には投稿の種類の判定、ユーザー名の正規化、HTML 要素からの不要な属性の削除、フィルターの適用、画像リンクの処理、データベースへの添付ファイルの保存といった処理がある。<br>
+<code>honk</code> では投稿内のインライン <code>&lt;img&gt;</code> 要素も処理し、画像を保存するが、これを無効化するには <code>fun.go</code> 内の <code>func inlineimgsfor</code> を常に <code>return &quot;&quot;</code> となるように変更すればいい。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
+画像リンクの処理は <code>func replaceimgsand</code> で行われる。自分の fork では WebUI 上ですべての <code>&lt;img&gt;</code> 要素に <code>loading=&quot;lazy&quot;</code> を追加するため、その関数内のフォーマット文字列を変更した。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
+<p>データベースからの取得は <code>database.go</code> に実装されている。何日以内の公開投稿を表示するか等も <code>database.go</code> 内で定義されているため、その部分を適切に変更することで、通常は一週間以内の表示期間を変更することができる。</p>
+<p><code>sensors.go</code> には <code>/about</code> ページで表示される <code>honk</code> のメモリ使用量 (<code>syscall Maxrss</code>)、起動時間 (Uptime)、CPU 使用量を取得する処理が実装されている。</p>
+<p><code>honk</code> のユーザーごとに設定可能なフィルター機能、Honk Filtering and Censorship System (hfcs) は <code>hfcs.go</code> に実装されている。<br>
+hfcs では正規表現を使うことができるが、ユーザーが設定した文字列の前後に <code>\\b</code> が追加したものをフィルタリングに用いるため、日本語等をフィルター対象に指定する場合は <code>\\b</code> を追加しないようコードを変更する必要があった。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
+投稿の表示を折り畳むかどうかの判定も <code>hfcs.go</code> 内の <code>func unsee</code> で行われる。<br>
+<code>honk</code> ではフィルター対象は折り畳むが、<code>sensitive</code> フラグが有効な投稿はそのまま表示する。自分の fork では簡単な変更を適用して <code>sensitive: true</code> な投稿も折り畳むようにしている。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
+ちなみに <code>sensitive: true</code> でも折り畳まないのは意図的なものらしく、その理由を Ted Unangst 氏に聞いた所、Python のインストールに関するスレッドを読むためだけに 20回もクリックして展開することにうんざりしているから、とのことだった。<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></p>
+<p><code>honk</code> では投稿時に Markdown 記法が使えるが、Markdown パーサーは Ted Unangst 氏が別に公開している <code>webs</code> パッケージに実装されている。<br>
+そのため、Markdown パーサー部を変更するには <code>go.mod</code> を編集し、ローカルにある <code>webs</code> パッケージを参照するようにする等の方法が必要になる。</p>
+<h2 id="fork">fork of honk<a href="#fork" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>レポジトリが公開されている <code>honk</code> の fork には以下のようなものがある。</p>
+<ul>
+<li><a href="https://github.com/benjojo/honk-benjojo" rel="noopener noreferrer" target="_blank" title="https://github.com/benjojo/honk-benjojo">benjojo/honk-benjojo: The benjojo.co.uk fork of honk</a></li>
+<li><a href="https://github.com/mascaldotfr/honk" rel="noopener noreferrer" target="_blank" title="https://github.com/mascaldotfr/honk">mascaldotfr/honk: customized honk for https://honk.thebus.top</a></li>
+<li><a href="https://github.com/timkuijsten/honk" rel="noopener noreferrer" target="_blank" title="https://github.com/timkuijsten/honk">timkuijsten/honk: Some patches to tedu&rsquo;s honk</a></li>
+<li><a href="https://hg.code.netlandish.com/~petersanchez/honk" rel="noopener noreferrer" target="_blank" title="https://hg.code.netlandish.com/~petersanchez/honk">~petersanchez/honk - netlandish hg</a></li>
+<li><a href="https://github.com/zevweiss/honk" rel="noopener noreferrer" target="_blank" title="https://github.com/zevweiss/honk">zevweiss/honk: Miscellaneous patches for Ted Unangst&rsquo;s honk: https://humungus.tedunangst.com/r/honk &ndash; tweaks branch probably rebased semi-often</a></li>
+<li><a href="https://git.icyphox.sh/honk" rel="noopener noreferrer" target="_blank" title="https://git.icyphox.sh/honk">https://git.icyphox.sh/honk</a></li>
+<li><a href="https://git.jxs.me/statianzo/honk" rel="noopener noreferrer" target="_blank" title="https://git.jxs.me/statianzo/honk">statianzo/honk: fork of honk - honk - Gitodome</a></li>
+<li><a href="https://git.sr.ht/~ols/yeet" rel="noopener noreferrer" target="_blank" title="https://git.sr.ht/~ols/yeet">~ols/yeet - sourcehut git</a></li>
+</ul>
+<p>Ben Cartwright-Cox (benjojo) 氏の fork では、外部ユーザーのアバター画像のサポートと WebUI 上での表示、MP4 と GIF のサポートが追加されており、また外部からの <code>Like</code> をログに出力するよう (記録はしない) 変更されている。<br>
+<code>honk</code> のクセが強い (と思う) 部分が緩和され、使いやすくなっているように思う。</p>
+<ul>
+<li><a href="https://github.com/benjojo/honk-benjojo" rel="noopener noreferrer" target="_blank" title="https://github.com/benjojo/honk-benjojo">benjojo/honk-benjojo: The benjojo.co.uk fork of honk</a></li>
+</ul>
+<p>自分の fork は <a href="https://github.com/Umio-Yasuno/honk-fisherman" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/honk-fisherman">Umio-Yasuno/honk-fisherman</a> で公開している。いくつかの変更を各ブランチで分けているが、それらをまとめ、実際に運用しているのが <code>dream</code> ブランチとなっている。<br>
+変更は HTMLテンプレートが主で、処理部は先に挙げた細かい修正くらいしかしていない。<br>
+投稿に表示される時刻フォーマットを <code>2006-01-02 15:04:05</code> に変更したり、<code>honkpage.js</code> を書き直したり、一部レイアウトを flex に置き換えたり、くらい。</p>
+<p>好みの fork をそのまま運用してもいいが、それぞれの変更内容を一部取り込んでいって独自の <code>honk</code> を構築する手もある。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://github.com/misskey-dev/misskey" rel="noopener noreferrer" target="_blank" title="https://github.com/misskey-dev/misskey">misskey-dev/misskey: 🌎 An interplanetary microblogging platform 🚀</a></li>
+<li><a href="https://github.com/mastodon/mastodon" rel="noopener noreferrer" target="_blank" title="https://github.com/mastodon/mastodon">mastodon/mastodon: Your self-hosted, globally interconnected microblogging community</a></li>
+<li><a href="https://pixelfed.org/" rel="noopener noreferrer" target="_blank" title="https://pixelfed.org/">Pixelfed - Decentralized social media</a>
+<ul>
+<li><a href="https://github.com/pixelfed/pixelfed" rel="noopener noreferrer" target="_blank" title="https://github.com/pixelfed/pixelfed">pixelfed/pixelfed: Photo Sharing. For Everyone.</a></li>
+</ul>
+</li>
+<li><a href="https://pleroma.social/" rel="noopener noreferrer" target="_blank" title="https://pleroma.social/">Pleroma — a lightweight fediverse server</a>
+<ul>
+<li><a href="https://git.pleroma.social/pleroma/pleroma" rel="noopener noreferrer" target="_blank" title="https://git.pleroma.social/pleroma/pleroma">Pleroma / pleroma · GitLab</a></li>
+</ul>
+</li>
+<li><a href="https://joinpeertube.org/" rel="noopener noreferrer" target="_blank" title="https://joinpeertube.org/">PeerTubeとは？ | JoinPeerTube</a>
+<ul>
+<li><a href="https://github.com/Chocobozzz/PeerTube" rel="noopener noreferrer" target="_blank" title="https://github.com/Chocobozzz/PeerTube">Chocobozzz/PeerTube: ActivityPub-federated video streaming platform using P2P directly in your web browser</a></li>
+</ul>
+</li>
+<li><a href="https://www.gnu.org/licenses/license-list.ja.html" rel="noopener noreferrer" target="_blank" title="https://www.gnu.org/licenses/license-list.ja.html">さまざまなライセンスとそれらについての解説 - GNUプロジェクト - フリーソフトウェアファウンデーション</a></li>
+</ul>
+</section>
+
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/06/19/honk/" title="/posts/2022/06/19/honk/">Go言語製 ActivityPub サーバーの最小実装 honk を立ててみた | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://pkg.go.dev/html/template" rel="noopener noreferrer" target="_blank" title="https://pkg.go.dev/html/template">template package - html/template - Go Packages</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://github.com/Umio-Yasuno/honk-fisherman/commit/d01a918dd411ff3e7de21a989aa36942a5c0764d" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/honk-fisherman/commit/d01a918dd411ff3e7de21a989aa36942a5c0764d">disable inline img tag · Umio-Yasuno/honk-fisherman@d01a918</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://github.com/Umio-Yasuno/honk-fisherman/commit/10c694e4dfae1106427ad99f57965c1fddd02c33" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/honk-fisherman/commit/10c694e4dfae1106427ad99f57965c1fddd02c33">add loading="lazy" to img tag · Umio-Yasuno/honk-fisherman@10c694e</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5">
+<p><a href="https://github.com/Umio-Yasuno/honk-fisherman/commit/2b4a010421c9c98cc2874bdbb365e06bc8804144" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/honk-fisherman/commit/2b4a010421c9c98cc2874bdbb365e06bc8804144">remove \\b from filter for non-ASCII word · Umio-Yasuno/honk-fisherman@2b4a010</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6">
+<p><a href="https://github.com/Umio-Yasuno/honk-fisherman/commit/d0bd6b86bb60a83bf83daba5ec25895ac7272adb" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/honk-fisherman/commit/d0bd6b86bb60a83bf83daba5ec25895ac7272adb">fix DZ: (sensitive) · Umio-Yasuno/honk-fisherman@d0bd6b8</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7">
+<p><a href="https://honk.tedunangst.com/u/tedu/h/Dm52M7sZbbT8fGCq16" rel="noopener noreferrer" target="_blank" title="https://honk.tedunangst.com/u/tedu/h/Dm52M7sZbbT8fGCq16">https://honk.tedunangst.com/u/tedu/h/Dm52M7sZbbT8fGCq16</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/honk/" title="Honk">#Honk</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2022/12/18/honk-customize.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.105.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/honk/" class="menu-cat-tag-lower">Honk</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/honk/" class="menu-cat-tag-lower">Honk</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
