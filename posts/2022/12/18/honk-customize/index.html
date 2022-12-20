@@ -39,12 +39,12 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2022-12-18T16:47:07+09:00">Post: 2022-12-18 16:47:07</time>
-    <aside class="update">Update: 2022-12-20 07:21:37</aside>
+    <aside class="update">Update: 2022-12-20 21:25:11</aside>
   </aside><p>最近の Twitter の情勢を受けて、他の SNS、特に Mastodon サーバーに移行または独自のサーバーを構築する人が増えている。<br>
 加えて自分の観測範囲では、以前に紹介した Ted Unangst 氏による Go言語製の ActivityPub サーバーの最小実装、<code>honk</code> を構築する人が増えている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 <code>honk</code> は省メモリであるため、メモリ 512MB の VPS でも快適に動作する。<br>
 メインでも予備でも、個人で運用可能な ActivityPub サーバーが欲しい人にとって <code>honk</code> は有力な選択肢になると思う。<br>
-また、最小実装ということが手伝い、カスタマイズ、それによる再ビルドと再起動に必要とするコストは小さい。<br>
+また、最小実装ということが手伝い、カスタマイズ、それによる再ビルドと再起動に必要とするコストは小さく、バイナリサイズも自分が運用しているもので 13M と小さい。<br>
 そこで、個人的に <code>honk</code> を運用しながらカスタマイズしていって得た知見を共有することで、誰かの <code>honk</code> を構築し、カスタマイズする切っ掛けになればと思い、この記事を書いている。</p>
 <ul>
 <li><a href="https://humungus.tedunangst.com/r/honk" rel="noopener noreferrer" target="_blank" title="https://humungus.tedunangst.com/r/honk">humungus - honk</a></li>
@@ -89,7 +89,10 @@ HTMLテンプレートを変更する際は、まず好みのコードフォー�
 <p>見た目だけでなく処理部分もカスタマイズしようとすると Go で書かれたソースコードの変更が必要となる。<br>
 <code>honk</code> の各ソースコードファイルの短い説明は <code>docs/vim.3</code> にまとめられている。<br>
 自分は <code>honk</code> のソースコードを読み込んでいる訳ではないが、カスタマイズし、自分の fork を作っていく中で触れた部分について簡単な解説を書いていく。</p>
-<p><code>activity.go</code> には ActivityPub 形式との変換、他 ActivityPub 実装との相互運用のための処理がまとめられている。</p>
+<p><code>activity.go</code> には ActivityPub 形式との変換、他 ActivityPub 実装との相互運用のための処理がまとめられている。<br>
+ActivityPub における <code>Inbox/Outbox</code> や RSS の出力は <code>web.go</code> にまとめられている。</p>
+<p><code>honk</code> ではアバター画像を保存せず、WebUI では設定された色のパターンとユーザー名のハッシュから生成した画像を表示する。その部分の実装が <code>avatar.go</code> にまとめられている。<br>
+一応、<code>{datadir}/memes</code> に画像を置き、アカウントのプロフィールで <code>avatar: &lt;file&gt;</code> の形式で記述することで外部に対してアバター画像を設定することはできる。</p>
 <p><code>fun.go</code> は <em>All sorts of fun stuff.</em> とあるように、投稿に対する色々な処理がまとめられてある。<br>
 具体的には投稿の種類の判定、ユーザー名の正規化、HTML 要素からの不要な属性の削除、フィルターの適用、画像リンクの処理、データベースへの添付ファイルの保存といった処理がある。<br>
 <code>honk</code> では投稿内のインライン <code>&lt;img&gt;</code> 要素も処理し、画像を保存するが、これを無効化するには <code>fun.go</code> 内の <code>func inlineimgsfor</code> を常に <code>return &quot;&quot;</code> となるように変更すればいい。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
@@ -130,6 +133,7 @@ hfcs では正規表現を使うことができるが、ユーザーが設定し
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
+<li><a href="https://humungus.tedunangst.com/r/honk" rel="noopener noreferrer" target="_blank" title="https://humungus.tedunangst.com/r/honk">humungus - honk</a></li>
 <li><a href="https://github.com/misskey-dev/misskey" rel="noopener noreferrer" target="_blank" title="https://github.com/misskey-dev/misskey">misskey-dev/misskey: 🌎 An interplanetary microblogging platform 🚀</a></li>
 <li><a href="https://github.com/mastodon/mastodon" rel="noopener noreferrer" target="_blank" title="https://github.com/mastodon/mastodon">mastodon/mastodon: Your self-hosted, globally interconnected microblogging community</a></li>
 <li><a href="https://pixelfed.org/" rel="noopener noreferrer" target="_blank" title="https://pixelfed.org/">Pixelfed - Decentralized social media</a>
