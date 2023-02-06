@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMD Phoenix と Phoenix2 の CPUID, GFX1103_R1 と GFX1103_R2 | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/02/07/amd-phx-phx2-gfx1103_r1_r2/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AMD Phoenix と Phoenix2 の CPUID, GFX1103_R1 と GFX1103_R2 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="Phoenix と Phoenix2 の CPUID Family/Model/Stepping Felix Held 氏により、AMD Phoenix APU と AMD Phoenix2 APU の CPUID Family/Model/Stepping に関するパッチが Coreboot に投稿されている。 Coreboot はオープンソースなファームウェア、BIOS/UEFI を開発するプロジェク">
+  <meta property="og:description" content="Phoenix と Phoenix2 の CPUID Family/Model/Stepping Felix Held 氏により、AMD Phoenix APU と AMD Phoenix2 APU の CPUID Family/Model/Stepping に関するパッチが Coreboot に投稿されている。 Coreboot はオープンソースなファームウェア、BIOS/UEFI を開発するプロジェク"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, Phoenix, Phoenix2, RDNA_3, GFX11, Coreboot, CPUID">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-02-07","dateModified":"2023-02-07","datePublished":"2023-02-07","headline":"AMD Phoenix と Phoenix2 の CPUID, GFX1103_R1 と GFX1103_R2","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD Phoenix と Phoenix2 の CPUID, GFX1103_R1 と GFX1103_R2"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">AMD Phoenix と Phoenix2 の CPUID, GFX1103_R1 と GFX1103_R2</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2023-02-07T00:28:57+09:00">Post: 2023-02-07 00:28:57</time>
+    <aside class="update">Update: 2023-02-07 02:59:32</aside>
+  </aside><h2 id="cpuid">Phoenix と Phoenix2 の CPUID Family/Model/Stepping<a href="#cpuid" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>Felix Held 氏により、<em>AMD Phoenix APU</em> と <em>AMD Phoenix2 APU</em> の <code>CPUID Family/Model/Stepping</code> に関するパッチが Coreboot に投稿されている。<br>
+Coreboot はオープンソースなファームウェア、BIOS/UEFI を開発するプロジェクトであり、Felix Held 氏は現在フルタイムで Coreboot プロジェクトの開発に参加している。</p>
+<ul>
+<li><a href="https://review.coreboot.org/c/coreboot/+/72843/1" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/72843/1">soc/amd/phoenix/include/cpu: rename CPUID define to match CPU model (Ie7500130) · Gerrit Code Review</a></li>
+</ul>
+<blockquote>
+<pre><code>    - #define PHOENIX_A0_CPUID	0x00a70f80
+    + #define PHOENIX2_A0_CPUID	0x00a70f80
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/72843/1/src/soc/amd/phoenix/include/soc/cpu.h#b6" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/72843/1/src/soc/amd/phoenix/include/soc/cpu.h#b6">https://review.coreboot.org/c/coreboot/+/72843/1/src/soc/amd/phoenix/include/soc/cpu.h#b6</a></cite>
+</div>
+
+</blockquote>
+<p>Felix Held 氏のコメントによれば、<code>0x00a70f80 (Family: 0x19, Model: 0xA8, Stepping: 0)</code> は <em>Phoenix2</em> の <code>CPUID Family/Model/Stepping</code> であり、<em>Phoenix APU</em> は <code>0x00a70f80 (Family: 0x19, Model: 0xA0, Stepping: 0)</code> となる。<br>
+前回 Coreboot で <em>Phoenix APU</em> のサポートが進められていることを取り上げた時には、エンジニアサンプリング品やリビジョンによって <code>CPUID Model</code> を変えていると考えたが、少なくとも <em>Phoenix APU</em> と <em>Phoenix2 APU</em> はそれに関係なく明確に違う <code>CPUID Model</code> が割り当てられているようだ。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p><code>CPUID</code> は実行した CPU の情報を返す命令であり、EAX/ECX レジスタの値によって情報の種類は変わる。<br>
+<code>CPUID Family/Model/Stepping</code> は EAX レジスタの値が <code>0x1</code> の時に返される情報であり、ソフトウェアはそれを用いてプロセッサの種類を判定することができる。</p>
+<h2 id="gfx1103_r1_r2">GFX1103_R1, GFX1103_R2<a href="#gfx1103_r1_r2" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>AMD のソフトウェア開発者である Marek Olšák 氏により、<em>Phoenix APU</em> の GPU ID (GFX ID) となる <em>GFX1103</em> を <em>GFX1103_R1</em> と <em>GFX1103_R2</em> に分けるパッチが Mesa3D に投稿され、それを含めたマージリクエストは既に main ブランチに取り込まれている。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/84d59cdb5971424a4297e288b852c8cc15c46163" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/84d59cdb5971424a4297e288b852c8cc15c46163">amd: split GFX1103 into GFX1103_R1 and GFX1103_R2 (84d59cdb) · Commits · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/76e3437c1ed88bb63c64ff87654224aee4ab0091" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/76e3437c1ed88bb63c64ff87654224aee4ab0091">amd: update the cache size for gfx1103_r1 (76e3437c) · Commits · Mesa / mesa · GitLab</a></li>
+</ul>
+<p><em>GFX1103_R1</em> と <em>GFX1103_R2</em> の違いとしては、L2キャッシュブロックあたりのサイズが明らかにされており、<em>GFX1103_R1</em> が <em>Rembrandt (Yellow Carp)</em> と同じ 512KiB なのに対し、<em>GFX1103_R2</em> は 256KiB となっている。<br>
+ここでは <em>GFX1103_R2</em> を指定したコードは追加されていないが、<code>switch</code> 文の <code>default</code> ケースが 256KiB となっている。</p>
+<blockquote>
+<pre><code>        case CHIP_REMBRANDT:
+    +   case CHIP_GFX1103_R1:
+           info-&gt;l2_cache_size = info-&gt;num_tcc_blocks * 512 * 1024;
+           break;
+        }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/76e3437c1ed88bb63c64ff87654224aee4ab0091" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/76e3437c1ed88bb63c64ff87654224aee4ab0091">amd: update the cache size for gfx1103_r1 (76e3437c) · Commits · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<p>他では、<code>chip_rev</code> が <code>0</code> の場合、シェーダープリフェッチを無効化する対象に <em>GFX1103_R1</em> は含まれるが、<em>GFX1103_R2</em> は含まれていない。<br>
+しかし、Marek Olšák 氏による他のパッチにて当該部分のコードは削除されているため、あまり気にする必要のない情報ではある。そのパッチによれば、シェーダープリフェッチ機能の無効有効はハードウェア側で自動で行われ、ソフトウェア側で一部のチップに存在するバグに対する回避策は必要としない。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/d21850f7538cbf719792e74cbc78b3c638b26137" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/d21850f7538cbf719792e74cbc78b3c638b26137">radeonsi/gfx11: remove the INST_PREF_SIZE workaround (d21850f7) · Commits · Mesa / mesa · GitLab</a></li>
+</ul>
+<p>もう 1つの <em>RDNA 3 APU</em> という点では、以前 AMDGPU ドライバーにサポートを追加するパッチが投稿された <em>GC 11.0.4 APU</em> が思い出される。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+ただ、<em>GFX1103_R1</em> と <em>GFX1103_R2</em> を判定する部分では <code>eRivisionID, external_rev_id</code> が用いられているが、AMDGPU ドライバーのコードを見るに、<em>Phoenix APU (GC 11.0.1)</em> と <em>GC 11.0.4</em> の <code>rev_id</code> に追加されるオフセット値は同じであり、これまでのパターンから <code>eRivisionID, external_rev_id</code> も同一である可能性が高い。<br>
+そうなると、<em>Phoniex APU (GC 11.0.1)</em> も <em>GC 11.0.4</em> も <em>GFX1103_R1</em> として判定される。<br>
+現時点で <em>Phoenix APU</em> として <em>GC 11.0.1, GFX1103_R1</em>、<em>GC 11.0.4, GFX1103_R1</em>、<em>GC 11.0.x?, GFX1103_R2</em> の 3種類が存在することが考えられるが、前者 2つに関しては単にステッピングの違いを表現しただけの可能性もある。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-May/078678.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2022-May/078678.html">[PATCH] drm/amdgpu: add soc21 common ip block support for GC 11.0.1</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-November/086816.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2022-November/086816.html">[PATCH 09/19] drm/amdgpu: add soc21 common ip block support for GC 11.0.4</a></li>
+</ul>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.coelacanth-dream.com/posts/2023/01/11/coreboot-phoenix/" title="/posts/2023/01/11/coreboot-phoenix/">Coreboot で Phoenix APU のサポートが進められる | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/11/22/rdna_3-apu-gc_11_0_4/" title="/posts/2022/11/22/rdna_3-apu-gc_11_0_4/">もう 1つの RDNA 3 APU IP、GC 11.0.4 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/phoenix/" title="Phoenix">#Phoenix</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/phoenix2/" title="Phoenix2">#Phoenix2</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna_3/" title="RDNA_3">#RDNA 3</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx11/" title="GFX11">#GFX11</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/coreboot/" title="Coreboot">#Coreboot</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cpuid/" title="CPUID">#CPUID</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2023/02/07/amd-phx-phx2-gfx1103_r1_r2.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.110.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu" role="menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/coreboot/" class="menu-cat-tag-lower">Coreboot</a><a href="https://www.coelacanth-dream.com/tags/cpuid/" class="menu-cat-tag-lower">CPUID</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/phoenix/" class="menu-cat-tag-lower">Phoenix</a><a href="https://www.coelacanth-dream.com/tags/phoenix2/" class="menu-cat-tag-lower">Phoenix2</a><a href="https://www.coelacanth-dream.com/tags/rdna_3/" class="menu-cat-tag-lower">RDNA 3</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/coreboot/" class="menu-cat-tag-lower">Coreboot</a><a href="https://www.coelacanth-dream.com/tags/cpuid/" class="menu-cat-tag-lower">CPUID</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/phoenix/" class="menu-cat-tag-lower">Phoenix</a><a href="https://www.coelacanth-dream.com/tags/phoenix2/" class="menu-cat-tag-lower">Phoenix2</a><a href="https://www.coelacanth-dream.com/tags/rdna_3/" class="menu-cat-tag-lower">RDNA 3</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
