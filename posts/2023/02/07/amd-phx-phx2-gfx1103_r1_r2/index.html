@@ -39,23 +39,24 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2023-02-07T00:28:57+09:00">Post: 2023-02-07 00:28:57</time>
-    <aside class="update">Update: 2023-02-07 02:59:32</aside>
+    <aside class="update">Update: 2023-02-07 16:14:16</aside>
   </aside><h2 id="cpuid">Phoenix と Phoenix2 の CPUID Family/Model/Stepping<a href="#cpuid" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>Felix Held 氏により、<em>AMD Phoenix APU</em> と <em>AMD Phoenix2 APU</em> の <code>CPUID Family/Model/Stepping</code> に関するパッチが Coreboot に投稿されている。<br>
 Coreboot はオープンソースなファームウェア、BIOS/UEFI を開発するプロジェクトであり、Felix Held 氏は現在フルタイムで Coreboot プロジェクトの開発に参加している。</p>
 <ul>
 <li><a href="https://review.coreboot.org/c/coreboot/+/72843/1" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/72843/1">soc/amd/phoenix/include/cpu: rename CPUID define to match CPU model (Ie7500130) · Gerrit Code Review</a></li>
+<li><a href="https://review.coreboot.org/c/coreboot/+/72853/1/" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/72853/1/">soc/amd/phoenix/include/cpu: add Phoenix CPUID (Id4eb3502) · Gerrit Code Review</a></li>
 </ul>
 <blockquote>
-<pre><code>    - #define PHOENIX_A0_CPUID	0x00a70f80
-    + #define PHOENIX2_A0_CPUID	0x00a70f80
+<pre><code>    #define PHOENIX_A0_CPUID	0x00a70f40
+    #define PHOENIX2_A0_CPUID	0x00a70f80
 </code></pre>
 <div class="quote-source">引用元:<cite class="source-link"><a href="https://review.coreboot.org/c/coreboot/+/72843/1/src/soc/amd/phoenix/include/soc/cpu.h#b6" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/72843/1/src/soc/amd/phoenix/include/soc/cpu.h#b6">https://review.coreboot.org/c/coreboot/+/72843/1/src/soc/amd/phoenix/include/soc/cpu.h#b6</a></cite>
 </div>
 
 </blockquote>
-<p>Felix Held 氏のコメントによれば、<code>0x00a70f80 (Family: 0x19, Model: 0xA8, Stepping: 0)</code> は <em>Phoenix2</em> の <code>CPUID Family/Model/Stepping</code> であり、<em>Phoenix APU</em> は <code>0x00a70f80 (Family: 0x19, Model: 0xA0, Stepping: 0)</code> となる。<br>
+<p>Felix Held 氏のコメントによれば、<code>0x00a70f80 (Family: 0x19, Model: 0xA8, Stepping: 0)</code> は <em>Phoenix2</em> の <code>CPUID Family/Model/Stepping</code> であり、<em>Phoenix APU</em> は <code>0x00a70f40 (Family: 0x19, Model: 0xA4, Stepping: 0)</code> となる。<br>
 前回 Coreboot で <em>Phoenix APU</em> のサポートが進められていることを取り上げた時には、エンジニアサンプリング品やリビジョンによって <code>CPUID Model</code> を変えていると考えたが、少なくとも <em>Phoenix APU</em> と <em>Phoenix2 APU</em> はそれに関係なく明確に違う <code>CPUID Model</code> が割り当てられているようだ。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <p><code>CPUID</code> は実行した CPU の情報を返す命令であり、EAX/ECX レジスタの値によって情報の種類は変わる。<br>
 <code>CPUID Family/Model/Stepping</code> は EAX レジスタの値が <code>0x1</code> の時に返される情報であり、ソフトウェアはそれを用いてプロセッサの種類を判定することができる。</p>
@@ -67,7 +68,8 @@ Coreboot はオープンソースなファームウェア、BIOS/UEFI を開発�
 <li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/76e3437c1ed88bb63c64ff87654224aee4ab0091" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/76e3437c1ed88bb63c64ff87654224aee4ab0091">amd: update the cache size for gfx1103_r1 (76e3437c) · Commits · Mesa / mesa · GitLab</a></li>
 </ul>
 <p><em>GFX1103_R1</em> と <em>GFX1103_R2</em> の違いとしては、L2キャッシュブロックあたりのサイズが明らかにされており、<em>GFX1103_R1</em> が <em>Rembrandt (Yellow Carp)</em> と同じ 512KiB なのに対し、<em>GFX1103_R2</em> は 256KiB となっている。<br>
-ここでは <em>GFX1103_R2</em> を指定したコードは追加されていないが、<code>switch</code> 文の <code>default</code> ケースが 256KiB となっている。</p>
+ここでは <em>GFX1103_R2</em> を指定したコードは追加されていないが、<code>switch</code> 文の <code>default</code> ケースが 256KiB となっている。<br>
+また、AMD GPU は基本 L2キャッシュブロックをメモリチャネルと同数持ち、<em>Phoenix APU (GC 11.0.1)</em> は合計 L2キャッシュサイズ 2MiB を持つことが過去に amd-gfx メーリングリストにて明かされている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <blockquote>
 <pre><code>        case CHIP_REMBRANDT:
     +   case CHIP_GFX1103_R1:
@@ -84,7 +86,7 @@ Coreboot はオープンソースなファームウェア、BIOS/UEFI を開発�
 <ul>
 <li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/commit/d21850f7538cbf719792e74cbc78b3c638b26137" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commit/d21850f7538cbf719792e74cbc78b3c638b26137">radeonsi/gfx11: remove the INST_PREF_SIZE workaround (d21850f7) · Commits · Mesa / mesa · GitLab</a></li>
 </ul>
-<p>もう 1つの <em>RDNA 3 APU</em> という点では、以前 AMDGPU ドライバーにサポートを追加するパッチが投稿された <em>GC 11.0.4 APU</em> が思い出される。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+<p>もう 1つの <em>RDNA 3 APU</em> という点では、以前 AMDGPU ドライバーにサポートを追加するパッチが投稿された <em>GC 11.0.4 APU</em> が思い出される。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 ただ、<em>GFX1103_R1</em> と <em>GFX1103_R2</em> を判定する部分では <code>eRivisionID, external_rev_id</code> が用いられているが、AMDGPU ドライバーのコードを見るに、<em>Phoenix APU (GC 11.0.1)</em> と <em>GC 11.0.4</em> の <code>rev_id</code> に追加されるオフセット値は同じであり、これまでのパターンから <code>eRivisionID, external_rev_id</code> も同一である可能性が高い。<br>
 そうなると、<em>Phoniex APU (GC 11.0.1)</em> も <em>GC 11.0.4</em> も <em>GFX1103_R1</em> として判定される。<br>
 現時点で <em>Phoenix APU</em> として <em>GC 11.0.1, GFX1103_R1</em>、<em>GC 11.0.4, GFX1103_R1</em>、<em>GC 11.0.x?, GFX1103_R2</em> の 3種類が存在することが考えられるが、前者 2つに関しては単にステッピングの違いを表現しただけの可能性もある。</p>
@@ -99,7 +101,10 @@ Coreboot はオープンソースなファームウェア、BIOS/UEFI を開発�
 <p><a href="https://www.coelacanth-dream.com/posts/2023/01/11/coreboot-phoenix/" title="/posts/2023/01/11/coreboot-phoenix/">Coreboot で Phoenix APU のサポートが進められる | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.coelacanth-dream.com/posts/2022/11/22/rdna_3-apu-gc_11_0_4/" title="/posts/2022/11/22/rdna_3-apu-gc_11_0_4/">もう 1つの RDNA 3 APU IP、GC 11.0.4 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2022/09/02/gfx11-l0c-gl1c/" title="/posts/2022/09/02/gfx11-l0c-gl1c/">L0ベクタキャッシュと GL1データキャッシュが増やされる RDNA 3/GFX11 APU | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/11/22/rdna_3-apu-gc_11_0_4/" title="/posts/2022/11/22/rdna_3-apu-gc_11_0_4/">もう 1つの RDNA 3 APU IP、GC 11.0.4 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
