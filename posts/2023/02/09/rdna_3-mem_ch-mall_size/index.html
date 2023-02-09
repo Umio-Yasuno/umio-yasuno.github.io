@@ -4,7 +4,7 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Navi31/Navi32/Navi33 のメモリチャネル数と MALL サイズ | Coelacanth&#39;s Dream</title>
+<title>Navi31/Navi32/Navi33 のメモリチャネル数と L3キャッシュサイズ | Coelacanth&#39;s Dream</title>
 
 <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/02/09/rdna_3-mem_ch-mall_size/">
 
@@ -15,7 +15,7 @@
 
 <meta property="og:site_name" content="Coelacanth&#39;s Dream">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Navi31/Navi32/Navi33 のメモリチャネル数と MALL サイズ | Coelacanth&#39;s Dream">
+<meta property="og:title" content="Navi31/Navi32/Navi33 のメモリチャネル数と L3キャッシュサイズ | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
 <meta name="description" content="先日、AMDGPU ドライバーのディスプレイエンジン、DCN (Display Core Next) のコード部に、RDNA 3 GPU のメモリチャネル数と MALL (Memory Access at Last Level, Infinity Cache, L3キャッシュ) サイズが異なる SKU に">
   <meta property="og:description" content="先日、AMDGPU ドライバーのディスプレイエンジン、DCN (Display Core Next) のコード部に、RDNA 3 GPU のメモリチャネル数と MALL (Memory Access at Last Level, Infinity Cache, L3キャッシュ) サイズが異なる SKU に"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-02-09","dateModified":"2023-02-09","datePublished":"2023-02-09","headline":"Navi31/Navi32/Navi33 のメモリチャネル数と MALL サイズ","image":"https://www.coelacanth-dream.com/icon.png","name":"Navi31/Navi32/Navi33 のメモリチャネル数と MALL サイズ"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-02-09","dateModified":"2023-02-10","datePublished":"2023-02-09","headline":"Navi31/Navi32/Navi33 のメモリチャネル数と L3キャッシュサイズ","image":"https://www.coelacanth-dream.com/icon.png","name":"Navi31/Navi32/Navi33 のメモリチャネル数と L3キャッシュサイズ"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -35,11 +35,11 @@
 <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 
     <main class="text">
-      <h1 class="page-title">Navi31/Navi32/Navi33 のメモリチャネル数と MALL サイズ</h1>
+      <h1 class="page-title">Navi31/Navi32/Navi33 のメモリチャネル数と L3キャッシュサイズ</h1>
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2023-02-09T19:57:29+09:00">Post: 2023-02-09 19:57:29</time>
-    <aside class="update">Update: 2023-02-09 21:09:20</aside>
+    <aside class="update">Update: 2023-02-10 08:11:14</aside>
   </aside><p>先日、AMDGPU ドライバーのディスプレイエンジン、DCN (Display Core Next) のコード部に、<em>RDNA 3</em> GPU のメモリチャネル数と MALL (Memory Access at Last Level, Infinity Cache, L3キャッシュ) サイズが異なる SKU に対応する変更が適用された。<br>
 パッチは amd-gfx メーリングリストには投稿されておらず、おそらくは AMD 内部でのレビューを経てブランチにコミットが追加されている。</p>
 <ul>
@@ -97,8 +97,6 @@
 さらに、判定部分では VBIOS から取得できるメモリチャネル数について最大 48ch となることを想定しており、その場合 DCN は 32ch 分を、そうでない場合は 16ch 分の MALL が使用可能とされている。<br>
 現時点で発表されている <em>Navi31 (GC 11.0.0, gfx1100)</em> ベースの SKU、<strong>RX 7900 XTX</strong> は 24ch (384-bit)<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、<strong>RX 7900 XT</strong> は 20ch (320-bit) の仕様となっている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 最大 48ch というのはそれらより大きい値だが、これらの情報は Linux Kernel とその AMDGPU ドライバーがオープンソースで開発されているから公開されているのであり、当然ハードコードされた値が今後変更される可能性は充分にある。</p>
-<p>AMDGPU ドライバーは、電源投入時に GPU 内部の PSP (Platform Security Processor) が VRAM に出力する GPU 情報、IP discovery table に対応しており、<br>
-GPU 側が対応していれば MALL の情報、メモリコントローラあたりのサイズ、通常の倍のサイズ、もしくは半分を使用するかといった情報も出力されるが、DCN 部のコードでその値は使われていない。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
 <blockquote>
 <pre><code>    +	int gc_11_0_0_max_chans = 48;
     +	int gc_11_0_0_max_avail_chans = 32;
@@ -124,6 +122,8 @@ GPU 側が対応していれば MALL の情報、メモリコントローラあ�
 </div>
 
 </blockquote>
+<p>AMDGPU ドライバーは、電源投入時に GPU 内部の PSP (Platform Security Processor) が VRAM に出力する GPU 情報、IP discovery table に対応しており、<br>
+GPU 側が対応していれば MALL の情報、メモリコントローラあたりのサイズ、通常の倍のサイズ、もしくは半分を使用するかといった情報も出力されるが、DCN 部のコードでその値は使われていない。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
