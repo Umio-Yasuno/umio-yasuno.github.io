@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Intel、Thunder Bay VPU をキャンセル | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/03/17/intel-tbh-is-cancelled/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Intel、Thunder Bay VPU をキャンセル | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="Intel の Rashmi A 氏により、Linux Kernel から Thunder Bay VPU 固有のコードを削除するパッチを投稿された。パッチ内にて Thunder Bay VPU がキャンセルされたことが伝えられている。 Remove Thunder Bay specific code as the product got cancelled">
+  <meta property="og:description" content="Intel の Rashmi A 氏により、Linux Kernel から Thunder Bay VPU 固有のコードを削除するパッチを投稿された。パッチ内にて Thunder Bay VPU がキャンセルされたことが伝えられている。 Remove Thunder Bay specific code as the product got cancelled"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-03-17","dateModified":"2023-03-17","datePublished":"2023-03-17","headline":"Intel、Thunder Bay VPU をキャンセル","image":"https://www.coelacanth-dream.com/icon.png","name":"Intel、Thunder Bay VPU をキャンセル"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">Intel、Thunder Bay VPU をキャンセル</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2023-03-17T19:56:50+09:00">Post: 2023-03-17 19:56:50</time>
+    <aside class="update">Update: 2023-03-17 21:07:38</aside>
+  </aside><p>Intel の Rashmi A 氏により、Linux Kernel から <em>Thunder Bay VPU</em> 固有のコードを削除するパッチを投稿された。パッチ内にて <em>Thunder Bay VPU</em> がキャンセルされたことが伝えられている。</p>
+<blockquote>
+<pre><code>    Remove Thunder Bay specific code as the product got cancelled and 
+    there are no end customers or users.
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/lkml/20230316120549.21486-1-rashmi.a@intel.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/lkml/20230316120549.21486-1-rashmi.a@intel.com/">https://lore.kernel.org/lkml/20230316120549.21486-1-rashmi.a@intel.com/</a></cite>
+</div>
+
+</blockquote>
+<h2 id="thb">Thunder Bay<a href="#thb" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>Thunder Bay VPU</em> は CPU に Arm Cortex-A53 を採用し、複数の VPUスライスを持つ SoC/VPU になることが過去の Linux Kernel へのパッチにて公開されていた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+現行の Intel VPU 製品とされている <em>Keem Bay APU</em> も同様に Arm Cortex-A53 を採用しているが、<em>Thunder Bay VPU</em> は Arm Cortex-A53 4-Core の CPUクラスタを最大で 4基、VPUスライスは Full バリアントで 4基、Prime (Standard) で 2基持ち、<em>Keem Bay VPU</em> よりも大規模な構成を取っている。</p>
+<p><em>Thunder Bay VPU</em> の SKU などが Intel から正式に発表されることはなかったが、2021/11/04 付で公開されたニュースリリースでは、中国の Tencent と協力し、推論性能とメディア性能を活かした交通制御システムが実演され、また Xeon プロセッサと PCIe カードに搭載した <em>Thunder Bay VPU</em> を組み合わせたプラットフォームを提供する予定であることが発表されている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+先のパッチでは、<em>Thunder Bay VPU</em> を採用する顧客とユーザーがいないことをキャンセルされた理由としているため、そうしたプロジェクトも立ち消えとなってしまったのだろう。</p>
+<h2 id="keem-bay-kmb">Keem Bay {kmb}<a href="#keem-bay-kmb" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>Keem Bay VPU</em> についても、発表自体は 2019/11/15 の Intel AI Summit だったが、Intel 公式サイトに掲載されている <em>Keem Bay VPU</em> の SKU は <strong>3700VC</strong> のみ。発売日は Q1'23 となっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
+恐らくモバイル向け <em>Raptor Lake</em> と組み合わせることを想定した SKU と思われる。</p>
+<ul>
+<li><a href="https://ark.intel.com/content/www/jp/ja/ark/products/230545/gen-3-intel-movidius-3700vc-vpu.html" rel="noopener noreferrer" target="_blank" title="https://ark.intel.com/content/www/jp/ja/ark/products/230545/gen-3-intel-movidius-3700vc-vpu.html">Gen 3 Intel Movidius 3700VC VPU 製品仕様</a></li>
+</ul>
+<p><strong>3400VE</strong> と <strong>3700VE</strong> といった SKU の性能を掲載しているページもあるが、<em>Gen 3 Intel® Movidius™ VPU (coming soon&hellip;)</em> のまま更新されていない。</p>
+<ul>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/how-to-choose-hardware-and-software-for-edge-inference-solutions.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/developer/articles/technical/how-to-choose-hardware-and-software-for-edge-inference-solutions.html">Hardware and Software for Edge Inference Solutions</a></li>
+</ul>
+<p><em>Thunder Bay VPU</em> はその規模とニュースリリースの内容から、クラウドサーバー向けの製品として開発されていたことがうかがえるが、最終的にはキャンセルされた。<br>
+一応エッジ推論処理向けの <em>Keem Bay VPU</em> は続けられており、またモバイル向け <em>Raptor Lake</em> と組み合わせた採用が進められていることが以前に語られている。<br>
+<em>Meteor Lake</em> では SoC Tile に VPU が統合され、今後はクライアント向けでの活用が加速してことが考えられる。<br>
+すでに Intel の Github レポジトリでは、<em>Meteor Lake VPU</em> 向けの UMD (User Mode Driver) が公開されており、Intel VPU の普及と同時に広範な利用が期待される。</p>
+<ul>
+<li><a href="https://github.com/intel/linux-vpu-driver" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/linux-vpu-driver">intel/linux-vpu-driver: Intel® Versatile Processing Unit Driver</a></li>
+</ul>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://edc.intel.com/content/www/us/en/design/products/platforms/details/raptor-lake-s/13th-generation-core-processors-datasheet-volume-1-of-2/005/introduction/" rel="noopener noreferrer" target="_blank" title="https://edc.intel.com/content/www/us/en/design/products/platforms/details/raptor-lake-s/13th-generation-core-processors-datasheet-volume-1-of-2/005/introduction/">Introduction - 005 - ID:743844 | 13th Generation Intel® Core™ Processors</a></li>
+<li><a href="https://www.phoronix.com/news/Intel-Thunder-Bay-Cancelled" rel="noopener noreferrer" target="_blank" title="https://www.phoronix.com/news/Intel-Thunder-Bay-Cancelled">Intel Thunder Bay Is Officially Canceled, Linux Driver Code To Be Removed - Phoronix</a></li>
+<li><a href="https://pc.watch.impress.co.jp/docs/news/1439818.html" rel="noopener noreferrer" target="_blank" title="https://pc.watch.impress.co.jp/docs/news/1439818.html">Intel、次世代のMeteor LakeにVPUを統合予定。第13世代CoreでLE Audio対応も - PC Watch</a></li>
+<li><a href="https://news.mynavi.jp/article/20220824-2433247/" rel="noopener noreferrer" target="_blank" title="https://news.mynavi.jp/article/20220824-2433247/">Intel Meteor Lake and Arrow Lake - HotChips 34レポート | マイナビニュース</a></li>
+</ul>
+</section>
+
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/#thb" title="/posts/2022/01/11/intel-kmb-thb/#thb">Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://www.intel.cn/content/www/cn/zh/newsroom/news/intel-tencent-cooperation.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.cn/content/www/cn/zh/newsroom/news/intel-tencent-cooperation.html">英特尔携手腾讯以全芯、全栈、全方位合作 共推云数智变革</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/" title="/posts/2022/01/11/intel-kmb-thb/">Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2023/03/17/intel-tbh-is-cancelled.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.110.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a><a href="https://www.coelacanth-dream.com/categories/vpu/" class="menu-cat-tag-lower">VPU</a>
+  </nav><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a><a href="https://www.coelacanth-dream.com/categories/vpu/" class="menu-cat-tag-lower">VPU</a>
+  </nav><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
