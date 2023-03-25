@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arrow Lake と Lunar Lake-M の CPUID Model、Arrow Lake の GPU DeviceID | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/03/25/arl-lnl-cpuid-model/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Arrow Lake と Lunar Lake-M の CPUID Model、Arrow Lake の GPU DeviceID | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="CPUID Model Intel の Tony Luck 氏により、Linux Kernel に Arrow Lake と Lunar Lake-M の CPUID Model 情報を追加するパッチが投稿された。 Arrow Lake の CPUID Model は 0xC6 (198)、Lunar Lake-M は 0xBD (189) とされている。 CPUID Model 情報を集約し">
+  <meta property="og:description" content="CPUID Model Intel の Tony Luck 氏により、Linux Kernel に Arrow Lake と Lunar Lake-M の CPUID Model 情報を追加するパッチが投稿された。 Arrow Lake の CPUID Model は 0xC6 (198)、Lunar Lake-M は 0xBD (189) とされている。 CPUID Model 情報を集約し"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, Arrow_Lake, Lunar_Lake, CPUID">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-03-25","dateModified":"2023-03-25","datePublished":"2023-03-25","headline":"Arrow Lake と Lunar Lake-M の CPUID Model、Arrow Lake の GPU DeviceID","image":"https://www.coelacanth-dream.com/icon.png","name":"Arrow Lake と Lunar Lake-M の CPUID Model、Arrow Lake の GPU DeviceID"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">Arrow Lake と Lunar Lake-M の CPUID Model、Arrow Lake の GPU DeviceID</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2023-03-25T17:15:29+09:00">Post: 2023-03-25 17:15:29</time>
+    <aside class="update">Update: 2023-03-25 18:12:31</aside>
+  </aside><h2 id="mod">CPUID Model<a href="#mod" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>Intel の Tony Luck 氏により、Linux Kernel に <em>Arrow Lake</em> と <em>Lunar Lake-M</em> の CPUID Model 情報を追加するパッチが投稿された。<br>
+<em>Arrow Lake</em> の CPUID Model は <code>0xC6 (198)</code>、<em>Lunar Lake-M</em> は <code>0xBD (189)</code> とされている。<br>
+CPUID Model 情報を集約している <code>intel-family.h (arch/x86/include/asm/intel-family.h)</code> では主に、接尾辞がないものをデスクトップ向け、<code>_L, _N, _P</code> をモバイル向けとしている。</p>
+<p>そのため今回追加された <em>Arrow Lake</em> の CPUID Model はデスクトップ向けと思われる。<em>Lunar Lake-M</em> の <code>_M</code> については記載がないが、<em>Meteor Lake-M/P</em> の例から、おそらくモバイル向けだろう。</p>
+<blockquote>
+<pre><code>    +#define INTEL_FAM6_LUNARLAKE_M		0xBD
+    +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/lkml/20230208172340.158548-1-tony.luck@intel.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/lkml/20230208172340.158548-1-tony.luck@intel.com/">[PATCH] x86/cpu: Add Lunar Lake M - Tony Luck</a></cite>
+</div>
+
+<pre><code>    +#define INTEL_FAM6_ARROWLAKE		0xC6
+    +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/lkml/20230324195932.241441-1-tony.luck@intel.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/lkml/20230324195932.241441-1-tony.luck@intel.com/">[PATCH] x86/cpu: Add model number for Intel Arrow Lake processor - Tony Luck</a></cite>
+</div>
+
+</blockquote>
+<ul>
+<li><a href="https://lore.kernel.org/lkml/20230208172340.158548-1-tony.luck@intel.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/lkml/20230208172340.158548-1-tony.luck@intel.com/">[PATCH] x86/cpu: Add Lunar Lake M - Tony Luck</a></li>
+<li><a href="https://lore.kernel.org/lkml/20230324195932.241441-1-tony.luck@intel.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/lkml/20230324195932.241441-1-tony.luck@intel.com/">[PATCH] x86/cpu: Add model number for Intel Arrow Lake processor - Tony Luck</a></li>
+</ul>
+<p>CPUID Model 情報の追加によって Linux Kernel 内でそれら CPU の識別が可能になる。主に PMU (Performance Monitoring Unit) 部のサポートや、相性問題が発生する場合にはプラットフォームの検出のために使われる。<br>
+別に CPUID Model 情報が無いからと言って Linux Kernel の起動が出来ない訳ではない。</p>
+<p>Intel® Architecture Instruction Set Extensions Programming Reference などのドキュメントに先んじて CPUID Model 情報が追加されたが、Tony Luck 氏は追加する理由として Intel がすでにロードマップで発表していることを挙げている。<br>
+<em>Arrow Lake</em> は Intel 20A プロセスで製造されるタイル (チップレット、ダイ) を搭載し、2024年に登場予定。<em>Lunar Lake</em> については製造プロセスも登場時期も Intel は発表していない。</p>
+<h2 id="arl-did">Arrow Lake-S/P の GPU DeviceID<a href="#arl-did" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>Intel の Garg, Nemesa 氏による <em>Arrow Lake-P</em> の GPU DeviceID を追加するパッチも投稿されている。<br>
+パッチのタイトルやコメントでは <em>Arrow Lake-S</em> にも触れられているが、実際に追加されているのは <em>Arrow Lake-P</em> の DeviceID のみ。</p>
+<ul>
+<li><a href="https://lore.kernel.org/lkml/20230301112445.2207064-1-nemesa.garg@intel.com/T/#u" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/lkml/20230301112445.2207064-1-nemesa.garg@intel.com/T/#u">[PATCH dii-client 0/3] Adding Device Ids for ARL-S and ARL-P</a></li>
+</ul>
+<p>パッチにて、<em>Meteor Lake</em> と <em>Arrow Lake</em> の GPU 部はわずかな違いがあるだけで、基本的な動作は同じだと Garg, Nemesa 氏はコメントしている。<br>
+<em>Meteor Lake, Arrow Lake</em> ではタイルアーキテクチャを採用しているため、GPU タイルについては共通のタイル、もしくは同じアーキテクチャとなることが考えられる。</p>
+<blockquote>
+<pre><code>    Arrow Lake behaves the same as Meteor Lake with just minor differences.
+    Add definitions for ARL_P. Update MTL and ARL definitions with new
+    device IDs for ARL-S and ARL-P.
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/lkml/20230301112445.2207064-1-nemesa.garg@intel.com/T/#u" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/lkml/20230301112445.2207064-1-nemesa.garg@intel.com/T/#u">[PATCH dii-client 0/3] Adding Device Ids for ARL-S and ARL-P</a></cite>
+</div>
+
+</blockquote>
+<p>また、このパッチは intel-gfx メーリングリストには投稿されていないため、正式版のパッチでは内容が変更されている可能性がある。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://www.intel.com/content/www/us/en/newsroom/news/hot-chips-34-new-era-chipmaking.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/newsroom/news/hot-chips-34-new-era-chipmaking.html">A New Era of Chipmaking to Meet the World’s Demand for Compute</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/newsroom/news/intel-technology-roadmaps-milestones.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/newsroom/news/intel-technology-roadmaps-milestones.html">Intel Technology Roadmaps and Milestones</a></li>
+</ul>
+</section>
+
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/arrow_lake/" title="Arrow_Lake">#Arrow Lake</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/lunar_lake/" title="Lunar_Lake">#Lunar Lake</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cpuid/" title="CPUID">#CPUID</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2023/03/25/arl-lnl-cpuid-model.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.110.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/arrow_lake/" class="menu-cat-tag-lower">Arrow Lake</a><a href="https://www.coelacanth-dream.com/tags/cpuid/" class="menu-cat-tag-lower">CPUID</a><a href="https://www.coelacanth-dream.com/tags/lunar_lake/" class="menu-cat-tag-lower">Lunar Lake</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/arrow_lake/" class="menu-cat-tag-lower">Arrow Lake</a><a href="https://www.coelacanth-dream.com/tags/cpuid/" class="menu-cat-tag-lower">CPUID</a><a href="https://www.coelacanth-dream.com/tags/lunar_lake/" class="menu-cat-tag-lower">Lunar Lake</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
