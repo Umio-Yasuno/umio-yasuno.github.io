@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Linux Kernel と Mesa3D で MI300/GFX940/GC 9.4.3 のサポートが進められる | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/03/28/gc_9_4_3/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux Kernel と Mesa3D で MI300/GFX940/GC 9.4.3 のサポートが進められる | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="AMD の CDNA 3 アーキテクチャ を採用した次世代データセンター向け APU、MI300 のサポートが Linux Kernel AMDGPU ドライバーと Mesa3D RadeonSI (OpenGL) ドライバーで進められている。 AMDGPU ドライバーには AMD の Alex">
+  <meta property="og:description" content="AMD の CDNA 3 アーキテクチャ を採用した次世代データセンター向け APU、MI300 のサポートが Linux Kernel AMDGPU ドライバーと Mesa3D RadeonSI (OpenGL) ドライバーで進められている。 AMDGPU ドライバーには AMD の Alex"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, CDNA_3, RadeonSI, gfx940, Linux_Kernel">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-03-28","dateModified":"2023-03-29","datePublished":"2023-03-28","headline":"Linux Kernel と Mesa3D で MI300/GFX940/GC 9.4.3 のサポートが進められる","image":"https://www.coelacanth-dream.com/icon.png","name":"Linux Kernel と Mesa3D で MI300/GFX940/GC 9.4.3 のサポートが進められる"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">Linux Kernel と Mesa3D で MI300/GFX940/GC 9.4.3 のサポートが進められる</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2023-03-28T21:15:11+09:00">Post: 2023-03-28 21:15:11</time>
+    <aside class="update">Update: 2023-03-29 01:21:46</aside>
+  </aside><p>AMD の <em>CDNA 3 アーキテクチャ</em> を採用した次世代データセンター向け APU、<em>MI300</em> のサポートが Linux Kernel AMDGPU ドライバーと Mesa3D RadeonSI (OpenGL) ドライバーで進められている。<br>
+AMDGPU ドライバーには AMD の Alex Deucher 氏、RadeonSI ドライバーには同じく AMD の Marek Olšák 氏がパッチリスト、マージリクエストを公開している。<br>
+パッチ、コミット単体には他の AMD の開発者の署名もされている。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/090139.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/090139.html">[PATCH 2/3] drm/amd/pm: Add PMFW headers for SMU 13.0.6</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/090141.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/090141.html">[PATCH 3/3] drm/amd/pm: Add SMU 13.0.6 support</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091055.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091055.html">[PATCH 00/11] VCN 4.0.3 Support</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091027.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091027.html">[PATCH 01/28] drm/amdgpu: move vmhub out of amdgpu_ring_funcs (v4)</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091016.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091016.html">[PATCH 01/10] drm/amdkfd: Add GC 9.4.3 KFD support</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/090947.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/090947.html">[PATCH 0/9] GMC 9.4.3 Support</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/090943.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/090943.html">[PATCH 0/3] NBIO 7.9 support</a></li>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/22158" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/22158">amd: add gfx940 chip, new NIR pass lowering image opcodes for it (!22158) · Merge requests · Mesa / mesa · GitLab</a></li>
+</ul>
+<p><em>MI300</em> の GFX ID は <em>GFX940</em>、GPU のコア部となる GC (Graphics Compute) IP のバージョンは <em>GC 9.4.3</em> とされている。</p>
+<blockquote>
+<pre><code>    +		case IP_VERSION(9, 4, 3):
+    +			gfx_target_version = 90400;
+    +			f2g = &amp;aldebaran_kfd2kgd;
+    +			break;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091019.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091019.html">[PATCH 07/10] drm/amdkfd: Add gfx_target_version for GC 9.4.3</a></cite>
+</div>
+
+<pre><code>     		case IP_VERSION(9, 4, 3):
+     			gfx_target_version = 90400;
+    -			f2g = &amp;aldebaran_kfd2kgd;
+    +			f2g = &amp;gc_9_4_3_kfd2kgd;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091051.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091051.html">[PATCH 26/28] drm/amdgpu: Add kgd2kfd for GC 9.4.3</a></cite>
+</div>
+
+</blockquote>
+<h2 id="xccxcdxcp">XCC/XCD/XCP<a href="#xccxcdxcp" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>AMDGPU ドライバーへのパッチでは <code>XCC, XCD, XCP</code> といった新たな用語が見られるが、それぞれどういう意味かは説明されていない。<br>
+<code>XCC</code> と <code>XCD</code> はほとんど同じ意味であり、<code>XCC</code> に統一するパッチが後から追加されている。恐らく GCD (Graphics Compute Die) のような GPU ダイを指す用語と思われる。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091146.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091146.html">[PATCH 6/6] drm/amdgpu: Change num_xcd to xcc_mask</a></li>
+</ul>
+<p><code>XCP</code> については以下引用部のようなコードから、<code>XCC (XCD)</code> をある程度まとめて取り扱うパーテーション機能とそのパーテーションを指すものと思われる。<br>
+パーテーションモードによってコマンドプロセッサやコマンドリングバッファの振る舞いが変わるのかもしれない。</p>
+<blockquote>
+<pre><code>    +static int gfx_v9_4_3_switch_compute_partition(struct amdgpu_device *adev,
+    +						enum amdgpu_gfx_partition mode)
+    +{
+    +	u32 tmp = 0;
+    +	int num_xcc_per_partition, i;
+    +
+    +	if (mode == adev-&gt;gfx.partition_mode)
+    +		return mode;
+    +
+    +	switch (mode) {
+    +	case AMDGPU_SPX_PARTITION_MODE:
+    +		num_xcc_per_partition = adev-&gt;gfx.num_xcd;
+    +		break;
+    +	case AMDGPU_DPX_PARTITION_MODE:
+    +		num_xcc_per_partition = adev-&gt;gfx.num_xcd / 2;
+    +		break;
+    +	case AMDGPU_TPX_PARTITION_MODE:
+    +		num_xcc_per_partition = adev-&gt;gfx.num_xcd / 3;
+    +		break;
+    +	case AMDGPU_QPX_PARTITION_MODE:
+    +		num_xcc_per_partition = adev-&gt;gfx.num_xcd / 4;
+    +		break;
+    +	case AMDGPU_CPX_PARTITION_MODE:
+    +		num_xcc_per_partition = 1;
+    +		break;
+    +	default:
+    +		return -EINVAL;
+    +	}
+    +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091050.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091050.html">[PATCH 22/28] drm/amdgpu: add sysfs node for compute partition mode</a></cite>
+</div>
+
+</blockquote>
+<p>パーテーションごとの Master (Primary) となる <code>XCC</code> を判定する関数も追加されている。<br>
+それらの記述からは、<em>MI200/GFX90A/Aldebaran</em> の情報が出てきた頃 (2021/06/09) に取り上げた、GPU ダイ/チップレットに関する特許技術が思い出される。<br>
+その技術資料では、Master (Primary) が CPU からのコマンド、リクエストを受け取り、Slave (Secondary) となる GPU ダイ/チップレットに分散する機能に触れられていた。<br>
+もしかしたらそうした技術、機能が <em>MI300/GFX940/GC 9.4.3</em> では導入されているのかもしれない。</p>
+<blockquote>
+<pre><code>    +
+    +bool amdgpu_gfx_is_master_xcc(struct amdgpu_device *adev, int xcc_id)
+    +{
+    +	return !(xcc_id % (adev-&gt;gfx.num_xcc_per_xcp ?
+    +			adev-&gt;gfx.num_xcc_per_xcp : 1));
+    +}
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091039.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091039.html">[PATCH 13/28] drm/amdgpu: add master/slave check in init phase</a></cite>
+</div>
+
+</blockquote>
+<ul>
+<li><a href="https://www.freepatentsonline.com/y2020/0409859.html" rel="noopener noreferrer" target="_blank" title="https://www.freepatentsonline.com/y2020/0409859.html">GPU CHIPLETS USING HIGH BANDWIDTH CROSSLINKS - ADVANCED MICRO DEVICES, INC.</a></li>
+<li><a href="https://www.freepatentsonline.com/y2021/0097013.html" rel="noopener noreferrer" target="_blank" title="https://www.freepatentsonline.com/y2021/0097013.html">ACTIVE BRIDGE CHIPLET WITH INTEGRATED CACHE - ADVANCED MICRO DEVICES, INC.</a></li>
+</ul>
+<p><em>MI200/GFX90A/Aldebaran</em> は初のマルチダイ構成を採用した GPU となったが、プログラムから見るとパッケージ内の GCD 2基はそれぞれ独立しており、あくまでもソケット、パッケージ間より高速なインターコネクトで接続された GPU 2基とされていた。<br>
+<em>MI300/GFX940/GC 9.4.3</em> に向けたパッチからは、<em>MI200/GFX90A/Aldebaran</em> から進んだ複数の GPU ダイ/チップレットの統合が実装されているように見える。<br>
+自分にはそう見えるというだけで、確実な情報は AMD 公式からの発表を待つしかないが。</p>
+<blockquote>
+<pre><code>    Gfx 9 starts to have multiple XCC instances in one device. Add instance
+    parameter to kgd2kfd functions where XCC instance was hard coded as 0.
+    Also, update code to pass the correct instance number when running
+    on a multi-XCC setup.
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091120.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091120.html">[PATCH 10/32] drm/amdkfd: Add XCC instance to kgd2kfd interface (v3)</a></cite>
+</div>
+
+</blockquote>
+<h2 id="aid">AID<a href="#aid" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>これもどういう略称、意味かは不明だが、<code>AID</code> という用語が登場している。<br>
+使われ方から VCN、マルチメディアエンジンを搭載したクラスタ、あるいはダイ/チップレットを指す用語と思われる。</p>
+<blockquote>
+<pre><code>    @@ -271,6 +272,8 @@ struct amdgpu_vcn {
+    
+     	struct ras_common_if    *ras_if;
+     	struct amdgpu_vcn_ras   *ras;
+    +
+    +	uint8_t	num_inst_per_aid;
+     };
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091148.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091148.html">[PATCH 2/7] drm/amdgpu/vcn: update vcn header to support multiple AIDs</a></cite>
+</div>
+
+</blockquote>
+<h2 id="f8_mode">F8_MODE<a href="#f8_mode" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>MI300/GFX940/GC 9.4.3</em> では <code>F8_MODE</code> と呼ばれるものに対応している。<br>
+これは LLVM へのパッチですでに公開されていた、独自の <code>FP8/BF8</code> データフォーマットに対応した命令のためのモードと思われる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091104.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091104.html">[PATCH] drm/amdkfd: Set F8_MODE for gc_v9_4_3</a></li>
+</ul>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.coelacanth-dream.com/posts/2022/07/26/gpu-fp8-bf8/" title="/posts/2022/07/26/gpu-fp8-bf8/">FP8 と BF8 に対応する AMD GFX940/CDNA 3 と BF8 に対応する Intel Xe-HPC | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cdna_3/" title="CDNA_3">#CDNA 3</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/radeonsi/" title="RadeonSI">#RadeonSI</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx940/" title="gfx940">#gfx940</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/linux_kernel/" title="Linux_Kernel">#Linux Kernel</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2023/03/28/gc_9_4_3.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.110.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna_3/" class="menu-cat-tag-lower">CDNA 3</a><a href="https://www.coelacanth-dream.com/tags/gfx940/" class="menu-cat-tag-lower">gfx940</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna_3/" class="menu-cat-tag-lower">CDNA 3</a><a href="https://www.coelacanth-dream.com/tags/gfx940/" class="menu-cat-tag-lower">gfx940</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/radeonsi/" class="menu-cat-tag-lower">RadeonSI</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
