@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MI300/GFX940/GC 9.4.3 における NPS, Aqua Vanjaram, AID と XCC の関係性 | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/03/31/aqua_vanjaram/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MI300/GFX940/GC 9.4.3 における NPS, Aqua Vanjaram, AID と XCC の関係性 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="引き続き MI300/GFX940/GC 9.4.3 のサポートに向けたパッチが amd-gfx メーリングリストにて公開されている。そのメモ。 NPS (Nodes Per Socket) MI300/GFX940/GC 9.4.3 では NPS (Nodes Per Socket) をサポートする。 NPS は AMD EPYC CPU でもサポートされている機">
+  <meta property="og:description" content="引き続き MI300/GFX940/GC 9.4.3 のサポートに向けたパッチが amd-gfx メーリングリストにて公開されている。そのメモ。 NPS (Nodes Per Socket) MI300/GFX940/GC 9.4.3 では NPS (Nodes Per Socket) をサポートする。 NPS は AMD EPYC CPU でもサポートされている機"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, CDNA_3, gfx940, Linux_Kernel">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-03-31","dateModified":"2023-03-31","datePublished":"2023-03-31","headline":"MI300/GFX940/GC 9.4.3 における NPS, Aqua Vanjaram, AID と XCC の関係性","image":"https://www.coelacanth-dream.com/icon.png","name":"MI300/GFX940/GC 9.4.3 における NPS, Aqua Vanjaram, AID と XCC の関係性"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">MI300/GFX940/GC 9.4.3 における NPS, Aqua Vanjaram, AID と XCC の関係性</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2023-03-31T17:38:02+09:00">Post: 2023-03-31 17:38:02</time>
+    <aside class="update">Update: 2023-03-31 20:58:49</aside>
+  </aside><p>引き続き <em>MI300/GFX940/GC 9.4.3</em> のサポートに向けたパッチが amd-gfx メーリングリストにて公開されている。そのメモ。</p>
+<h2 id="nps-nodes-per-socket">NPS (Nodes Per Socket)<a href="#nps-nodes-per-socket" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>MI300/GFX940/GC 9.4.3</em> では NPS (Nodes Per Socket) をサポートする。<br>
+NPS は <em>AMD EPYC CPU</em> でもサポートされている機能であり、ソケット内で NUMA (Non-Uniform Memory Access) ノードを単一もしくは複数構成する。ノードが複数の場合、それぞれに近いメモリコントローラー、CPU ダイ (L3 キャッシュ)、PCIe ルートコンプレックスが割り当てられる。<br>
+パッチではどのように <em>MI300/GFX940/GC 9.4.3</em> をメモリ的に分割するかは書かれていないが、CPU と GPU で共有する巨大なキャッシュがあればそことメモリコントローラーで分割されるものと思われる。<br>
+<em>MI300/GFX940/GC 9.4.3</em> は HBM3 8チップを搭載し、NPS のモードには <code>NPS1/2/4/8</code> をサポートしている。</p>
+<p><em>MI300/GFX940/GC 9.4.3</em> は CPU と GPU で実際のメモリを共有した APU ではあるが、NPS をサポートしている点で従来の APU の定義と異なる。<br>
+AMDGPU ドライバーでは、単一ノードの場合 (<code>NPS1</code>) を従来の APU に近い <code>native APU mode</code>、複数ノードの場合 (<code>NPS2,NPS4,NPS8</code>) を <code>carveout mode</code> としている。<br>
+また、CPU と GPU でメモリ空間を別とした <code>dGPU mode</code> もサポートされているのではないかと思われる。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091427.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091427.html">[PATCH 1/9] drm/amdgpu: detect current GPU memory partition mode</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091434.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091434.html">[PATCH 8/9] drm/amdgpu: Check APU supports true APP mode</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091466.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091466.html">[PATCH 08/23] drm/amdgpu: set MTYPE in PTE for GFXIP 9.4.3</a></li>
+</ul>
+<blockquote>
+<pre><code>    +	case IP_VERSION(9, 4, 3):
+    +		/* FIXME: Needs more work for handling multiple memory
+    +		 * partitions (&gt; NPS1 mode) e.g. NPS4 for both APU and dGPU
+    +		 * modes.
+    +		 */
+    +		snoop = true;
+    +		if (uncached) {
+    +			mtype = MTYPE_UC;
+    +		} else if (adev-&gt;gmc.is_app_apu) {
+    +			/* FIXME: APU in native mode, NPS1 single socket only
+    +			 *
+    +			 * For suporting NUMA partitioned APU e.g. in NPS4 mode,
+    +			 * this need to look at the NUMA node on which the
+    +			 * system memory allocation was done.
+    +			 *
+    +			 * Memory access by a different partition within same
+    +			 * socket should be treated as remote access so MTYPE_RW
+    +			 * cannot be used always.
+    +			 */
+    +			mtype = MTYPE_RW;
+    +		} else if (adev-&gt;flags &amp; AMD_IS_APU) {
+    +			/* APU on carve out mode */
+    +			mtype = MTYPE_RW;
+    +		} else {
+    +			/* dGPU */
+    +			/*
+    +			if ((mem-&gt;alloc_flags &amp; KFD_IOC_ALLOC_MEM_FLAGS_VRAM) &amp;&amp;
+    +			    bo_adev == adev)
+    +				mapping_flags |= AMDGPU_VM_MTYPE_RW;
+    +			else
+    +			*/
+    +			/* Temporarily comment out above lines and use MTYPE_NC
+    +			 * on both VRAM and system memory access until
+    +			 * MTYPE_RW can properly work on VRAM access
+    +			 */
+    +			mtype = MTYPE_NC;
+    +		}
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091466.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091466.html">[PATCH 08/23] drm/amdgpu: set MTYPE in PTE for GFXIP 9.4.3</a></cite>
+</div>
+
+</blockquote>
+<h2 id="aqua-vanjaram">Aqua Vanjaram<a href="#aqua-vanjaram" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>MI300/GFX940/GC 9.4.3</em> のコードネームとして新たに <em>Aqua Vanjaram</em> がパッチから確認できる。<br>
+AMDGPU ドライバーでは各 Hardware IP をサポートする形式に移行してから特定の GPU を指すコードネームは必要なくなったが、レジスタの初期化処理等、GPU ASIC 全体を指す場合にはコードネームが有用と判断されたのだろう。<br>
+<em>RDNA 3/GFX11</em> 世代では初期化処理等は複数の dGPU, APU で共通しているため、コードネームではなく <code>SOC21</code> といった名前が使われている。</p>
+<blockquote>
+<pre><code>     	case IP_VERSION(9, 4, 3):
+    -		adev-&gt;asic_funcs = &amp;vega20_asic_funcs;
+    +		adev-&gt;asic_funcs = &amp;aqua_vanjaram_asic_funcs;
+     		adev-&gt;cg_flags =
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091275.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091275.html">[PATCH 5/5] drm/amdgpu: switch to aqua_vanjaram_doorbell_index_init</a></cite>
+</div>
+
+</blockquote>
+<h2 id="aid-と-xcc-の関係性">AID と XCC の関係性<a href="#aid-%e3%81%a8-xcc-%e3%81%ae%e9%96%a2%e4%bf%82%e6%80%a7" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><code>AID</code> の略称は不明なままだが、<em>MI300/GFX940/GC 9.4.3</em> でサポートする最大 <code>AID</code> 数や <code>AID</code> が内蔵するユニットはパッチから読み取れる</p>
+<p><code>AID</code> は通常 SDMA (System DMA, XGMI) エンジンを 4基、マルチメディアエンジン、VCN (Video Core Next) と JPEG 用を 1基ずつ持つ。</p>
+<blockquote>
+<pre><code>    +	/* generally 1 AID supports 4 instances */
+    +	adev-&gt;sdma.num_inst_per_aid = 4;
+    +	adev-&gt;sdma.num_instances = NUM_SDMA(adev-&gt;sdma.sdma_mask);
+    +
+    +	adev-&gt;vcn.num_inst_per_aid = 1;
+    +	adev-&gt;vcn.num_vcn_inst = adev-&gt;vcn.num_inst_per_aid * adev-&gt;num_aid;
+    +	adev-&gt;jpeg.num_inst_per_aid = 1;
+    +	adev-&gt;jpeg.num_jpeg_inst = adev-&gt;jpeg.num_inst_per_aid * adev-&gt;num_aid;
+    +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091450.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091450.html">[PATCH 04/23] drm/amdgpu: Move generic logic to soc config</a></cite>
+</div>
+
+</blockquote>
+<p>そして <code>XCC (XCD)</code> 2基で <code>AID</code> 1基を共有し、<code>AID</code> 自体は最大 4基とされている。<br>
+恐らく <code>AID</code> はマルチメディアやチップレット間接続、I/O 周りの機能と <code>XCC (XCD)</code> 2基のベースダイとしての役割を持っているのではないかと思われる。</p>
+<blockquote>
+<pre><code>    +	unsigned int reg;
+    +	/* Every two XCCs share one AID */
+    +	unsigned int aid = xcc_inst / 2;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091265.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091265.html">[PATCH 09/14] drm/amdgpu: Fix SWS on multi-XCD GPU</a></cite>
+</div>
+
+</blockquote>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091126.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091126.html">[PATCH 24/32] drm/amdgpu: assign the doorbell index for sdma on non-AID0</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091128.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091128.html">[PATCH 27/32] drm/amdgpu: complement the IH node_id table for multiple AIDs</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091265.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091265.html">[PATCH 09/14] drm/amdgpu: Fix SWS on multi-XCD GPU</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091450.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2023-March/091450.html">[PATCH 04/23] drm/amdgpu: Move generic logic to soc config</a></li>
+</ul>
+<p><em>MI300/GFX940/GC 9.4.3</em> に搭載される <em>VCN 4.0.3</em> の対応コーデックについては RadeonSI へのパッチで触れられているが、<em>RDNA 3/GFX11</em> 世代に搭載されている <em>VCN 4.0.x</em> と基本同じとされている。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://www.hpctech.co.jp/hardware/amd-genoa.html" rel="noopener noreferrer" target="_blank" title="https://www.hpctech.co.jp/hardware/amd-genoa.html">株式会社HPCテック | 開発コード名：Genoa</a></li>
+<li><a href="https://www.hpcwire.jp/archives/42846" rel="noopener noreferrer" target="_blank" title="https://www.hpcwire.jp/archives/42846">最大25%性能が向上するAMD EPYC(Milan)を搭載したPowerEdgeサーバーが登場 | HPCwire Japan</a></li>
+</ul>
+</section>
+
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cdna_3/" title="CDNA_3">#CDNA 3</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx940/" title="gfx940">#gfx940</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/linux_kernel/" title="Linux_Kernel">#Linux Kernel</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2023/03/31/aqua_vanjaram.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.110.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna_3/" class="menu-cat-tag-lower">CDNA 3</a><a href="https://www.coelacanth-dream.com/tags/gfx940/" class="menu-cat-tag-lower">gfx940</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna_3/" class="menu-cat-tag-lower">CDNA 3</a><a href="https://www.coelacanth-dream.com/tags/gfx940/" class="menu-cat-tag-lower">gfx940</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
