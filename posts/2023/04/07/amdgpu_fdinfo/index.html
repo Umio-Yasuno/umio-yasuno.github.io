@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>【雑記】fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/04/07/amdgpu_fdinfo/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【雑記】fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="自作の AMD GPU モニタリングツールを、プロセスごとの fdinfo から取得できる AMD GPU の使用量の取得に対応させた、そのメモ。 自分が取った方法の解説的なものも書いておくが、自分がそれ">
+  <meta property="og:description" content="自作の AMD GPU モニタリングツールを、プロセスごとの fdinfo から取得できる AMD GPU の使用量の取得に対応させた、そのメモ。 自分が取った方法の解説的なものも書いておくが、自分がそれ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, Rust">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-04-07","dateModified":"2023-04-08","datePublished":"2023-04-07","headline":"【雑記】fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する","image":"https://www.coelacanth-dream.com/icon.png","name":"【雑記】fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">【雑記】fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2023-04-07T03:50:40+09:00">Post: 2023-04-07 03:50:40</time>
+    <aside class="update">Update: 2023-04-08 02:30:48</aside>
+  </aside><p>自作の AMD GPU モニタリングツールを、プロセスごとの <code>fdinfo</code> から取得できる AMD GPU の使用量の取得に対応させた、そのメモ。<br>
+自分が取った方法の解説的なものも書いておくが、自分がそれにしか気付けなかっただけでもっと効率の良い方法があるかもしれない。</p>
+<ul>
+<li><a href="https://github.com/Umio-Yasuno/amdgpu_top" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/amdgpu_top">Umio-Yasuno/amdgpu_top: Tool to display AMDGPU usage</a></li>
+</ul>
+<h2 id="fdinfo">fdinfo<a href="#fdinfo" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>まず対応している DRM (Direct Rendering Manager) ドライバーであれば、<code>fdinfo</code> にドライバー内で計測した情報を出力し、ユーザースペースで動作するモニタリングツールがその情報を利用可能なようにしている。<br>
+<code>fdinfo</code> は <code>/proc/&lt;pid&gt;/fdinfo/</code> 下にあり、ファイル名は対応した <code>fd (File descriptor)</code> になっている。</p>
+<ul>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/drm-usage-stats.html" rel="noopener noreferrer" target="_blank" title="https://www.kernel.org/doc/html/latest/gpu/drm-usage-stats.html">DRM client usage stats — The Linux Kernel documentation</a></li>
+</ul>
+<p>ドライバー側は現在公開されている Linux Kernel のバージョンだと、AMDGPU ドライバーが v5.15.xxx、Intel GPU (i915) ドライバーは v6.1.xxx で対応している。<br>
+<code>fdinfo</code> からの GPU 使用量の取得に対応したモニタリングツールには <code>intel_gpu_top</code> と <code>nvtop</code> がある。<br>
+<code>intel_gpu_top</code> は名前の通り Intel GPU のみの対応だが、PMU (Performance Monitoring Unit, Performance Counter) からの読み取りにも対応しており、消費電力やメモリ帯域といった情報も表示可能。<br>
+<code>nvtop</code> は逆に NVIDIA GPU 以外に AMD GPU と Intel GPU にも対応している。<code>nvtop</code> では <code>fdinfo</code> から取得可能な情報の他に、<code>hwmon</code> や <code>sysfs</code> から取得可能な GPU の各種センサー情報やクロック、PCIe の情報も表示する。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/man/intel_gpu_top.rst" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/man/intel_gpu_top.rst">man/intel_gpu_top.rst · master · drm / igt-gpu-tools · GitLab</a></li>
+<li><a href="https://github.com/Syllo/nvtop" rel="noopener noreferrer" target="_blank" title="https://github.com/Syllo/nvtop">Syllo/nvtop: GPUs process monitoring for AMD, Intel and NVIDIA</a></li>
+</ul>
+<p><code>fdinfo</code> に出力される情報は基本的な部分以外ドライバーごとで異なる。<br>
+AMDGPU ドライバーは VRAM (<code>drm-memory-vram</code>)、GTT (<code>drm-memory-gtt</code>)、CPU がアクセス可能な VRAM (<code>drm-memory-cpu</code>) の使用量と、各 Hardware IP (<code>GFX, COMPUTE, DMA, UVD, VCE, UVD_ENC, VCN_DEC, VCN_ENC, VCN_JPEG</code>) の使用時間 (ns) を出力する。</p>
+<blockquote>
+<pre><code>    	/*
+    	 * ******************************************************************
+    	 * For text output format description please see drm-usage-stats.rst!
+    	 * ******************************************************************
+    	 */
+    
+    	seq_printf(m, &quot;pasid:\t%u\n&quot;, fpriv-&gt;vm.pasid);
+    	seq_printf(m, &quot;drm-driver:\t%s\n&quot;, file-&gt;minor-&gt;dev-&gt;driver-&gt;name);
+    	seq_printf(m, &quot;drm-pdev:\t%04x:%02x:%02x.%d\n&quot;, domain, bus, dev, fn);
+    	seq_printf(m, &quot;drm-client-id:\t%Lu\n&quot;, vm-&gt;immediate.fence_context);
+    	seq_printf(m, &quot;drm-memory-vram:\t%llu KiB\n&quot;, vram_mem/1024UL);
+    	seq_printf(m, &quot;drm-memory-gtt: \t%llu KiB\n&quot;, gtt_mem/1024UL);
+    	seq_printf(m, &quot;drm-memory-cpu: \t%llu KiB\n&quot;, cpu_mem/1024UL);
+    	for (hw_ip = 0; hw_ip &lt; AMDGPU_HW_IP_NUM; ++hw_ip) {
+    		if (!usage[hw_ip])
+    			continue;
+    
+    		seq_printf(m, &quot;drm-engine-%s:\t%Ld ns\n&quot;, amdgpu_ip_name[hw_ip],
+    			   ktime_to_ns(usage[hw_ip]));
+    	}
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_fdinfo.c?h=v6.2.10" rel="noopener noreferrer" target="_blank" title="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_fdinfo.c?h=v6.2.10">amdgpu_fdinfo.c « amdgpu « amd « drm « gpu « drivers - kernel/git/stable/linux.git - Linux kernel stable tree</a></cite>
+</div>
+
+</blockquote>
+<p>Intel GPU (i915) ドライバーは各エンジン (<code>RENDER, COPY, VIDEO, VIDEO_ENHANCE, COMPUTE</code>) の使用時間 (<code>drm-engine-&lt;engine-name&gt;</code>) とエンジン数 (<code>drm-engine-capacity-&lt;engine-name&gt;</code>) を出力する。</p>
+<ul>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/i915.html#i915-usage-stats" rel="noopener noreferrer" target="_blank" title="https://www.kernel.org/doc/html/latest/gpu/i915.html#i915-usage-stats">drm/i915 Intel GFX Driver — The Linux Kernel documentation</a></li>
+</ul>
+<p>各 VRAM 使用量はそのまま使えるが、各 Hardware IP の使用時間は合計であるため、使用率を出すには前回取得した結果と更新間隔が必要になる。</p>
+<p><code>fdinfo</code> から取得できる情報は一度置いて、<code>fdinfo</code> の読み取りまでには稼働してる全プロセスから GPU を使用しているプロセスを抽出し、さらにそのプロセスから GPU に関連付けられた <code>fd</code> の抽出が必要となる。<br>
+まずプロセスの一覧だが、必要なのは PID なので単に <code>/proc/</code> 直下にある数字のみディレクトリ名を PID として使えばいい。Rust であれば <code>procfs</code> クレートの <a href="https://docs.rs/procfs/latest/procfs/process/fn.all_processes.html" rel="noopener noreferrer" target="_blank" title="https://docs.rs/procfs/latest/procfs/process/fn.all_processes.html">procfs::process::all_processes</a> を使う方法もある。</p>
+<p>次に <code>fd</code> の抽出だが、<code>/proc/&lt;pid&gt;/fd/</code> 下にあるファイルはそのプロセスで開いているファイルへのシンボリックリンクになっている。そして DRM ドライバーの場合、リンク先が <code>/dev/dri/renderD128</code> (以降 <code>/dev/dri/renderD129 ...</code>) となっているため、そこで判定、抽出することができる。<br>
+Rust では <a href="https://doc.rust-lang.org/std/fs/fn.read_link.html" rel="noopener noreferrer" target="_blank" title="https://doc.rust-lang.org/std/fs/fn.read_link.html">std::fs::read_link</a> でリンク先のパスを取得できる。<br>
+<code>fdinfo</code> の <code>drm-pdev</code> が GPU の PCI バス情報 (<code>domain:bus:dev:function</code>) になっているため、抽出せずに <code>/proc/&lt;pid&gt;/fdinfo/</code> 下にあるファイルをすべて読み、<code>drm-pdev</code> で判定する方法もある。<br>
+前者は毎回すべての <code>fdinfo</code> を読む必要がなく、またデバイスハンドルの初期化に用いるパスをそのまま判定に用いることができたため、自分は前者を選んだ。</p>
+<p>後は <code>fdinfo</code> をパースし、各使用量を加算、合計をそのプロセスの GPU 使用量とすればいい。<br>
+ただ、<code>fd</code> は異なってもドライバー内でのコンテキストは同じ場合があるため、<code>drm-client-id</code> が重複していないか確認する必要がある。Rust であれば HashSet を使えばいい。<br>
+使用率の計算には、前述したように前回の結果と更新間隔の情報が必要となる。<br>
+自分の場合は、PID をキーにした HashMap に前回の結果を格納するようにしている。<br>
+それとプロセス名も表示したい場合は <code>/proc/&lt;pid&gt;/comm</code> から取得できる。</p>
+<p>すべての <code>/proc/&lt;pid&gt;/</code> を見て、PID とそのプロセスの GPU に関連付けられている <code>fd</code>、オプションでプロセス名、それらをまとめたインデックスを毎回生成するのはコストが高いと思われる。<br>
+そのためインデックスを <code>Arc&lt;Mutex&lt;T&gt;&gt;</code> で包み、インデックスからプロセスごとの使用量と使用率を計算して表示を更新するスレッドとは別にインデックスを更新するスレッドを作るようにした。<br>
+インデックスの更新間隔は表示の更新よりも遅くしてあり、表示が 1秒か 0.1秒間隔なのに対し、インデックスは今の所 5秒間隔で更新するようにしている。</p>
+<h2 id="gpu-metrics">GPU Metrics<a href="#gpu-metrics" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>AMDGPU ドライバーは対応している APU/dGPU であれば <code>sysfs</code> に GPU Metrics (ファイル名は <code>gpu_metrics</code>) を出力する。<br>
+AMDGPU ドライバーのコードを見るに、dGPU は <a href="https://www.coelacanth-dream.com/tags/vega12" rel="noopener noreferrer" target="_blank" title="/tags/vega12">Vega12</a> とそれ以降、APU は <a href="https://www.coelacanth-dream.com/tags/renoir" rel="noopener noreferrer" target="_blank" title="/tags/renoir">Renoir</a> から GPU Metrics に対応している。<br>
+GPU Metrics には温度、クロック、エンジンの使用状況、消費電力、スロットルの状態といった情報が含まれている。APU であれば CPU コアごとの温度、クロック、消費電力、L3 キャッシュの温度とクロックも含まれる。<br>
+モニタリングツールに表示させておきたい情報が揃っているが、<code>gpu_metrics</code> ファイルはフォーマットされた文字列ではなくバイナリデータとなっているため少し扱いづらい。</p>
+<blockquote>
+<pre><code>    /**
+     * DOC: gpu_metrics
+     *
+     * The amdgpu driver provides a sysfs API for retrieving current gpu
+     * metrics data. The file gpu_metrics is used for this. Reading the
+     * file will dump all the current gpu metrics data.
+     *
+     * These data include temperature, frequency, engines utilization,
+     * power consume, throttler status, fan speed and cpu core statistics(
+     * available for APU only). That's it will give a snapshot of all sensors
+     * at the same time.
+     */
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/pm/amdgpu_pm.c?h=v6.2.10#n1688" rel="noopener noreferrer" target="_blank" title="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/pm/amdgpu_pm.c?h=v6.2.10#n1688">amdgpu_pm.c « pm « amd « drm « gpu « drivers - kernel/git/stable/linux.git - Linux kernel stable tree</a></cite>
+</div>
+
+</blockquote>
+<p>GPU Metrics の構造体定義が <code>drivers/gpu/drm/amd/include/kgd_pp_interface.h</code> にあり、<code>gpu_metrics_v1_{0,1,2,3}</code> が dGPU 向け、<code>gpu_metrics_v2_{0,1,2,3}</code> が APU 向けとなる。<br>
+ただ <code>gpu_metrics_v1_x</code> と <code>gpu_metrics_v2_x</code> で異なり、さらに <code>gpu_metrics_v1_x</code> だとそれぞれで構造体の中身が異なるため、プログラム側でそのまま使うのは難しい。<br>
+取得する際も、<code>gpu_metrics</code> の最初 4バイトがヘッダとなっているため、まずそこでバージョンを確認する必要がある。</p>
+<blockquote>
+<pre><code>    struct metrics_table_header {
+    	uint16_t			structure_size;
+    	uint8_t				format_revision;
+    	uint8_t				content_revision;
+    };
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/include/kgd_pp_interface.h?h=v6.2.10#n416" rel="noopener noreferrer" target="_blank" title="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/drivers/gpu/drm/amd/include/kgd_pp_interface.h?h=v6.2.10#n416">kgd_pp_interface.h « include « amd « drm « gpu « drivers - kernel/git/stable/linux.git - Linux kernel stable tree</a></cite>
+</div>
+
+</blockquote>
+<p><code>gpu_metrics_v1_x</code> と <code>gpu_metrics_v2_x</code> の内容すべてを網羅した構造体を別に定義し、バージョンを見てから変換する方法も考えられるが、変換部分をバージョン分書く必要があり面倒。<br>
+一部の値だけを変換する方法ならば少しは楽になるが、当然抜け落ちて使えなくなる値が出てくる。<br>
+そこで以下のような <code>enum</code> を定義し、<code>gpu_metrics_v1_x</code> と <code>gpu_metrics_v2_x</code> それぞれにトレイトを実装する方法を取った。<br>
+メソッドが返す値はすべて <code>Option&lt;T&gt;</code> であり、その構造体が持っていない値の場合は <code>None</code> を返す。<br>
+トレイトを以下の <code>GpuMetics</code> にも実装すれば、構造体のバージョン違いを意識することなく扱うことが可能となる。<br>
+バイナリデータから構造体への変換には、<code>MaybeUninit&lt;T&gt;</code> と <code>ptr::copy_nonoverlapping</code> を使うことで可能。</p>
+<blockquote>
+<pre><code>    pub enum GpuMetrics {
+        Unknown,
+        V1_0(gpu_metrics_v1_0),
+        V1_1(gpu_metrics_v1_1),
+        V1_2(gpu_metrics_v1_2),
+        V1_3(gpu_metrics_v1_3),
+        V2_0(gpu_metrics_v2_0),
+        V2_1(gpu_metrics_v2_1),
+        V2_2(gpu_metrics_v2_2),
+        V2_3(gpu_metrics_v2_3),
+    }
+</code></pre>
+</blockquote>
+<p>トレイトの実装に慣れないマクロを使いまくったが、結果的にはシンプルで維持も楽になったため良かった。</p>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rust/" title="Rust">#Rust</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2023/04/07/amdgpu_fdinfo.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.110.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/rust/" class="menu-cat-tag-lower">Rust</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/rust/" class="menu-cat-tag-lower">Rust</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
