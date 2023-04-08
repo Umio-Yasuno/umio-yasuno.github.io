@@ -4,7 +4,7 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>【雑記】fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する | Coelacanth&#39;s Dream</title>
+<title>【雑記】 fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する | Coelacanth&#39;s Dream</title>
 
 <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/04/07/amdgpu_fdinfo/">
 
@@ -15,7 +15,7 @@
 
 <meta property="og:site_name" content="Coelacanth&#39;s Dream">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【雑記】fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する | Coelacanth&#39;s Dream">
+<meta property="og:title" content="【雑記】 fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
 <meta name="description" content="自作の AMD GPU モニタリングツールを、プロセスごとの fdinfo から取得できる AMD GPU の使用量の取得に対応させた、そのメモ。 自分が取った方法の解説的なものも書いておくが、自分がそれ">
   <meta property="og:description" content="自作の AMD GPU モニタリングツールを、プロセスごとの fdinfo から取得できる AMD GPU の使用量の取得に対応させた、そのメモ。 自分が取った方法の解説的なものも書いておくが、自分がそれ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-04-07","dateModified":"2023-04-08","datePublished":"2023-04-07","headline":"【雑記】fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する","image":"https://www.coelacanth-dream.com/icon.png","name":"【雑記】fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-04-07","dateModified":"2023-04-08","datePublished":"2023-04-07","headline":"【雑記】 fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する","image":"https://www.coelacanth-dream.com/icon.png","name":"【雑記】 fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -35,11 +35,11 @@
 <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 
     <main class="text">
-      <h1 class="page-title">【雑記】fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する</h1>
+      <h1 class="page-title">【雑記】 fdinfo からプロセスごとの AMD GPU 使用量を、GPU Metrics から消費電力と温度情報を取得する</h1>
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2023-04-07T03:50:40+09:00">Post: 2023-04-07 03:50:40</time>
-    <aside class="update">Update: 2023-04-08 02:30:48</aside>
+    <aside class="update">Update: 2023-04-08 12:08:48</aside>
   </aside><p>自作の AMD GPU モニタリングツールを、プロセスごとの <code>fdinfo</code> から取得できる AMD GPU の使用量の取得に対応させた、そのメモ。<br>
 自分が取った方法の解説的なものも書いておくが、自分がそれにしか気付けなかっただけでもっと効率の良い方法があるかもしれない。</p>
 <ul>
@@ -106,7 +106,37 @@ Rust では <a href="https://doc.rust-lang.org/std/fs/fn.read_link.html" rel="no
 それとプロセス名も表示したい場合は <code>/proc/&lt;pid&gt;/comm</code> から取得できる。</p>
 <p>すべての <code>/proc/&lt;pid&gt;/</code> を見て、PID とそのプロセスの GPU に関連付けられている <code>fd</code>、オプションでプロセス名、それらをまとめたインデックスを毎回生成するのはコストが高いと思われる。<br>
 そのためインデックスを <code>Arc&lt;Mutex&lt;T&gt;&gt;</code> で包み、インデックスからプロセスごとの使用量と使用率を計算して表示を更新するスレッドとは別にインデックスを更新するスレッドを作るようにした。<br>
-インデックスの更新間隔は表示の更新よりも遅くしてあり、表示が 1秒か 0.1秒間隔なのに対し、インデックスは今の所 5秒間隔で更新するようにしている。</p>
+インデックスの更新用スレッドは <code>lock()</code>、表示更新用のスレッドは <code>try_lock()</code> を用いてロックする。<br>
+インデックスの更新間隔は表示の更新よりも遅くしてあり、表示が 1秒か 0.1秒間隔なのに対し、インデックスは今の所 5秒間隔で更新するようにしている。<br>
+試した限りでは、更新間隔を縮めても表示更新用のスレッドがロックの確保に失敗することはなく、また失敗しても使用率の計算に使う更新間隔に 1周分加算しておけばいいだけなので、5秒ではなく 2秒とか 3秒でもいいかも。</p>
+<p>ソート機能も実装したが、一旦 PID、プロセス名、各使用率をまとめた構造体の <code>Vec</code> を作るようにして、それからソートしたい種類に応じて <a href="https://doc.rust-lang.org/stable/std/vec/struct.Vec.html#method.sort_by" rel="noopener noreferrer" target="_blank" title="https://doc.rust-lang.org/stable/std/vec/struct.Vec.html#method.sort_by">sort_by</a> を実行するようにするだけで良かった。</p>
+<blockquote>
+<pre><code>                match (sort, reverse) {
+                    (FdInfoSortType::PID, false) =&gt; b.pid.cmp(&amp;a.pid),
+                    (FdInfoSortType::PID, true) =&gt; a.pid.cmp(&amp;b.pid),
+                    (FdInfoSortType::VRAM, false) =&gt; b.usage.vram_usage.cmp(&amp;a.usage.vram_usage),
+                    (FdInfoSortType::VRAM, true) =&gt; a.usage.vram_usage.cmp(&amp;b.usage.vram_usage),
+                    (FdInfoSortType::GFX, false) =&gt; b.usage.gfx.cmp(&amp;a.usage.gfx),
+                    (FdInfoSortType::GFX, true) =&gt; a.usage.gfx.cmp(&amp;b.usage.gfx),
+                    (FdInfoSortType::MediaEngine, false) =&gt;
+                        (b.usage.dec + b.usage.enc + b.usage.uvd_enc)
+                            .cmp(&amp;(a.usage.dec + a.usage.enc + a.usage.uvd_enc)),
+                    (FdInfoSortType::MediaEngine, true) =&gt;
+                        (a.usage.dec + a.usage.enc + a.usage.uvd_enc)
+                            .cmp(&amp;(b.usage.dec + b.usage.enc + b.usage.uvd_enc)),
+                }
+</code></pre>
+</blockquote>
+<p>以下は自環境での実行結果。</p>
+<figure>
+  <a href="../fdinfo.webp" target="_blank"  >
+  <img src="../fdinfo.webp"
+      alt="fdinfo"/>
+</a><figcaption>
+      <h4 class="fig-title">fdinfo</h4>
+  </figcaption>
+</figure>
+
 <h2 id="gpu-metrics">GPU Metrics<a href="#gpu-metrics" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>AMDGPU ドライバーは対応している APU/dGPU であれば <code>sysfs</code> に GPU Metrics (ファイル名は <code>gpu_metrics</code>) を出力する。<br>
@@ -166,6 +196,18 @@ GPU Metrics には温度、クロック、エンジンの使用状況、消費�
 </code></pre>
 </blockquote>
 <p>トレイトの実装に慣れないマクロを使いまくったが、結果的にはシンプルで維持も楽になったため良かった。</p>
+<p>以下は <em>Cezanne /Green Sardine APU</em> での実行結果。GPU Metrics のバージョンは <code>gpu_metrics_v2_2</code> となる。<br>
+試した限りでは、<code>average_gfx_power</code> に <em>Cezanne /Green Sardine APU</em> は対応しておらず、<code>0xFFFF (65535)</code> で固定だったため、そうした値の場合は表示しないようにしている。<br>
+<code>gpu_metrics_v2_2</code> は現状 <em>Renoir APU</em> 系統でのみ使われているため、先の実装を行ったライブラリ側で <code>None</code> を返すようにしてもいいのかもしれない。</p>
+<figure>
+  <a href="../gpu_metrics.webp" target="_blank"  >
+  <img src="../gpu_metrics.webp"
+      alt="GPU Metrics"/>
+</a><figcaption>
+      <h4 class="fig-title">GPU Metrics</h4>
+  </figcaption>
+</figure>
+
 </article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rust/" title="Rust">#Rust</a></nav><aside class="article-bottom-misc delay-page">
   <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2023/04/07/amdgpu_fdinfo.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
 </aside>
