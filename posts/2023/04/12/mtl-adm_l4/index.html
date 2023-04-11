@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LLC をサポートせず、ADM/L4キャッシュをサポートする Meteor Lake GPU | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/04/12/mtl-adm_l4/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LLC をサポートせず、ADM/L4キャッシュをサポートする Meteor Lake GPU | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="Intel の Fei Yang 氏より、intel-gfx メーリングリストに公開されたパッチにて Meteor Lake GPU では LLC (Last Level Cache) をサポートせず、新たに ADM/L4キャッシュをサポートすることが明かさ">
+  <meta property="og:description" content="Intel の Fei Yang 氏より、intel-gfx メーリングリストに公開されたパッチにて Meteor Lake GPU では LLC (Last Level Cache) をサポートせず、新たに ADM/L4キャッシュをサポートすることが明かさ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, Linux_Kernel, Meteor_Lake">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-04-12","dateModified":"2023-04-12","datePublished":"2023-04-12","headline":"LLC をサポートせず、ADM/L4キャッシュをサポートする Meteor Lake GPU","image":"https://www.coelacanth-dream.com/icon.png","name":"LLC をサポートせず、ADM/L4キャッシュをサポートする Meteor Lake GPU"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">LLC をサポートせず、ADM/L4キャッシュをサポートする Meteor Lake GPU</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2023-04-12T00:41:17+09:00">Post: 2023-04-12 00:41:17</time>
+    <aside class="update">Update: 2023-04-12 01:45:22</aside>
+  </aside><p>Intel の Fei Yang 氏より、intel-gfx メーリングリストに公開されたパッチにて <em>Meteor Lake GPU</em> では LLC (Last Level Cache) をサポートせず、新たに ADM/L4キャッシュをサポートすることが明かされた。</p>
+<blockquote>
+<pre><code>    On MTL, GT can no longer allocate on LLC - only the CPU can.
+    This, along with addition of support for ADM/L4 cache calls a
+    MOCS/PAT table update.
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lists.freedesktop.org/archives/intel-gfx/2023-April/323891.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/intel-gfx/2023-April/323891.html">[Intel-gfx] [PATCH 2/9] drm/i915/mtl: Define MOCS and PAT tables for MTL</a></cite>
+</div>
+
+</blockquote>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2023-April/323893.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/intel-gfx/2023-April/323893.html">[Intel-gfx] [PATCH 1/9] drm/i915/mtl: Set has_llc=0</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2023-April/323891.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/intel-gfx/2023-April/323891.html">[Intel-gfx] [PATCH 2/9] drm/i915/mtl: Define MOCS and PAT tables for MTL</a></li>
+</ul>
+<p>従来の Intel iGPU では CPU と GPU で LLC を共有可能な構成となっており、MOCS (Memory Object Control State) の値に応じて GPU 側のキャッシュに割り当てることが可能だった。<br>
+それが <em>Meteor Lake GPU</em> では、LLC は CPU のみが使用するようになり、GPU 側のキャッシュに割り当てることができなくなる。<br>
+CPU と GPU で共有可能なキャッシュを持たないという点で Intel dGPU、AMD APU のキャッシュ構成に近くなったと言える。<br>
+余談だが、少し前に <strong>Ryzen 9 7950X3D</strong> の内蔵 GPU 性能が <strong>7950X</strong> の 4倍という話が流れたが (実際はそのレビュワーが以前の検証データを使い回したことによる勘違い)<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、AMD APU のキャッシュ構成を知っていれば間違いに気付くことができた。</p>
+<p>そして <em>Meteor Lake GPU</em> では ADM とも呼ばれる L4キャッシュをサポートする。<br>
+パッチでは ADM が何の略称なのか、ADM/L4キャッシュのサイズについては触れていない。</p>
+<p>Intel iGPU における L4キャッシュというと、<em>Gen9 アーキテクチャ</em> でサポートしていた eDRAM が思い出される。<br>
+しかし eDRAM がメモリサイドキャッシュ、SoC 全体で使用可能なキャッシュであったのに対し、ADM/L4キャッシュはあくまで GPU 側でも割り当て可能キャッシュとなっている。従来の LLC の役割が移ったキャッシュなのだろう。<br>
+また、GPU 専用のキャッシュではなく、CPU からも使用可能ではないかと思われる。</p>
+<p>気になるのは ADM/L4キャッシュが <em>Meteor Lake</em> のどこに搭載されているかだが、恐らく Base Tile と思われる。<br>
+Intel は <em>Meteor Lake</em> のタイル構成を公開しており、Base Tile 上に GPU, SoC, CPU, IO Extender Tile を積層する構成となっている。ADM/L4キャッシュを搭載した Tile をオプションで追加可能な構成になっているようには見えない。<br>
+メモリコントローラーが搭載されている SoC Tile の可能性もあるが、HotChips34 で発表された SoC Tile の内部ブロックにキャッシュは載っていない。</p>
+<p>Intel は <em>Ponte Vecchio</em> にてすでにキャッシュの一部を Base Tile に搭載している。<em>Ponte Vecchio</em> の L3キャッシュは、Base Tile 内の L3キャッシュと、Base Tile 上に積層された RAMBO キャッシュを組み合わせる構成になっている。<br>
+そのため、現時点では <em>Meteor Lake</em> の ADM/L4キャッシュが搭載されている可能性が高いのは Base Tile と考えられる。</p>
+<p>Base Tile にあると仮定すると、<em>Meteor Lake</em> の SKU 全体で Base Tile は共通なのか、GPU, CPU Tile の規模に応じて ADM/L4キャッシュサイズも調整されるのか、ADM/L4キャッシュサイズの違いが与える GPU, CPU 性能への影響……等、気になる点は色々出てくる。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0-807584.pdf" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0-807584.pdf">the-compute-architecture-of-intel-processor-graphics-gen9-v1d0-807584.pdf</a></li>
+<li><a href="https://www.hardwareluxx.de/index.php/news/hardware/grafikkarten/58176-isscc-2022-wie-intel-fuer-ponte-vecchio-63-tiles-in-ein-package-bringt.html" rel="noopener noreferrer" target="_blank" title="https://www.hardwareluxx.de/index.php/news/hardware/grafikkarten/58176-isscc-2022-wie-intel-fuer-ponte-vecchio-63-tiles-in-ein-package-bringt.html">ISSCC 2022: Wie Intel für Ponte Vecchio 63 Tiles in ein Package bringt - Hardwareluxx</a></li>
+<li><a href="https://hc34.hotchips.org/assets/program/conference/day2/Mobile%20and%20Edge/Meteor_Lake_Hotchips%20_%20Wilfred%20_%20final_submit%20(1).pdf" rel="noopener noreferrer" target="_blank" title="https://hc34.hotchips.org/assets/program/conference/day2/Mobile%20and%20Edge/Meteor_Lake_Hotchips%20_%20Wilfred%20_%20final_submit%20(1).pdf">Next Gen Client - Meteor_Lake_Hotchips _ Wilfred _ final_submit (1).pdf</a></li>
+</ul>
+</section>
+
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.nicovideo.jp/watch/sm41891118" rel="noopener noreferrer" target="_blank" title="https://www.nicovideo.jp/watch/sm41891118">Ryzen 9 7950X3Dの内蔵GPUは非X3Dの4倍速い？【3D V-Cache】 - ニコニコ動画</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/linux_kernel/" title="Linux_Kernel">#Linux Kernel</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/meteor_lake/" title="Meteor_Lake">#Meteor Lake</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2023/04/12/mtl-adm_l4.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.111.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="menu-cat-tag-lower">Meteor Lake</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/meteor_lake/" class="menu-cat-tag-lower">Meteor Lake</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/about/#fediverse">Fediverse</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
