@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2023-04-12T00:41:17+09:00">Post: 2023-04-12 00:41:17</time>
-    <aside class="update">Update: 2023-04-12 01:45:22</aside>
+    <aside class="update">Update: 2023-04-12 20:18:31</aside>
   </aside><p>Intel の Fei Yang 氏より、intel-gfx メーリングリストに公開されたパッチにて <em>Meteor Lake GPU</em> では LLC (Last Level Cache) をサポートせず、新たに ADM/L4キャッシュをサポートすることが明かされた。</p>
 <blockquote>
 <pre><code>    On MTL, GT can no longer allocate on LLC - only the CPU can.
@@ -60,10 +60,15 @@ CPU と GPU で共有可能なキャッシュを持たないという点で Inte
 余談だが、少し前に <strong>Ryzen 9 7950X3D</strong> の内蔵 GPU 性能が <strong>7950X</strong> の 4倍という話が流れたが (実際はそのレビュワーが以前の検証データを使い回したことによる勘違い)<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、AMD APU のキャッシュ構成を知っていれば間違いに気付くことができた。</p>
 <p>そして <em>Meteor Lake GPU</em> では ADM とも呼ばれる L4キャッシュをサポートする。<br>
 パッチでは ADM が何の略称なのか、ADM/L4キャッシュのサイズについては触れていない。</p>
+<p>Intel GPU ドライバーでは、サンプラーが持つキャッシュを L2、GPU Device 全体で共有するキャッシュを L3 としている。<br>
+<em><span class="xe-gpu-arch">X<sup>e</sup></span>-Core アーキテクチャ</em> でキャッシュ階層の定義を改める動きがあり、従来の GPU L3キャッシュを L2キャッシュとしていたが、最近になって公開されたドキュメントでは Device Cache となっていた。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+ドライバーや過去のドキュメントとの整合性を取る上で不都合があったのかもしれない。</p>
 <p>Intel iGPU における L4キャッシュというと、<em>Gen9 アーキテクチャ</em> でサポートしていた eDRAM が思い出される。<br>
-しかし eDRAM がメモリサイドキャッシュ、SoC 全体で使用可能なキャッシュであったのに対し、ADM/L4キャッシュはあくまで GPU 側でも割り当て可能キャッシュとなっている。従来の LLC の役割が移ったキャッシュなのだろう。<br>
-また、GPU 専用のキャッシュではなく、CPU からも使用可能ではないかと思われる。</p>
-<p>気になるのは ADM/L4キャッシュが <em>Meteor Lake</em> のどこに搭載されているかだが、恐らく Base Tile と思われる。<br>
+しかし eDRAM がメモリサイドキャッシュ、SoC 全体で使用可能なキャッシュ (SLC, System Level Cache とも呼ばれる) であったのに対し、ADM/L4キャッシュはあくまで GPU 側でも割り当て可能なキャッシュとなっている。<br>
+ADM/L4キャッシュはメモリサイドキャッシュというより、従来の LLC の役割が移ったキャッシュなのだろう。また、GPU 専用のキャッシュではなく、CPU からも使用可能ではないかと思われる。<br>
+そうなると結局は従来のキャッシュ構成を引き継いでいることとなる。<br>
+ADM/L4キャッシュを搭載しない構成があるとして、その場合 LLC を GPU が使うことができるのかは気になる。</p>
+<p>もう一つ気になるのは ADM/L4キャッシュが <em>Meteor Lake</em> のどこに搭載されているかだが、恐らく Base Tile と思われる。<br>
 Intel は <em>Meteor Lake</em> のタイル構成を公開しており、Base Tile 上に GPU, SoC, CPU, IO Extender Tile を積層する構成となっている。ADM/L4キャッシュを搭載した Tile をオプションで追加可能な構成になっているようには見えない。<br>
 メモリコントローラーが搭載されている SoC Tile の可能性もあるが、HotChips34 で発表された SoC Tile の内部ブロックにキャッシュは載っていない。</p>
 <p>Intel は <em>Ponte Vecchio</em> にてすでにキャッシュの一部を Base Tile に搭載している。<em>Ponte Vecchio</em> の L3キャッシュは、Base Tile 内の L3キャッシュと、Base Tile 上に積層された RAMBO キャッシュを組み合わせる構成になっている。<br>
@@ -83,6 +88,9 @@ Intel は <em>Meteor Lake</em> のタイル構成を公開しており、Base Ti
 <ol>
 <li id="fn:1">
 <p><a href="https://www.nicovideo.jp/watch/sm41891118" rel="noopener noreferrer" target="_blank" title="https://www.nicovideo.jp/watch/sm41891118">Ryzen 9 7950X3Dの内蔵GPUは非X3Dの4倍速い？【3D V-Cache】 - ニコニコ動画</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://www.intel.com/content/www/us/en/docs/graphics-for-linux/developer-reference/1-0/alchemist-arctic-sound-m.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/docs/graphics-for-linux/developer-reference/1-0/alchemist-arctic-sound-m.html">2023 Intel® Processors - Alchemist/Arctic Sound-M Platform</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
