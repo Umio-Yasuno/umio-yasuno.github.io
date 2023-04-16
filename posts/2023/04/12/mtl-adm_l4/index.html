@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-04-12","dateModified":"2023-04-12","datePublished":"2023-04-12","headline":"LLC をサポートせず、ADM/L4キャッシュをサポートする Meteor Lake GPU","image":"https://www.coelacanth-dream.com/icon.png","name":"LLC をサポートせず、ADM/L4キャッシュをサポートする Meteor Lake GPU"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-04-12","dateModified":"2023-04-17","datePublished":"2023-04-12","headline":"LLC をサポートせず、ADM/L4キャッシュをサポートする Meteor Lake GPU","image":"https://www.coelacanth-dream.com/icon.png","name":"LLC をサポートせず、ADM/L4キャッシュをサポートする Meteor Lake GPU"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2023-04-12T00:41:17+09:00">Post: 2023-04-12 00:41:17</time>
-    <aside class="update">Update: 2023-04-12 20:18:31</aside>
+    <aside class="update">Update: 2023-04-17 00:19:23</aside>
   </aside><p>Intel の Fei Yang 氏より、intel-gfx メーリングリストに公開されたパッチにて <em>Meteor Lake GPU</em> では LLC (Last Level Cache) をサポートせず、新たに ADM/L4キャッシュをサポートすることが明かされた。</p>
 <blockquote>
 <pre><code>    On MTL, GT can no longer allocate on LLC - only the CPU can.
@@ -67,8 +67,8 @@ CPU と GPU で共有可能なキャッシュを持たないという点で Inte
 しかし eDRAM がメモリサイドキャッシュ、SoC 全体で使用可能なキャッシュ (SLC, System Level Cache とも呼ばれる) であったのに対し、ADM/L4キャッシュはあくまで GPU 側でも割り当て可能なキャッシュとなっている。<br>
 ADM/L4キャッシュはメモリサイドキャッシュというより、従来の LLC の役割が移ったキャッシュなのだろう。また、GPU 専用のキャッシュではなく、CPU からも使用可能ではないかと思われる。<br>
 そうなると結局は従来のキャッシュ構成を引き継いでいることとなる。<br>
-ADM/L4キャッシュを搭載しない構成があるとして、その場合 LLC を GPU が使うことができるのかは気になる。</p>
-<p>もう一つ気になるのは ADM/L4キャッシュが <em>Meteor Lake</em> のどこに搭載されているかだが、恐らく Base Tile と思われる。<br>
+ただ <em>Meteor Lake GPU</em> のデバイス情報に <code>has_llc=0</code> をセットしていることから、ADM/L4キャッシュが無い場合も LLC を使うことはできず、その場合は Intel dGPU、AMD APU に近くなる。</p>
+<p>気になるのは ADM/L4キャッシュが <em>Meteor Lake</em> のどこに搭載されているかだが、恐らく Base Tile と思われる。<br>
 Intel は <em>Meteor Lake</em> のタイル構成を公開しており、Base Tile 上に GPU, SoC, CPU, IO Extender Tile を積層する構成となっている。ADM/L4キャッシュを搭載した Tile をオプションで追加可能な構成になっているようには見えない。<br>
 メモリコントローラーが搭載されている SoC Tile の可能性もあるが、HotChips34 で発表された SoC Tile の内部ブロックにキャッシュは載っていない。</p>
 <p>Intel は <em>Ponte Vecchio</em> にてすでにキャッシュの一部を Base Tile に搭載している。<em>Ponte Vecchio</em> の L3キャッシュは、Base Tile 内の L3キャッシュと、Base Tile 上に積層された RAMBO キャッシュを組み合わせる構成になっている。<br>
