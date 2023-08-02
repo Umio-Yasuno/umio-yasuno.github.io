@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMD MI300A と MI300C の CPUID Models | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/08/03/amd-mi300c-mi300a-cpuid-model/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AMD MI300A と MI300C の CPUID Models | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="AMD の Muralidhara M K 氏により、Linux の EDAC (Error Detection And Correction) ドライバーに MI300A と MI300C のサポートを追加するパッチが投稿されている。 EDAC ドライバーはハードウェアが持つ MCE (Machine Check Exceptions) をデコードし、ハ">
+  <meta property="og:description" content="AMD の Muralidhara M K 氏により、Linux の EDAC (Error Detection And Correction) ドライバーに MI300A と MI300C のサポートを追加するパッチが投稿されている。 EDAC ドライバーはハードウェアが持つ MCE (Machine Check Exceptions) をデコードし、ハ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, CDNA_3">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-08-03","dateModified":"2023-08-03","datePublished":"2023-08-03","headline":"AMD MI300A と MI300C の CPUID Models","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD MI300A と MI300C の CPUID Models"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">AMD MI300A と MI300C の CPUID Models</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2023-08-03T00:45:31+09:00">Post: 2023-08-03 00:45:31</time>
+    <aside class="update">Update: 2023-08-03 01:28:36</aside>
+  </aside><p>AMD の Muralidhara M K 氏により、Linux の EDAC (Error Detection And Correction) ドライバーに <strong>MI300A</strong> と <strong>MI300C</strong> のサポートを追加するパッチが投稿されている。<br>
+EDAC ドライバーはハードウェアが持つ MCE (Machine Check Exceptions) をデコードし、ハードウェアに起きたエラーの情報を読みやすい形式にして出力する機能を持つ。</p>
+<ul>
+<li><a href="https://lore.kernel.org/linux-edac/20230720125425.3735538-1-muralimk@amd.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/linux-edac/20230720125425.3735538-1-muralimk@amd.com/">[PATCH 0/7] AMD Family 19h Models 90h-9fh EDAC Support - Muralidhara M K</a></li>
+</ul>
+<p><strong>AMD MI300 シリーズ</strong> は <em>Zen 4</em> CPU チップレットと <em>CDNA 3</em> GPU チップレットを組み合わせた HPC、AI 処理向けの製品ファミリー。<br>
+<strong>MI300A</strong> は CPU チップレットと GPU チップレットを組み合わせた APU の形を取る SKU、<strong>MI300X</strong> は GPU チップレットのみで構成された SKU となる。<br>
+パッチ内で触れられている <strong>MI300C</strong> はまだ正式発表されていない SKU だが、CPUID Model が設定されていることから少なくとも CPU チップレットを持った SKU と思われる。</p>
+<p>同じく AMD の Yazen Ghannam 氏によれば、<strong>MI300A</strong> は <em>Family 19h Models 90h-9Fh</em>、<strong>MI300C</strong> は <em>Family 19h Models 80h-8Fh</em> が CPUID Models に割り当てられている。</p>
+<blockquote>
+<pre><code>    I suggest using MI300 in the $SUBJECT. And highlight in the message that
+    both groups of MI300 use the same IDs. You can clarify that Models
+    80h-8Fh are MI300C and 90h-9Fh are MI300A.
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-edac/6bce6a44-890e-9d50-dd10-e621b4d2a735@amd.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/linux-edac/6bce6a44-890e-9d50-dd10-e621b4d2a735@amd.com/">Re: [PATCH 1/7] x86/amd_nb: Add AMD Family 19h Models(80h-80fh) and (90h-9fh) PCI IDs - Yazen Ghannam</a></cite>
+</div>
+
+</blockquote>
+<p>パッチでは、<strong>MI300A (Family 19h Models 90h-9Fh)</strong> の場合はメモリタイプを HBM3 と判定し、HBM3 コントローラーは 4基としているが、<strong>MI300C (Family 19h Models 80h-8Fh)</strong> に関するコードは含まれておらず、Root Complex や Data Fabric の PCI Device ID が追加されているのみとなる。<br>
+そのため、<strong>MI300C</strong> のメモリタイプやメモリコントローラ数は不明となっている。</p>
+<blockquote>
+<pre><code>    -	return 0x50000 + (umc &lt;&lt; 20) + ((channel % 4) &lt;&lt; 12);
+    +	return gpu_umc_base + (umc &lt;&lt; 20) + ((channel % 4) &lt;&lt; 12);
+    +}
+    +
+    +static void gpu_determine_memory_type(struct amd64_pvt *pvt)
+    +{
+    +	if (pvt-&gt;fam == 0x19) {
+    +		switch (pvt-&gt;model) {
+    +		case 0x30 ... 0x3F:
+    +			pvt-&gt;dram_type = MEM_HBM2;
+    +			break;
+    +		case 0x90 ... 0x9F:
+    +			pvt-&gt;dram_type = MEM_HBM3;
+    +			break;
+    +		default:
+    +			break;
+    +		}
+    +	}
+    +	edac_dbg(1, &quot;  MEM type: %s\n&quot;, edac_mem_types[pvt-&gt;dram_type]);
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/linux-edac/20230720125425.3735538-6-muralimk@amd.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/linux-edac/20230720125425.3735538-6-muralimk@amd.com/">[PATCH 5/7] EDAC/amd64: Add Fam19h Model 90h ~ 9fh enumeration support - Muralidhara M K</a></cite>
+</div>
+
+</blockquote>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cdna_3/" title="CDNA_3">#CDNA 3</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2023/08/03/amd-mi300c-mi300a-cpuid-model.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.113.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna_3/" class="menu-cat-tag-lower">CDNA 3</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna_3/" class="menu-cat-tag-lower">CDNA 3</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
