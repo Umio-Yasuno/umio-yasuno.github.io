@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2 | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2023/10/07/xe2-grf-long-pipe/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="Intel GPU オープンソースドライバーでは現在、Kernel Mode Driver (i915, intel-xe)、User Mode Driver (Iris [OpenGL], Anv [Vulkan]) ともに、Lunar Lake のサポート作業が進められている。 Lunar Lake は GPU コア">
+  <meta property="og:description" content="Intel GPU オープンソースドライバーでは現在、Kernel Mode Driver (i915, intel-xe)、User Mode Driver (Iris [OpenGL], Anv [Vulkan]) ともに、Lunar Lake のサポート作業が進められている。 Lunar Lake は GPU コア"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, Lunar_Lake, Xe2, Xe-HPC">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-10-07","dateModified":"2023-10-07","datePublished":"2023-10-07","headline":"レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2","image":"https://www.coelacanth-dream.com/icon.png","name":"レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2023-10-07T14:54:26+09:00">Post: 2023-10-07 14:54:26</time>
+    <aside class="update">Update: 2023-10-07 17:57:52</aside>
+  </aside><p>Intel GPU オープンソースドライバーでは現在、Kernel Mode Driver (i915, intel-xe)、User Mode Driver (Iris [OpenGL], Anv [Vulkan]) ともに、<em>Lunar Lake</em> のサポート作業が進められている。<br>
+<em>Lunar Lake</em> は GPU コアに <em>Xe2 アーキテクチャ</em>、ディスプレイエンジンに <em>Xe2-LPD</em> を採用するとされている。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/24377" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/24377">Draft: Intel LNL platform (!24377) · マージリクエスト · Mesa / mesa · GitLab</a></li>
+</ul>
+<h2 id="xe2">Intel Xe2<a href="#xe2" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>先日 Francisco Jerez 氏により公開された、コンパイラバックエンドに <em>Xe2 アーキテクチャ</em> のサポートを追加するマージリクエストでは従来のアーキテクチャからの変更点に触れている。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25514" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25514">intel: Second round of compiler patches enabling Xe2 platforms: SWSB synchronization support. (!25514) · マージリクエスト · Mesa / mesa · GitLab</a></li>
+</ul>
+<p>まず、<em>Xe2 アーキテクチャ</em> では FP64 と (Extended) Math 命令は in-order タイプのパイプラインが処理するようになる。ここでのパイプラインは実行ポートと同義と思われる。<br>
+Francisco Jerez 氏はコメントで、<em>Xe-LP, Xe-HPG, Xe-LPG</em> における Math 実行ポートのように out-of-order タイプの命令のトラッキングを行うよりも in-order の方が効率的だとしている。</p>
+<p>FP64 命令は Math 実行ポートではなく Long 実行ポートに実装される。<br>
+Intel GPU は <em>Gen11 アーキテクチャ</em> から FP64 の実装が外され、<em>Xe-LPG アーキテクチャ</em> で再度実装されるようになった。<br>
+ただし <em>Gen9 アーキテクチャ</em> が FP32 演算性能に対して 1/4 の FP64 演算性能だったのに対し、<em>Xe-LPG アーキテクチャ</em> では 1/16 となっている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<p><em>Xe2 アーキテクチャ</em> では Int64 命令のサポートも復活するが、これは Long 実行ポートではなく Int 実行ポートに実装される。</p>
+<p>こうした変更から見るに <em>Xe2 アーキテクチャ</em> は <em>Xe-HPC アーキテクチャ</em> に近いものとなっている。<br>
+Intel は <em>Xe-HPC アーキテクチャ</em> の EU 内部構成等に関する資料を公開していないが、<a href="https://github.com/intel/intel-graphics-compiler" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler">intel-graphics-compiler</a> のソースコードを読むに、Math 実行ポートの in-order 化、Long 実行ポート (FP64) の追加、Int 実行ポートの Int64 サポートは <em>Xe-HPC アーキテクチャ</em> で実装されていた。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
+推測だが、<em>Xe (Xe1)</em> 世代では <em>Xe-LP, Xe-HPG, Xe-HP, Xe-HPC, Xe-LPG</em> ではそれぞれで EU 内部構成が異なっていたが、<em>Xe2</em> 世代では出来る限り統一する方針となったのかもしれない。<br>
+AMD GPU における RDNA 系と CDNA 系のように、FP64 演算性能や行列演算専用命令の有無で差別化するのだろうか。</p>
+<h2 id="grf">レジスタファイルサイズが倍に<a href="#grf" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>Xe2 アーキテクチャ</em> では EU あたりのレジスタファイルサイズが倍となる。</p>
+<p><em>Xe-LP アーキテクチャ</em> は EU あたり 7スレッド、スレッドあたりのレジスタファイルは 128エントリ (4KiB)、EU 全体では 28KiB のレジスタファイルを持つ構成となっていた。<br>
+それが <em>Xe-HPG アーキテクチャ</em> では EU あたり 8スレッドをサポートするようになり、それにあわせてレジスタファイルも触れたため、EU 全体では 32KiB のレジスタファイルを持つようになった。</p>
+<p>変更内容から、<em>Xe2 アーキテクチャ</em> ではスレッドあたりのレジスタファイルが 256エントリになったことでレジスタファイルサイズが倍になったのだと思われる。</p>
+<blockquote>
+<pre><code>    -/** Number of general purpose registers (VS, WM, etc) */
+    +/** Size of general purpose register space in REG_SIZE units */
+     #define BRW_MAX_GRF 128
+    +#define XE2_MAX_GRF 256
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25514" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25514">intel: Second round of compiler patches enabling Xe2 platforms: SWSB synchronization support. (!25514) · マージリクエスト · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25020" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25020">intel/compiler: initial compiler changes for xe2/lnl register size change; adds reg_unit() (!25020) · マージリクエスト · Mesa / mesa · GitLab</a></li>
+</ul>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://github.com/intel/intel-graphics-compiler/blob/master/visa/iga/IGALibrary/IR/RegDeps.cpp" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/blob/master/visa/iga/IGALibrary/IR/RegDeps.cpp">https://github.com/intel/intel-graphics-compiler/blob/master/visa/iga/IGALibrary/IR/RegDeps.cpp</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2021/04/02/xehp-add-two-async-pipeline/" title="/posts/2021/04/02/xehp-add-two-async-pipeline/">2つの非同期パイプラインが追加される Xe-HP EU | Coelacanth&rsquo;s Dream</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/developer/articles/technical/introduction-to-the-xe-hpg-architecture.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/developer/articles/technical/introduction-to-the-xe-hpg-architecture.html">Introduction to the Xe-HPG Architecture</a></li>
+</ul>
+</section>
+
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.intel.com/content/www/us/en/content-details/788848/graphics-and-media-deep-dive.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/content-details/788848/graphics-and-media-deep-dive.html">Graphics and Media Deep Dive</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/intel/intel-graphics-compiler/blob/master/visa/iga/IGALibrary/IR/RegDeps.cpp" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/blob/master/visa/iga/IGALibrary/IR/RegDeps.cpp">https://github.com/intel/intel-graphics-compiler/blob/master/visa/iga/IGALibrary/IR/RegDeps.cpp</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/lunar_lake/" title="Lunar_Lake">#Lunar Lake</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/xe2/" title="Xe2">#Xe2</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/xe-hpc/" title="Xe-HPC">#Xe-HPC</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2023/10/07/xe2-grf-long-pipe.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.113.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/lunar_lake/" class="menu-cat-tag-lower">Lunar Lake</a><a href="https://www.coelacanth-dream.com/tags/xe-hpc/" class="menu-cat-tag-lower">Xe-HPC</a><a href="https://www.coelacanth-dream.com/tags/xe2/" class="menu-cat-tag-lower">Xe2</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/intel/" class="menu-cat-tag-lower">Intel</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/lunar_lake/" class="menu-cat-tag-lower">Lunar Lake</a><a href="https://www.coelacanth-dream.com/tags/xe-hpc/" class="menu-cat-tag-lower">Xe-HPC</a><a href="https://www.coelacanth-dream.com/tags/xe2/" class="menu-cat-tag-lower">Xe2</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
