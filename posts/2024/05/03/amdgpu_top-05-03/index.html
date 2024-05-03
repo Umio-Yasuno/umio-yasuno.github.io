@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMD GPU 用のモニタリングツールを作り始めてから 1年が経ってた | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2024/05/03/amdgpu_top-05-03/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AMD GPU 用のモニタリングツールを作り始めてから 1年が経ってた | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="タイトル通り amdgpu_top を作り始めてから 1年が経っていたため、実装した機能などを振り返ってみる。 Umio-Yasuno/amdgpu_top: Tool to display AMDGPU usage 【雑記】 AMD GPU のモニタリングツールを作ってみた | Coelacanth&rsquo;s Dream GUI モード v0.1.4 で">
+  <meta property="og:description" content="タイトル通り amdgpu_top を作り始めてから 1年が経っていたため、実装した機能などを振り返ってみる。 Umio-Yasuno/amdgpu_top: Tool to display AMDGPU usage 【雑記】 AMD GPU のモニタリングツールを作ってみた | Coelacanth&rsquo;s Dream GUI モード v0.1.4 で"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, Rust">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2024-05-03","dateModified":"2024-05-03","datePublished":"2024-05-03","headline":"AMD GPU 用のモニタリングツールを作り始めてから 1年が経ってた","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD GPU 用のモニタリングツールを作り始めてから 1年が経ってた"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">AMD GPU 用のモニタリングツールを作り始めてから 1年が経ってた</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2024-05-03T08:24:55+09:00">Post: 2024-05-03 08:24:55</time>
+    <aside class="update">Update: 2024-05-03 23:47:14</aside>
+  </aside><p>タイトル通り <code>amdgpu_top</code> を作り始めてから 1年が経っていたため、実装した機能などを振り返ってみる。</p>
+<ul>
+<li><a href="https://github.com/Umio-Yasuno/amdgpu_top" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/amdgpu_top">Umio-Yasuno/amdgpu_top: Tool to display AMDGPU usage</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2023/03/08/diary-amdgpu-tool/" title="/posts/2023/03/08/diary-amdgpu-tool/">【雑記】 AMD GPU のモニタリングツールを作ってみた | Coelacanth&rsquo;s Dream</a></li>
+</ul>
+<h2 id="gui">GUI モード<a href="#gui" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><code>v0.1.4</code> で GUI モードを追加した。GUI クレートには <a href="https://github.com/emilk/egui" rel="noopener noreferrer" target="_blank" title="https://github.com/emilk/egui">emilk/egui</a> を用いている。<br>
+<code>egui</code> を選んだ理由としては、レイアウト用のテンプレートファイルを必要とせず、レイアウトの構築が Rust ソースコードだけで完結し、サンプルも分かりやすかったからだ。<br>
+また、これは使い始めてから気付いたが <code>egui</code> にはプロット用の機能もあり、モニタリングツールを作る上で相性は最高だった。<br>
+GUI モードを追加した切っ掛けは、TUI モードよりずっと多くの情報を一画面に表示するモードが必要と考えたことだ。<br>
+<code>amdgpu_top</code> には TUI モードの他にダンプ機能 (<code>--dump</code>) があり、それで GPU 情報の確認ができるのだが、正直 <code>--help</code> や README.md で利用可能なオプションを調べ、実際に確かめる人は少数だと思ってる。</p>
+<p>GUI モードの欠点としてはバイナリサイズが大きくなることで、GUI モードを有効にしてビルドすると 13MiB 近く増える。<br>
+とはいえ他の GUI クレートを用いて大量の動的ライブラリへの依存を追加するよりは良い、かもしれない。</p>
+<p>GUI モードには <a href="https://github.com/kellpossible/cargo-i18n" rel="noopener noreferrer" target="_blank" title="https://github.com/kellpossible/cargo-i18n">cargo-i18n</a> と <a href="https://projectfluent.org/" rel="noopener noreferrer" target="_blank" title="https://projectfluent.org/">Fluent</a> を用いた多言語対応も実装している。<br>
+これは誰かから要望があった訳ではなく、Rust における多言語対応を経験してみたくて実装した。<br>
+現状日本語は一部の説明のみを翻訳している。AMD GPU 独自の用語や単位などは変に翻訳するよりそのまま表示した方が分かりやすいと思っている。</p>
+<h2 id="smi">SMI モード<a href="#smi" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>SMI モードは複数の GPU を同時にモニタリングするために追加した。TUI モードも GUI モードも一つの画面に一つの GPU の情報を表示するのが限界だと思っている。それだけ AMDGPU ドライバーがユーザースペースに公開している情報は多い。<br>
+複数の dGPU を搭載可能な環境は持っていないが、APU (Ryzen 5 5600G) と dGPU (Radeon RX 6600) で一応検証可能なのは良かった。<br>
+レイアウトは <code>rocm-smi, amd-smi</code> より <code>nvidia-smi</code> の方に寄せてある。</p>
+<figure>
+  <a href="https://www.coelacanth-dream.com/image/2024/05/03/amdgpu_top-smi.webp" target="_blank"  >
+  <img src="https://www.coelacanth-dream.com/image/2024/05/03/amdgpu_top-smi.webp"
+      alt="amdgpu_top smi"/>
+</a>
+</figure>
+
+<p>自分が一番よく使っているのは SMI モードで次に TUI モード。それらのモードはターミナルから起動した場合は新規ウィンドウを作成しないため画面上の変化が小さく、知りたい情報をすぐに確かめられるからだ。<br>
+SMI モードは主に必要とする情報を詰め込んでおり、機能的な部分も気に入っている。</p>
+<h2 id="json">JSON モード<a href="#json" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>他のスクリプトやアプリケーションから利用するケースを想定して JSON モードも追加した。<br>
+最初は <code>intel_gpu_top</code> と同様、stdout に JSON 形式で情報を出力し続けるだけだったが、後から出力回数を指定可能にしたり、繰り返し <code>amdgpu_top</code> を呼び出さなくても済むように FIFO (名前付きパイプ) を作成する機能を追加した。<br>
+JSON 形式の出力自体は <a href="https://github.com/serde-rs/json" rel="noopener noreferrer" target="_blank" title="https://github.com/serde-rs/json">serde_json</a> のおかげで簡単だった。</p>
+<h2 id="version">バージョン<a href="#version" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>現在 <code>amdgpu_top</code> の最新リリースは <code>v0.8.2</code> となっていて、そこから細かい修正や機能追加がたまってきたため、近くに <code>v0.8.3</code> か <code>v0.9.0</code> をリリースするつもりでいる。<br>
+バージョンについては、GUI や SMI モードの追加といった大きな変更があったのにパッチバージョンの更新を続けた結果 <code>v0.1.11</code> まで続いてしまったことを反省して、ある程度新機能と言えるものを追加したらマイナーバージョンを更新するようになった。<br>
+<code>v1.0.0</code> のリリース予定は現状全くない。AMDGPU ドライバー側の更新や機能追加に合わせて <code>amdgpu_top</code> を更新する部分もあるため、どこを <code>v1.0.0</code> とするかは難しいからだ。<br>
+ロードマップも無く、今後追加したい機能も特に考えていない。<br>
+強いて言えば、AMD XDNA, Ryzen AI, NPU, IPU……どう呼ぶのが良いのか分からないが、まあそういったものの対応をぼんやりと考えてはいる。<br>
+一応 Windows では NPU のモニタリング機能があるため可能だとは思うが、Linux 環境ではまだそのインターフェイスは公開されていない。<code>xdna-driver</code> が公開されてからまだ日が浅いのもあるだろう。<code>xdna-driver</code> を試すことのできる環境を持っていないため検証できていないが、ドライバーを読むに消費電力の表示には対応しているようだ。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+次世代の APU (SMU v14.0.0) であれば <code>gpu_metrics</code> に IPU の情報が含まれており、column ごとのIPU の使用率 (最大 8-columns) やリード/ライトの平均使用帯域、IPU 全体の消費電力、IPU の動作クロックをそこから取得できる。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>それ以外にも機能追加の要望があって、かつ可能なものであれば対応するつもりではいる。
+ただオーバークロック関連の機能は追加するつもりはない。そうしたツールの方が需要も人気も強いらしいが、自分は <code>amdgpu_top</code> をあくまでもモニタリングツールとして開発している。<br>
+まあモニタリングツールとしても既存の <code>radeontop</code> や <code>nvtop</code> の人気が根強く、<code>amdgpu_top</code> が使われている場面を見る機会は少ないが。</p>
+<p>だが <code>radeontop</code> は作者が最近の AMD GPU 向けに更新する気はないことを明言しており<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、最新のコミットは一年前に受け入れた PR のものとなっている。</p>
+<p><code>nvtop</code> は開発が続けられており、対応するデバイスの種類が増え、今では AMD, Intel, NVIDIA に加え、Qualcomm, Apple, Huawei Ascend (NPU) もサポートしているらしい。<br>
+しかしそれら全てを検証できる環境は無い。ベンダーの異なるデバイスを複数サポートするモニタリングツールの必要性は分かるが、作者の負担が増えていくという点で不安を覚える。<br>
+時々 AMD GPU 関連の issue を勝手に手伝ってはいるものの、作者の Syllo 氏は忙しいのか数ヶ月ごとに返信が来るような状態である。</p>
+<p><code>amdgpu_top</code> を開発する中で <em>まともに</em> モニタリングするためには、部分的に特定の GPU/APU や世代に向けたコードを書かなければならないことを知った。<br>
+例えばある GPU/APU は GPU使用率を常に 100% として返すとか、ある世代からはメディアエンジンへのエンコード/デコードキューが統合された関係でそれぞれの使用率を取得できないため、その世代に対しては使用率の計算方法と表示を変えなければならないとか。<br>
+他には、PCIe 使用帯域を取得するのに <code>pcie_bw</code> sysfs が使えるが、これは AMDGPU ドライバー側でパフォーマンスカウンターを用いた計測を行い、そこで <code>msleep(1000)</code> を使うため、そのまま読み取ろうとすると 1秒間スレッドが停止する。そのため別スレッドで読み取る必要がある、とか。</p>
+<p>そうして得た知見は他のモニタリングツールで発生している問題の解決に役立つはずだ。<br>
+今後別のモニタリングツールを誰かが開発するとしても、検証用に比較できるものが必要だろう。</p>
+<p>とはいえ結局の所、そうした大層な理由よりも、<code>amdgpu_top</code> の一番のユーザーは自分自身というドックフーディングであることが開発を続けている一番の理由なのだが。</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://github.com/amd/xdna-driver" rel="noopener noreferrer" target="_blank" title="https://github.com/amd/xdna-driver">amd/xdna-driver</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://github.com/Umio-Yasuno/libdrm-amdgpu-sys-rs/blob/main/wrapper/wrapper_gpu_metrics.h#L724" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/libdrm-amdgpu-sys-rs/blob/main/wrapper/wrapper_gpu_metrics.h#L724">https://github.com/Umio-Yasuno/libdrm-amdgpu-sys-rs/blob/main/wrapper/wrapper_gpu_metrics.h#L724</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://github.com/clbr/radeontop/pull/165#issuecomment-1996725404" rel="noopener noreferrer" target="_blank" title="https://github.com/clbr/radeontop/pull/165#issuecomment-1996725404">https://github.com/clbr/radeontop/pull/165#issuecomment-1996725404</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rust/" title="Rust">#Rust</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2024/05/03/amdgpu_top-05-03.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.111.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/rust/" class="menu-cat-tag-lower">Rust</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/rust/" class="menu-cat-tag-lower">Rust</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
