@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMD CPU も Intel Thread Director に近い機能を実装か | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2024/08/27/amd-hfi/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AMD CPU も Intel Thread Director に近い機能を実装か | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="AMD の Perry Yuan 氏により、Linux Kernel に AMD Hetero Core Hardware Feedback Driver (amd_hfi) を追加するパッチが公開されている。 [PATCH 00/11] Introduce New AMD Heterogeneous Core Driver - Perry Yuan パッチ内では、AMD におけるヘテロジニアスアーキテクチャの">
+  <meta property="og:description" content="AMD の Perry Yuan 氏により、Linux Kernel に AMD Hetero Core Hardware Feedback Driver (amd_hfi) を追加するパッチが公開されている。 [PATCH 00/11] Introduce New AMD Heterogeneous Core Driver - Perry Yuan パッチ内では、AMD におけるヘテロジニアスアーキテクチャの"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2022 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, CPUID, Linux_Kernel">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2024-08-27","dateModified":"2024-08-28","datePublished":"2024-08-27","headline":"AMD CPU も Intel Thread Director に近い機能を実装か","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD CPU も Intel Thread Director に近い機能を実装か"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">AMD CPU も Intel Thread Director に近い機能を実装か</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2024-08-27T22:48:06+09:00">Post: 2024-08-27 22:48:06</time>
+    <aside class="update">Update: 2024-08-28 01:22:39</aside>
+  </aside><p>AMD の Perry Yuan 氏により、Linux Kernel に AMD Hetero Core Hardware Feedback Driver (<code>amd_hfi</code>) を追加するパッチが公開されている。</p>
+<ul>
+<li><a href="https://lore.kernel.org/platform-driver-x86/cover.1724748733.git.perry.yuan@amd.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/platform-driver-x86/cover.1724748733.git.perry.yuan@amd.com/">[PATCH 00/11] Introduce New AMD Heterogeneous Core Driver - Perry Yuan</a></li>
+</ul>
+<p>パッチ内では、AMD におけるヘテロジニアスアーキテクチャの目標はバックグラウンドスレッドを Dense (高密度, &ldquo;c&rdquo; 系) コアに割り当て、優先度の高いスレッドを Classic (高性能, 無印系) コアに割り当てることで消費電力の観点でメリットを得ることだと説明されている。<br>
+バックグラウンドスレッドを Dense コアに割り当てれば、処理に必要な電力は少なくて済み、その分を Classic コアにまわすことで優先度の高いスレッドをより速く処理することができる。<br>
+また Dense コアを増やすことでマルチスレッド性能も向上させられる。</p>
+<p>Hardware Feedback Interface (HFI) は実行中のスレッドの分類機能もあり、分類とその Class ID、割り当てられるのが望ましいコアの種類、優先度の例が以下のテーブル。</p>
+<blockquote>
+<pre><code>    +Thread Classification Example Table
+    +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ++----------+----------------+-------------------------------+---------------------+---------+
+    +| class ID | Classification | Preferred scheduling behavior | Preemption priority | Counter |
+    ++----------+----------------+-------------------------------+---------------------+---------+
+    +| 0        | Default        | Performant                    | Highest             |         |
+    ++----------+----------------+-------------------------------+---------------------+---------+
+    +| 1        | Non-scalable   | Efficient                     | Lowest              | PMCx1A1 |
+    ++----------+----------------+-------------------------------+---------------------+---------+
+    +| 2        | I/O bound      | Efficient                     | Lowest              | PMCx044 |
+    ++----------+----------------+-------------------------------+---------------------+---------+
+    +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/platform-driver-x86/c4c66679fc6f8432c0402c8def2dc1b09eaa812d.1724748733.git.perry.yuan@amd.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/platform-driver-x86/c4c66679fc6f8432c0402c8def2dc1b09eaa812d.1724748733.git.perry.yuan@amd.com/">[PATCH 01/11] Documentation: x86: Add AMD Hardware Feedback Interface documentation - Perry Yuan</a></cite>
+</div>
+
+</blockquote>
+<p>BIOS/UEFI から提供され、共有メモリに配置される CPU コアのランキングデータも <code>amd_hfi</code> ドライバーはスケジューリングに活用する。<br>
+ソースコードからドライバーの動作を完全に読み取れてはいないが、自分の理解で書くと、ランキングデータにはすべての CPU コア (スレッド) 分の性能と電力効率の能力を示す値が含まれているのだろう。
+ドライバーは CPU コア (スレッド) から実行中のスレッドの分類を読み取り、そしてそのコア (スレッド) が処理に対して最適でない場合、ランキングデータから最適なコア (スレッド) を選択する。</p>
+<p>機能としては概ね Intel HFI, Intel Thread Director (ITD), EHFI (Enhanced HFI) と同じと見ていいだろう。<br>
+ただしスレッドの分類は異なる。</p>
+<p>AMD のヘテロジニアスアーキテクチャは Intel のそれとは異なり、マイクロアーキテクチャと IPC は同一であるため、CPPC (Collaborative Processor Performance Control) に関連する値の設定を調整することで充分適したスケジューリングができると自分は考えていたが、実際は性能と電力効率の最大化にはハードウェアからヒントを用いたスケジューリングが必要だったのだろう。</p>
+<ul>
+<li><a href="https://www.coelacanth-dream.com/posts/2024/05/22/amd-pstate-hetero-core-topology/" title="/posts/2024/05/22/amd-pstate-hetero-core-topology/">amd-pstate ドライバーにおける異種コア構成のトポロジへの対応 | Coelacanth&rsquo;s Dream</a></li>
+</ul>
+<p>AMD HFI, Workload Classification の機能フラグビットは <code>CPUID 0x8000_0021:EAX:Bit22</code> とされている。</p>
+<blockquote>
+<pre><code>    +	{ X86_FEATURE_WORKLOAD_CLASS,   CPUID_EAX,  22, 0x80000021, 0 },
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/platform-driver-x86/067b306ea3457091d5ac97b0cc5b41fcadac10d2.1724748733.git.perry.yuan@amd.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/platform-driver-x86/067b306ea3457091d5ac97b0cc5b41fcadac10d2.1724748733.git.perry.yuan@amd.com/">[PATCH 03/11] x86/cpufeatures: add X86_FEATURE_WORKLOAD_CLASS feature bit - Perry Yuan</a></cite>
+</div>
+
+</blockquote>
+<p>AMD HFI に関する情報は <code>CPUID 0x8000_0027</code> から読み取ることができる。なお <code>CPUID 0x8000_0027</code> はまだ AMD が公開しているドキュメントには記載されていない。<br>
+<code>CPUID 0x8000_0027:EAX</code> がサポートしているスレッドのクラス (分類) 数を示す。</p>
+<blockquote>
+<pre><code>    +	nr_class_id = cpuid_eax(AMD_HETERO_CPUID_27);
+    +	if (nr_class_id &lt; 0 || nr_class_id &gt; 255) {
+    +		dev_warn(dev, &quot;failed to get supported class number from CPUID %d\n&quot;,
+    +				AMD_HETERO_CPUID_27);
+    +		return -EINVAL;
+    +	}
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/platform-driver-x86/8d3d75941a87839ab88dff20e89b73c0f5e6cb2a.1724748733.git.perry.yuan@amd.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/platform-driver-x86/8d3d75941a87839ab88dff20e89b73c0f5e6cb2a.1724748733.git.perry.yuan@amd.com/">[PATCH 05/11] platform/x86: hfi: Introduce AMD Hardware Feedback Interface Driver - Perry Yuan</a></cite>
+</div>
+
+</blockquote>
+<p>また、<code>CPUID 0x8000_0027:EBX</code> がランキングテーブルの更新モードに関するフラグ等を示すと思われる。</p>
+<blockquote>
+<pre><code>    +	amd_hfi_data-&gt;hfi_meta-&gt;dynamic_rank_feature =
+    +					cpuid_ebx(AMD_HETERO_CPUID_27) &amp; 0xF;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://lore.kernel.org/platform-driver-x86/8d3d75941a87839ab88dff20e89b73c0f5e6cb2a.1724748733.git.perry.yuan@amd.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/platform-driver-x86/8d3d75941a87839ab88dff20e89b73c0f5e6cb2a.1724748733.git.perry.yuan@amd.com/">[PATCH 05/11] platform/x86: hfi: Introduce AMD Hardware Feedback Interface Driver - Perry Yuan</a></cite>
+</div>
+
+</blockquote>
+<p>InstaLatx64 氏の Github リポジトリで公開されている Ryzen 7 9700X の CPUID 実行結果一覧を見ると<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、<code>CPUID 0x8000_0021:EAX:Bit22</code> フラグビットが立っており、また <code>CPUID 0x8000_0027:EAX</code> が 3 となっているため、AMD HFI は <em>Zen 5/c</em> からサポートしていると考えられる。</p>
+<p>Ryzen AI 300 Series は <em>Zen 5</em> と <em>Zen 5c</em> のヘテロジニアスアーキテクチャを採っており、<code>amd_hfi</code> ドライバーによる最適化が期待される。<br>
+西川善司氏による 4Gamer.net の記事にて、Windows では I/O 処理スレッド等は <em>Zen 5c</em> に積極的に割り当てるようになっていることが書かれており、Windows では既に先行して <code>amd_hfi</code> ドライバーと同様の機能が実装されていると考えられる。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p>https://github.com/InstLatx64/InstLatx64/blob/4b94fc56e1d959d5124fae901679b434263bdd6e/AuthenticAMD/AuthenticAMD0B40F40_K20_GraniteRidge_03_CPUID.txt#L82&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://www.4gamer.net/games/804/G080449/20240729031/" rel="noopener noreferrer" target="_blank" title="https://www.4gamer.net/games/804/G080449/20240729031/">「Ryzen AI 300」とはどんなプロセッサなのか。高効率Zen 5cコアに新世代NPUとPS5を超えるGPUを組み合わせる［西川善司の3DGE］</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cpuid/" title="CPUID">#CPUID</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/linux_kernel/" title="Linux_Kernel">#Linux Kernel</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2024/08/27/amd-hfi.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.111.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2022 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cpuid/" class="menu-cat-tag-lower">CPUID</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/cpu/" class="menu-cat-tag-lower">CPU</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cpuid/" class="menu-cat-tag-lower">CPUID</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
