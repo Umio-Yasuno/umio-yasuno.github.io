@@ -4,7 +4,7 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AMD CPU も Intel Thread Director に近い機能を実装か | Coelacanth&#39;s Dream</title>
+<title>AMD CPU も Intel Thread Director と同様の機能を実装か | Coelacanth&#39;s Dream</title>
 
 <link rel="canonical" href="https://www.coelacanth-dream.com/posts/2024/08/27/amd-hfi/">
 
@@ -15,7 +15,7 @@
 
 <meta property="og:site_name" content="Coelacanth&#39;s Dream">
 <meta property="og:type" content="article">
-<meta property="og:title" content="AMD CPU も Intel Thread Director に近い機能を実装か | Coelacanth&#39;s Dream">
+<meta property="og:title" content="AMD CPU も Intel Thread Director と同様の機能を実装か | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
 <meta name="description" content="AMD の Perry Yuan 氏により、Linux Kernel に AMD Hetero Core Hardware Feedback Driver (amd_hfi) を追加するパッチが公開されている。 [PATCH 00/11] Introduce New AMD Heterogeneous Core Driver - Perry Yuan パッチ内では、AMD におけるヘテロジニアスアーキテクチャの">
   <meta property="og:description" content="AMD の Perry Yuan 氏により、Linux Kernel に AMD Hetero Core Hardware Feedback Driver (amd_hfi) を追加するパッチが公開されている。 [PATCH 00/11] Introduce New AMD Heterogeneous Core Driver - Perry Yuan パッチ内では、AMD におけるヘテロジニアスアーキテクチャの"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2024-08-27","dateModified":"2024-08-28","datePublished":"2024-08-27","headline":"AMD CPU も Intel Thread Director に近い機能を実装か","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD CPU も Intel Thread Director に近い機能を実装か"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2024-08-27","dateModified":"2024-08-28","datePublished":"2024-08-27","headline":"AMD CPU も Intel Thread Director と同様の機能を実装か","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD CPU も Intel Thread Director と同様の機能を実装か"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -35,11 +35,11 @@
 <link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
 
     <main class="text">
-      <h1 class="page-title">AMD CPU も Intel Thread Director に近い機能を実装か</h1>
+      <h1 class="page-title">AMD CPU も Intel Thread Director と同様の機能を実装か</h1>
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2024-08-27T22:48:06+09:00">Post: 2024-08-27 22:48:06</time>
-    <aside class="update">Update: 2024-08-28 01:22:39</aside>
+    <aside class="update">Update: 2024-08-28 18:19:58</aside>
   </aside><p>AMD の Perry Yuan 氏により、Linux Kernel に AMD Hetero Core Hardware Feedback Driver (<code>amd_hfi</code>) を追加するパッチが公開されている。</p>
 <ul>
 <li><a href="https://lore.kernel.org/platform-driver-x86/cover.1724748733.git.perry.yuan@amd.com/" rel="noopener noreferrer" target="_blank" title="https://lore.kernel.org/platform-driver-x86/cover.1724748733.git.perry.yuan@amd.com/">[PATCH 00/11] Introduce New AMD Heterogeneous Core Driver - Perry Yuan</a></li>
@@ -70,11 +70,39 @@
 ソースコードからドライバーの動作を完全に読み取れてはいないが、自分の理解で書くと、ランキングデータにはすべての CPU コア (スレッド) 分の性能と電力効率の能力を示す値が含まれているのだろう。
 ドライバーは CPU コア (スレッド) から実行中のスレッドの分類を読み取り、そしてそのコア (スレッド) が処理に対して最適でない場合、ランキングデータから最適なコア (スレッド) を選択する。</p>
 <p>機能としては概ね Intel HFI, Intel Thread Director (ITD), EHFI (Enhanced HFI) と同じと見ていいだろう。<br>
-ただしスレッドの分類は異なる。</p>
+ただしスレッドの分類は異なり、ITD の場合は以下のようになっている<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Intel Thread Director</th>
+<th style="text-align:center">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Class 0</td>
+<td style="text-align:center">Non-vectorized integer or floating-point code.</td>
+</tr>
+<tr>
+<td style="text-align:left">Class 1</td>
+<td style="text-align:center">Integer or floating-point vectorized code,<br>excluding Intel® Deep Learning Boost (Intel® DL Boost) code.</td>
+</tr>
+<tr>
+<td style="text-align:left">Class 2</td>
+<td style="text-align:center">Intel DL Boost code.</td>
+</tr>
+<tr>
+<td style="text-align:left">Class 3</td>
+<td style="text-align:center">Pause (spin-wait) dominated code.</td>
+</tr>
+</tbody>
+</table>
 <p>AMD のヘテロジニアスアーキテクチャは Intel のそれとは異なり、マイクロアーキテクチャと IPC は同一であるため、CPPC (Collaborative Processor Performance Control) に関連する値の設定を調整することで充分適したスケジューリングができると自分は考えていたが、実際は性能と電力効率の最大化にはハードウェアからヒントを用いたスケジューリングが必要だったのだろう。</p>
 <ul>
 <li><a href="https://www.coelacanth-dream.com/posts/2024/05/22/amd-pstate-hetero-core-topology/" title="/posts/2024/05/22/amd-pstate-hetero-core-topology/">amd-pstate ドライバーにおける異種コア構成のトポロジへの対応 | Coelacanth&rsquo;s Dream</a></li>
 </ul>
+<h2 id="cpuid">CPUID<a href="#cpuid" class="head-cur-link" aria-hidden></a>
+</h2>
 <p>AMD HFI, Workload Classification の機能フラグビットは <code>CPUID 0x8000_0021:EAX:Bit22</code> とされている。</p>
 <blockquote>
 <pre><code>    +	{ X86_FEATURE_WORKLOAD_CLASS,   CPUID_EAX,  22, 0x80000021, 0 },
@@ -106,17 +134,20 @@
 </div>
 
 </blockquote>
-<p>InstaLatx64 氏の Github リポジトリで公開されている Ryzen 7 9700X の CPUID 実行結果一覧を見ると<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、<code>CPUID 0x8000_0021:EAX:Bit22</code> フラグビットが立っており、また <code>CPUID 0x8000_0027:EAX</code> が 3 となっているため、AMD HFI は <em>Zen 5/c</em> からサポートしていると考えられる。</p>
+<p>InstaLatx64 氏の Github リポジトリで公開されている Ryzen 7 9700X の CPUID 実行結果一覧を見ると<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、<code>CPUID 0x8000_0021:EAX:Bit22</code> フラグビットが立っており、また <code>CPUID 0x8000_0027:EAX</code> が 3 となっているため、AMD HFI は <em>Zen 5/c</em> からサポートしていると考えられる。</p>
 <p>Ryzen AI 300 Series は <em>Zen 5</em> と <em>Zen 5c</em> のヘテロジニアスアーキテクチャを採っており、<code>amd_hfi</code> ドライバーによる最適化が期待される。<br>
-西川善司氏による 4Gamer.net の記事にて、Windows では I/O 処理スレッド等は <em>Zen 5c</em> に積極的に割り当てるようになっていることが書かれており、Windows では既に先行して <code>amd_hfi</code> ドライバーと同様の機能が実装されていると考えられる。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+西川善司氏による 4Gamer.net の記事にて、Windows では I/O 処理スレッド等は <em>Zen 5c</em> に積極的に割り当てるようになっていることが書かれており、Windows では既に先行して <code>amd_hfi</code> ドライバーと同様の機能が実装されていると考えられる。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></p>
 <div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
 <li id="fn:1">
-<p>https://github.com/InstLatx64/InstLatx64/blob/4b94fc56e1d959d5124fae901679b434263bdd6e/AuthenticAMD/AuthenticAMD0B40F40_K20_GraniteRidge_03_CPUID.txt#L82&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2022/09/10/linux-kernel-intel-itd/#itd" title="/posts/2022/09/10/linux-kernel-intel-itd/#itd">Linux Kernel に Intel Thread Director を実装するパッチ | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.4gamer.net/games/804/G080449/20240729031/" rel="noopener noreferrer" target="_blank" title="https://www.4gamer.net/games/804/G080449/20240729031/">「Ryzen AI 300」とはどんなプロセッサなのか。高効率Zen 5cコアに新世代NPUとPS5を超えるGPUを組み合わせる［西川善司の3DGE］</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://github.com/InstLatx64/InstLatx64/blob/4b94fc56e1d959d5124fae901679b434263bdd6e/AuthenticAMD/AuthenticAMD0B40F40_K20_GraniteRidge_03_CPUID.txt" rel="noopener noreferrer" target="_blank" title="https://github.com/InstLatx64/InstLatx64/blob/4b94fc56e1d959d5124fae901679b434263bdd6e/AuthenticAMD/AuthenticAMD0B40F40_K20_GraniteRidge_03_CPUID.txt">https://github.com/InstLatx64/InstLatx64/blob/4b94fc56e1d959d5124fae901679b434263bdd6e/AuthenticAMD/AuthenticAMD0B40F40_K20_GraniteRidge_03_CPUID.txt</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://www.4gamer.net/games/804/G080449/20240729031/" rel="noopener noreferrer" target="_blank" title="https://www.4gamer.net/games/804/G080449/20240729031/">「Ryzen AI 300」とはどんなプロセッサなのか。高効率Zen 5cコアに新世代NPUとPS5を超えるGPUを組み合わせる［西川善司の3DGE］</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
