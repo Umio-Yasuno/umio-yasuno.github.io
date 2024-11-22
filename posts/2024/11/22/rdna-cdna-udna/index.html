@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMD RDNA と CDNA の違いを考える | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2024/11/22/rdna-cdna-udna/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AMD RDNA と CDNA の違いを考える | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="2024/09/09 付けで公開された Tom&rsquo;s Hardware の Paul Alcorn 氏による、AMD の Jack Huynh 氏へのインタビュー記事にて、RDNA アーキテクチャ と CDNA アーキテクチャ を統合させた UDNA アーキテクチャ の構想が初めて">
+  <meta property="og:description" content="2024/09/09 付けで公開された Tom&rsquo;s Hardware の Paul Alcorn 氏による、AMD の Jack Huynh 氏へのインタビュー記事にて、RDNA アーキテクチャ と CDNA アーキテクチャ を統合させた UDNA アーキテクチャ の構想が初めて"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, RDNA, CDNA, UDNA">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2024-11-22","dateModified":"2024-11-22","datePublished":"2024-11-22","headline":"AMD RDNA と CDNA の違いを考える","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD RDNA と CDNA の違いを考える"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">AMD RDNA と CDNA の違いを考える</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2024-11-22T14:07:10+09:00">Post: 2024-11-22 14:07:10</time>
+    <aside class="update">Update: 2024-11-22 17:53:20</aside>
+  </aside><p>2024/09/09 付けで公開された Tom&rsquo;s Hardware の Paul Alcorn 氏による、AMD の Jack Huynh 氏へのインタビュー記事にて、<em>RDNA アーキテクチャ</em> と <em>CDNA アーキテクチャ</em> を統合させた <em>UDNA アーキテクチャ</em> の構想が初めて語られた。</p>
+<ul>
+<li><a href="https://www.tomshardware.com/pc-components/cpus/amd-announces-unified-udna-gpu-architecture-bringing-rdna-and-cdna-together-to-take-on-nvidias-cuda-ecosystem" rel="noopener noreferrer" target="_blank" title="https://www.tomshardware.com/pc-components/cpus/amd-announces-unified-udna-gpu-architecture-bringing-rdna-and-cdna-together-to-take-on-nvidias-cuda-ecosystem">AMD announces unified UDNA GPU architecture — bringing RDNA and CDNA together to take on Nvidia&rsquo;s CUDA ecosystem | Tom&rsquo;s Hardware</a></li>
+</ul>
+<p>現在、AMD GPU のアーキテクチャは大きく分けてグラフィクス、ゲーム向けの <em>RDNA 系アーキテクチャ</em> と、サーバー、HPC 向けの <em>CDNA 系アーキテクチャ</em> の 2つが存在する。<br>
+<em>UDNA アーキテクチャ</em> でどのようにその 2つが統合されるかは全く語られてはいないが、統合する上で意識する必要のある差異について一度個人的に整理してみることにした。<br>
+記事内の予想に関しては完全に素人によるものであるため、信用しないでほしい。</p>
+<h2 id="matrix">WMMA, MFMA<a href="#matrix" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>RDNA</em> も <em>CDNA</em> も行列積和演算命令をサポートするが、<em>RDNA</em> は WMMA (Wave Matrix Multiply Accumulate)、<em>CDNA</em> は MFMA (Matrix fused-multiply-add) と異なる命令になっている。<br>
+2つのとしては、<em>CDNA</em> は MFMA 命令を処理するための Matrix Core Unit (miSIMD, Machine Intelligence SIMD) と専用のベクタレジスタ AccVGPR (Accumulation Vector general-purpose register) を持つが、
+<em>RDNA</em> はそれらを持たない構成になっていることが挙げられる。<br>
+<em>RDNA (RDNA 3)</em> の WMMA 命令は通常のベクタレジスタを使用し、内部的にドット積命令を複数呼ぶ仕様となっている。</p>
+<ul>
+<li><a href="https://gpuopen.com/learn/wmma_on_rdna3/" rel="noopener noreferrer" target="_blank" title="https://gpuopen.com/learn/wmma_on_rdna3/">How to accelerate AI applications on RDNA 3 using WMMA - AMD GPUOpen</a></li>
+<li><a href="https://gpuopen.com/learn/amd-lab-notes/amd-lab-notes-matrix-cores-readme/" rel="noopener noreferrer" target="_blank" title="https://gpuopen.com/learn/amd-lab-notes/amd-lab-notes-matrix-cores-readme/">AMD matrix cores (amd-lab-notes) - AMD GPUOpen</a></li>
+</ul>
+<p>なお、AccVGPR は <em>CDNA 1/MI100/gfx908/Arcturus</em> では完全に MFMA 命令専用のベクタレジスタだったが、
+<em>CDNA 2/MI200/gfx90a/Aldebaran</em> ではベクタレジスタ全体を VGPR と AccVGPR の 2つのプールに分割する方式となり、また MFMA 命令の入出力も一部 VGPR を指定するようになった。<br>
+<em>CDNA 3/MI300/gfx94x</em> でも VGPR と AccVGPR に分割する方式は変わっていないが、ドキュメントを読む限りでは MFMA 命令の入出力に関してはどちらでもよく、ベクタレジスタの制限は無くなったように見える。</p>
+<ul>
+<li><a href="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/instinct-mi200-cdna2-instruction-set-architecture.pdf" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/instinct-mi200-cdna2-instruction-set-architecture.pdf">&ldquo;AMD Instinct MI200&rdquo; Instruction Set Architecture: Reference Guide - instinct-mi200-cdna2-instruction-set-architecture.pdf</a></li>
+<li><a href="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-mi300-cdna3-instruction-set-architecture.pdf" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-mi300-cdna3-instruction-set-architecture.pdf">&ldquo;AMD Instinct MI300&rdquo; Instruction Set Architecture: Reference Guide - amd-instinct-mi300-cdna3-instruction-set-architecture.pdf</a></li>
+</ul>
+<p>AMD の開発者が行列演算に関してサーバー向けを第一に考えているのであれば、<em>UDNA アーキテクチャ</em> では MFMA 命令を採用する可能性が高いように思う。<br>
+しかし <em>RDNA</em> から見れば追加の Matrix Core Unit に追加のベクタレジスタと、必要なハードウェアリソースが増えることとなる。<br>
+そのため、物理ベクタレジスタファイルサイズや Matrix Core Unit のスループットがゲーム向けとサーバー向けで異なることになるかもしれない。<br>
+既に <em>RDNA 3</em> では従来通りの物理ベクタレジスタを持つものと、それよりも 1.5倍多いもので分かれている。<br>
+VGPR と AccVGPR の 2つのプールに分割する方式については、MFMA 命令の制限が <em>CDNA 3</em> で無くなった (ように見える) ことから引き継ぐ必要はないかもしれないが、レジスタ割り当ての最適化に影響する可能性もある。</p>
+<h2 id="cache">キャッシュ<a href="#cache" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>AMD の Jack Huynh 氏はインタビューの中で、<em>RDNA</em> 側で犯したミスとして、メモリ階層、サブシステムの変更を挙げており、理由は最適化のマトリクスをリセットする必要があったこととしている。<br>
+ただ、これについて具体的に何を指すのか、自分にはわかっていない。</p>
+<blockquote>
+<p>So, one of the things we want to do is &hellip;we made some mistakes with the RDNA side; each time we change the memory hierarchy, the subsystem, it has to reset the matrix on the optimizations. I don&rsquo;t want to do that.
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://www.tomshardware.com/pc-components/cpus/amd-announces-unified-udna-gpu-architecture-bringing-rdna-and-cdna-together-to-take-on-nvidias-cuda-ecosystem" rel="noopener noreferrer" target="_blank" title="https://www.tomshardware.com/pc-components/cpus/amd-announces-unified-udna-gpu-architecture-bringing-rdna-and-cdna-together-to-take-on-nvidias-cuda-ecosystem">AMD announces unified UDNA GPU architecture — bringing RDNA and CDNA together to take on Nvidia&rsquo;s CUDA ecosystem | Tom&rsquo;s Hardware</a></cite>
+</div>
+</p>
+</blockquote>
+<p><em>RDNA</em> で Shader Array ごとに持つ GL1 キャッシュを導入し、<em>RDNA 2</em> ではさらに Infinity Cache を導入したことなのか、キャッシュ帯域の変更のことなのか、メモリスコープを指定する方式の変更のことなのか、設計レベルの話なのか。<br>
+メモリスコープの指定方式に関しては、<em>RDNA 1/2</em> では GLC (Globally Coherent), DLC (Device Level Coherent), SLC (System Level Coherent) の各ビットの組み合わせでスコープが異なり複雑だったが、<em>RDNA 3</em> でかなり簡略化された。<br>
+<em>RDNA 4/GFX12</em> では CU, SE (Shader Engine), Device/Agent, System を指定する、よりシンプルな方式となっている。</p>
+<ul>
+<li><a href="https://github.com/llvm/llvm-project/blob/main/llvm/docs/AMDGPUUsage.rst#memory-model-gfx12" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/blob/main/llvm/docs/AMDGPUUsage.rst#memory-model-gfx12">https://github.com/llvm/llvm-project/blob/main/llvm/docs/AMDGPUUsage.rst#memory-model-gfx12</a></li>
+</ul>
+<blockquote>
+<pre><code>       } else if (gfx_level &gt;= GFX11) {
+          /* GFX11 simplified it and exposes what is actually useful.
+           *
+           * GLC means device scope for loads only. (stores and atomics are always device scope)
+           * SLC means non-temporal for GL1 and GL2 caches. (GL1 = hit-evict, GL2 = stream, unavailable in SMEM)
+           * DLC means non-temporal for MALL. (noalloc, i.e. coherent bypass)
+           *
+           * GL0 doesn't have a non-temporal flag, so you always get LRU caching in CU scope.
+           */
+          if (access &amp; ACCESS_TYPE_LOAD &amp;&amp; scope_is_device)
+             result.value |= ac_glc;
+    
+          if (access &amp; ACCESS_NON_TEMPORAL &amp;&amp; !(access &amp; ACCESS_TYPE_SMEM))
+             result.value |= ac_slc;
+       } else if (gfx_level &gt;= GFX10) {
+          /* GFX10-10.3:
+           *
+           * VMEM and SMEM loads (SMEM only supports the first four):
+           * !GLC &amp;&amp; !DLC &amp;&amp; !SLC means CU scope          &lt;== use for normal loads with CU scope
+           *  GLC &amp;&amp; !DLC &amp;&amp; !SLC means SA scope
+           * !GLC &amp;&amp;  DLC &amp;&amp; !SLC means CU scope, GL1 bypass
+           *  GLC &amp;&amp;  DLC &amp;&amp; !SLC means device scope      &lt;== use for normal loads with device scope
+           * !GLC &amp;&amp; !DLC &amp;&amp;  SLC means CU scope, non-temporal (GL0 = GL1 = hit-evict, GL2 = stream)  &lt;== use for non-temporal loads with CU scope
+           *  GLC &amp;&amp; !DLC &amp;&amp;  SLC means SA scope, non-temporal (GL1 = hit-evict, GL2 = stream)
+           * !GLC &amp;&amp;  DLC &amp;&amp;  SLC means CU scope, GL0 non-temporal, GL1-GL2 coherent bypass (GL0 = hit-evict, GL1 = bypass, GL2 = noalloc)
+           *  GLC &amp;&amp;  DLC &amp;&amp;  SLC means device scope, GL2 coherent bypass (noalloc)  &lt;== use for non-temporal loads with device scope
+           *
+           * VMEM stores/atomics (stores are CU scope only if they overwrite the whole cache line,
+           * atomics are always device scope, GL1 is always bypassed):
+           * !GLC &amp;&amp; !DLC &amp;&amp; !SLC means CU scope          &lt;== use for normal stores with CU scope
+           *  GLC &amp;&amp; !DLC &amp;&amp; !SLC means device scope      &lt;== use for normal stores with device scope
+           * !GLC &amp;&amp;  DLC &amp;&amp; !SLC means CU scope, GL2 non-coherent bypass
+           *  GLC &amp;&amp;  DLC &amp;&amp; !SLC means device scope, GL2 non-coherent bypass
+           * !GLC &amp;&amp; !DLC &amp;&amp;  SLC means CU scope, GL2 non-temporal (stream)  &lt;== use for non-temporal stores with CU scope
+           *  GLC &amp;&amp; !DLC &amp;&amp;  SLC means device scope, GL2 non-temporal (stream)  &lt;== use for non-temporal stores with device scope
+           * !GLC &amp;&amp;  DLC &amp;&amp;  SLC means CU scope, GL2 coherent bypass (noalloc)
+           *  GLC &amp;&amp;  DLC &amp;&amp;  SLC means device scope, GL2 coherent bypass (noalloc)
+           *
+           * &quot;stream&quot; allows write combining in GL2. &quot;coherent bypass&quot; doesn't.
+           * &quot;non-coherent bypass&quot; doesn't guarantee ordering with any coherent stores.
+           */
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/amd/common/ac_shader_util.c" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/amd/common/ac_shader_util.c">https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/amd/common/ac_shader_util.c</a></cite>
+</div>
+
+</blockquote>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/22770" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/22770">aco,llvm: rewrite how GLC, DLC, SLC are set, don&rsquo;t treat ACCESS_NON_READABLE as ACCESS_COHERENT (!22770) · マージリクエスト · Mesa / mesa · GitLab</a></li>
+</ul>
+<h2 id="wave">Wave32/64<a href="#wave" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>Wave (SIMD ユニットが実行するスレッドの塊) 内のスレッド数の違いについては、<em>RDNA</em> の登場から何度も語られてきたことであろうことから、過去の資料や記事に任せてここでは詳細を省く。</p>
+<ul>
+<li><a href="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf" rel="noopener noreferrer" target="_blank" title="https://gpuopen.com/wp-content/uploads/2019/08/RDNA_Architecture_public.pdf">AMD PowerPoint- White Template - RDNA_Architecture_public.pdf</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/" title="/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/">RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&rsquo;s Dream</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2021/11/27/radeonsi-wave32-rework/" title="/posts/2021/11/27/radeonsi-wave32-rework/">RadeonSIドライバーで一部シェーダーを再び Wave32モードで実行するように | Coelacanth&rsquo;s Dream</a></li>
+</ul>
+<p><em>RDNA 1/2</em> では Wave32/64 のモードの違いによる性能特性は変わらないが、<em>RDNA 3</em> からは変わった。<br>
+<em>RDNA 3</em> では CU 内の SIMD32 ユニットが増えたため、<em>RDNA 1/2</em> より多くのケースで Wave32 より Wave64 の方が優れた性能を示すとされている。<br>
+また、<em>RDNA 3</em> では <em>RDNA 1/2</em> に実装されていた Sub-Vector Mode は削除された。</p>
+<blockquote>
+<pre><code>       /* Gfx10: Pixel shaders without interp instructions don't suffer from reduced interpolation
+        * performance in Wave32, so use Wave32. This helps Piano and Voloplosion.
+        *
+        * Gfx11: Prefer Wave64 to take advantage of doubled VALU performance.
+        */
+       if (sscreen-&gt;info.gfx_level &lt; GFX11 &amp;&amp; stage == MESA_SHADER_FRAGMENT &amp;&amp; !info-&gt;num_inputs)
+          return 32;
+    
+       /* Gfx10: There are a few very rare cases where VS is better with Wave32, and there are no
+        * known cases where Wave64 is better.
+        *
+        * Wave32 is disabled for GFX10 when culling is active as a workaround for #6457. I don't
+        * know why this helps.
+        *
+        * Gfx11: Prefer Wave64 because it's slightly better than Wave32.
+        */
+       if (stage &lt;= MESA_SHADER_GEOMETRY &amp;&amp;
+           (sscreen-&gt;info.gfx_level == GFX10 || sscreen-&gt;info.gfx_level == GFX10_3) &amp;&amp;
+           !(sscreen-&gt;info.gfx_level == GFX10 &amp;&amp; si_shader_culling_enabled(shader)))
+          return 32;
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/gallium/drivers/radeonsi/si_state_shaders.cpp" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/gallium/drivers/radeonsi/si_state_shaders.cpp">https://gitlab.freedesktop.org/mesa/mesa/-/blob/main/src/gallium/drivers/radeonsi/si_state_shaders.cpp</a></cite>
+</div>
+
+</blockquote>
+<ul>
+<li><a href="https://www.4gamer.net/games/660/G066019/20221212087/" rel="noopener noreferrer" target="_blank" title="https://www.4gamer.net/games/660/G066019/20221212087/">西川善司の3DGE：Radeon RX 7900 XTX/XTは何が変わったのか。大幅な性能向上を遂げたNavi 31世代の秘密を探る</a></li>
+</ul>
+<p>統合にあたって重要なのは Wave32/64 モードより、CU 内の SIMD ユニット幅と命令の発行方式かもしれない。<br>
+<em>RDNA 1/2</em> は SIMD32 で Wave32 を 1回で、Wave64 を 2回に分けて発行する方式であり、<em>RDNA 3</em> は 2xSIMD32 で Wave32 (VOPD, Dual issue) を 1回、Wave64 を 1回で発行する方式する。 (VOPD 命令以外を Wave32 で発行した場合は不明)<br>
+そして <em>GCN, CDNA</em> は SIMD16 で Wave64 を 4回に分けて発行する方式となる。<br>
+<em>RDNA</em> は低レイテンシを、<em>GCN, CDNA</em> は SIMD ユニットの高使用率を意識した実行方式となっている。</p>
+<p>実行方式は <em>UDNA</em> でどのように統合するのか、特に気になる点である。<br>
+ゲーム向けとサーバー向けで、SIMD ユニット幅と CU 内の数を変えてしまっては統合する意味が薄れてしまうようにも思う。</p>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna/" title="RDNA">#RDNA</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cdna/" title="CDNA">#CDNA</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/udna/" title="UDNA">#UDNA</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2024/11/22/rdna-cdna-udna.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.111.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna/" class="menu-cat-tag-lower">CDNA</a><a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-cat-tag-lower">RDNA</a><a href="https://www.coelacanth-dream.com/tags/udna/" class="menu-cat-tag-lower">UDNA</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna/" class="menu-cat-tag-lower">CDNA</a><a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-cat-tag-lower">RDNA</a><a href="https://www.coelacanth-dream.com/tags/udna/" class="menu-cat-tag-lower">UDNA</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
