@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GPU を起こさないモニタリング | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2024/12/04/gpu-monitoring/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GPU を起こさないモニタリング | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="自作の AMD GPU 向けモニタリングツール amdgpu_top で、v0.9.0 で dGPU が D3 ステートに移行可能に、v0.9.2 で D3 の dGPU を起こさずに (D0 にせずに) ツール側の起動と初期化を可能にする作">
+  <meta property="og:description" content="自作の AMD GPU 向けモニタリングツール amdgpu_top で、v0.9.0 で dGPU が D3 ステートに移行可能に、v0.9.2 で D3 の dGPU を起こさずに (D0 にせずに) ツール側の起動と初期化を可能にする作"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, Rust">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 55%,#0003 55%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2024-12-04","dateModified":"2024-12-04","datePublished":"2024-12-04","headline":"GPU を起こさないモニタリング","image":"https://www.coelacanth-dream.com/icon.png","name":"GPU を起こさないモニタリング"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">GPU を起こさないモニタリング</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2024-12-04T10:04:00+09:00">Post: 2024-12-04 10:04:00</time>
+    <aside class="update">Update: 2024-12-04 12:12:36</aside>
+  </aside><p>自作の AMD GPU 向けモニタリングツール <code>amdgpu_top</code> で、v0.9.0 で dGPU が D3 ステートに移行可能に、v0.9.2 で D3 の dGPU を起こさずに (D0 にせずに) ツール側の起動と初期化を可能にする作業をした。その備忘録。<br>
+ここでの解説は個人的な限られた検証によるものの含まれる。</p>
+<h2 id="state">PCI デバイスのステート<a href="#state" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>PCI デバイスには複数の電源状態 (D0, D1, D2, D3hot/D3cold) があり、かなりざっくり言えば D0 が起動状態 (フル)、D3hot/D3cold は待機/停止状態とされている。</p>
+<ul>
+<li><a href="https://docs.kernel.org/power/pci.html" rel="noopener noreferrer" target="_blank" title="https://docs.kernel.org/power/pci.html">PCI Power Management — The Linux Kernel documentation</a></li>
+<li><a href="https://learn.microsoft.com/ja-jp/windows-hardware/drivers/kernel/device-power-states" rel="noopener noreferrer" target="_blank" title="https://learn.microsoft.com/ja-jp/windows-hardware/drivers/kernel/device-power-states">デバイスの電源状態 - Windows drivers | Microsoft Learn</a></li>
+<li><a href="https://pc.watch.impress.co.jp/docs/2009/0318/interface04.htm" rel="noopener noreferrer" target="_blank" title="https://pc.watch.impress.co.jp/docs/2009/0318/interface04.htm">【短期集中連載】大原雄介の最新インターフェイス動向</a></li>
+</ul>
+<p>一般的なデスクトップ PC の構成で見られる dGPU 側の映像出力を使用している場合では dGPU が D3hot/D3cold に移行することはないが、<br>
+APU/iGPU と dGPU を組み合わせたノート PC でよくある構成で、APU/iGPU 側の映像出力を使用しており、かつ dGPU を使用するアプリケーションが起動していない場合は dGPU が D3hot/D3cold に移行可能となる。</p>
+<p>D3cold/D3hot ステートの dGPU は様々な理由で起動 (D0 への移行) する。<br>
+一般のケースではゲームやアプリケーションからの使用によって起動する。ただ厳密にはデバイスハンドルの初期化に必要な fd (file descriptor) を取得しただけでも起動するし、一部 sysfs の読み取りや hwmon 経由のセンサー値の読み取りだけでも起動する。<br>
+これはモニタリングツール側からするとかなり厄介で、何の回避策も実装していないとモニタリングツール自体が dGPU を起動、そして D3hot/D3cold への移行を妨害し、消費電力を増やす最大の要因となってしまう。<br>
+これはノート PC では特に大きな問題となる。</p>
+<p>いくつもの GPU モニタリングツールでこの問題が報告されているが、複数のベンダーの GPU のサポート同時に、D3hot/D3cold ステートのデバイスも対象に含めると複雑度が増すためか、対応が中々進まないのが現状となる。<br>
+その中で <code>amdgpu_top</code> は名の通り AMD GPU のみを対象にしたモニタリングツールであるため (最近 XDNA NPU のサポートを追加したが)、比較的簡単に対応することができた。</p>
+<ul>
+<li><a href="https://github.com/Umio-Yasuno/amdgpu_top/issues/90" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/amdgpu_top/issues/90">PRIME Reporting · Issue #90 · Umio-Yasuno/amdgpu_top</a></li>
+<li><a href="https://github.com/Syllo/nvtop/issues/230" rel="noopener noreferrer" target="_blank" title="https://github.com/Syllo/nvtop/issues/230">nvtop keeps otherwise-idle dGPU awake, significantly increasing system power consumption · Issue #230 · Syllo/nvtop</a>
+<ul>
+<li><a href="https://gitlab.com/mission-center-devs/mission-center/-/issues/30" rel="noopener noreferrer" target="_blank" title="https://gitlab.com/mission-center-devs/mission-center/-/issues/30">GPU stats keep Nvidia/AMD dGPU powered up and draining power (#30) · イシュー · mission-center-devs / Mission Center · GitLab</a></li>
+</ul>
+</li>
+<li><a href="https://github.com/nokyan/resources/issues/207" rel="noopener noreferrer" target="_blank" title="https://github.com/nokyan/resources/issues/207">Nvidia RTD3 Power Management Unawareness Bug in Hybrid Graphics Laptops · Issue #207 · nokyan/resources</a></li>
+<li><a href="https://github.com/ClementTsang/bottom/issues/1291" rel="noopener noreferrer" target="_blank" title="https://github.com/ClementTsang/bottom/issues/1291">Polling Nvidia temperature keeps GPU awake · Issue #1291 · ClementTsang/bottom</a></li>
+</ul>
+<h2 id="d3">dGPU を D3hot/D3cold に移行可能にする<a href="#d3" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>まず <code>amdgpu_top</code> を起動した状態でも dGPU が D3hot/D3cold に移行可能に、また dGPU がゲーム等によって起動したらモニタリングを再開する作業から始めた。<br>
+自分の PC は CPU が Ryzen 5 5600G APU であるため、検証環境を用意することは簡単だった。</p>
+<p>D3hot/D3cold に移行可能にするには、一部の sysfs とセンサー値の読み取りを停止すればいいが、その基準を決める必要がある。<br>
+単に dGPU 全体の使用率が 0% の時に停止する方法でもいいかもしれないが、ブラウジングのように断続的に GPU 負荷が発生するものだとうまくいかない場合がある。<br>
+また、読み取りを停止したことをユーザーに通知することを考えると、0% になった途端に停止するのはユーザーにとって使いづらいだろう。<br>
+デバイスの電源状態は <code>&lt;sysfs path&gt;/power/</code> 下にある <code>runtime_status</code> から取得できるが、モニタリングツール自体が D3hot/D3cold への移行を妨害するため、基準には使うことができない。</p>
+<p>そこで <code>amdgpu_top</code> では GPU を使用しているプロセス数で判断することとした。<br>
+<code>amdgpu_top</code> は GPU プロセスの検出と fdinfo を利用したプロセスごとの GPU 使用率の取得に対応している。<br>
+dGPU を使用するプロセスが 1つだけの場合、つまり <code>amdgpu_top</code> だけの場合に sysfs とセンサー値の読み取りを停止するようにした。<br>
+またデバイスハンドルも解放するようにしたが、D3hot/D3cold への移行だけが目的なら解放する必要はないかもしれない。自分は実装において表現を分かりやすくするためにした。<br>
+ユーザーへの通知については、センサー値等は <code>Option&lt;T&gt;</code> で表現していたため、<code>None</code> の場合の表示を追加するだけでよかった。</p>
+<p>この基準はサーバー用途等の一部のケースではうまく機能しない可能性はあるが、一般的なデスクトップ用途であれば充分なはずだ。</p>
+<p>モニタリングを再開する基準については、dGPU を使用するプロセスが 2つ以上、かつ <code>&lt;sysfs path&gt;/power/runtime_status</code> が <code>active</code> となっている場合とした。</p>
+<h2 id="wakeup">GPU を起こさずにモニタリングする<a href="#wakeup" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>D3hot/D3cold ステートの GPU を起こさずにモニタリングツールを起動するには、GPU 情報をまとめた構造体の初期化を後回しにして、かつ D0 ステートになっているか定期的にチェックするデバイスとして登録する必要がある。</p>
+<p><code>amdgpu_top</code> には TUI, SMI, GUI, JSON の複数のモードがあるが、結局それぞれに処理を実装して対応した。<br>
+D3hot/D3cold に移行可能にするだけなら、複数のモードで共通する部分の変更で対応が済んだが、アプリケーションの初期化を後回しにするため、それぞれでの対応が必要だった。</p>
+<p>AMD GPU は DeviceID と RevisionID だけでデバイス名を判別できるため、何のデバイスが D3hot/D3cold ステートかわかりやすくすることができたが、libdrm、OpenGL や Vulkan といった API を経由してデバイス名を取得するアプリケーションでは難しいだろう。</p>
+<p>モニタリングツール自体がハードウェアのリソースや電力を多く消費しないようにする、というのは当たり前の話に思えるかもしれないが、デバイスの電源状態が絡むと複雑になり、実装が難しくなりやすい。</p>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rust/" title="Rust">#Rust</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2024/12/04/gpu-monitoring.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.111.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/rust/" class="menu-cat-tag-lower">Rust</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/diary/" class="menu-cat-tag-lower">Diary</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/note/" class="menu-cat-tag-lower">Note</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/rust/" class="menu-cat-tag-lower">Rust</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
