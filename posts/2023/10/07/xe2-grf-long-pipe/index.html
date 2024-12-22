@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-10-07","dateModified":"2023-10-07","datePublished":"2023-10-07","headline":"レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2","image":"https://www.coelacanth-dream.com/icon.png","name":"レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2023-10-07","dateModified":"2024-12-22","datePublished":"2023-10-07","headline":"レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2","image":"https://www.coelacanth-dream.com/icon.png","name":"レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2023-10-07T14:54:26+09:00">Post: 2023-10-07 14:54:26</time>
-    <aside class="update">Update: 2023-10-07 17:57:52</aside>
+    <aside class="update">Update: 2024-12-22 17:45:17</aside>
   </aside><p>Intel GPU オープンソースドライバーでは現在、Kernel Mode Driver (i915, intel-xe)、User Mode Driver (Iris [OpenGL], Anv [Vulkan]) ともに、<em>Lunar Lake</em> のサポート作業が進められている。<br>
 <em>Lunar Lake</em> は GPU コアに <em>Xe2 アーキテクチャ</em>、ディスプレイエンジンに <em>Xe2-LPD</em> を採用するとされている。</p>
 <ul>
@@ -63,20 +63,10 @@ Intel は <em>Xe-HPC アーキテクチャ</em> の EU 内部構成等に関す�
 AMD GPU における RDNA 系と CDNA 系のように、FP64 演算性能や行列演算専用命令の有無で差別化するのだろうか。</p>
 <h2 id="grf">レジスタファイルサイズが倍に<a href="#grf" class="head-cur-link" aria-hidden></a>
 </h2>
-<p><em>Xe2 アーキテクチャ</em> では EU あたりのレジスタファイルサイズが倍となる。</p>
 <p><em>Xe-LP アーキテクチャ</em> は EU あたり 7スレッド、スレッドあたりのレジスタファイルは 128エントリ (4KiB)、EU 全体では 28KiB のレジスタファイルを持つ構成となっていた。<br>
-それが <em>Xe-HPG アーキテクチャ</em> では EU あたり 8スレッドをサポートするようになり、それにあわせてレジスタファイルも触れたため、EU 全体では 32KiB のレジスタファイルを持つようになった。</p>
-<p>変更内容から、<em>Xe2 アーキテクチャ</em> ではスレッドあたりのレジスタファイルが 256エントリになったことでレジスタファイルサイズが倍になったのだと思われる。</p>
-<blockquote>
-<pre><code>    -/** Number of general purpose registers (VS, WM, etc) */
-    +/** Size of general purpose register space in REG_SIZE units */
-     #define BRW_MAX_GRF 128
-    +#define XE2_MAX_GRF 256
-</code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25514" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25514">intel: Second round of compiler patches enabling Xe2 platforms: SWSB synchronization support. (!25514) · マージリクエスト · Mesa / mesa · GitLab</a></cite>
-</div>
-
-</blockquote>
+それが <em>Xe-HPG アーキテクチャ</em> では EU あたり 8スレッドをサポートするようになり、それにあわせてレジスタファイルも増えたため、EU 全体では 32KiB のレジスタファイルを持つようになった。<br>
+<em>Xe-HPC アーキテクチャ</em> ではエントリあたりのサイズが 64Byte となり、EU 全体では 64KiB を持つ。<br>
+レジスタファイルサイズが倍ということから、ここにおいても <em>Xe-HPC アーキテクチャ</em> と同様の変更を <em>Xe2 アーキテクチャ</em> で施した可能性がある。</p>
 <ul>
 <li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25020" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/25020">intel/compiler: initial compiler changes for xe2/lnl register size change; adds reg_unit() (!25020) · マージリクエスト · Mesa / mesa · GitLab</a></li>
 </ul>
