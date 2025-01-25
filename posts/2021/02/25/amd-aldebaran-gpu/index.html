@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2021-02-25","dateModified":"2021-06-07","datePublished":"2021-02-25","headline":"Linux Kernel に 「Aldebaran」 GPU をサポートするパッチが投稿される　―― CDNA 2/MI200?","image":"https://www.coelacanth-dream.com/icon.png","name":"Linux Kernel に 「Aldebaran」 GPU をサポートするパッチが投稿される　―― CDNA 2/MI200?"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2021-02-25","dateModified":"2025-01-26","datePublished":"2021-02-25","headline":"Linux Kernel に 「Aldebaran」 GPU をサポートするパッチが投稿される　―― CDNA 2/MI200?","image":"https://www.coelacanth-dream.com/icon.png","name":"Linux Kernel に 「Aldebaran」 GPU をサポートするパッチが投稿される　―― CDNA 2/MI200?"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2021-02-25T13:40:22+09:00">Post: 2021-02-25 13:40:22</time>
-    <aside class="update">Update: 2021-06-07 09:15:12</aside>
+    <aside class="update">Update: 2025-01-26 07:28:40</aside>
   </aside><p>新たな AMD GPU、<em>Aldebaran</em> をサポートするためのパッチ 159個が Linux Kernel (amd-gfx) に投稿された。</p>
 <ul>
 <li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059694.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059694.html">[PATCH 000/159] Aldebaran support</a></li>
@@ -158,12 +158,11 @@
 <h2 id="removed-gds">Aldebaran では GDS が削除<a href="#removed-gds" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>AMD GPUアーキテクチャでは、全ての CU がアクセス可能なオンチップメモリ、GDS (Global Data Share) を持っているが、<em>Aldebaran</em> では GDS が削除されている。<br>
-GDS はスレッド間でのデータ共有やソフトウェアが用いるキャッシュ等の用途がある。</p>
+GDS はスレッド間でのデータ共有やソフトウェアが用いるキャッシュ、アトミック操作等の用途がある。</p>
 <ul>
 <li><a href="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059758.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2021-February/059758.html">[PATCH 072/159] drm/amdgpu: init gds for aldebaran</a></li>
 </ul>
-<p>GDS を削除した理由としてはアトミック操作/使用のためとしている。<br>
-これだけではよく分からないが、1-GPU に搭載される CU が増えるにつれ、GDS ではなく増やした L2キャッシュを利用した方が良い、となったのかもしれない。<br>
+<p>GDS を削除した理由については触れられていないが、1-GPU に搭載される CU が増えるにつれ、GDS ではなく増やした L2キャッシュを利用した方が良い、となったのかもしれない。<br>
 それと、追加された実行フローにおける新モード <em>TgSplit</em> の存在が関係している可能性もある。</p>
 <p>そして今になって調べて気付いたが、GDS の変更は <em>Arcturus/MI100</em> の時点で行われていた。<br>
 <em>Vega10/Vega20</em> は GDS 64KB (32バンク) を持っていたが、<em>Arcturus/MI100</em> では 4KB (4バンク) に減らされている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>帯域やバンク数は資料に記述されなくなった。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>
