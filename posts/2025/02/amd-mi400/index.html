@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2025-02-02","dateModified":"2025-02-02","datePublished":"2025-02-02","headline":"AMD MI400 のチップレット構成?","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD MI400 のチップレット構成?"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2025-02-02","dateModified":"2025-02-04","datePublished":"2025-02-02","headline":"AMD MI400 のチップレット構成?","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD MI400 のチップレット構成?"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -39,21 +39,22 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2025-02-02T13:06:30+09:00">Post: 2025-02-02 13:06:30</time>
-    <aside class="update">Update: 2025-02-02 14:04:23</aside>
-  </aside><p>AMD の Shaoyun Liu 氏により、amd-gfx メーリングリストに MES (MicroEngine Scheduler) v12 向けの API ヘッダーを更新するパッチが投稿されたのだが、そこで MI400 のチップレット構成についてのコメントがあった。</p>
+    <aside class="update">Update: 2025-02-04 02:45:09</aside>
+  </aside><p>AMD の Shaoyun Liu 氏により、amd-gfx メーリングリストに MES (MicroEngine Scheduler) v12 向けの API ヘッダーを更新するパッチが投稿されたのだが、そこで MI400 のチップレット構成についてのコメントがあった。<br>
+自分が知っている限り、MI400 に関しては CDNA &ldquo;Next&rdquo; アーキテクチャを採用し、2026年に登場予定ということが発表されているのみで、具体的な構成は一切発表されていなかったはずである。</p>
 <ul>
 <li><a href="https://lists.freedesktop.org/archives/amd-gfx/2025-February/119450.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2025-February/119450.html">[PATCH] drm/amd/include : Update MES v12 API header according to new MES features</a></li>
 </ul>
 <p>パッチはおそらくレジスタの書き込む対象となるダイ (チップレット) を指定可能にするためのものと思われる。<br>
-そしてコメントでは MI400 の場合、オプションの指定する値とダイの ID がどのように結び付けられているかを解説している。<br>
+そしてコメントでは MI400 の場合、オプションの指定する値とダイの ID がどのように結び付けられているかが解説されている。<br>
 コメントによれば、MI400 は AID (Active Interposer Die) ごとに XCD (Accelerated Compute Die) を 4基搭載し、全体では AID 2基、XCD 8基の構成になるとされている。<br>
 AMD MI300 では AID ごとに XCD 2基、全体では AID 4基、XCD 8基の構成となっており、MI400 では AID が大型化している可能性がある。<br>
-また、AID に搭載される XCD の数が増えたことで、同一の AID に搭載された XCD 間の通信の高速化や、チップレット外に出る通信が減ることによる消費電力の低下といった利点はあるだろう。<br>
-しかし、もしも MI300 と同様に CPU Complex Die (CCD) を XCD 用 AID と別の AID に搭載する形式だとすると、搭載可能な XCD が最大 4基となり、MI300A APU から XCD の数自体は減ることとなる。</p>
-<p>MI400 ではダイの種類に MID (Multimedia IO Die) が追加される。<br>
-名前からしておそらく、MI300 では AID に実装されていたマルチメディアエンジンを別ダイに分割したのだろう。<br>
-他 I/O も MID に移されている可能性はある。<br>
-コメントでは MID を最大 2基としており、AID ごとに MID 1基を搭載する構成と思われる。</p>
+大型化によってコストは増えるが、AID に搭載される XCD の数が増えたことで、同一の AID に搭載された XCD 間の通信の高速化や、チップレット外に出る通信が減ることによる消費電力の低下といった利点はあるだろう。</p>
+<p>しかし、もしも MI300 と同様に CPU Complex Die (CCD) を XCD 用 AID と別の AID に搭載する形式だとすると、搭載可能な XCD が最大 4基となり、MI300A APU から XCD の数自体は減ることとなる。</p>
+<p>そして、MI400 ではダイの種類に MID (Multimedia IO Die) が追加される。<br>
+名前からして MI300 では AID に実装されていたマルチメディアエンジンを別ダイに分割したのだろう。他 I/O も MID に移されている可能性はある。<br>
+コメントでは MID を最大 2基としており、AID ごとに MID 1基を搭載する構成と思われる。<br>
+まだ MI400 の各種 IP のサポートに関係するパッチは公開されていないが、MI300 等はメディアエンジンにエンコーダーを持たず、デコーダーに重点を置いた構成を取っている。</p>
 <blockquote>
 <pre><code>    +/*
     + * RRMT(Register Remapping Table), allow the firmware to modify the upper address
@@ -87,6 +88,14 @@ AMD MI300 では AID ごとに XCD 2基、全体では AID 4基、XCD 8基の構
 </div>
 
 </blockquote>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://ir.amd.com/news-events/press-releases/detail/1201/amd-accelerates-pace-of-data-center-ai-innovation-and" rel="noopener noreferrer" target="_blank" title="https://ir.amd.com/news-events/press-releases/detail/1201/amd-accelerates-pace-of-data-center-ai-innovation-and">AMD Accelerates Pace of Data Center AI Innovation and Leadership with Expanded AMD Instinct GPU Roadmap :: Advanced Micro Devices, Inc. (AMD)</a></li>
+<li><a href="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/white-papers/amd-cdna-3-white-paper.pdf" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/white-papers/amd-cdna-3-white-paper.pdf">amd-cdna-3-white-paper.pdf</a></li>
+</ul>
+</section>
+
 </article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cdna/" title="CDNA">#CDNA</a></nav><aside class="article-bottom-misc delay-page">
   <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2025/02/amd-mi400.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
 </aside>
