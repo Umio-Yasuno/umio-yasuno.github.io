@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2025-02-09T10:12:17+09:00">Post: 2025-02-09 10:12:17</time>
-    <aside class="update">Update: 2025-02-09 13:43:59</aside>
+    <aside class="update">Update: 2025-02-09 23:08:12</aside>
   </aside><p><em>RDNA 3/GFX11 アーキテクチャ</em> からサポートされている <code>WMMA (Wave Matrix Multiply-accumulate)</code> 命令だが、<em>RDNA 4/GFX12 アーキテクチャ</em> でも引き続きサポートしており、そして対応フォーマットの追加や対応する行列レイアウトの追加、必要なベクタレジスタサイズの削減などが実装されている。</p>
 <h2 id="vgpr">使用ベクタレジスタの削減<a href="#vgpr" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -109,8 +109,9 @@
 <p><em>RDNA 3/GFX11</em> では <code>WMMA</code> 命令の入力フォーマットに F16/BF16/IU8/IU4、出力フォーマットに F32/F16/BF16/I32 をサポートし、行列のレイアウトは入出力ともに 16x16 のみをサポートしていた。<br>
 <em>RDNA 4/GFX12</em> では入力フォーマットに FP8 (1 bit sign, 4 bit exponent, 3 bit mantissa) と BF8 (1 bit sign, 5 bit exponent, 2 bit mantissa) のサポートが追加され、<br>
 入力フォーマットが IU4 の場合は 16x16x32 (A: 16x32, B: 32x16, C: 16x16) のレイアウトもサポートする。</p>
+<p><em>RDNA 4/GFX12</em> がサポートする FP8/BF8 は OCP (Open Compute Project) 準拠のフォーマットであり、<em>MI300/CDNA 3</em> がサポートする FP8/BF8 とは異なって無限大 (Inf) をサポートしている。</p>
 <p>また、疎行列を入力に取る <code>SWMMAC (Wave Matrix(sparse) Multiply-Accumulate)</code> 命令のサポートが追加された。<br>
-<code>SWMMAC</code> 命令の対応フォーマットは <code>WMMA</code> 命令と同じであり、行列のレイアウトは 16x16x32 (A: sparse 32x16, B: 16x32, C: 16x16) と、入力フォーマットが IU4 の場合は 16x16x64 (A: sparse 16x64, B: 64x16, C: 16x16) をサポートする。</p>
+<code>SWMMAC</code> 命令の対応フォーマットは <code>WMMA</code> 命令と同じであり、行列のレイアウトは <em>CDNA</em> 系の <code>SMFMAC</code> 命令と同じだとすると 16x16x32 (A: sparse 32x16, B: 16x32, C: 16x16)、入力フォーマットが IU4 の場合は 16x16x64 (A: sparse 16x64, B: 64x16, C: 16x16) をサポートする。</p>
 <p><em>RDNA 4/GFX12</em> でも <em>RDNA 3/GFX11</em> の内部的に複数のドット積命令に分解して発行する形式を継続するのか、それとも <em>CDNA</em> 系のように専用の行列演算ユニットを実装するのかまだ不明である。<br>
 <em>RDNA 3/GFX11</em> から行列演算の IPC が向上しているのかについても、<em>RDNA 4/GFX12</em> におけるサイクル数が公開されていないため不明。<br>
 しかし、モデルのサイズや VRAM の使用サイズの削減に役立つ FP8/BF8 フォーマットのサポート、疎行列のサポート、必要な VGPR の削減と <em>RDNA 3/GFX11</em> から進化しているのは確かである。</p>
@@ -124,6 +125,7 @@
 <li><a href="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-mi300-cdna3-instruction-set-architecture.pdf" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-mi300-cdna3-instruction-set-architecture.pdf">&ldquo;AMD Instinct MI300&rdquo; Instruction Set Architecture: Reference Guide - amd-instinct-mi300-cdna3-instruction-set-architecture.pdf</a></li>
 <li><a href="https://rocm.docs.amd.com/projects/rocprofiler-compute/en/latest/conceptual/pipeline-descriptions.html" rel="noopener noreferrer" target="_blank" title="https://rocm.docs.amd.com/projects/rocprofiler-compute/en/latest/conceptual/pipeline-descriptions.html">Pipeline descriptions — ROCm Compute Profiler 3.0.0 documentation</a></li>
 <li><a href="https://rocm.docs.amd.com/projects/HIP/en/latest/reference/fp8_numbers.html" rel="noopener noreferrer" target="_blank" title="https://rocm.docs.amd.com/projects/HIP/en/latest/reference/fp8_numbers.html">FP8 Numbers — HIP 6.3.42134 Documentation</a></li>
+<li><a href="https://www.opencompute.org/documents/ocp-8-bit-floating-point-specification-ofp8-revision-1-0-2023-12-01-pdf-1" rel="noopener noreferrer" target="_blank" title="https://www.opencompute.org/documents/ocp-8-bit-floating-point-specification-ofp8-revision-1-0-2023-12-01-pdf-1">OCP 8-bit Floating Point Specification (OFP8) Revision 1.0 - OCP 8-bit Floating Point Specification (OFP8) Revision 1.0 2023-12-01.pdf</a></li>
 </ul>
 </section>
 
