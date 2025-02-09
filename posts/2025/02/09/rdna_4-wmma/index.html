@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RDNA 4 における WMMA 命令と改善 | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2025/02/09/rdna_4-wmma/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RDNA 4 における WMMA 命令と改善 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="RDNA 3/GFX11 アーキテクチャ からサポートされている WMMA (Wave Matrix Multiply-accumulate) 命令だが、RDNA 4/GFX12 アーキテクチャ でも引き続きサポートしており、そして対応フォーマットの追加や対応する行列レイア">
+  <meta property="og:description" content="RDNA 3/GFX11 アーキテクチャ からサポートされている WMMA (Wave Matrix Multiply-accumulate) 命令だが、RDNA 4/GFX12 アーキテクチャ でも引き続きサポートしており、そして対応フォーマットの追加や対応する行列レイア"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, RDNA_4, GFX12, RDNA_3, GFX11">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 84%,#0004 84%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2025-02-09","dateModified":"2025-02-09","datePublished":"2025-02-09","headline":"RDNA 4 における WMMA 命令と改善","image":"https://www.coelacanth-dream.com/icon.png","name":"RDNA 4 における WMMA 命令と改善"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">RDNA 4 における WMMA 命令と改善</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2025-02-09T10:12:17+09:00">Post: 2025-02-09 10:12:17</time>
+    <aside class="update">Update: 2025-02-09 13:43:59</aside>
+  </aside><p><em>RDNA 3/GFX11 アーキテクチャ</em> からサポートされている <code>WMMA (Wave Matrix Multiply-accumulate)</code> 命令だが、<em>RDNA 4/GFX12 アーキテクチャ</em> でも引き続きサポートしており、そして対応フォーマットの追加や対応する行列レイアウトの追加、必要なベクタレジスタサイズの削減などが実装されている。</p>
+<h2 id="vgpr">使用ベクタレジスタの削減<a href="#vgpr" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>RDNA 3/GFX11</em> における <code>WMMA</code> 命令は内部的に複数のドット積命令に分解して実行する方式となっていた。<br>
+また、性能を最大化するには積算に使われる入力行列 A, B の配置を工夫する必要があり、thread/work-item/vector-lane 0-15 のデータを 16-31 にも複製する必要があった。これは Wave32 モードの場合であり、Wave64 の場合は 0-31 のデータを 32-63 に複製する必要がある。<br>
+<em>RDNA 3/GFX11</em> では 32-bit VGPR (ベクタレジスタ) を 2つの 16-bit VGPR に分割する機能 (16-bit VGPR-pairs) を持ち、また <code>WMMA</code> 命令は入力行列 A, B に F16/BF16/IU8 のフォーマットのみをサポートしている。<br>
+そのため、理論上は 16x16 の行列は 4 VGPR (4 [vgpr]* 2 [16-bit pair] * 32 [lane]) に収まるはずだが、先の理由のため 8 VGPR を割り当てる必要があった。<br>
+また、アキュムレータとなる行列 C も出力フォーマットが F16/BF16 の場合でも 8 VGPR を必要とする。<br>
+これは <code>WMMA</code> 命令では設定したフラグによって 32-bit VGPR の上半分と下半分のどちらに結果を格納するか決まるためとされている。</p>
+<p>それが <em>RDNA 4/GFX12</em> では一部データを複製する必要がなくなり、行列 A, B が 4 VGPR (Wave32) に収まるようになった。<br>
+また、結果の格納に関するフラグを設定する必要もなくなり、行列 C も 4 VGPR に収まるようになった。</p>
+<blockquote>
+<pre><code>    +/* This pass lowers cooperative matrix.
+    + *
+    + * On GFX11, the A&amp;B matrices needs to be replicated, lanes 0..15 are replicated
+    + * to 16..31 and for wave64 also into lanes 32..47 and 48..63. A&amp;B matrices are
+    + * always vectors of 16 elements.
+    + *
+    + * On GFX12, there is no data replication and the matrices layout is described
+    + * as below:
+    + *
+    + * Wave32:
+    + * A&amp;B:
+    + *         0..15  | 16..31 (lanes)
+    + * v0 lo:  row 0  | row 4
+    + * v0 hi:  row 1  | row 5
+    + * v1 lo:  row 2  | row 6
+    + * v1 hi:  row 3  | row 7
+    + * v2 lo:  row 8  | row 12
+    + * v2 hi:  row 9  | row 13
+    + * v3 lo:  row 10 | row 14
+    + * v3 hi:  row 11 | row 15
+    + *
+    + * C:
+    + *         0..15  | 16..31 (lanes)
+    + * v0 lo:  row 0  | row 8
+    + * v0 hi:  row 1  | row 9
+    + * v1 lo:  row 2  | row 10
+    + * v1 hi:  row 3  | row 11
+    + * v2 lo:  row 4  | row 12
+    + * v2 hi:  row 5  | row 13
+    + * v3 lo:  row 6  | row 14
+    + * v3 hi:  row 7  | row 15
+    + *
+    + * Wave64:
+    + * A&amp;B:
+    + *         0..15 | 16..31 | 32..47 | 48..63 (lanes)
+    + * v0 lo:  row 0 | row 4  | row 8  | row 12
+    + * v0 hi:  row 1 | row 5  | row 9  | row 13
+    + * v1 lo:  row 2 | row 6  | row 10 | row 14
+    + * v1 hi:  row 3 | row 7  | row 11 | row 15
+    + *
+    + * C:
+    + *         0..15 | 16..31 | 32..47 | 48..63 (lanes)
+    + * v0 lo:  row 0 | row 8  | row 4  | row 12
+    + * v0 hi:  row 1 | row 9  | row 5  | row 13
+    + * v1 lo:  row 2 | row 10 | row 6  | row 14
+    + * v1 hi:  row 3 | row 11 | row 7  | row 15
+    + */
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33378" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33378">radv: add support for VK_KHR_cooperative_matrix on GFX12 (!33378) · マージリクエスト · Mesa / mesa · GitLab</a></cite>
+</div>
+
+</blockquote>
+<h2 id="format-layout">対応フォーマットとレイアウト<a href="#format-layout" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>RDNA 3/GFX11</em> では <code>WMMA</code> 命令の入力フォーマットに F16/BF16/IU8/IU4、出力フォーマットに F32/F16/BF16/I32 をサポートし、行列のレイアウトは入出力ともに 16x16 のみをサポートしていた。<br>
+<em>RDNA 4/GFX12</em> では入力フォーマットに FP8 (1 bit sign, 4 bit exponent, 3 bit mantissa) と BF8 (1 bit sign, 5 bit exponent, 2 bit mantissa) のサポートが追加され、<br>
+入力フォーマットが IU4 の場合は 16x16x32 (A: 16x32, B: 32x16, C: 16x16) のレイアウトもサポートする。</p>
+<p>また、疎行列を入力に取る <code>SWMMAC (Wave Matrix(sparse) Multiply-Accumulate)</code> 命令のサポートが追加された。<br>
+<code>SWMMAC</code> 命令の対応フォーマットは <code>WMMA</code> 命令と同じであり、行列のレイアウトは 16x16x32 (A: sparse 32x16, B: 16x32, C: 16x16) と、入力フォーマットが IU4 の場合は 16x16x64 (A: sparse 16x64, B: 64x16, C: 16x16) をサポートする。</p>
+<p><em>RDNA 4/GFX12</em> でも <em>RDNA 3/GFX11</em> の内部的に複数のドット積命令に分解して発行する形式を継続するのか、それとも <em>CDNA</em> 系のように専用の行列演算ユニットを実装するのかまだ不明である。<br>
+<em>RDNA 3/GFX11</em> から行列演算の IPC が向上しているのかについても、<em>RDNA 4/GFX12</em> におけるサイクル数が公開されていないため不明。<br>
+しかし、モデルのサイズや VRAM の使用サイズの削減に役立つ FP8/BF8 フォーマットのサポート、疎行列のサポート、必要な VGPR の削減と <em>RDNA 3/GFX11</em> から進化しているのは確かである。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33378" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/33378">radv: add support for VK_KHR_cooperative_matrix on GFX12 (!33378) · マージリクエスト · Mesa / mesa · GitLab</a></li>
+<li><a href="https://gpuopen.com/learn/wmma_on_rdna3/" rel="noopener noreferrer" target="_blank" title="https://gpuopen.com/learn/wmma_on_rdna3/">How to accelerate AI applications on RDNA 3 using WMMA - AMD GPUOpen</a></li>
+<li><a href="https://www.amd.com/content/dam/amd/en/documents/radeon-tech-docs/instruction-set-architectures/rdna3-shader-instruction-set-architecture-feb-2023_0.pdf" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/content/dam/amd/en/documents/radeon-tech-docs/instruction-set-architectures/rdna3-shader-instruction-set-architecture-feb-2023_0.pdf">&ldquo;RDNA3&rdquo; Instruction Set Architecture: Reference Guide - rdna3-shader-instruction-set-architecture-feb-2023_0.pdf</a></li>
+<li><a href="https://www.amd.com/content/dam/amd/en/documents/radeon-tech-docs/instruction-set-architectures/rdna35_instruction_set_architecture.pdf" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/content/dam/amd/en/documents/radeon-tech-docs/instruction-set-architectures/rdna35_instruction_set_architecture.pdf">&ldquo;RDNA3.5&rdquo; Instruction Set Architecture: Reference Guide - rdna35_instruction_set_architecture.pdf</a></li>
+<li><a href="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-mi300-cdna3-instruction-set-architecture.pdf" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/instruction-set-architectures/amd-instinct-mi300-cdna3-instruction-set-architecture.pdf">&ldquo;AMD Instinct MI300&rdquo; Instruction Set Architecture: Reference Guide - amd-instinct-mi300-cdna3-instruction-set-architecture.pdf</a></li>
+<li><a href="https://rocm.docs.amd.com/projects/rocprofiler-compute/en/latest/conceptual/pipeline-descriptions.html" rel="noopener noreferrer" target="_blank" title="https://rocm.docs.amd.com/projects/rocprofiler-compute/en/latest/conceptual/pipeline-descriptions.html">Pipeline descriptions — ROCm Compute Profiler 3.0.0 documentation</a></li>
+<li><a href="https://rocm.docs.amd.com/projects/HIP/en/latest/reference/fp8_numbers.html" rel="noopener noreferrer" target="_blank" title="https://rocm.docs.amd.com/projects/HIP/en/latest/reference/fp8_numbers.html">FP8 Numbers — HIP 6.3.42134 Documentation</a></li>
+</ul>
+</section>
+
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna_4/" title="RDNA_4">#RDNA 4</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx12/" title="GFX12">#GFX12</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna_3/" title="RDNA_3">#RDNA 3</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx11/" title="GFX11">#GFX11</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2025/02/09/rdna_4-wmma.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.111.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/gfx12/" class="menu-cat-tag-lower">GFX12</a><a href="https://www.coelacanth-dream.com/tags/rdna_3/" class="menu-cat-tag-lower">RDNA 3</a><a href="https://www.coelacanth-dream.com/tags/rdna_4/" class="menu-cat-tag-lower">RDNA 4</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/gfx12/" class="menu-cat-tag-lower">GFX12</a><a href="https://www.coelacanth-dream.com/tags/rdna_3/" class="menu-cat-tag-lower">RDNA 3</a><a href="https://www.coelacanth-dream.com/tags/rdna_4/" class="menu-cat-tag-lower">RDNA 4</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
