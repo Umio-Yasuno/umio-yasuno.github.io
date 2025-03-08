@@ -27,7 +27,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2025-03-07","dateModified":"2025-03-07","datePublished":"2025-03-07","headline":"AMD、RDNA 4 Instruction Set Architecture: Reference Guide を公開","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD、RDNA 4 Instruction Set Architecture: Reference Guide を公開"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2025-03-07","dateModified":"2025-03-09","datePublished":"2025-03-07","headline":"AMD、RDNA 4 Instruction Set Architecture: Reference Guide を公開","image":"https://www.coelacanth-dream.com/icon.png","name":"AMD、RDNA 4 Instruction Set Architecture: Reference Guide を公開"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -39,7 +39,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2025-03-07T04:59:14+09:00">Post: 2025-03-07 04:59:14</time>
-    <aside class="update">Update: 2025-03-07 06:51:29</aside>
+    <aside class="update">Update: 2025-03-09 07:11:38</aside>
   </aside><p>AMD は 2025/03/07 付で「&ldquo;RDNA4&rdquo; Instruction Set Architecture: Reference Guide」を公開した。<br>
 発売のタイミングになって初めて公開された <em>RDNA 4 アーキテクチャ</em> でサポートする新命令もあり、それらを紹介していきたい。</p>
 <ul>
@@ -60,13 +60,18 @@
 </ul>
 <p>まず Dynamic VGPR にはいくつかの制限があり、それはコンピュートシェーダーでのみサポートされ、グラフィクスシェーダーはサポートしないことと、Wave64 モードはサポートされず、Wave32 モードのみをサポートすることである。<br>
 また、Dynamic VGPR を使用する Wave と使用しない Wave を混在して WGP (Workgroup Processor) または CU (Compute Unit) で実行されることはないとされている。<br>
-いずれかの Work-group または Wave で Dynamic VGPR を使用している場合、その WGP または CU で実行できるのは Dynamic VGPR が有効な Work-group または Wave のみとなる。</p>
+いずれかの Work-group または Wave で Dynamic VGPR を使用している場合、その WGP または CU で実行できるのは Dynamic VGPR が有効な Work-group または Wave のみとなる。<br>
+Wave32 モードでのみ Dynamic VGPR がサポートされているのは、そもそもの割り当て可能な VGPR ブロック数が Wave32 では最大 16、Wave64 では 8 (1.5倍の VGPR を持つ場合は 24、12) と違いがあるからだろうか？<br>
+また Wave32 であれば Wave64 より早く解放されるため、Dynamic VGPR が効率的に機能するという可能性もある。</p>
 <p>VGPR はブロック単位で割り当てられ、最大 8ブロック、最小 1ブロックが割り当て可能。<br>
 VGPR ブロックサイズは 16-VGPR か 32-VGPR に設定可能であり、16-VGPR の場合は 128-VGPR、32-VGPR の場合は 256-VGPR が Wave あたりに割り当て可能な最大サイズとなる。<br>
 また、VGPR ブロックサイズはチップ全体に設定され、ディスパッチごとに変更することはできない。</p>
 <p>VGPR の割り当てには <code>S_ALLOC_VGPR</code> 命令を発行する必要がある。<br>
-<code>S_ALLOC_VGPR</code> 命令の引数には定数か SGPR (スカラレジスタ) を指定可能。<br>
-<code>S_ALLOC_VGPR</code> 命令は引数に応じて VGPR ブロックを割り当てる。引数が現在割り当てている VGPR ブロック数より小さい場合は VGPR ブロックを解放する。</p>
+<code>S_ALLOC_VGPR</code> 命令の引数には定数か SGPR (スカラレジスタ) を指定可能。引数に指定するのは VGPR 数であり、それに最も近い VGPR ブロック数に切り上げて割り当てられる。<br>
+引数が現在割り当てている VGPR 数より小さい場合は VGPR を解放する。<br>
+もしシェーダープログラムの終わりまで達しても VGPR が解放されていない場合、ハードウェア的に <code>S_ALLOC_VGPR 0</code>、つまり確実にすべての VGPR を解放する命令が自動で挿入されるが、それは性能に悪影響する可能性があるとされている。</p>
+<p>Dynamic VGPR モードで実行される Wave は、1つの VGPR ブロックが割り当てられて初期化される。<br>
+1つの VGPR ブロック (16-VGPR or 32-VGPR) に収まる範囲であれば、追加の割り当てなしでも正常に実行可能なのだろうか？</p>
 <p>上で書いたように <code>S_ALLOC_VGPR</code> 命令については今回初めて公開されたため、オープンソースドライバーや LLVM でサポートされ、それがリリースに含まれるまでは時間が掛かると思われる。</p>
 <h2 id="bvh"><code>IMAGE_BVH_DUAL_INTERSECT_RAY, IMAGE_BVH8_INTERSECT_RAY</code><a href="#bvh" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -78,6 +83,8 @@ VGPR ブロックサイズは 16-VGPR か 32-VGPR に設定可能であり、16-
 </ul>
 <p><code>IMAGE_BVH_DUAL_INTERSECT_RAY</code> 命令は 2つの BVH4 ノードに対して、<code>IMAGE_BVH8_INTERSECT_RAY</code> 命令は 1つの BVH8 ノードに対して交差判定をテストするための命令となる。<br>
 これらの命令の説明には、両方の交差エンジンを使用して (using both intersection engines) と書かれており、<em>RDNA 4</em> では従来のレイトレーシングユニットの内部を倍化するのではなく、2基搭載することでレイトレーシング性能を引き上げたのだろう。</p>
+<p>また、レイトレーシング向けのスタック管理命令として <code>DS_BVH_STACK_PUSH4_POP1_RTN_B32, DS_BVH_STACK_PUSH8_POP1_RTN_B32, DS_BVH_STACK_PUSH8_POP2_RTN_B64</code> 命令が追加された。<br>
+<code>DS_BVH_STACK_PUSH4_POP1_RTN_B32</code> 命令は <em>RDNA 3/3.5</em> における <code>DS_BVH_STACK_RTN_B32</code> 命令に相当する。</p>
 </article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna_4/" title="RDNA_4">#RDNA 4</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx12/" title="GFX12">#GFX12</a></nav><aside class="article-bottom-misc delay-page">
   <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2025/03/07/rdna_4-isa.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
 </aside>
