@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AMDGPU ドライバーのデフォルトプロファイルが BOOTUP_DEFAULT に戻り、動的なプロファイル切替が有効に | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2025/04/11/dynamic_workload_profile_switching/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AMDGPU ドライバーのデフォルトプロファイルが BOOTUP_DEFAULT に戻り、動的なプロファイル切替が有効に | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="Linux Kernel における AMDGPU ドライバーでは、負荷の低いゲームで報告されていたスタッタリングの問題への対策として、Linux Kernel v6.13 から dGPU では 3D_FULL_SCREEN プロファイルをデフォルトで有効にして">
+  <meta property="og:description" content="Linux Kernel における AMDGPU ドライバーでは、負荷の低いゲームで報告されていたスタッタリングの問題への対策として、Linux Kernel v6.13 から dGPU では 3D_FULL_SCREEN プロファイルをデフォルトで有効にして"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, Linux_Kernel, RDNA, RDNA_2, RDNA_3, RDNA_4">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 84%,#0004 84%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2025-04-11","dateModified":"2025-04-11","datePublished":"2025-04-11","headline":"AMDGPU ドライバーのデフォルトプロファイルが BOOTUP_DEFAULT に戻り、動的なプロファイル切替が有効に","image":"https://www.coelacanth-dream.com/icon.png","name":"AMDGPU ドライバーのデフォルトプロファイルが BOOTUP_DEFAULT に戻り、動的なプロファイル切替が有効に"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">AMDGPU ドライバーのデフォルトプロファイルが BOOTUP_DEFAULT に戻り、動的なプロファイル切替が有効に</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2025-04-11T01:26:31+09:00">Post: 2025-04-11 01:26:31</time>
+    <aside class="update">Update: 2025-04-11 17:06:57</aside>
+  </aside><p>Linux Kernel における AMDGPU ドライバーでは、負荷の低いゲームで報告されていたスタッタリングの問題への対策として、Linux Kernel v6.13 から dGPU では <code>3D_FULL_SCREEN</code> プロファイルをデフォルトで有効にしていた。<br>
+それが Linux Kernel v6.15 からは <code>BOOTUP_DEFAULT</code> プロファイルがデフォルトに戻り、<code>3D_FULL_SCREEN</code> プロファイルを動的に切り替えるようになった。</p>
+<ul>
+<li><a href="https://www.coelacanth-dream.com/posts/2024/12/29/amdgpu-power-profile/" title="/posts/2024/12/29/amdgpu-power-profile/">Linux 環境では AMD dGPU のデフォルトプロファイルが 3D_FULL_SCREEN に | Coelacanth&rsquo;s Dream</a></li>
+</ul>
+<p>以前から AMDGPU ドライバーでは、メディアエンジンである VCN へのコマンドが送信された時に <code>VIDEO</code> プロファイルを有効にし、コマンドが完了した時に無効化する切り替え機能が実装されていた。<br>
+今回の変更はそれを GFX/Compute へのコマンドにも適用し、切り替えるプロファイルを <code>3D_FULL_SCREEN</code> にしたものとなる。<br>
+GFX 部を持たない <em>CDNA 系アーキテクチャ</em> では代わりに <code>COMPUTE</code> プロファイルを切り替えるようになっている。</p>
+<ul>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2025-January/118546.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2025-January/118546.html">[PATCH 1/5] drm/amdgpu/gfx: add ring helpers for setting workload profile</a></li>
+<li><a href="https://lists.freedesktop.org/archives/amd-gfx/2025-January/118549.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2025-January/118549.html">[PATCH 5/5] drm/amdgpu/swsmu: set workload profile to bootup default</a></li>
+</ul>
+<p>ただ、デスクトップ環境のコンポジタ等も GPU コンテキストを持つと思われるため、一般的な使用状況で <code>3D_FULL_SCREEN</code> プロファイルが無効化されることはないような気がする。<br>
+AMDGPU の電力プロファイルは内部的にビットマスクで管理されており、複数のプロファイルのビットを有効可能となっている。<br>
+そのため今回のパッチが適用されている環境では、通常 <code>BOOTUP_DEFAULT, 3D_FULL_SCREEN</code> プロファイルが有効化され、メディアエンジンを使用している状況ではそこに加えて <code>VIDEO</code> プロファイルが有効化されるという動作になると思われる。</p>
+<p>自分が見た限り、動的なプロファイル切り替えは無効できないようになっている。<br>
+そのため、従来のように <code>POWERSAVING</code> や <code>COMPUTE</code> プロファイルのみを有効するといったことは不可能だと思われる。dGPU の映像出力を使用しておらず、D3hot/D3cold ステートに移行可能であればその限りではないかもしれないが。<br>
+AMDGPU ドライバーでは <code>pp_power_profile_mode</code> sysfs を経由してユーザーが電力プロファイルを選択可能になっているが、これは 1つのプロファイルしか指定できない。<br>
+例えば <code>pp_power_profile_mode</code> で <code>POWERSAVING</code> プロファイルを指定した場合、一般的なデスクトップ環境の使用では <code>POWERSAVING</code> と <code>3D_FULL_SCREEN</code> プロファイルが同時に有効化される。<br>
+各電力プロファイルに応じた動作は GPU によって異なり、そこに複数のプロファイルが有効化されるとなると、動作クロックがどのように変化するか予想するのは難しい。</p>
+<p>また、ユーザーは <code>pp_power_profile_mode</code> で指定されているプロファイルのみが確認可能であり、動的なプロファイル切り替えによって実際に有効化されているプロファイルを確認する方法は無い。<br>
+今回の変更は、デフォルトの状態で使用するユーザーにとっては有益な面が多いと思われるが、<br>
+省電力あるいは最適化を目的としてプロファイルを切り替えていたユーザーにとっては複雑化したと感じられるかもしれない。</p>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/linux_kernel/" title="Linux_Kernel">#Linux Kernel</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna/" title="RDNA">#RDNA</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna_2/" title="RDNA_2">#RDNA 2</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna_3/" title="RDNA_3">#RDNA 3</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna_4/" title="RDNA_4">#RDNA 4</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2025/04/11/dynamic_workload_profile_switching.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.111.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-cat-tag-lower">RDNA</a><a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a><a href="https://www.coelacanth-dream.com/tags/rdna_3/" class="menu-cat-tag-lower">RDNA 3</a><a href="https://www.coelacanth-dream.com/tags/rdna_4/" class="menu-cat-tag-lower">RDNA 4</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/software/" class="menu-cat-tag-lower">Software</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a><a href="https://www.coelacanth-dream.com/tags/rdna/" class="menu-cat-tag-lower">RDNA</a><a href="https://www.coelacanth-dream.com/tags/rdna_2/" class="menu-cat-tag-lower">RDNA 2</a><a href="https://www.coelacanth-dream.com/tags/rdna_3/" class="menu-cat-tag-lower">RDNA 3</a><a href="https://www.coelacanth-dream.com/tags/rdna_4/" class="menu-cat-tag-lower">RDNA 4</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
