@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RDNA 3 dGPU で TEMP_HOTSPOT スロットリングがほぼ常時検出される理由 | Coelacanth&#39;s Dream</title>
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2025/05/16/rdna_3-dgpu-temp_hotspot-throttling/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RDNA 3 dGPU で TEMP_HOTSPOT スロットリングがほぼ常時検出される理由 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="TL;DR AMDGPU ドライバーでは SMU (System Management Unit) が報告する ThrottlingPercentage が 0 でなければスロットリングのフラグビットを有効にするが、RDNA 3 dGPU では TEMP_HOTSPOT の ThrottlingPercentage がほぼ常時 1 以上だと報告されるため。 gpu_metrics と indep_throttle_status">
+  <meta property="og:description" content="TL;DR AMDGPU ドライバーでは SMU (System Management Unit) が報告する ThrottlingPercentage が 0 でなければスロットリングのフラグビットを有効にするが、RDNA 3 dGPU では TEMP_HOTSPOT の ThrottlingPercentage がほぼ常時 1 以上だと報告されるため。 gpu_metrics と indep_throttle_status"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, Linux_Kernel">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}.crt{background:radial-gradient(#eee1 4%,#0000 95%,#111 98%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 84%,#0004 84%)50%/100% .5rem fixed repeat-y,linear-gradient(to right,#f002 33.4%,#0802 33.4%,#0802 66.8%,#00f2 66.8%)50%/.25rem 100% fixed repeat-x;opacity:.3;width:100%;height:100%;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2025-05-16","dateModified":"2025-05-23","datePublished":"2025-05-16","headline":"RDNA 3 dGPU で TEMP_HOTSPOT スロットリングがほぼ常時検出される理由","image":"https://www.coelacanth-dream.com/icon.png","name":"RDNA 3 dGPU で TEMP_HOTSPOT スロットリングがほぼ常時検出される理由"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">RDNA 3 dGPU で TEMP_HOTSPOT スロットリングがほぼ常時検出される理由</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2025-05-16T10:20:10+09:00">Post: 2025-05-16 10:20:10</time>
+    <aside class="update">Update: 2025-05-23 19:38:44</aside>
+  </aside><h2 id="tldr">TL;DR<a href="#tldr" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>AMDGPU ドライバーでは SMU (System Management Unit) が報告する <code>ThrottlingPercentage</code> が 0 でなければスロットリングのフラグビットを有効にするが、RDNA 3 dGPU では <code>TEMP_HOTSPOT</code> の <code>ThrottlingPercentage</code> がほぼ常時 1 以上だと報告されるため。</p>
+<h2 id="sysfs">gpu_metrics と indep_throttle_status<a href="#sysfs" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>AMDGPU ドライバーと最近の AMD APU/GPU の組み合わせでは <code>gpu_metrics</code> sysfs ファイルをサポートしており、これには GPU の各種動作クロックや電圧、消費電力、温度、スロットリングステータスといった情報がまとめられている。<br>
+他の sysfs ファイルから取得できる情報も含まれているが、<code>gpu_metrics</code> は単一の sysfs ファイルにまとめられているため、タイミングがずれることなくまとめて取得することができる。</p>
+<p><code>gpu_metrics</code> はテキスト形式ではなくバイナリ形式であるため、ユーザースペースのアプリケーションは構造体の定義と、ヘッダーから取得できるバージョン情報を基にして最終的な構造体 (<code>gpu_metrics_v{}_{}</code>) に変換する必要がある。<br>
+構造体の定義は Linux Kernel の <code>drivers/gpu/drm/amd/include/kgd_pp_interface.h</code> に公開されている。</p>
+<ul>
+<li><a href="https://www.kernel.org/doc/html/latest/gpu/amdgpu/thermal.html#gpu-metrics" rel="noopener noreferrer" target="_blank" title="https://www.kernel.org/doc/html/latest/gpu/amdgpu/thermal.html#gpu-metrics">https://www.kernel.org/doc/html/latest/gpu/amdgpu/thermal.html#gpu-metrics</a></li>
+</ul>
+<p>そして一部の <code>gpu_metrics_v{}_{}</code> 構造体には <code>throttle_status</code> と <code>indep_throttle_status</code> フィールドが存在している。<br>
+<code>throttle_status</code> は SMU が報告するスロットリング情報をフラグビットセットの形式に変換したものであり、<code>indep_throttle_status</code> はそれを共通のフラグビットセットに変換したものとなる。<br>
+そのため、アプリケーションは <code>indep_throttle_status</code> とその各スロットリングのフラグビットの位置をサポートしていれば、APU/GPU の種類に依存したコードを書くことなくスロットリング情報を取得することができる。<br>
+<code>indep_throttle_status</code> からのスロットリング情報の取得をサポートしているアプリケーションは、自分が知っている限り <a href="https://github.com/flightlessmango/MangoHud" rel="noopener noreferrer" target="_blank" title="https://github.com/flightlessmango/MangoHud">MangoHud</a> と、
+<a href="https://github.com/Umio-Yasuno/libdrm-amdgpu-sys-rs" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/libdrm-amdgpu-sys-rs">libdrm-amdgpu-sys-rs</a> を採用している <a href="https://github.com/Umio-Yasuno/amdgpu_top" rel="noopener noreferrer" target="_blank" title="https://github.com/Umio-Yasuno/amdgpu_top">amdgpu_top</a> と <a href="https://github.com/ilya-zlobintsev/LACT" rel="noopener noreferrer" target="_blank" title="https://github.com/ilya-zlobintsev/LACT">LACT</a> だけである。<br>
+AMD が公式に開発して公開しているツールには、<code>gpu_metrics</code> のデコードまではサポートしていても、スロットリング情報の検出までサポートしているものは無い。</p>
+<h2 id="temp_hotspot">TEMP_HOTSPOT<a href="#temp_hotspot" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>スロットリング情報の取得はほとんどの GPU でうまく機能するが、RDNA 3 dGPU だけは何故かほぼ常時 <code>TEMP_HOTSPOT</code> が検出される問題が発生していた。</p>
+<ul>
+<li><a href="https://gitlab.freedesktop.org/drm/amd/-/issues/3251" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/drm/amd/-/issues/3251">throttle_status in gpu_metrics for Navi31 always show TEMP_HOTSPOT (#3251) · Issue · drm/amd</a></li>
+<li><a href="https://github.com/flightlessmango/MangoHud/issues/1243" rel="noopener noreferrer" target="_blank" title="https://github.com/flightlessmango/MangoHud/issues/1243">Thinks that I&rsquo;m constantly thermal throttling / power limited · Issue #1243 · flightlessmango/MangoHud</a></li>
+</ul>
+<p>一部の RDNA 2 dGPU、<em>Navi22/Navy Flounder</em> と <em>Navi23/Dimgrey Cavefish</em> にもスロットリング情報がアイドル状態でも検出される問題が発生していたが、これは AMDGPU ドライバー側の処理に抜けていた部分があったためである。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
+しかし、RDNA 3 dGPU 関係のコードを読んでもドライバー側に原因があるようには思えなかった。<br>
+そのため自分は最初ファームウェア側の問題と考え、ドライバー開発者からの返答を待つことにした。<br>
+だが、特に進展が無いまま最初に報告されてから 1年が経過した。<br>
+この問題はアイドル時や GPU 温度が低い状態でも発生しており、明らかに異常な挙動ではあったが、性能や動作クロックからして実際にはスロットリングは発生していないと考えられたからだろう。<br>
+基本、ファームウェアやドライバーに対する問題は、性能や安定性に影響が無ければ対応の優先度は低くなる。<br>
+自分が知っているものでは、Navi33 で GFXOFF 機能が有効化されているとアイドル時の GPU 使用率が瞬間的に 100% になる、という問題があるが、これも報告されてから執筆時点で 9ヶ月経ってるが、特に修正される様子はない。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
+<p>途中でドライバー側で <code>TEMP_HOTSPOT</code> スロットリングのフラグビットを有効化しないようにすることで、暫定的ではあるが対策することを提案したが、ドライバー開発者からの反応は無かった。<br>
+また、自分で RX 7600 を購入して調査、検証することを検討もしたが、実行には踏み切れなかった。調べた結果、仮にファームウェアの問題と判明してもそれ以上やれることはなく、また問題が放置される可能性が充分にあった。<br>
+それに 4-5万する PCパーツを気軽に買えるほど自分は金持ちじゃなかった。ずっと前はインターネット上の活動で得た収益を検証用パーツの購入費にあてる構想があったが、今は完全に諦めている。</p>
+<p>修正されないまま RDNA 4 dGPU、RX 9070 シリーズが発表され、同じ問題が発生することを懸念していたが、発売されてからしばらく経っても報告されることはなかった。<br>
+コードを読んでも RDNA 3 dGPU とスロットリング情報に関してはほぼ同じである。<br>
+RDNA 3 dGPU でだけ発生する点が気になり、もう一度調査してみることにした。</p>
+<p>まず、ファームウェア、ハードウェア側である SMU が更新するデータ、<code>SmuMetrics_t</code> 内に <code>ThrottlingPercentage</code> があり、これは <code>uint8_t</code> の配列となっている。<br>
+<code>ThrottlingPercentage</code> の各要素にはそれぞれ対応したスロットリング情報の度合い (%) が収められている。<br>
+AMDGPU ドライバーの処理としては、その度合いが非 0 であればスロットリングのフラグビットを有効化するような実装になっていた。これは RDNA 2 dGPU、RDNA 4 dGPU でも同様となっている。<br>
+自分が手持ちの RX 6600 (Navi23/Dimgrey Cavefish) で検証した結果では、それぞれのスロットリング情報に閾値と限界値が設定されており、その 2つの値の間で度合いが 1-100% で表現され、限界値に近いほど度合いが大きくなるようになっていた。<br>
+次に RDNA 3 dGPU の <code>ThrottlingPercentage</code> が実際にどうなっているか確認する必要があったが、そこでまた行き詰まった。<br>
+AMDGPU ドライバー内部で使用しているデータの確認方法を、Linux Kernel のログに出力する方法しか知らなかったからだ。<br>
+この方法の場合、自分では検証できない環境に対するパッチを書き、それを他者が適用、ビルドし、起動する必要がある。不可能ではないが、労力と時間を考えると極力取りたくない方法だ。<br>
+だがその後、他の問題に対して <a href="https://github.com/bpftrace/bpftrace/" rel="noopener noreferrer" target="_blank" title="https://github.com/bpftrace/bpftrace/">bpftrace</a> を使用して AMDGPU ドライバー内部のデータを確認しているユーザーを見付け、<code>bpftrace</code> の存在を知った。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
+<code>bpftrace</code> の技術的な詳細は省くが、単一のスクリプトファイルで Linux Kernel の動的なトレースが可能になる、かなり便利なツールである。<br>
+自分の環境では完全な検証ができないことに変わりはないが、修正と実行においては先の方法とは比べ物にならないほど簡単だ。</p>
+<p>RX 6600 で検証し、ある程度 <code>bpftrace</code> の使い方を学んだ後、<em>Navi31, Navi32</em> 向けの検証用スクリプトを書いて公開した。<em>Navi33</em> が対象に含まれていないのは使用している構造体が異なるため。<br>
+そして他者がスクリプトを実行した結果を確認したところ、確かにアイドル状態でも <code>ThrottlePercentage</code> は非 0 ではあるが値は 1-30 (%) で安定し、ストレステスト実行時は 80-100 (%) となっていた。<br>
+値がランダムではなく、温度や負荷に合わせて <code>ThrottlingPercentage</code> も変化することから、機能自体は正常だが、閾値が異常に低い設定になっているという推測が立てられる。<br>
+そこで自分は <code>TEMP_HOTSPOT</code> に限り <code>ThrottlingPercentage</code> が 80 以上の場合にフラグビットを有効化するパッチを書いて提案した。<br>
+単にフラグビットの有効化にあたってドライバー側に閾値を設定するだけであり、ハードウェアの動作には影響しない。根本的な修正にはならないが、ユーザーから見れば正常に機能するようになるはずだ。<br>
+また、ファームウェアでの修正が期待できないのであれば、ドライバーで対処するのが修正方法として現実的だと考えた。<br>
+しかし、ドライバー開発者からのパッチに対する反応は良くなかった。<br>
+ドライバー開発者によれば、<code>gpu_metrics</code> は SMU、ファームウェア (PMFW) からの情報を &ldquo;出来る限り&rdquo; 生のまま出力するように設計されているとのことだった。つまり、ドライバー側で閾値を設定するのはそれに反しているということなのだろう。<br>
+正直に言えば、ファームウェアが 0-100 (%) で表現しているものをフラグビットに変換している時点で今更であるように思えた。</p>
+<p>気付けば問題に対してどのレベルで対処し、責任を持つべきなのか、という別の複雑な問題になっていた。<br>
+他 GPU と異なる挙動をするファームウェアが悪いのか？ その問題を把握せず、対処もせずにユーザースペースに公開するドライバーが悪いのか？ ドライバーからの情報を信頼しきって、そのままユーザーに対して表示するアプリケーションが悪いのか？</p>
+<p>ユーザースペース側で回避策を実装して対処すること自体は可能だし、実装が難しい訳でもなかった。<br>
+しかしそうなると、ライブラリあるいはアプリケーションごとに回避策を実装する必要があり、将来 <code>gpu_metrics</code> とその <code>indeo_throttle_status</code> をサポートするものが出てきた時も回避策の実装が必要になってくる。<br>
+また、回避策を実装する必要があるということは、ファームウェアとドライバーからの情報が信頼できないということを意味する。<br>
+だが、結局ユーザースペースに回避策を実装することにした。<br>
+ファームウェアが修正されるかも不明で、AMDGPU ドライバーへのパッチ受け入れも期待できない以上、そうするしかない。<br>
+自分が開発している <code>libdrm-amdgpu-sys-rs</code> にはホットスポット温度 (ジャンクション温度) が 90度未満なのに有効化されている <code>TEMP_HOTSPOT</code> フラグビットを信用せず、クリアすることにした。<br>
+温度による閾値の設定でもある程度実用的に機能する、ようには見せられるはずだ。<br>
+<code>MangoHud</code> に対しても自分で回避策を実装するプルリクエストを作成した。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>
+問題について把握している自分が対応した方が早いだろうと考えたためだが、これまで関わってきたことによる責任感もあった。<br>
+最初は <code>libdrm-amdgpu-sys-rs</code> と同様の温度による閾値の設定を提案したが、<code>Mangohud</code> の開発者である flightlessmango 氏との話し合いで常に <code>TEMP_HOTSPOT</code> フラグビットをクリアすることになった。<br>
+無効なスロットリング情報が報告されるのであれば、部分的ではあるが最初から信用するべきではない、ということだろう。</p>
+<p>今にして思うと、もっと早くに回避策を実装していれば混乱するユーザーをもっと減らせただろう。だが、問題の原因が不明で、ドライバー開発者からの説明も無かったため、そう判断するのは難しかった。</p>
+<p>今後修正されたファームウェアがリリースされるかは不明、そもそも内部的にこの問題が共有されているかも不明である。<br>
+結果としては、ファームウェアの問題とされるものに対して、1年越しにユーザースペースで回避策を実装するという若干苦いものとなったが、ユーザーからの問題報告に対して優先度が存在することは理解しているため、あまり深くは考えていない。<br>
+今回で <code>bpftrace</code> の使い方を学べたため、次はもっと効率良く原因を突き止められるはずだ。<br>
+今後もファームウェア側の問題に対して。ユーザースペースで回避策を実装する必要があるのかと言えば、それは結局の所、問題によるだろう。<br>
+何しろ <code>gpu_metrics</code> も <code>indep_throttle_status</code> も、ユーザースペースに公開されてはいるが、使い方に関しては全くドキュメント化されていない。それなのに問題を報告されても、あまり解決に向けて積極的にはなれないのかもしれない。<br>
+とりあえず、自分は今後も出来る範囲で AMDGPU ドライバーやそのコミュニティに協力していくつもりである。</p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.coelacanth-dream.com/posts/2023/08/03/coelacanth-diary-2023-08-03/" title="/posts/2023/08/03/coelacanth-diary-2023-08-03/">【雑記】 RX 6600 の購入とバグ報告と更新頻度と | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://gitlab.freedesktop.org/drm/amd/-/issues/3549" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/drm/amd/-/issues/3549">AMD GPU usage peaks with system in idle - Radeon RX 7600 XT (#3549) · Issue · drm/amd</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://gitlab.freedesktop.org/drm/amd/-/issues/2321#note_1746183" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/drm/amd/-/issues/2321#note_1746183">https://gitlab.freedesktop.org/drm/amd/-/issues/2321#note_1746183</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://github.com/flightlessmango/MangoHud/pull/1690" rel="noopener noreferrer" target="_blank" title="https://github.com/flightlessmango/MangoHud/pull/1690">amdgpu: implement the invalid TEMP_HOTSPOT throttling workaround for RDNA 3 dGPU & some fixes by Umio-Yasuno · Pull Request #1690 · flightlessmango/MangoHud</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/linux_kernel/" title="Linux_Kernel">#Linux Kernel</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2025/05/16/rdna_3-dgpu-temp_hotspot-throttling.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.111.3</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a><a href="https://www.coelacanth-dream.com/categories/hardware/" class="menu-cat-tag-lower">Hardware</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/linux_kernel/" class="menu-cat-tag-lower">Linux Kernel</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
