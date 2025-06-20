@@ -41,20 +41,34 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2025-06-20T19:57:33+09:00">Post: 2025-06-20 19:57:33</time>
-    <aside class="update">Update: 2025-06-20 20:44:22</aside>
+    <aside class="update">Update: 2025-06-20 23:54:30</aside>
   </aside><p>AMD の Stanislav Mekhanoshin 氏によって LLVM に新たな GFX ID、<em>gfx1250</em> が追加された。<br>
 今のところ、これはただの仮サポート (stub) だとされている。</p>
 <ul>
 <li><a href="https://github.com/llvm/llvm-project/pull/144965" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/144965">[AMDGPU] Initial support for gfx1250 target. by rampitec · Pull Request #144965 · llvm/llvm-project</a></li>
 </ul>
-<p>だがそれを置いても <em>gfx1250</em> は今後の AMD GPU を見る上でかなり興味深い存在である。<br>
-まず、<em>gfx1250 (gfx12.5.0)</em> の GFX メジャーバージョンは RDNA 4 系と同じ GFX12 であり、Wave32 に対応しているが、WGP (Work-Group Processor) モードには対応せず、CU モードのみをサポートする。<br>
+<p>だがそれを置いても <em>gfx1250</em> は今後の AMD GPU を見る上でかなり興味深い存在である。</p>
+<p>まず、<em>gfx1250 (gfx12.5.0)</em> の GFX メジャーバージョンは RDNA 4 系と同じ GFX12 であり、Wave32 に対応しているが、WGP (Work-Group Processor) モードには対応せず、CU モードのみをサポートする。<br>
 RDNA 系アーキテクチャにおける WGP モードと CU モードは主に LDS (Local Data Share) の割り当てに影響し、WGP モードではペアとなる 2基の CU の LDS 64KiB を合わせて割り当てることが可能になるが、CU モードでは常に CU 内の LDS のみに割り当てる。</p>
 <p>また、CDNA 系アーキテクチャ特有のパックド FP32 実行や SRAM ECC に対応する一方で、CDNA 系における行列演算専用命令である MFMA (Matrix fused-multiply-add) には対応せず、RDNA 3/4 が対応してる WMMA (Wave Matrix Multiply Accumulate) には対応している。<br>
 他にもフルレートでの FP64 実行の機能フラグも <em>gfx1250</em> には設定されていない。</p>
 <p>RDNA 系アーキテクチャとして見ても、<em>gfx1250</em> は画像系命令のサポートやレイトレーシング関連命令のサポートを示す機能フラグが設定されていない。<br>
 RDNA 3/4 の Dual issue、VOPD 命令もサポートしていないとされている。</p>
 <p>CDNA 4 アーキテクチャでは LDS を従来の 64KiB (32バンク) から 160KiB (64バンク) に増やしたが、<em>gfx1250</em> は 64KiB (32バンク) のままとされている。</p>
+<p><em>gfx1250</em> は APU とされているが、MI300A/CDNA 3 と MI300X/CDNA 3 のように APU と dGPU のどちらにも対応したアーキテクチャなのかは不明。</p>
+<blockquote>
+<pre><code>    +     ``gfx1250``                 ``amdgcn``   APU                     - Architected                   *TBA*
+    +                                                                        flat
+    +                                                                        scratch                       .. TODO::
+    +                                                                      - Packed
+    +                                                                        work-item                       Add product
+    +                                                                        IDs                             names.
+    +
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/pull/144965" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/144965">[AMDGPU] Initial support for gfx1250 target. by rampitec · Pull Request #144965 · llvm/llvm-project</a></cite>
+</div>
+
+</blockquote>
 <p>すべて &ldquo;現時点の内容では&rdquo; という言葉が前に付くが、<em>gfx1250</em> は CDNA と RDNA を融合したような存在となっている。<br>
 以前に AMD の Jack Huynh 氏はそのようなアーキテクチャとなる UDNA の構想を語っていたが、<em>gfx1250</em> がそうなのだろうか？
 データセンター向けの GPU アーキテクチャとして考えると、<em>gfx1250</em> はフルレート FP64 実行に必要なリソースを減らし、FP32 性能と推論処理性能に特化したものなのかもしれない。</p>
