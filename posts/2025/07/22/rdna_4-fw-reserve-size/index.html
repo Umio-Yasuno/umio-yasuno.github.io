@@ -41,7 +41,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2025-07-22T23:06:07+09:00">Post: 2025-07-22 23:06:07</time>
-    <aside class="update">Update: 2025-07-23 00:12:45</aside>
+    <aside class="update">Update: 2025-07-23 06:25:12</aside>
   </aside><h2 id="tldr">TL;DR<a href="#tldr" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>Linux 環境における AMDGPU ドライバーは、VBIOS (ファームウェア) に記述された情報に応じて VRAM の一部を予約領域として割り当てるが、RDNA 4 GPU では何故かこれが 516MiB とかなり巨大なサイズの設定になっているため。</p>
@@ -65,7 +65,7 @@ AMDGPU ドライバーのモジュールパラメータには <code>vramlimit</c
 </ul>
 <p>最初に 1024 (MiB) を設定してみたが、特に変化はなかった。<br>
 次に 512 (MiB)、AMDGPU ドライバー側の割り当てだけで制限を超えるサイズに設定してみたところ、<code>amdgpu_ttm_reserve_tmr</code> 関数でエラーが発生し、起動に失敗するようになった。</p>
-<p><code>amdgpu_ttm_reserve_tmr</code> 関数の中身を読むと、ファームウェアから得られる情報に応じて、メモリトレーニングや IP 検出 バイナリやテーブル、その他様々な機能のために VRAM の一部を割り当てているようだった。<br>
+<p><code>amdgpu_ttm_reserve_tmr</code> 関数の中身を読むと、ファームウェアから得られる情報に応じて、メモリトレーニングや IP 検出 バイナリ (IP discover binary)、その他様々な機能のために VRAM の一部を割り当てているようだった。<br>
 そこで以下のようなパッチを適用し、割り当てるサイズをログに出力するように変更したところ、516MiB というサイズを割り当てていることがわかった。</p>
 <blockquote>
 <pre><code>    diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c
@@ -83,9 +83,9 @@ AMDGPU ドライバーのモジュールパラメータには <code>vramlimit</c
      		amdgpu_ttm_training_data_block_init(adev, reserve_size);
 </code></pre>
 </blockquote>
-<p>この 516MiB というサイズは予約済み領域、言い換えればユーザーが使用できない領域としては大きく、現状 RDNA 4 GPU で最も廉価である RX 9060 XT 8GB では他モデル (RX 9060 XT 16GB, RX 9070 /XT 16GB) よりも影響を強く受けるだろう。<br>
+<p>この 516MiB というサイズは予約済み領域、言い換えればユーザーが使用できない領域としては大きく、現状 RDNA 4 GPU で最も廉価である RX 9060 XT 8GB では他モデル (RX 9060 XT 16GB, RX 9070 /XT 16GB) よりも性能面で影響を強く受けるだろう。<br>
 またこれは従来の世代よりもずっと大きく、RX 6600 8GB の場合に割り当てられるサイズはたったの 3MiB である。<br>
-drm/amd に issue を投稿した Adriano Martins 氏によれば Windows 環境では、起動直後で 80MiB のみが割り当てられるため、今後修正されることを願っている。</p>
+drm/amd に issue を投稿した Adriano Martins 氏によれば、Windows 環境では起動直後で 80MiB のみが使用済みとされるらしいため、今後修正されることを願っている。</p>
 <h2 id="他の確認方法">他の確認方法<a href="#%e4%bb%96%e3%81%ae%e7%a2%ba%e8%aa%8d%e6%96%b9%e6%b3%95" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>もし Linux Kernel への変更なしで予約されるサイズを調べたい場合は、以下のリポジトリをクローンし、<code>cargo run --example vbios_parser | grep fw_reserved_size_in_kb</code> を実行することで確かめられる。<br>
