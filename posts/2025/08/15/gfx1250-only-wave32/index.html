@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wave32 モードのみをサポートし、LDS を 320KiB 持つ GFX1250 | Coelacanth&#39;s Dream</title>
+
+
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2025/08/15/gfx1250-only-wave32/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Wave32 モードのみをサポートし、LDS を 320KiB 持つ GFX1250 | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="LLVM にてサポート作業が進められている次世代の CDNA 系 APU gfx1250 だが、最近の変更にて Wave64 モードをサポートせず、Wave32 モードのみをサポートすることが公開された。 Wave32 モードのみ">
+  <meta property="og:description" content="LLVM にてサポート作業が進められている次世代の CDNA 系 APU gfx1250 だが、最近の変更にて Wave64 モードをサポートせず、Wave32 モードのみをサポートすることが公開された。 Wave32 モードのみ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, GFX12.5, LLVM, CDNA">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}@keyframes flicker{0%{opacity:.4}25%{opacity:.4}50%{opacity:.45}100%{opacity:.45}}.crt{background:radial-gradient(#eee2 4%,#0000 80%,#000a 83%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 75%,#0003 75%)50%/100% .5rem fixed repeat-y;animation:flicker 3s infinite alternate;transform:scale(1.5,1);width:100vw;height:100vh;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2025-08-15","dateModified":"2025-08-15","datePublished":"2025-08-15","headline":"Wave32 モードのみをサポートし、LDS を 320KiB 持つ GFX1250","image":"https://www.coelacanth-dream.com/icon.png","name":"Wave32 モードのみをサポートし、LDS を 320KiB 持つ GFX1250"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">Wave32 モードのみをサポートし、LDS を 320KiB 持つ GFX1250</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2025-08-15T18:50:22+09:00">Post: 2025-08-15 18:50:22</time>
+    <aside class="update">Update: 2025-08-15 22:27:37</aside>
+  </aside><p>LLVM にてサポート作業が進められている次世代の CDNA 系 APU <em>gfx1250</em> だが、最近の変更にて Wave64 モードをサポートせず、Wave32 モードのみをサポートすることが公開された。</p>
+<h2 id="only-wave32">Wave32 モードのみサポート<a href="#only-wave32" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>Wave とは AMD GPU におけるスレッド (Work-item) の塊であり、SIMD ユニットへの命令の発行単位とも言える。<br>
+GCN アーキテクチャと CDNA 3 までの CDNA 系アーキテクチャでは Wave64 (64 work-item) のみをサポートしており、RDNA 系アーキテクチャから Wave32 (32 work-item) のサポートが追加された。<br>
+Wave64 モードの特徴としては、発行単位が大きく複数回に分けて SIMD ユニットで実行されるため、Wave が終了するまでのレイテンシは大きくなるが、SIMD ユニットの稼働率は高くしやすいことが挙げられる。</p>
+<p>SIMD ユニットの構成によって命令の実行方式は異なるが、Wave64 モードは長年 AMD GPU でサポートされてきた。<br>
+それが <em>gfx1250</em> ではついに Wave64 モードが削除され、Wave32 モードのみがサポートされる。</p>
+<ul>
+<li><a href="https://github.com/llvm/llvm-project/pull/153690" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/153690">[AMDGPU] Remove wave64 functions by rampitec · Pull Request #153690 · llvm/llvm-project</a></li>
+<li><a href="https://github.com/llvm/llvm-project/pull/153693" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/153693">[AMDGPU] Error out in clang if wavefront64 is used on gfx1250 by rampitec · Pull Request #153693 · llvm/llvm-project</a></li>
+</ul>
+<p>AMD GPU としては象徴的な変更と言えるかもしれないが、RDNA 3 では Wave32 モードでのみサポートされる Dual Issue Wave32 (VOPD 命令) が、RDNA 4 では同様の Dynamic register allocation (Dynamic VGPR) が追加されてきたため、そうした流れで言えば自然なものなのかもしれない。</p>
+<h2 id="lds">LDS 320KiB<a href="#lds" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>AMD GPU が CU (Compute Unit) ごとに持つ高速なローカルメモリ、LDS (Local Data Share) が <em>gfx1250</em> では 320KiB へと拡張される。<br>
+CDNA 4 アーキテクチャでは従来の 64KiB から 160KiB と、倍以上のサイズになったが、<em>gfx1250</em> ではそこからさらに倍となる。<br>
+CDNA 4 で LDS のサイズと帯域を拡張させた理由について、データの再利用が特に多い行列演算ルーチンにおいて、メモリアクセスを減らし CU の稼働率を上げるのに不可欠と語られているため、<em>gfx1250</em> でのさらなる拡張も同様の理由だろう。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
+<ul>
+<li><a href="https://github.com/llvm/llvm-project/pull/153645" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/153645">[AMDGPU] Increase LDS to 320K on gfx1250 by rampitec · Pull Request #153645 · llvm/llvm-project</a></li>
+</ul>
+<h2 id="vopd">VOPD 命令の制限が緩和<a href="#vopd" class="head-cur-link" aria-hidden></a>
+</h2>
+<p>RDNA 3 からサポートされている Dual issue (VOPD 命令) は 2種類の VOPD 命令を同時に実行する機能だが、正常に機能させるにはいくつかの要件を守る必要がある。<br>
+その一つが 2種類の命令 (opX, opY) のソースオペランドが異なる VGPR バンクであること、というものだ。<br>
+それが <em>gfx1250</em> では緩和され、同じ VGPR バンクであっても正常に VOPD 命令が実行可能となる。</p>
+<blockquote>
+<pre><code>    +  // If \p AllowSameVGPR is set then same VGPRs are allowed for X and Y sources
+    +  // even though it violates requirement to be from different banks.
+    +  // If \p VOPD3 is set to true both dst registers allowed to be either odd
+    +  // or even and instruction may have real src2 as opposed to tied accumulator.
+       bool hasInvalidOperand(std::function&lt;unsigned(unsigned, unsigned)&gt; GetRegIdx,
+    -                         bool SkipSrc = false) const {
+    -    return getInvalidCompOperandIndex(GetRegIdx, SkipSrc).has_value();
+    +                         const MCRegisterInfo &amp;MRI, bool SkipSrc = false,
+    +                         bool AllowSameVGPR = false, bool VOPD3 = false) const {
+    +    return getInvalidCompOperandIndex(GetRegIdx, MRI, SkipSrc, AllowSameVGPR,
+    +                                      VOPD3)
+    +        .has_value();
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/pull/147602" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/147602">[AMDGPU] VOPD/VOPD3 changes for gfx1250 by rampitec · Pull Request #147602 · llvm/llvm-project</a></cite>
+</div>
+
+</blockquote>
+<h2 id="no-wgp-mode">WGP モードもサポートせず<a href="#no-wgp-mode" class="head-cur-link" aria-hidden></a>
+</h2>
+<p><em>gfx1250</em> は WGP モードもサポートせず、CU モードのみをサポートするとされている。</p>
+<ul>
+<li><a href="https://github.com/llvm/llvm-project/pull/153680" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/153680">[AMDGPU] Don&rsquo;t allow wgp mode on gfx1250 by rampitec · Pull Request #153680 · llvm/llvm-project</a></li>
+</ul>
+<p>WGP モード、CU モードは RDNA 1 からサポートされており、Work-group の発行方式に関わる機能である。<br>
+Work-group は Wave の集まりであり、同じ Work-group 内の Wave はバリア命令を介して同期でき、LDS も共有できる。<br>
+CU モードは 1基の CU を Work-group の発行単位とし、SIMD ユニット 2基で実行され、LDS 64KiB が使用可能となる。 (RDNA 1/2/3/4 の場合)<br>
+WGP モードでは 2基の CU をまとめた WGP (Work-group processor) を Work-group の発行単位とし、SIMD ユニット 4基、LDS 128KiB が使用可能となる。</p>
+<p>そして <em>gfx1250</em> では CU あたり 4基の SIMD ユニットを持つとされている。<br>
+CU モードのみをサポートすることと SIMD ユニットの数は、GCN アーキテクチャの構成に近いと言える。<br>
+見方を変えれば、LDS のサイズが拡張されたことと合わせ、RDNA 系の CU 2基を 1基に融合させた結果とも見えるだろう。</p>
+<p>この場合、VOPD 命令はどのように実行されるかだが、<br>
+RDNA 3/4 では、SIMD32 (Float, Int) ユニット 2基に加え、それぞれにサブセットとなる SIMD32 (Float) ユニットがあり、VOPD 命令の実行にはサブセットを活用する方式だった。<br>
+Wave が SIMD ユニットごとに割り当てられることと、現時点で VOPD 命令が拡張されていないことを考えると、<em>gfx1250</em> でも RDNA 3/4 と同様にサブセットとなる SIMD32 ユニットを持ち、それを活用する可能性が高いように思う。</p>
+<blockquote>
+<pre><code>     unsigned getEUsPerCU(const MCSubtargetInfo *STI) {
+       // &quot;Per CU&quot; really means &quot;per whatever functional block the waves of a
+    -  // workgroup must share&quot;. For gfx10 in CU mode this is the CU, which contains
+    +  // workgroup must share&quot;.
+    +
+    +  // GFX12.5 only supports CU mode, which contains four SIMDs.
+    +  if (isGFX1250(*STI)) {
+    +    assert(STI-&gt;getFeatureBits().test(FeatureCuMode));
+    +    return 4;
+    +  }
+    +
+    +  // For gfx10 in CU mode the functional block is the CU, which contains
+       // two SIMDs.
+       if (isGFX10Plus(*STI) &amp;&amp; STI-&gt;getFeatureBits().test(FeatureCuMode))
+         return 2;
+    -  // Pre-gfx10 a CU contains four SIMDs. For gfx10 in WGP mode the WGP contains
+    -  // two CUs, so a total of four SIMDs.
+    +
+    +  // Pre-gfx10 a CU contains four SIMDs. For gfx10 in WGP mode the WGP
+    +  // contains two CUs, so a total of four SIMDs.
+       return 4;
+     }
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/pull/153680" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/153680">[AMDGPU] Don&rsquo;t allow wgp mode on gfx1250 by rampitec · Pull Request #153680 · llvm/llvm-project</a></cite>
+</div>
+
+</blockquote>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/white-papers/amd-cdna-4-architecture-whitepaper.pdf" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/content/dam/amd/en/documents/instinct-tech-docs/white-papers/amd-cdna-4-architecture-whitepaper.pdf">amd-cdna-4-architecture-whitepaper.pdf</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx12.5/" title="GFX12.5">#GFX12.5</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/llvm/" title="LLVM">#LLVM</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cdna/" title="CDNA">#CDNA</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2025/08/15/gfx1250-only-wave32.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna/" class="menu-cat-tag-lower">CDNA</a><a href="https://www.coelacanth-dream.com/tags/gfx12.5/" class="menu-cat-tag-lower">GFX12.5</a><a href="https://www.coelacanth-dream.com/tags/llvm/" class="menu-cat-tag-lower">LLVM</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/gpu/" class="menu-cat-tag-lower">GPU</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/cdna/" class="menu-cat-tag-lower">CDNA</a><a href="https://www.coelacanth-dream.com/tags/gfx12.5/" class="menu-cat-tag-lower">GFX12.5</a><a href="https://www.coelacanth-dream.com/tags/llvm/" class="menu-cat-tag-lower">LLVM</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
