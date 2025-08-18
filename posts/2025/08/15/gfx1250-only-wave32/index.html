@@ -29,7 +29,7 @@
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2025-08-15","dateModified":"2025-08-15","datePublished":"2025-08-15","headline":"Wave32 モードのみをサポートし、LDS を 320KiB 持つ GFX1250","image":"https://www.coelacanth-dream.com/icon.png","name":"Wave32 モードのみをサポートし、LDS を 320KiB 持つ GFX1250"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2025-08-15","dateModified":"2025-08-18","datePublished":"2025-08-15","headline":"Wave32 モードのみをサポートし、LDS を 320KiB 持つ GFX1250","image":"https://www.coelacanth-dream.com/icon.png","name":"Wave32 モードのみをサポートし、LDS を 320KiB 持つ GFX1250"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -41,7 +41,7 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2025-08-15T18:50:22+09:00">Post: 2025-08-15 18:50:22</time>
-    <aside class="update">Update: 2025-08-15 22:27:37</aside>
+    <aside class="update">Update: 2025-08-18 18:48:22</aside>
   </aside><p>LLVM にてサポート作業が進められている次世代の CDNA 系 APU <em>gfx1250</em> だが、最近の変更にて Wave64 モードをサポートせず、Wave32 モードのみをサポートすることが公開された。</p>
 <h2 id="only-wave32">Wave32 モードのみサポート<a href="#only-wave32" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -67,7 +67,8 @@ CDNA 4 で LDS のサイズと帯域を拡張させた理由について、デ�
 </h2>
 <p>RDNA 3 からサポートされている Dual issue (VOPD 命令) は 2種類の VOPD 命令を同時に実行する機能だが、正常に機能させるにはいくつかの要件を守る必要がある。<br>
 その一つが 2種類の命令 (opX, opY) のソースオペランドが異なる VGPR バンクであること、というものだ。<br>
-それが <em>gfx1250</em> では緩和され、同じ VGPR バンクであっても正常に VOPD 命令が実行可能となる。</p>
+それが <em>gfx1250</em> では緩和され、同じ VGPR バンクであっても正常に VOPD 命令が実行可能となる。<br>
+具体的な例は特に思いつかないが、VOPD 命令にコンパイル可能なパターンが増えることで実行性能も向上するケースがあるかもしれない。</p>
 <blockquote>
 <pre><code>    +  // If \p AllowSameVGPR is set then same VGPRs are allowed for X and Y sources
     +  // even though it violates requirement to be from different banks.
@@ -98,7 +99,8 @@ CU モードは 1基の CU を Work-group の発行単位とし、SIMD ユニッ
 WGP モードでは 2基の CU をまとめた WGP (Work-group processor) を Work-group の発行単位とし、SIMD ユニット 4基、LDS 128KiB が使用可能となる。</p>
 <p>そして <em>gfx1250</em> では CU あたり 4基の SIMD ユニットを持つとされている。<br>
 CU モードのみをサポートすることと SIMD ユニットの数は、GCN アーキテクチャの構成に近いと言える。<br>
-見方を変えれば、LDS のサイズが拡張されたことと合わせ、RDNA 系の CU 2基を 1基に融合させた結果とも見えるだろう。</p>
+見方を変えれば、LDS のサイズが拡張されたことと合わせ、RDNA 系の CU 2基を 1基に融合させた結果とも見えるだろう。<br>
+しかし、SIMD ユニットの幅は不明である。</p>
 <p>この場合、VOPD 命令はどのように実行されるかだが、<br>
 RDNA 3/4 では、SIMD32 (Float, Int) ユニット 2基に加え、それぞれにサブセットとなる SIMD32 (Float) ユニットがあり、VOPD 命令の実行にはサブセットを活用する方式だった。<br>
 Wave が SIMD ユニットごとに割り当てられることと、現時点で VOPD 命令が拡張されていないことを考えると、<em>gfx1250</em> でも RDNA 3/4 と同様にサブセットとなる SIMD32 ユニットを持ち、それを活用する可能性が高いように思う。</p>
