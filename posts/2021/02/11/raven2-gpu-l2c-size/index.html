@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Raven2 の GPU L2キャッシュは 128KB | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="オープンソースで開発されるユーザーモードドライバー Mesa3D に投稿されたパッチから、Raven2 (Dali/Pollock) APU が持つ GPU L2キャッシュのサイズが 128KB であることが明かされた。 Raven2 (Dali/Pollock) APU は C">
-  <meta property="og:description" content="オープンソースで開発されるユーザーモードドライバー Mesa3D に投稿されたパッチから、Raven2 (Dali/Pollock) APU が持つ GPU L2キャッシュのサイズが 128KB であることが明かされた。 Raven2 (Dali/Pollock) APU は C"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="オープンソースで開発されるユーザーモードドライバー Mesa3D に投稿されたパッチから、Raven2 (Dali/Pollock) APU が持つ GPU L2キャッシュのサイズが 128KB であることが明かされた。
+Raven2 (Dali/Pollock) APU は CPUに Zenアーキテクチャ 2-Core/4-Thread、GPU に Vega/GFX9 (gfx909) 3CU を持つ、小型な省電力 SoC。GF 14nmプロセスで製造される。">
+  <meta property="og:description" content="オープンソースで開発されるユーザーモードドライバー Mesa3D に投稿されたパッチから、Raven2 (Dali/Pollock) APU が持つ GPU L2キャッシュのサイズが 128KB であることが明かされた。
+Raven2 (Dali/Pollock) APU は CPUに Zenアーキテクチャ 2-Core/4-Thread、GPU に Vega/GFX9 (gfx909) 3CU を持つ、小型な省電力 SoC。GF 14nmプロセスで製造される。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Raven2, Dali, Pollock">
@@ -86,7 +88,7 @@
 <p>以前に、<a href="https://www.flickr.com/photos/130561288@N04/" rel="noopener noreferrer" target="_blank" title="https://www.flickr.com/photos/130561288@N04/">Fritzchens Fritz | Flickr</a> 氏が撮影したダイショットを元に各ブロックを推測したことがあったが、その時には気が付けなかった。<br>
 言い訳をすると、SoC として多くの機能を持つプロセッサは、各ブロックが入り組んだ構造をしており <span class="complement">CPUコアや GPU CU 等の分かりやすいもの以外</span>
  2つを並べて見比べても、あるブロックが何のユニットで、片方のどれと対応するかを推測することは難しい。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/07/24/raven2-dieshot-and-compare-zen-apu/" title="/posts/2020/07/24/raven2-dieshot-and-compare-zen-apu/">AMD Raven2 のダイ観察 & Zen系 APU を比較 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/07/24/raven2-dieshot-and-compare-zen-apu/" title="/posts/2020/07/24/raven2-dieshot-and-compare-zen-apu/">AMD Raven2 のダイ観察 & Zen系 APU を比較 | Coelacanth’s Dream</a></span>
 </p>
 <p><em>Raven2</em> の GPU部は <em>Raven/Picasso</em> のそれから規模を大きく減らしており、CU数は約1/4、RB は 2基から 1基に、そして L2キャッシュは 1/8 の規模となる。<br>
 AMD GPU は <em>Vega/GFX9</em> 世代から、L2キャッシュのブロックあたりのサイズは 256KB を基本としており、<em>RDNA/GFX10</em> 世代もそのようになっている。( Polaris10/11 等、GFX8 世代でもブロックあたり 256KB の GPU は存在する)<br>
@@ -129,40 +131,40 @@ L2キャッシュのサイズは選択でき、<a href="https://www.amd.com/syst
  [L2$ 256K] [L2$ 256K] [L2$ 256K] [L2$ 256K]
 </code></pre>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:center">Raven2</th>
-<th style="text-align:center">Raven/Picasso</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">CPU Core/Thread</td>
-<td style="text-align:center">2/4</td>
-<td style="text-align:center">4/8</td>
-</tr>
-<tr>
-<td style="text-align:left">GPU</td>
-<td style="text-align:center">gfx909</td>
-<td style="text-align:center">gfx902</td>
-</tr>
-<tr>
-<td style="text-align:left">GPU CU</td>
-<td style="text-align:center">3CU</td>
-<td style="text-align:center">11CU</td>
-</tr>
-<tr>
-<td style="text-align:left">GPU L2$</td>
-<td style="text-align:center">128KB</td>
-<td style="text-align:center">1024KB</td>
-</tr>
-<tr>
-<td style="text-align:left">GPU RB+<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
-<td style="text-align:center">1 RB+<br>(8-ROP)</td>
-<td style="text-align:center">2 RB+<br>(16-ROP)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: center">Raven2</th>
+          <th style="text-align: center">Raven/Picasso</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">CPU Core/Thread</td>
+          <td style="text-align: center">2/4</td>
+          <td style="text-align: center">4/8</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GPU</td>
+          <td style="text-align: center">gfx909</td>
+          <td style="text-align: center">gfx902</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GPU CU</td>
+          <td style="text-align: center">3CU</td>
+          <td style="text-align: center">11CU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GPU L2$</td>
+          <td style="text-align: center">128KB</td>
+          <td style="text-align: center">1024KB</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GPU RB+<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
+          <td style="text-align: center">1 RB+<br>(8-ROP)</td>
+          <td style="text-align: center">2 RB+<br>(16-ROP)</td>
+      </tr>
+  </tbody>
 </table>
 <div class="footnotes" role="doc-endnotes">
 <hr>
@@ -171,7 +173,7 @@ L2キャッシュのサイズは選択でき、<a href="https://www.amd.com/syst
 <p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/issues/1208#note_240161" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/issues/1208#note_240161">[radeonsi] Tahiti LE: GFX block is not functional, CP is okay (#1208) · Issues · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.coelacanth-dream.com/posts/2020/11/10/what-is-rbplus/" title="/posts/2020/11/10/what-is-rbplus/">一部の AMD GPU で実装、有効化されている RB+ とは何か | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2020/11/10/what-is-rbplus/" title="/posts/2020/11/10/what-is-rbplus/">一部の AMD GPU で実装、有効化されている RB+ とは何か | Coelacanth’s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
@@ -186,7 +188,7 @@ L2キャッシュのサイズは選択でき、<a href="https://www.amd.com/syst
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

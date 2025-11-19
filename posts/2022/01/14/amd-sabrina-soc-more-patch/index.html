@@ -19,8 +19,66 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="AMD Sabrina SoC に向けたさらなるパッチ | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="先日に続いて Coreboot に、Felix Held 氏より、AMD Sabrina SoC (Family 17h Model A0h (0x008A0F00)) のサポート追加に向けたパッチが投稿されている。 topic:amd-sabrina-soc · Gerrit Code Review #define SABRINA_A0_CPUID 0x008a0f00 引用元:https://review.c">
-  <meta property="og:description" content="先日に続いて Coreboot に、Felix Held 氏より、AMD Sabrina SoC (Family 17h Model A0h (0x008A0F00)) のサポート追加に向けたパッチが投稿されている。 topic:amd-sabrina-soc · Gerrit Code Review #define SABRINA_A0_CPUID 0x008a0f00 引用元:https://review.c"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="先日に続いて Coreboot に、Felix Held 氏より、AMD Sabrina SoC (Family 17h Model A0h (0x008A0F00)) のサポート追加に向けたパッチが投稿されている。
+
+topic:amd-sabrina-soc · Gerrit Code Review
+
+
+ #define SABRINA_A0_CPUID	0x008a0f00
+
+引用元:https://review.coreboot.org/c/coreboot/&#43;/61087/2/src/soc/amd/sabrina/include/soc/cpu.h#6
+
+
+
+Index
+
+
+AMD Chausie
+
+UARTコントローラ
+CPPC2 をサポートせず
+PCIe
+SATAコントローラを持たず
+
+
+
+
+
+AMD Chausie
+
+Sabrina SoC のメインボード名は AMD Chausie。コードとしては、AMD Chausie ボード部に FP6パッケージ を採用する AMD Majolica を、FSP (Firmware Support Package) も Cezanne SoC をベースにしている。コードファイルのほとんどをコピーし、名前だけを置き換えた形となっている。1
+コードファイルを Cezanne 関連からコピーした理由に、Felix Held 氏は、ひとまずビルドを成功させることを挙げている。
+そのためベース部の情報が多く、Sabrina SoC 、AMD Chausie 固有の情報はまだ読みにくいところがある。パッケージも、Cezanne 同様に FP6 が使われるかどうかはまだ判然としない。">
+  <meta property="og:description" content="先日に続いて Coreboot に、Felix Held 氏より、AMD Sabrina SoC (Family 17h Model A0h (0x008A0F00)) のサポート追加に向けたパッチが投稿されている。
+
+topic:amd-sabrina-soc · Gerrit Code Review
+
+
+ #define SABRINA_A0_CPUID	0x008a0f00
+
+引用元:https://review.coreboot.org/c/coreboot/&#43;/61087/2/src/soc/amd/sabrina/include/soc/cpu.h#6
+
+
+
+Index
+
+
+AMD Chausie
+
+UARTコントローラ
+CPPC2 をサポートせず
+PCIe
+SATAコントローラを持たず
+
+
+
+
+
+AMD Chausie
+
+Sabrina SoC のメインボード名は AMD Chausie。コードとしては、AMD Chausie ボード部に FP6パッケージ を採用する AMD Majolica を、FSP (Firmware Support Package) も Cezanne SoC をベースにしている。コードファイルのほとんどをコピーし、名前だけを置き換えた形となっている。1
+コードファイルを Cezanne 関連からコピーした理由に、Felix Held 氏は、ひとまずビルドを成功させることを挙げている。
+そのためベース部の情報が多く、Sabrina SoC 、AMD Chausie 固有の情報はまだ読みにくいところがある。パッケージも、Cezanne 同様に FP6 が使われるかどうかはまだ判然としない。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Sabrina, Mendocino, Coreboot">
@@ -129,7 +187,7 @@ CPPC は電源管理機能の 1つであり、CPPC2 ではクロックの選択�
 </h3>
 <p><em>Sabrisa SoC</em> は SATAコントローラを持たないとされている。<br>
 <em>Raven2 (Pollock)</em> が搭載可能な小型、省電力クラスのパッケージ、<em>FT5</em> では SATAインターフェイスを持たなかったが、それに近い。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/02/12/amd-pollock-ft5/" title="/posts/2020/02/12/amd-pollock-ft5/">Chromebookに搭載されるPollockはFT5ソケット ――DDR4シングルチャネル、SATA無し | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/02/12/amd-pollock-ft5/" title="/posts/2020/02/12/amd-pollock-ft5/">Chromebookに搭載されるPollockはFT5ソケット ――DDR4シングルチャネル、SATA無し | Coelacanth’s Dream</a></span>
 
 だが <em>Raven2 (Pollock)</em> 自体は SATAコントローラを 2基持ち、<em>FT5</em> パッケージの仕様としてインターフェイスを廃した形であるため、SoC 自体に SATAコントローラを持たない <em>Sabrina</em> とは色が異なる。<br>
 最近は NVMe SSD がメインストレージになってきているが、割り切った変更であるようにも思える。<br>
@@ -149,52 +207,52 @@ CPPC は電源管理機能の 1つであり、CPPC2 ではクロックの選択�
 <em>Zen 2 アーキテクチャ</em> を採用する <em>Renoir APU</em> からは、CPU 8-Core の APU がメインとなり、更新されるのも上位帯に向けたものだった。<em>VanGogh APU</em> は <em>Zen 2</em> 4-Core、<em>RDNA 2</em> 8CU であり、小規模な APU と言えるかもしれないが、カスタム APU であるため、一般向け製品に採用される見込みは薄い。<br>
 そうした中で、<em>Sabrina SoC</em> は <em>Raven2</em> 以降の小規模 APU となるかもしれない。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:center">Raven /Picasso<br>/Raven2 (Dali)</th>
-<th style="text-align:center">Renoir /Cezanne<br>/Barcelo</th>
-<th style="text-align:center">Raven2<br>(Pollock)</th>
-<th style="text-align:center">Sabrina</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Package</td>
-<td style="text-align:center">FP5</td>
-<td style="text-align:center">FP6</td>
-<td style="text-align:center">FT5</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Base board name</td>
-<td style="text-align:center">Mandolin</td>
-<td style="text-align:center">Majolica</td>
-<td style="text-align:center">Cereme</td>
-<td style="text-align:center">Chausie</td>
-</tr>
-<tr>
-<td style="text-align:left">UART controller</td>
-<td style="text-align:center">4</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">4?</td>
-<td style="text-align:center">5</td>
-</tr>
-<tr>
-<td style="text-align:left">SATA controller</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">0</td>
-</tr>
-<tr>
-<td style="text-align:left">PCIe GPP</td>
-<td style="text-align:center">7</td>
-<td style="text-align:center">7</td>
-<td style="text-align:center">5</td>
-<td style="text-align:center">6</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: center">Raven /Picasso<br>/Raven2 (Dali)</th>
+          <th style="text-align: center">Renoir /Cezanne<br>/Barcelo</th>
+          <th style="text-align: center">Raven2<br>(Pollock)</th>
+          <th style="text-align: center">Sabrina</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Package</td>
+          <td style="text-align: center">FP5</td>
+          <td style="text-align: center">FP6</td>
+          <td style="text-align: center">FT5</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Base board name</td>
+          <td style="text-align: center">Mandolin</td>
+          <td style="text-align: center">Majolica</td>
+          <td style="text-align: center">Cereme</td>
+          <td style="text-align: center">Chausie</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">UART controller</td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">4?</td>
+          <td style="text-align: center">5</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">SATA controller</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">PCIe GPP</td>
+          <td style="text-align: center">7</td>
+          <td style="text-align: center">7</td>
+          <td style="text-align: center">5</td>
+          <td style="text-align: center">6</td>
+      </tr>
+  </tbody>
 </table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -222,7 +280,7 @@ CPPC は電源管理機能の 1つであり、CPPC2 ではクロックの選択�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

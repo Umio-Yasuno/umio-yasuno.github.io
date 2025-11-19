@@ -19,8 +19,24 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel GFX ドライバーに Meteor Lake をサポートする最初のパッチが投稿される ―― Gen12.7, Xe_LPD&#43;, Xe_LPM&#43; | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Intel の Radhakrishna Sripada 氏より、Linux Kernel における Intel GPU/GFX ドライバー i915 に Meteor Lake-M/P のサポートを追加する最初のパッチが投稿されている。 [Intel-gfx] [PATCH 0/2] i915: Introduce Meteorlake [Intel-gfx] [PATCH 1/2] drm/i915/mtl: Add MeteorLake platform info [Intel-gfx] [PATCH 2/2] drm/i915/mtl: Add MeteorLake PCI IDs Meteor Lake-M/P の各">
-  <meta property="og:description" content="Intel の Radhakrishna Sripada 氏より、Linux Kernel における Intel GPU/GFX ドライバー i915 に Meteor Lake-M/P のサポートを追加する最初のパッチが投稿されている。 [Intel-gfx] [PATCH 0/2] i915: Introduce Meteorlake [Intel-gfx] [PATCH 1/2] drm/i915/mtl: Add MeteorLake platform info [Intel-gfx] [PATCH 2/2] drm/i915/mtl: Add MeteorLake PCI IDs Meteor Lake-M/P の各"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Intel の Radhakrishna Sripada 氏より、Linux Kernel における Intel GPU/GFX ドライバー i915 に Meteor Lake-M/P のサポートを追加する最初のパッチが投稿されている。
+
+[Intel-gfx] [PATCH 0/2] i915: Introduce Meteorlake
+[Intel-gfx] [PATCH 1/2] drm/i915/mtl: Add MeteorLake platform info
+[Intel-gfx] [PATCH 2/2] drm/i915/mtl: Add MeteorLake PCI IDs
+
+Meteor Lake-M/P の各 IP バージョンは、GraphicsIP は ver12.70、DisplayIP は ver14 (Xe_LPD&#43;)、MediaIP は ver13 (Xe_LPM&#43;) とされている。
+ただ GraphicsIP については、あくまでもドライバー内で区別するためのバージョンであり、実際のバージョンはハードウェアの GMD_ID レジスタから読み取れる。
+また、intel/gmmlib などでは、PRODUCT_FAMILY や GFXCORE_FAMILY としては IGFX_DG2 = 1270 (ver12.7) を割り当てているが、Intel GFX ドライバーでは DG2/Alchemist の GraphicsIP は ver12.55 とされており、それぞれバージョン番号は近いが意味する所は異なっている。1">
+  <meta property="og:description" content="Intel の Radhakrishna Sripada 氏より、Linux Kernel における Intel GPU/GFX ドライバー i915 に Meteor Lake-M/P のサポートを追加する最初のパッチが投稿されている。
+
+[Intel-gfx] [PATCH 0/2] i915: Introduce Meteorlake
+[Intel-gfx] [PATCH 1/2] drm/i915/mtl: Add MeteorLake platform info
+[Intel-gfx] [PATCH 2/2] drm/i915/mtl: Add MeteorLake PCI IDs
+
+Meteor Lake-M/P の各 IP バージョンは、GraphicsIP は ver12.70、DisplayIP は ver14 (Xe_LPD&#43;)、MediaIP は ver13 (Xe_LPM&#43;) とされている。
+ただ GraphicsIP については、あくまでもドライバー内で区別するためのバージョンであり、実際のバージョンはハードウェアの GMD_ID レジスタから読み取れる。
+また、intel/gmmlib などでは、PRODUCT_FAMILY や GFXCORE_FAMILY としては IGFX_DG2 = 1270 (ver12.7) を割り当てているが、Intel GFX ドライバーでは DG2/Alchemist の GraphicsIP は ver12.55 とされており、それぞれバージョン番号は近いが意味する所は異なっている。1"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Linux_Kernel, Meteor_Lake">
@@ -57,7 +73,7 @@
 <em>Xe_HP SDV, DG2/Alchemist, Ponte Vecchio</em> では 4基搭載されているため、それよりも小さい規模となる。<br>
 公開されているドキュメントでは <em>Tiger Lake</em> でも CCS 1基を搭載しているとされているが、i915 ドライバーでは何らかの理由で有効化されていないものと思われる。<br>
 <em>Rocket Lake, Alder Lake-N/M/P/S</em> でも同様のため、iGPU では <em>Meteor Lake-M/P</em> で CCS がようやく有効化されることとなる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/06/16/intel-ccs-mesa3d/" title="/posts/2022/06/16/intel-ccs-mesa3d/">Intel OSS OpenGL/Vulkan ドライバーが &ldquo;Compute Engine&rdquo; に対応 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/06/16/intel-ccs-mesa3d/" title="/posts/2022/06/16/intel-ccs-mesa3d/">Intel OSS OpenGL/Vulkan ドライバーが “Compute Engine” に対応 | Coelacanth’s Dream</a></span>
 </p>
 <blockquote>
 <pre><code> +#define XE_LPDP_FEATURES	\
@@ -119,64 +135,64 @@
 
 </blockquote>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Intel GPU ({ver}.{release_ver})</th>
-<th style="text-align:center">Graphics IP ver</th>
-<th style="text-align:center">Display IP ver</th>
-<th style="text-align:center">Media IP ver</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Tiger Lake, Rocket Lake?</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">12</td>
-</tr>
-<tr>
-<td style="text-align:left">DG1</td>
-<td style="text-align:center">12.1</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">12</td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-S</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">12.2</td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-P</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">13 (XE_LPD)</td>
-<td style="text-align:center">12.2</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
-<td style="text-align:center">12.5</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">12.5</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></td>
-<td style="text-align:center">12.55</td>
-<td style="text-align:center">13 (XE_LPD)</td>
-<td style="text-align:center">12.55</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></td>
-<td style="text-align:center">12.6</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">12.6</td>
-</tr>
-<tr>
-<td style="text-align:left">Meteor Lake</td>
-<td style="text-align:center">12.7</td>
-<td style="text-align:center">14 (XE_LPD+)</td>
-<td style="text-align:center">13 (XE_LPM+)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Intel GPU ({ver}.{release_ver})</th>
+          <th style="text-align: center">Graphics IP ver</th>
+          <th style="text-align: center">Display IP ver</th>
+          <th style="text-align: center">Media IP ver</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Tiger Lake, Rocket Lake?</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">DG1</td>
+          <td style="text-align: center">12.1</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-S</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12.2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-P</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">13 (XE_LPD)</td>
+          <td style="text-align: center">12.2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
+          <td style="text-align: center">12.5</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">12.5</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></td>
+          <td style="text-align: center">12.55</td>
+          <td style="text-align: center">13 (XE_LPD)</td>
+          <td style="text-align: center">12.55</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></td>
+          <td style="text-align: center">12.6</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">12.6</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Meteor Lake</td>
+          <td style="text-align: center">12.7</td>
+          <td style="text-align: center">14 (XE_LPD+)</td>
+          <td style="text-align: center">13 (XE_LPM+)</td>
+      </tr>
+  </tbody>
 </table>
 <div class="footnotes" role="doc-endnotes">
 <hr>
@@ -200,7 +216,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

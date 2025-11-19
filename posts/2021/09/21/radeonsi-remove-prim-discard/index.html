@@ -19,8 +19,8 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="RadeonSIドライバーから非同期コンピュートによるプリミティブカリング機能が削除 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="先日、AMD のソフトウェアエンジニア Marek Olšák 氏より、非同期コンピュートを用いたプリミティブカリング機能を削除するパッチ (マージリクエスト) が投稿され、メイン">
-  <meta property="og:description" content="先日、AMD のソフトウェアエンジニア Marek Olšák 氏より、非同期コンピュートを用いたプリミティブカリング機能を削除するパッチ (マージリクエスト) が投稿され、メイン"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="先日、AMD のソフトウェアエンジニア Marek Olšák 氏より、非同期コンピュートを用いたプリミティブカリング機能を削除するパッチ (マージリクエスト) が投稿され、メインラインにも組み込まれた。">
+  <meta property="og:description" content="先日、AMD のソフトウェアエンジニア Marek Olšák 氏より、非同期コンピュートを用いたプリミティブカリング機能を削除するパッチ (マージリクエスト) が投稿され、メインラインにも組み込まれた。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, RadeonSI, NGG">
@@ -78,12 +78,12 @@ GDC 2016 で発表された <a href="https://archive.org/details/GDC2016Wihlidal
 非同期コンピュート版は OpenGLドライバーである <em>RadeonSI</em> のみに実装されていたが、<em>NGG</em> と <em>NGG カリング</em> は Vulkanドライバー <em>RADV</em> にも実装されているのも大きい。<br>
 <a href="https://www.phoronix.com/" rel="noopener noreferrer" target="_blank" title="https://www.phoronix.com/">Phoronix</a> の Michael Larabel 氏が行った検証では、<em>NGG カリング</em> の有効化でいくつか性能が低下しているものもあるが、確かな性能向上を得られているゲームもあり、ここも非同期コンピュート版との大きな違いと言える。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p><em>NGG</em> は <em>RadeonSI, RADV</em> 共に、<em>Navi14</em> 以外の <em>GFX10</em> とそれ以降の世代でデフォルトで有効化されている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/07/26/radv-nggc/" title="/posts/2021/07/26/radv-nggc/">RADVドライバーに NGGカリングが実装 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/07/26/radv-nggc/" title="/posts/2021/07/26/radv-nggc/">RADVドライバーに NGGカリングが実装 | Coelacanth’s Dream</a></span>
 
 <em>Navi14</em> で <em>NGG</em> がデフォルトで有効化されない理由はハードウェア的にバグによるものとされている。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup><br>
 <em>NGG カリング</em> は、<em>RadeonSI</em> では RenderBackend (RB = 4 ROPs, RB+ = 8 ROPs) が 2基以上という条件が付いているが、現時点で存在する <em>GFX10/RDNA, GFX10.3/RDNA 2</em> 世代の dGPU は条件をクリアしているため、デフォルトで有効化される。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
 <em>RADV</em> では、安定したパフォーマンスの向上が確認できたなら <em>GFX10.3/RDNA 2</em> 世代でデフォルトで有効化するつもりであることをコメントで触れている。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/10/17/gfx103-default-ngg-culling/#fn:navi1x-pro-nggc" title="/posts/2020/10/17/gfx103-default-ngg-culling/#fn:navi1x-pro-nggc">RadeonSIドライバー + RDNA 2 では NGGカリング/プリミティブシェーダー がデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/10/17/gfx103-default-ngg-culling/#fn:navi1x-pro-nggc" title="/posts/2020/10/17/gfx103-default-ngg-culling/#fn:navi1x-pro-nggc">RadeonSIドライバー + RDNA 2 では NGGカリング/プリミティブシェーダー がデフォルトで有効に | Coelacanth’s Dream</a></span>
 </p>
 <p>そして、(コードが) とても複雑という点だが、該当コミットではある Issue をクローズしており、そこでは非同期コンピュートによるプリミティブカリングを有効化して UNIGINE Heaven を実行すると、GPU がハングすることが報告されている。<br>
 その問題は後のパッチで修正されたが、他にもアーティファクト (視覚的なエラー?) が発生する問題もあった。</p>
@@ -122,7 +122,7 @@ GDC 2016 で発表された <a href="https://archive.org/details/GDC2016Wihlidal
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

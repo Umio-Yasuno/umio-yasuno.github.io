@@ -19,8 +19,50 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="DG2-G12, DG2 L3 banks, SIMD width | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="DG2/Alchemist (Xe-HPG) や Ponte Vecchio (Xe-HPC) に関するメモ書き。 Index DG2-G12 DG2 L3 banks SIMD width DPAS/DPASW DG2-G12 Linux Kernel に DG2-G12 バリアント (サブプラットフォーム) 関連のパッチが投稿された。 以前から IGC (intel-graphics-c">
-  <meta property="og:description" content="DG2/Alchemist (Xe-HPG) や Ponte Vecchio (Xe-HPC) に関するメモ書き。 Index DG2-G12 DG2 L3 banks SIMD width DPAS/DPASW DG2-G12 Linux Kernel に DG2-G12 バリアント (サブプラットフォーム) 関連のパッチが投稿された。 以前から IGC (intel-graphics-c"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="DG2/Alchemist (Xe-HPG) や Ponte Vecchio (Xe-HPC) に関するメモ書き。
+Index
+
+
+DG2-G12
+DG2 L3 banks
+SIMD width
+
+DPAS/DPASW
+
+
+
+
+
+DG2-G12
+
+Linux Kernel に DG2-G12 バリアント (サブプラットフォーム) 関連のパッチが投稿された。
+以前から IGC (intel-graphics-compiler)、compute-runtime に取り込まれた変更から、DG2 には G10/G11 に加え、G12 バリアント (サブプラットフォーム) も存在することが示唆されていた。
+3種類存在するかも知れない Intel Alchemist/DG2 と 2種類存在する Ponte Vecchio | Coelacanth’s Dream
+
+今回のパッチで、ひとまず G12 バリアントの存在が確定したと言える。
+パッチの内容は初期的なサポートを追加するもので、現時点で G12 はハードウェアに存在するバグへの回避策や機能面において、G10/G11 と共通していると推察される。">
+  <meta property="og:description" content="DG2/Alchemist (Xe-HPG) や Ponte Vecchio (Xe-HPC) に関するメモ書き。
+Index
+
+
+DG2-G12
+DG2 L3 banks
+SIMD width
+
+DPAS/DPASW
+
+
+
+
+
+DG2-G12
+
+Linux Kernel に DG2-G12 バリアント (サブプラットフォーム) 関連のパッチが投稿された。
+以前から IGC (intel-graphics-compiler)、compute-runtime に取り込まれた変更から、DG2 には G10/G11 に加え、G12 バリアント (サブプラットフォーム) も存在することが示唆されていた。
+3種類存在するかも知れない Intel Alchemist/DG2 と 2種類存在する Ponte Vecchio | Coelacanth’s Dream
+
+今回のパッチで、ひとまず G12 バリアントの存在が確定したと言える。
+パッチの内容は初期的なサポートを追加するもので、現時点で G12 はハードウェアに存在するバグへの回避策や機能面において、G10/G11 と共通していると推察される。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Xe-HPG, Xe-HPC, DG2, Xe-HP, Gen12">
@@ -60,7 +102,7 @@
 </h2>
 <p>Linux Kernel に <em>DG2-G12</em> バリアント (サブプラットフォーム) 関連のパッチが投稿された。<br>
 以前から <a href="https://github.com/intel/intel-graphics-compiler" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler">IGC (intel-graphics-compiler)</a>、<a href="https://github.com/intel/compute-runtime" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/compute-runtime">compute-runtime</a> に取り込まれた変更から、<em>DG2</em> には <em>G10/G11</em> に加え、<em>G12</em> バリアント (サブプラットフォーム) も存在することが示唆されていた。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/12/17/dg2_g10-g11-g12/#dg2" title="/posts/2021/12/17/dg2_g10-g11-g12/#dg2">3種類存在するかも知れない Intel Alchemist/DG2 と 2種類存在する Ponte Vecchio | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/12/17/dg2_g10-g11-g12/#dg2" title="/posts/2021/12/17/dg2_g10-g11-g12/#dg2">3種類存在するかも知れない Intel Alchemist/DG2 と 2種類存在する Ponte Vecchio | Coelacanth’s Dream</a></span>
 
 今回のパッチで、ひとまず <em>G12</em> バリアントの存在が確定したと言える。<br>
 パッチの内容は初期的なサポートを追加するもので、現時点で <em>G12</em> はハードウェアに存在するバグへの回避策や機能面において、<em>G10/G11</em> と共通していると推察される。</p>
@@ -73,39 +115,39 @@
 <p>補足すると、Intel はこれまで GPU が持つキャッシュについて、サンプラーごとに持つリードオンリーキャッシュを L2、GPU全体で共有するプログラマブルなキャッシュを L3 としていた。<br>
 それが <span class="xe-gpu-arch">X<sup>e</sup></span>-Core、Vector Engine、Matrix Engine といった用語を打ち出すとともに、キャッシュ階層の呼称が整理され、従来の L3キャッシュを L2キャッシュとするようになった。<span class="xe-gpu-arch">X<sup>e</sup></span>-Core が Sub-Slice、Vector Engine + Matirx Engine が EU に相当する。<br>
 しかし、ドライバ等のシェーダコンパイラ、GPU に最適化されたソフトウェアでは従来の用語を使い続けている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/08/26/intel-arch-day-2021-xe-gpu/" title="/posts/2021/08/26/intel-arch-day-2021-xe-gpu/">Intel Architecture Day 2021 個人的まとめ　―― 用語が整理された Xe GPU | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/08/26/intel-arch-day-2021-xe-gpu/" title="/posts/2021/08/26/intel-arch-day-2021-xe-gpu/">Intel Architecture Day 2021 個人的まとめ　―― 用語が整理された Xe GPU | Coelacanth’s Dream</a></span>
 </p>
 <ul>
 <li><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/14297" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/14297">intel/devinfo: updates for gfx12.5 (!14297) · Merge requests · Mesa / mesa · GitLab</a></li>
 </ul>
 <p>以下引用部によれば、<em>DG2</em> では Sub-Slice (<span class="xe-gpu-arch">X<sup>e</sup></span>-Core) の有効数が L3キャッシュバンク数と結びついている。<br>
 <em>DG2 (<span class="xe-gpu-arch">X<sup>e</sup>-HPG</span>)</em> では Sub-Slice あたり EU 16基 (SP 128基) を持ち、また最近 <a href="https://github.com/intel/media-driver" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/media-driver">Intel(R) Media Driver</a> に追加された記述から、L3キャッシュバンクあたりのキャッシュサイズは 512KB とされる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/12/19/intel-dg2-av1-encode/#l3c" title="/posts/2021/12/19/intel-dg2-av1-encode/#l3c">Intel Alchemist/DG2 は AV1エンコードをサポートか | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/12/19/intel-dg2-av1-encode/#l3c" title="/posts/2021/12/19/intel-dg2-av1-encode/#l3c">Intel Alchemist/DG2 は AV1エンコードをサポートか | Coelacanth’s Dream</a></span>
 
 以上の情報を合わせると、Sub-Slice 17-32基 (EU 272-512基) は L3キャッシュバンク 32基 (16MB)、Sub-Slice 9-16基 (EU 144-256基) は L3キャッシュバンク 16基 (8MB)、Sub-Slice 8基以下 (EU 128基以下) は L3キャッシュバンク 8基 (4MB) を持つという構成が考えられる。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">DG2<br>Sub-Slice</th>
-<th style="text-align:center">16&lt; (&lt;=32)</th>
-<th style="text-align:center">8&lt; (&lt;=16)</th>
-<th style="text-align:center">&lt;=8</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">EU</td>
-<td style="text-align:center">272-512</td>
-<td style="text-align:center">144-256</td>
-<td style="text-align:center">&lt;=128</td>
-</tr>
-<tr>
-<td style="text-align:left">L3cache</td>
-<td style="text-align:center">32 Banks<br> (16MB?)</td>
-<td style="text-align:center">16 Banks<br> (8MB?)</td>
-<td style="text-align:center">8 Banks<br> (4MB?)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">DG2<br>Sub-Slice</th>
+          <th style="text-align: center">16&lt; (&lt;=32)</th>
+          <th style="text-align: center">8&lt; (&lt;=16)</th>
+          <th style="text-align: center">&lt;=8</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">EU</td>
+          <td style="text-align: center">272-512</td>
+          <td style="text-align: center">144-256</td>
+          <td style="text-align: center">&lt;=128</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L3cache</td>
+          <td style="text-align: center">32 Banks<br> (16MB?)</td>
+          <td style="text-align: center">16 Banks<br> (8MB?)</td>
+          <td style="text-align: center">8 Banks<br> (4MB?)</td>
+      </tr>
+  </tbody>
 </table>
 <blockquote>
 <pre><code> +static void
@@ -134,7 +176,7 @@
 <h2 id="simd_width">SIMD width<a href="#simd_width" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> では EU内に、8-wide FP32/Int32 ALU と 2-wide Extened Math (EM) ALU を持つことが Intel Architecture Day 2020 ですでに発表されている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/#xe-lp-detail" title="/posts/2020/08/14/intel-architecture-day-2020/#xe-lp-detail">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/#xe-lp-detail" title="/posts/2020/08/14/intel-architecture-day-2020/#xe-lp-detail">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth’s Dream</a></span>
 
 <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> 、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> はまだ EU (Vector Engine) の詳細な構成は明かされていないが、SIMD幅 (要素数) については OSS のコードから読み取ることができる。</p>
 <p>OneDNN、IGC に記述されている情報によると、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> は 8-wide、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> は 16-wide だとされている。</p>
@@ -164,35 +206,35 @@
 また、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP/HP/HPG</span></em> では、EU 2基をペアとし、スレッドコントロールを共通化する Fused EU (EU fusion とも) が実装されている。だが <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> は Fused EU が実装されておらず、EU が単体で扱われる。</p>
 <p>オタクの戯言であるから、確かな考えではないだろうが、SIMD幅を広げることでスレッドあたりの性能を上げたのが <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> 、スレッドコントロールを共通化することで効率を上げたのが <em><span class="xe-gpu-arch">X<sup>e</sup>-LP/HP/HPG</span></em> と見られるのだろうか？</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">EU</th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-LP/HP/HPG</span></th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">SIMD ALU width</td>
-<td style="text-align:center">8-wide</td>
-<td style="text-align:center">16-wide</td>
-</tr>
-<tr>
-<td style="text-align:left">GRF size per entry</td>
-<td style="text-align:center">32 Bytes</td>
-<td style="text-align:center">64 Bytes</td>
-</tr>
-<tr>
-<td style="text-align:left">EU per Sub-Slice</td>
-<td style="text-align:center">16 EU</td>
-<td style="text-align:center">8 EU</td>
-</tr>
-<tr>
-<td style="text-align:left">Fused EU</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">N</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">EU</th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-LP/HP/HPG</span></th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">SIMD ALU width</td>
+          <td style="text-align: center">8-wide</td>
+          <td style="text-align: center">16-wide</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GRF size per entry</td>
+          <td style="text-align: center">32 Bytes</td>
+          <td style="text-align: center">64 Bytes</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">EU per Sub-Slice</td>
+          <td style="text-align: center">16 EU</td>
+          <td style="text-align: center">8 EU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Fused EU</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">N</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="dpas_w">DPAS/DPASW<a href="#dpas_w" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -227,7 +269,7 @@
 <ul>
 <li>GRF Size: <a href="https://github.com/intel/intel-graphics-compiler/blob/aee335103dd48a7451f36e3b711c649660ec6dc5/IGC/Compiler/CISACodeGen/Platform.hpp#L928-L937" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/blob/aee335103dd48a7451f36e3b711c649660ec6dc5/IGC/Compiler/CISACodeGen/Platform.hpp#L928-L937">intel-graphics-compiler/Platform.hpp at aee335103dd48a7451f36e3b711c649660ec6dc5 · intel/intel-graphics-compiler</a></li>
 <li>Gen12 FusedEU description: <a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5910/" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/5910/">intel/ir/gen12+: Work around FS performance regressions due to SIMD32 discard divergence. (!5910) · Merge requests · Mesa / mesa · GitLab</a></li>
-<li>HC33 PVC: <a href="https://hc33.hotchips.org/assets/program/conference/day2/hc2021_pvc_final.pdf" rel="noopener noreferrer" target="_blank" title="https://hc33.hotchips.org/assets/program/conference/day2/hc2021_pvc_final.pdf">Intel&rsquo;s Ponte Vecchio GPU Architecture - hc2021_pvc_final.pdf</a></li>
+<li>HC33 PVC: <a href="https://hc33.hotchips.org/assets/program/conference/day2/hc2021_pvc_final.pdf" rel="noopener noreferrer" target="_blank" title="https://hc33.hotchips.org/assets/program/conference/day2/hc2021_pvc_final.pdf">Intel’s Ponte Vecchio GPU Architecture - hc2021_pvc_final.pdf</a></li>
 <li>DPASW FusedEU: <a href="https://github.com/oneapi-src/oneDNN/blob/72e9993236c10bd2d676896b600fac05bdcfa2e1/src/gpu/jit/gemm/xe_hp_systolic_gemm_kernel.cpp#L897-L901" rel="noopener noreferrer" target="_blank" title="https://github.com/oneapi-src/oneDNN/blob/72e9993236c10bd2d676896b600fac05bdcfa2e1/src/gpu/jit/gemm/xe_hp_systolic_gemm_kernel.cpp#L897-L901">oneDNN/xe_hp_systolic_gemm_kernel.cpp at 72e9993236c10bd2d676896b600fac05bdcfa2e1 · oneapi-src/oneDNN</a></li>
 <li>Gen12 PDF: <a href="https://www.intel.com/content/dam/develop/external/us/en/documents/pdf/july-gdc-2021-developing-for-intel-graphics-today-and-into-the-future.pdf" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/dam/develop/external/us/en/documents/pdf/july-gdc-2021-developing-for-intel-graphics-today-and-into-the-future.pdf">Develop for Intel Graphics—Today and into the Future Presentation - july-gdc-2021-developing-for-intel-graphics-today-and-into-the-future.pdf</a></li>
 <li><a href="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/dam/develop/external/us/en/documents/the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf">the-compute-architecture-of-intel-processor-graphics-gen9-v1d0.pdf</a></li>
@@ -253,7 +295,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

@@ -19,8 +19,18 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD の Joe Nash 氏より、LLVM への GFX11 のサポートに向けたさらなるパッチが投稿、公開されている。 LLVM で GFX11 のサポートが進み始める | Coelacanth&rsquo;s Dream 今回のパッチには GFX11 で追加される新機能のサ">
-  <meta property="og:description" content="AMD の Joe Nash 氏より、LLVM への GFX11 のサポートに向けたさらなるパッチが投稿、公開されている。 LLVM で GFX11 のサポートが進み始める | Coelacanth&rsquo;s Dream 今回のパッチには GFX11 で追加される新機能のサ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD の Joe Nash 氏より、LLVM への GFX11 のサポートに向けたさらなるパッチが投稿、公開されている。
+LLVM で GFX11 のサポートが進み始める | Coelacanth’s Dream
+
+今回のパッチには GFX11 で追加される新機能のサポートも一部含まれている。
+しかし、新機能のフラグ管理と GFX11 のテストファイル追加が主であり、新機能の詳細、新機能が有効になっていることで分岐する部分のコード等は追加されていない。
+そのため、機能の詳細については推測がほとんどとなる。">
+  <meta property="og:description" content="AMD の Joe Nash 氏より、LLVM への GFX11 のサポートに向けたさらなるパッチが投稿、公開されている。
+LLVM で GFX11 のサポートが進み始める | Coelacanth’s Dream
+
+今回のパッチには GFX11 で追加される新機能のサポートも一部含まれている。
+しかし、新機能のフラグ管理と GFX11 のテストファイル追加が主であり、新機能の詳細、新機能が有効になっていることで分岐する部分のコード等は追加されていない。
+そのため、機能の詳細については推測がほとんどとなる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GFX11, RDNA_3, LLVM">
@@ -43,7 +53,7 @@
     <time datetime="2022-05-10T12:14:27+09:00">Post: 2022-05-10 12:14:27</time>
     <aside class="update">Update: 2022-11-17 11:52:11</aside>
   </aside><p>AMD の Joe Nash 氏より、LLVM への <em>GFX11</em> のサポートに向けたさらなるパッチが投稿、公開されている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/04/28/llvm-gfx11/" title="/posts/2022/04/28/llvm-gfx11/">LLVM で GFX11 のサポートが進み始める | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/04/28/llvm-gfx11/" title="/posts/2022/04/28/llvm-gfx11/">LLVM で GFX11 のサポートが進み始める | Coelacanth’s Dream</a></span>
 
 今回のパッチには <em>GFX11</em> で追加される新機能のサポートも一部含まれている。<br>
 しかし、新機能のフラグ管理と <em>GFX11</em> のテストファイル追加が主であり、新機能の詳細、新機能が有効になっていることで分岐する部分のコード等は追加されていない。<br>
@@ -114,7 +124,7 @@
 <h3 id="dot8">Dot8Insts<a href="#dot8" class="head-cur-link" aria-hidden></a>
 </h3>
 <p><em>GFX11</em> で新たに <code>Dot8Insts</code> をサポートすることは以前のパッチで明かされていたが、今回でそこに含まれる命令が公開された。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/04/28/llvm-gfx11/" title="/posts/2022/04/28/llvm-gfx11/">LLVM で GFX11 のサポートが進み始める | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/04/28/llvm-gfx11/" title="/posts/2022/04/28/llvm-gfx11/">LLVM で GFX11 のサポートが進み始める | Coelacanth’s Dream</a></span>
 
 これまで bf16 フォーマットには、<em>CDNA 系アーキテクチャ</em> の行列演算命令でしかネイティブでサポートされていなかったが、<em>GFX11</em> ではドット積命令の一部でサポートされる。<br>
 また入力と出力の精度を同じにすると思われる <code>v_dot2_f16_f16, v_dot2_bf16_bf16</code> が追加されている。 (<code>D.f16 = S0.f16[0] * S1.f16[0] + S0.f16[1] * S1.f16[1] + S2.f16</code>)</p>
@@ -165,7 +175,7 @@
 推測するならば、1個の命令から 2x Wave32 分のスレッドを発行する機能と思われるが、ただ SIMDユニットに対応する Wave Controller (Buffer) に 2x Wave32 がスタックされるだけなのか、<br>
 または Wave Controller と SIMDユニットの構成が変更され、一部の <code>FeatureVOPD</code> に含まれる命令は従来の 2x レートで処理できるのか、等は不明。</p>
 <p>前者は、<em>GFX10/RDNA 1</em> 世代からソフトウェアで実装されている Sub-Vector Mode に近い。Sub-Vector Mode では、Wave64 をベクタレジスタを共有する 2x Wave32 に分解して実行する。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/#consider" title="/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/#consider">RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/#consider" title="/posts/2020/07/02/radeonsi-shader-wave64-with-rdna/#consider">RadeonSI ドライバーでは RDNA GPU も Wave64モードで各シェーダーを実行するように | Coelacanth’s Dream</a></span>
 
 後者は、Wave Controller に対して SIMDユニットを増やした可能性が考えられる。ただ一部の命令に限られるとすると効率が気になる所ではある。<br>
 CU 内部の構造が大きく変わっている可能性、自分の推測がすべて外れている可能性も高い。</p>
@@ -233,35 +243,35 @@ CU 内部の構造が大きく変わっている可能性、自分の推測が�
 
 </blockquote>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">GC IP ver</th>
-<th style="text-align:center">GFX ID</th>
-<th style="text-align:center"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">11.0.0</td>
-<td style="text-align:center">gfx1100</td>
-<td style="text-align:center">dGPU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.1</td>
-<td style="text-align:center">gfx1103</td>
-<td style="text-align:center">APU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.2</td>
-<td style="text-align:center">gfx1102</td>
-<td style="text-align:center">dGPU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.3?</td>
-<td style="text-align:center">gfx1101?</td>
-<td style="text-align:center">dGPU?</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">GC IP ver</th>
+          <th style="text-align: center">GFX ID</th>
+          <th style="text-align: center"></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">11.0.0</td>
+          <td style="text-align: center">gfx1100</td>
+          <td style="text-align: center">dGPU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.1</td>
+          <td style="text-align: center">gfx1103</td>
+          <td style="text-align: center">APU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.2</td>
+          <td style="text-align: center">gfx1102</td>
+          <td style="text-align: center">dGPU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.3?</td>
+          <td style="text-align: center">gfx1101?</td>
+          <td style="text-align: center">dGPU?</td>
+      </tr>
+  </tbody>
 </table>
 <p>それ以外にも <code>GCNSubtarget.h</code> には <em>GFX11</em> でサポートされる機能フラグに関するコードが追加されている。</p>
 <blockquote>
@@ -278,7 +288,7 @@ CU 内部の構造が大きく変わっている可能性、自分の推測が�
 </code></pre>
 </blockquote>
 <p><em>GFX11</em> では <em>NGG (Next Generation Geometry)</em> パイプラインのみをサポートし、レガシーなパイプラインはサポートしない、というのは <em>RadeonSI</em> ドライバーの内容と一致している。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/" title="/posts/2022/05/05/radeonsi-gfx11/">RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/" title="/posts/2022/05/05/radeonsi-gfx11/">RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth’s Dream</a></span>
 </p>
 <blockquote>
 <pre><code> +  // \returns true if the target supports the pre-NGG legacy geometry path.
@@ -304,7 +314,7 @@ CU 内部の構造が大きく変わっている可能性、自分の推測が�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

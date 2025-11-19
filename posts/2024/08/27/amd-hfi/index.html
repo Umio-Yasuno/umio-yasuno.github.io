@@ -19,8 +19,20 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="AMD CPU も Intel Thread Director と同様の機能を実装か | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD の Perry Yuan 氏により、Linux Kernel に AMD Hetero Core Hardware Feedback Driver (amd_hfi) を追加するパッチが公開されている。 [PATCH 00/11] Introduce New AMD Heterogeneous Core Driver - Perry Yuan パッチ内では、AMD におけるヘテロジニアスアーキテクチャの">
-  <meta property="og:description" content="AMD の Perry Yuan 氏により、Linux Kernel に AMD Hetero Core Hardware Feedback Driver (amd_hfi) を追加するパッチが公開されている。 [PATCH 00/11] Introduce New AMD Heterogeneous Core Driver - Perry Yuan パッチ内では、AMD におけるヘテロジニアスアーキテクチャの"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD の Perry Yuan 氏により、Linux Kernel に AMD Hetero Core Hardware Feedback Driver (amd_hfi) を追加するパッチが公開されている。
+
+[PATCH 00/11] Introduce New AMD Heterogeneous Core Driver - Perry Yuan
+
+パッチ内では、AMD におけるヘテロジニアスアーキテクチャの目標はバックグラウンドスレッドを Dense (高密度, &ldquo;c&rdquo; 系) コアに割り当て、優先度の高いスレッドを Classic (高性能, 無印系) コアに割り当てることで消費電力の観点でメリットを得ることだと説明されている。
+バックグラウンドスレッドを Dense コアに割り当てれば、処理に必要な電力は少なくて済み、その分を Classic コアにまわすことで優先度の高いスレッドをより速く処理することができる。
+また Dense コアを増やすことでマルチスレッド性能も向上させられる。">
+  <meta property="og:description" content="AMD の Perry Yuan 氏により、Linux Kernel に AMD Hetero Core Hardware Feedback Driver (amd_hfi) を追加するパッチが公開されている。
+
+[PATCH 00/11] Introduce New AMD Heterogeneous Core Driver - Perry Yuan
+
+パッチ内では、AMD におけるヘテロジニアスアーキテクチャの目標はバックグラウンドスレッドを Dense (高密度, &ldquo;c&rdquo; 系) コアに割り当て、優先度の高いスレッドを Classic (高性能, 無印系) コアに割り当てることで消費電力の観点でメリットを得ることだと説明されている。
+バックグラウンドスレッドを Dense コアに割り当てれば、処理に必要な電力は少なくて済み、その分を Classic コアにまわすことで優先度の高いスレッドをより速く処理することができる。
+また Dense コアを増やすことでマルチスレッド性能も向上させられる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, CPUID, Linux_Kernel">
@@ -74,34 +86,34 @@
 <p>機能としては概ね Intel HFI, Intel Thread Director (ITD), EHFI (Enhanced HFI) と同じと見ていいだろう。<br>
 ただしスレッドの分類は異なり、ITD の場合は以下のようになっている<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Intel Thread Director</th>
-<th style="text-align:center">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Class 0</td>
-<td style="text-align:center">Non-vectorized integer or floating-point code.</td>
-</tr>
-<tr>
-<td style="text-align:left">Class 1</td>
-<td style="text-align:center">Integer or floating-point vectorized code,<br>excluding Intel® Deep Learning Boost (Intel® DL Boost) code.</td>
-</tr>
-<tr>
-<td style="text-align:left">Class 2</td>
-<td style="text-align:center">Intel DL Boost code.</td>
-</tr>
-<tr>
-<td style="text-align:left">Class 3</td>
-<td style="text-align:center">Pause (spin-wait) dominated code.</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Intel Thread Director</th>
+          <th style="text-align: center">Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Class 0</td>
+          <td style="text-align: center">Non-vectorized integer or floating-point code.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Class 1</td>
+          <td style="text-align: center">Integer or floating-point vectorized code,<br>excluding Intel® Deep Learning Boost (Intel® DL Boost) code.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Class 2</td>
+          <td style="text-align: center">Intel DL Boost code.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Class 3</td>
+          <td style="text-align: center">Pause (spin-wait) dominated code.</td>
+      </tr>
+  </tbody>
 </table>
 <p>AMD のヘテロジニアスアーキテクチャは Intel のそれとは異なり、マイクロアーキテクチャと IPC は同一であるため、CPPC (Collaborative Processor Performance Control) に関連する値の設定を調整することで充分適したスケジューリングができると自分は考えていたが、実際は性能と電力効率の最大化にはハードウェアからヒントを用いたスケジューリングが必要だったのだろう。</p>
 <ul>
-<li><a href="https://www.coelacanth-dream.com/posts/2024/05/22/amd-pstate-hetero-core-topology/" title="/posts/2024/05/22/amd-pstate-hetero-core-topology/">amd-pstate ドライバーにおける異種コア構成のトポロジへの対応 | Coelacanth&rsquo;s Dream</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2024/05/22/amd-pstate-hetero-core-topology/" title="/posts/2024/05/22/amd-pstate-hetero-core-topology/">amd-pstate ドライバーにおける異種コア構成のトポロジへの対応 | Coelacanth’s Dream</a></li>
 </ul>
 <h2 id="cpuid">CPUID<a href="#cpuid" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -143,7 +155,7 @@
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.coelacanth-dream.com/posts/2022/09/10/linux-kernel-intel-itd/#itd" title="/posts/2022/09/10/linux-kernel-intel-itd/#itd">Linux Kernel に Intel Thread Director を実装するパッチ | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2022/09/10/linux-kernel-intel-itd/#itd" title="/posts/2022/09/10/linux-kernel-intel-itd/#itd">Linux Kernel に Intel Thread Director を実装するパッチ | Coelacanth’s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
 <p><a href="https://github.com/InstLatx64/InstLatx64/blob/4b94fc56e1d959d5124fae901679b434263bdd6e/AuthenticAMD/AuthenticAMD0B40F40_K20_GraniteRidge_03_CPUID.txt" rel="noopener noreferrer" target="_blank" title="https://github.com/InstLatx64/InstLatx64/blob/4b94fc56e1d959d5124fae901679b434263bdd6e/AuthenticAMD/AuthenticAMD0B40F40_K20_GraniteRidge_03_CPUID.txt">https://github.com/InstLatx64/InstLatx64/blob/4b94fc56e1d959d5124fae901679b434263bdd6e/AuthenticAMD/AuthenticAMD0B40F40_K20_GraniteRidge_03_CPUID.txt</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
@@ -164,7 +176,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

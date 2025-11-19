@@ -19,8 +19,20 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="GFX11 でサポートされる VOPD (Dual issue wave32) 命令の範囲と特徴 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD の Joe Nash 氏より、GFX11 に追加される VOPD (Dual issue wave32) 命令を LLVM MC (Machine Code) でサポートするパッチが投稿されている。 ⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support 以前のパッチで HasVOPDInsts (VOPD dual issue wave32) の機能フラグは出てきて">
-  <meta property="og:description" content="AMD の Joe Nash 氏より、GFX11 に追加される VOPD (Dual issue wave32) 命令を LLVM MC (Machine Code) でサポートするパッチが投稿されている。 ⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support 以前のパッチで HasVOPDInsts (VOPD dual issue wave32) の機能フラグは出てきて"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD の Joe Nash 氏より、GFX11 に追加される VOPD (Dual issue wave32) 命令を LLVM MC (Machine Code) でサポートするパッチが投稿されている。
+
+⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support
+
+以前のパッチで HasVOPDInsts (VOPD dual issue wave32) の機能フラグは出てきており、今回のパッチでさらなる詳細が明かされた。
+GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth’s Dream
+">
+  <meta property="og:description" content="AMD の Joe Nash 氏より、GFX11 に追加される VOPD (Dual issue wave32) 命令を LLVM MC (Machine Code) でサポートするパッチが投稿されている。
+
+⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support
+
+以前のパッチで HasVOPDInsts (VOPD dual issue wave32) の機能フラグは出てきており、今回のパッチでさらなる詳細が明かされた。
+GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth’s Dream
+"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GFX11, RDNA_3, LLVM">
@@ -47,7 +59,7 @@
 <li><a href="https://reviews.llvm.org/D128218" rel="noopener noreferrer" target="_blank" title="https://reviews.llvm.org/D128218">⚙ D128218 [AMDGPU] gfx11 VOPD instructions MC support</a></li>
 </ul>
 <p>以前のパッチで <code>HasVOPDInsts (VOPD dual issue wave32)</code> の機能フラグは出てきており、今回のパッチでさらなる詳細が明かされた。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/05/10/llvm-gfx11-dual-issue/#vopd" title="/posts/2022/05/10/llvm-gfx11-dual-issue/#vopd">GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/05/10/llvm-gfx11-dual-issue/#vopd" title="/posts/2022/05/10/llvm-gfx11-dual-issue/#vopd">GFX11 のサポートに向けた LLVM へのさらなるパッチ ―― True16Bit, Dot8, Dual issue wave32 | Coelacanth’s Dream</a></span>
 </p>
 <h2 id="vopd">VOPD (Dual issue wave32)<a href="#vopd" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -74,7 +86,7 @@
 <p>以下は <code>VOPD</code> 命令でサポートされる擬似的な命令のリストであり、実際の命令名は <code>V_DUAL_*</code> の形式となる。<br>
 倍精度 (64-bit) 向け命令や半精度 (16-bit) 向けのパックド命令は含まれず、単精度 (32-bit) 向けの命令のみがサポートされている。<br>
 FP64:FP32 の演算性能レートが 1:32 になったことと合わせ、<em>GFX11</em> では FP32 性能をより重視した設計になっているという印象を受ける。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/" title="/posts/2022/06/18/gfx11-dpfp-rate/">GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/" title="/posts/2022/06/18/gfx11-dpfp-rate/">GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth’s Dream</a></span>
 </p>
 <p>命令の種類としては、基本的な演算命令 <code>(ADD, SUB, MUL)</code>、FMA (<code>FMA{C,AK,MK}</code>) 命令、データの移動命令 (<code>MOV</code>)、比較命令 (<code>MAX, MIN</code>)、条件命令 (<code>CNDMASK</code>)、ビット演算命令 (<code>LSHLREV, AND</code>) となる。ビット演算命令に <code>OR, XOR</code> は含まれていない。<br>
 また、ドット積命令に唯一 <code>DOT2C_F32_F16 (D.f32 = S0.f16[0] * S1.f16[0] + S0.f16[1] * S1.f16[1] + D.f32)</code> 命令がサポートされている。</p>
@@ -137,7 +149,7 @@ FP64:FP32 の演算性能レートが 1:32 になったことと合わせ、<em>
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

@@ -19,8 +19,44 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux Kernel に Intel Xe-HP SDV, DG2 をサポートする最初のパッチが投稿される | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="intel-gfx メーリングリストに、Linux Kernel部の Intel GPU ドライバーに Xe-HP SDV (Software Development Vehicle) 、 DG2 (Xe-HPG) プラットフォームのサポートを追加する一連のパッチが投稿、公開された。 [Intel-gfx] [PATCH 00/53] Begin enabling Xe_HP">
-  <meta property="og:description" content="intel-gfx メーリングリストに、Linux Kernel部の Intel GPU ドライバーに Xe-HP SDV (Software Development Vehicle) 、 DG2 (Xe-HPG) プラットフォームのサポートを追加する一連のパッチが投稿、公開された。 [Intel-gfx] [PATCH 00/53] Begin enabling Xe_HP"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="intel-gfx メーリングリストに、Linux Kernel部の Intel GPU ドライバーに Xe-HP SDV (Software Development Vehicle) 、 DG2 (Xe-HPG) プラットフォームのサポートを追加する一連のパッチが投稿、公開された。
+
+[Intel-gfx] [PATCH 00/53] Begin enabling Xe_HP SDV and DG2 platforms
+
+Index
+
+
+Xe-HP/Xe-HPG
+
+2つのバリアントが存在する Xe-HPG
+
+
+
+
+
+Xe-HP/Xe-HPG
+
+Xe-HP/Xe-HPG は、パッチを公開し、オープンソースソフトウェアにサポートを追加する段階まで進んだらしく、Linux Kernel 以外にも OpenCLコンパイラ intel-graphics-compiler 等にもパッチが投稿され、すでにメインラインに取り込まれている。
+User Mode Driver (UMD) である Mesa3D には、 Xe-HPG で大幅に設計が見直されたとするデータポート LSC (Load Store Cache) のサポートを追加するパッチが投稿されている。1">
+  <meta property="og:description" content="intel-gfx メーリングリストに、Linux Kernel部の Intel GPU ドライバーに Xe-HP SDV (Software Development Vehicle) 、 DG2 (Xe-HPG) プラットフォームのサポートを追加する一連のパッチが投稿、公開された。
+
+[Intel-gfx] [PATCH 00/53] Begin enabling Xe_HP SDV and DG2 platforms
+
+Index
+
+
+Xe-HP/Xe-HPG
+
+2つのバリアントが存在する Xe-HPG
+
+
+
+
+
+Xe-HP/Xe-HPG
+
+Xe-HP/Xe-HPG は、パッチを公開し、オープンソースソフトウェアにサポートを追加する段階まで進んだらしく、Linux Kernel 以外にも OpenCLコンパイラ intel-graphics-compiler 等にもパッチが投稿され、すでにメインラインに取り込まれている。
+User Mode Driver (UMD) である Mesa3D には、 Xe-HPG で大幅に設計が見直されたとするデータポート LSC (Load Store Cache) のサポートを追加するパッチが投稿されている。1"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Linux_Kernel, Xe-HP, DG2, Xe-HPG, XE_LPD, Gen12">
@@ -71,7 +107,7 @@ Slice(s) は一部の固定ユニットと L3 Data Cache、EU (Execution Unit) �
 <h2 id="xe-hpg">2つのバリアントが存在する <span class="xe-gpu-arch">X<sup>e</sup>-HPG</span><a href="#xe-hpg" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em>DG2</em> ではディスプレイIP に <em>Alder Lake-P</em> と同じ <em>Xe_LPD (Display13)</em> を採用している。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/01/29/intel-display13/" title="/posts/2021/01/29/intel-display13/">Linux Kernel に 「Intel Display13」をサポートする最初のパッチが投稿される | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/01/29/intel-display13/" title="/posts/2021/01/29/intel-display13/">Linux Kernel に 「Intel Display13」をサポートする最初のパッチが投稿される | Coelacanth’s Dream</a></span>
 </p>
 <p>そして、<em>DG2</em> には <em>DG2-G10</em> と <em>DG2-G11</em> の 2つのバリアントが存在し、それらのハードウェアステッピングは一方から続くものではない、珍しい方式となっている。<br>
 バリアント間の違いは今の所、ハードウェアに存在する細かなバグとそれに対する回避策 (ワークアラウンド) くらいしかわからない。</p>
@@ -80,102 +116,102 @@ Slice(s) は一部の固定ユニットと L3 Data Cache、EU (Execution Unit) �
 </ul>
 <p>個人的な感覚で言えば <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/G</span> アーキテクチャ</em> は、<em>Gen11 アーキテクチャ</em> から <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span>Gen12.[0-2] アーキテクチャ</em> へ進んだ時以上に、多くの機能や概念が導入されており、正直ちゃんと読めていない部分が多い。<br>
 全体的な構成とリソースの割り当て方法が変更され、データポートも EU内の実行パイプラインも刷新されている。ディスクリート GPU 向けの <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/G</span> アーキテクチャ</em> には、統合 GPU を前提としていた従来の Intel GPU アーキテクチャでは推し量れない部分が多くある。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/" title="/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/">Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/" title="/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/">Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth’s Dream</a></span>
 
 そうした部分を Intel GPUアーキテクトがどういった意図で設計、搭載したのか――公式の発表、ドキュメント、あるいはパッチ、どのような形であれ明かされる時が楽しみだ。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Intel GPU</th>
-<th style="text-align:center">Graphics IP ver</th>
-<th style="text-align:center">Display IP ver</th>
-<th style="text-align:center">Media IP ver</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Tiger Lake,<br>Rocket Lake?</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen12</td>
-</tr>
-<tr>
-<td style="text-align:left">DG1</td>
-<td style="text-align:center">Gen12.1</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen12</td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-S</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen12.2<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-P</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd" rel="noopener noreferrer" target="_blank" title="/tags/xe_lpd">XE_LPD</a>)</td>
-<td style="text-align:center">Gen12.2<sup id="fnref1:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
-<td style="text-align:center">Gen12.5</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">Gen12.5</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></td>
-<td style="text-align:center">Gen12.55</td>
-<td style="text-align:center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd" rel="noopener noreferrer" target="_blank" title="/tags/xe_lpd">XE_LPD</a>)</td>
-<td style="text-align:center">Gen12.55</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Intel GPU</th>
+          <th style="text-align: center">Graphics IP ver</th>
+          <th style="text-align: center">Display IP ver</th>
+          <th style="text-align: center">Media IP ver</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Tiger Lake,<br>Rocket Lake?</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen12</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">DG1</td>
+          <td style="text-align: center">Gen12.1</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen12</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-S</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen12.2<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-P</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd" rel="noopener noreferrer" target="_blank" title="/tags/xe_lpd">XE_LPD</a>)</td>
+          <td style="text-align: center">Gen12.2<sup id="fnref1:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
+          <td style="text-align: center">Gen12.5</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">Gen12.5</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></td>
+          <td style="text-align: center">Gen12.55</td>
+          <td style="text-align: center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd" rel="noopener noreferrer" target="_blank" title="/tags/xe_lpd">XE_LPD</a>)</td>
+          <td style="text-align: center">Gen12.55</td>
+      </tr>
+  </tbody>
 </table>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span> EU</th>
-<th style="text-align:center"></th>
-<th style="text-align:center"></th>
-<th style="text-align:center">Issue Port 0</th>
-<th style="text-align:center">IP 1</th>
-<th style="text-align:center">IP 2</th>
-<th style="text-align:center">IP 3</th>
-<th style="text-align:center">IP 4?</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></td>
-<td style="text-align:center">Branch<br>(Control Flow)</td>
-<td style="text-align:center">Send</td>
-<td style="text-align:center">Short<br>(INT /FP)</td>
-<td style="text-align:center">Math</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">-</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">Send</td>
-<td style="text-align:center">INT? (int8/16/32)<br> /Branch?</td>
-<td style="text-align:center">Math?</td>
-<td style="text-align:center">DPAS?</td>
-<td style="text-align:center">Long?<br>(Int64 /FP64)</td>
-<td style="text-align:center">FP?<br>(FP16/32, BF16)</td>
-</tr>
-<tr>
-<td style="text-align:left"></td>
-<td style="text-align:center">In-Order</td>
-<td style="text-align:center">Out-of-Order</td>
-<td style="text-align:center">In-Order</td>
-<td style="text-align:center">Out-of-Order</td>
-<td style="text-align:center">Out-of-Order</td>
-<td style="text-align:center">In-Order</td>
-<td style="text-align:center">In-Order</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup></span> EU</th>
+          <th style="text-align: center"></th>
+          <th style="text-align: center"></th>
+          <th style="text-align: center">Issue Port 0</th>
+          <th style="text-align: center">IP 1</th>
+          <th style="text-align: center">IP 2</th>
+          <th style="text-align: center">IP 3</th>
+          <th style="text-align: center">IP 4?</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></td>
+          <td style="text-align: center">Branch<br>(Control Flow)</td>
+          <td style="text-align: center">Send</td>
+          <td style="text-align: center">Short<br>(INT /FP)</td>
+          <td style="text-align: center">Math</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">Send</td>
+          <td style="text-align: center">INT? (int8/16/32)<br> /Branch?</td>
+          <td style="text-align: center">Math?</td>
+          <td style="text-align: center">DPAS?</td>
+          <td style="text-align: center">Long?<br>(Int64 /FP64)</td>
+          <td style="text-align: center">FP?<br>(FP16/32, BF16)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"></td>
+          <td style="text-align: center">In-Order</td>
+          <td style="text-align: center">Out-of-Order</td>
+          <td style="text-align: center">In-Order</td>
+          <td style="text-align: center">Out-of-Order</td>
+          <td style="text-align: center">Out-of-Order</td>
+          <td style="text-align: center">In-Order</td>
+          <td style="text-align: center">In-Order</td>
+      </tr>
+  </tbody>
 </table>
 <span class="thread-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/f5e9e3dcda319339b82f1171c7e55add46884036/visa/iga/IGALibrary/IR/RegDeps.cpp#L100" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/blob/f5e9e3dcda319339b82f1171c7e55add46884036/visa/iga/IGALibrary/IR/RegDeps.cpp#L100">intel-graphics-compiler/RegDeps.cpp at f5e9e3dcda319339b82f1171c7e55add46884036 · intel/intel-graphics-compiler</a></span>
 
@@ -201,7 +237,7 @@ Slice(s) は一部の固定ユニットと L3 Data Cache、EU (Execution Unit) �
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

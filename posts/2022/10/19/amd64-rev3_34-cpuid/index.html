@@ -19,8 +19,14 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="AMD64 Architecture Programmer’s Manual アップデート、CPUID に非対称トポロジ関連の項目が追加 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD が公開している AMD64 Architecture Programmer’s Manual が Revision 3.34 にアップデートされ、CPUID 命令が返す機能フラグや情報の項目が追加された。 CPUID 命令は、実行した CPU の各種情報を">
-  <meta property="og:description" content="AMD が公開している AMD64 Architecture Programmer’s Manual が Revision 3.34 にアップデートされ、CPUID 命令が返す機能フラグや情報の項目が追加された。 CPUID 命令は、実行した CPU の各種情報を"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD が公開している AMD64 Architecture Programmer’s Manual が Revision 3.34 にアップデートされ、CPUID 命令が返す機能フラグや情報の項目が追加された。
+CPUID 命令は、実行した CPU の各種情報を示す値を EAX, EBX, ECX, EDX レジスタに出力する命令であり、内容は実行時の EAX, ECX レジスタの値で異なる。
+実行時の EAX, ECX レジスタは Leaf, Sub-Leaf とも呼ばれる。
+CPU の識別子 (Family, Model, Stepping)、機能フラグ、命令のサポート有無、アドレスサイズ等を確認するのにも使われる基本的な命令。">
+  <meta property="og:description" content="AMD が公開している AMD64 Architecture Programmer’s Manual が Revision 3.34 にアップデートされ、CPUID 命令が返す機能フラグや情報の項目が追加された。
+CPUID 命令は、実行した CPU の各種情報を示す値を EAX, EBX, ECX, EDX レジスタに出力する命令であり、内容は実行時の EAX, ECX レジスタの値で異なる。
+実行時の EAX, ECX レジスタは Leaf, Sub-Leaf とも呼ばれる。
+CPU の識別子 (Family, Model, Stepping)、機能フラグ、命令のサポート有無、アドレスサイズ等を確認するのにも使われる基本的な命令。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, CPUID">
@@ -60,52 +66,52 @@ AMD CPU のドキュメントとしては、AMD が別に公開している <str
 <p>返す CPU トポロジ情報とそのトポロジのレベルは <code>Sub-Leaf (ECX)</code> によって変わるが、<code>Sub-Leaf (ECX)</code> とトポロジのレベルタイプを示す値が一致する訳ではないことに注意。</p>
 <p><code>Fn Bh</code> は AMD CPU では <em>Zen 2 アーキテクチャ</em> の世代から実装されている。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Value(ECX[Bit15:8]) - Level Type</th>
-<th style="text-align:center">Fn Bh</th>
-<th style="text-align:center">Fn 1Fh</th>
-<th style="text-align:center">Fn 8000_0026h</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">0h</td>
-<td style="text-align:center">Reserved</td>
-<td style="text-align:center">Reserved</td>
-<td style="text-align:center">Reserved</td>
-</tr>
-<tr>
-<td style="text-align:left">1h</td>
-<td style="text-align:center">SMT</td>
-<td style="text-align:center">SMT</td>
-<td style="text-align:center">Core</td>
-</tr>
-<tr>
-<td style="text-align:left">2h</td>
-<td style="text-align:center">Core</td>
-<td style="text-align:center">Core</td>
-<td style="text-align:center">Complex</td>
-</tr>
-<tr>
-<td style="text-align:left">3h</td>
-<td style="text-align:center">Reserved</td>
-<td style="text-align:center">Module</td>
-<td style="text-align:center">Die</td>
-</tr>
-<tr>
-<td style="text-align:left">4h</td>
-<td style="text-align:center">Reserved</td>
-<td style="text-align:center">Tile</td>
-<td style="text-align:center">Socket</td>
-</tr>
-<tr>
-<td style="text-align:left">5h</td>
-<td style="text-align:center">Reserved</td>
-<td style="text-align:center">Die</td>
-<td style="text-align:center">Reserved</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Value(ECX[Bit15:8]) - Level Type</th>
+          <th style="text-align: center">Fn Bh</th>
+          <th style="text-align: center">Fn 1Fh</th>
+          <th style="text-align: center">Fn 8000_0026h</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">0h</td>
+          <td style="text-align: center">Reserved</td>
+          <td style="text-align: center">Reserved</td>
+          <td style="text-align: center">Reserved</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">1h</td>
+          <td style="text-align: center">SMT</td>
+          <td style="text-align: center">SMT</td>
+          <td style="text-align: center">Core</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">2h</td>
+          <td style="text-align: center">Core</td>
+          <td style="text-align: center">Core</td>
+          <td style="text-align: center">Complex</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">3h</td>
+          <td style="text-align: center">Reserved</td>
+          <td style="text-align: center">Module</td>
+          <td style="text-align: center">Die</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">4h</td>
+          <td style="text-align: center">Reserved</td>
+          <td style="text-align: center">Tile</td>
+          <td style="text-align: center">Socket</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">5h</td>
+          <td style="text-align: center">Reserved</td>
+          <td style="text-align: center">Die</td>
+          <td style="text-align: center">Reserved</td>
+      </tr>
+  </tbody>
 </table>
 <p><code>Fn 8000_0026h</code> では Intel CPU におけるハイブリッドアーキテクチャ、非対称トポロジに関する情報も定義されている。一部は Intel CPU に合わせた仕様になっているが、割り当てられたビット位置、ビット範囲が異なっているものもある。<br>
 ハイブリッドアーキテクチャの情報は、Intel CPU では <code>Fn 1Ah</code> に定義されており、<code>EAX[Bit31:24]</code> が CoreType、<code>EAX[Bit24:0]</code> が NativeModelID と定義されているが、<br>
@@ -139,7 +145,7 @@ CpuidUserDis は非特権ソフトウェア (CPL &gt; 0) での <code>CPUID</cod
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

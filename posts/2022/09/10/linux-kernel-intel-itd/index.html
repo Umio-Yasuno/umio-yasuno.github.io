@@ -19,8 +19,12 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux Kernel に Intel Thread Director を実装するパッチ | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Intel のソフトウェアエンジニア Ricardo Neri 氏により、Linux Kernel のスケジューラに Intel Thread Director (ITD) を実装するパッチが投稿されている。 Ricardo Neri 氏はこれまでにも Linux Kernel における Alder Lake のスケジューリ">
-  <meta property="og:description" content="Intel のソフトウェアエンジニア Ricardo Neri 氏により、Linux Kernel のスケジューラに Intel Thread Director (ITD) を実装するパッチが投稿されている。 Ricardo Neri 氏はこれまでにも Linux Kernel における Alder Lake のスケジューリ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Intel のソフトウェアエンジニア Ricardo Neri 氏により、Linux Kernel のスケジューラに Intel Thread Director (ITD) を実装するパッチが投稿されている。
+Ricardo Neri 氏はこれまでにも Linux Kernel における Alder Lake のスケジューリングを改善するパッチ1や HFI (Hardware Feedback Interface) を活用するパッチを投稿している。
+パッチは RFC (Request for Comments) の段階にあり、現在のパッチがそのまま取り込まれるのではなく、いくつかバージョンを重ねた後にメインラインに取り込まれると思われる。">
+  <meta property="og:description" content="Intel のソフトウェアエンジニア Ricardo Neri 氏により、Linux Kernel のスケジューラに Intel Thread Director (ITD) を実装するパッチが投稿されている。
+Ricardo Neri 氏はこれまでにも Linux Kernel における Alder Lake のスケジューリングを改善するパッチ1や HFI (Hardware Feedback Interface) を活用するパッチを投稿している。
+パッチは RFC (Request for Comments) の段階にあり、現在のパッチがそのまま取り込まれるのではなく、いくつかバージョンを重ねた後にメインラインに取り込まれると思われる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Alder_Lake, Raptor_Lake, Linux_Kernel">
@@ -88,30 +92,30 @@ Class を自動で分類し、Class ごとに性能と電力効率の状況を�
 また、Ricardo Neri 氏は、パッチには ITD を使用した Intel ハイブリッドプロセッサの完全な実装 (full implementation) が含まれているとしている。</p>
 <p>パッチでは各 Class の種類について詳細は書かれていないが、Intel が公開している Optimization Reference Manual によれば、以下のような割り当てとなっている。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Intel Thread Director</th>
-<th style="text-align:center">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Class 0</td>
-<td style="text-align:center">Non-vectorized integer or floating-point code.</td>
-</tr>
-<tr>
-<td style="text-align:left">Class 1</td>
-<td style="text-align:center">Integer or floating-point vectorized code,<br>excluding Intel® Deep Learning Boost (Intel® DL Boost) code.</td>
-</tr>
-<tr>
-<td style="text-align:left">Class 2</td>
-<td style="text-align:center">Intel DL Boost code.</td>
-</tr>
-<tr>
-<td style="text-align:left">Class 3</td>
-<td style="text-align:center">Pause (spin-wait) dominated code.</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Intel Thread Director</th>
+          <th style="text-align: center">Description</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Class 0</td>
+          <td style="text-align: center">Non-vectorized integer or floating-point code.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Class 1</td>
+          <td style="text-align: center">Integer or floating-point vectorized code,<br>excluding Intel® Deep Learning Boost (Intel® DL Boost) code.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Class 2</td>
+          <td style="text-align: center">Intel DL Boost code.</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Class 3</td>
+          <td style="text-align: center">Pause (spin-wait) dominated code.</td>
+      </tr>
+  </tbody>
 </table>
 <p>Class 0 がベクトル化 (SIMD化) されていない整数演算と浮動小数点演算、Class 1 が VNNI (Vector Neural Network Instructions) 系命令は含まないベクトル化 (SIMD化) された整数演算と浮動小数点演算、Class 2 が VNNI系命令、Class 3 がスピン・ウェイト・ループという割り当てとなる。<br>
 VNNI系命令が Class 1 から分離されているのは、推論処理等を E-Core (Atom, <em>Gracemont</em>) で実行することを想定しているのではないかと思われる。<br>
@@ -123,9 +127,9 @@ Hot Chips 33 における <em>Alder Lake</em> と Intel Thread Directore の発�
 <li>Volume 3B: <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html#inpage-nav-3" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html#inpage-nav-3">Intel® 64 and IA-32 Architectures Software Developer Manuals</a></li>
 <li>Optimization Reference Manual: <a href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html#inpage-nav-5" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html#inpage-nav-5">Intel® 64 and IA-32 Architectures Software Developer Manuals</a></li>
 <li>Alder Lake Architecture: <a href="https://hc33.hotchips.org/assets/program/conference/day1/HC2021.C1.1%20Intel%20Efraim%20Rotem.pdf" rel="noopener noreferrer" target="_blank" title="https://hc33.hotchips.org/assets/program/conference/day1/HC2021.C1.1%20Intel%20Efraim%20Rotem.pdf">Title of this template file over multiple lines of text - HC2021.C1.1 Intel Efraim Rotem.pdf</a></li>
-<li><a href="https://www.coelacanth-dream.com/posts/2022/01/02/intel-hfi/" title="/posts/2022/01/02/intel-hfi/">Linux Kernel に Intel HFI をサポートするパッチ | Coelacanth&rsquo;s Dream</a></li>
-<li><a href="https://www.coelacanth-dream.com/posts/2022/03/04/adl-arch-details/" title="/posts/2022/03/04/adl-arch-details/">Intel、SDM に Golden Cove、Gracemont アーキテクチャの詳細を追加 | Coelacanth&rsquo;s Dream</a></li>
-<li><a href="https://www.coelacanth-dream.com/posts/2022/08/28/linux-kernel-alder_lake-sched/" title="/posts/2022/08/28/linux-kernel-alder_lake-sched/">Linux Kernel における Alder Lake のスケジューリング改善 | Coelacanth&rsquo;s Dream</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2022/01/02/intel-hfi/" title="/posts/2022/01/02/intel-hfi/">Linux Kernel に Intel HFI をサポートするパッチ | Coelacanth’s Dream</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2022/03/04/adl-arch-details/" title="/posts/2022/03/04/adl-arch-details/">Intel、SDM に Golden Cove、Gracemont アーキテクチャの詳細を追加 | Coelacanth’s Dream</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2022/08/28/linux-kernel-alder_lake-sched/" title="/posts/2022/08/28/linux-kernel-alder_lake-sched/">Linux Kernel における Alder Lake のスケジューリング改善 | Coelacanth’s Dream</a></li>
 </ul>
 </section>
 
@@ -133,10 +137,10 @@ Hot Chips 33 における <em>Alder Lake</em> と Intel Thread Directore の発�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.coelacanth-dream.com/posts/2022/08/28/linux-kernel-alder_lake-sched/" title="/posts/2022/08/28/linux-kernel-alder_lake-sched/">Linux Kernel における Alder Lake のスケジューリング改善 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2022/08/28/linux-kernel-alder_lake-sched/" title="/posts/2022/08/28/linux-kernel-alder_lake-sched/">Linux Kernel における Alder Lake のスケジューリング改善 | Coelacanth’s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.coelacanth-dream.com/posts/2022/01/02/intel-hfi/" title="/posts/2022/01/02/intel-hfi/">Linux Kernel に Intel HFI をサポートするパッチ | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2022/01/02/intel-hfi/" title="/posts/2022/01/02/intel-hfi/">Linux Kernel に Intel HFI をサポートするパッチ | Coelacanth’s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
@@ -151,7 +155,7 @@ Hot Chips 33 における <em>Alder Lake</em> と Intel Thread Directore の発�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

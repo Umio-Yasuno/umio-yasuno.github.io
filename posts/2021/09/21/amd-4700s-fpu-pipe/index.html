@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="FPU部を削減した AMD 4700S プロセッサ | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="チップに関する解説や情報発信といった活動を行っている Nemez (@GPUsAreMagic) 氏 (Nemez | Patreon) と、 Hardwareluxx のエディターである Andreas Schilling (@aschilling) 氏により、Zen 2 アーキテクチャ を採用するとしている AMD 4700S と同アーキ">
-  <meta property="og:description" content="チップに関する解説や情報発信といった活動を行っている Nemez (@GPUsAreMagic) 氏 (Nemez | Patreon) と、 Hardwareluxx のエディターである Andreas Schilling (@aschilling) 氏により、Zen 2 アーキテクチャ を採用するとしている AMD 4700S と同アーキ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="チップに関する解説や情報発信といった活動を行っている Nemez (@GPUsAreMagic) 氏 (Nemez | Patreon) と、
+Hardwareluxx のエディターである Andreas Schilling (@aschilling) 氏により、Zen 2 アーキテクチャ を採用するとしている AMD 4700S と同アーキテクチャの Ryzen Threadripper 3960X の IPC 計測結果を比較したものが公開された。">
+  <meta property="og:description" content="チップに関する解説や情報発信といった活動を行っている Nemez (@GPUsAreMagic) 氏 (Nemez | Patreon) と、
+Hardwareluxx のエディターである Andreas Schilling (@aschilling) 氏により、Zen 2 アーキテクチャ を採用するとしている AMD 4700S と同アーキテクチャの Ryzen Threadripper 3960X の IPC 計測結果を比較したものが公開された。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, AMD_4700S, Zen_2">
@@ -56,108 +58,108 @@
 <p><em>Zen/+/2 アーキテクチャ</em> では、FPU部に 4本の実行パイプラインを持ち、2x MUL + 2x ADD で構成されている。<br>
 <a href="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h">Software Optimization Guide for AMD Family 17h Models 30h and Greater Processors</a> によれば、<em>Zen 2 アーキテクチャ</em> の 各実行パイプと実行ユニットの対応関係は以下のようになっている。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Unit</th>
-<th style="text-align:center">Pipe 0 <br> (MUL)</th>
-<th style="text-align:center">Pipe 1 <br> (MUL)</th>
-<th style="text-align:center">Pipe 2 <br> (ADD)</th>
-<th style="text-align:center">Pipe 3 <br> (ADD)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">FMUL</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:left">FADD</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">FCVT</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">FDIV</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">FMISC</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">STORE</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:left">VADD</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">VMUL</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:left">VSHUF</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:left">VSHIFT</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:left">VMISC</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">AES</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:left">CLM<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">S</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Unit</th>
+          <th style="text-align: center">Pipe 0 <br> (MUL)</th>
+          <th style="text-align: center">Pipe 1 <br> (MUL)</th>
+          <th style="text-align: center">Pipe 2 <br> (ADD)</th>
+          <th style="text-align: center">Pipe 3 <br> (ADD)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">FMUL</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">FADD</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">FCVT</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">FDIV</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">FMISC</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">STORE</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center"></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VADD</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VMUL</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VSHUF</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center"></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VSHIFT</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center"></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VMISC</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AES</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">CLM<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">S</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+      </tr>
+  </tbody>
 </table>
 <span class="thread-link"><a href="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h" rel="noopener noreferrer" target="_blank" title="https://www.amd.com/en/support/tech-docs?keyword=Family+17h+Model+30h">Software Optimization Guide for AMD Family 17h Models 30h and Greater Processors</a></span>
 
@@ -181,80 +183,80 @@ FDIVユニットはパイプが占有中でも 2つのオペレーションを�
 <p>だが <em>AMD 4700S</em> では 2 に近く、FADD をブロックすることなく FMA が実行できるよう Pipe 0 にレジスタポートが 3本備えられている <em>可能性</em> があるが、単にうまいこと命令を並び替えて実行している可能性もある。</p>
 <p>また、<code>STORE</code> や <code>FCVT</code> 等、ここで計測されなかったものを処理するためのパイプが、演算メインのパイプとは別に持っている可能性もある。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">[AMD 4700S]<br>Unit</th>
-<th style="text-align:center">Pipe 0 <br> (MUL ?)</th>
-<th style="text-align:center">Pipe 1 <br> (ADD ?)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">FMUL</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:left">FADD</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">FCVT</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X ?</td>
-</tr>
-<tr>
-<td style="text-align:left">FDIV</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X ?</td>
-</tr>
-<tr>
-<td style="text-align:left">FMISC</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">STORE</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X ?</td>
-</tr>
-<tr>
-<td style="text-align:left">VADD</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">VMUL</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">VSHUF</td>
-<td style="text-align:center">X ?</td>
-<td style="text-align:center">X ?</td>
-</tr>
-<tr>
-<td style="text-align:left">VSHIFT</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">X ?</td>
-</tr>
-<tr>
-<td style="text-align:left">VMISC</td>
-<td style="text-align:center">X</td>
-<td style="text-align:center">X</td>
-</tr>
-<tr>
-<td style="text-align:left">AES</td>
-<td style="text-align:center">X</td>
-<td></td>
-</tr>
-<tr>
-<td style="text-align:left">CLM</td>
-<td style="text-align:center">S ?</td>
-<td style="text-align:center"></td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">[AMD 4700S]<br>Unit</th>
+          <th style="text-align: center">Pipe 0 <br> (MUL ?)</th>
+          <th style="text-align: center">Pipe 1 <br> (ADD ?)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">FMUL</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center"></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">FADD</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">FCVT</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X ?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">FDIV</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X ?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">FMISC</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">STORE</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X ?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VADD</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VMUL</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VSHUF</td>
+          <td style="text-align: center">X ?</td>
+          <td style="text-align: center">X ?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VSHIFT</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">X ?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VMISC</td>
+          <td style="text-align: center">X</td>
+          <td style="text-align: center">X</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AES</td>
+          <td style="text-align: center">X</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">CLM</td>
+          <td style="text-align: center">S ?</td>
+          <td style="text-align: center"></td>
+      </tr>
+  </tbody>
 </table>
 <p><em>Zen/+/2 アーキテクチャ</em> の FPU実行パイプは 2x MUL + 2x ADD という構成だが、細かい部分で実行できる命令はそれぞれ異なり実際には非対称構成となる。<br>
 <em>AMD 4700S</em> では FPU実行パイプを 2本に減らしたという推測が当たっているとすると、そうした部分で再設計が必要になると思われる。<br>
@@ -284,7 +286,7 @@ FPU のデータ幅を 256-bit から 128-bit にするのであれば <em>Zen/+
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

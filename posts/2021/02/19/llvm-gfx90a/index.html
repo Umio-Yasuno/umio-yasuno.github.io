@@ -19,8 +19,14 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、GPUID gfx90a のサポートを追加するパッチが投稿された。 [AMDGPU] gfx90a support · llvm/llvm-project@a8d9d50 Vega/GFX9 世代であること、Arcturus/MI100/">
-  <meta property="og:description" content="AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、GPUID gfx90a のサポートを追加するパッチが投稿された。 [AMDGPU] gfx90a support · llvm/llvm-project@a8d9d50 Vega/GFX9 世代であること、Arcturus/MI100/"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、GPUID gfx90a のサポートを追加するパッチが投稿された。
+[AMDGPU] gfx90a support · llvm/llvm-project@a8d9d50
+
+Vega/GFX9 世代であること、Arcturus/MI100/gfx908 と同様に SRAM ECC、MFMA命令等をサポートしていることから、 CDNA 2 (次世代 CDNA )  GPU、MI200 の GPUID ではないかと思われる。">
+  <meta property="og:description" content="AMDGPU のコンパイラバックエンドとしても用いられる LLVM に、GPUID gfx90a のサポートを追加するパッチが投稿された。
+[AMDGPU] gfx90a support · llvm/llvm-project@a8d9d50
+
+Vega/GFX9 世代であること、Arcturus/MI100/gfx908 と同様に SRAM ECC、MFMA命令等をサポートしていることから、 CDNA 2 (次世代 CDNA )  GPU、MI200 の GPUID ではないかと思われる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, MI200, gfx90a, CDNA_2, CDNA, Aldebaran, LLVM">
@@ -87,7 +93,7 @@
 <p>名前から推測するに、前者は FP32演算を 2つ束ねて (Packed) 実行することで 2倍のレートで処理する機能、後者はフルレートで FP64演算を行う機能と思われる。<br>
 そう言ってしまうとあっさりしているが実際は凄まじい演算部の強化であり、これまでの AMD GPU における FP64演算は、FP32演算のレートの半分というのが通常だった。<br>
 ピークFP64演算性能 11.5 TFLOPS を持ち、10 TFLOPS の壁を突破した初の GPU である <em>Arcturus/MI100</em> でも FP32演算の半分のレートであり、GPU内部のクラスタとなる ShaderEngine 8基、総 CU 120基という、それまでの AMD GPUアーキテクチャを踏襲しつつ、規模を増やすことでその性能を達成している。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/11/17/amd-cdna-arch-mi100-arcturus/" title="/posts/2020/11/17/amd-cdna-arch-mi100-arcturus/">AMD、初の CDNAアーキテクチャ GPU 「MI100」 を発表 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/11/17/amd-cdna-arch-mi100-arcturus/" title="/posts/2020/11/17/amd-cdna-arch-mi100-arcturus/">AMD、初の CDNAアーキテクチャ GPU 「MI100」 を発表 | Coelacanth’s Dream</a></span>
 
 合わせて FP32演算のパックド実行もサポートしたことから、演算ユニット、ベクタレジスタは FP64 が基本単位となっていると思われ、 <em>Arcturus/MI100</em> から倍のリソースとなる。</p>
 <blockquote>
@@ -132,74 +138,74 @@ Workgroup は GPU が処理するカーネル内のブロックであり、ス�
 そういった点では、<em>TgSplit</em> モードは増強された CU の稼働率を上げ、ダイに掛かるコストパフォーマンスを高めるために必要だったのではないか、という見方もできる。</p>
 <p>また、 <em>XGMI/Infinity Fabric Link</em> によるメモリ共有が可能なマルチGPU構成時のメモリモデルも改良され、仮想アドレスが割り当てられている L2キャッシュを、必要以上に無効化することを減らす工夫が採り入れられている。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">AMDGPU</th>
-<th style="text-align:center">GPU ID</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Vega10</td>
-<td style="text-align:center">gfx900</td>
-</tr>
-<tr>
-<td style="text-align:left">Raven/Picasso</td>
-<td style="text-align:center">gfx902</td>
-</tr>
-<tr>
-<td style="text-align:left">Vega12</td>
-<td style="text-align:center">gfx904</td>
-</tr>
-<tr>
-<td style="text-align:left">Vega20</td>
-<td style="text-align:center">gfx906</td>
-</tr>
-<tr>
-<td style="text-align:left">Arcturus</td>
-<td style="text-align:center">gfx908</td>
-</tr>
-<tr>
-<td style="text-align:left">Raven2</td>
-<td style="text-align:center">gfx909</td>
-</tr>
-<tr>
-<td style="text-align:left"><em>MI200?</em></td>
-<td style="text-align:center"><em>gfx90a?</em></td>
-</tr>
-<tr>
-<td style="text-align:left">Renoir/Lucienne<br>/Green Sardine (Cezanne)</td>
-<td style="text-align:center">gfx90c</td>
-</tr>
-<tr>
-<td style="text-align:left">Navi10</td>
-<td style="text-align:center">gfx1010</td>
-</tr>
-<tr>
-<td style="text-align:left">Navi12</td>
-<td style="text-align:center">gfx1011</td>
-</tr>
-<tr>
-<td style="text-align:left">Navi14</td>
-<td style="text-align:center">gfx1012</td>
-</tr>
-<tr>
-<td style="text-align:left">Sienna Cichlid (Navi21)</td>
-<td style="text-align:center">gfx1030</td>
-</tr>
-<tr>
-<td style="text-align:left">Navy Flounder (Navi22)</td>
-<td style="text-align:center">gfx1031</td>
-</tr>
-<tr>
-<td style="text-align:left">Dimgrey Cavefish (Navi23)</td>
-<td style="text-align:center">gfx1032</td>
-</tr>
-<tr>
-<td style="text-align:left">VanGogh</td>
-<td style="text-align:center">gfx1033?</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">AMDGPU</th>
+          <th style="text-align: center">GPU ID</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Vega10</td>
+          <td style="text-align: center">gfx900</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Raven/Picasso</td>
+          <td style="text-align: center">gfx902</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Vega12</td>
+          <td style="text-align: center">gfx904</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Vega20</td>
+          <td style="text-align: center">gfx906</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Arcturus</td>
+          <td style="text-align: center">gfx908</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Raven2</td>
+          <td style="text-align: center">gfx909</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><em>MI200?</em></td>
+          <td style="text-align: center"><em>gfx90a?</em></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Renoir/Lucienne<br>/Green Sardine (Cezanne)</td>
+          <td style="text-align: center">gfx90c</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Navi10</td>
+          <td style="text-align: center">gfx1010</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Navi12</td>
+          <td style="text-align: center">gfx1011</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Navi14</td>
+          <td style="text-align: center">gfx1012</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Sienna Cichlid (Navi21)</td>
+          <td style="text-align: center">gfx1030</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Navy Flounder (Navi22)</td>
+          <td style="text-align: center">gfx1031</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Dimgrey Cavefish (Navi23)</td>
+          <td style="text-align: center">gfx1032</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VanGogh</td>
+          <td style="text-align: center">gfx1033?</td>
+      </tr>
+  </tbody>
 </table>
 </article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/mi200/" title="MI200">#MI200</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx90a/" title="gfx90a">#gfx90a</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cdna_2/" title="CDNA_2">#CDNA 2</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/cdna/" title="CDNA">#CDNA</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/aldebaran/" title="Aldebaran">#Aldebaran</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/llvm/" title="LLVM">#LLVM</a></nav><aside class="article-bottom-misc delay-page">
   <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2021/02/19/llvm-gfx90a.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
@@ -212,7 +218,7 @@ Workgroup は GPU が処理するカーネル内のブロックであり、ス�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

@@ -19,8 +19,38 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="RADV/ACO 検証: ACOの高速シェーダーコンパイル | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="インデックス ACO のシェーダーコンパイル速度検証 環境 計測方法 結果 推測 やはり ACO は優秀 ACO のシェーダーコンパイル速度検証 前回の検証で ACOバックエンド は Vulakn Compute による GPGP">
-  <meta property="og:description" content="インデックス ACO のシェーダーコンパイル速度検証 環境 計測方法 結果 推測 やはり ACO は優秀 ACO のシェーダーコンパイル速度検証 前回の検証で ACOバックエンド は Vulakn Compute による GPGP"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="インデックス
+
+
+ACO のシェーダーコンパイル速度検証
+環境
+計測方法
+結果
+推測
+やはり ACO は優秀
+
+ACO のシェーダーコンパイル速度検証
+
+前回の検証で ACOバックエンド は Vulakn Compute による GPGPU用途においても、いやそれどころかグラフィック用途よりもずっと効果を発揮することがわかった。
+RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth’s Dream
+
+しかし、ACO の特徴の1つであるコンパイル速度を検証できていなかった。1">
+  <meta property="og:description" content="インデックス
+
+
+ACO のシェーダーコンパイル速度検証
+環境
+計測方法
+結果
+推測
+やはり ACO は優秀
+
+ACO のシェーダーコンパイル速度検証
+
+前回の検証で ACOバックエンド は Vulakn Compute による GPGPU用途においても、いやそれどころかグラフィック用途よりもずっと効果を発揮することがわかった。
+RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth’s Dream
+
+しかし、ACO の特徴の1つであるコンパイル速度を検証できていなかった。1"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, RADV, ACO, Radeon, ACO, GCN, RADV">
@@ -55,7 +85,7 @@
 <h2 id="aco-shader-compie-speed-test">ACO のシェーダーコンパイル速度検証<a href="#aco-shader-compie-speed-test" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>前回の検証で <em>ACOバックエンド</em> は Vulakn Compute による GPGPU用途においても、いやそれどころかグラフィック用途よりもずっと効果を発揮することがわかった。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/" title="/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/" title="/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">RADV/ACO 検証: waifu2x-ncnn-vulakan の実行が最大3倍近く高速に | Coelacanth’s Dream</a></span>
 
 しかし、<em>ACO</em> の特徴の1つであるコンパイル速度を検証できていなかった。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <p>そこで、<em>RADVドライバー</em> のデバック機能にある <code>nocache</code> オプションでシェーダーキャッシュを無効化した際と、通常通りキャッシュを有効とした際のユーザーモードのCPU時間(User CPU time)を計測し、それらを比較して大体のシェーダーコンパイルに掛かった時間を割り出すこととした。<br>
@@ -63,42 +93,42 @@
 <h2 id="env">環境<a href="#env" class="head-cur-link" aria-hidden></a>
 </h2>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:center"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">CPU</td>
-<td style="text-align:center">Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory</td>
-<td style="text-align:center">16GB 2933MHz</td>
-</tr>
-<tr>
-<td style="text-align:left">GPU</td>
-<td style="text-align:center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 1750MHz/7Gbps)</td>
-</tr>
-<tr>
-<td style="text-align:left">Linux Kernel</td>
-<td style="text-align:center">5.4.21</td>
-</tr>
-<tr>
-<td style="text-align:left">User Mode Driver</td>
-<td style="text-align:center">Mesa 20.1.0-devel (git-a64d266134)</td>
-</tr>
-<tr>
-<td style="text-align:left">Vulkan Driver</td>
-<td style="text-align:center">AMD RADV(LLVM) POLARIS11 (LLVM 9.0.1)<br>AMD RADV/ACO POLARIS11 (LLVM 9.0.1)</td>
-</tr>
-<tr>
-<td style="text-align:left">waifu2x-ncnn-vulkan</td>
-<td style="text-align:center">version<br>20200224</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: center"></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">CPU</td>
+          <td style="text-align: center">Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory</td>
+          <td style="text-align: center">16GB 2933MHz</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GPU</td>
+          <td style="text-align: center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 1750MHz/7Gbps)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Linux Kernel</td>
+          <td style="text-align: center">5.4.21</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">User Mode Driver</td>
+          <td style="text-align: center">Mesa 20.1.0-devel (git-a64d266134)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Vulkan Driver</td>
+          <td style="text-align: center">AMD RADV(LLVM) POLARIS11 (LLVM 9.0.1)<br>AMD RADV/ACO POLARIS11 (LLVM 9.0.1)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">waifu2x-ncnn-vulkan</td>
+          <td style="text-align: center">version<br>20200224</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="how">計測方法<a href="#how" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -122,58 +152,58 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 <h2 id="result">結果<a href="#result" class="head-cur-link" aria-hidden></a>
 </h2>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Result<br>(models-cunet)</th>
-<th style="text-align:center">RADV(LLVM)<br>(nocache)</th>
-<th style="text-align:center">RADV(LLVM)<br>(cache)</th>
-<th style="text-align:center">RADV/ACO<br>(nocache)</th>
-<th style="text-align:center">RADV/ACO<br>(cache)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Real time<br>(lower is better)</td>
-<td style="text-align:center">58.17s</td>
-<td style="text-align:center">51.69s<br>(-7.48s)</td>
-<td style="text-align:center">34.97s</td>
-<td style="text-align:center">34.33s<br>(-0.64s)</td>
-</tr>
-<tr>
-<td style="text-align:left">User CPU time<br>(lower is better)</td>
-<td style="text-align:center">11.86s</td>
-<td style="text-align:center">4.45s<br>(-7.41s)</td>
-<td style="text-align:center">5.35s</td>
-<td style="text-align:center">4.56s<br>(-0.79s)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Result<br>(models-cunet)</th>
+          <th style="text-align: center">RADV(LLVM)<br>(nocache)</th>
+          <th style="text-align: center">RADV(LLVM)<br>(cache)</th>
+          <th style="text-align: center">RADV/ACO<br>(nocache)</th>
+          <th style="text-align: center">RADV/ACO<br>(cache)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Real time<br>(lower is better)</td>
+          <td style="text-align: center">58.17s</td>
+          <td style="text-align: center">51.69s<br>(-7.48s)</td>
+          <td style="text-align: center">34.97s</td>
+          <td style="text-align: center">34.33s<br>(-0.64s)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">User CPU time<br>(lower is better)</td>
+          <td style="text-align: center">11.86s</td>
+          <td style="text-align: center">4.45s<br>(-7.41s)</td>
+          <td style="text-align: center">5.35s</td>
+          <td style="text-align: center">4.56s<br>(-0.79s)</td>
+      </tr>
+  </tbody>
 </table>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Result<br>(models-upconv_7_anime_style_art_rgb)</th>
-<th style="text-align:center">RADV(LLVM)<br>(nocache)</th>
-<th style="text-align:center">RADV(LLVM)<br>(cache)</th>
-<th style="text-align:center">RADV/ACO<br>(nocache)</th>
-<th style="text-align:center">RADV/ACO<br>(cache)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Real time<br>(lower is better)</td>
-<td style="text-align:center">25.16s</td>
-<td style="text-align:center">22.15s<br>(-3.01s)</td>
-<td style="text-align:center">6.71s</td>
-<td style="text-align:center">6.45s<br>(-0.26s)</td>
-</tr>
-<tr>
-<td style="text-align:left">User CPU time<br>(lower is better)</td>
-<td style="text-align:center">7.52s</td>
-<td style="text-align:center">4.52s<br>(-3.00s)</td>
-<td style="text-align:center">4.77s</td>
-<td style="text-align:center">4.53s<br>(-0.24s)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Result<br>(models-upconv_7_anime_style_art_rgb)</th>
+          <th style="text-align: center">RADV(LLVM)<br>(nocache)</th>
+          <th style="text-align: center">RADV(LLVM)<br>(cache)</th>
+          <th style="text-align: center">RADV/ACO<br>(nocache)</th>
+          <th style="text-align: center">RADV/ACO<br>(cache)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Real time<br>(lower is better)</td>
+          <td style="text-align: center">25.16s</td>
+          <td style="text-align: center">22.15s<br>(-3.01s)</td>
+          <td style="text-align: center">6.71s</td>
+          <td style="text-align: center">6.45s<br>(-0.26s)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">User CPU time<br>(lower is better)</td>
+          <td style="text-align: center">7.52s</td>
+          <td style="text-align: center">4.52s<br>(-3.00s)</td>
+          <td style="text-align: center">4.77s</td>
+          <td style="text-align: center">4.53s<br>(-0.24s)</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="guess">推測<a href="#guess" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -225,7 +255,7 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

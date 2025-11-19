@@ -19,8 +19,34 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="オープンソースで開発され、LLVM をベースとする Intel GPU の OpenCLコンパイラ intel-graphics-compiler に Xe-HP サポートへ向けたパッチが投稿され、メインラインに取り込まれてきている。 Index DPAS, Long パ">
-  <meta property="og:description" content="オープンソースで開発され、LLVM をベースとする Intel GPU の OpenCLコンパイラ intel-graphics-compiler に Xe-HP サポートへ向けたパッチが投稿され、メインラインに取り込まれてきている。 Index DPAS, Long パ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="オープンソースで開発され、LLVM をベースとする Intel GPU の OpenCLコンパイラ intel-graphics-compiler に Xe-HP サポートへ向けたパッチが投稿され、メインラインに取り込まれてきている。
+Index
+
+
+DPAS, Long パイプラインが追加　―― FPも?
+EU あたりのスレッド数とレジスタファイルが増加
+
+
+
+DPAS, Long パイプラインが追加　―― FPも?
+
+以前、オープンソースで開発される Intel GPU のシェーダーコンパイラバックエンドに投稿された Xe-HP の ISA (Instruction Set Architecture) をサポートするパッチで語られたように、Xe-HP EU では 2つのパイプラインが追加される。
+2つの非同期パイプラインが追加される Xe-HP EU | Coelacanth’s Dream
+">
+  <meta property="og:description" content="オープンソースで開発され、LLVM をベースとする Intel GPU の OpenCLコンパイラ intel-graphics-compiler に Xe-HP サポートへ向けたパッチが投稿され、メインラインに取り込まれてきている。
+Index
+
+
+DPAS, Long パイプラインが追加　―― FPも?
+EU あたりのスレッド数とレジスタファイルが増加
+
+
+
+DPAS, Long パイプラインが追加　―― FPも?
+
+以前、オープンソースで開発される Intel GPU のシェーダーコンパイラバックエンドに投稿された Xe-HP の ISA (Instruction Set Architecture) をサポートするパッチで語られたように、Xe-HP EU では 2つのパイプラインが追加される。
+2つの非同期パイプラインが追加される Xe-HP EU | Coelacanth’s Dream
+"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Xe-HP, Gen12">
@@ -54,7 +80,7 @@
 <h2 id="dpas-long">DPAS, Long パイプラインが追加　―― FPも?<a href="#dpas-long" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>以前、オープンソースで開発される Intel GPU のシェーダーコンパイラバックエンドに投稿された <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> の ISA (Instruction Set Architecture) をサポートするパッチで語られたように、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> EU では 2つのパイプラインが追加される。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/04/02/xehp-add-two-async-pipeline/" title="/posts/2021/04/02/xehp-add-two-async-pipeline/">2つの非同期パイプラインが追加される Xe-HP EU | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/04/02/xehp-add-two-async-pipeline/" title="/posts/2021/04/02/xehp-add-two-async-pipeline/">2つの非同期パイプラインが追加される Xe-HP EU | Coelacanth’s Dream</a></span>
 </p>
 <p>前回は追加された 2つのパイプラインと演算命令を発行する Issue Port の構成について、1つは INT/FP 両方を実行していたものを分割し、もう 1つは FP64 (DP) を実行するものではないかと推測したが、<br>
 今回 <a href="https://github.com/intel/intel-graphics-compiler" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler">intel-graphics-compiler</a> に取り込まれたパッチの内容によれば、1つは <code>dpas (Dot Product Accumulate Systolic)</code> 命令を実行するためのもので、もう 1つは FP64 に加え Int64 もサポートする Long (64-bit) パイプラインだとされる。<br>
@@ -62,55 +88,55 @@
 パイプライン、Issue Port が増設されれば、それだけ命令の発行、実行数を増やすことができ、ピーク IPC は向上する。</p>
 <p>コントロールフローに関しても <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> EU では変更が入っており、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> では分岐を実行する Control Flowパイプラインが実装されているが、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> では INTパイプラインに統合されている。</p>
 <p>ただ、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> は 512EU, 1300MHz で clpeak を FP32 での演算を実行するデモで 約 10.6 TFLOPS という結果を出しており、Longパイプラインを FPパイプラインとして実行するのではでは 約 5.3 TFLOPS となり、デモの結果と一致しない。(SIMD幅が <span class="xe-gpu-arch">X<sup>e</sup>-LP</span> と同じ 8-wide だという前提だが)<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu" title="/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu" title="/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth’s Dream</a></span>
 
 自分でもここを書いていて気付いたが、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> では Control Flowパイプラインが無くなり、INTパイプラインに統合されている。そのため FPパイプラインを追加しても、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> から追加されるパイプラインは実質 2個となる。それならば FP32 演算を 2つのパイプラインで実行できるため、説明らしい説明が付く。<br>
 本来なら文章を再構成すべきなのだろうが、メモとしてとりあえずこのままにしておく。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span> EU</th>
-<th style="text-align:center"></th>
-<th style="text-align:center"></th>
-<th style="text-align:center">Issue Port 0</th>
-<th style="text-align:center">IP 1</th>
-<th style="text-align:center">IP 2</th>
-<th style="text-align:center">IP 3</th>
-<th style="text-align:center">IP 4?</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></td>
-<td style="text-align:center">Branch<br>(Control Flow)</td>
-<td style="text-align:center">Send</td>
-<td style="text-align:center">Short<br>(INT /FP)</td>
-<td style="text-align:center">Math</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">-</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">Send</td>
-<td style="text-align:center">INT? (int8/16/32)<br> /Branch?</td>
-<td style="text-align:center">Math?</td>
-<td style="text-align:center">DPAS?</td>
-<td style="text-align:center">Long?<br>(Int64 /FP64)</td>
-<td style="text-align:center">FP?<br>(FP16/32, BF16)</td>
-</tr>
-<tr>
-<td style="text-align:left"></td>
-<td style="text-align:center">In-Order</td>
-<td style="text-align:center">Out-of-Order</td>
-<td style="text-align:center">In-Order</td>
-<td style="text-align:center">Out-of-Order</td>
-<td style="text-align:center">Out-of-Order</td>
-<td style="text-align:center">In-Order</td>
-<td style="text-align:center">In-Order</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup></span> EU</th>
+          <th style="text-align: center"></th>
+          <th style="text-align: center"></th>
+          <th style="text-align: center">Issue Port 0</th>
+          <th style="text-align: center">IP 1</th>
+          <th style="text-align: center">IP 2</th>
+          <th style="text-align: center">IP 3</th>
+          <th style="text-align: center">IP 4?</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></td>
+          <td style="text-align: center">Branch<br>(Control Flow)</td>
+          <td style="text-align: center">Send</td>
+          <td style="text-align: center">Short<br>(INT /FP)</td>
+          <td style="text-align: center">Math</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">Send</td>
+          <td style="text-align: center">INT? (int8/16/32)<br> /Branch?</td>
+          <td style="text-align: center">Math?</td>
+          <td style="text-align: center">DPAS?</td>
+          <td style="text-align: center">Long?<br>(Int64 /FP64)</td>
+          <td style="text-align: center">FP?<br>(FP16/32, BF16)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"></td>
+          <td style="text-align: center">In-Order</td>
+          <td style="text-align: center">Out-of-Order</td>
+          <td style="text-align: center">In-Order</td>
+          <td style="text-align: center">Out-of-Order</td>
+          <td style="text-align: center">Out-of-Order</td>
+          <td style="text-align: center">In-Order</td>
+          <td style="text-align: center">In-Order</td>
+      </tr>
+  </tbody>
 </table>
 <span class="thread-link"><a href="https://github.com/intel/intel-graphics-compiler/blob/f5e9e3dcda319339b82f1171c7e55add46884036/visa/iga/IGALibrary/IR/RegDeps.cpp#L100" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/blob/f5e9e3dcda319339b82f1171c7e55add46884036/visa/iga/IGALibrary/IR/RegDeps.cpp#L100">intel-graphics-compiler/RegDeps.cpp at f5e9e3dcda319339b82f1171c7e55add46884036 · intel/intel-graphics-compiler</a></span>
 
@@ -190,7 +216,7 @@
 </h3>
 <ul>
 <li><a href="https://software.intel.com/content/www/us/en/develop/articles/gdc-2019-tech-sessions.html?wapkw=gdc%202019" rel="noopener noreferrer" target="_blank" title="https://software.intel.com/content/www/us/en/develop/articles/gdc-2019-tech-sessions.html?wapkw=gdc%202019">GDC 2019 Tech Sessions</a></li>
-<li><a href="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/openvino-tiger-lake.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/openvino-tiger-lake.html">Intel&rsquo;s Artificial Intelligence Blog</a></li>
+<li><a href="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/openvino-tiger-lake.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/artificial-intelligence/posts/openvino-tiger-lake.html">Intel’s Artificial Intelligence Blog</a></li>
 </ul>
 </section>
 
@@ -205,7 +231,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

@@ -19,8 +19,40 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="AMD RDNA 2 ノート　―― 非対称な ShaderArray、gpu_info、XSS 【2020/09/23】 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Index 非対称な Shader Array 構成の効率を向上させる gpu_info ファームウェアは必要無し Xbox Series S 非対称な Shader Array 構成の効率を向上させる radeonsi: miscellaneous changes for gfx10 (!6822) · Merge Requests · Mesa / mesa · GitLab まず AMD GPU のアーキテクチャでは">
-  <meta property="og:description" content="Index 非対称な Shader Array 構成の効率を向上させる gpu_info ファームウェアは必要無し Xbox Series S 非対称な Shader Array 構成の効率を向上させる radeonsi: miscellaneous changes for gfx10 (!6822) · Merge Requests · Mesa / mesa · GitLab まず AMD GPU のアーキテクチャでは"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Index
+
+
+非対称な Shader Array 構成の効率を向上させる
+gpu_info ファームウェアは必要無し
+Xbox Series S
+
+
+
+非対称な Shader Array 構成の効率を向上させる
+
+
+radeonsi: miscellaneous changes for gfx10 (!6822) · Merge Requests · Mesa / mesa · GitLab
+
+まず AMD GPU のアーキテクチャでは、GPU のコア部と言える、シェーダーを処理する CU、Rastrizerユニット、Primitiveユニット、RenderBackendユニット等を、Shader Engine としてまとめて管理している。
+そして、RDNAアーキテクチャ では Shader Engine 内部が、それぞれ L1メモリキャッシュ (128KB) を持つ Shader Array 2基にコア部を分け、構成されている。
+また、CU は 2基をまとめた Dual Compute Unit / WGP(Work Group Processor) 単位となる。">
+  <meta property="og:description" content="Index
+
+
+非対称な Shader Array 構成の効率を向上させる
+gpu_info ファームウェアは必要無し
+Xbox Series S
+
+
+
+非対称な Shader Array 構成の効率を向上させる
+
+
+radeonsi: miscellaneous changes for gfx10 (!6822) · Merge Requests · Mesa / mesa · GitLab
+
+まず AMD GPU のアーキテクチャでは、GPU のコア部と言える、シェーダーを処理する CU、Rastrizerユニット、Primitiveユニット、RenderBackendユニット等を、Shader Engine としてまとめて管理している。
+そして、RDNAアーキテクチャ では Shader Engine 内部が、それぞれ L1メモリキャッシュ (128KB) を持つ Shader Array 2基にコア部を分け、構成されている。
+また、CU は 2基をまとめた Dual Compute Unit / WGP(Work Group Processor) 単位となる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, RDNA_2">
@@ -101,45 +133,45 @@ GPU は大きく規模を削られ、<strong>XSX</strong> の 52CU@1.825GH に�
 あるニュース系サイトで <strong>XSS Soc</strong> のチップ写真が掲載されたスライドが公開されており、見た限り、<strong>XSS SoC</strong> は 24CU 持つが、<strong>XSX</strong> 同様に 4CU を冗長ユニットとし、20CU を製品仕様にしているようだ。<br>
 また、<strong>XSX</strong> は 2-ShaderEngine の構成だったが、<strong>XSS</strong> では 1-ShaderEngine であるように見えた。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:center">Xbox Series X</th>
-<th style="text-align:center">Xbox Series S</th>
-<th style="text-align:center">Navi10</th>
-<th style="text-align:center">Navi14</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">SE<br>(Shader Engine)</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">1?</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">1</td>
-</tr>
-<tr>
-<td style="text-align:left">SH per SE</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">2</td>
-</tr>
-<tr>
-<td style="text-align:left">WGP(CU) per SH</td>
-<td style="text-align:center">7(14)</td>
-<td style="text-align:center">6?(12?)</td>
-<td style="text-align:center">5(10)</td>
-<td style="text-align:center">6(12)</td>
-</tr>
-<tr>
-<td style="text-align:left">Total WGP(CU)</td>
-<td style="text-align:center">28(56)</td>
-<td style="text-align:center">12?(24?)</td>
-<td style="text-align:center">20(40)</td>
-<td style="text-align:center">12(24)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: center">Xbox Series X</th>
+          <th style="text-align: center">Xbox Series S</th>
+          <th style="text-align: center">Navi10</th>
+          <th style="text-align: center">Navi14</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">SE<br>(Shader Engine)</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">1?</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">SH per SE</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">WGP(CU) per SH</td>
+          <td style="text-align: center">7(14)</td>
+          <td style="text-align: center">6?(12?)</td>
+          <td style="text-align: center">5(10)</td>
+          <td style="text-align: center">6(12)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Total WGP(CU)</td>
+          <td style="text-align: center">28(56)</td>
+          <td style="text-align: center">12?(24?)</td>
+          <td style="text-align: center">20(40)</td>
+          <td style="text-align: center">12(24)</td>
+      </tr>
+  </tbody>
 </table>
 <div class="footnotes" role="doc-endnotes">
 <hr>
@@ -160,7 +192,7 @@ GPU は大きく規模を削られ、<strong>XSX</strong> の 52CU@1.825GH に�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

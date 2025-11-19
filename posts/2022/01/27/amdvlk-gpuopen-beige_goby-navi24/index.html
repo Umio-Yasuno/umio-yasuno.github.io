@@ -19,8 +19,30 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="AMDVLK GPUOpenドライバーが Beige Goby/Navi24 に対応 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する各種ソフトウェア (LLPC (LLVM-Based Pipeline Compiler), PAL (Platform Abstraction Library), XGL (Vulkan API Layer)) が、Beige Goby/Navi24 (gfx10) に対応した。 Update">
-  <meta property="og:description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する各種ソフトウェア (LLPC (LLVM-Based Pipeline Compiler), PAL (Platform Abstraction Library), XGL (Vulkan API Layer)) が、Beige Goby/Navi24 (gfx10) に対応した。 Update"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する各種ソフトウェア (LLPC (LLVM-Based Pipeline Compiler), PAL (Platform Abstraction Library), XGL (Vulkan API Layer)) が、Beige Goby/Navi24 (gfx10) に対応した。
+
+Update pal from commit: f4c1b21c · GPUOpen-Drivers/pal@0a0a4ae
+Update llpc from commit: 9c33c180 · GPUOpen-Drivers/llpc@7c2f5f7
+Update xgl from commit: b30d9ce9 · GPUOpen-Drivers/xgl@d01032b
+
+Beige Goby/Navi24 spec
+
+Beige Goby/Navi24 の GPUコア部は、ShaderEngine (SE) 1基、SE あたりの ShaderArray (SA,SH) 2基、SA あたりの WGP (CU) 4基 (8基)、SE あたりの RenderBackend (RB) 4基という構成になっている。
+スペックに関するもう 1つのコードブロックでは SE あたりの RB数は 2基となっているが、AMD 公式サイトでは ROP 32基 (RB&#43; 4基) となっているため、下引用部が正しいと思われる。1
+メモリサイドキャッシュには、L2キャッシュブロック 1MiB (ブロック 4基)、L3キャッシュ/MALL 16MiB を持つ。メモリチャネルは 4ch、メモリタイプは GDDR6 に対応している (GDDR6 64-bit [16-bit x 4ch])。
+余談となるが、AMDGPU に関するソフトウェア中では L3キャッシュを MALL と呼んでいるものの、MALL が何の略称かは分かれており、LLVM では Memory Attached Last Level 2、Linux Kernel における AMDGPUドライバーでは Memory Access at Last Level だとしている。3">
+  <meta property="og:description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する各種ソフトウェア (LLPC (LLVM-Based Pipeline Compiler), PAL (Platform Abstraction Library), XGL (Vulkan API Layer)) が、Beige Goby/Navi24 (gfx10) に対応した。
+
+Update pal from commit: f4c1b21c · GPUOpen-Drivers/pal@0a0a4ae
+Update llpc from commit: 9c33c180 · GPUOpen-Drivers/llpc@7c2f5f7
+Update xgl from commit: b30d9ce9 · GPUOpen-Drivers/xgl@d01032b
+
+Beige Goby/Navi24 spec
+
+Beige Goby/Navi24 の GPUコア部は、ShaderEngine (SE) 1基、SE あたりの ShaderArray (SA,SH) 2基、SA あたりの WGP (CU) 4基 (8基)、SE あたりの RenderBackend (RB) 4基という構成になっている。
+スペックに関するもう 1つのコードブロックでは SE あたりの RB数は 2基となっているが、AMD 公式サイトでは ROP 32基 (RB&#43; 4基) となっているため、下引用部が正しいと思われる。1
+メモリサイドキャッシュには、L2キャッシュブロック 1MiB (ブロック 4基)、L3キャッシュ/MALL 16MiB を持つ。メモリチャネルは 4ch、メモリタイプは GDDR6 に対応している (GDDR6 64-bit [16-bit x 4ch])。
+余談となるが、AMDGPU に関するソフトウェア中では L3キャッシュを MALL と呼んでいるものの、MALL が何の略称かは分かれており、LLVM では Memory Attached Last Level 2、Linux Kernel における AMDGPUドライバーでは Memory Access at Last Level だとしている。3"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GPUOpen, RDNA_2, Beige_Goby">
@@ -79,7 +101,7 @@
 
 </blockquote>
 <p><em>NGG (Next Generation Geometry)</em> に対応する RDNA系アーキテクチャ GPU では、特殊なオンチップバッファ、Parameter Cache (PC) を持つ。PC はメモリキャッシュと異なり、ピクセルシェーダ (Pixel Shader, PS) への入力バッファとして用いられる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/07/26/radv-nggc/#pc" title="/posts/2021/07/26/radv-nggc/#pc">RADVドライバーに NGGカリングが実装 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/07/26/radv-nggc/#pc" title="/posts/2021/07/26/radv-nggc/#pc">RADVドライバーに NGGカリングが実装 | Coelacanth’s Dream</a></span>
 
 PC の規模について <em>RDNA 2 dGPU</em> という枠で見たとき、<em>Beige Goby</em> は他 GPU よりも少ない 512ラインとなっている。<br>
 その他 <em>RDNA 2 dGPU</em>、<em>Sienna Cichlid/Navi21, Navy Flounder/Navi22, Dimgrey Cavefish/Navi23</em> それぞれで全体的な規模は異なるが、PC は同じ 1024ラインという構成を採っており、PC は GPUコア部の規模とは別に調節されているものと思われる。<br>
@@ -109,144 +131,144 @@ PC の規模について <em>RDNA 2 dGPU</em> という枠で見たとき、<em>
 
 </blockquote>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">RDNA 2</th>
-<th style="text-align:center">Sienna Cichlid<br>(Navi21)</th>
-<th style="text-align:center">Navy Flounder<br>(Navi22)</th>
-<th style="text-align:center">Dimgrey Cavefish<br>(Navi23)</th>
-<th style="text-align:center">Beige Goby<br>(Navi24)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Shader Engine</td>
-<td style="text-align:center">4</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">1</td>
-</tr>
-<tr>
-<td style="text-align:left">WGP (CU)</td>
-<td style="text-align:center">40 (80)</td>
-<td style="text-align:center">20 (40)</td>
-<td style="text-align:center">16 (32)</td>
-<td style="text-align:center">8 (16)</td>
-</tr>
-<tr>
-<td style="text-align:left">RB+</td>
-<td style="text-align:center">16</td>
-<td style="text-align:center">8</td>
-<td style="text-align:center">8</td>
-<td style="text-align:center">4</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory Bus</td>
-<td style="text-align:center">256-bit</td>
-<td style="text-align:center">192-bit</td>
-<td style="text-align:center">128-bit</td>
-<td style="text-align:center">64-bit</td>
-</tr>
-<tr>
-<td style="text-align:left">L2 Cache</td>
-<td style="text-align:center">4 MiB</td>
-<td style="text-align:center">3 MiB</td>
-<td style="text-align:center">2 MiB</td>
-<td style="text-align:center">1 MiB</td>
-</tr>
-<tr>
-<td style="text-align:left">L3 Cache</td>
-<td style="text-align:center">128 MiB</td>
-<td style="text-align:center">96 MiB</td>
-<td style="text-align:center">32 MiB</td>
-<td style="text-align:center">16 MiB</td>
-</tr>
-<tr>
-<td style="text-align:left">Transistor</td>
-<td style="text-align:center">26.8 B</td>
-<td style="text-align:center">17.2 B</td>
-<td style="text-align:center">11.1 B</td>
-<td style="text-align:center">5.4 B</td>
-</tr>
-<tr>
-<td style="text-align:left">Process</td>
-<td style="text-align:center">7 nm</td>
-<td style="text-align:center">7nm</td>
-<td style="text-align:center">7 nm</td>
-<td style="text-align:center">6 nm</td>
-</tr>
-<tr>
-<td style="text-align:left">Die size</td>
-<td style="text-align:center">520 mm2</td>
-<td style="text-align:center">336 mm2</td>
-<td style="text-align:center">237 mm2</td>
-<td style="text-align:center">107 mm2</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">RDNA 2</th>
+          <th style="text-align: center">Sienna Cichlid<br>(Navi21)</th>
+          <th style="text-align: center">Navy Flounder<br>(Navi22)</th>
+          <th style="text-align: center">Dimgrey Cavefish<br>(Navi23)</th>
+          <th style="text-align: center">Beige Goby<br>(Navi24)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Shader Engine</td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">WGP (CU)</td>
+          <td style="text-align: center">40 (80)</td>
+          <td style="text-align: center">20 (40)</td>
+          <td style="text-align: center">16 (32)</td>
+          <td style="text-align: center">8 (16)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">RB+</td>
+          <td style="text-align: center">16</td>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">4</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory Bus</td>
+          <td style="text-align: center">256-bit</td>
+          <td style="text-align: center">192-bit</td>
+          <td style="text-align: center">128-bit</td>
+          <td style="text-align: center">64-bit</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L2 Cache</td>
+          <td style="text-align: center">4 MiB</td>
+          <td style="text-align: center">3 MiB</td>
+          <td style="text-align: center">2 MiB</td>
+          <td style="text-align: center">1 MiB</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L3 Cache</td>
+          <td style="text-align: center">128 MiB</td>
+          <td style="text-align: center">96 MiB</td>
+          <td style="text-align: center">32 MiB</td>
+          <td style="text-align: center">16 MiB</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Transistor</td>
+          <td style="text-align: center">26.8 B</td>
+          <td style="text-align: center">17.2 B</td>
+          <td style="text-align: center">11.1 B</td>
+          <td style="text-align: center">5.4 B</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Process</td>
+          <td style="text-align: center">7 nm</td>
+          <td style="text-align: center">7nm</td>
+          <td style="text-align: center">7 nm</td>
+          <td style="text-align: center">6 nm</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Die size</td>
+          <td style="text-align: center">520 mm2</td>
+          <td style="text-align: center">336 mm2</td>
+          <td style="text-align: center">237 mm2</td>
+          <td style="text-align: center">107 mm2</td>
+      </tr>
+  </tbody>
 </table>
 <p>規模、ターゲット性能が近い <em>Navi14</em> と <em>Beige Goby/Navi24</em> を比較すると、SE 1基というのは共通するが、<em>Beige Goby</em> では 総 WGP (CU) 数は 8基減り、メモリバス幅と L2キャッシュも半減した。しかし L3キャッシュ 16 MiB が追加されている。<br>
 RB数も減ったが、処理可能なピクセル数を増やした RB+ となったため、相当 ROP数は変わらない。<br>
 それと <em>Navi14</em> ではハードウェアのバグで <em>NGG</em> が無効化されていたが、<em>Beige Goby</em> ではそれが無いため有効可能になっていることは触れておきたい。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:center">Navi14</th>
-<th style="text-align:center">Beige Goby<br>(Navi24)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Shader Engine</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">1</td>
-</tr>
-<tr>
-<td style="text-align:left">WGP (CU)</td>
-<td style="text-align:center">12 (24)</td>
-<td style="text-align:center">8 (16)</td>
-</tr>
-<tr>
-<td style="text-align:left">RB (ROP)</td>
-<td style="text-align:center">8 (32)</td>
-<td style="text-align:center">4 (32)</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory Bus</td>
-<td style="text-align:center">128-bit</td>
-<td style="text-align:center">64-bit</td>
-</tr>
-<tr>
-<td style="text-align:left">L2 Cache</td>
-<td style="text-align:center">2 MiB</td>
-<td style="text-align:center">1 MiB</td>
-</tr>
-<tr>
-<td style="text-align:left">L3 Cache</td>
-<td style="text-align:center">N/A</td>
-<td style="text-align:center">16 MiB</td>
-</tr>
-<tr>
-<td style="text-align:left">Transistor</td>
-<td style="text-align:center">6.4 B</td>
-<td style="text-align:center">5.4 B</td>
-</tr>
-<tr>
-<td style="text-align:left">Process</td>
-<td style="text-align:center">7 nm</td>
-<td style="text-align:center">6 nm</td>
-</tr>
-<tr>
-<td style="text-align:left">Die size</td>
-<td style="text-align:center">158 mm2</td>
-<td style="text-align:center">107 mm2</td>
-</tr>
-<tr>
-<td style="text-align:left">NGG</td>
-<td style="text-align:center">Disabled<br>(for HW bug)</td>
-<td style="text-align:center">Enabled</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: center">Navi14</th>
+          <th style="text-align: center">Beige Goby<br>(Navi24)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Shader Engine</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">WGP (CU)</td>
+          <td style="text-align: center">12 (24)</td>
+          <td style="text-align: center">8 (16)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">RB (ROP)</td>
+          <td style="text-align: center">8 (32)</td>
+          <td style="text-align: center">4 (32)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory Bus</td>
+          <td style="text-align: center">128-bit</td>
+          <td style="text-align: center">64-bit</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L2 Cache</td>
+          <td style="text-align: center">2 MiB</td>
+          <td style="text-align: center">1 MiB</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L3 Cache</td>
+          <td style="text-align: center">N/A</td>
+          <td style="text-align: center">16 MiB</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Transistor</td>
+          <td style="text-align: center">6.4 B</td>
+          <td style="text-align: center">5.4 B</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Process</td>
+          <td style="text-align: center">7 nm</td>
+          <td style="text-align: center">6 nm</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Die size</td>
+          <td style="text-align: center">158 mm2</td>
+          <td style="text-align: center">107 mm2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">NGG</td>
+          <td style="text-align: center">Disabled<br>(for HW bug)</td>
+          <td style="text-align: center">Enabled</td>
+      </tr>
+  </tbody>
 </table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -281,7 +303,7 @@ RB数も減ったが、処理可能なピクセル数を増やした RB+ とな�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

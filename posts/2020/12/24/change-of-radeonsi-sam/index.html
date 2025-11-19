@@ -19,8 +19,24 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="RadeonSI では Smart Access Memory をオプションで切り替える方式に、 Zen 3 &#43; RDNA 2 ではデフォルトで有効 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="オープンソースで開発される AMD GPU の OpenGLドライバー RadeonSI に、Smart Access Memory に関する新たなパッチが投稿された。 util,ac,radeonsi: add Zen3 detection, disable SAM w/out Zen3 & gfx10.3, add color interpolation fixes (!8225) · Merge Requests · Mesa / mesa · GitLab 内容">
-  <meta property="og:description" content="オープンソースで開発される AMD GPU の OpenGLドライバー RadeonSI に、Smart Access Memory に関する新たなパッチが投稿された。 util,ac,radeonsi: add Zen3 detection, disable SAM w/out Zen3 & gfx10.3, add color interpolation fixes (!8225) · Merge Requests · Mesa / mesa · GitLab 内容"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="オープンソースで開発される AMD GPU の OpenGLドライバー RadeonSI に、Smart Access Memory に関する新たなパッチが投稿された。
+
+util,ac,radeonsi: add Zen3 detection, disable SAM w/out Zen3 & gfx10.3, add color interpolation fixes (!8225) · Merge Requests · Mesa / mesa · GitLab
+
+内容は、ドライバー内の GPU情報に Smart Access Memory の値を追加。有効とする判定に Above 4G Decoding が有効かつ、Zen 3 &#43; RDNA 2 であること、というものを用いている。
+パッチを投稿した AMD の Marek Olšák 氏は、(Zen 3 &#43; RDNA 2 以外の) システムでは、多くの人が性能の低下を体験している、とコメント。1
+それをデフォルトで回避すると同時に、ユーザーが選択できるよう driconf に Smart Access Memory のオプションを追加している。
+Mesa3Dドライバーの DriConf について | Coelacanth’s Dream
+">
+  <meta property="og:description" content="オープンソースで開発される AMD GPU の OpenGLドライバー RadeonSI に、Smart Access Memory に関する新たなパッチが投稿された。
+
+util,ac,radeonsi: add Zen3 detection, disable SAM w/out Zen3 & gfx10.3, add color interpolation fixes (!8225) · Merge Requests · Mesa / mesa · GitLab
+
+内容は、ドライバー内の GPU情報に Smart Access Memory の値を追加。有効とする判定に Above 4G Decoding が有効かつ、Zen 3 &#43; RDNA 2 であること、というものを用いている。
+パッチを投稿した AMD の Marek Olšák 氏は、(Zen 3 &#43; RDNA 2 以外の) システムでは、多くの人が性能の低下を体験している、とコメント。1
+それをデフォルトで回避すると同時に、ユーザーが選択できるよう driconf に Smart Access Memory のオプションを追加している。
+Mesa3Dドライバーの DriConf について | Coelacanth’s Dream
+"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, RadeonSI, Smart_Access_Memory">
@@ -49,14 +65,14 @@
 <p>内容は、ドライバー内の GPU情報に <em>Smart Access Memory</em> の値を追加。有効とする判定に <em>Above 4G Decoding</em> が有効かつ、<em>Zen 3 + RDNA 2</em> であること、というものを用いている。<br>
 パッチを投稿した AMD の <a href="https://gitlab.freedesktop.org/mareko" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mareko">Marek Olšák</a> 氏は、(<em>Zen 3 + RDNA 2</em> 以外の) システムでは、多くの人が性能の低下を体験している、とコメント。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 それをデフォルトで回避すると同時に、ユーザーが選択できるよう driconf に <em>Smart Access Memory</em> のオプションを追加している。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/11/28/driconf/" title="/posts/2020/11/28/driconf/">Mesa3Dドライバーの DriConf について | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/11/28/driconf/" title="/posts/2020/11/28/driconf/">Mesa3Dドライバーの DriConf について | Coelacanth’s Dream</a></span>
 </p>
 <p>しかし、<em>Smart Access Memory</em> を無効と言っても、パッチを読む限り、重要な要素である CPU が GPU の VRAM 全範囲に一度にアクセス可能という点では変わりはなく、以前行なわれた <em>Smart Access Memory</em> に向けた最適化を無視する (以前と同様の状態にする) というように見られる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/" title="/posts/2020/12/07/radeonsi-sam-optimization/">RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/" title="/posts/2020/12/07/radeonsi-sam-optimization/">RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth’s Dream</a></span>
 
 <em>Zen 3 + RDNA 2</em> 以外のシステムでは最適化が逆に働いてしまったのかもしれない。</p>
 <p><em>Smart Access Memory</em> の中身である <em>Resizeable PCI BAR</em> は、2017年には Linux Kernel に実装されていたが、<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/12/05/amd-sam-fact/" title="/posts/2020/12/05/amd-sam-fact/">AMD Smart Access Memory 再調査　―― Bulldozer世代の CPU/APU でも有効可能 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/12/05/amd-sam-fact/" title="/posts/2020/12/05/amd-sam-fact/">AMD Smart Access Memory 再調査　―― Bulldozer世代の CPU/APU でも有効可能 | Coelacanth’s Dream</a></span>
 
 性能への最適化やサポートの強化は、Windows OS でのサポートに合わせてか、最近になって集中的に行なわれており、BAR のサイズを適切取得できない一部 GPU VBIOS に対処するパッチなどが投稿されている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <div class="footnotes" role="doc-endnotes">
@@ -81,7 +97,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

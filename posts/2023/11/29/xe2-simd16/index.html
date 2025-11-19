@@ -19,8 +19,20 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="計算ユニットが SIMD16 になる Intel Xe2 アーキテクチャ | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Mesa3D, Intel Graphics Compiler (IGC), oneDNN では Xe2 アーキテクチャ、Lunar Lake のサポートが現在進められており、Xe2 アーキテクチャ が詳細が徐々に公開されてきている。 src: gpu: added Xe2 architecture support · oneapi-src/oneDNN@c1f86dc SIMD16 Xe2 アーキテ">
-  <meta property="og:description" content="Mesa3D, Intel Graphics Compiler (IGC), oneDNN では Xe2 アーキテクチャ、Lunar Lake のサポートが現在進められており、Xe2 アーキテクチャ が詳細が徐々に公開されてきている。 src: gpu: added Xe2 architecture support · oneapi-src/oneDNN@c1f86dc SIMD16 Xe2 アーキテ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Mesa3D, Intel Graphics Compiler (IGC), oneDNN では Xe2 アーキテクチャ、Lunar Lake のサポートが現在進められており、Xe2 アーキテクチャ が詳細が徐々に公開されてきている。
+
+src: gpu: added Xe2 architecture support · oneapi-src/oneDNN@c1f86dc
+
+SIMD16
+
+Xe2 アーキテクチャ では Xe-HPC と同様に EU (Xe Vector Engine) 内の計算ユニットが SIMD16 となる。">
+  <meta property="og:description" content="Mesa3D, Intel Graphics Compiler (IGC), oneDNN では Xe2 アーキテクチャ、Lunar Lake のサポートが現在進められており、Xe2 アーキテクチャ が詳細が徐々に公開されてきている。
+
+src: gpu: added Xe2 architecture support · oneapi-src/oneDNN@c1f86dc
+
+SIMD16
+
+Xe2 アーキテクチャ では Xe-HPC と同様に EU (Xe Vector Engine) 内の計算ユニットが SIMD16 となる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Xe2, Xe2-LPG, Lunar_Lake">
@@ -99,46 +111,46 @@ IGC 内の <code>hasFusedEU</code> の条件に <code>Xe2</code> がないため
 EU (FP+INT/EM/FP64) 2基でその性能であったため、ペア構成をやめて SIMD16 化した <em>Xe2</em> では、FP64 演算をサポートしつつ、さらに FP64 演算性能を減らすことが可能になるとは思われる。</p>
 <p>ちなみに最近の GPU アーキテクチャにおける FP64 演算性能は以下のようになっている。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">FP64 peak perf per FP32 peak perf</th>
-<th style="text-align:center"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">AMD RDNA 2</td>
-<td style="text-align:center">1/16</td>
-</tr>
-<tr>
-<td style="text-align:left">AMD RDNA 3</td>
-<td style="text-align:center">1/32<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></td>
-</tr>
-<tr>
-<td style="text-align:left">AMD CDNA 2</td>
-<td style="text-align:center">1 (Vector)</td>
-</tr>
-<tr>
-<td style="text-align:left">Intel Xe-HPG</td>
-<td style="text-align:center">N/A</td>
-</tr>
-<tr>
-<td style="text-align:left">Intel Xe-LPG</td>
-<td style="text-align:center">1/16</td>
-</tr>
-<tr>
-<td style="text-align:left">Intel Xe-HPC</td>
-<td style="text-align:center">1<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></td>
-</tr>
-<tr>
-<td style="text-align:left">NVIDIA AD102</td>
-<td style="text-align:center">1/64<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></td>
-</tr>
-<tr>
-<td style="text-align:left">NVIDIA H100/H200</td>
-<td style="text-align:center">1/2 (Vector)<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">FP64 peak perf per FP32 peak perf</th>
+          <th style="text-align: center"></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">AMD RDNA 2</td>
+          <td style="text-align: center">1/16</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AMD RDNA 3</td>
+          <td style="text-align: center">1/32<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AMD CDNA 2</td>
+          <td style="text-align: center">1 (Vector)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Intel Xe-HPG</td>
+          <td style="text-align: center">N/A</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Intel Xe-LPG</td>
+          <td style="text-align: center">1/16</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Intel Xe-HPC</td>
+          <td style="text-align: center">1<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">NVIDIA AD102</td>
+          <td style="text-align: center">1/64<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">NVIDIA H100/H200</td>
+          <td style="text-align: center">1/2 (Vector)<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></td>
+      </tr>
+  </tbody>
 </table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -151,7 +163,7 @@ EU (FP+INT/EM/FP64) 2基でその性能であったため、ペア構成をや�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.coelacanth-dream.com/posts/2023/10/07/xe2-grf-long-pipe/" title="/posts/2023/10/07/xe2-grf-long-pipe/">レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2023/10/07/xe2-grf-long-pipe/" title="/posts/2023/10/07/xe2-grf-long-pipe/">レジスタファイルサイズが倍になり、Int64 のサポートが復活する Intel Xe2 | Coelacanth’s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
 <p><a href="https://www.intel.com/content/www/us/en/content-details/788848/graphics-and-media-deep-dive.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/content-details/788848/graphics-and-media-deep-dive.html">Graphics and Media Deep Dive</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
@@ -181,7 +193,7 @@ EU (FP+INT/EM/FP64) 2基でその性能であったため、ペア構成をや�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

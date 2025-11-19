@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="2つの非同期パイプラインが追加される Xe-HP EU | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="オープンソースで開発される Intel GPU のシェーダーコンパイラバックエンドに、Xe-HP GPU の ISA (Instruction Set Architecture) をサポートするパッチ (マージリクエスト) が投稿された。 偶然だが、そのマ">
-  <meta property="og:description" content="オープンソースで開発される Intel GPU のシェーダーコンパイラバックエンドに、Xe-HP GPU の ISA (Instruction Set Architecture) をサポートするパッチ (マージリクエスト) が投稿された。 偶然だが、そのマ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="オープンソースで開発される Intel GPU のシェーダーコンパイラバックエンドに、Xe-HP GPU の ISA (Instruction Set Architecture) をサポートするパッチ (マージリクエスト) が投稿された。
+偶然だが、そのマージリクエストが Mesa3D の Gitlabレポジトリにおける 1000個目のマージリクエストであり、次世代の Intel GPU をサポートするパッチは記念としてぴったりと言えるかもしれない。">
+  <meta property="og:description" content="オープンソースで開発される Intel GPU のシェーダーコンパイラバックエンドに、Xe-HP GPU の ISA (Instruction Set Architecture) をサポートするパッチ (マージリクエスト) が投稿された。
+偶然だが、そのマージリクエストが Mesa3D の Gitlabレポジトリにおける 1000個目のマージリクエストであり、次世代の Intel GPU をサポートするパッチは記念としてぴったりと言えるかもしれない。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Xe-HP">
@@ -108,37 +110,37 @@ Issue Port が増えればその分多く演算命令を発行でき、多くの
 
 </blockquote>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span> EU</th>
-<th style="text-align:center">IP 0</th>
-<th style="text-align:center">IP 1</th>
-<th style="text-align:center">IP 2</th>
-<th style="text-align:center">IP 3</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></td>
-<td style="text-align:center">FP/INT</td>
-<td style="text-align:center">EM</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">-</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
-<td style="text-align:center">INT?<br>(or FP?)</td>
-<td style="text-align:center">EM</td>
-<td style="text-align:center">FP?<br>(or INT?)</td>
-<td style="text-align:center">DP?</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup></span> EU</th>
+          <th style="text-align: center">IP 0</th>
+          <th style="text-align: center">IP 1</th>
+          <th style="text-align: center">IP 2</th>
+          <th style="text-align: center">IP 3</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></td>
+          <td style="text-align: center">FP/INT</td>
+          <td style="text-align: center">EM</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
+          <td style="text-align: center">INT?<br>(or FP?)</td>
+          <td style="text-align: center">EM</td>
+          <td style="text-align: center">FP?<br>(or INT?)</td>
+          <td style="text-align: center">DP?</td>
+      </tr>
+  </tbody>
 </table>
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> は、タイルと呼ぶ GPUチップを、パッケージ上に単体もしくは複数 (2, 4) 搭載する構成を取り、1タイルあたりに EU を 512基搭載している。<br>
 Intel Architecture Day 2020 で披露されたデモでは、1タイル (512EU) 構成の <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> が 1300MHz で動作し、約10.6 TFLOPs というピークFP32演算性能を達成していた。<br>
 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> の同様の 8-wide FPパイプライン 1ポートという構成では、ピークFP32演算性能は約5.3TFLOPs と一致しなかったが、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> で増設された倍精度演算器のパイプラインも単精度演算器として活用していたとすると約10.6TFLOPsというデモの性能と近い数字が出る。<br>
 パイプラインあたりの演算幅を増やした可能性もあるが、今回のパッチで明かされた情報と合わせて上のような推測もできる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu" title="/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu" title="/posts/2020/08/14/intel-architecture-day-2020/#xe-hp-1t-512eu">Intel Architecture Day 2020 個人的まとめ　―― XeHP は 1-Tile 512EU、XeLPアーキテクチャ詳細 | Coelacanth’s Dream</a></span>
 
 ゲーミング向け <span class="xe-gpu-arch">X<sup>e</sup></span> アーキテクチャ <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> の存在が明らかにされているが、 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> と <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> どちらの EU構成を踏襲するかはまだ分かっていない。</p>
 <p>パッチでは他に、ハードウェアから整数除算演算器が外されたことや、倍精度演算対応のためと思われる 64-bitレジスタについても触れられている。</p>
@@ -174,7 +176,7 @@ Intel Architecture Day 2020 で披露されたデモでは、1タイル (512EU) 
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

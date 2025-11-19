@@ -19,8 +19,50 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Xe-HPC のサポートが intel-graphics-compiler、oneDNN に追加される | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Intel GPU の OpenCLコンパイラ intel-graphics-compiler、oneAPI における深層学習ライブラリ oneDNN に Xe-HPC のサポートが追加された。 support for DG2&#43;PVC · intel/intel-graphics-compiler@574378f gpu: jit: ngen:">
-  <meta property="og:description" content="Intel GPU の OpenCLコンパイラ intel-graphics-compiler、oneAPI における深層学習ライブラリ oneDNN に Xe-HPC のサポートが追加された。 support for DG2&#43;PVC · intel/intel-graphics-compiler@574378f gpu: jit: ngen:"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Intel GPU の OpenCLコンパイラ intel-graphics-compiler、oneAPI における深層学習ライブラリ oneDNN に Xe-HPC のサポートが追加された。
+
+support for DG2&#43;PVC · intel/intel-graphics-compiler@574378f
+gpu: jit: ngen: implement ngen Xe HPC support · oneapi-src/oneDNN@8c79e4e
+gpu: compute: add Xe HPC engine · oneapi-src/oneDNN@dac5847
+gpu: ocl: implement ocl Xe HPC support · oneapi-src/oneDNN@43b0a06
+
+Index
+
+
+Xe-HPC の L1命令キャッシュサイズ
+
+Xe-HPC-XT と Xe-HPC-XL
+
+
+
+
+
+Xe-HPC の L1命令キャッシュサイズ
+
+Xe アーキテクチャ では複数の EU (Vector Engine, Matrix Engine) やロード/ストアユニットをまとめた Xe-Core ごとに L1命令キャッシュを持つ。
+Xe-Core は、以前は Sub-Slice(s) と呼ばれており、Intel GPU 向けのオープンソースソフトウェア、ドライバーではそのまま Sub-Slice(s) を使っている。">
+  <meta property="og:description" content="Intel GPU の OpenCLコンパイラ intel-graphics-compiler、oneAPI における深層学習ライブラリ oneDNN に Xe-HPC のサポートが追加された。
+
+support for DG2&#43;PVC · intel/intel-graphics-compiler@574378f
+gpu: jit: ngen: implement ngen Xe HPC support · oneapi-src/oneDNN@8c79e4e
+gpu: compute: add Xe HPC engine · oneapi-src/oneDNN@dac5847
+gpu: ocl: implement ocl Xe HPC support · oneapi-src/oneDNN@43b0a06
+
+Index
+
+
+Xe-HPC の L1命令キャッシュサイズ
+
+Xe-HPC-XT と Xe-HPC-XL
+
+
+
+
+
+Xe-HPC の L1命令キャッシュサイズ
+
+Xe アーキテクチャ では複数の EU (Vector Engine, Matrix Engine) やロード/ストアユニットをまとめた Xe-Core ごとに L1命令キャッシュを持つ。
+Xe-Core は、以前は Sub-Slice(s) と呼ばれており、Intel GPU 向けのオープンソースソフトウェア、ドライバーではそのまま Sub-Slice(s) を使っている。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Xe-HPC, Xe-HPG, Gen12, DG2">
@@ -66,7 +108,7 @@
 <span class="xe-gpu-arch">X<sup>e</sup></span>-Core は、以前は Sub-Slice(s) と呼ばれており、Intel GPU 向けのオープンソースソフトウェア、ドライバーではそのまま Sub-Slice(s) を使っている。</p>
 <p><em>Tiger/Rocket/Alder Lake</em> 、<em>DG1</em> が採用する <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span> アーキテクチャ</em> では L1命令キャッシュのサイズは 48 KiB となっていた。<br>
 以前には、<em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> は <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> と同じ 48 KiB、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> はその倍のサイズとなる 96 KiB を L1命令キャッシュに持つことを示す記述が oneDNN に追加されていた。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/09/16/intel-xe_hpg-icache/" title="/posts/2021/09/16/intel-xe_hpg-icache/">Xe-LP/HP より大きな命令キャッシュを持つ Xe-HPG | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/09/16/intel-xe_hpg-icache/" title="/posts/2021/09/16/intel-xe_hpg-icache/">Xe-LP/HP より大きな命令キャッシュを持つ Xe-HPG | Coelacanth’s Dream</a></span>
 
 今回、同様の部分に <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> の L1命令キャッシュサイズを示す記述が追加され、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP/HP</span></em> とも <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> とも異なる 80 KiB とされている。</p>
 <blockquote>
@@ -89,71 +131,71 @@
 oneDNN では命令キャッシュの情報を、実行するカーネルの生サイズと比較してカーネルが命令キャッシュより大きかった場合にログに警告メッセージを出力する、といった使い方をしている。より大きなカーネルの実行性能を高めるために命令キャッシュを大きくした、という可能性はある。</p>
 <p>とはいえ、上記のコードの通りであれば、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP/HP</span></em>, <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em>, <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> でそれぞれ <span class="xe-gpu-arch">X<sup>e</sup></span>-Core (Sub-Slice) あたりの命令キャッシュサイズは異なることとなり、目的があってサイズを調整していることは窺い知れる。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span> GPU</th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Vector Engine</td>
-<td style="text-align:center">256-bit?</td>
-<td style="text-align:center">256-bit</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">512-bit</td>
-</tr>
-<tr>
-<td style="text-align:left">VE per SS (Sub-Slice)</td>
-<td style="text-align:center">16</td>
-<td style="text-align:center">16</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">8</td>
-</tr>
-<tr>
-<td style="text-align:left">L1I$ per SS</td>
-<td style="text-align:center">48 KB</td>
-<td style="text-align:center">96 KB?</td>
-<td style="text-align:center">48 KB?</td>
-<td style="text-align:center">80 KB?</td>
-</tr>
-<tr>
-<td style="text-align:left">Matrix Engine</td>
-<td style="text-align:center">N/A</td>
-<td style="text-align:center">1024-bit</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">4096-bit</td>
-</tr>
-<tr>
-<td style="text-align:left">Load/Store per cycle (SLM)</td>
-<td style="text-align:center">128 B?<br>(per Dataport)</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">512 B</td>
-</tr>
-<tr>
-<td style="text-align:left">L1D$/SLM per SS</td>
-<td style="text-align:center">128 KB</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">512 KB</td>
-</tr>
-<tr>
-<td style="text-align:left">Native FP64</td>
-<td style="text-align:center">N/A</td>
-<td style="text-align:center">N/A</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup></span> GPU</th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Vector Engine</td>
+          <td style="text-align: center">256-bit?</td>
+          <td style="text-align: center">256-bit</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">512-bit</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VE per SS (Sub-Slice)</td>
+          <td style="text-align: center">16</td>
+          <td style="text-align: center">16</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">8</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L1I$ per SS</td>
+          <td style="text-align: center">48 KB</td>
+          <td style="text-align: center">96 KB?</td>
+          <td style="text-align: center">48 KB?</td>
+          <td style="text-align: center">80 KB?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Matrix Engine</td>
+          <td style="text-align: center">N/A</td>
+          <td style="text-align: center">1024-bit</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">4096-bit</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Load/Store per cycle (SLM)</td>
+          <td style="text-align: center">128 B?<br>(per Dataport)</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">512 B</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L1D$/SLM per SS</td>
+          <td style="text-align: center">128 KB</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">512 KB</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Native FP64</td>
+          <td style="text-align: center">N/A</td>
+          <td style="text-align: center">N/A</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+      </tr>
+  </tbody>
 </table>
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> では GRF (General Register File) のサイズが 64 Bytes (512-bit) に拡張されており、従来のアーキテクチャでは 32 Bytes (256-bit, 8x 32-bit) だった。<br>
 恐らく FP64演算性能の最適化のため、8x 64-bit の構成を採っていると思われる。<br>
 同様のアーキテクチャ拡張は <em>AMD Aldebaran/MI200 GPU</em> でも施されており、FullRateFP64、PackedFP32 への対応と同時に行われている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/" title="/posts/2021/02/19/llvm-gfx90a/">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/02/19/llvm-gfx90a/" title="/posts/2021/02/19/llvm-gfx90a/">LLVM に GFX90A のサポートが追加される　―― CDNA 2/MI200 か | Coelacanth’s Dream</a></span>
 </p>
 <blockquote>
 <pre><code>     const int REG_SIZE_BITS = p &gt;= Platform::XE_HPC ? 512 : 256;
@@ -244,7 +286,7 @@ AMD風の命名法則に従えば、<span class="xe-gpu-arch">X<sup>e</sup>-HPC<
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

@@ -19,8 +19,18 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Wave32 モードのみをサポートし、LDS を 320KiB 持つ GFX1250 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="LLVM にてサポート作業が進められている次世代の CDNA 系 APU gfx1250 だが、最近の変更にて Wave64 モードをサポートせず、Wave32 モードのみをサポートすることが公開された。 Wave32 モードのみ">
-  <meta property="og:description" content="LLVM にてサポート作業が進められている次世代の CDNA 系 APU gfx1250 だが、最近の変更にて Wave64 モードをサポートせず、Wave32 モードのみをサポートすることが公開された。 Wave32 モードのみ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="LLVM にてサポート作業が進められている次世代の CDNA 系 APU gfx1250 だが、最近の変更にて Wave64 モードをサポートせず、Wave32 モードのみをサポートすることが公開された。
+Wave32 モードのみサポート
+
+Wave とは AMD GPU におけるスレッド (Work-item) の塊であり、SIMD ユニットへの命令の発行単位とも言える。
+GCN アーキテクチャと CDNA 3 までの CDNA 系アーキテクチャでは Wave64 (64 work-item) のみをサポートしており、RDNA 系アーキテクチャから Wave32 (32 work-item) のサポートが追加された。
+Wave64 モードの特徴としては、発行単位が大きく複数回に分けて SIMD ユニットで実行されるため、Wave が終了するまでのレイテンシは大きくなるが、SIMD ユニットの稼働率は高くしやすいことが挙げられる。">
+  <meta property="og:description" content="LLVM にてサポート作業が進められている次世代の CDNA 系 APU gfx1250 だが、最近の変更にて Wave64 モードをサポートせず、Wave32 モードのみをサポートすることが公開された。
+Wave32 モードのみサポート
+
+Wave とは AMD GPU におけるスレッド (Work-item) の塊であり、SIMD ユニットへの命令の発行単位とも言える。
+GCN アーキテクチャと CDNA 3 までの CDNA 系アーキテクチャでは Wave64 (64 work-item) のみをサポートしており、RDNA 系アーキテクチャから Wave32 (32 work-item) のサポートが追加された。
+Wave64 モードの特徴としては、発行単位が大きく複数回に分けて SIMD ユニットで実行されるため、Wave が終了するまでのレイテンシは大きくなるが、SIMD ユニットの稼働率は高くしやすいことが挙げられる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GFX12.5, LLVM, CDNA">
@@ -91,7 +101,7 @@ CDNA 4 で LDS のサイズと帯域を拡張させた理由について、デ�
 </h2>
 <p><em>gfx1250</em> は WGP モードもサポートせず、CU モードのみをサポートするとされている。</p>
 <ul>
-<li><a href="https://github.com/llvm/llvm-project/pull/153680" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/153680">[AMDGPU] Don&rsquo;t allow wgp mode on gfx1250 by rampitec · Pull Request #153680 · llvm/llvm-project</a></li>
+<li><a href="https://github.com/llvm/llvm-project/pull/153680" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/153680">[AMDGPU] Don’t allow wgp mode on gfx1250 by rampitec · Pull Request #153680 · llvm/llvm-project</a></li>
 </ul>
 <p>WGP モード、CU モードは RDNA 1 からサポートされており、Work-group の発行方式に関わる機能である。<br>
 Work-group は Wave の集まりであり、同じ Work-group 内の Wave はバリア命令を介して同期でき、LDS も共有できる。<br>
@@ -128,7 +138,7 @@ Wave が SIMD ユニットごとに割り当てられることと、現時点で
        return 4;
      }
 </code></pre>
-<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/pull/153680" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/153680">[AMDGPU] Don&rsquo;t allow wgp mode on gfx1250 by rampitec · Pull Request #153680 · llvm/llvm-project</a></cite>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/pull/153680" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/153680">[AMDGPU] Don’t allow wgp mode on gfx1250 by rampitec · Pull Request #153680 · llvm/llvm-project</a></cite>
 </div>
 
 </blockquote>
@@ -151,7 +161,7 @@ Wave が SIMD ユニットごとに割り当てられることと、現時点で
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

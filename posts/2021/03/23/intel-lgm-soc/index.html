@@ -19,8 +19,20 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel Lightning Mountain を追う | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="2019/08頃に、Intel の新しいネットワークプロセッサ SoC Lightning Mountain をサポートするパッチが Linux Kernel に投稿され始めた。1 Lightning Mountain は、Intel 14nmプロセスにおける第一世">
-  <meta property="og:description" content="2019/08頃に、Intel の新しいネットワークプロセッサ SoC Lightning Mountain をサポートするパッチが Linux Kernel に投稿され始めた。1 Lightning Mountain は、Intel 14nmプロセスにおける第一世"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="2019/08頃に、Intel の新しいネットワークプロセッサ SoC Lightning Mountain をサポートするパッチが Linux Kernel に投稿され始めた。1
+Lightning Mountain は、Intel 14nmプロセスにおける第一世代 Atomアーキテクチャ Airmont を採用する SoC とされる。そのため、Linux Kernel上では新登場する SoC であっても、その中身は特別新しくはない。
+しかし Lightning Mountain の特別興味を惹く点は、最初の 2019/08頃のパッチ以降もポツポツと新たなパッチが投稿されてはいるが、積極的にサポートをアップストリームに統合させようとする様子は見られず、
+さらには既存のパッチについても十分にメンテナンスが行われているとは言い難く、SUSE のソフトウェアエンジニアである Pavel Machek 氏より、Lightning Mountain の LEDデバイスドライバーのビルドが失敗することが 2021/03/09 に報告された。2
+そして、Adam Borowski 氏が聞いたところでは、Lightning Mountain を含む Intel のホームゲートウェイ向けプロセッサの部門は MaxLinear社に売却されたらしく、元のパッチを投稿したエンジニアも移ったはずだが、その MaxLinearの連絡先を知らないとのこと。
+MaxLinear社による Intel ホームゲートウェイ部門の買収は 2020/04/06 に行われている。3
+これら一連の流れについては Phoronix の記事が詳しい。">
+  <meta property="og:description" content="2019/08頃に、Intel の新しいネットワークプロセッサ SoC Lightning Mountain をサポートするパッチが Linux Kernel に投稿され始めた。1
+Lightning Mountain は、Intel 14nmプロセスにおける第一世代 Atomアーキテクチャ Airmont を採用する SoC とされる。そのため、Linux Kernel上では新登場する SoC であっても、その中身は特別新しくはない。
+しかし Lightning Mountain の特別興味を惹く点は、最初の 2019/08頃のパッチ以降もポツポツと新たなパッチが投稿されてはいるが、積極的にサポートをアップストリームに統合させようとする様子は見られず、
+さらには既存のパッチについても十分にメンテナンスが行われているとは言い難く、SUSE のソフトウェアエンジニアである Pavel Machek 氏より、Lightning Mountain の LEDデバイスドライバーのビルドが失敗することが 2021/03/09 に報告された。2
+そして、Adam Borowski 氏が聞いたところでは、Lightning Mountain を含む Intel のホームゲートウェイ向けプロセッサの部門は MaxLinear社に売却されたらしく、元のパッチを投稿したエンジニアも移ったはずだが、その MaxLinearの連絡先を知らないとのこと。
+MaxLinear社による Intel ホームゲートウェイ部門の買収は 2020/04/06 に行われている。3
+これら一連の流れについては Phoronix の記事が詳しい。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Unknown">
@@ -50,7 +62,7 @@
 MaxLinear社による Intel ホームゲートウェイ部門の買収は 2020/04/06 に行われている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 これら一連の流れについては <a href="https://www.phoronix.com/" rel="noopener noreferrer" target="_blank" title="https://www.phoronix.com/">Phoronix</a> の記事が詳しい。</p>
 <ul>
-<li><a href="https://www.phoronix.com/scan.php?page=news_item&px=Lightning-Mountain-Code-2021" rel="noopener noreferrer" target="_blank" title="https://www.phoronix.com/scan.php?page=news_item&px=Lightning-Mountain-Code-2021">Intel&rsquo;s Lightning Mountain Appears Punted Off Or Canned As Part Of MaxLinear Acquisition - Phoronix</a></li>
+<li><a href="https://www.phoronix.com/scan.php?page=news_item&px=Lightning-Mountain-Code-2021" rel="noopener noreferrer" target="_blank" title="https://www.phoronix.com/scan.php?page=news_item&px=Lightning-Mountain-Code-2021">Intel’s Lightning Mountain Appears Punted Off Or Canned As Part Of MaxLinear Acquisition - Phoronix</a></li>
 </ul>
 <p>その後、MaxLinear社は <em>Lightning Mountain</em> のコードをメンテナンスしていく意思を見せたとのことだが、新しいようでそうではなく、サポートもそう積極的に行われていない <em>Lightning Mountain</em> に自分は興味を惹かれ、一度記事にまとめるに至った。</p>
 <!--
@@ -148,14 +160,14 @@ Android は Linux Kernel を採用しているため、搭載製品に使われ�
  見付からなかった。<br>
 <em>Lightning Mountain SoC</em> 自体よりも、その扱いが一番の謎と言えるかもしれない。</p>
 <p>中国市場は独特の流れを持つらしく、いつかに <em>Xbox One SoC</em> を転用した <em>AMD Cato APU</em> 搭載製品が中国市場で発売されたことがあった。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/10/14/a9-9820-silicon/" title="/posts/2020/10/14/a9-9820-silicon/">A9-9820 は Xbox One SoC と同一ダイ | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/10/14/a9-9820-silicon/" title="/posts/2020/10/14/a9-9820-silicon/">A9-9820 は Xbox One SoC と同一ダイ | Coelacanth’s Dream</a></span>
 
 <em>Lightning Mountain</em> もまた、<span class="complement">不遇に思える点はあるが</span>
  そうした魅力を持つプロセッサの 1つだろう。</p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://www.phoronix.com/scan.php?page=news_item&px=Lightning-Mountain-Code-2021" rel="noopener noreferrer" target="_blank" title="https://www.phoronix.com/scan.php?page=news_item&px=Lightning-Mountain-Code-2021">Intel&rsquo;s Lightning Mountain Appears Punted Off Or Canned As Part Of MaxLinear Acquisition - Phoronix</a></li>
+<li><a href="https://www.phoronix.com/scan.php?page=news_item&px=Lightning-Mountain-Code-2021" rel="noopener noreferrer" target="_blank" title="https://www.phoronix.com/scan.php?page=news_item&px=Lightning-Mountain-Code-2021">Intel’s Lightning Mountain Appears Punted Off Or Canned As Part Of MaxLinear Acquisition - Phoronix</a></li>
 <li><a href="http://web.archive.org/web/20170301092811/www.spreadtrum.com/en/show_news.html?id=fe766282-e9cc-4ffd-b211-e3d19675d3f7" rel="noopener noreferrer" target="_blank" title="http://web.archive.org/web/20170301092811/www.spreadtrum.com/en/show_news.html?id=fe766282-e9cc-4ffd-b211-e3d19675d3f7">Spreadtrum launches 14nm 8-core 64-bit mid- and high-end LTE SoC platform - Spreadtrum Communications, Inc.</a></li>
 <li><a href="https://newsroom.intel.com/news/intel-demonstrates-5g-power-versatility-with-att-introduces-mobile-soc-with-spreadtrum/" rel="noopener noreferrer" target="_blank" title="https://newsroom.intel.com/news/intel-demonstrates-5g-power-versatility-with-att-introduces-mobile-soc-with-spreadtrum/">Intel Demonstrates 5G Power, Versatility with AT&T; Introduces New Mobile SoC with Spreadtrum</a></li>
 <li><a href="https://blog.osakana.net/archives/8561" rel="noopener noreferrer" target="_blank" title="https://blog.osakana.net/archives/8561">Intel Airmont採用の中華SoC Spreadtrum SC9853i採用のLeagoo T5cを使ってみた – OSAKANA TAROのメモ帳</a></li>
@@ -225,7 +237,7 @@ Android は Linux Kernel を採用しているため、搭載製品に使われ�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

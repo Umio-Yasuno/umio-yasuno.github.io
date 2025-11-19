@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="ダイあたり 4基のメモリコントローラーを持つ Aldebaran/MI200 GPU | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Linux Kernel における、ハードウェアのエラーを検出、収集して報告する EDAC (Error Detection And Correction) ドライバーに Aldebaran/MI200 GPU のサポートを追加するパッチが投稿された。 CDNA 2 アーキテクチャ を採用する Aldebaran GPU は 3rd">
-  <meta property="og:description" content="Linux Kernel における、ハードウェアのエラーを検出、収集して報告する EDAC (Error Detection And Correction) ドライバーに Aldebaran/MI200 GPU のサポートを追加するパッチが投稿された。 CDNA 2 アーキテクチャ を採用する Aldebaran GPU は 3rd"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Linux Kernel における、ハードウェアのエラーを検出、収集して報告する EDAC (Error Detection And Correction) ドライバーに Aldebaran/MI200 GPU のサポートを追加するパッチが投稿された。
+CDNA 2 アーキテクチャ を採用する Aldebaran GPU は 3rd Gen Infinity Architecture 、CPU との XGMI/Infinity Fabric 接続に対応し、3rd Gen Infinity Architecture では CPU と GPU のメモリ空間が統合される。">
+  <meta property="og:description" content="Linux Kernel における、ハードウェアのエラーを検出、収集して報告する EDAC (Error Detection And Correction) ドライバーに Aldebaran/MI200 GPU のサポートを追加するパッチが投稿された。
+CDNA 2 アーキテクチャ を採用する Aldebaran GPU は 3rd Gen Infinity Architecture 、CPU との XGMI/Infinity Fabric 接続に対応し、3rd Gen Infinity Architecture では CPU と GPU のメモリ空間が統合される。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Aldebaran, MI200, CDNA_2, gfx90a">
@@ -61,7 +63,7 @@
 
 </blockquote>
 <p>先日 Intel は ISC2021 にて <a href="https://www.coelacanth-dream.com/tags/sapphire_rapids" rel="noopener noreferrer" target="_blank" title="/tags/sapphire_rapids">Sapphire Rapids CPU</a> と <a href="https://www.coelacanth-dream.com/tags/xe-hpc" rel="noopener noreferrer" target="_blank" title="/tags/xe-hpc"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span> GPU</a> に関する新たな発表を行い、<em>Intel Ponte Vecchio</em> GPU が OCP Accelerator Module (OAM) フォームファクと、それを 4基組み合わせて構成するサブシステムに対応することを明らかにしたが、 <em>AMD Aldebaran</em> の GPUノード (noncpu node) も同様の構成を採るのかもしれない。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/03/26/intel-pvc-47-tiles/" title="/posts/2021/03/26/intel-pvc-47-tiles/">47個のタイルで構成される Intel Ponte Vecchio | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/03/26/intel-pvc-47-tiles/" title="/posts/2021/03/26/intel-pvc-47-tiles/">47個のタイルで構成される Intel Ponte Vecchio | Coelacanth’s Dream</a></span>
 </p>
 <h2 id="umc">ダイあたり 4基の UMC<a href="#umc" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -82,7 +84,7 @@ HBM2メモリではスタックあたり最大 8GB までだったが、HBM2e �
 <p>TSMC 7nmプロセス (N7) で製造される <em>NVIDIA GA100</em> はチップ的には 6144-bit (6x HBM2/eスタック)のメモリインターフェイスが実装されていたが、製品である <strong>NVIDIA A100 GPU</strong> では 1スタック分を無効化し、5120-bit (5x HBM2/eスタック) の構成となっていた。 <em>NVIDIA GA100</em> は 826 mm2 という巨大なダイサイズであり、メモリインターフェイスを一部無効化したのは歩留まり向上のためと考えられる。<br>
 対し、<em>AMD Aldebaran</em> GPU ではダイあたりのメモリインターフェイスは 4096-bit (4x HBM2eスタック) になると見られ、ダイレベルでは <a href="https://www.coelacanth-dream.com/tags/cdna" rel="noopener noreferrer" target="_blank" title="/tags/cdna">CDNA アーキテクチャ</a> を採用する <em>Arcturus/MI100</em> と同じ規模のメモリインターフェイスを保つことができ、歩留まり悪化の緩和が期待できる。こうした点は MCM構成の明らかな利点だろう。<br>
 また、 <em>Aldebaran</em> GPU は 2個のダイで構成され、それぞれプライマリーダイとセカンダリーダイという役割の異なるダイに分かれるが、そこは設定可能な部分で、ダイ自体は同一になると思われる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/09/aldebaran-primary-secondary/" title="/posts/2021/06/09/aldebaran-primary-secondary/">プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/09/aldebaran-primary-secondary/" title="/posts/2021/06/09/aldebaran-primary-secondary/">プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth’s Dream</a></span>
 </p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -112,7 +114,7 @@ HBM2メモリではスタックあたり最大 8GB までだったが、HBM2e �
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

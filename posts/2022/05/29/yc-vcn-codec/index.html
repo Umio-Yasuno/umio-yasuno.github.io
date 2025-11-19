@@ -19,8 +19,14 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Yellow Carp/Rembrandt APU の対応コーデックについて | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="雑記。 Yellow Carp/Rembrandt APU に搭載されたメディアエンジン (VCN, Video Core Next) の対応コーデック情報について、過去に何度か触れてきた。 対応コーデック情報は AMD 公式サイト、RadeonFeatur">
-  <meta property="og:description" content="雑記。 Yellow Carp/Rembrandt APU に搭載されたメディアエンジン (VCN, Video Core Next) の対応コーデック情報について、過去に何度か触れてきた。 対応コーデック情報は AMD 公式サイト、RadeonFeatur"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="雑記。
+Yellow Carp/Rembrandt APU に搭載されたメディアエンジン (VCN, Video Core Next) の対応コーデック情報について、過去に何度か触れてきた。
+対応コーデック情報は AMD 公式サイト、RadeonFeature、オープンソースドライバーのコード等から得られるが、Yellow Carp/Rembrandt APU の情報はそれぞれでわずかに食い違っていた。主に MPEG2, MPEG4, VC1, AV1 のデコード対応について。
+その点を drm / amd レポジトリに issue を送ったところ、AMD の Alex Deucher 氏より実質的な回答となるパッチが返ってきた。">
+  <meta property="og:description" content="雑記。
+Yellow Carp/Rembrandt APU に搭載されたメディアエンジン (VCN, Video Core Next) の対応コーデック情報について、過去に何度か触れてきた。
+対応コーデック情報は AMD 公式サイト、RadeonFeature、オープンソースドライバーのコード等から得られるが、Yellow Carp/Rembrandt APU の情報はそれぞれでわずかに食い違っていた。主に MPEG2, MPEG4, VC1, AV1 のデコード対応について。
+その点を drm / amd レポジトリに issue を送ったところ、AMD の Alex Deucher 氏より実質的な回答となるパッチが返ってきた。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Yellow_Carp, Rembrandt">
@@ -61,7 +67,7 @@
 </blockquote>
 <p>まず、Linux Kernel側の AMDGPUドライバーに記述されているコーデック情報は、libdrm uAPI の <code>amdgpu_query_video_caps_info</code> が呼ばれたときにコーデック自体への対応と対応サイズを返すのに使われる。<br>
 <code>amdgpu_query_video_caps_info</code> を使うのは基本 UMD (User Mode Driver) である Mesa3D のみとなる。そして、以前にも触れたが、Mesa3D では取得した対応コーデック情報の内、サイズのみを使用している。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/01/05/amd-ces-2022/#av1-dec" title="/posts/2022/01/05/amd-ces-2022/#av1-dec">AMD CES 2022 個人的まとめ | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/01/05/amd-ces-2022/#av1-dec" title="/posts/2022/01/05/amd-ces-2022/#av1-dec">AMD CES 2022 個人的まとめ | Coelacanth’s Dream</a></span>
 
 libdrm のバージョン違い等で <code>amdgpu_query_video_caps_info</code> に対応していない場合でも、AMD APU/GPU ファミリーを元に対応サイズが返される。</p>
 <blockquote>
@@ -108,7 +114,7 @@ libdrm のバージョン違い等で <code>amdgpu_query_video_caps_info</code> 
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

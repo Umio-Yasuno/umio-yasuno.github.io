@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="メモリバス幅 32-bit の Polaris12 をベースにした GPU が存在するらしい | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="しばらくぶりのメモリバス幅 32-bit AMD GPU であり、ほぼ確実に Polaris世代の製品でも最も下に位置する Discrete GPU だろう。 linux-firmware.gitレポジトリに、メモ">
-  <meta property="og:description" content="しばらくぶりのメモリバス幅 32-bit AMD GPU であり、ほぼ確実に Polaris世代の製品でも最も下に位置する Discrete GPU だろう。 linux-firmware.gitレポジトリに、メモ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="しばらくぶりのメモリバス幅 32-bit AMD GPU であり、ほぼ確実に Polaris世代の製品でも最も下に位置する Discrete GPU だろう。
+linux-firmware.gitレポジトリに、メモリバス幅を 32-bit とする Polaris12 ベース GPU のためのファームウェアが追加され、Linux Kernel における AMD GPU ドライバーにもそのファームウェアに対応するパッチが投稿されている。">
+  <meta property="og:description" content="しばらくぶりのメモリバス幅 32-bit AMD GPU であり、ほぼ確実に Polaris世代の製品でも最も下に位置する Discrete GPU だろう。
+linux-firmware.gitレポジトリに、メモリバス幅を 32-bit とする Polaris12 ベース GPU のためのファームウェアが追加され、Linux Kernel における AMD GPU ドライバーにもそのファームウェアに対応するパッチが投稿されている。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GFX8">
@@ -58,46 +60,46 @@
 
 </blockquote>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">GFX8</th>
-<th style="text-align:center">Polaris10</th>
-<th style="text-align:center">Polaris11</th>
-<th style="text-align:center">Polaris12</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">ShaderEngine</td>
-<td style="text-align:center">4 SE</td>
-<td style="text-align:center">2 SE</td>
-<td style="text-align:center">2 SE</td>
-</tr>
-<tr>
-<td style="text-align:left">CU per SE / Total CU</td>
-<td style="text-align:center">9 / 36 CU</td>
-<td style="text-align:center">8 / 16 CU</td>
-<td style="text-align:center">5 / 10 CU</td>
-</tr>
-<tr>
-<td style="text-align:left">Toatl RB</td>
-<td style="text-align:center">8 RB<br>(32 ROP)</td>
-<td style="text-align:center">4 RB<br>(16 ROP)</td>
-<td style="text-align:center">4 RB<br>(16 ROP)</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory Bus width</td>
-<td style="text-align:center">256-bit</td>
-<td style="text-align:center">128-bit</td>
-<td style="text-align:center">128-bit</td>
-</tr>
-<tr>
-<td style="text-align:left">L2cache size</td>
-<td style="text-align:center">2048 KB</td>
-<td style="text-align:center">1024 KB</td>
-<td style="text-align:center">512 KB</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">GFX8</th>
+          <th style="text-align: center">Polaris10</th>
+          <th style="text-align: center">Polaris11</th>
+          <th style="text-align: center">Polaris12</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">ShaderEngine</td>
+          <td style="text-align: center">4 SE</td>
+          <td style="text-align: center">2 SE</td>
+          <td style="text-align: center">2 SE</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">CU per SE / Total CU</td>
+          <td style="text-align: center">9 / 36 CU</td>
+          <td style="text-align: center">8 / 16 CU</td>
+          <td style="text-align: center">5 / 10 CU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Toatl RB</td>
+          <td style="text-align: center">8 RB<br>(32 ROP)</td>
+          <td style="text-align: center">4 RB<br>(16 ROP)</td>
+          <td style="text-align: center">4 RB<br>(16 ROP)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory Bus width</td>
+          <td style="text-align: center">256-bit</td>
+          <td style="text-align: center">128-bit</td>
+          <td style="text-align: center">128-bit</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L2cache size</td>
+          <td style="text-align: center">2048 KB</td>
+          <td style="text-align: center">1024 KB</td>
+          <td style="text-align: center">512 KB</td>
+      </tr>
+  </tbody>
 </table>
 <p>メモリバス幅が 32-bit の場合、通常とは違う特殊なメモリコントローラーに関するファームウェアが必要としており、その理由については GPU のメモリコントローラーが基本 64-bit単位であることが考えられる。</p>
 <p>dGPU であり、メモリコントローラーも 64-bit単位でありながら 32-bit構成を採ることはまさに特異だと言える。他の <em>Polaris12</em> をベースにする GPU製品を見ても、メモリバス幅は小さくて 64-bit となっている。<br>
@@ -110,7 +112,7 @@ AMD GCN GPU ということで Linux Kernel の AMD GPUドライバーを使う�
  マルチメディアエンジンも利用可能ならば、安定したサポートを受けられ、映像出力以外にも活用方法がある優秀な小型 GPU となるだろう。</p>
 <p>そういう訳でメモリバス幅 32-bit の <em>Polaris12</em> GPU が存在しても、一般に出回る可能性は低いと思われるが、32-bit幅の AMD GPU が 14年振りに登場し、驚くことに 14nmプロセスで製造される <em>Polaris12</em> がそのベースとなる。<br>
 マイニング需要、半導体製品の供給不足が影響していることもあるが、やはり Polaris世代の GPU は長く、かつ幅広く活躍する働き者だと言えるだろう。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/03/11/polaris-hard-worker/" title="/posts/2020/03/11/polaris-hard-worker/">働き者のPolaris | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/03/11/polaris-hard-worker/" title="/posts/2020/03/11/polaris-hard-worker/">働き者のPolaris | Coelacanth’s Dream</a></span>
 </p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -149,7 +151,7 @@ AMD GCN GPU ということで Linux Kernel の AMD GPUドライバーを使う�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

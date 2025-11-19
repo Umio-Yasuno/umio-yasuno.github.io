@@ -19,8 +19,14 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Meteor Lake に向けた Intel Graphics Compiler へのさらなるパッチ | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="以前に Intel の Pete Chou 氏より、Intel Graphics Compiler (IGC) のサポートターゲット、vISA (virtual ISA) に Meteor Lake を追加するコミットが投稿された。 そして今回、Intel の Mateusz Borzyszkowski 氏により、Meteor">
-  <meta property="og:description" content="以前に Intel の Pete Chou 氏より、Intel Graphics Compiler (IGC) のサポートターゲット、vISA (virtual ISA) に Meteor Lake を追加するコミットが投稿された。 そして今回、Intel の Mateusz Borzyszkowski 氏により、Meteor"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="以前に Intel の Pete Chou 氏より、Intel Graphics Compiler (IGC) のサポートターゲット、vISA (virtual ISA) に Meteor Lake を追加するコミットが投稿された。
+そして今回、Intel の Mateusz Borzyszkowski 氏により、Meteor Lake のサポートに向けたさらなるパッチが IGC に投稿されている。
+Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth’s Dream
+">
+  <meta property="og:description" content="以前に Intel の Pete Chou 氏より、Intel Graphics Compiler (IGC) のサポートターゲット、vISA (virtual ISA) に Meteor Lake を追加するコミットが投稿された。
+そして今回、Intel の Mateusz Borzyszkowski 氏により、Meteor Lake のサポートに向けたさらなるパッチが IGC に投稿されている。
+Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth’s Dream
+"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Meteor_Lake, Xe-HPG">
@@ -44,7 +50,7 @@
     <aside class="update">Update: 2022-08-22 10:16:11</aside>
   </aside><p>以前に Intel の Pete Chou 氏より、<a href="https://github.com/intel/intel-graphics-compiler" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler">Intel Graphics Compiler (IGC)</a> のサポートターゲット、vISA (virtual ISA) に <em>Meteor Lake</em> を追加するコミットが投稿された。<br>
 そして今回、Intel の Mateusz Borzyszkowski 氏により、<em>Meteor Lake</em> のサポートに向けたさらなるパッチが IGC に投稿されている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/07/06/igc-mtl/" title="/posts/2022/07/06/igc-mtl/">Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/07/06/igc-mtl/" title="/posts/2022/07/06/igc-mtl/">Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth’s Dream</a></span>
 </p>
 <ul>
 <li><a href="https://github.com/intel/intel-graphics-compiler/commit/2013a0c271b136be2629fe74cb2b4eefffad78c0" rel="noopener noreferrer" target="_blank" title="https://github.com/intel/intel-graphics-compiler/commit/2013a0c271b136be2629fe74cb2b4eefffad78c0">Add MTL support · intel/intel-graphics-compiler@2013a0c</a></li>
@@ -52,7 +58,7 @@
 <h2 id="xe-hpg"><span class="xe-gpu-arch">X<sup>e</sup></span>-HPG<a href="#xe-hpg" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>前回触れたように、<em>Meteor Lake GPU</em> の IGC におけるアーキテクチャ、プラットフォームは <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> とされている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/07/06/igc-mtl/" title="/posts/2022/07/06/igc-mtl/">Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/07/06/igc-mtl/" title="/posts/2022/07/06/igc-mtl/">Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth’s Dream</a></span>
 
 しかし、<em>Alchemist/DG2</em> とまったく同じアーキテクチャ、構成という訳ではなく、<em>Meteor Lake GPU</em> では XMXユニットを用いて実行される <code>DPAS (Dot Product Accumulate Systolic)</code> 命令をサポートしないといった違いがある。<br>
 <em>Meteor Lake GPU</em> では <code>FP64 (DP)</code> のサポートが復活することから、EU の構成もある程度 <em>Alchemist/DG2</em> とは異なると考えられる。</p>
@@ -127,7 +133,7 @@ EM Pipe の比率が小さくなったため、<code>FP32 (SP)</code> 性能に�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

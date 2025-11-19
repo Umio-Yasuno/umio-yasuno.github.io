@@ -19,8 +19,20 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Alder Lake-N は Atom系コアのみの構成か | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Coreboot に、Alder Lake (Golden Cove &#43; Gracemont) のようにハイブリットコア構成を採る CPU における CPPC v3 のサポートに向けて、コアタイプを取得するためのパッチが投稿、公開された。 soc/intel/alderlake, soc/common: Add method to determine the">
-  <meta property="og:description" content="Coreboot に、Alder Lake (Golden Cove &#43; Gracemont) のようにハイブリットコア構成を採る CPU における CPPC v3 のサポートに向けて、コアタイプを取得するためのパッチが投稿、公開された。 soc/intel/alderlake, soc/common: Add method to determine the"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Coreboot に、Alder Lake (Golden Cove &#43; Gracemont) のようにハイブリットコア構成を採る CPU における CPPC v3 のサポートに向けて、コアタイプを取得するためのパッチが投稿、公開された。
+
+soc/intel/alderlake, soc/common: Add method to determine the cpu type mask (If4ceb24d) · Gerrit Code Review
+
+パッチで追加されたコードの一部が、以前に同じく Coreboot へのパッチ内で存在が明らかにされた Alder Lake-N が他バリアントとは異なり、Atom (Small) 系コアのみで構成されることを示している。
+N バリアントも存在する Alder Lake | Coelacanth’s Dream
+">
+  <meta property="og:description" content="Coreboot に、Alder Lake (Golden Cove &#43; Gracemont) のようにハイブリットコア構成を採る CPU における CPPC v3 のサポートに向けて、コアタイプを取得するためのパッチが投稿、公開された。
+
+soc/intel/alderlake, soc/common: Add method to determine the cpu type mask (If4ceb24d) · Gerrit Code Review
+
+パッチで追加されたコードの一部が、以前に同じく Coreboot へのパッチ内で存在が明らかにされた Alder Lake-N が他バリアントとは異なり、Atom (Small) 系コアのみで構成されることを示している。
+N バリアントも存在する Alder Lake | Coelacanth’s Dream
+"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Alder_Lake, Coreboot">
@@ -47,7 +59,7 @@
 <li><a href="https://review.coreboot.org/c/coreboot/+/59360/3" rel="noopener noreferrer" target="_blank" title="https://review.coreboot.org/c/coreboot/+/59360/3">soc/intel/alderlake, soc/common: Add method to determine the cpu type mask (If4ceb24d) · Gerrit Code Review</a></li>
 </ul>
 <p>パッチで追加されたコードの一部が、以前に同じく Coreboot へのパッチ内で存在が明らかにされた <em>Alder Lake-N</em> が他バリアントとは異なり、Atom (Small) 系コアのみで構成されることを示している。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/11/16/coreboot-intel-adl_n/" title="/posts/2021/11/16/coreboot-intel-adl_n/">N バリアントも存在する Alder Lake | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/11/16/coreboot-intel-adl_n/" title="/posts/2021/11/16/coreboot-intel-adl_n/">N バリアントも存在する Alder Lake | Coelacanth’s Dream</a></span>
 </p>
 <blockquote>
 <pre><code> +uint8_t get_soc_cpu_type(void)
@@ -94,40 +106,40 @@ Atom系コアで構成される製品は、<a href="https://www.coelacanth-dream
 今回調べ直したところ、特別ハイブリッドコア構成は組み込みに向いていないという訳ではないらしいが<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>、<em>Alder Lake</em> においては消費電力やダイサイズから Atomコアのみで構成する方が適していると判断された可能性がある。</p>
 <p>また N バリアントは以前にも使われたことがあり、MacbookPro向けの <em>Ice Lake</em> や <em>Jasper Lake</em> が当たるが <sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>、CPU ではなく PCH部に使われており<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>、意味合いとしては異なると思われる。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:center">Golden Cove (Big)</th>
-<th style="text-align:center">Gracemont (Small)</th>
-<th style="text-align:center">GPU (Gen12.2)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Alder Lake-S (Desktop)</td>
-<td style="text-align:center">8</td>
-<td style="text-align:center">8</td>
-<td style="text-align:center">GT1 (32 EU)</td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-P (Mobile)</td>
-<td style="text-align:center">6</td>
-<td style="text-align:center">8</td>
-<td style="text-align:center">GT2 (96 EU)</td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-M (Mobile)</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">8</td>
-<td style="text-align:center">GT2 (96 EU)</td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-N (Embedded?)</td>
-<td style="text-align:center">0</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">GT2? (96 EU)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: center">Golden Cove (Big)</th>
+          <th style="text-align: center">Gracemont (Small)</th>
+          <th style="text-align: center">GPU (Gen12.2)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Alder Lake-S (Desktop)</td>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">GT1 (32 EU)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-P (Mobile)</td>
+          <td style="text-align: center">6</td>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">GT2 (96 EU)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-M (Mobile)</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">GT2 (96 EU)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-N (Embedded?)</td>
+          <td style="text-align: center">0</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">GT2? (96 EU)</td>
+      </tr>
+  </tbody>
 </table>
 <div class="footnotes" role="doc-endnotes">
 <hr>
@@ -157,7 +169,7 @@ Atom系コアで構成される製品は、<a href="https://www.coelacanth-dream
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

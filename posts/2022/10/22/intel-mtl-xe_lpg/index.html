@@ -19,8 +19,90 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel Meteor Lake GPU は Xe-LPG に、Xe-LPM&#43; では引き続き AV1 エンコードをサポートか | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Xe-LPG Intel GPU ドライバー (i915) 等で Meteor Lake の Graphics IP を指す名前として Xe-LPG が使われ始めている。 [Intel-gfx] [PATCH v3 13/14] drm/i915/xelpg: Add multicast steering Introducing MTL Support · intel/gmmlib@e7d5cb0 Meteor Lake platform support · intel/cm-compiler@e1b0daa MTL&#39;s graphics IP (Xe_LPG) once again changes the multicast register types and steering details. Key changes from past platforms: * The number of instances of some">
-  <meta property="og:description" content="Xe-LPG Intel GPU ドライバー (i915) 等で Meteor Lake の Graphics IP を指す名前として Xe-LPG が使われ始めている。 [Intel-gfx] [PATCH v3 13/14] drm/i915/xelpg: Add multicast steering Introducing MTL Support · intel/gmmlib@e7d5cb0 Meteor Lake platform support · intel/cm-compiler@e1b0daa MTL&#39;s graphics IP (Xe_LPG) once again changes the multicast register types and steering details. Key changes from past platforms: * The number of instances of some"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Xe-LPG
+
+Intel GPU ドライバー (i915) 等で Meteor Lake の Graphics IP を指す名前として Xe-LPG が使われ始めている。
+
+[Intel-gfx] [PATCH v3 13/14] drm/i915/xelpg: Add multicast steering
+Introducing MTL Support · intel/gmmlib@e7d5cb0
+Meteor Lake platform support · intel/cm-compiler@e1b0daa
+
+
+    MTL&#39;s graphics IP (Xe_LPG) once again changes the multicast register
+    types and steering details.  Key changes from past platforms:
+     * The number of instances of some MCR types (NODE, OAAL2, and GAM) vary
+       according to the MTL subplatform and cannot be read from fuse
+       registers.  However steering to instance #0 will always provided a
+       non-terminated value, so we can lump these all into a single
+       &quot;instance0&quot; table.
+     * The MCR steering register (and its bitfields) has changed.
+
+引用元:[Intel-gfx] [PATCH v3 13/14] drm/i915/xelpg: Add multicast steering
+
+
+
+
+    diff --git a/clang/compute_sdk/docs/cmcuserguide/cmcuserguide.rst b/clang/compute_sdk/docs/cmcuserguide/cmcuserguide.rst
+    index 7836235111b..efa0e34bb83 100644
+    --- a/clang/compute_sdk/docs/cmcuserguide/cmcuserguide.rst
+    &#43;&#43;&#43; b/clang/compute_sdk/docs/cmcuserguide/cmcuserguide.rst
+    @@ -79,6 &#43;79,7 @@ GEN12     TGLLP    CM_GEN12    1200          0
+     ...       ADLN     CM_GEN12    1240          0
+     XEHP_SDV  XEHP_SDV CM_XEHP     1270          0
+     XeHPG     DG2      CM_XEHPG    1271          0
+    &#43;XeLPG     MTL      CM_XELPG    1275          0
+     XeHPC     PVC      CM_XEHPC    1280          0
+     ...       PVCXT    CM_XEHPC    1280          5
+     ========= ======== =========== ============= ===================
+
+引用元:Meteor Lake platform support · intel/cm-compiler@e1b0daa
+
+
+
+Meteor Lake GPU の Display IP には Xe-LPD&#43; (ver14)、Media IP には Xe-LPM&#43; (ver13) という IP 名が付けられているため、単に統一感を持たせたとも取れる。
+一方で、Xe-LPG は今後 Xe-HPG 系列 をベースにしながらも別の系列として更新していくが考えられる。">
+  <meta property="og:description" content="Xe-LPG
+
+Intel GPU ドライバー (i915) 等で Meteor Lake の Graphics IP を指す名前として Xe-LPG が使われ始めている。
+
+[Intel-gfx] [PATCH v3 13/14] drm/i915/xelpg: Add multicast steering
+Introducing MTL Support · intel/gmmlib@e7d5cb0
+Meteor Lake platform support · intel/cm-compiler@e1b0daa
+
+
+    MTL&#39;s graphics IP (Xe_LPG) once again changes the multicast register
+    types and steering details.  Key changes from past platforms:
+     * The number of instances of some MCR types (NODE, OAAL2, and GAM) vary
+       according to the MTL subplatform and cannot be read from fuse
+       registers.  However steering to instance #0 will always provided a
+       non-terminated value, so we can lump these all into a single
+       &quot;instance0&quot; table.
+     * The MCR steering register (and its bitfields) has changed.
+
+引用元:[Intel-gfx] [PATCH v3 13/14] drm/i915/xelpg: Add multicast steering
+
+
+
+
+    diff --git a/clang/compute_sdk/docs/cmcuserguide/cmcuserguide.rst b/clang/compute_sdk/docs/cmcuserguide/cmcuserguide.rst
+    index 7836235111b..efa0e34bb83 100644
+    --- a/clang/compute_sdk/docs/cmcuserguide/cmcuserguide.rst
+    &#43;&#43;&#43; b/clang/compute_sdk/docs/cmcuserguide/cmcuserguide.rst
+    @@ -79,6 &#43;79,7 @@ GEN12     TGLLP    CM_GEN12    1200          0
+     ...       ADLN     CM_GEN12    1240          0
+     XEHP_SDV  XEHP_SDV CM_XEHP     1270          0
+     XeHPG     DG2      CM_XEHPG    1271          0
+    &#43;XeLPG     MTL      CM_XELPG    1275          0
+     XeHPC     PVC      CM_XEHPC    1280          0
+     ...       PVCXT    CM_XEHPC    1280          5
+     ========= ======== =========== ============= ===================
+
+引用元:Meteor Lake platform support · intel/cm-compiler@e1b0daa
+
+
+
+Meteor Lake GPU の Display IP には Xe-LPD&#43; (ver14)、Media IP には Xe-LPM&#43; (ver13) という IP 名が付けられているため、単に統一感を持たせたとも取れる。
+一方で、Xe-LPG は今後 Xe-HPG 系列 をベースにしながらも別の系列として更新していくが考えられる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Xe-HPG, Meteor_Lake">
@@ -88,64 +170,64 @@
 また、Intel は <em><span class="xe-gpu-arch">X<sup>e</sup></span>-HPG 系列</em> は今後 <em><span class="xe-gpu-arch">X<sup>e2</sup></span>-HPG (Battlemage)</em>、<em><span class="xe-gpu-arch">X<sup>e3</sup></span>-HPG (Celestial)</em>、<em><span class="xe-gpu-arch">X<sup>e</sup></span>Next (Druid)</em> として更新していくことを発表している。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
 <p>今後はデスクトップ向けに <em><span class="xe-gpu-arch">X<sup>e</sup></span>-HPG</em>、内蔵 GPU 向けに <em><span class="xe-gpu-arch">X<sup>e</sup></span>-LPG</em> として分岐していくのだろう。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Intel GPU ({ver}.{release_ver})</th>
-<th style="text-align:center">Graphics IP ver</th>
-<th style="text-align:center">Display IP ver</th>
-<th style="text-align:center">Media IP ver</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Tiger Lake, Rocket Lake?</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">12</td>
-</tr>
-<tr>
-<td style="text-align:left">DG1</td>
-<td style="text-align:center">12.1</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">12</td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-S</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">12.2</td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-P</td>
-<td style="text-align:center">12</td>
-<td style="text-align:center">13 (XE_LPD)</td>
-<td style="text-align:center">12.2</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span>-HP</td>
-<td style="text-align:center">12.5</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">12.5</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span>-HPG (DG2/Alchemist)</td>
-<td style="text-align:center">12.55</td>
-<td style="text-align:center">13 (XE_LPD)</td>
-<td style="text-align:center">12.55</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span>-HPC</td>
-<td style="text-align:center">12.6</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">12.6</td>
-</tr>
-<tr>
-<td style="text-align:left">Meteor Lake</td>
-<td style="text-align:center">12.7 (XE_LPG)</td>
-<td style="text-align:center">14 (XE_LPD+)</td>
-<td style="text-align:center">13 (XE_LPM+)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Intel GPU ({ver}.{release_ver})</th>
+          <th style="text-align: center">Graphics IP ver</th>
+          <th style="text-align: center">Display IP ver</th>
+          <th style="text-align: center">Media IP ver</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Tiger Lake, Rocket Lake?</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">DG1</td>
+          <td style="text-align: center">12.1</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-S</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">12.2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-P</td>
+          <td style="text-align: center">12</td>
+          <td style="text-align: center">13 (XE_LPD)</td>
+          <td style="text-align: center">12.2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup></span>-HP</td>
+          <td style="text-align: center">12.5</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">12.5</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup></span>-HPG (DG2/Alchemist)</td>
+          <td style="text-align: center">12.55</td>
+          <td style="text-align: center">13 (XE_LPD)</td>
+          <td style="text-align: center">12.55</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup></span>-HPC</td>
+          <td style="text-align: center">12.6</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">12.6</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Meteor Lake</td>
+          <td style="text-align: center">12.7 (XE_LPG)</td>
+          <td style="text-align: center">14 (XE_LPD+)</td>
+          <td style="text-align: center">13 (XE_LPM+)</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="xe-lpm"><span class="xe-gpu-arch">X<sup>e</sup></span>-LPM+ は引き続き AV1 エンコードをサポートか<a href="#xe-lpm" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -160,40 +242,40 @@
 <p>ただ Linux Kernel における Intel GPU ドライバー (<code>i915</code>) へのパッチから、<em><span class="xe-gpu-arch">X<sup>e</sup></span>-LPM+</em> のエンコードエンジン (VEBox, Video Enhancement Engine) 数は 1基と、<em>DG2/Alchemist</em> の 2基よりも小規模となっている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 メモリ帯域も影響するだろうが、<em><span class="xe-gpu-arch">X<sup>e</sup></span>-LPM+</em> と <em>DG2/Alchemist</em> とでメディアエンジンの性能を比較した時、<em><span class="xe-gpu-arch">X<sup>e</sup></span>-LPM+</em> の方がエンコード性能が低くなると思われる。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Intel Media Engine</th>
-<th style="text-align:center">VEBox</th>
-<th style="text-align:center">VDBox</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">TGL/DG1/ADL</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">2</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span>-HP SDV</td>
-<td style="text-align:center">4</td>
-<td style="text-align:center">4</td>
-</tr>
-<tr>
-<td style="text-align:left">DG2/Alchemist</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">2</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup></span>-LPM+</td>
-<td style="text-align:center">1?</td>
-<td style="text-align:center">2?</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Intel Media Engine</th>
+          <th style="text-align: center">VEBox</th>
+          <th style="text-align: center">VDBox</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">TGL/DG1/ADL</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup></span>-HP SDV</td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">4</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">DG2/Alchemist</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup></span>-LPM+</td>
+          <td style="text-align: center">1?</td>
+          <td style="text-align: center">2?</td>
+      </tr>
+  </tbody>
 </table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://www.coelacanth-dream.com/posts/2022/07/07/i915-mtl/" title="/posts/2022/07/07/i915-mtl/">Intel GFX ドライバーに Meteor Lake をサポートする最初のパッチが投稿される ―― Gen12.7, Xe_LPD+, Xe_LPM+ | Coelacanth&rsquo;s Dream</a></li>
+<li><a href="https://www.coelacanth-dream.com/posts/2022/07/07/i915-mtl/" title="/posts/2022/07/07/i915-mtl/">Intel GFX ドライバーに Meteor Lake をサポートする最初のパッチが投稿される ―― Gen12.7, Xe_LPD+, Xe_LPM+ | Coelacanth’s Dream</a></li>
 </ul>
 </section>
 
@@ -201,13 +283,13 @@
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.coelacanth-dream.com/posts/2022/07/06/igc-mtl/" title="/posts/2022/07/06/igc-mtl/">Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2022/07/06/igc-mtl/" title="/posts/2022/07/06/igc-mtl/">Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth’s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
 <p><a href="https://pc.watch.impress.co.jp/docs/news/1345044.html" rel="noopener noreferrer" target="_blank" title="https://pc.watch.impress.co.jp/docs/news/1345044.html">Intel、ゲーマー向け次世代GPU「Arc」をチラ見せ。ハイエンドまで対応可能な伸縮アーキテクチャ - PC Watch</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://www.coelacanth-dream.com/posts/2022/08/30/intel-mtl-media-engine/" title="/posts/2022/08/30/intel-mtl-media-engine/">GPU と Media Engine が別々のタイルに搭載される Meteor Lake | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2022/08/30/intel-mtl-media-engine/" title="/posts/2022/08/30/intel-mtl-media-engine/">GPU と Media Engine が別々のタイルに搭載される Meteor Lake | Coelacanth’s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
@@ -222,7 +304,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

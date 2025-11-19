@@ -19,8 +19,8 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="NGG に関するメモ ―― Vega/GFX9 世代の NGG, Mesh Shader | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD GPU 向け Vulkan ドライバー RADV とそのコンパイラバックエンドに採用されている ACO の開発者として知られる Timur Kristóf 氏が、ブログにて RDNA 1/GFX10 世代から有効化されている NGG (Next Generation Geometry) /NGG">
-  <meta property="og:description" content="AMD GPU 向け Vulkan ドライバー RADV とそのコンパイラバックエンドに採用されている ACO の開発者として知られる Timur Kristóf 氏が、ブログにて RDNA 1/GFX10 世代から有効化されている NGG (Next Generation Geometry) /NGG"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD GPU 向け Vulkan ドライバー RADV とそのコンパイラバックエンドに採用されている ACO の開発者として知られる Timur Kristóf 氏が、ブログにて RDNA 1/GFX10 世代から有効化されている NGG (Next Generation Geometry) /NGG パイプライン とドライバー側で行われる NGG カリング について解説した記事を公開している。">
+  <meta property="og:description" content="AMD GPU 向け Vulkan ドライバー RADV とそのコンパイラバックエンドに採用されている ACO の開発者として知られる Timur Kristóf 氏が、ブログにて RDNA 1/GFX10 世代から有効化されている NGG (Next Generation Geometry) /NGG パイプライン とドライバー側で行われる NGG カリング について解説した記事を公開している。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, NGG">
@@ -76,17 +76,17 @@ AMDGPU ドライバー側の実装も 2019-09 に関連コードを削除する�
 <em>Cyan Skilfish/Skillfish APU (gfx1013)</em> も <em>RDNA 1/GFX10.1</em> 世代だが、UMD側では対応が行われていないため、詳細は不明。</p>
 <p><em>VanGogh APU</em> は GPU部が <em>RDNA 2/GFX10.3</em> 世代であり、<em>NGG</em> と <em>NGG カリング</em> が有効可能だが、<em>NGG カリング</em> による性能向上幅は dGPU よりも低くなっているという。<br>
 これについては、Timur Kristóf 氏が以前にパッチ内で語った、<em>NGG カリング</em> の効率は Pixel Shader のスループットに依存するということと、APU では PS へのオンチップバッファ Parameter Cache (PC) の規模が dGPU より小さいことで説明できる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc" title="/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc">RADV + RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc" title="/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc">RADV + RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth’s Dream</a></span>
 
 他の <em>RDNA 2/GFX10.3 APU</em>、<em>Yellow Carp/Rembrandt APU</em> や <em>GC 10.3.7/Sabrina APU</em> でも同様の傾向が見られるのではないかと思われる。</p>
 <h2 id="ms">NGG と Mesh Shader<a href="#ms" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>Timur Kristóf 氏は XDC2020 にて <strong>ACO</strong> の今後の計画について発表した際、<em>NGG</em> で Mesh Shader を実行できる <em>可能性</em> について触れていたが、今回の記事内でプリミティブごとの出力機能などが <em>RDNA 1/GFX10</em> 世代の <em>NGG</em> には実装されていないため、<em>NGG</em> が有効であっても Mesh Shader への対応は <em>RDNA 2/GFX10.3</em> 世代からに限定されると語っている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/09/19/xdc2020-aco/#ms-on-ngg" title="/posts/2020/09/19/xdc2020-aco/#ms-on-ngg">【XDC2020】 ACOバックエンドの今後の計画 ―― RDNA 2, RT, Mesh Shader | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/09/19/xdc2020-aco/#ms-on-ngg" title="/posts/2020/09/19/xdc2020-aco/#ms-on-ngg">【XDC2020】 ACOバックエンドの今後の計画 ―― RDNA 2, RT, Mesh Shader | Coelacanth’s Dream</a></span>
 
 <em>NGG パイプライン</em> として基本的な部分は共通しつつも、一部の機能は世代によって異なることとなる。<br>
 <em>RDNA 3?/GFX11</em> 世代ではついに従来のパイプラインは廃され、<em>NGG</em> のみの実装となるが、こうしたことから新機能や最適化に関わる部分が変更されている可能性がある。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/#ngg" title="/posts/2022/05/05/radeonsi-gfx11/#ngg">RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/05/05/radeonsi-gfx11/#ngg" title="/posts/2022/05/05/radeonsi-gfx11/#ngg">RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth’s Dream</a></span>
 </p>
 <div class="footnotes" role="doc-endnotes">
 <hr>
@@ -116,7 +116,7 @@ AMDGPU ドライバー側の実装も 2019-09 に関連コードを削除する�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

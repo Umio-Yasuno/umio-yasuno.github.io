@@ -19,8 +19,60 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Aldebaran GPU は 2-Die 構成か | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="改めて Aldebaran GPU 関連のパッチを読んでいた所、以下のような記述が見つかった。 レジスタに特定の値をセットし、GPU の内部設定を行う部分がダイ 2種類分用意されている。 &#43;static const struct">
-  <meta property="og:description" content="改めて Aldebaran GPU 関連のパッチを読んでいた所、以下のような記述が見つかった。 レジスタに特定の値をセットし、GPU の内部設定を行う部分がダイ 2種類分用意されている。 &#43;static const struct"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="改めて Aldebaran GPU 関連のパッチを読んでいた所、以下のような記述が見つかった。
+レジスタに特定の値をセットし、GPU の内部設定を行う部分がダイ 2種類分用意されている。
+
+   &#43;static const struct soc15_reg_golden golden_settings_gc_9_4_2_alde_die_0[] = {
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_0, 0x3fffffff, 0x141dc920),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_1, 0x3fffffff, 0x3b458b93),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_2, 0x3fffffff, 0x1a4f5583),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_3, 0x3fffffff, 0x317717f6),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_4, 0x3fffffff, 0x107cc1e6),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_5, 0x3ff, 0x351),
+   &#43;};
+   &#43;
+   &#43;static const struct soc15_reg_golden golden_settings_gc_9_4_2_alde_die_1[] = {
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_0, 0x3fffffff, 0x2591aa38),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_1, 0x3fffffff, 0xac9688B),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_2, 0x3fffffff, 0x2bc3369B),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_3, 0x3fffffff, 0xfb74ee),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_4, 0x3fffffff, 0x21f0a2fe),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_5, 0x3ff, 0x49),
+   &#43;};
+   &#43;
+
+引用元:[PATCH 148/159] drm/amdgpu: apply gc v9_4_2 golden settings for aldebaran
+
+
+
+以下のコードを見る限り、想定しているダイ数は 2個 まで であり、それより多いダイは無効化、無視される。">
+  <meta property="og:description" content="改めて Aldebaran GPU 関連のパッチを読んでいた所、以下のような記述が見つかった。
+レジスタに特定の値をセットし、GPU の内部設定を行う部分がダイ 2種類分用意されている。
+
+   &#43;static const struct soc15_reg_golden golden_settings_gc_9_4_2_alde_die_0[] = {
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_0, 0x3fffffff, 0x141dc920),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_1, 0x3fffffff, 0x3b458b93),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_2, 0x3fffffff, 0x1a4f5583),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_3, 0x3fffffff, 0x317717f6),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_4, 0x3fffffff, 0x107cc1e6),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_5, 0x3ff, 0x351),
+   &#43;};
+   &#43;
+   &#43;static const struct soc15_reg_golden golden_settings_gc_9_4_2_alde_die_1[] = {
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_0, 0x3fffffff, 0x2591aa38),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_1, 0x3fffffff, 0xac9688B),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_2, 0x3fffffff, 0x2bc3369B),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_3, 0x3fffffff, 0xfb74ee),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_4, 0x3fffffff, 0x21f0a2fe),
+   &#43;	SOC15_REG_GOLDEN_VALUE(GC, 0, regTCP_CHAN_STEER_5, 0x3ff, 0x49),
+   &#43;};
+   &#43;
+
+引用元:[PATCH 148/159] drm/amdgpu: apply gc v9_4_2 golden settings for aldebaran
+
+
+
+以下のコードを見る限り、想定しているダイ数は 2個 まで であり、それより多いダイは無効化、無視される。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Aldebaran, gfx90a, MI200, CDNA_2">
@@ -139,7 +191,7 @@
 <p>ただ、それもやはり、記述されている SDMAエンジンの数が GPU全体ではなくダイごとのもので、ダイ同士の接続は SDMAエンジンを用いる <em>XGMI</em> 接続ではない必要が出てくる。<br>
 Intel の <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> も 1パッケージ内に EMIB技術による複数の GPUチップ (タイル) を搭載する MCM構成を取っているが、メモリアクセスについては各 GPU に接続された HBM2eメモリが最も高速であり、他の GPU に接続されたメモリはそれよりも遅くなる。<br>
 <em><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></em> のあるタイルに接続されたメモリと、他の GPU に接続されたメモリを区別するパッチは既に投稿されており、<em>Aldebaran</em> も MCM構成を採るのであればドライバー側でそれを意識する必要があるように思われる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/12/21/intel-xe-dgpu-recent-info/" title="/posts/2020/12/21/intel-xe-dgpu-recent-info/">Intel Xe GPU 近況　―― Xe-HPのメモリリージョン, PXP, Iris Xe MAX のサポート状況 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/12/21/intel-xe-dgpu-recent-info/" title="/posts/2020/12/21/intel-xe-dgpu-recent-info/">Intel Xe GPU 近況　―― Xe-HPのメモリリージョン, PXP, Iris Xe MAX のサポート状況 | Coelacanth’s Dream</a></span>
 </p>
 <figure>
   <a href="https://www.coelacanth-dream.com/image/2021/03/05/amdgpu-fabric.webp" target="_blank"  >
@@ -178,7 +230,7 @@ Linux Kernel のドライバー部を見る限りでは <em>Aldebran</em> 関連
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

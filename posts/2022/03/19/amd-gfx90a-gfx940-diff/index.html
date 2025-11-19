@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="gfx940 で新たにサポートされる命令と XF32フォーマット | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD の Stanislav Mekhanoshin 氏より、新たな CDNA系 GPUID gfx940 のサポートに向けたさらなるパッチが LLVM に投稿されている。 それらパッチによれば、gfx940 では行列演算命令、MFMA (Matrix-Fused-Multiply-Add) 系命令と">
-  <meta property="og:description" content="AMD の Stanislav Mekhanoshin 氏より、新たな CDNA系 GPUID gfx940 のサポートに向けたさらなるパッチが LLVM に投稿されている。 それらパッチによれば、gfx940 では行列演算命令、MFMA (Matrix-Fused-Multiply-Add) 系命令と"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD の Stanislav Mekhanoshin 氏より、新たな CDNA系 GPUID gfx940 のサポートに向けたさらなるパッチが LLVM に投稿されている。
+それらパッチによれば、gfx940 では行列演算命令、MFMA (Matrix-Fused-Multiply-Add) 系命令として新たな命令がいくつか追加され、またいくつかは Aldebaran/gfx90a/CDNA 2 からサポートが外される。">
+  <meta property="og:description" content="AMD の Stanislav Mekhanoshin 氏より、新たな CDNA系 GPUID gfx940 のサポートに向けたさらなるパッチが LLVM に投稿されている。
+それらパッチによれば、gfx940 では行列演算命令、MFMA (Matrix-Fused-Multiply-Add) 系命令として新たな命令がいくつか追加され、またいくつかは Aldebaran/gfx90a/CDNA 2 からサポートが外される。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, gfx940, gfx90a, CDNA_2, LLVM">
@@ -83,7 +85,7 @@ TF32 そのままを命令名に使用しなかった理由には、ハードウ
 TF32 は 19-bits 長のデータフォーマットであり、データのダイナミックレンジは FP32 と同じ 8-bits、精度は FP&quot;16&quot; と同じ 10-bits となっている。(1-bit は符号 [sign] bit )</p>
 <p>TF32 データフォーマットには、NVIDIA GPU では <em>NVIDIA A100</em> からサポートしており、Intel GPU でも <em>Ponte Vecchio (<span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>)</em> がサポートする。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 <em>Ponte Vecchio (<span class="xe-gpu-arch">X<sup>e</sup>-HPC</span>)</em> は他に QF, BF8 といったデータフォーマットをサポートするとしているが、詳細はまだ不明。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/10/29/xe-hpc-onednn/#icache" title="/posts/2021/10/29/xe-hpc-onednn/#icache">Xe-HPC のサポートが intel-graphics-compiler、oneDNN に追加される | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/10/29/xe-hpc-onednn/#icache" title="/posts/2021/10/29/xe-hpc-onednn/#icache">Xe-HPC のサポートが intel-graphics-compiler、oneDNN に追加される | Coelacanth’s Dream</a></span>
 </p>
 <p><em>Aldebaran/gfx90a/CDNA 2</em> では TF32 データフォーマットへのサポートが行われなかったが、<em>gfx940</em> でサポートされ、他社 GPU と揃うことが明らかとなった。</p>
 <h3 id="smfmac">SMFMAC<a href="#smfmac" class="head-cur-link" aria-hidden></a>
@@ -119,13 +121,13 @@ TF32 は 19-bits 長のデータフォーマットであり、データのダイ
 <li><a href="https://github.com/llvm/llvm-project/commit/e7b362d75d2a3fdf67550b88738c708a33eec3cc" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/commit/e7b362d75d2a3fdf67550b88738c708a33eec3cc">[AMDGPU] Add v_mov_b64 gfx940 opcode · llvm/llvm-project@e7b362d</a></li>
 </ul>
 <p>まだ <em>gfx940</em> のサポートは途中だが、<em>RDNA 2/GFX10.3</em> 世代と同様に <code>FeatureMadMacF32Insts</code> (<code>V_{MAD,MAC,MADAK,MADMK}_F32</code>) の削除が行われていることと合わせ、対応命令の追加だけでなく整理も <em>gfx940</em> で行われているような印象を受ける。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/03/01/llvm-gfx940/" title="/posts/2022/03/01/llvm-gfx940/">新たな CDNA系の GPUID 「gfx940」 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/03/01/llvm-gfx940/" title="/posts/2022/03/01/llvm-gfx940/">新たな CDNA系の GPUID 「gfx940」 | Coelacanth’s Dream</a></span>
 </p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://community.intel.com/t5/Blogs/Products-and-Solutions/HPC/Accelerating-the-Convergence-of-HPC-and-AI-at-Exascale/post/1334987" rel="noopener noreferrer" target="_blank" title="https://community.intel.com/t5/Blogs/Products-and-Solutions/HPC/Accelerating-the-Convergence-of-HPC-and-AI-at-Exascale/post/1334987">Accelerating the Convergence of HPC and AI at Exascale - Intel Communities</a></li>
-<li><a href="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf">&ldquo;AMD Instinct MI200&rdquo; Instruction Set Architecture: Reference Guide - CDNA2_Shader_ISA_4February2022.pdf</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf">“AMD Instinct MI200” Instruction Set Architecture: Reference Guide - CDNA2_Shader_ISA_4February2022.pdf</a></li>
 <li><a href="https://jp.xlsoft.com/documents/intel/mkl/11.3/mkl113_tutorial_c/GUID-36BFBCE9-EB0A-43B0-ADAF-2B65275726EA.htm" rel="noopener noreferrer" target="_blank" title="https://jp.xlsoft.com/documents/intel/mkl/11.3/mkl113_tutorial_c/GUID-36BFBCE9-EB0A-43B0-ADAF-2B65275726EA.htm">dgemm を使用した行列の乗算</a></li>
 </ul>
 </section>
@@ -152,7 +154,7 @@ TF32 は 19-bits 長のデータフォーマットであり、データのダイ
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

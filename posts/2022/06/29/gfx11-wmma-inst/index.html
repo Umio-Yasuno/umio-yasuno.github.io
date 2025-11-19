@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="RDNA 3/GFX11 では行列積和演算命令、WMMA (Wave Matrix Multiply-accumulate) をサポート | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="最近になって AMD の開発者より LLVM に GFX11 の新機能、新命令のサポートを追加するパッチが続いて投稿されている。 そして今回、AMD の Joe Nash 氏より、GFX11 の新命令として WMMA (Wave Matrix">
-  <meta property="og:description" content="最近になって AMD の開発者より LLVM に GFX11 の新機能、新命令のサポートを追加するパッチが続いて投稿されている。 そして今回、AMD の Joe Nash 氏より、GFX11 の新命令として WMMA (Wave Matrix"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="最近になって AMD の開発者より LLVM に GFX11 の新機能、新命令のサポートを追加するパッチが続いて投稿されている。
+そして今回、AMD の Joe Nash 氏より、GFX11 の新命令として WMMA (Wave Matrix Multiply-accumulate) のサポートを追加するパッチが投稿された。">
+  <meta property="og:description" content="最近になって AMD の開発者より LLVM に GFX11 の新機能、新命令のサポートを追加するパッチが続いて投稿されている。
+そして今回、AMD の Joe Nash 氏より、GFX11 の新命令として WMMA (Wave Matrix Multiply-accumulate) のサポートを追加するパッチが投稿された。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GFX11, RDNA_3, LLVM">
@@ -80,35 +82,35 @@
 <code>MFMA</code> は複数の行列レイアウトに対応するが <code>WMMA</code> は 16x16x16 に固定されている点が挙げられる。<br>
 ここでの <code>MFMA</code> 命令は <em>CDNA 2/gfx90a/MI200/Aldebaran</em> がサポートしている範囲を指している。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">AMDGPU</th>
-<th style="text-align:center">MFMA (CDNA 2)</th>
-<th style="text-align:center">WMMA (GFX11)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Register type</td>
-<td style="text-align:center">AccVGPR</td>
-<td style="text-align:center">VGPR</td>
-</tr>
-<tr>
-<td style="text-align:left">Input format</td>
-<td style="text-align:center">F32, F16, I8, BF16, F64</td>
-<td style="text-align:center">F16, BF16, IU8, IU4</td>
-</tr>
-<tr>
-<td style="text-align:left">Output format</td>
-<td style="text-align:center">F32, I32, F64</td>
-<td style="text-align:center">F32, F16, BF16, I32</td>
-</tr>
-<tr>
-<td style="text-align:left">Matrix layout</td>
-<td style="text-align:center">{4,16,32}x{4,16,32}x{2,4,8,16}</td>
-<td style="text-align:center">16x16x16</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">AMDGPU</th>
+          <th style="text-align: center">MFMA (CDNA 2)</th>
+          <th style="text-align: center">WMMA (GFX11)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Register type</td>
+          <td style="text-align: center">AccVGPR</td>
+          <td style="text-align: center">VGPR</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Input format</td>
+          <td style="text-align: center">F32, F16, I8, BF16, F64</td>
+          <td style="text-align: center">F16, BF16, IU8, IU4</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Output format</td>
+          <td style="text-align: center">F32, I32, F64</td>
+          <td style="text-align: center">F32, F16, BF16, I32</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Matrix layout</td>
+          <td style="text-align: center">{4,16,32}x{4,16,32}x{2,4,8,16}</td>
+          <td style="text-align: center">16x16x16</td>
+      </tr>
+  </tbody>
 </table>
 <p><em>GFX11</em> では Wave32 と Wave64 の両方に対応するが、<code>WMMA</code> 命令では Wave のサイズによって割り当てられるレジスタリソースが異なっている。</p>
 <blockquote>
@@ -136,16 +138,16 @@ Fused EU 構成を採用する <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HP
 <em>GFX11</em> に AccVGPR があることを示すようなパッチも現状投稿されていない。</p>
 <p><em>CDNA 1/gfx908/MI100/Arcturus</em> では SIMD と VGPR、miSIMD と AccVGPR が分けて実装されている。<br>
 <em>CDNA 2/gfx90a/MI200/Aldebaran</em> からは VGPR と AccVGPR が統合され、<code>MFMA</code> 命令を実行するにはオフセットを指定して分割する必要があるが、それぞれのレジスタサイズは柔軟に変更可能となった。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/07/01/aldebaran-unified-vgpr/" title="/posts/2021/07/01/aldebaran-unified-vgpr/">CDNA 2 アーキテクチャでは Unified Register Files を実装 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/07/01/aldebaran-unified-vgpr/" title="/posts/2021/07/01/aldebaran-unified-vgpr/">CDNA 2 アーキテクチャでは Unified Register Files を実装 | Coelacanth’s Dream</a></span>
 
 <em>CDNA 3/gfx940/MI300</em> では XF32 (TF32, 19-bit) フォーマットに対応し、また <code>SMFAC</code> 命令が追加される。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/03/19/amd-gfx90a-gfx940-diff/" title="/posts/2022/03/19/amd-gfx90a-gfx940-diff/">gfx940 で新たにサポートされる命令と XF32フォーマット | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/03/19/amd-gfx90a-gfx940-diff/" title="/posts/2022/03/19/amd-gfx90a-gfx940-diff/">gfx940 で新たにサポートされる命令と XF32フォーマット | Coelacanth’s Dream</a></span>
 </p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#wmma" rel="noopener noreferrer" target="_blank" title="https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#wmma">Programming Guide :: CUDA Toolkit Documentation</a></li>
-<li><a href="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf">&ldquo;AMD Instinct MI200&rdquo; Instruction Set Architecture: Reference Guide - CDNA2_Shader_ISA_4February2022.pdf</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf">“AMD Instinct MI200” Instruction Set Architecture: Reference Guide - CDNA2_Shader_ISA_4February2022.pdf</a></li>
 <li><a href="https://proc-cpuinfo.fixstars.com/2018/10/tensorcore/" rel="noopener noreferrer" target="_blank" title="https://proc-cpuinfo.fixstars.com/2018/10/tensorcore/">Tensorコアを使ってみた - Fixstars Tech Blog /proc/cpuinfo</a></li>
 <li><a href="https://github.com/ROCmSoftwarePlatform/rocWMMA" rel="noopener noreferrer" target="_blank" title="https://github.com/ROCmSoftwarePlatform/rocWMMA">ROCmSoftwarePlatform/rocWMMA: rocWMMA</a></li>
 </ul>
@@ -158,7 +160,7 @@ Fused EU 構成を採用する <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HP
 <p><a href="https://www.intel.com/content/www/us/en/develop/documentation/oneapi-gpu-optimization-guide/top/xe-arch.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/develop/documentation/oneapi-gpu-optimization-guide/top/xe-arch.html">Intel® Iris® Xe GPU Architecture</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.coelacanth-dream.com/posts/2022/01/16/xe_hpg-hpc-eu-inst/#dpas_w" title="/posts/2022/01/16/xe_hpg-hpc-eu-inst/#dpas_w">DG2-G12, DG2 L3 banks, SIMD width | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2022/01/16/xe_hpg-hpc-eu-inst/#dpas_w" title="/posts/2022/01/16/xe_hpg-hpc-eu-inst/#dpas_w">DG2-G12, DG2 L3 banks, SIMD width | Coelacanth’s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
@@ -173,7 +175,7 @@ Fused EU 構成を採用する <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HP
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

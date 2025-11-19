@@ -19,8 +19,54 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="AMD GPU としては珍しい構成の Radeon RX 6800 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="先日、AMD の Marek Olšák 氏により Mesa3D に投稿されたマージリクエストの中に、以下のようなものがあった。 uint32_t max_se; /* number of shader engines incl. disabled ones */ uint32_t num_se; /* number of enabled shader engines */ 引用元:ac,rade">
-  <meta property="og:description" content="先日、AMD の Marek Olšák 氏により Mesa3D に投稿されたマージリクエストの中に、以下のようなものがあった。 uint32_t max_se; /* number of shader engines incl. disabled ones */ uint32_t num_se; /* number of enabled shader engines */ 引用元:ac,rade"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="先日、AMD の Marek Olšák 氏により Mesa3D に投稿されたマージリクエストの中に、以下のようなものがあった。
+
+  uint32_t max_se;             /* number of shader engines incl. disabled ones */
+  uint32_t num_se;             /* number of enabled shader engines */
+
+引用元:ac,radeonsi: many NGG improvements and fixes, etc. (!7542) · Merge Requests · Mesa / mesa · GitLab
+
+
+	   /* Guess the number of enabled SEs because the kernel doesn&#39;t tell us. */
+    if (info-&gt;chip_class &gt;= GFX10_3 &amp;&amp; info-&gt;max_se &gt; 1) {
+       unsigned num_rbs_per_se = info-&gt;num_render_backends / info-&gt;max_se;
+       info-&gt;num_se = util_bitcount(amdinfo-&gt;enabled_rb_pipes_mask) / num_rbs_per_se;
+    } else {
+       info-&gt;num_se = info-&gt;max_se;
+    }
+
+引用元:ac,radeonsi: many NGG improvements and fixes, etc. (!7542) · Merge Requests · Mesa / mesa · GitLab
+
+
+
+ドライバーが検出し、表示する GPU の情報一覧に、有効にされている ShaderEngine数が追加された。これまで ShaderEngine数については、その GPU が持つ最大数、max_se のみを検出していた。
+そして引用したコード部は、RDNA 2 / GFX10.3 世代の GPU で、最大 ShaderEngine 数が 1基より多い場合、ShaderEngineあたりの RB (Render Backend) と有効にされている RB数から、有効な ShaderEngine数を求める処理を行なっている。
+それとこれはついでだが、ShaderArray の略称がこれまで SH か SA かで分かれていて、ソースファイル上にどちらも存在することもあったが、ようやく SA で統一されそうな向きを見せている。
+">
+  <meta property="og:description" content="先日、AMD の Marek Olšák 氏により Mesa3D に投稿されたマージリクエストの中に、以下のようなものがあった。
+
+  uint32_t max_se;             /* number of shader engines incl. disabled ones */
+  uint32_t num_se;             /* number of enabled shader engines */
+
+引用元:ac,radeonsi: many NGG improvements and fixes, etc. (!7542) · Merge Requests · Mesa / mesa · GitLab
+
+
+	   /* Guess the number of enabled SEs because the kernel doesn&#39;t tell us. */
+    if (info-&gt;chip_class &gt;= GFX10_3 &amp;&amp; info-&gt;max_se &gt; 1) {
+       unsigned num_rbs_per_se = info-&gt;num_render_backends / info-&gt;max_se;
+       info-&gt;num_se = util_bitcount(amdinfo-&gt;enabled_rb_pipes_mask) / num_rbs_per_se;
+    } else {
+       info-&gt;num_se = info-&gt;max_se;
+    }
+
+引用元:ac,radeonsi: many NGG improvements and fixes, etc. (!7542) · Merge Requests · Mesa / mesa · GitLab
+
+
+
+ドライバーが検出し、表示する GPU の情報一覧に、有効にされている ShaderEngine数が追加された。これまで ShaderEngine数については、その GPU が持つ最大数、max_se のみを検出していた。
+そして引用したコード部は、RDNA 2 / GFX10.3 世代の GPU で、最大 ShaderEngine 数が 1基より多い場合、ShaderEngineあたりの RB (Render Backend) と有効にされている RB数から、有効な ShaderEngine数を求める処理を行なっている。
+それとこれはついでだが、ShaderArray の略称がこれまで SH か SA かで分かれていて、ソースファイル上にどちらも存在することもあったが、ようやく SA で統一されそうな向きを見せている。
+"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, RDNA_2, Sienna_Cichlid">
@@ -72,7 +118,7 @@
 <h2 id="dis-1se">ShaderEngine を 1基無効化<a href="#dis-1se" class="head-cur-link" aria-hidden></a>
 </h2>
 <p><em>Radeon RX 6000シリーズ</em> が正式発表された際にも書いたが、<strong>RX 6800</strong> は 30WGP (60CU) という仕様から、ShaderEngine 4基中 1基を無効化しているものと思われる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/10/29/amd-rdna_2/#spec" title="/posts/2020/10/29/amd-rdna_2/#spec">AMD RDNA 2 GPU 正式発表　―― 各スペック、Infinity Cache、プロセス | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/10/29/amd-rdna_2/#spec" title="/posts/2020/10/29/amd-rdna_2/#spec">AMD RDNA 2 GPU 正式発表　―― 各スペック、Infinity Cache、プロセス | Coelacanth’s Dream</a></span>
 
 AMD GPU はスケジューリング等の観点から、複数の ShaderEngine が対称となるように設定される。<br>
 同じ GPUダイを採用する他の <strong>Radeon RX 6000シリーズ</strong> 、<strong>RX 6900 XT</strong> は ShaderEngine すべてをフルスペックで有効にすることで総 40WGP を、<strong>RX 6800 XT</strong> は各 ShaderEngine 内の WGP を 1基無効化することで総 36WGP というスペックを実現している。<br>
@@ -101,7 +147,7 @@ ShaderEngine には、ジオメトリプロセッサ、ラスタライザ/プリ
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

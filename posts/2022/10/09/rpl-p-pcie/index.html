@@ -19,8 +19,16 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel Raptor Lake-P の PCIe I/O 構成 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Raptor Lake-S は Alder Lake-S と CPU部を除いて設計がほとんど共通しており、I/O 部も基本同じとされているが、モバイル向けの Raptor Lake-P は Alder Lake-P から変更される可能性がある。 Alder Lake 世代では Alder Lake-S/P/M で">
-  <meta property="og:description" content="Raptor Lake-S は Alder Lake-S と CPU部を除いて設計がほとんど共通しており、I/O 部も基本同じとされているが、モバイル向けの Raptor Lake-P は Alder Lake-P から変更される可能性がある。 Alder Lake 世代では Alder Lake-S/P/M で"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Raptor Lake-S は Alder Lake-S と CPU部を除いて設計がほとんど共通しており、I/O 部も基本同じとされているが、モバイル向けの Raptor Lake-P は Alder Lake-P から変更される可能性がある。
+Alder Lake 世代では Alder Lake-S/P/M でそれぞれ CPU 側の PCIe I/O 構成が異なり、デスクトップ向けの Alder Lake-S (8P&#43;8E) では 2x Gen5 8-Lane &#43; 1x Gen4 4-Lane、Alder Lake-P (6&#43;8) では 1x Gen5 8-Lane &#43; 2x Gen4 4-Lane、Alder Lake-M (2&#43;8) では 1x Gen4 4-Lane という構成になっている。
+現状 Alder Lake-P の 1x Gen5 8-Lane は H Series でのみ有効とされているが、Gen5 ではなく Gen4 での利用となっている。これはドキュメント中では TTM (time-to-market, 製品化に掛かる期間) のためだとしている。1
+搭載するデバイスがほとんど固定されているモバイル向けでは、PCIe Gen5 対応デバイスが少ない中わざわざ Gen5 認証を取るコストに対してリターンが見合わないというのもあるだろう。
+また、CPU部が Atom系 (E-Core) Gracemont のみの Alder Lake-N は CPU側 PCIe I/O を持たない。">
+  <meta property="og:description" content="Raptor Lake-S は Alder Lake-S と CPU部を除いて設計がほとんど共通しており、I/O 部も基本同じとされているが、モバイル向けの Raptor Lake-P は Alder Lake-P から変更される可能性がある。
+Alder Lake 世代では Alder Lake-S/P/M でそれぞれ CPU 側の PCIe I/O 構成が異なり、デスクトップ向けの Alder Lake-S (8P&#43;8E) では 2x Gen5 8-Lane &#43; 1x Gen4 4-Lane、Alder Lake-P (6&#43;8) では 1x Gen5 8-Lane &#43; 2x Gen4 4-Lane、Alder Lake-M (2&#43;8) では 1x Gen4 4-Lane という構成になっている。
+現状 Alder Lake-P の 1x Gen5 8-Lane は H Series でのみ有効とされているが、Gen5 ではなく Gen4 での利用となっている。これはドキュメント中では TTM (time-to-market, 製品化に掛かる期間) のためだとしている。1
+搭載するデバイスがほとんど固定されているモバイル向けでは、PCIe Gen5 対応デバイスが少ない中わざわざ Gen5 認証を取るコストに対してリターンが見合わないというのもあるだろう。
+また、CPU部が Atom系 (E-Core) Gracemont のみの Alder Lake-N は CPU側 PCIe I/O を持たない。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Raptor_Lake, Alder_Lake">
@@ -71,64 +79,64 @@ PCIe RC と DeviceID はそれぞれ <code>PCIe RC 010 G5 (DeviceID: 0xA70D), PC
 <em>Alder Lake-S/Raptor Lake-S</em> と同様の構成とすることで、開発期間も短縮することができる。</p>
 <p>しかし、<em>Raptor Lake-P</em> では <em>H Series</em> だけでなく <em>U Series</em> でも追加の PCIe Lane が有効化されるのか、また <em>Alder Lake-P</em> では有効化されなかった Gen5 での利用が可能になるかは不明である。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:center">ADL-S</th>
-<th style="text-align:center">ADL-P</th>
-<th style="text-align:center">ADL-M</th>
-<th style="text-align:center">ADL-N</th>
-<th style="text-align:center">RPL-S</th>
-<th style="text-align:center">RPL-P</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Variant (CPUID Model)</td>
-<td style="text-align:center">Desktop (0x97)</td>
-<td style="text-align:center">Mobile (0x9A)</td>
-<td style="text-align:center">Mobile (0x9A)</td>
-<td style="text-align:center">Mobile (0xBE)</td>
-<td style="text-align:center">Desktop (0xB7)</td>
-<td style="text-align:center">Mobile (0xBA)</td>
-</tr>
-<tr>
-<td style="text-align:left">CPU (big + small)</td>
-<td style="text-align:center">8 + 8</td>
-<td style="text-align:center">6 + 8</td>
-<td style="text-align:center">2 + 8</td>
-<td style="text-align:center">0 + 8</td>
-<td style="text-align:center">8 + 16</td>
-<td style="text-align:center">6 + 8?</td>
-</tr>
-<tr>
-<td style="text-align:left">GPU (Gen12.2)</td>
-<td style="text-align:center">GT1 32EU</td>
-<td style="text-align:center">GT2 96EU</td>
-<td style="text-align:center">GT2 96EU</td>
-<td style="text-align:center">GT1 32EU</td>
-<td style="text-align:center">GT1 32EU</td>
-<td style="text-align:center">GT2 96EU</td>
-</tr>
-<tr>
-<td style="text-align:left">Display ver</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen13 (XE_LPD)</td>
-<td style="text-align:center">Gen13 (XE_LPD)</td>
-<td style="text-align:center">Gen13 (XE_LPD)</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen13 (XE_LPD)</td>
-</tr>
-<tr>
-<td style="text-align:left">CPU PCIe</td>
-<td style="text-align:center">2x Gen5 8L,<br>1x Gen4 4L</td>
-<td style="text-align:center">1x Gen5 8L,<br>2x Gen4 4L</td>
-<td style="text-align:center">1x Gen4 4L</td>
-<td style="text-align:center">N/A</td>
-<td style="text-align:center">2x Gen5 8L,<br>1x Gen4 4L</td>
-<td style="text-align:center">2x Gen5 8L?,<br>1x Gen4 4L?</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: center">ADL-S</th>
+          <th style="text-align: center">ADL-P</th>
+          <th style="text-align: center">ADL-M</th>
+          <th style="text-align: center">ADL-N</th>
+          <th style="text-align: center">RPL-S</th>
+          <th style="text-align: center">RPL-P</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Variant (CPUID Model)</td>
+          <td style="text-align: center">Desktop (0x97)</td>
+          <td style="text-align: center">Mobile (0x9A)</td>
+          <td style="text-align: center">Mobile (0x9A)</td>
+          <td style="text-align: center">Mobile (0xBE)</td>
+          <td style="text-align: center">Desktop (0xB7)</td>
+          <td style="text-align: center">Mobile (0xBA)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">CPU (big + small)</td>
+          <td style="text-align: center">8 + 8</td>
+          <td style="text-align: center">6 + 8</td>
+          <td style="text-align: center">2 + 8</td>
+          <td style="text-align: center">0 + 8</td>
+          <td style="text-align: center">8 + 16</td>
+          <td style="text-align: center">6 + 8?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GPU (Gen12.2)</td>
+          <td style="text-align: center">GT1 32EU</td>
+          <td style="text-align: center">GT2 96EU</td>
+          <td style="text-align: center">GT2 96EU</td>
+          <td style="text-align: center">GT1 32EU</td>
+          <td style="text-align: center">GT1 32EU</td>
+          <td style="text-align: center">GT2 96EU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Display ver</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen13 (XE_LPD)</td>
+          <td style="text-align: center">Gen13 (XE_LPD)</td>
+          <td style="text-align: center">Gen13 (XE_LPD)</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen13 (XE_LPD)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">CPU PCIe</td>
+          <td style="text-align: center">2x Gen5 8L,<br>1x Gen4 4L</td>
+          <td style="text-align: center">1x Gen5 8L,<br>2x Gen4 4L</td>
+          <td style="text-align: center">1x Gen4 4L</td>
+          <td style="text-align: center">N/A</td>
+          <td style="text-align: center">2x Gen5 8L,<br>1x Gen4 4L</td>
+          <td style="text-align: center">2x Gen5 8L?,<br>1x Gen4 4L?</td>
+      </tr>
+  </tbody>
 </table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -163,7 +171,7 @@ PCIe RC と DeviceID はそれぞれ <code>PCIe RC 010 G5 (DeviceID: 0xA70D), PC
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

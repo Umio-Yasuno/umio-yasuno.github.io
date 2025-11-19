@@ -19,8 +19,44 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="AMDGPUドライバーにて RDNA 2 アーキテクチャの GFX Async Ring が 2年越しに有効化 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Linux Kernel の次回バージョンアップ、5.20/6.0 に向けた AMDGPUドライバーの更新では、RDNA 2/GFX10.3 アーキテクチャ の GFX Async Ring (MicroEngine1, Pipe1) を有効化するパッチが取り込まれる。 [pull] amdgpu,">
-  <meta property="og:description" content="Linux Kernel の次回バージョンアップ、5.20/6.0 に向けた AMDGPUドライバーの更新では、RDNA 2/GFX10.3 アーキテクチャ の GFX Async Ring (MicroEngine1, Pipe1) を有効化するパッチが取り込まれる。 [pull] amdgpu,"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Linux Kernel の次回バージョンアップ、5.20/6.0 に向けた AMDGPUドライバーの更新では、RDNA 2/GFX10.3 アーキテクチャ の GFX Async Ring (MicroEngine1, Pipe1) を有効化するパッチが取り込まれる。
+
+[pull] amdgpu, amdkfd, radeon drm-next-5.20
+
+
+ Arunpravin Paneer Selvam (3):
+       drm/amd/amdgpu: Enable high priority gfx queue
+       drm/amd/amdgpu: add pipe1 hardware support
+       drm/amd/amdgpu: Fix alignment issue
+
+引用元:[pull] amdgpu, amdkfd, radeon drm-next-5.20
+
+
+
+GFX Async Ring
+
+GFX Ring/ME は AMD GPU に搭載されているマイクロコントローラの一種であり、GFX エンジンへのグラフィクスキューをコントロールする役割を持つ。
+Compute エンジン、コンピュートキュー用のマイクロコントローラは MEC (MicroEngine Compute) とされている。
+ME と MEC はハードウェアブロックとしては GFX/Compute パイプラインのフロントエンドに位置する。">
+  <meta property="og:description" content="Linux Kernel の次回バージョンアップ、5.20/6.0 に向けた AMDGPUドライバーの更新では、RDNA 2/GFX10.3 アーキテクチャ の GFX Async Ring (MicroEngine1, Pipe1) を有効化するパッチが取り込まれる。
+
+[pull] amdgpu, amdkfd, radeon drm-next-5.20
+
+
+ Arunpravin Paneer Selvam (3):
+       drm/amd/amdgpu: Enable high priority gfx queue
+       drm/amd/amdgpu: add pipe1 hardware support
+       drm/amd/amdgpu: Fix alignment issue
+
+引用元:[pull] amdgpu, amdkfd, radeon drm-next-5.20
+
+
+
+GFX Async Ring
+
+GFX Ring/ME は AMD GPU に搭載されているマイクロコントローラの一種であり、GFX エンジンへのグラフィクスキューをコントロールする役割を持つ。
+Compute エンジン、コンピュートキュー用のマイクロコントローラは MEC (MicroEngine Compute) とされている。
+ME と MEC はハードウェアブロックとしては GFX/Compute パイプラインのフロントエンドに位置する。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, RDNA_2, Linux_Kernel">
@@ -112,10 +148,10 @@ ME と MEC はハードウェアブロックとしては GFX/Compute パイプ�
 <p><a href="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050126.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2020-June/050126.html">[PATCH 162/207] drm/amdgpu: only use one gfx pipe for Sienna_Cichlid</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://gitlab.freedesktop.org/drm/amd/-/issues/2117" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/drm/amd/-/issues/2117">Navi 21 GFX hangs since &ldquo;drm/amd/amdgpu: add pipe1 hardware support&rdquo; (#2117) · Issues · drm / amd · GitLab</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://gitlab.freedesktop.org/drm/amd/-/issues/2117" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/drm/amd/-/issues/2117">Navi 21 GFX hangs since “drm/amd/amdgpu: add pipe1 hardware support” (#2117) · Issues · drm / amd · GitLab</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4">
-<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-August/082886.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2022-August/082886.html">[PATCH] Revert &ldquo;drm/amd/amdgpu: add pipe1 hardware support&rdquo;</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://lists.freedesktop.org/archives/amd-gfx/2022-August/082886.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2022-August/082886.html">[PATCH] Revert “drm/amd/amdgpu: add pipe1 hardware support”</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
@@ -130,7 +166,7 @@ ME と MEC はハードウェアブロックとしては GFX/Compute パイプ�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

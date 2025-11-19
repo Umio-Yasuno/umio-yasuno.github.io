@@ -19,8 +19,16 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel、Alder Lake Developer Guide を公開 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Intel は 2021/10/04 付でゲーム開発者向けに Alder Lake への性能最適化手法をまとめた 「Intel® Codename Alder Lake (ADL) Developer Guide」 を公開した。 Intel® Codename Alder Lake (ADL) Developer Guide Alder Lake は Big/Performance Core (Golden Cove/Core) と Small/Efficient Core (Gracemont/Atom) の異な">
-  <meta property="og:description" content="Intel は 2021/10/04 付でゲーム開発者向けに Alder Lake への性能最適化手法をまとめた 「Intel® Codename Alder Lake (ADL) Developer Guide」 を公開した。 Intel® Codename Alder Lake (ADL) Developer Guide Alder Lake は Big/Performance Core (Golden Cove/Core) と Small/Efficient Core (Gracemont/Atom) の異な"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Intel は 2021/10/04 付でゲーム開発者向けに Alder Lake への性能最適化手法をまとめた 「Intel® Codename Alder Lake (ADL) Developer Guide」 を公開した。
+
+Intel® Codename Alder Lake (ADL) Developer Guide
+
+Alder Lake は Big/Performance Core (Golden Cove/Core) と Small/Efficient Core (Gracemont/Atom) の異なる 2種類の CPUアーキテクチャを組み合わせたハイブリッドアーキテクチャを採り、最適化のためにはそれを意識したスレッド化が必要となる。">
+  <meta property="og:description" content="Intel は 2021/10/04 付でゲーム開発者向けに Alder Lake への性能最適化手法をまとめた 「Intel® Codename Alder Lake (ADL) Developer Guide」 を公開した。
+
+Intel® Codename Alder Lake (ADL) Developer Guide
+
+Alder Lake は Big/Performance Core (Golden Cove/Core) と Small/Efficient Core (Gracemont/Atom) の異なる 2種類の CPUアーキテクチャを組み合わせたハイブリッドアーキテクチャを採り、最適化のためにはそれを意識したスレッド化が必要となる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Alder_Lake">
@@ -60,7 +68,7 @@
 <p>ハイブリッドアーキテクチャでは対応命令/ISAレベルでは対称的となり、そのため <em>Golden Cove</em> の一部機能は制限される。<br>
 <em>Golden Cove</em> では AVX512系命令に対応しているが、<em>Gracemont</em> は AVX2 までのサポートであるため、<em>Gracemont/E-Core</em> が有効化されている場合、AVX512 は無効化される。<br>
 同時に <em>Gracemont/E-Core</em> を BIOS/UEFI から無効化する機能が存在するが、それをユーザーが切り替え可能とするかは OEM に委ねられるとしている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/04/29/adl-cpu-type/" title="/posts/2021/04/29/adl-cpu-type/">Alder Lake では BIOS から一方の CPUタイプを無効化可能 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/04/29/adl-cpu-type/" title="/posts/2021/04/29/adl-cpu-type/">Alder Lake では BIOS から一方の CPUタイプを無効化可能 | Coelacanth’s Dream</a></span>
 
 ただ、AVX512 が無効化されている理由に <em>Gracemont/E-Core</em> を挙げているが、<em>Gracemont/E-Core</em> をすべて無効化すれば AVX512 が有効化されるかどうかについては明言されていない。<br>
 Intel Architecture Day 2021、Hot Chip 33 で語られたところでは、<em>Gracemont/E-Core</em> を無効化しても AVX-512 等は有効化されず、また AVX-512 ユニットを <em>Alder Lake</em> の <em>Golden Cove/P-Core</em> には物理的に搭載していないという。</p>
@@ -80,80 +88,80 @@ Intel Architecture Day 2021、Hot Chip 33 で語られたところでは、<em>G
 <em>Gracemont/E-Core</em> に向いた処理には、シェーダーコンパイル、音声処理、アセットストリーミング、展開処理等が挙げられている。</p>
 <p>モバイル向けでは最大で <em>Golden Cove/P-Core</em> 6コア + <em>Gracemont/E-Core</em> 8コアという構成で、SKU によっては 2コア+8コアという <em>Gracemont/E-Core</em> の比率が大きい構成が用意されているため、こうした <em>Alder Lake</em> 向けの最適化はモバイル向けでは特に重要となる。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">uArch</th>
-<th style="text-align:center">Golden Cove</th>
-<th style="text-align:center">Willow Cove</th>
-<th style="text-align:center">Sunny Cove</th>
-<th style="text-align:center">Gracemont</th>
-<th style="text-align:center">Tremont</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">L1 Data size</td>
-<td style="text-align:center">48 KiB<br>/12-way</td>
-<td style="text-align:center">48 KiB<br>/12-way</td>
-<td style="text-align:center">48 KiB<br>/12-way</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-</tr>
-<tr>
-<td style="text-align:left">L1D BW<br>(L: Load, S: Store)</td>
-<td style="text-align:center">256B?<br>(L: 3x32B? or 2x64B?)<br>(S: 2x64B?)</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">192B<br>(L: 2x64B)<br>(S: 1x64B or 2x32B)</td>
-<td style="text-align:center">128B???<br>(L: 2x32B? + S: 2x32B?)</td>
-<td style="text-align:center">64B???<br>(L: 1x32B + S: 1x32B)<br>(L: 2x32B or S: 2x32B)</td>
-</tr>
-<tr>
-<td style="text-align:left">L1 Inst. size</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-<td style="text-align:center">64 KiB<br>/8-way</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-</tr>
-<tr>
-<td style="text-align:left">L1I BW</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">32B?<br>(2x 16B)</td>
-<td style="text-align:center">32B<br>(2x 16B)</td>
-</tr>
-<tr>
-<td style="text-align:left">L2 size</td>
-<td style="text-align:center">1.25 MiB/10-way (Client)<br>2 MiB (Data Center)</td>
-<td style="text-align:center">1.25 MiB<br>/20-way</td>
-<td style="text-align:center">512 KiB<br>/8-way</td>
-<td style="text-align:center">2 MiB<br>/16-way<br>(per Module)</td>
-<td style="text-align:center">1.5-4.5 MiB<br>/12-way<br>(per Cluster/Module)</td>
-</tr>
-<tr>
-<td style="text-align:left">L2 BW Peak/Sustained</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">64B/48B</td>
-<td style="text-align:center">64B/?</td>
-<td></td>
-</tr>
-<tr>
-<td style="text-align:left">L3 size</td>
-<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
-<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
-<td style="text-align:center">2 MiB<br>/12-way</td>
-<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Cluster/Module)</td>
-<td style="text-align:center">4 MiB<br>/16-way</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">uArch</th>
+          <th style="text-align: center">Golden Cove</th>
+          <th style="text-align: center">Willow Cove</th>
+          <th style="text-align: center">Sunny Cove</th>
+          <th style="text-align: center">Gracemont</th>
+          <th style="text-align: center">Tremont</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">L1 Data size</td>
+          <td style="text-align: center">48 KiB<br>/12-way</td>
+          <td style="text-align: center">48 KiB<br>/12-way</td>
+          <td style="text-align: center">48 KiB<br>/12-way</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L1D BW<br>(L: Load, S: Store)</td>
+          <td style="text-align: center">256B?<br>(L: 3x32B? or 2x64B?)<br>(S: 2x64B?)</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">192B<br>(L: 2x64B)<br>(S: 1x64B or 2x32B)</td>
+          <td style="text-align: center">128B???<br>(L: 2x32B? + S: 2x32B?)</td>
+          <td style="text-align: center">64B???<br>(L: 1x32B + S: 1x32B)<br>(L: 2x32B or S: 2x32B)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L1 Inst. size</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+          <td style="text-align: center">64 KiB<br>/8-way</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L1I BW</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">32B?<br>(2x 16B)</td>
+          <td style="text-align: center">32B<br>(2x 16B)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L2 size</td>
+          <td style="text-align: center">1.25 MiB/10-way (Client)<br>2 MiB (Data Center)</td>
+          <td style="text-align: center">1.25 MiB<br>/20-way</td>
+          <td style="text-align: center">512 KiB<br>/8-way</td>
+          <td style="text-align: center">2 MiB<br>/16-way<br>(per Module)</td>
+          <td style="text-align: center">1.5-4.5 MiB<br>/12-way<br>(per Cluster/Module)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L2 BW Peak/Sustained</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">64B/48B</td>
+          <td style="text-align: center">64B/?</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L3 size</td>
+          <td style="text-align: center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
+          <td style="text-align: center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
+          <td style="text-align: center">2 MiB<br>/12-way</td>
+          <td style="text-align: center">12 MiB<br>/12-way<br>(3 MiB per Cluster/Module)</td>
+          <td style="text-align: center">4 MiB<br>/16-way</td>
+      </tr>
+  </tbody>
 </table>
 <ul>
 <li>表参考リンク
 <ul>
 <li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="noopener noreferrer" target="_blank" title="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></li>
-<li>Tremont - <a href="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2" rel="noopener noreferrer" target="_blank" title="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2">Tremont: A Wider Front End and Caches - Intel&rsquo;s new Atom Microarchitecture: The Tremont Core in Lakefield</a></li>
+<li>Tremont - <a href="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2" rel="noopener noreferrer" target="_blank" title="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2">Tremont: A Wider Front End and Caches - Intel’s new Atom Microarchitecture: The Tremont Core in Lakefield</a></li>
 <li>Willow Cove/Sunny Cove - <a href="https://www.anandtech.com/show/16084/intel-tiger-lake-review-deep-dive-core-11th-gen/4" rel="noopener noreferrer" target="_blank" title="https://www.anandtech.com/show/16084/intel-tiger-lake-review-deep-dive-core-11th-gen/4">Cache Architecture: The Effect of Increasing L2 and L3 - Intel’s Tiger Lake 11th Gen Core i7-1185G7 Review and Deep Dive: Baskin’ for the Exotic</a></li>
 <li><a href="https://github.com/projectacrn/acrn-hypervisor/commit/918ec7aaf316b49aba5f58ffed6513f84cc1f96f" rel="noopener noreferrer" target="_blank" title="https://github.com/projectacrn/acrn-hypervisor/commit/918ec7aaf316b49aba5f58ffed6513f84cc1f96f">Config_tools: Update board xml for acrn 2.5 · projectacrn/acrn-hypervisor@918ec7a</a>
 <ul>
@@ -184,7 +192,7 @@ Intel Architecture Day 2021、Hot Chip 33 で語られたところでは、<em>G
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

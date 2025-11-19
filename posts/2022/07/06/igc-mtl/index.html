@@ -19,8 +19,22 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel Graphics Compiler で Meteor Lake のサポートが進み始める ―― Xe-HPG、XMXユニットは非搭載か、再度 FP64 に対応 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Intel の Pete Chou 氏より、Intel Graphics Compiler (IGC) のサポートターゲット、vISA (virtual ISA) に Meteor Lake を追加するコミットが投稿されている。 vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5 Xe-HPG Meteor Lake GPU は IGC の内部的なアーキテクチャ、プ">
-  <meta property="og:description" content="Intel の Pete Chou 氏より、Intel Graphics Compiler (IGC) のサポートターゲット、vISA (virtual ISA) に Meteor Lake を追加するコミットが投稿されている。 vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5 Xe-HPG Meteor Lake GPU は IGC の内部的なアーキテクチャ、プ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Intel の Pete Chou 氏より、Intel Graphics Compiler (IGC) のサポートターゲット、vISA (virtual ISA) に Meteor Lake を追加するコミットが投稿されている。
+
+vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5
+
+Xe-HPG
+
+Meteor Lake GPU は IGC の内部的なアーキテクチャ、プラットフォームとしては Xe-HPG となる。
+他の部分を読むに現行の DG2/Alchemist (Xe-HPG) をそのまま iGPU 化したのではなく、そこからいくつかの変更が施されている。">
+  <meta property="og:description" content="Intel の Pete Chou 氏より、Intel Graphics Compiler (IGC) のサポートターゲット、vISA (virtual ISA) に Meteor Lake を追加するコミットが投稿されている。
+
+vISA: Add MTL target. · intel/intel-graphics-compiler@20ef9c5
+
+Xe-HPG
+
+Meteor Lake GPU は IGC の内部的なアーキテクチャ、プラットフォームとしては Xe-HPG となる。
+他の部分を読むに現行の DG2/Alchemist (Xe-HPG) をそのまま iGPU 化したのではなく、そこからいくつかの変更が施されている。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Meteor_Lake, Xe-HPG">
@@ -64,14 +78,14 @@
 <p>EU あたり 8スレッド、EU あたり 4スレッドにも設定可能であり、その場合スレッドあたりの利用可能レジスタファイルが 256エントリ (8KiB) になるという点は <em>Meteor Lake</em> と <em><span class="xe-gpu-arch">X<sup>e</sup>-HP/HPG</span></em> と共通する。<br>
 EU のネイティブでの実行サイズが SIMD8 という点も変わらない。<br>
 従来から大幅に設計が見直されたデータポート、LSC (Load Store Cache) も <em><span class="xe-gpu-arch">X<sup>e</sup>-HPG/HPC</span></em> と同様に採用している。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/" title="/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/">Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/" title="/posts/2021/06/08/intel-xe_hp-thread-reg-pipe/">Intel Xe-HP EU に追加されるパイプラインと増加するスレッド/レジスタファイル | Coelacanth’s Dream</a></span>
 </p>
 <p>だが行列積和演算を行う <code>DPAS (Dot Product Accumulate Systolic)</code> 命令、XMX (<span class="xe-gpu-arch">X<sup>e</sup></span> Matrix eXtension) とも呼ばれるユニットの有無を判定する <code>hasDPAS()</code> において <code>getPlatform() != Xe_MTL</code> が追加されている。<br>
 このことから <em>Meteor Lake GPU</em> では XMXユニットが搭載されていないことが考えられる。<br>
 XMXユニットは主に推論処理の高速化を目的としており、用途の一つに Intel はアップスケーリング技術 <span class="xe-gpu-arch">X<sup>e</sup></span>SS (Super Sampling) を挙げている。<br>
 <span class="xe-gpu-arch">X<sup>e</sup></span>SS は DP4a (INT8) にも対応しているため、タイルアーキテクチャを採用するとはいえ iGPU としてダイ面積、面積あたりの性能を <em>Meteor Lake GPU</em> で重視した結果、XMXユニットを搭載しなかったのではないかと考えられる。<br>
 <em>Meteor Lake</em> は VPU (Vision Processing Unit) を搭載するとされているため、GPU との連携が重要な推論処理以外は VPU で実行することができる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/" title="/posts/2022/01/11/intel-kmb-thb/">Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/01/11/intel-kmb-thb/" title="/posts/2022/01/11/intel-kmb-thb/">Intel Movidius VPU に関するメモ ―― Keem Bay, Thunder Bay, Meteor Lake | Coelacanth’s Dream</a></span>
 </p>
 <blockquote>
 <pre><code>      bool hasDPAS() const
@@ -122,7 +136,7 @@ XMXユニットは主に推論処理の高速化を目的としており、用�
 
 </blockquote>
 <p>GPU の FP32:FP64 演算性能レートは、AMD GPU では FP64演算性能を高めたサーバー向けを除けば <em>RDNA 2/GFX10.3 アーキテクチャ</em> までの長い間 16:1 を保っていたが、<em>RDNA 3/GFX11</em> では 32:1 になることが明らかにされている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/" title="/posts/2022/06/18/gfx11-dpfp-rate/">GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/06/18/gfx11-dpfp-rate/" title="/posts/2022/06/18/gfx11-dpfp-rate/">GFX11 では FP64 演算性能が FP32 の 1/32 に | Coelacanth’s Dream</a></span>
 </p>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -154,7 +168,7 @@ XMXユニットは主に推論処理の高速化を目的としており、用�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

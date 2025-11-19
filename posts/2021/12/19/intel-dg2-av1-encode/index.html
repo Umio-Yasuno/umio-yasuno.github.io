@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel Alchemist/DG2 は AV1エンコードをサポートか | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Intel GPU のメディア関連機能 (動画エンコード/デコード、ポストプロセッシング) をサポートする VA-API (Video Acceleration API) 向けドライバー、Intel(R) Media Driver で Alchemist/DG2 、Ponte Vecchio 、Xe-HP">
-  <meta property="og:description" content="Intel GPU のメディア関連機能 (動画エンコード/デコード、ポストプロセッシング) をサポートする VA-API (Video Acceleration API) 向けドライバー、Intel(R) Media Driver で Alchemist/DG2 、Ponte Vecchio 、Xe-HP"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Intel GPU のメディア関連機能 (動画エンコード/デコード、ポストプロセッシング) をサポートする VA-API (Video Acceleration API) 向けドライバー、Intel(R) Media Driver で Alchemist/DG2 、Ponte Vecchio 、Xe-HP SDV のサポートが進められている。
+そして masterブランチに取り込まれた変更の中に、Alchemist/DG2 では AV1コーデックの HWエンコードに対応していることを示唆するものがあった。">
+  <meta property="og:description" content="Intel GPU のメディア関連機能 (動画エンコード/デコード、ポストプロセッシング) をサポートする VA-API (Video Acceleration API) 向けドライバー、Intel(R) Media Driver で Alchemist/DG2 、Ponte Vecchio 、Xe-HP SDV のサポートが進められている。
+そして masterブランチに取り込まれた変更の中に、Alchemist/DG2 では AV1コーデックの HWエンコードに対応していることを示唆するものがあった。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Xe-HP, Xe-HPG, DG2, Xe-HPC, Gen12">
@@ -125,45 +127,45 @@
 
 </blockquote>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">L3$</th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span><br>(TGL/RKL/ADL)</th>
-<th style="text-align:center">DG1</th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG/HPC</span><br>(Alchemist/DG2, PVC)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Up to L3$ size</td>
-<td style="text-align:center">3840KB</td>
-<td style="text-align:center">16384KB (16MB)</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">L3$ size per bank</td>
-<td style="text-align:center">480KB</td>
-<td style="text-align:center">2048KB</td>
-<td style="text-align:center">512KB</td>
-</tr>
-<tr>
-<td style="text-align:left">size per way</td>
-<td style="text-align:center">4KB</td>
-<td style="text-align:center">16KB</td>
-<td style="text-align:center">4KB</td>
-</tr>
-<tr>
-<td style="text-align:left">way count per section</td>
-<td style="text-align:center">2-Way</td>
-<td style="text-align:center">2-Way</td>
-<td style="text-align:center">2-Way</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">L3$</th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span><br>(TGL/RKL/ADL)</th>
+          <th style="text-align: center">DG1</th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG/HPC</span><br>(Alchemist/DG2, PVC)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Up to L3$ size</td>
+          <td style="text-align: center">3840KB</td>
+          <td style="text-align: center">16384KB (16MB)</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L3$ size per bank</td>
+          <td style="text-align: center">480KB</td>
+          <td style="text-align: center">2048KB</td>
+          <td style="text-align: center">512KB</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">size per way</td>
+          <td style="text-align: center">4KB</td>
+          <td style="text-align: center">16KB</td>
+          <td style="text-align: center">4KB</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">way count per section</td>
+          <td style="text-align: center">2-Way</td>
+          <td style="text-align: center">2-Way</td>
+          <td style="text-align: center">2-Way</td>
+      </tr>
+  </tbody>
 </table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol07-memory_cache.pdf" rel="noopener noreferrer" target="_blank" title="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol07-memory_cache.pdf">Intel® Iris® Xe MAX Graphics Open Source Programmer&rsquo;s Reference Manual For the 2020 Discrete GPU formerly named &ldquo;DG1&rdquo; Volume 7: Memory Cache - intel-gfx-prm-osrc-dg1-vol07-memory_cache.pdf</a></li>
+<li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol07-memory_cache.pdf" rel="noopener noreferrer" target="_blank" title="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol07-memory_cache.pdf">Intel® Iris® Xe MAX Graphics Open Source Programmer’s Reference Manual For the 2020 Discrete GPU formerly named “DG1” Volume 7: Memory Cache - intel-gfx-prm-osrc-dg1-vol07-memory_cache.pdf</a></li>
 <li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-tgl-vol07-memory_cache_0.pdf" rel="noopener noreferrer" target="_blank" title="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-tgl-vol07-memory_cache_0.pdf">Volume 7: Memory Cache - intel-gfx-prm-osrc-tgl-vol07-memory_cache_0.pdf</a></li>
 <li><a href="https://01.org/intel-media-for-linux" rel="noopener noreferrer" target="_blank" title="https://01.org/intel-media-for-linux">Intel Media For Linux | 01.org</a></li>
 </ul>
@@ -188,7 +190,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

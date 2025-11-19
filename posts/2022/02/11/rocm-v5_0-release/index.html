@@ -19,8 +19,22 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="RDNA 2 (gfx1030) を正式にサポートした ROCm v5.0 がリリース | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="ROCm v5.0 がリリースされた。 ついに RDNA 2 GPU のサポートが正式に追加されたが、Sienna Cichlid/Navi21 (gfx1030) をベースにする Radeon Pro V620/W6800 のみのサポートとなる。 RadeonOpenCompute/ROCm at roc-5.0.x HIP (Heterogeneous-Compute Interface for Portability) における統合メモリ (CPU&#43;GPU)">
-  <meta property="og:description" content="ROCm v5.0 がリリースされた。 ついに RDNA 2 GPU のサポートが正式に追加されたが、Sienna Cichlid/Navi21 (gfx1030) をベースにする Radeon Pro V620/W6800 のみのサポートとなる。 RadeonOpenCompute/ROCm at roc-5.0.x HIP (Heterogeneous-Compute Interface for Portability) における統合メモリ (CPU&#43;GPU)"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="ROCm v5.0 がリリースされた。
+ついに RDNA 2 GPU のサポートが正式に追加されたが、Sienna Cichlid/Navi21 (gfx1030) をベースにする Radeon Pro V620/W6800 のみのサポートとなる。
+
+RadeonOpenCompute/ROCm at roc-5.0.x
+
+HIP (Heterogeneous-Compute Interface for Portability) における統合メモリ (CPU&#43;GPU) のサポートが強化され、__managed__ キーワードが新たにサポートされた。
+変数の前に __managed__ を宣言することで、CPU、GPU の両方で単一のポインタを使用してアクセスするようになる。
+メモリの割り当ては Linux Kernel の AMDGPUドライバーに実装された HMM (Heterogeneous Memory Management) によって行われる。1">
+  <meta property="og:description" content="ROCm v5.0 がリリースされた。
+ついに RDNA 2 GPU のサポートが正式に追加されたが、Sienna Cichlid/Navi21 (gfx1030) をベースにする Radeon Pro V620/W6800 のみのサポートとなる。
+
+RadeonOpenCompute/ROCm at roc-5.0.x
+
+HIP (Heterogeneous-Compute Interface for Portability) における統合メモリ (CPU&#43;GPU) のサポートが強化され、__managed__ キーワードが新たにサポートされた。
+変数の前に __managed__ を宣言することで、CPU、GPU の両方で単一のポインタを使用してアクセスするようになる。
+メモリの割り当ては Linux Kernel の AMDGPUドライバーに実装された HMM (Heterogeneous Memory Management) によって行われる。1"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, ROCm, RDNA_2, gfx1030, Sienna_Cichlid">
@@ -52,7 +66,7 @@
 メモリの割り当ては Linux Kernel の AMDGPUドライバーに実装された HMM (Heterogeneous Memory Management) によって行われる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <p>ROCM-SMI ツールでは、異なる <em>Infinity Fabric/XGMI (Global Memory Interconnect)</em> 帯域を持つトポロジに対応した。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><br>
 <em>MI250X</em> はパッケージ内の GCD 2基と、異なるパッケージ間、どちらも XGMI で接続されるが帯域は異なるため、それを意識した対応ではないかと思われる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/01/14/olcf-crusher/" title="/posts/2022/01/14/olcf-crusher/">OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 + 4x MI250X | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/01/14/olcf-crusher/" title="/posts/2022/01/14/olcf-crusher/">OLCF Frontier と同様のノード構成となる Crusher ―― EPYC 7A53 + 4x MI250X | Coelacanth’s Dream</a></span>
 </p>
 <p><a href="https://github.com/RadeonOpenCompute/ROCR-Runtime" rel="noopener noreferrer" target="_blank" title="https://github.com/RadeonOpenCompute/ROCR-Runtime">ROCR-Runtime</a> では新たな環境変数 <code>HSA_COOP_CU_COUNT</code> が追加された。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
 これは同期などの集合的な処理を行う単位となるスレッドグループ (Cooperative Groups) に対し、正しい使用可能な CU数を取得するためのものと思われる。<br>
@@ -98,7 +112,7 @@ ROCmSupportアカウントは、意図的に (gfx803 に関する) コードを�
 <li><a href="https://github.com/ROCm-Developer-Tools/ROCclr/commit/16044d1b30b822bb135a389c968b8365630da452" rel="noopener noreferrer" target="_blank" title="https://github.com/ROCm-Developer-Tools/ROCclr/commit/16044d1b30b822bb135a389c968b8365630da452">SWDEV-1 - Disable OpenCL support for gfx8 in ROCm path · ROCm-Developer-Tools/ROCclr@16044d1</a></li>
 </ul>
 <p>また、<em>Vega10 (gfx900)</em> ベースのサーバー向け SKU <em>Instinct MI25</em> が EOL (End of Life) に達し、ROCm v4.5 が <em>Instinct MI25</em> をサポートする最後の公式リリースになるとされていたが、ROCm v5.0 でも何故かサポートリストに入ったままになっている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/10/30/rocm-4_5-release/#polaris-rdna" title="/posts/2021/10/30/rocm-4_5-release/#polaris-rdna">ROCm v4.5 がリリース ―― CPU+GPU の統合メモリをサポート、RDNA系のサポートは v5.0 に？ | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/10/30/rocm-4_5-release/#polaris-rdna" title="/posts/2021/10/30/rocm-4_5-release/#polaris-rdna">ROCm v4.5 がリリース ―― CPU+GPU の統合メモリをサポート、RDNA系のサポートは v5.0 に？ | Coelacanth’s Dream</a></span>
 </p>
 <p>ROCm v5.0 では既知の問題 (Known Issues) として、dGPU の VBIOS を上書きする AMDVBFlashツールが挙げられているが、自分が知っている限り Linux環境向けの AMDVBFlash は公開されていない。そして ROCm は現在 Linux系 OS しかサポートしていない。<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup></p>
 <p>全体的にサポート状況が曖昧という印象を受け、開発者とサポーターの間で正しく情報共有が行われていないのではないかという気がする。<br>
@@ -132,7 +146,7 @@ ROCm は複数のライブラリ、ソフトウェアから構成されるプラ
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

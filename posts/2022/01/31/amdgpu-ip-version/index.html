@@ -19,8 +19,12 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="IPバージョンベースのサポートに移行する AMDGPUドライバー | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="以前の AMDGPUドライバーでは、DeviceID (DID) から GPU ASIC を検出し、そこから分岐して各種 IPブロック (GC, SDMA, DCN, UVD, VCN, VCE) をサポートする形を採っていたが、少し前 (2021/09) から、">
-  <meta property="og:description" content="以前の AMDGPUドライバーでは、DeviceID (DID) から GPU ASIC を検出し、そこから分岐して各種 IPブロック (GC, SDMA, DCN, UVD, VCN, VCE) をサポートする形を採っていたが、少し前 (2021/09) から、"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="以前の AMDGPUドライバーでは、DeviceID (DID) から GPU ASIC を検出し、そこから分岐して各種 IPブロック (GC, SDMA, DCN, UVD, VCN, VCE) をサポートする形を採っていたが、少し前 (2021/09) から、VBIOS、ファームウェアに含まれている各種 IPバージョンを取得、直接 IPブロックをサポートする形になった。
+これにより、ドライバーに直接記述された DeviceIDリスト や GPU ASIC に結びつけた各種 IPバージョンの情報が無くとも IPブロックをサポートすることができる。以前の方法では、ある GPU の DeviceID を後から追加した場合、ほとんどサポートされている状態でもその DeviceID が反映されなければ不明の GPU として扱われてしまう。
+例えば、Renoir, Lucienne, Green Sardine (Cezanne), Barcelo は共通した構成の GPU部となるが、DevceID は異なるため、サポートには DeviceID を追加するパッチを適用する必要があった。">
+  <meta property="og:description" content="以前の AMDGPUドライバーでは、DeviceID (DID) から GPU ASIC を検出し、そこから分岐して各種 IPブロック (GC, SDMA, DCN, UVD, VCN, VCE) をサポートする形を採っていたが、少し前 (2021/09) から、VBIOS、ファームウェアに含まれている各種 IPバージョンを取得、直接 IPブロックをサポートする形になった。
+これにより、ドライバーに直接記述された DeviceIDリスト や GPU ASIC に結びつけた各種 IPバージョンの情報が無くとも IPブロックをサポートすることができる。以前の方法では、ある GPU の DeviceID を後から追加した場合、ほとんどサポートされている状態でもその DeviceID が反映されなければ不明の GPU として扱われてしまう。
+例えば、Renoir, Lucienne, Green Sardine (Cezanne), Barcelo は共通した構成の GPU部となるが、DevceID は異なるため、サポートには DeviceID を追加するパッチを適用する必要があった。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Linux_Kernel, GFX9, RDNA, RDNA_2">
@@ -97,230 +101,230 @@ GC と GPU/GFX/Target ID は近いフォーマットとバージョンになっ�
 
 </blockquote>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">AMD GPU</th>
-<th style="text-align:center">GC</th>
-<th style="text-align:center">SDMA</th>
-<th style="text-align:center">DCE/DCN</th>
-<th style="text-align:center">VCN (UVD, VCE)</th>
-<th style="text-align:center">NBIO</th>
-<th style="text-align:center">PSP (MP0)</th>
-<th style="text-align:center">SMU (MP1)</th>
-<th style="text-align:center">UMC</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Vega10 (gfx900)</td>
-<td style="text-align:center">9.0.1</td>
-<td style="text-align:center">4.0.0</td>
-<td style="text-align:center">12.0.0</td>
-<td style="text-align:center">(7.0.0, 4.0.0)</td>
-<td style="text-align:center">6.1.0</td>
-<td style="text-align:center">9.0.0</td>
-<td style="text-align:center">9.0.0</td>
-<td style="text-align:center">6.0.0</td>
-</tr>
-<tr>
-<td style="text-align:left">Vega12 (gfx904)</td>
-<td style="text-align:center">9.2.1</td>
-<td style="text-align:center">4.0.1</td>
-<td style="text-align:center">12.0.1</td>
-<td style="text-align:center">(7.0.0, 4.0.0)</td>
-<td style="text-align:center">6.2.0</td>
-<td style="text-align:center">9.0.0</td>
-<td style="text-align:center">9.0.0</td>
-<td style="text-align:center">6.1.0</td>
-</tr>
-<tr>
-<td style="text-align:left">Vega20 (gfx906)</td>
-<td style="text-align:center">9.4.0</td>
-<td style="text-align:center">4.2.0</td>
-<td style="text-align:center">12.1.0</td>
-<td style="text-align:center">(7.2.0, 4.1.0)</td>
-<td style="text-align:center">7.4.0</td>
-<td style="text-align:center">11.0.2</td>
-<td style="text-align:center">11.0.2</td>
-<td style="text-align:center">6.1.1</td>
-</tr>
-<tr>
-<td style="text-align:left">Arcturus (gfx908)</td>
-<td style="text-align:center">9.4.1</td>
-<td style="text-align:center">4.2.2</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">2.5.0</td>
-<td style="text-align:center">7.4.1</td>
-<td style="text-align:center">11.0.4</td>
-<td style="text-align:center">11.0.2</td>
-<td style="text-align:center">6.1.2</td>
-</tr>
-<tr>
-<td style="text-align:left">Aldebaran (gfx90a)</td>
-<td style="text-align:center">9.4.2</td>
-<td style="text-align:center">4.4.0</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">2.6.0</td>
-<td style="text-align:center">7.4.4</td>
-<td style="text-align:center">13.0.2</td>
-<td style="text-align:center">13.0.2</td>
-<td style="text-align:center">6.7.0</td>
-</tr>
-<tr>
-<td style="text-align:left">Raven/Picasso (gfx902)</td>
-<td style="text-align:center">9.1.0</td>
-<td style="text-align:center">4.1.1</td>
-<td style="text-align:center">1.0.0</td>
-<td style="text-align:center">1.0.0</td>
-<td style="text-align:center">7.0.0</td>
-<td style="text-align:center">10.0.0</td>
-<td style="text-align:center">10.0.0</td>
-<td style="text-align:center">7.0.0</td>
-</tr>
-<tr>
-<td style="text-align:left">Raven2 (gfx909)</td>
-<td style="text-align:center">9.2.2</td>
-<td style="text-align:center">4.1.1</td>
-<td style="text-align:center">1.0.1</td>
-<td style="text-align:center">1.0.1</td>
-<td style="text-align:center">7.0.1</td>
-<td style="text-align:center">10.0.1</td>
-<td style="text-align:center">10.0.1</td>
-<td style="text-align:center">7.5.0</td>
-</tr>
-<tr>
-<td style="text-align:left">Renoir/Lucienne<br>/Barcelo/Green Sardine [Cezanne] (gfx90c)</td>
-<td style="text-align:center">9.3.0</td>
-<td style="text-align:center">4.1.2</td>
-<td style="text-align:center">2.1.0</td>
-<td style="text-align:center">2.2.0</td>
-<td style="text-align:center">7.0.0?</td>
-<td style="text-align:center">12.0.x?</td>
-<td style="text-align:center">12.0.{1,2}<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Navi10 (gfx1010)</td>
-<td style="text-align:center">10.1.10</td>
-<td style="text-align:center">5.0.0</td>
-<td style="text-align:center">2.0.0?</td>
-<td style="text-align:center">2.0.{0,2}?</td>
-<td style="text-align:center">2.3.x</td>
-<td style="text-align:center">11.0.0</td>
-<td style="text-align:center">11.0.0</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Navi12 (gfx1011)</td>
-<td style="text-align:center">10.1.2</td>
-<td style="text-align:center">5.0.5</td>
-<td style="text-align:center">2.0.0?</td>
-<td style="text-align:center">2.0.{0,2}?</td>
-<td style="text-align:center">2.3.x</td>
-<td style="text-align:center">11.0.9</td>
-<td style="text-align:center">11.0.9</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Navi14 (gfx1012)</td>
-<td style="text-align:center">10.1.1</td>
-<td style="text-align:center">5.0.2</td>
-<td style="text-align:center">2.0.0?</td>
-<td style="text-align:center">2.0.{0,2}?</td>
-<td style="text-align:center">2.3.x</td>
-<td style="text-align:center">11.0.5</td>
-<td style="text-align:center">11.0.5</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Cyan Skilfish/Skillfish (gfx1013)</td>
-<td style="text-align:center">10.1.3</td>
-<td style="text-align:center">5.0.1</td>
-<td style="text-align:center">2.0.1?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">2.3.x?</td>
-<td style="text-align:center">11.0.8</td>
-<td style="text-align:center">11.0.8</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Cyan Skilfish/Skillfish 2 (gfx1013)</td>
-<td style="text-align:center">10.1.4</td>
-<td style="text-align:center">5.0.1</td>
-<td style="text-align:center">2.0.1?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">2.3.x?</td>
-<td style="text-align:center">11.0.8</td>
-<td style="text-align:center">11.0.8</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Sienna Cichlid/Navi21 (gfx1030)</td>
-<td style="text-align:center">10.3.0</td>
-<td style="text-align:center">5.2.0</td>
-<td style="text-align:center">3.0.0?</td>
-<td style="text-align:center">3.0.0</td>
-<td style="text-align:center">2.3.x?</td>
-<td style="text-align:center">11.0.7</td>
-<td style="text-align:center">11.0.7</td>
-<td style="text-align:center">8.7.x</td>
-</tr>
-<tr>
-<td style="text-align:left">VanGogh (gfx1033)</td>
-<td style="text-align:center">10.3.1</td>
-<td style="text-align:center">5.2.1</td>
-<td style="text-align:center">3.0.1?</td>
-<td style="text-align:center">3.0.33</td>
-<td style="text-align:center">2.3.x?</td>
-<td style="text-align:center">11.5.0</td>
-<td style="text-align:center">11.5.0</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Navy Flounder/Navi22 (gfx1031)</td>
-<td style="text-align:center">10.3.2</td>
-<td style="text-align:center">5.2.2</td>
-<td style="text-align:center">3.0.0?</td>
-<td style="text-align:center">3.x.x</td>
-<td style="text-align:center">2.3.x?</td>
-<td style="text-align:center">11.0.11</td>
-<td style="text-align:center">11.0.11</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Dimgrey Cavefish/Navi23 (gfx1032)</td>
-<td style="text-align:center">10.3.4</td>
-<td style="text-align:center">5.2.4</td>
-<td style="text-align:center">3.0.0?</td>
-<td style="text-align:center">3.x.x</td>
-<td style="text-align:center">2.3.x?</td>
-<td style="text-align:center">11.0.12</td>
-<td style="text-align:center">11.0.12</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Beige Goby/Navi24 (gfx1034)</td>
-<td style="text-align:center">10.3.5</td>
-<td style="text-align:center">5.2.5</td>
-<td style="text-align:center">3.0.3?</td>
-<td style="text-align:center">3.0.33</td>
-<td style="text-align:center">2.3.x?</td>
-<td style="text-align:center">11.0.13</td>
-<td style="text-align:center">11.0.13</td>
-<td style="text-align:center">?</td>
-</tr>
-<tr>
-<td style="text-align:left">Yellow Carp/Rembrandt (gfx1035)</td>
-<td style="text-align:center">10.3.3</td>
-<td style="text-align:center">5.2.3</td>
-<td style="text-align:center">3.1.2?</td>
-<td style="text-align:center">3.1.1</td>
-<td style="text-align:center">2.3.x?</td>
-<td style="text-align:center">13.0.{1,3}</td>
-<td style="text-align:center">13.0.{1,3}?</td>
-<td style="text-align:center">?</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">AMD GPU</th>
+          <th style="text-align: center">GC</th>
+          <th style="text-align: center">SDMA</th>
+          <th style="text-align: center">DCE/DCN</th>
+          <th style="text-align: center">VCN (UVD, VCE)</th>
+          <th style="text-align: center">NBIO</th>
+          <th style="text-align: center">PSP (MP0)</th>
+          <th style="text-align: center">SMU (MP1)</th>
+          <th style="text-align: center">UMC</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Vega10 (gfx900)</td>
+          <td style="text-align: center">9.0.1</td>
+          <td style="text-align: center">4.0.0</td>
+          <td style="text-align: center">12.0.0</td>
+          <td style="text-align: center">(7.0.0, 4.0.0)</td>
+          <td style="text-align: center">6.1.0</td>
+          <td style="text-align: center">9.0.0</td>
+          <td style="text-align: center">9.0.0</td>
+          <td style="text-align: center">6.0.0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Vega12 (gfx904)</td>
+          <td style="text-align: center">9.2.1</td>
+          <td style="text-align: center">4.0.1</td>
+          <td style="text-align: center">12.0.1</td>
+          <td style="text-align: center">(7.0.0, 4.0.0)</td>
+          <td style="text-align: center">6.2.0</td>
+          <td style="text-align: center">9.0.0</td>
+          <td style="text-align: center">9.0.0</td>
+          <td style="text-align: center">6.1.0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Vega20 (gfx906)</td>
+          <td style="text-align: center">9.4.0</td>
+          <td style="text-align: center">4.2.0</td>
+          <td style="text-align: center">12.1.0</td>
+          <td style="text-align: center">(7.2.0, 4.1.0)</td>
+          <td style="text-align: center">7.4.0</td>
+          <td style="text-align: center">11.0.2</td>
+          <td style="text-align: center">11.0.2</td>
+          <td style="text-align: center">6.1.1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Arcturus (gfx908)</td>
+          <td style="text-align: center">9.4.1</td>
+          <td style="text-align: center">4.2.2</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">2.5.0</td>
+          <td style="text-align: center">7.4.1</td>
+          <td style="text-align: center">11.0.4</td>
+          <td style="text-align: center">11.0.2</td>
+          <td style="text-align: center">6.1.2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Aldebaran (gfx90a)</td>
+          <td style="text-align: center">9.4.2</td>
+          <td style="text-align: center">4.4.0</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">2.6.0</td>
+          <td style="text-align: center">7.4.4</td>
+          <td style="text-align: center">13.0.2</td>
+          <td style="text-align: center">13.0.2</td>
+          <td style="text-align: center">6.7.0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Raven/Picasso (gfx902)</td>
+          <td style="text-align: center">9.1.0</td>
+          <td style="text-align: center">4.1.1</td>
+          <td style="text-align: center">1.0.0</td>
+          <td style="text-align: center">1.0.0</td>
+          <td style="text-align: center">7.0.0</td>
+          <td style="text-align: center">10.0.0</td>
+          <td style="text-align: center">10.0.0</td>
+          <td style="text-align: center">7.0.0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Raven2 (gfx909)</td>
+          <td style="text-align: center">9.2.2</td>
+          <td style="text-align: center">4.1.1</td>
+          <td style="text-align: center">1.0.1</td>
+          <td style="text-align: center">1.0.1</td>
+          <td style="text-align: center">7.0.1</td>
+          <td style="text-align: center">10.0.1</td>
+          <td style="text-align: center">10.0.1</td>
+          <td style="text-align: center">7.5.0</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Renoir/Lucienne<br>/Barcelo/Green Sardine [Cezanne] (gfx90c)</td>
+          <td style="text-align: center">9.3.0</td>
+          <td style="text-align: center">4.1.2</td>
+          <td style="text-align: center">2.1.0</td>
+          <td style="text-align: center">2.2.0</td>
+          <td style="text-align: center">7.0.0?</td>
+          <td style="text-align: center">12.0.x?</td>
+          <td style="text-align: center">12.0.{1,2}<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Navi10 (gfx1010)</td>
+          <td style="text-align: center">10.1.10</td>
+          <td style="text-align: center">5.0.0</td>
+          <td style="text-align: center">2.0.0?</td>
+          <td style="text-align: center">2.0.{0,2}?</td>
+          <td style="text-align: center">2.3.x</td>
+          <td style="text-align: center">11.0.0</td>
+          <td style="text-align: center">11.0.0</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Navi12 (gfx1011)</td>
+          <td style="text-align: center">10.1.2</td>
+          <td style="text-align: center">5.0.5</td>
+          <td style="text-align: center">2.0.0?</td>
+          <td style="text-align: center">2.0.{0,2}?</td>
+          <td style="text-align: center">2.3.x</td>
+          <td style="text-align: center">11.0.9</td>
+          <td style="text-align: center">11.0.9</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Navi14 (gfx1012)</td>
+          <td style="text-align: center">10.1.1</td>
+          <td style="text-align: center">5.0.2</td>
+          <td style="text-align: center">2.0.0?</td>
+          <td style="text-align: center">2.0.{0,2}?</td>
+          <td style="text-align: center">2.3.x</td>
+          <td style="text-align: center">11.0.5</td>
+          <td style="text-align: center">11.0.5</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Cyan Skilfish/Skillfish (gfx1013)</td>
+          <td style="text-align: center">10.1.3</td>
+          <td style="text-align: center">5.0.1</td>
+          <td style="text-align: center">2.0.1?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">2.3.x?</td>
+          <td style="text-align: center">11.0.8</td>
+          <td style="text-align: center">11.0.8</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Cyan Skilfish/Skillfish 2 (gfx1013)</td>
+          <td style="text-align: center">10.1.4</td>
+          <td style="text-align: center">5.0.1</td>
+          <td style="text-align: center">2.0.1?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">2.3.x?</td>
+          <td style="text-align: center">11.0.8</td>
+          <td style="text-align: center">11.0.8</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Sienna Cichlid/Navi21 (gfx1030)</td>
+          <td style="text-align: center">10.3.0</td>
+          <td style="text-align: center">5.2.0</td>
+          <td style="text-align: center">3.0.0?</td>
+          <td style="text-align: center">3.0.0</td>
+          <td style="text-align: center">2.3.x?</td>
+          <td style="text-align: center">11.0.7</td>
+          <td style="text-align: center">11.0.7</td>
+          <td style="text-align: center">8.7.x</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VanGogh (gfx1033)</td>
+          <td style="text-align: center">10.3.1</td>
+          <td style="text-align: center">5.2.1</td>
+          <td style="text-align: center">3.0.1?</td>
+          <td style="text-align: center">3.0.33</td>
+          <td style="text-align: center">2.3.x?</td>
+          <td style="text-align: center">11.5.0</td>
+          <td style="text-align: center">11.5.0</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Navy Flounder/Navi22 (gfx1031)</td>
+          <td style="text-align: center">10.3.2</td>
+          <td style="text-align: center">5.2.2</td>
+          <td style="text-align: center">3.0.0?</td>
+          <td style="text-align: center">3.x.x</td>
+          <td style="text-align: center">2.3.x?</td>
+          <td style="text-align: center">11.0.11</td>
+          <td style="text-align: center">11.0.11</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Dimgrey Cavefish/Navi23 (gfx1032)</td>
+          <td style="text-align: center">10.3.4</td>
+          <td style="text-align: center">5.2.4</td>
+          <td style="text-align: center">3.0.0?</td>
+          <td style="text-align: center">3.x.x</td>
+          <td style="text-align: center">2.3.x?</td>
+          <td style="text-align: center">11.0.12</td>
+          <td style="text-align: center">11.0.12</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Beige Goby/Navi24 (gfx1034)</td>
+          <td style="text-align: center">10.3.5</td>
+          <td style="text-align: center">5.2.5</td>
+          <td style="text-align: center">3.0.3?</td>
+          <td style="text-align: center">3.0.33</td>
+          <td style="text-align: center">2.3.x?</td>
+          <td style="text-align: center">11.0.13</td>
+          <td style="text-align: center">11.0.13</td>
+          <td style="text-align: center">?</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Yellow Carp/Rembrandt (gfx1035)</td>
+          <td style="text-align: center">10.3.3</td>
+          <td style="text-align: center">5.2.3</td>
+          <td style="text-align: center">3.1.2?</td>
+          <td style="text-align: center">3.1.1</td>
+          <td style="text-align: center">2.3.x?</td>
+          <td style="text-align: center">13.0.{1,3}</td>
+          <td style="text-align: center">13.0.{1,3}?</td>
+          <td style="text-align: center">?</td>
+      </tr>
+  </tbody>
 </table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -359,7 +363,7 @@ GC と GPU/GFX/Target ID は近いフォーマットとバージョンになっ�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

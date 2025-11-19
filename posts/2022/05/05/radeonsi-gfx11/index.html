@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="RadeonSI ドライバーで GFX11 のサポートが進められる | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD の Marek Olšák 氏より、RadeonSI (OpenGL) ドライバーに GFX11 世代のサポートを追加するマージリクエストが投稿、公開されている。 内容としては GFX11 で従来から変更のあった部分">
-  <meta property="og:description" content="AMD の Marek Olšák 氏より、RadeonSI (OpenGL) ドライバーに GFX11 世代のサポートを追加するマージリクエストが投稿、公開されている。 内容としては GFX11 で従来から変更のあった部分"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD の Marek Olšák 氏より、RadeonSI (OpenGL) ドライバーに GFX11 世代のサポートを追加するマージリクエストが投稿、公開されている。
+内容としては GFX11 で従来から変更のあった部分、機能の改良や拡張、あるいは廃止になった部分に対するものが主であり、GFX11 で実装される新機能のサポートといったものはまだ公開されていないように見えた。">
+  <meta property="og:description" content="AMD の Marek Olšák 氏より、RadeonSI (OpenGL) ドライバーに GFX11 世代のサポートを追加するマージリクエストが投稿、公開されている。
+内容としては GFX11 で従来から変更のあった部分、機能の改良や拡張、あるいは廃止になった部分に対するものが主であり、GFX11 で実装される新機能のサポートといったものはまだ公開されていないように見えた。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GFX11, RDNA_3, RadeonSI, NGG">
@@ -79,42 +81,42 @@
 </blockquote>
 <p><em>GFX11</em> では L2キャッシュ (TCC, Texture Cache Channel) のラインサイズは 128 bytes とされており<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>、SQC である L1命令キャッシュ (それと恐らくは L1スカラデータキャッシュも) のラインサイズのみを拡大した形となっている。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Cache Line Size</th>
-<th style="text-align:center">L1i</th>
-<th style="text-align:center">L1k</th>
-<th style="text-align:center">L1d</th>
-<th style="text-align:center">GL1</th>
-<th style="text-align:center">GL2</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">GFX9/Vega (without Aldebaran)</td>
-<td style="text-align:center">32B</td>
-<td style="text-align:center">32B</td>
-<td style="text-align:center">64B</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">64B</td>
-</tr>
-<tr>
-<td style="text-align:left">GFX10/RDNA 1, GFX10.3/RDNA 2</td>
-<td style="text-align:center">64B</td>
-<td style="text-align:center">64B</td>
-<td style="text-align:center">128B</td>
-<td style="text-align:center">128B</td>
-<td style="text-align:center">128B</td>
-</tr>
-<tr>
-<td style="text-align:left">GFX11</td>
-<td style="text-align:center">128B</td>
-<td style="text-align:center">128B?</td>
-<td style="text-align:center">128B?</td>
-<td style="text-align:center">128B?</td>
-<td style="text-align:center">128B</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Cache Line Size</th>
+          <th style="text-align: center">L1i</th>
+          <th style="text-align: center">L1k</th>
+          <th style="text-align: center">L1d</th>
+          <th style="text-align: center">GL1</th>
+          <th style="text-align: center">GL2</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">GFX9/Vega (without Aldebaran)</td>
+          <td style="text-align: center">32B</td>
+          <td style="text-align: center">32B</td>
+          <td style="text-align: center">64B</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">64B</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GFX10/RDNA 1, GFX10.3/RDNA 2</td>
+          <td style="text-align: center">64B</td>
+          <td style="text-align: center">64B</td>
+          <td style="text-align: center">128B</td>
+          <td style="text-align: center">128B</td>
+          <td style="text-align: center">128B</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GFX11</td>
+          <td style="text-align: center">128B</td>
+          <td style="text-align: center">128B?</td>
+          <td style="text-align: center">128B?</td>
+          <td style="text-align: center">128B?</td>
+          <td style="text-align: center">128B</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="ngg">NGG<a href="#ngg" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -128,7 +130,7 @@
 またこれまでは無効化されていた NGG Stream-Out (transform feedback) も <em>GFX11</em> ではデフォルトで有効化される。</p>
 <p>現時点で <em>GFX11</em> の NGG Culling はデフォルトで無効化されているが、これは <em>GFX10/RDNA 1</em> 以上の世代でも、RenderBackend (RB) が 2基以上という条件がデフォルトで有効化する条件に含まれており、GPU の規模によって効果に違いがあることが理由だろう。<br>
 NGGカリングのようなシェーダーベースのカリング処理は、効率が Pixel Shader のスループットに依存するとされている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc" title="/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc">RADV + RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc" title="/posts/2021/09/29/radv-enable-nggc-default-on-rdna_2/#nggc">RADV + RDNA 2 で NGGカリングがデフォルトで有効に | Coelacanth’s Dream</a></span>
 
 内部での検証が進み、効果があると分かれば切り替えられると思われる。</p>
 <blockquote>
@@ -268,35 +270,35 @@ NGGカリングのようなシェーダーベースのカリング処理は、�
 <p>GC (Graphics Compute) IP のバージョンと、LLVM 等で用いられる GPU/GFX/TargetID は近いフォーマットながら一致は以前からしていなかったが、この世代でもそれは同様らしい。</p>
 <p>現時点で AMDGPUドライバーには <em>GC 11.0.{0, 1, 2}</em> のサポートを追加するパッチが投稿されているが、対応する GFX ID の対応は以下の表のようになっている。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">GC IP ver</th>
-<th style="text-align:center">GFX ID</th>
-<th style="text-align:center"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">11.0.0</td>
-<td style="text-align:center">gfx1100</td>
-<td style="text-align:center">dGPU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.1</td>
-<td style="text-align:center">gfx1103</td>
-<td style="text-align:center">APU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.2</td>
-<td style="text-align:center">gfx1102</td>
-<td style="text-align:center">dGPU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.3?</td>
-<td style="text-align:center">gfx1101?</td>
-<td style="text-align:center">dGPU?</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">GC IP ver</th>
+          <th style="text-align: center">GFX ID</th>
+          <th style="text-align: center"></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">11.0.0</td>
+          <td style="text-align: center">gfx1100</td>
+          <td style="text-align: center">dGPU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.1</td>
+          <td style="text-align: center">gfx1103</td>
+          <td style="text-align: center">APU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.2</td>
+          <td style="text-align: center">gfx1102</td>
+          <td style="text-align: center">dGPU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.3?</td>
+          <td style="text-align: center">gfx1101?</td>
+          <td style="text-align: center">dGPU?</td>
+      </tr>
+  </tbody>
 </table>
 <p>下引用部で、チップの判定に使われる <code>eRevisionId</code> の範囲がそのままの並びになっていないが、<em>RadeonSI</em> では GFX ID をベースにした名前を用いていることと、先に書いたように GC IP と GFX IP が必ず一致はしないことが関係していると考えられる。</p>
 <blockquote>
@@ -342,7 +344,7 @@ NGGカリングのようなシェーダーベースのカリング処理は、�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

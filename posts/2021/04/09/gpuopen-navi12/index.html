@@ -19,8 +19,8 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="AMDVLK GPUOpenドライバーが Navi12 に対応 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Library)、XGL (Vulkan API Layer) が、R">
-  <meta property="og:description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Library)、XGL (Vulkan API Layer) が、R"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Library)、XGL (Vulkan API Layer) が、Radeon Pro V520 等の製品に採用されている Navi12 に対応した。">
+  <meta property="og:description" content="AMD が公式に提供しているオープンソース Vulkanドライバー、AMDVLK、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Library)、XGL (Vulkan API Layer) が、Radeon Pro V520 等の製品に採用されている Navi12 に対応した。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GPUOpen, Navi12, RDNA">
@@ -60,13 +60,13 @@
 <strong>Radeon Pro V520</strong> では HBM2メモリの ECC機能を有効することもできるようになっている。<br>
 メモリバス幅は 2048-bit、HBM2メモリではメモリチャネルを 128-bit としているため、メモリチャネル数は 16ch (16x128-bit) になる。<em>Navi10</em> もメモリチャネル数で言えば 16ch (16x16-bit) 構成であり、このあたりが L2キャッシュサイズが同じな理由になっている。<br>
 そして、<em>Navi12</em> は INT4/INT8、FP16 等の低い精度を用いるドット積演算を高速化する命令に対応しており、機械学習における推論には <em>Navi10</em> よりも向いている。同様の命令には <em>Navi14</em> も対応しているが、<em>Navi10</em> は対応していない。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/03/09/navi12-recent-info/" title="/posts/2020/03/09/navi12-recent-info/">Navi12情報近況 (2020-03-09) & 推測 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/03/09/navi12-recent-info/" title="/posts/2020/03/09/navi12-recent-info/">Navi12情報近況 (2020-03-09) & 推測 | Coelacanth’s Dream</a></span>
 </p>
 <p>また、<em>Navi12</em> は RDNA/Navi1x 系列では唯一 MxGPU/SR-IOV、1GPU を仮想的に分割し、複数のユーザーで利用する機能に対応している。</p>
 <p>総じて言えば、<em>Navi12</em> は電力効率に優れ高速な HBM2メモリを採用し、低精度のドット積を高速に処理するための命令と MxGPU/SR-IOV に対応している、クラウドゲーミングやサーバー用途に向いた GPU であり、<strong>Radeon Pro V520</strong> はそうした特徴を活かした製品である。<br>
 今回 GPUOpenドライバーにサポートが追加されたのは、Vulkan API を用いるゲームのサポートを強化する向きがあるものと思われる。</p>
 <p><strong>Radeon Pro V520</strong> は AWS EC2 G4adインスタンスに採用されており、カード自体の入手は難しいが、クラウド上であれば (比較的) 気軽に利用できる。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/12/02/aws-radeon-pro-v520/" title="/posts/2020/12/02/aws-radeon-pro-v520/">AWS、RDNAアーキテクチャ GPU 「Radeon Pro V520」を採用する G4adインスタンスを発表 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/12/02/aws-radeon-pro-v520/" title="/posts/2020/12/02/aws-radeon-pro-v520/">AWS、RDNAアーキテクチャ GPU 「Radeon Pro V520」を採用する G4adインスタンスを発表 | Coelacanth’s Dream</a></span>
 
 自分も一度試したことがあるが、まず GPU を使う環境構築に手こずり、そこからも公式のドライバーのバージョンが少し前のもので結局あまり活用できずにインスタンスを削除した。<br>
 環境構築については、マーケットプレイスにあるものを使うのが一番手っ取り早い。</p>
@@ -95,64 +95,64 @@
 
 </blockquote>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">RDNA</th>
-<th style="text-align:center">Navi10</th>
-<th style="text-align:center">Navi14</th>
-<th style="text-align:center">Navi12</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Total SE</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">1</td>
-<td style="text-align:center">2</td>
-</tr>
-<tr>
-<td style="text-align:left">Total SH</td>
-<td style="text-align:center">4</td>
-<td style="text-align:center">2</td>
-<td style="text-align:center">2</td>
-</tr>
-<tr>
-<td style="text-align:left">Total WGP (CU)</td>
-<td style="text-align:center">20 (40)</td>
-<td style="text-align:center">12 (24)</td>
-<td style="text-align:center">20 (40)</td>
-</tr>
-<tr>
-<td style="text-align:left">Total RB</td>
-<td style="text-align:center">16</td>
-<td style="text-align:center">8</td>
-<td style="text-align:center">16</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory Type</td>
-<td style="text-align:center">GDDR6</td>
-<td style="text-align:center">GDDR6</td>
-<td style="text-align:center">HBM2</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory Bus Width</td>
-<td style="text-align:center">256-bit</td>
-<td style="text-align:center">128-bit</td>
-<td style="text-align:center">2048-bit</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory Channel</td>
-<td style="text-align:center">16ch (16x16-bit)</td>
-<td style="text-align:center">8ch (8x16-bit)</td>
-<td style="text-align:center">16ch (16x128-bit)</td>
-</tr>
-<tr>
-<td style="text-align:left">L2cache Size</td>
-<td style="text-align:center">4MiB</td>
-<td style="text-align:center">2MiB</td>
-<td style="text-align:center">4MiB</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">RDNA</th>
+          <th style="text-align: center">Navi10</th>
+          <th style="text-align: center">Navi14</th>
+          <th style="text-align: center">Navi12</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Total SE</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">1</td>
+          <td style="text-align: center">2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Total SH</td>
+          <td style="text-align: center">4</td>
+          <td style="text-align: center">2</td>
+          <td style="text-align: center">2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Total WGP (CU)</td>
+          <td style="text-align: center">20 (40)</td>
+          <td style="text-align: center">12 (24)</td>
+          <td style="text-align: center">20 (40)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Total RB</td>
+          <td style="text-align: center">16</td>
+          <td style="text-align: center">8</td>
+          <td style="text-align: center">16</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory Type</td>
+          <td style="text-align: center">GDDR6</td>
+          <td style="text-align: center">GDDR6</td>
+          <td style="text-align: center">HBM2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory Bus Width</td>
+          <td style="text-align: center">256-bit</td>
+          <td style="text-align: center">128-bit</td>
+          <td style="text-align: center">2048-bit</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory Channel</td>
+          <td style="text-align: center">16ch (16x16-bit)</td>
+          <td style="text-align: center">8ch (8x16-bit)</td>
+          <td style="text-align: center">16ch (16x128-bit)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L2cache Size</td>
+          <td style="text-align: center">4MiB</td>
+          <td style="text-align: center">2MiB</td>
+          <td style="text-align: center">4MiB</td>
+      </tr>
+  </tbody>
 </table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -172,7 +172,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

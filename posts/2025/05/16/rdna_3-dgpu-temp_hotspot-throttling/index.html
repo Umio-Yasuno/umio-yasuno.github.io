@@ -19,8 +19,20 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="RDNA 3 dGPU で TEMP_HOTSPOT スロットリングがほぼ常時検出される理由 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="TL;DR AMDGPU ドライバーでは SMU (System Management Unit) が報告する ThrottlingPercentage が 0 でなければスロットリングのフラグビットを有効にするが、RDNA 3 dGPU では TEMP_HOTSPOT の ThrottlingPercentage がほぼ常時 1 以上だと報告されるため。 gpu_metrics と indep_throttle_status">
-  <meta property="og:description" content="TL;DR AMDGPU ドライバーでは SMU (System Management Unit) が報告する ThrottlingPercentage が 0 でなければスロットリングのフラグビットを有効にするが、RDNA 3 dGPU では TEMP_HOTSPOT の ThrottlingPercentage がほぼ常時 1 以上だと報告されるため。 gpu_metrics と indep_throttle_status"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="TL;DR
+
+AMDGPU ドライバーでは SMU (System Management Unit) が報告する ThrottlingPercentage が 0 でなければスロットリングのフラグビットを有効にするが、RDNA 3 dGPU では TEMP_HOTSPOT の ThrottlingPercentage がほぼ常時 1 以上だと報告されるため。
+gpu_metrics と indep_throttle_status
+
+AMDGPU ドライバーと最近の AMD APU/GPU の組み合わせでは gpu_metrics sysfs ファイルをサポートしており、これには GPU の各種動作クロックや電圧、消費電力、温度、スロットリングステータスといった情報がまとめられている。
+他の sysfs ファイルから取得できる情報も含まれているが、gpu_metrics は単一の sysfs ファイルにまとめられているため、タイミングがずれることなくまとめて取得することができる。">
+  <meta property="og:description" content="TL;DR
+
+AMDGPU ドライバーでは SMU (System Management Unit) が報告する ThrottlingPercentage が 0 でなければスロットリングのフラグビットを有効にするが、RDNA 3 dGPU では TEMP_HOTSPOT の ThrottlingPercentage がほぼ常時 1 以上だと報告されるため。
+gpu_metrics と indep_throttle_status
+
+AMDGPU ドライバーと最近の AMD APU/GPU の組み合わせでは gpu_metrics sysfs ファイルをサポートしており、これには GPU の各種動作クロックや電圧、消費電力、温度、スロットリングステータスといった情報がまとめられている。
+他の sysfs ファイルから取得できる情報も含まれているが、gpu_metrics は単一の sysfs ファイルにまとめられているため、タイミングがずれることなくまとめて取得することができる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Linux_Kernel">
@@ -65,7 +77,7 @@ AMD が公式に開発して公開しているツールには、<code>gpu_metric
 <p>スロットリング情報の取得はほとんどの GPU でうまく機能するが、RDNA 3 dGPU だけは何故かほぼ常時 <code>TEMP_HOTSPOT</code> が検出される問題が発生していた。</p>
 <ul>
 <li><a href="https://gitlab.freedesktop.org/drm/amd/-/issues/3251" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/drm/amd/-/issues/3251">throttle_status in gpu_metrics for Navi31 always show TEMP_HOTSPOT (#3251) · Issue · drm/amd</a></li>
-<li><a href="https://github.com/flightlessmango/MangoHud/issues/1243" rel="noopener noreferrer" target="_blank" title="https://github.com/flightlessmango/MangoHud/issues/1243">Thinks that I&rsquo;m constantly thermal throttling / power limited · Issue #1243 · flightlessmango/MangoHud</a></li>
+<li><a href="https://github.com/flightlessmango/MangoHud/issues/1243" rel="noopener noreferrer" target="_blank" title="https://github.com/flightlessmango/MangoHud/issues/1243">Thinks that I’m constantly thermal throttling / power limited · Issue #1243 · flightlessmango/MangoHud</a></li>
 </ul>
 <p>一部の RDNA 2 dGPU、<em>Navi22/Navy Flounder</em> と <em>Navi23/Dimgrey Cavefish</em> にもスロットリング情報がアイドル状態でも検出される問題が発生していたが、これは AMDGPU ドライバー側の処理に抜けていた部分があったためである。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 しかし、RDNA 3 dGPU 関係のコードを読んでもドライバー側に原因があるようには思えなかった。<br>
@@ -123,7 +135,7 @@ AMDGPU ドライバー内部で使用しているデータの確認方法を、L
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.coelacanth-dream.com/posts/2023/08/03/coelacanth-diary-2023-08-03/" title="/posts/2023/08/03/coelacanth-diary-2023-08-03/">【雑記】 RX 6600 の購入とバグ報告と更新頻度と | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2023/08/03/coelacanth-diary-2023-08-03/" title="/posts/2023/08/03/coelacanth-diary-2023-08-03/">【雑記】 RX 6600 の購入とバグ報告と更新頻度と | Coelacanth’s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
 <p><a href="https://gitlab.freedesktop.org/drm/amd/-/issues/3549" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/drm/amd/-/issues/3549">AMD GPU usage peaks with system in idle - Radeon RX 7600 XT (#3549) · Issue · drm/amd</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
@@ -147,7 +159,7 @@ AMDGPU ドライバー内部で使用しているデータの確認方法を、L
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

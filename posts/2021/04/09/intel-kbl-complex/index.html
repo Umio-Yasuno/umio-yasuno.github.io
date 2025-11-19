@@ -19,8 +19,8 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel Kaby Lake 周りの CPU Stepping を整理するパッチ | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Linux Kernel には Intel CPU (Family: 0x6) の判別をするため、Model をまとめたヘッダファイル intel-family.h があるが、Intel の Peter Zijlstra 氏により、そこに複雑な Kaby Lake 周りを整理するためのコメントを追加する">
-  <meta property="og:description" content="Linux Kernel には Intel CPU (Family: 0x6) の判別をするため、Model をまとめたヘッダファイル intel-family.h があるが、Intel の Peter Zijlstra 氏により、そこに複雑な Kaby Lake 周りを整理するためのコメントを追加する"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Linux Kernel には Intel CPU (Family: 0x6) の判別をするため、Model をまとめたヘッダファイル intel-family.h があるが、Intel の Peter Zijlstra 氏により、そこに複雑な Kaby Lake 周りを整理するためのコメントを追加するパッチが投稿された。">
+  <meta property="og:description" content="Linux Kernel には Intel CPU (Family: 0x6) の判別をするため、Model をまとめたヘッダファイル intel-family.h があるが、Intel の Peter Zijlstra 氏により、そこに複雑な Kaby Lake 周りを整理するためのコメントを追加するパッチが投稿された。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Sapphire_Rapids, Cannon_Lake">
@@ -60,7 +60,7 @@
 </h2>
 <p>CPUマイクロアーキテクチャに <em>Sky Lake アーキテクチャ</em> を採用し、Intel 14nmプロセスで製造されるプロセッサにはモバイル向け、デスクトップ向けといった括りを無視すれば、<em>Sky Lake / Kaby Lake / Amber Lake / Whiskey Lake / Coffee Lake / Comet Lake</em> の 6種類が存在する。<br>
 <code>Family, Model</code> による CPU の判別において、<em>Sky Lake (_L/X)</em> 、<em>Comet Lake (_L)</em> は <code>Model</code> がそれぞれ違っているため判別することは容易だが、<em>Kaby Lake</em> についてはそうはいかない。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/" title="/posts/2021/03/01/cpuid-family-model/">【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/03/01/cpuid-family-model/" title="/posts/2021/03/01/cpuid-family-model/">【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点 | Coelacanth’s Dream</a></span>
 </p>
 <p>モバイル向け <em>Kaby Lake (KABYLAKE_L)</em> は <code>Model: 0x8E (142)</code> が与えられているが、同じ Model が <em>Amber Lake(-Y) / Coffee Lake(-U) / Whiskey Lake(-U)</em> が使われている。<br>
 <code>intel-family.h</code> では、末尾 <code>_L</code> がモバイル向け、<code>_X</code> がサーバー向け、<code>_D</code> がマイクロサーバー向け、無印がデスクトップ向けと区別されている。<br>
@@ -99,34 +99,34 @@
 <p>Stepping は基本大きい程進んだものとなっており、以前の Stepping に存在したエラッタの修正や脆弱性への対応が盛り込まれている。<br>
 <em>Coffee Lake(-S)</em> の Stepping 数が多いのは脆弱性への対策が理由として大きく、Intel が公開している情報によれば、<code>B0 (0xB) -&gt; P0 (0xC)</code> で、Spectre v2/v4、Meltdown、L1TF、MDS への策がハードウェア側に追加されている。 (Spectre v2/v4 はソフトウェアと合わせての対策) <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Coffee Lake(-S)<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></th>
-<th style="text-align:center">Stepping</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">S (U0)</td>
-<td style="text-align:center">0xA (10)</td>
-</tr>
-<tr>
-<td style="text-align:left">S (B0)</td>
-<td style="text-align:center">0xB (11)</td>
-</tr>
-<tr>
-<td style="text-align:left">S (P0)</td>
-<td style="text-align:center">0xC (12)</td>
-</tr>
-<tr>
-<td style="text-align:left">H (U0)</td>
-<td style="text-align:center">0xA (10)</td>
-</tr>
-<tr>
-<td style="text-align:left">H (R0)</td>
-<td style="text-align:center">0xD (13)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Coffee Lake(-S)<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></th>
+          <th style="text-align: center">Stepping</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">S (U0)</td>
+          <td style="text-align: center">0xA (10)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">S (B0)</td>
+          <td style="text-align: center">0xB (11)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">S (P0)</td>
+          <td style="text-align: center">0xC (12)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">H (U0)</td>
+          <td style="text-align: center">0xA (10)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">H (R0)</td>
+          <td style="text-align: center">0xD (13)</td>
+      </tr>
+  </tbody>
 </table>
 <!--
 | U (D0) | 0xA (10) |
@@ -169,7 +169,7 @@
 <p>ただ、パッチ内で Peter Zijlstra 氏は、<em>Cannon Lake (Palm Cove)</em> は Linux Kernel の CPU性能解析ツール <code>perf</code> コマンドのサポートがされていない、とコメントしており、それは <code>intel-family.h</code> に <em>Cannon Lake</em> のためのマクロを残す必要性が薄いことを意味する。<br>
 <em>Palm Cove</em> の名がようやく? Intel より出されたが、将来的には GPUドライバーのように、コードから <em>Cannon Lake</em> のための部分が <span class="complement">わずかだとは思うが</span>
  削除される可能性も出てきた。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/09/29/intel-cnl-chase/" title="/posts/2020/09/29/intel-cnl-chase/">Cannon Lake を追う | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/09/29/intel-cnl-chase/" title="/posts/2020/09/29/intel-cnl-chase/">Cannon Lake を追う | Coelacanth’s Dream</a></span>
 </p>
 <h2 id="spr">Sapphire Rapids == Golden Cove? / Willow Cove?<a href="#spr" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -190,7 +190,7 @@
 <p>まず、<em>Alder Lake</em> は Core (Big) 側に <em>Golden Cove アーキテクチャ</em> を採用することが明言されている。<br>
 そして、<em>Alder Lake</em> も <em>Sapphire Rapids</em> も 128-bit/256-bit幅の <code>AVX_VNNI</code> 命令に対応しており、他にも <code>CLDEMOTE / PTWRITE / Architectural LBRs / HLAT / SERIALIZE</code> 等の最新の命令における対応も共通している。<br>
 また、<em>Sapphire Rapids</em> は、用途に 5G基地局等を想定した <code>AVX512_FP16/HFNI</code> 命令に対応しており、それは <em>Golden Cove</em> の特徴として挙げられた Network/5G Perf の文言と一致する。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/" title="/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/" title="/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth’s Dream</a></span>
 
 さらには、上で少し触れた <code>perf</code> コマンドの対応に関して、<em>Alder Lake (Golden Cove)</em> の PMU (Performance Monitoring Unit) は <em>Sapphire Rapids</em> のそれと近いというコメントがされている。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup><br>
 そういう訳で <em>Sapphire Rapids</em> の CPUマイクロアーキテクチャは <em>Golden Cove</em> だと考えているが、果たして。</p>
@@ -239,7 +239,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

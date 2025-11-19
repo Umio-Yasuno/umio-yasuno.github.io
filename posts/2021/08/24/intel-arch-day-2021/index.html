@@ -20,8 +20,44 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel Architecture Day 2021 個人的まとめ　―― Gracemont, Golden Cove, Alder Lake | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="時間と体力の関係で遅れた上に一部だけを取り上げた、個人的な Intel Architecture Day 2021 のまとめ。 Xe-HPG、Xe-HPC はその内に、たぶん。 Intel Architecture Day 2021 Presentation Deck: Intel Architecture Day 2021 Alder Lake Gracemont (Efficient-core) Gramont はスルー">
-  <meta property="og:description" content="時間と体力の関係で遅れた上に一部だけを取り上げた、個人的な Intel Architecture Day 2021 のまとめ。 Xe-HPG、Xe-HPC はその内に、たぶん。 Intel Architecture Day 2021 Presentation Deck: Intel Architecture Day 2021 Alder Lake Gracemont (Efficient-core) Gramont はスルー"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="時間と体力の関係で遅れた上に一部だけを取り上げた、個人的な Intel Architecture Day 2021 のまとめ。
+Xe-HPG、Xe-HPC はその内に、たぶん。
+
+Intel Architecture Day 2021
+
+Presentation Deck: Intel Architecture Day 2021
+
+
+
+Alder Lake
+
+Gracemont (Efficient-core)
+
+Gramont はスループット、マルチスレッドにおけるスケーリング性能を重視して設計された高効率マイクロアーキテクチャ (Atom/Small)。
+前世代の Tremontアーキテクチャ から大きく進化した点には、L1命令キャッシュの倍増 (32KiB -&gt; 64KiB)、実行ポート数が 8ポートから 17ポートに、AVX2 と AVX-VNNI命令への対応等が挙げられる。ロード/ストアユニットも倍に増やされており、L1データキャッシュの帯域も向上していると思われる。
+デコーダーが 3-wide デコードのクラスタを 2基持つという構成は Tremont から引き継がれている。  従来の方法でデコード幅を増やそうとすると、必要なリソース量が指数関数的に増えて効率が悪化するが、デコーダーのクラスタリングを用いることでリソース量は線形となり、効率の低下を防げる。1
+Tremont では。デコーダーのクラスタリングによって発生する負荷分散は分岐予測に依存していたため、分岐の存在しない長いコード (浮動小数点演算等) では片方のデコードクラスタしか使用できず、ボトルネックとなる可能性があった。
+Intel® 64 and IA-32 Architectures Optimization Reference Manual では、次世代の Atomプロセッサではそうしたケースを検出し、ボトルネックを軽減するハードウェアを含む予定だとしている。
+その次世代の Atomプロセッサが Gracemont を指し、かつ実際にそうしたハードウェアが導入されているならば、クラスタリングによるリソース量の節約という恩恵を受けながら、性能と電力効率がさらに向上していることとなる。">
+  <meta property="og:description" content="時間と体力の関係で遅れた上に一部だけを取り上げた、個人的な Intel Architecture Day 2021 のまとめ。
+Xe-HPG、Xe-HPC はその内に、たぶん。
+
+Intel Architecture Day 2021
+
+Presentation Deck: Intel Architecture Day 2021
+
+
+
+Alder Lake
+
+Gracemont (Efficient-core)
+
+Gramont はスループット、マルチスレッドにおけるスケーリング性能を重視して設計された高効率マイクロアーキテクチャ (Atom/Small)。
+前世代の Tremontアーキテクチャ から大きく進化した点には、L1命令キャッシュの倍増 (32KiB -&gt; 64KiB)、実行ポート数が 8ポートから 17ポートに、AVX2 と AVX-VNNI命令への対応等が挙げられる。ロード/ストアユニットも倍に増やされており、L1データキャッシュの帯域も向上していると思われる。
+デコーダーが 3-wide デコードのクラスタを 2基持つという構成は Tremont から引き継がれている。  従来の方法でデコード幅を増やそうとすると、必要なリソース量が指数関数的に増えて効率が悪化するが、デコーダーのクラスタリングを用いることでリソース量は線形となり、効率の低下を防げる。1
+Tremont では。デコーダーのクラスタリングによって発生する負荷分散は分岐予測に依存していたため、分岐の存在しない長いコード (浮動小数点演算等) では片方のデコードクラスタしか使用できず、ボトルネックとなる可能性があった。
+Intel® 64 and IA-32 Architectures Optimization Reference Manual では、次世代の Atomプロセッサではそうしたケースを検出し、ボトルネックを軽減するハードウェアを含む予定だとしている。
+その次世代の Atomプロセッサが Gracemont を指し、かつ実際にそうしたハードウェアが導入されているならば、クラスタリングによるリソース量の節約という恩恵を受けながら、性能と電力効率がさらに向上していることとなる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Alder_Lake, Sapphire_Rapids">
@@ -72,7 +108,7 @@
 Intel が示す <em>Alder Lake</em> の CGイメージでは、<em>1x Golden Cove = 4x Gracemont</em> というサイズで描かれているが、これは <em>Gracemont</em> が小さいというよりは、<em>Golden Cove</em> が巨大なコアであることを示しているような気がしなくもない。<br>
 <em>Golden Cove</em> は AVX512 に対応している。スライド内の CGイメージから、2x FMA (256-bit?) + 1x FMA (512-bit) という構成で、<em>Skylake (Server), Sunny Cove (Server)</em> と同様に、2x FMA (256-bit) を束ねるポートフージョンと FMA (512-bit) 1ポートそれぞれで AVX-512 が処理可能になっていると思われる。<br>
 また、<em>Golden Cove</em> では新たな AVX-512系命令、<code>AVX512_FP16</code> に対応している。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/" title="/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/01/11/intel-spr-avx512_fp16/" title="/posts/2021/01/11/intel-spr-avx512_fp16/">Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth’s Dream</a></span>
 </p>
 <p><em>Sunny Cove (Client)</em> ではポートフージョンには対応せず、FMA (512-bit) で AVX-512 を処理する形を採っていた。<br>
 <em>Golden Cove (Client)</em> も同様の構成を採るかどうかは気になる所だが、それ以前に <em>Golden Cove (Client)</em> を採用する <em>Alder Lake</em> では AVX-512 が有効化されないことが複数のメディア、ライターから語られている。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup><sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup><br>
@@ -81,7 +117,7 @@ Intel のハイブリッドアーキテクチャでは、<em>Lakefield</em> の�
 <li><a href="https://www.anandtech.com/show/16881/a-deep-dive-into-intels-alder-lake-microarchitectures/5" rel="noopener noreferrer" target="_blank" title="https://www.anandtech.com/show/16881/a-deep-dive-into-intels-alder-lake-microarchitectures/5">Instruction Sets: Alder Lake Dumps AVX-512 in a BIG Way - Intel Architecture Day 2021: Alder Lake, Golden Cove, and Gracemont Detailed</a></li>
 </ul>
 <p>以前、Linux Kernel へのあるパッチ内で Intel のソフトウェアエンジニアより、<em>Alder Lake</em> では UEFI/BIOS、またはカーネルパラメーターから一方の CPUタイプを無効化するオプションが提供されることが語られていた。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/04/29/adl-cpu-type/" title="/posts/2021/04/29/adl-cpu-type/">Alder Lake では BIOS から一方の CPUタイプを無効化可能 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/04/29/adl-cpu-type/" title="/posts/2021/04/29/adl-cpu-type/">Alder Lake では BIOS から一方の CPUタイプを無効化可能 | Coelacanth’s Dream</a></span>
 
 その時は Atom (Small) 側の無効化により、AVX-512 命令の対応が有効化されるのではないかと自分は考えたが、その推測は外れてしまった。<br>
 技術的な問題か、それとも性能に関係するマーケティング的な問題か。理由が明かされる望みは薄いが、多くの人が惜しいと思う部分になるのではないだろうか。<br>
@@ -91,80 +127,80 @@ Intel のハイブリッドアーキテクチャでは、<em>Lakefield</em> の�
 それでもやはりスケーリング性能、スケジューリング、Atom (Small) 側の最大動作周波数等が性能に悪影響をもたらす懸念は出てくる。<br>
 その影響がどれ程のものになるかは、実際に <em>Alder Lake</em> が登場してくるまでは分からない。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">uArch</th>
-<th style="text-align:center">Golden Cove</th>
-<th style="text-align:center">Willow Cove</th>
-<th style="text-align:center">Sunny Cove</th>
-<th style="text-align:center">Gracemont</th>
-<th style="text-align:center">Tremont</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">L1 Data size</td>
-<td style="text-align:center">48 KiB<br>/12-way</td>
-<td style="text-align:center">48 KiB<br>/12-way</td>
-<td style="text-align:center">48 KiB<br>/12-way</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-</tr>
-<tr>
-<td style="text-align:left">L1D BW<br>(L: Load, S: Store)</td>
-<td style="text-align:center">256B?<br>(L: 3x32B? or 2x64B?)<br>(S: 2x64B?)</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">192B<br>(L: 2x64B)<br>(S: 1x64B or 2x32B)</td>
-<td style="text-align:center">128B???<br>(L: 2x32B? + S: 2x32B?)</td>
-<td style="text-align:center">64B???<br>(L: 1x32B + S: 1x32B)<br>(L: 2x32B or S: 2x32B)</td>
-</tr>
-<tr>
-<td style="text-align:left">L1 Inst. size</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-<td style="text-align:center">64 KiB<br>/8-way</td>
-<td style="text-align:center">32 KiB<br>/8-way</td>
-</tr>
-<tr>
-<td style="text-align:left">L1I BW</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">32B?<br>(2x 16B)</td>
-<td style="text-align:center">32B<br>(2x 16B)</td>
-</tr>
-<tr>
-<td style="text-align:left">L2 size</td>
-<td style="text-align:center">1.25 MiB/10-way (Client)<br>2 MiB (Data Center)</td>
-<td style="text-align:center">1.25 MiB<br>/20-way</td>
-<td style="text-align:center">512 KiB<br>/8-way</td>
-<td style="text-align:center">2 MiB<br>/16-way<br>(per Module)</td>
-<td style="text-align:center">1.5-4.5 MiB<br>/12-way<br>(per Cluster/Tile)</td>
-</tr>
-<tr>
-<td style="text-align:left">L2 BW Peak/Sustained</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">64B/48B</td>
-<td style="text-align:center">64B/?</td>
-<td></td>
-</tr>
-<tr>
-<td style="text-align:left">L3 size</td>
-<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
-<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
-<td style="text-align:center">2 MiB<br>/12-way</td>
-<td style="text-align:center">12 MiB<br>/12-way<br>(3 MiB per Cluster/Tile)</td>
-<td style="text-align:center">4 MiB<br>/16-way</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">uArch</th>
+          <th style="text-align: center">Golden Cove</th>
+          <th style="text-align: center">Willow Cove</th>
+          <th style="text-align: center">Sunny Cove</th>
+          <th style="text-align: center">Gracemont</th>
+          <th style="text-align: center">Tremont</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">L1 Data size</td>
+          <td style="text-align: center">48 KiB<br>/12-way</td>
+          <td style="text-align: center">48 KiB<br>/12-way</td>
+          <td style="text-align: center">48 KiB<br>/12-way</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L1D BW<br>(L: Load, S: Store)</td>
+          <td style="text-align: center">256B?<br>(L: 3x32B? or 2x64B?)<br>(S: 2x64B?)</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">192B<br>(L: 2x64B)<br>(S: 1x64B or 2x32B)</td>
+          <td style="text-align: center">128B???<br>(L: 2x32B? + S: 2x32B?)</td>
+          <td style="text-align: center">64B???<br>(L: 1x32B + S: 1x32B)<br>(L: 2x32B or S: 2x32B)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L1 Inst. size</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+          <td style="text-align: center">64 KiB<br>/8-way</td>
+          <td style="text-align: center">32 KiB<br>/8-way</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L1I BW</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">32B?<br>(2x 16B)</td>
+          <td style="text-align: center">32B<br>(2x 16B)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L2 size</td>
+          <td style="text-align: center">1.25 MiB/10-way (Client)<br>2 MiB (Data Center)</td>
+          <td style="text-align: center">1.25 MiB<br>/20-way</td>
+          <td style="text-align: center">512 KiB<br>/8-way</td>
+          <td style="text-align: center">2 MiB<br>/16-way<br>(per Module)</td>
+          <td style="text-align: center">1.5-4.5 MiB<br>/12-way<br>(per Cluster/Tile)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L2 BW Peak/Sustained</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">64B/48B</td>
+          <td style="text-align: center">64B/?</td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">L3 size</td>
+          <td style="text-align: center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
+          <td style="text-align: center">12 MiB<br>/12-way<br>(3 MiB per Core)</td>
+          <td style="text-align: center">2 MiB<br>/12-way</td>
+          <td style="text-align: center">12 MiB<br>/12-way<br>(3 MiB per Cluster/Tile)</td>
+          <td style="text-align: center">4 MiB<br>/16-way</td>
+      </tr>
+  </tbody>
 </table>
 <ul>
 <li>表参考リンク
 <ul>
 <li><a href="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html" rel="noopener noreferrer" target="_blank" title="https://software.intel.com/content/www/us/en/develop/download/intel-64-and-ia-32-architectures-optimization-reference-manual.html">Intel® 64 and IA-32 Architectures Optimization Reference Manual</a></li>
-<li>Tremont - <a href="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2" rel="noopener noreferrer" target="_blank" title="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2">Tremont: A Wider Front End and Caches - Intel&rsquo;s new Atom Microarchitecture: The Tremont Core in Lakefield</a></li>
+<li>Tremont - <a href="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2" rel="noopener noreferrer" target="_blank" title="https://www.anandtech.com/show/15009/intels-new-atom-microarchitecture-the-tremont-core/2">Tremont: A Wider Front End and Caches - Intel’s new Atom Microarchitecture: The Tremont Core in Lakefield</a></li>
 <li>Willow Cove/Sunny Cove - <a href="https://www.anandtech.com/show/16084/intel-tiger-lake-review-deep-dive-core-11th-gen/4" rel="noopener noreferrer" target="_blank" title="https://www.anandtech.com/show/16084/intel-tiger-lake-review-deep-dive-core-11th-gen/4">Cache Architecture: The Effect of Increasing L2 and L3 - Intel’s Tiger Lake 11th Gen Core i7-1185G7 Review and Deep Dive: Baskin’ for the Exotic</a></li>
 <li><a href="https://github.com/projectacrn/acrn-hypervisor/commit/918ec7aaf316b49aba5f58ffed6513f84cc1f96f" rel="noopener noreferrer" target="_blank" title="https://github.com/projectacrn/acrn-hypervisor/commit/918ec7aaf316b49aba5f58ffed6513f84cc1f96f">Config_tools: Update board xml for acrn 2.5 · projectacrn/acrn-hypervisor@918ec7a</a>
 <ul>
@@ -199,7 +235,7 @@ Intel のハイブリッドアーキテクチャでは、<em>Lakefield</em> の�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

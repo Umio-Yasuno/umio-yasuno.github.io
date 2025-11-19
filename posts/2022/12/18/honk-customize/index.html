@@ -19,8 +19,18 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="ActivityPub サーバー、honk をカスタマイズしてみる | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="最近の Twitter の情勢を受けて、他の SNS、特に Mastodon サーバーに移行または独自のサーバーを構築する人が増えている。 加えて自分の観測範囲では、以前に紹介した Ted Unangst 氏による Go言">
-  <meta property="og:description" content="最近の Twitter の情勢を受けて、他の SNS、特に Mastodon サーバーに移行または独自のサーバーを構築する人が増えている。 加えて自分の観測範囲では、以前に紹介した Ted Unangst 氏による Go言"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="最近の Twitter の情勢を受けて、他の SNS、特に Mastodon サーバーに移行または独自のサーバーを構築する人が増えている。
+加えて自分の観測範囲では、以前に紹介した Ted Unangst 氏による Go言語製の ActivityPub サーバーの最小実装、honk を構築する人が増えている。1
+honk は省メモリであるため、メモリ 512MB の VPS でも快適に動作する。
+メインでも予備でも、個人で運用可能な ActivityPub サーバーが欲しい人にとって honk は有力な選択肢になると思う。
+また、最小実装ということが手伝い、カスタマイズ、それによる再ビルドと再起動に必要とするコストは小さく、バイナリサイズも自分が運用しているもので 13M と小さい。
+そこで、個人的に honk を運用しながらカスタマイズしていって得た知見を共有することで、誰かの honk を構築し、カスタマイズする切っ掛けになればと思い、この記事を書いている。">
+  <meta property="og:description" content="最近の Twitter の情勢を受けて、他の SNS、特に Mastodon サーバーに移行または独自のサーバーを構築する人が増えている。
+加えて自分の観測範囲では、以前に紹介した Ted Unangst 氏による Go言語製の ActivityPub サーバーの最小実装、honk を構築する人が増えている。1
+honk は省メモリであるため、メモリ 512MB の VPS でも快適に動作する。
+メインでも予備でも、個人で運用可能な ActivityPub サーバーが欲しい人にとって honk は有力な選択肢になると思う。
+また、最小実装ということが手伝い、カスタマイズ、それによる再ビルドと再起動に必要とするコストは小さく、バイナリサイズも自分が運用しているもので 13M と小さい。
+そこで、個人的に honk を運用しながらカスタマイズしていって得た知見を共有することで、誰かの honk を構築し、カスタマイズする切っ掛けになればと思い、この記事を書いている。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Honk">
@@ -137,9 +147,9 @@ hfcs では正規表現を使うことができるが、ユーザーが設定し
 <ul>
 <li><a href="https://github.com/benjojo/honk-benjojo" rel="noopener noreferrer" target="_blank" title="https://github.com/benjojo/honk-benjojo">benjojo/honk-benjojo: The benjojo.co.uk fork of honk</a></li>
 <li><a href="https://github.com/mascaldotfr/honk" rel="noopener noreferrer" target="_blank" title="https://github.com/mascaldotfr/honk">mascaldotfr/honk: customized honk for https://honk.thebus.top</a></li>
-<li><a href="https://github.com/timkuijsten/honk" rel="noopener noreferrer" target="_blank" title="https://github.com/timkuijsten/honk">timkuijsten/honk: Some patches to tedu&rsquo;s honk</a></li>
+<li><a href="https://github.com/timkuijsten/honk" rel="noopener noreferrer" target="_blank" title="https://github.com/timkuijsten/honk">timkuijsten/honk: Some patches to tedu’s honk</a></li>
 <li><a href="https://hg.code.netlandish.com/~petersanchez/honk" rel="noopener noreferrer" target="_blank" title="https://hg.code.netlandish.com/~petersanchez/honk">~petersanchez/honk - netlandish hg</a></li>
-<li><a href="https://github.com/zevweiss/honk" rel="noopener noreferrer" target="_blank" title="https://github.com/zevweiss/honk">zevweiss/honk: Miscellaneous patches for Ted Unangst&rsquo;s honk: https://humungus.tedunangst.com/r/honk &ndash; tweaks branch probably rebased semi-often</a></li>
+<li><a href="https://github.com/zevweiss/honk" rel="noopener noreferrer" target="_blank" title="https://github.com/zevweiss/honk">zevweiss/honk: Miscellaneous patches for Ted Unangst’s honk: https://humungus.tedunangst.com/r/honk – tweaks branch probably rebased semi-often</a></li>
 <li><a href="https://git.icyphox.sh/honk" rel="noopener noreferrer" target="_blank" title="https://git.icyphox.sh/honk">https://git.icyphox.sh/honk</a></li>
 <li><a href="https://git.jxs.me/statianzo/honk" rel="noopener noreferrer" target="_blank" title="https://git.jxs.me/statianzo/honk">statianzo/honk: fork of honk - honk - Gitodome</a></li>
 <li><a href="https://hg.code.netlandish.com/~petersanchez/honk" rel="noopener noreferrer" target="_blank" title="https://hg.code.netlandish.com/~petersanchez/honk">~petersanchez/honk - netlandish hg</a></li>
@@ -184,7 +194,7 @@ hfcs では正規表現を使うことができるが、ユーザーが設定し
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.coelacanth-dream.com/posts/2022/06/19/honk/" title="/posts/2022/06/19/honk/">Go言語製 ActivityPub サーバーの最小実装 honk を立ててみた | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2022/06/19/honk/" title="/posts/2022/06/19/honk/">Go言語製 ActivityPub サーバーの最小実装 honk を立ててみた | Coelacanth’s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
 <p><a href="https://pkg.go.dev/html/template" rel="noopener noreferrer" target="_blank" title="https://pkg.go.dev/html/template">template package - html/template - Go Packages</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
@@ -217,7 +227,7 @@ hfcs では正規表現を使うことができるが、ユーザーが設定し
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

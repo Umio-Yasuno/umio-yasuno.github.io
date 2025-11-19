@@ -19,8 +19,16 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="RDNA 3/GFX11 Phoenix APU は AMDGPU_FAMILY_GC_11_0_1 に | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="以前に RDNA 3/GFX11 Phoenix APU 1 で採用されるディスプレイエンジン DCN (Display Core Next) 3.1.4 のサポートを AMDGPUドライバーに追加するパッチを取り上げた。 RDNA 3/GFX11 APU に採用される DCN 3.1.4 | Coelacanth&rsquo;s Dream その際、そ">
-  <meta property="og:description" content="以前に RDNA 3/GFX11 Phoenix APU 1 で採用されるディスプレイエンジン DCN (Display Core Next) 3.1.4 のサポートを AMDGPUドライバーに追加するパッチを取り上げた。 RDNA 3/GFX11 APU に採用される DCN 3.1.4 | Coelacanth&rsquo;s Dream その際、そ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="以前に RDNA 3/GFX11 Phoenix APU 1 で採用されるディスプレイエンジン DCN (Display Core Next) 3.1.4 のサポートを AMDGPUドライバーに追加するパッチを取り上げた。
+RDNA 3/GFX11 APU に採用される DCN 3.1.4 | Coelacanth’s Dream
+
+その際、それらに関連付けられている AMDGPU_FAMILY が AMDGPU_FAMILY_GC_11_0_2 となっており、RDNA 3/GFX11 APU は GC (Graphics Compute) IP のバージョンが GC 11.0.1 であるため、少しややこしいということを書いた。
+それがやはりミスだったようで、AMD の Yifan Zhang 氏により、AMDGPU_FAMILY_GC_11_0_2 を AMDGPU_FAMILY_GC_11_0_1 に置き換えるパッチが投稿され、修正された。">
+  <meta property="og:description" content="以前に RDNA 3/GFX11 Phoenix APU 1 で採用されるディスプレイエンジン DCN (Display Core Next) 3.1.4 のサポートを AMDGPUドライバーに追加するパッチを取り上げた。
+RDNA 3/GFX11 APU に採用される DCN 3.1.4 | Coelacanth’s Dream
+
+その際、それらに関連付けられている AMDGPU_FAMILY が AMDGPU_FAMILY_GC_11_0_2 となっており、RDNA 3/GFX11 APU は GC (Graphics Compute) IP のバージョンが GC 11.0.1 であるため、少しややこしいということを書いた。
+それがやはりミスだったようで、AMD の Yifan Zhang 氏により、AMDGPU_FAMILY_GC_11_0_2 を AMDGPU_FAMILY_GC_11_0_1 に置き換えるパッチが投稿され、修正された。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GFX11, RDNA_3, Linux_Kernel, Phoenix">
@@ -43,7 +51,7 @@
     <time datetime="2022-08-05T10:59:41+09:00">Post: 2022-08-05 10:59:41</time>
     <aside class="update">Update: 2022-11-17 11:52:11</aside>
   </aside><p>以前に <em>RDNA 3/GFX11 Phoenix APU</em> <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> で採用されるディスプレイエンジン <em>DCN (Display Core Next) 3.1.4</em> のサポートを AMDGPUドライバーに追加するパッチを取り上げた。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/07/09/dcn3_1_4-apu/" title="/posts/2022/07/09/dcn3_1_4-apu/">RDNA 3/GFX11 APU に採用される DCN 3.1.4 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/07/09/dcn3_1_4-apu/" title="/posts/2022/07/09/dcn3_1_4-apu/">RDNA 3/GFX11 APU に採用される DCN 3.1.4 | Coelacanth’s Dream</a></span>
 
 その際、それらに関連付けられている <code>AMDGPU_FAMILY</code> が <code>AMDGPU_FAMILY_GC_11_0_2</code> となっており、<em>RDNA 3/GFX11 APU</em> は <em>GC (Graphics Compute) IP</em> のバージョンが <em>GC 11.0.1</em> であるため、少しややこしいということを書いた。<br>
 それがやはりミスだったようで、AMD の Yifan Zhang 氏により、<code>AMDGPU_FAMILY_GC_11_0_2</code> を <code>AMDGPU_FAMILY_GC_11_0_1</code> に置き換えるパッチが投稿され、修正された。</p>
@@ -54,40 +62,40 @@
 自分も以前の記事で <em>GC IP</em> と <em>GFXID</em>、<em>AMDGPU_FAMILY</em> の対応表を掲載したが、最初のリビジョンで <em>Navi32 (gfx1101)</em> と <em>Navi33 (gfx1102)</em> を取り違えていた。<br>
 以下は訂正版。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">GC (Graphics Compute) IP ver</th>
-<th style="text-align:center">GFX ID</th>
-<th style="text-align:center">AMDGPU_FAMILY</th>
-<th style="text-align:center">Type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">11.0.0</td>
-<td style="text-align:center">gfx1100 (Navi31)<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
-<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
-<td style="text-align:center">dGPU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.1</td>
-<td style="text-align:center">gfx1103</td>
-<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)</td>
-<td style="text-align:center">APU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.2</td>
-<td style="text-align:center">gfx1102 (Navi33)</td>
-<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
-<td style="text-align:center">dGPU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.3?</td>
-<td style="text-align:center">gfx1101 (Navi32)?</td>
-<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)?</td>
-<td style="text-align:center">dGPU?</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">GC (Graphics Compute) IP ver</th>
+          <th style="text-align: center">GFX ID</th>
+          <th style="text-align: center">AMDGPU_FAMILY</th>
+          <th style="text-align: center">Type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">11.0.0</td>
+          <td style="text-align: center">gfx1100 (Navi31)<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></td>
+          <td style="text-align: center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
+          <td style="text-align: center">dGPU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.1</td>
+          <td style="text-align: center">gfx1103</td>
+          <td style="text-align: center">AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)</td>
+          <td style="text-align: center">APU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.2</td>
+          <td style="text-align: center">gfx1102 (Navi33)</td>
+          <td style="text-align: center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
+          <td style="text-align: center">dGPU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.3?</td>
+          <td style="text-align: center">gfx1101 (Navi32)?</td>
+          <td style="text-align: center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)?</td>
+          <td style="text-align: center">dGPU?</td>
+      </tr>
+  </tbody>
 </table>
 <blockquote>
 <pre><code> -  'gfx1010':'navi10', 'gfx1011':'navi12', 'gfx1012':'navi14', 'gfx1030':'navi21'
@@ -175,7 +183,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

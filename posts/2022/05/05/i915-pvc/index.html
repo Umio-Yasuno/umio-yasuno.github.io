@@ -19,8 +19,18 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel GFX ドライバーに Ponte Vecchio をサポートするパッチが投稿される | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Intel の Matt Roper 氏より、Linux Kernel における Intel GPU/GFX ドライバー、i915 に Ponte Vecchio GPU を初期サポートを追加するパッチが投稿されている。 [Intel-gfx] [PATCH 00/11] i915: Introduce Ponte Vecchio [Intel-gfx] [PATCH v2 00/12] i915: Introduce Ponte Vecchio パッチ内のコメ">
-  <meta property="og:description" content="Intel の Matt Roper 氏より、Linux Kernel における Intel GPU/GFX ドライバー、i915 に Ponte Vecchio GPU を初期サポートを追加するパッチが投稿されている。 [Intel-gfx] [PATCH 00/11] i915: Introduce Ponte Vecchio [Intel-gfx] [PATCH v2 00/12] i915: Introduce Ponte Vecchio パッチ内のコメ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Intel の Matt Roper 氏より、Linux Kernel における Intel GPU/GFX ドライバー、i915 に Ponte Vecchio GPU を初期サポートを追加するパッチが投稿されている。
+
+[Intel-gfx] [PATCH 00/11] i915: Introduce Ponte Vecchio
+[Intel-gfx] [PATCH v2 00/12] i915: Introduce Ponte Vecchio
+
+パッチ内のコメントで Matt Roper 氏は、Ponte Vecchio は Xe-HPC アーキテクチャ に基づいたコンピューティング向け GPU であり、コンピューティングエンジンと拡張されたコピーエンジン (BCS, blitting {copy} engine) を備えるが、ジオメトリパイプラインを含むレンダーエンジンは持たず、またディスプレイ出力機能も持たない、コンピューティング向けプラットフォームだと説明している。">
+  <meta property="og:description" content="Intel の Matt Roper 氏より、Linux Kernel における Intel GPU/GFX ドライバー、i915 に Ponte Vecchio GPU を初期サポートを追加するパッチが投稿されている。
+
+[Intel-gfx] [PATCH 00/11] i915: Introduce Ponte Vecchio
+[Intel-gfx] [PATCH v2 00/12] i915: Introduce Ponte Vecchio
+
+パッチ内のコメントで Matt Roper 氏は、Ponte Vecchio は Xe-HPC アーキテクチャ に基づいたコンピューティング向け GPU であり、コンピューティングエンジンと拡張されたコピーエンジン (BCS, blitting {copy} engine) を備えるが、ジオメトリパイプラインを含むレンダーエンジンは持たず、またディスプレイ出力機能も持たない、コンピューティング向けプラットフォームだと説明している。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Linux_Kernel, Xe-HPC">
@@ -101,65 +111,65 @@ Graphics IP と Media IP のバージョンについては、世代を表す基�
 
 </blockquote>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Intel GPU / (ver.release_ver)</th>
-<th style="text-align:center">Graphics IP ver</th>
-<th style="text-align:center">Display IP ver</th>
-<th style="text-align:center">Media IP ver</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Tiger Lake,<br>Rocket Lake?</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen12</td>
-</tr>
-<tr>
-<td style="text-align:left">DG1</td>
-<td style="text-align:center">Gen12.1</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen12</td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-S</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen12.2</td>
-</tr>
-<tr>
-<td style="text-align:left">Alder Lake-P</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd" rel="noopener noreferrer" target="_blank" title="/tags/xe_lpd">XE_LPD</a>)</td>
-<td style="text-align:center">Gen12.2</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
-<td style="text-align:center">Gen12.5</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">Gen12.5</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></td>
-<td style="text-align:center">Gen12.55</td>
-<td style="text-align:center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd" rel="noopener noreferrer" target="_blank" title="/tags/xe_lpd">XE_LPD</a>)</td>
-<td style="text-align:center">Gen12.55</td>
-</tr>
-<tr>
-<td style="text-align:left"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></td>
-<td style="text-align:center">Gen12.6</td>
-<td style="text-align:center">-</td>
-<td style="text-align:center">Gen12.6</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Intel GPU / (ver.release_ver)</th>
+          <th style="text-align: center">Graphics IP ver</th>
+          <th style="text-align: center">Display IP ver</th>
+          <th style="text-align: center">Media IP ver</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Tiger Lake,<br>Rocket Lake?</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen12</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">DG1</td>
+          <td style="text-align: center">Gen12.1</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen12</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-S</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen12.2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Alder Lake-P</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd" rel="noopener noreferrer" target="_blank" title="/tags/xe_lpd">XE_LPD</a>)</td>
+          <td style="text-align: center">Gen12.2</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HP</span></td>
+          <td style="text-align: center">Gen12.5</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">Gen12.5</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></td>
+          <td style="text-align: center">Gen12.55</td>
+          <td style="text-align: center">Gen13<br>(<a href="https://www.coelacanth-dream.com/tags/xe_lpd" rel="noopener noreferrer" target="_blank" title="/tags/xe_lpd">XE_LPD</a>)</td>
+          <td style="text-align: center">Gen12.55</td>
+      </tr>
+      <tr>
+          <td style="text-align: left"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></td>
+          <td style="text-align: center">Gen12.6</td>
+          <td style="text-align: center">-</td>
+          <td style="text-align: center">Gen12.6</td>
+      </tr>
+  </tbody>
 </table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
 <li><a href="https://01.org/linuxgraphics/gfx-docs/drm/gpu/i915.html" rel="noopener noreferrer" target="_blank" title="https://01.org/linuxgraphics/gfx-docs/drm/gpu/i915.html">drm/i915 Intel GFX Driver — The Linux Kernel documentation</a></li>
-<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-July/270870.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/intel-gfx/2021-July/270870.html">[Intel-gfx] [PATCH 01/53] drm/i915: Add &ldquo;release id&rdquo; version</a></li>
-<li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol10-copyengine.pdf" rel="noopener noreferrer" target="_blank" title="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol10-copyengine.pdf">Intel® Iris® Xe MAX Graphics Open Source Programmer&rsquo;s Reference Manual For the 2020 Discrete GPU formerly named &ldquo;DG1&rdquo; Volume 10: Copy Engine - intel-gfx-prm-osrc-dg1-vol10-copyengine.pdf</a></li>
+<li><a href="https://lists.freedesktop.org/archives/intel-gfx/2021-July/270870.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/intel-gfx/2021-July/270870.html">[Intel-gfx] [PATCH 01/53] drm/i915: Add “release id” version</a></li>
+<li><a href="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol10-copyengine.pdf" rel="noopener noreferrer" target="_blank" title="https://01.org/sites/default/files/documentation/intel-gfx-prm-osrc-dg1-vol10-copyengine.pdf">Intel® Iris® Xe MAX Graphics Open Source Programmer’s Reference Manual For the 2020 Discrete GPU formerly named “DG1” Volume 10: Copy Engine - intel-gfx-prm-osrc-dg1-vol10-copyengine.pdf</a></li>
 </ul>
 </section>
 
@@ -185,7 +195,7 @@ Graphics IP と Media IP のバージョンについては、世代を表す基�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

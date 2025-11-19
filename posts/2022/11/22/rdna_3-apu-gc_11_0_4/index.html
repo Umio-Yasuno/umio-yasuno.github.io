@@ -19,8 +19,124 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="もう 1つの RDNA 3 APU IP、GC 11.0.4 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD の Yifan Zhang 氏により、Linux Kernel における AMDGPU ドライバーに GC 11.0.1 (gfx1103, Phoenix APU) に続く RDNA 3 APU IP、GC 11.0.4 のサポートを追加するパッチが投稿されている。 [PATCH 01/19] drm/amdgpu/discovery: enable soc21 common for GC 11.0.4 case IP_VERSION(11, 0, 1): &#43; case">
-  <meta property="og:description" content="AMD の Yifan Zhang 氏により、Linux Kernel における AMDGPU ドライバーに GC 11.0.1 (gfx1103, Phoenix APU) に続く RDNA 3 APU IP、GC 11.0.4 のサポートを追加するパッチが投稿されている。 [PATCH 01/19] drm/amdgpu/discovery: enable soc21 common for GC 11.0.4 case IP_VERSION(11, 0, 1): &#43; case"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD の Yifan Zhang 氏により、Linux Kernel における AMDGPU ドライバーに GC 11.0.1 (gfx1103, Phoenix APU) に続く RDNA 3 APU IP、GC 11.0.4 のサポートを追加するパッチが投稿されている。
+
+[PATCH 01/19] drm/amdgpu/discovery: enable soc21 common for GC 11.0.4
+
+
+     	case IP_VERSION(11, 0, 1):
+    &#43;	case IP_VERSION(11, 0, 4):
+     		adev-&gt;flags |= AMD_IS_APU;
+     		break;
+
+引用元:[PATCH 07/19] drm/amdgpu/discovery: set the APU flag for GC 11.0.4
+
+
+
+
+  
+      
+          GC (Graphics Compute) IP ver
+          GFX ID
+          AMDGPU_FAMILY
+          Type
+      
+  
+  
+      
+          11.0.0
+          gfx1100 (Navi31)1
+          AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)
+          dGPU
+      
+      
+          11.0.1
+          gfx1103 (Phoenix)
+          AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)
+          APU
+      
+      
+          11.0.2
+          gfx1102 (Navi33)
+          AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)
+          dGPU
+      
+      
+          11.0.3?
+          gfx1101 (Navi32)?
+          AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)?
+          dGPU
+      
+      
+          11.0.4
+          gfx1103?
+          AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)
+          APU
+      
+  
+
+GC 11.0.4 は現時点では基本 GC 11.0.1 と共通したコードパスを用いており、AMDGPUファミリーには AMDGPU_FAMILY_GC_11_0_1、GPU ID には gfx1103 が設定されている。
+補足すると、GPU ID は主にコンパイラやライブラリが機能の有無等を判定するために用いられるため、複数の AMD GPU に同じ GPU ID が割り当てられることもあれば、必要に応じて別の GPU ID が割り当てられることもある。
+同時に SMU IP v13.0.11 と PSP IP v13.0.11 をサポートするパッチも投稿されているが、異なるのはレジスタのオフセット値などで、他 IP バージョンとの機能的な違いは今の所見られない。">
+  <meta property="og:description" content="AMD の Yifan Zhang 氏により、Linux Kernel における AMDGPU ドライバーに GC 11.0.1 (gfx1103, Phoenix APU) に続く RDNA 3 APU IP、GC 11.0.4 のサポートを追加するパッチが投稿されている。
+
+[PATCH 01/19] drm/amdgpu/discovery: enable soc21 common for GC 11.0.4
+
+
+     	case IP_VERSION(11, 0, 1):
+    &#43;	case IP_VERSION(11, 0, 4):
+     		adev-&gt;flags |= AMD_IS_APU;
+     		break;
+
+引用元:[PATCH 07/19] drm/amdgpu/discovery: set the APU flag for GC 11.0.4
+
+
+
+
+  
+      
+          GC (Graphics Compute) IP ver
+          GFX ID
+          AMDGPU_FAMILY
+          Type
+      
+  
+  
+      
+          11.0.0
+          gfx1100 (Navi31)1
+          AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)
+          dGPU
+      
+      
+          11.0.1
+          gfx1103 (Phoenix)
+          AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)
+          APU
+      
+      
+          11.0.2
+          gfx1102 (Navi33)
+          AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)
+          dGPU
+      
+      
+          11.0.3?
+          gfx1101 (Navi32)?
+          AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)?
+          dGPU
+      
+      
+          11.0.4
+          gfx1103?
+          AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)
+          APU
+      
+  
+
+GC 11.0.4 は現時点では基本 GC 11.0.1 と共通したコードパスを用いており、AMDGPUファミリーには AMDGPU_FAMILY_GC_11_0_1、GPU ID には gfx1103 が設定されている。
+補足すると、GPU ID は主にコンパイラやライブラリが機能の有無等を判定するために用いられるため、複数の AMD GPU に同じ GPU ID が割り当てられることもあれば、必要に応じて別の GPU ID が割り当てられることもある。
+同時に SMU IP v13.0.11 と PSP IP v13.0.11 をサポートするパッチも投稿されているが、異なるのはレジスタのオフセット値などで、他 IP バージョンとの機能的な違いは今の所見られない。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GFX11, RDNA_3, Phoenix">
@@ -57,46 +173,46 @@
 
 </blockquote>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">GC (Graphics Compute) IP ver</th>
-<th style="text-align:center">GFX ID</th>
-<th style="text-align:center">AMDGPU_FAMILY</th>
-<th style="text-align:center">Type</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">11.0.0</td>
-<td style="text-align:center">gfx1100 (Navi31)<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></td>
-<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
-<td style="text-align:center">dGPU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.1</td>
-<td style="text-align:center">gfx1103 (Phoenix)</td>
-<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)</td>
-<td style="text-align:center">APU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.2</td>
-<td style="text-align:center">gfx1102 (Navi33)</td>
-<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
-<td style="text-align:center">dGPU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.3?</td>
-<td style="text-align:center">gfx1101 (Navi32)?</td>
-<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)?</td>
-<td style="text-align:center">dGPU</td>
-</tr>
-<tr>
-<td style="text-align:left">11.0.4</td>
-<td style="text-align:center">gfx1103?</td>
-<td style="text-align:center">AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)</td>
-<td style="text-align:center">APU</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">GC (Graphics Compute) IP ver</th>
+          <th style="text-align: center">GFX ID</th>
+          <th style="text-align: center">AMDGPU_FAMILY</th>
+          <th style="text-align: center">Type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">11.0.0</td>
+          <td style="text-align: center">gfx1100 (Navi31)<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></td>
+          <td style="text-align: center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
+          <td style="text-align: center">dGPU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.1</td>
+          <td style="text-align: center">gfx1103 (Phoenix)</td>
+          <td style="text-align: center">AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)</td>
+          <td style="text-align: center">APU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.2</td>
+          <td style="text-align: center">gfx1102 (Navi33)</td>
+          <td style="text-align: center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)</td>
+          <td style="text-align: center">dGPU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.3?</td>
+          <td style="text-align: center">gfx1101 (Navi32)?</td>
+          <td style="text-align: center">AMDGPU_FAMILY_GC_11_0_0 (FAMILY_GFX1100)?</td>
+          <td style="text-align: center">dGPU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">11.0.4</td>
+          <td style="text-align: center">gfx1103?</td>
+          <td style="text-align: center">AMDGPU_FAMILY_GC_11_0_1 (FAMILY_GFX1103)</td>
+          <td style="text-align: center">APU</td>
+      </tr>
+  </tbody>
 </table>
 <p><em>GC 11.0.4</em> は現時点では基本 <em>GC 11.0.1</em> と共通したコードパスを用いており、AMDGPUファミリーには <code>AMDGPU_FAMILY_GC_11_0_1</code>、GPU ID には <em>gfx1103</em> が設定されている。<br>
 補足すると、GPU ID は主にコンパイラやライブラリが機能の有無等を判定するために用いられるため、複数の AMD GPU に同じ GPU ID が割り当てられることもあれば、必要に応じて別の GPU ID が割り当てられることもある。<br>
@@ -129,8 +245,8 @@
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985" rel="noopener noreferrer" target="_blank" title="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985">Announcing New Model Numbers for 2023+ Mobile Proc&hellip; - AMD Community</a></li>
-<li><a href="https://www.pcworld.com/article/697301/amd-announces-2023-extreme-gaming-laptop-cpu-dragon-range.html" rel="noopener noreferrer" target="_blank" title="https://www.pcworld.com/article/697301/amd-announces-2023-extreme-gaming-laptop-cpu-dragon-range.html">AMD announces 2023 &rsquo;extreme gaming laptop CPU,&rsquo; Dragon Range | PCWorld</a></li>
+<li><a href="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985" rel="noopener noreferrer" target="_blank" title="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985">Announcing New Model Numbers for 2023+ Mobile Proc… - AMD Community</a></li>
+<li><a href="https://www.pcworld.com/article/697301/amd-announces-2023-extreme-gaming-laptop-cpu-dragon-range.html" rel="noopener noreferrer" target="_blank" title="https://www.pcworld.com/article/697301/amd-announces-2023-extreme-gaming-laptop-cpu-dragon-range.html">AMD announces 2023 ’extreme gaming laptop CPU,’ Dragon Range | PCWorld</a></li>
 </ul>
 </section>
 
@@ -141,7 +257,7 @@
 <p><a href="https://github.com/ROCmSoftwarePlatform/Tensile/pull/1521/commits/3796d41aec358721fced1ed4337c27f69aeda3bb" rel="noopener noreferrer" target="_blank" title="https://github.com/ROCmSoftwarePlatform/Tensile/pull/1521/commits/3796d41aec358721fced1ed4337c27f69aeda3bb">Support Tensile for gfx11 series platform by TonyYHsieh · Pull Request #1521 · ROCmSoftwarePlatform/Tensile</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985" rel="noopener noreferrer" target="_blank" title="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985">Announcing New Model Numbers for 2023+ Mobile Proc&hellip; - AMD Community</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985" rel="noopener noreferrer" target="_blank" title="https://community.amd.com/t5/corporate/announcing-new-model-numbers-for-2023-mobile-processors/ba-p/543985">Announcing New Model Numbers for 2023+ Mobile Proc… - AMD Community</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
@@ -156,7 +272,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

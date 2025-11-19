@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Smart Access Memory への最適化は本当に逆効果だったのかを確かめる　【追記】RADVに最適化が適用されてなかったため加筆修正 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="RDNA 2/GFX10.3 GPU、RX 6800 Series と共に発表された新機能 Smart Access Memory (以下 SAM) だが、Windows でのサポートに合わせてか、最近になって Linux ドライバーでも最適化、サポートの強化が行なわ">
-  <meta property="og:description" content="RDNA 2/GFX10.3 GPU、RX 6800 Series と共に発表された新機能 Smart Access Memory (以下 SAM) だが、Windows でのサポートに合わせてか、最近になって Linux ドライバーでも最適化、サポートの強化が行なわ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="RDNA 2/GFX10.3 GPU、RX 6800 Series と共に発表された新機能 Smart Access Memory (以下 SAM) だが、Windows でのサポートに合わせてか、最近になって Linux ドライバーでも最適化、サポートの強化が行なわれている。
+2020/12/07 には、RadeonSI (OpenGL) 、RADV (Vulkan) ドライバーに、SAM が有効な場合は VRAMドメインを変更する、バッファを確保する処理を一部変更するといった最適化を目的としたパッチが投稿された。1">
+  <meta property="og:description" content="RDNA 2/GFX10.3 GPU、RX 6800 Series と共に発表された新機能 Smart Access Memory (以下 SAM) だが、Windows でのサポートに合わせてか、最近になって Linux ドライバーでも最適化、サポートの強化が行なわれている。
+2020/12/07 には、RadeonSI (OpenGL) 、RADV (Vulkan) ドライバーに、SAM が有効な場合は VRAMドメインを変更する、バッファを確保する処理を一部変更するといった最適化を目的としたパッチが投稿された。1"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Smart_Access_Memory, RadeonSI, RADV">
@@ -64,61 +66,61 @@
 <h2 id="env">環境<a href="#env" class="head-cur-link" aria-hidden></a>
 </h2>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Hardware/Software</th>
-<th style="text-align:center">desc</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">CPU</td>
-<td style="text-align:center">AMD Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
-</tr>
-<tr>
-<td style="text-align:left">M/B</td>
-<td style="text-align:center">GIGABYTE GA-A320-HD2 (rev 1.0)</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory</td>
-<td style="text-align:center">DDR4-3200 16GB</td>
-</tr>
-<tr>
-<td style="text-align:left">GPU</td>
-<td style="text-align:center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 7Gbps<br>PCIe Gen3 x8)</td>
-</tr>
-<tr>
-<td style="text-align:left">Linux Kernel</td>
-<td style="text-align:center">5.10.4</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Hardware/Software</th>
+          <th style="text-align: center">desc</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">CPU</td>
+          <td style="text-align: center">AMD Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">M/B</td>
+          <td style="text-align: center">GIGABYTE GA-A320-HD2 (rev 1.0)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory</td>
+          <td style="text-align: center">DDR4-3200 16GB</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GPU</td>
+          <td style="text-align: center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 7Gbps<br>PCIe Gen3 x8)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Linux Kernel</td>
+          <td style="text-align: center">5.10.4</td>
+      </tr>
+  </tbody>
 </table>
 <p>環境は普段とほとんど変わらない。<br>
 Linux Kernel を v5.10.4 にアップデートした点と、メモリ速度が DDR4-2933 から DDR4-3200 に向上している点は異なる。<br>
 メモリを買い替えた訳ではなく、メモリ電圧を 1.35Vに設定したら意外にも 3200MHz で動作しちゃったため。メモリタイミング等の設定は Auto のままで一切弄っていない。見る人によっては怒りそうな設定かもしれない。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">User Mode Driver</th>
-<th style="text-align:center">Mesa3D</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Previous Version</td>
-<td style="text-align:center">Mesa 21.0.0-devel<br>(<a href="https://gitlab.freedesktop.org/mesa/mesa/-/commits/b02e15d1a3" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commits/b02e15d1a3">git-b02e15d1a3</a>)<br>(Build: 2020/12/02)</td>
-</tr>
-<tr>
-<td style="text-align:left">Recent Version</td>
-<td style="text-align:center">Mesa 21.0.0-devel<br>(<a href="https://gitlab.freedesktop.org/mesa/mesa/-/commits/9ef2c44ce6" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commits/9ef2c44ce6">git-9ef2c44ce6</a>)<br>(Build: 2021/01/02)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">User Mode Driver</th>
+          <th style="text-align: center">Mesa3D</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Previous Version</td>
+          <td style="text-align: center">Mesa 21.0.0-devel<br>(<a href="https://gitlab.freedesktop.org/mesa/mesa/-/commits/b02e15d1a3" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commits/b02e15d1a3">git-b02e15d1a3</a>)<br>(Build: 2020/12/02)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Recent Version</td>
+          <td style="text-align: center">Mesa 21.0.0-devel<br>(<a href="https://gitlab.freedesktop.org/mesa/mesa/-/commits/9ef2c44ce6" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/commits/9ef2c44ce6">git-9ef2c44ce6</a>)<br>(Build: 2021/01/02)</td>
+      </tr>
+  </tbody>
 </table>
 <p>UMD (User Mode Driver) だが、<em>SAM</em> への最適化が組み込まれていない以前のバージョンと、組み込まれている最近のバージョンの 2つで検証を行なった。<br>
 また、最近のバージョンでは <em>SAM</em> の有効無効 2つに分けても検証している。</p>
 <p>ドライバーの切り替えについては、レポジトリからインストールするのではなく、独自にビルドし、複数バージョンをインストールする方法であれば、<code>LIBGL_DRIVERS_PATH</code> 、 <code>VK_ICD_FILENAMES</code> といった環境変数を変更するだけで切り替えられる。<br>
 Mesa3D のビルド方法、インストール方法については約1年前に書いたのがあるため、そちらを参考にしてほしい。近い内に加筆修正するかも。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/" title="/posts/2019/12/04/how-to-build-mesa-for-radeon/">Radeon向けMesaビルド方法　―― RadeonSI, RADV | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/" title="/posts/2019/12/04/how-to-build-mesa-for-radeon/">Radeon向けMesaビルド方法　―― RadeonSI, RADV | Coelacanth’s Dream</a></span>
 </p>
 <h2 id="how">計測方法<a href="#how" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -146,52 +148,52 @@ vkmark は 1920x1080 の解像度設定で実行している。</p>
 <h2 id="result">結果<a href="#result" class="head-cur-link" aria-hidden></a>
 </h2>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">SAM</th>
-<th style="text-align:center">Prev ver<br>(SAM ON)</th>
-<th style="text-align:center">Recent ver<br>(SAM ON)</th>
-<th style="text-align:center">Recent ver<br>(SAM OFF)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">glxgears (FPS)</td>
-<td style="text-align:center">14353.595<br>(100%)</td>
-<td style="text-align:center">12140.448<br>(84.5%)</td>
-<td style="text-align:center">14296.476<br>(99.6%)</td>
-</tr>
-<tr>
-<td style="text-align:left">waifu2x-ncnn-vulkan (real sec)<br>(model: cunet)</td>
-<td style="text-align:center">26.73s<br>(100%)</td>
-<td style="text-align:center">26.69s<br>(100.1%)</td>
-<td style="text-align:center">26.70s<br>(100.1%)</td>
-</tr>
-<tr>
-<td style="text-align:left">waifu2x-ncnn-vulkan (real sec)<br>(model: upconv_7_anime_style_art_rgb)</td>
-<td style="text-align:center">10.71s<br>(100%)</td>
-<td style="text-align:center">10.70s<br>(100.1%)</td>
-<td style="text-align:center">10.70s<br>(100.1%)</td>
-</tr>
-<tr>
-<td style="text-align:left">vkfft (score)</td>
-<td style="text-align:center">4204<br>(100%)</td>
-<td style="text-align:center">4207<br>(100.1%)</td>
-<td style="text-align:center">4237<br>(100.7%)</td>
-</tr>
-<tr>
-<td style="text-align:left">vkmark (score)<br>(1920x1080)</td>
-<td style="text-align:center">4531<br>(100%)</td>
-<td style="text-align:center">4534<br>(100.1%)</td>
-<td style="text-align:center">4511<br>(100.4%)</td>
-</tr>
-<tr>
-<td style="text-align:left">Basemark GPU Vulkan (score)<br>(Medium, 1920x1080)</td>
-<td style="text-align:center">23568<br>(100%)</td>
-<td style="text-align:center">23797<br>(101.0%)</td>
-<td style="text-align:center">23651<br>(100.3%)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">SAM</th>
+          <th style="text-align: center">Prev ver<br>(SAM ON)</th>
+          <th style="text-align: center">Recent ver<br>(SAM ON)</th>
+          <th style="text-align: center">Recent ver<br>(SAM OFF)</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">glxgears (FPS)</td>
+          <td style="text-align: center">14353.595<br>(100%)</td>
+          <td style="text-align: center">12140.448<br>(84.5%)</td>
+          <td style="text-align: center">14296.476<br>(99.6%)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">waifu2x-ncnn-vulkan (real sec)<br>(model: cunet)</td>
+          <td style="text-align: center">26.73s<br>(100%)</td>
+          <td style="text-align: center">26.69s<br>(100.1%)</td>
+          <td style="text-align: center">26.70s<br>(100.1%)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">waifu2x-ncnn-vulkan (real sec)<br>(model: upconv_7_anime_style_art_rgb)</td>
+          <td style="text-align: center">10.71s<br>(100%)</td>
+          <td style="text-align: center">10.70s<br>(100.1%)</td>
+          <td style="text-align: center">10.70s<br>(100.1%)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">vkfft (score)</td>
+          <td style="text-align: center">4204<br>(100%)</td>
+          <td style="text-align: center">4207<br>(100.1%)</td>
+          <td style="text-align: center">4237<br>(100.7%)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">vkmark (score)<br>(1920x1080)</td>
+          <td style="text-align: center">4531<br>(100%)</td>
+          <td style="text-align: center">4534<br>(100.1%)</td>
+          <td style="text-align: center">4511<br>(100.4%)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Basemark GPU Vulkan (score)<br>(Medium, 1920x1080)</td>
+          <td style="text-align: center">23568<br>(100%)</td>
+          <td style="text-align: center">23797<br>(101.0%)</td>
+          <td style="text-align: center">23651<br>(100.3%)</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="consider">考察<a href="#consider" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -234,40 +236,40 @@ GPU性能に余裕があれば CPU によらず効果を発揮する余地があ
 <p>検証のほとんどに Vulkan アプリケーションを用いながら、ドライバー側に適用されているかの確認を怠っていたこと、申し訳ありませんでした。</p>
 <p>RADVドライバーでは、環境変数 <code>RADV_PERFTEST=nosam</code> で <em>SAM</em> への最適化を無効化できるようにされており、最適化の有無を切り換えて再度検証を行ないました。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">SAM</th>
-<th style="text-align:center">Optimization</th>
-<th style="text-align:center">No Optimization</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">waifu2x-ncnn-vulkan (real sec)<br>(Model: cunet)</td>
-<td style="text-align:center">26.68s</td>
-<td style="text-align:center">26.69s</td>
-</tr>
-<tr>
-<td style="text-align:left">waifu2x-ncnn-vulkan (real sec)<br>(Model: upconv_7_anime_style_art_rgb)</td>
-<td style="text-align:center">10.68s</td>
-<td style="text-align:center">10.69s</td>
-</tr>
-<tr>
-<td style="text-align:left">vkfft (score)</td>
-<td style="text-align:center">4229</td>
-<td style="text-align:center">4232</td>
-</tr>
-<tr>
-<td style="text-align:left">vkmark (score)<br>(1920x1080)</td>
-<td style="text-align:center">4605<br>(101.4%)</td>
-<td style="text-align:center">4540<br>(100%)</td>
-</tr>
-<tr>
-<td style="text-align:left">Basemark GPU (score)<br>(Medium, 1920x1080)</td>
-<td style="text-align:center">23970<br>(100.7%)</td>
-<td style="text-align:center">23802<br>(100%)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">SAM</th>
+          <th style="text-align: center">Optimization</th>
+          <th style="text-align: center">No Optimization</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">waifu2x-ncnn-vulkan (real sec)<br>(Model: cunet)</td>
+          <td style="text-align: center">26.68s</td>
+          <td style="text-align: center">26.69s</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">waifu2x-ncnn-vulkan (real sec)<br>(Model: upconv_7_anime_style_art_rgb)</td>
+          <td style="text-align: center">10.68s</td>
+          <td style="text-align: center">10.69s</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">vkfft (score)</td>
+          <td style="text-align: center">4229</td>
+          <td style="text-align: center">4232</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">vkmark (score)<br>(1920x1080)</td>
+          <td style="text-align: center">4605<br>(101.4%)</td>
+          <td style="text-align: center">4540<br>(100%)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Basemark GPU (score)<br>(Medium, 1920x1080)</td>
+          <td style="text-align: center">23970<br>(100.7%)</td>
+          <td style="text-align: center">23802<br>(100%)</td>
+      </tr>
+  </tbody>
 </table>
 <p>コンピュート系では最適化の効果が見られないが、グラフィクス系では約1%の効果が出ている、という結果となりました。<br>
 Vulkan ゲームを普段プレイする人は、<em>Zen 3 + RDNA 2</em> 以前の CPU/GPU 環境であっても <em>SAM</em> を有効にする価値があるかもしれません。</p>
@@ -275,16 +277,16 @@ Vulkan ゲームを普段プレイする人は、<em>Zen 3 + RDNA 2</em> 以前�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/" title="/posts/2020/12/07/radeonsi-sam-optimization/">RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2020/12/07/radeonsi-sam-optimization/" title="/posts/2020/12/07/radeonsi-sam-optimization/">RadeonSI/RADVドライバーに Smart Access Memory に向けた最適化が行なわれる | Coelacanth’s Dream</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://www.coelacanth-dream.com/posts/2020/12/24/change-of-radeonsi-sam/" title="/posts/2020/12/24/change-of-radeonsi-sam/">RadeonSI では Smart Access Memory をオプションで切り替える方式に、 Zen 3 + RDNA 2 ではデフォルトで有効 | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2020/12/24/change-of-radeonsi-sam/" title="/posts/2020/12/24/change-of-radeonsi-sam/">RadeonSI では Smart Access Memory をオプションで切り替える方式に、 Zen 3 + RDNA 2 ではデフォルトで有効 | Coelacanth’s Dream</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
 <p><a href="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7979" rel="noopener noreferrer" target="_blank" title="https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/7979">radv: Use VRAM for CS & upload buffer if all VRAM is CPU-visible. (!7979) · Merge Requests · Mesa / mesa · GitLab</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:4">
-<p><a href="https://www.coelacanth-dream.com/posts/2020/11/05/linux-amd-smart-access-memory/" title="/posts/2020/11/05/linux-amd-smart-access-memory/">Linux環境と Ryzen 5 2600、Radeon RX 560 で &ldquo;Smart Access Memory&rdquo; 機能を試す | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2020/11/05/linux-amd-smart-access-memory/" title="/posts/2020/11/05/linux-amd-smart-access-memory/">Linux環境と Ryzen 5 2600、Radeon RX 560 で “Smart Access Memory” 機能を試す | Coelacanth’s Dream</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
@@ -299,7 +301,7 @@ Vulkan ゲームを普段プレイする人は、<em>Zen 3 + RDNA 2</em> 以前�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

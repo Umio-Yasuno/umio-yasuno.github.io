@@ -19,8 +19,30 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="【雑記】CPUID の Family と Model、表示する一部ソフトウェアの問題点 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="CPU の判定とかに使われる Family、Model についての話。 Index Base と Extended 一部ソフトウェアの問題点 Base と Extended CPU の Family、Model、Stepping 等の情報は CPUID から">
-  <meta property="og:description" content="CPU の判定とかに使われる Family、Model についての話。 Index Base と Extended 一部ソフトウェアの問題点 Base と Extended CPU の Family、Model、Stepping 等の情報は CPUID から"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="CPU の判定とかに使われる Family、Model についての話。
+Index
+
+
+Base と Extended
+一部ソフトウェアの問題点
+
+
+
+Base と Extended
+
+CPU の Family、Model、Stepping 等の情報は CPUID から読み取ることができ、その CPUID のバイナリは以下のフォーマットになっている。">
+  <meta property="og:description" content="CPU の判定とかに使われる Family、Model についての話。
+Index
+
+
+Base と Extended
+一部ソフトウェアの問題点
+
+
+
+Base と Extended
+
+CPU の Family、Model、Stepping 等の情報は CPUID から読み取ることができ、その CPUID のバイナリは以下のフォーマットになっている。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream">
@@ -55,32 +77,32 @@
 </h2>
 <p>CPU の Family、Model、Stepping 等の情報は CPUID から読み取ることができ、その CPUID のバイナリは以下のフォーマットになっている。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">CPUID (bit)</th>
-<th style="text-align:center">31-28</th>
-<th style="text-align:center">27-20</th>
-<th style="text-align:center">19-16</th>
-<th style="text-align:center">15-14</th>
-<th style="text-align:center">13-12</th>
-<th style="text-align:center">11-8</th>
-<th style="text-align:center">7-4</th>
-<th style="text-align:center">3-0</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">EAX</td>
-<td style="text-align:center">Reserved</td>
-<td style="text-align:center">Extended<br>Family</td>
-<td style="text-align:center">Extended<br>Model</td>
-<td style="text-align:center">Reserved</td>
-<td style="text-align:center">Processor<br>Type</td>
-<td style="text-align:center">Base<br>Family</td>
-<td style="text-align:center">Base<br>Model</td>
-<td style="text-align:center">Stepping<br>ID</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">CPUID (bit)</th>
+          <th style="text-align: center">31-28</th>
+          <th style="text-align: center">27-20</th>
+          <th style="text-align: center">19-16</th>
+          <th style="text-align: center">15-14</th>
+          <th style="text-align: center">13-12</th>
+          <th style="text-align: center">11-8</th>
+          <th style="text-align: center">7-4</th>
+          <th style="text-align: center">3-0</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">EAX</td>
+          <td style="text-align: center">Reserved</td>
+          <td style="text-align: center">Extended<br>Family</td>
+          <td style="text-align: center">Extended<br>Model</td>
+          <td style="text-align: center">Reserved</td>
+          <td style="text-align: center">Processor<br>Type</td>
+          <td style="text-align: center">Base<br>Family</td>
+          <td style="text-align: center">Base<br>Model</td>
+          <td style="text-align: center">Stepping<br>ID</td>
+      </tr>
+  </tbody>
 </table>
 <p>主に CPU の判定に使われる Family、Model は、CPUID では Family/Model と Extended.Family/Model に分けられており、それらが組み合わされて表現される。<br>
 AMD の PRR (Processor Programming Reference) では、CPUID のを Base.Family/Model と Extended.Family/Model とし、それらが組み合わせられて Family/Model が表現されると記述しており、そちらのが分かりやすいため、ここではその方式を採用して解説する。</p>
@@ -101,30 +123,30 @@ AMD の PRR (Processor Programming Reference) では、CPUID のを Base.Family/
 Extended.Family は 8-bit、他は基本 4-bit となっているが、Processor Type の左 2-bit は 予約領域 (Reserved) に割り当てられており、16進数で表現した時にずれることはない。</p>
 <p>Processor Type の各定義は以下のようになっている。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Type</th>
-<th style="text-align:center">Encoding</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Original OEM Processor</td>
-<td style="text-align:center">00B</td>
-</tr>
-<tr>
-<td style="text-align:left">Intel OverDrive Processor</td>
-<td style="text-align:center">01B</td>
-</tr>
-<tr>
-<td style="text-align:left">Dual processor (not applicable to Intel486 processors)</td>
-<td style="text-align:center">10B</td>
-</tr>
-<tr>
-<td style="text-align:left">Intel reserved</td>
-<td style="text-align:center">11B</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Type</th>
+          <th style="text-align: center">Encoding</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Original OEM Processor</td>
+          <td style="text-align: center">00B</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Intel OverDrive Processor</td>
+          <td style="text-align: center">01B</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Dual processor (not applicable to Intel486 processors)</td>
+          <td style="text-align: center">10B</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Intel reserved</td>
+          <td style="text-align: center">11B</td>
+      </tr>
+  </tbody>
 </table>
 <h2 id="oroblem">一部ソフトウェアの問題点<a href="#oroblem" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -212,7 +234,7 @@ CPU-X の方には issue と Pull Request を送ったが、libcpuid の問題�
 <hr>
 <ol>
 <li id="fn:1">
-<p><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-2a-manual.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-2a-manual.html">Intel® 64 and IA-32 Architectures Developer&rsquo;s Manual: Vol. 2A</a> (Page 307)&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-2a-manual.html" rel="noopener noreferrer" target="_blank" title="https://www.intel.com/content/www/us/en/architecture-and-technology/64-ia-32-architectures-software-developer-vol-2a-manual.html">Intel® 64 and IA-32 Architectures Developer’s Manual: Vol. 2A</a> (Page 307)&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
@@ -227,7 +249,7 @@ CPU-X の方には issue と Pull Request を送ったが、libcpuid の問題�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

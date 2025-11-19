@@ -19,8 +19,46 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="RADV/ACO 検証: waifu2x-ncnn-vulkan の実行が最大3倍近く高速に | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 課題 最適化で Radeon">
-  <meta property="og:description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。 インデックス ACOとは waifu2x-ncnn-vulkan 環境 計測方法 結果 推測 課題 最適化で Radeon"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。
+インデックス
+
+
+ACOとは
+waifu2x-ncnn-vulkan
+環境
+計測方法
+結果
+推測
+課題
+最適化で Radeon はさらに輝く
+
+ACOとは
+
+オープンソースのAMDGPU向けVulkanドライバー、RADVの新たなシェーダーコンパイラバックエンド。
+ACO の IR(Intermediate Representaions, 中間言語)1は完全に SSA(Static Single Assignment form, 静的単一代入)2ベースであり、
+レジスタ割り付けも SSA で行なうため、シェーダーのレジスタ要求を正確に事前計算することができる。
+Just-in-timeコンパイルを念頭に置いてに記述されており、反復の速いデータ構造を使用している。
+記述言語は C&#43;&#43;。">
+  <meta property="og:description" content="Radeonの性能をさらに引き出す ACO だが、GPGPUではどうだろうか？ というのを今回 waifu2x-ncnn-vulkan で検証してみた。
+インデックス
+
+
+ACOとは
+waifu2x-ncnn-vulkan
+環境
+計測方法
+結果
+推測
+課題
+最適化で Radeon はさらに輝く
+
+ACOとは
+
+オープンソースのAMDGPU向けVulkanドライバー、RADVの新たなシェーダーコンパイラバックエンド。
+ACO の IR(Intermediate Representaions, 中間言語)1は完全に SSA(Static Single Assignment form, 静的単一代入)2ベースであり、
+レジスタ割り付けも SSA で行なうため、シェーダーのレジスタ要求を正確に事前計算することができる。
+Just-in-timeコンパイルを念頭に置いてに記述されており、反復の速いデータ構造を使用している。
+記述言語は C&#43;&#43;。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, waifu2x-ncnn-vulkan, ACO, GCN, RADV">
@@ -65,13 +103,13 @@ Just-in-timeコンパイルを念頭に置いてに記述されており、反�
 <p>RADV はそれまで<a href="https://llvm.org/" rel="noopener noreferrer" target="_blank" title="https://llvm.org/">LLVM</a>をバックエンドに採用していたが、<em>LLVM</em> のプロジェクト規模は大きく、シェーダーコンパイラバックエンドとして使う上で何かしらの問題が発覚し、修正を行なったとしてもそれがリリースサイクルに乗るまでは時間がかかる。<br>
 バックエンドを別に開発することでそれを避けられるというのが利点の1つであり、また積極的な &ldquo;DivergenceAnalysis&rdquo; の実装と正確なレジスタ割り付けにより、効率的なバイナリの生成を <em>ACO</em> は可能とする。<br>
 (DivergenceAnalysis: 発散分析? SIMD実行モデルにおける性能低下原因となる条件分岐を最適化する手法。日本語の文献が見つけられなかったため、自分のこの解説はかなり怪しい。)</p>
-<p><a href="https://xdc2019.x.org/event/5/" rel="noopener noreferrer" target="_blank" title="https://xdc2019.x.org/event/5/">X.Org Developer&rsquo;s Conference 2019</a>での発表スライドでは、<em>LLVM</em> から使用するレジスタ量は若干増えたが、レジスタあふれの頻度はスカラレジスタで -95.91%、ベクタレジスタで -100.00%(!)とかなり減り、Waveも -5.24%減少、コードサイズは -7.90%に減少したとしている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>　<br>
+<p><a href="https://xdc2019.x.org/event/5/" rel="noopener noreferrer" target="_blank" title="https://xdc2019.x.org/event/5/">X.Org Developer’s Conference 2019</a>での発表スライドでは、<em>LLVM</em> から使用するレジスタ量は若干増えたが、レジスタあふれの頻度はスカラレジスタで -95.91%、ベクタレジスタで -100.00%(!)とかなり減り、Waveも -5.24%減少、コードサイズは -7.90%に減少したとしている。<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>　<br>
 (Wave: GPUで実行するスレッドをまとめた単位。スレッド数は GCN は64スレッド、RDNA は基本32スレッド。)<br>
 ゲーミング性能も Doom<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>では約25%の向上を確認している。<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup><br>
 <a href="https://www.phoronix.com/scan.php?page=home" rel="noopener noreferrer" target="_blank" title="https://www.phoronix.com/scan.php?page=home">Phoronix</a>による検証でも、平均で概ね +20%近くの性能向上が見られている。<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup></p>
 <p>それと、<em>ACO</em> は <strong>AMD Compiler</strong> を縮めた名前、と開発者の Daniel Schürmann 氏は述べている。<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></p>
 <p>最新ドライバーのビルド方法は別記事で。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/" title="/posts/2019/12/04/how-to-build-mesa-for-radeon/">Radeon向けMesaビルド方法 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2019/12/04/how-to-build-mesa-for-radeon/" title="/posts/2019/12/04/how-to-build-mesa-for-radeon/">Radeon向けMesaビルド方法 | Coelacanth’s Dream</a></span>
 </p>
 <h2 id="waifu2x-ncnn-vulkan">waifu2x-ncnn-vulkan<a href="#waifu2x-ncnn-vulkan" class="head-cur-link" aria-hidden></a>
 </h2>
@@ -87,42 +125,42 @@ Vulkan APIでGPGPU処理を行なうため、広いプラットフォームに�
 <h2 id="env">環境<a href="#env" class="head-cur-link" aria-hidden></a>
 </h2>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:center"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">CPU</td>
-<td style="text-align:center">Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory</td>
-<td style="text-align:center">16GB 2933MHz</td>
-</tr>
-<tr>
-<td style="text-align:left">GPU</td>
-<td style="text-align:center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz, VRAM 4GB)</td>
-</tr>
-<tr>
-<td style="text-align:left">Linux Kernel</td>
-<td style="text-align:center">5.4.21</td>
-</tr>
-<tr>
-<td style="text-align:left">User Mode Driver</td>
-<td style="text-align:center">Mesa 20.1.0-devel (git-a64d266134)</td>
-</tr>
-<tr>
-<td style="text-align:left">Vulkan Driver</td>
-<td style="text-align:center">AMD RADV(LLVM) POLARIS11 (LLVM 9.0.1)<br>AMD RADV/ACO POLARIS11 (LLVM 9.0.1)</td>
-</tr>
-<tr>
-<td style="text-align:left">waifu2x-ncnn-vulkan</td>
-<td style="text-align:center">version<br>20200224</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: center"></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">CPU</td>
+          <td style="text-align: center">Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory</td>
+          <td style="text-align: center">16GB 2933MHz</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GPU</td>
+          <td style="text-align: center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz, VRAM 4GB)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Linux Kernel</td>
+          <td style="text-align: center">5.4.21</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">User Mode Driver</td>
+          <td style="text-align: center">Mesa 20.1.0-devel (git-a64d266134)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Vulkan Driver</td>
+          <td style="text-align: center">AMD RADV(LLVM) POLARIS11 (LLVM 9.0.1)<br>AMD RADV/ACO POLARIS11 (LLVM 9.0.1)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">waifu2x-ncnn-vulkan</td>
+          <td style="text-align: center">version<br>20200224</td>
+      </tr>
+  </tbody>
 </table>
 <h3 id="how">計測方法<a href="#how" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -142,36 +180,36 @@ waifu2x-ncnn-vulakn は入力元にディレクトリを指定することで、
 <h2 id="result">結果<a href="#result" class="head-cur-link" aria-hidden></a>
 </h2>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Result<br>(models-cunet)</th>
-<th style="text-align:center">RADV(LLVM)</th>
-<th style="text-align:center">RADV/ACO</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">real time<br>(lower is better)</td>
-<td style="text-align:center">50.75 s</td>
-<td style="text-align:center">34.28 s<br>(1.48x)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Result<br>(models-cunet)</th>
+          <th style="text-align: center">RADV(LLVM)</th>
+          <th style="text-align: center">RADV/ACO</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">real time<br>(lower is better)</td>
+          <td style="text-align: center">50.75 s</td>
+          <td style="text-align: center">34.28 s<br>(1.48x)</td>
+      </tr>
+  </tbody>
 </table>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Result<br>(models-upconv_7_anime_style_art_rgb)</th>
-<th style="text-align:center">RADV(LLVM)</th>
-<th style="text-align:center">RADV/ACO</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">real time<br>(lower is better)</td>
-<td style="text-align:center">22.19 s</td>
-<td style="text-align:center">6.48 s<br>(3.42x)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Result<br>(models-upconv_7_anime_style_art_rgb)</th>
+          <th style="text-align: center">RADV(LLVM)</th>
+          <th style="text-align: center">RADV/ACO</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">real time<br>(lower is better)</td>
+          <td style="text-align: center">22.19 s</td>
+          <td style="text-align: center">6.48 s<br>(3.42x)</td>
+      </tr>
+  </tbody>
 </table>
 <p>RADV/ACO は、RADV(LLVM) より <code>models-cunet</code> では 1.48倍、<code>models-upconv_7_anime_style_art_rgb</code> では 3.42倍も高速という結果となった。<br>
 同じモデル、同じパラメーター、そこまで高精度なデータタイプは用いないため、出力結果の画像に違いはなかった。</p>
@@ -250,7 +288,7 @@ RADV にあるシェーダーや SPIR-V をダンプする機能から作成し�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

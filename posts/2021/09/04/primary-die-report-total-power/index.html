@@ -19,8 +19,26 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="プライマリーダイがまとめて電力情報を報告する Aldebaran/MI200 GPU | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="ROCmプラットフォームにおけるテスト、ベンチマーク、認定を行うツールのコレクション ROCm Validation Suite (RVS) に、MCM (Multi-Chip Module) 構成を採る GPU かどうかを判定するコードが追加された。 Logging to">
-  <meta property="og:description" content="ROCmプラットフォームにおけるテスト、ベンチマーク、認定を行うツールのコレクション ROCm Validation Suite (RVS) に、MCM (Multi-Chip Module) 構成を採る GPU かどうかを判定するコードが追加された。 Logging to"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="ROCmプラットフォームにおけるテスト、ベンチマーク、認定を行うツールのコレクション ROCm Validation Suite (RVS) に、MCM (Multi-Chip Module) 構成を採る GPU かどうかを判定するコードが追加された。
+
+Logging to identify MCM GPUs. · ROCm-Developer-Tools/ROCmValidationSuite@d9729e5
+
+MCM構成を採る AMD GPU として、ここでは Aldebaran/MI200 が対象となっている。また、Aldebaran/MI200 は GPUダイ 2基で構成され、プライマリーダイとセカンダリーダイとで役割が分かれている。ダイ自体は同一ではないかと思われる。
+MCM における電力管理機能では、関連したパッチが以前 Linux Kernel の AMD GPUドライバーに投稿されていた。
+プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth’s Dream
+
+そのパッチは、電力情報の取得が可能なのがプライマリーダイのみであるため、取得と電力制限の設定をプライマリーダイのみに行うようにするという内容だった。
+今回でその電力情報がどうなっているかが補足される形となり、ROCmValidationSuite に追加されたログに出力する部分の内容にて、プライマリーダイが自身とセカンダリーダイを合わせたソケットレベルでの電力情報を報告することが明かされた。">
+  <meta property="og:description" content="ROCmプラットフォームにおけるテスト、ベンチマーク、認定を行うツールのコレクション ROCm Validation Suite (RVS) に、MCM (Multi-Chip Module) 構成を採る GPU かどうかを判定するコードが追加された。
+
+Logging to identify MCM GPUs. · ROCm-Developer-Tools/ROCmValidationSuite@d9729e5
+
+MCM構成を採る AMD GPU として、ここでは Aldebaran/MI200 が対象となっている。また、Aldebaran/MI200 は GPUダイ 2基で構成され、プライマリーダイとセカンダリーダイとで役割が分かれている。ダイ自体は同一ではないかと思われる。
+MCM における電力管理機能では、関連したパッチが以前 Linux Kernel の AMD GPUドライバーに投稿されていた。
+プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth’s Dream
+
+そのパッチは、電力情報の取得が可能なのがプライマリーダイのみであるため、取得と電力制限の設定をプライマリーダイのみに行うようにするという内容だった。
+今回でその電力情報がどうなっているかが補足される形となり、ROCmValidationSuite に追加されたログに出力する部分の内容にて、プライマリーダイが自身とセカンダリーダイを合わせたソケットレベルでの電力情報を報告することが明かされた。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, ROCm, Aldebaran">
@@ -48,7 +66,7 @@
 </ul>
 <p>MCM構成を採る AMD GPU として、ここでは <em>Aldebaran/MI200</em> が対象となっている。また、<em>Aldebaran/MI200</em> は GPUダイ 2基で構成され、プライマリーダイとセカンダリーダイとで役割が分かれている。ダイ自体は同一ではないかと思われる。<br>
 MCM における電力管理機能では、関連したパッチが以前 Linux Kernel の AMD GPUドライバーに投稿されていた。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/09/aldebaran-primary-secondary/" title="/posts/2021/06/09/aldebaran-primary-secondary/">プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/09/aldebaran-primary-secondary/" title="/posts/2021/06/09/aldebaran-primary-secondary/">プライマリーダイとセカンダリーダイで構成される Aldebaran/MI200 GPU | Coelacanth’s Dream</a></span>
 
 そのパッチは、電力情報の取得が可能なのがプライマリーダイのみであるため、取得と電力制限の設定をプライマリーダイのみに行うようにするという内容だった。<br>
 今回でその電力情報がどうなっているかが補足される形となり、ROCmValidationSuite に追加されたログに出力する部分の内容にて、プライマリーダイが自身とセカンダリーダイを合わせたソケットレベルでの電力情報を報告することが明かされた。</p>
@@ -131,7 +149,7 @@ MCM における電力管理機能では、関連したパッチが以前 Linux 
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

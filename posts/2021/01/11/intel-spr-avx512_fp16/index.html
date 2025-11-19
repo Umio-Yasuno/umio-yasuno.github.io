@@ -19,8 +19,10 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel Sapphire Rapids は AVX512_FP16 をサポート | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="モバイル向けでは Ice Lake (client) から、デスクトップ向けでは 2021年第一四半期での登場が予告されている Rocket Lake からついにサポートされる AVX512命令。 これまでに何度も拡張を">
-  <meta property="og:description" content="モバイル向けでは Ice Lake (client) から、デスクトップ向けでは 2021年第一四半期での登場が予告されている Rocket Lake からついにサポートされる AVX512命令。 これまでに何度も拡張を"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="モバイル向けでは Ice Lake (client) から、デスクトップ向けでは 2021年第一四半期での登場が予告されている Rocket Lake からついにサポートされる AVX512命令。
+これまでに何度も拡張を繰り返して来たが、Sapphire Rapids ではさらに拡張された AVX512_FP16 がサポートされる。">
+  <meta property="og:description" content="モバイル向けでは Ice Lake (client) から、デスクトップ向けでは 2021年第一四半期での登場が予告されている Rocket Lake からついにサポートされる AVX512命令。
+これまでに何度も拡張を繰り返して来たが、Sapphire Rapids ではさらに拡張された AVX512_FP16 がサポートされる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Sapphire_Rapids, Alder_Lake">
@@ -57,7 +59,7 @@ is indicated by CPUID.(EAX=7,ECX=0):EDX[bit 23]</p>
 <p>AVX512系命令では、<code>AVX512_VNNI</code> にて精度を下げて複数の要素を扱うことで処理性能を向上させることができ、データ精度 FP32 の場合に対してピーク理論性能が、 Int8 では 4倍、Int16 では 2倍となる。(ただし、メモリ性能がボトルネックとなるため、実際の性能はそれより低くなる可能性がある。)<br>
 <code>AVX512_FP16</code> はこれを拡張したものと思われ、ピーク理論性能は Int16 と同じとなるが、FP16 であれば Int16 よりも数値が広い範囲で保持される。</p>
 <p>AVX512、FP16 というキーワードで、過去にバグ報告プラットフォームである <a href="https://launchpad.net/intel" rel="noopener noreferrer" target="_blank" title="https://launchpad.net/intel">intel in Launchpad</a> にちらと出てきた <code>HFNI</code> 命令が思い出される。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/05/26/intel-adl-spr-new-inst/" title="/posts/2020/05/26/intel-adl-spr-new-inst/">Intel Alder Lake、Sapphire Rapids にて追加される2つの命令 ――AVX2 VNNI /HFNI | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/05/26/intel-adl-spr-new-inst/" title="/posts/2020/05/26/intel-adl-spr-new-inst/">Intel Alder Lake、Sapphire Rapids にて追加される2つの命令 ――AVX2 VNNI /HFNI | Coelacanth’s Dream</a></span>
 
 その時のリンク先は消されてしまったが、メールアーカイブには残っていた。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup><br>
 <code>HFNI</code> は AVX512命令において、FP32 の代わりに FP16 を使用し、性能を最大 2倍に引き上げるものと説明されている。<br>
@@ -74,118 +76,118 @@ is indicated by CPUID.(EAX=7,ECX=0):EDX[bit 23]</p>
 <p>AVX512命令は <strong>Xeon Phi シリーズ</strong> 、<em>Knight’s Landing</em> 、<em>Knights Mill</em> でも一部サポートされているが、それも含めるとさらに表が肥大化してしまうため省いた。5つの命令をまとめている 2行目を細かく分ける必要が出てしまう。<br>
 それと <em>Rocket Lake</em> も省いているが、その <em>Crypress Cove アーキテクチャ</em> は <em>Ice Lake (client)</em> と同じ機能を備えることから、AVX512命令の範囲も同様と思われる。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Intel AVX</th>
-<th style="text-align:center">SKX</th>
-<th style="text-align:center">CNL</th>
-<th style="text-align:center">CLX</th>
-<th style="text-align:center">CPX</th>
-<th style="text-align:center">ICL</th>
-<th style="text-align:center">ICX</th>
-<th style="text-align:center">TGL</th>
-<th style="text-align:center">SPR</th>
-<th style="text-align:center">ADL</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">AVX512F (Foundation),<br>AVX512CD (Conflict Detection),<br>AVX512BW (Byte and Word),<br>AVX512DQ (Doubleword and Quadword),<br>AVX512VL (Vector Length)</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">-</td>
-</tr>
-<tr>
-<td style="text-align:left">AVX512_IFMA (Integer Fused Multiply-Add),<br>AVX512_VBMI (Vector Byte Manipulation Instructions)</td>
-<td style="text-align:center"></td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">-</td>
-</tr>
-<tr>
-<td style="text-align:left">AVX512_VNNI</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">-</td>
-</tr>
-<tr>
-<td style="text-align:left">AVX512_VBMI2 (Vector Byte Manipulation Instructions 2),<br>AVX512_VPOPCNTDQ,<br>AVX512_BITALG (Bit Algorithms),<br>GFNI 512-bit (Galois Field New Instructions),<br>VAES 512-bit (Vector AES instructions)</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">-</td>
-</tr>
-<tr>
-<td style="text-align:left">AVX512_BF16</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">-</td>
-</tr>
-<tr>
-<td style="text-align:left">AVX512_VP2INTERSECT</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">-</td>
-</tr>
-<tr>
-<td style="text-align:left">AVX512_FP16</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">-</td>
-</tr>
-<tr>
-<td style="text-align:left">AVX_VNNI (128/256-bit)</td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center"></td>
-<td style="text-align:center">Y</td>
-<td style="text-align:center">Y</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Intel AVX</th>
+          <th style="text-align: center">SKX</th>
+          <th style="text-align: center">CNL</th>
+          <th style="text-align: center">CLX</th>
+          <th style="text-align: center">CPX</th>
+          <th style="text-align: center">ICL</th>
+          <th style="text-align: center">ICX</th>
+          <th style="text-align: center">TGL</th>
+          <th style="text-align: center">SPR</th>
+          <th style="text-align: center">ADL</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">AVX512F (Foundation),<br>AVX512CD (Conflict Detection),<br>AVX512BW (Byte and Word),<br>AVX512DQ (Doubleword and Quadword),<br>AVX512VL (Vector Length)</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AVX512_IFMA (Integer Fused Multiply-Add),<br>AVX512_VBMI (Vector Byte Manipulation Instructions)</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AVX512_VNNI</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AVX512_VBMI2 (Vector Byte Manipulation Instructions 2),<br>AVX512_VPOPCNTDQ,<br>AVX512_BITALG (Bit Algorithms),<br>GFNI 512-bit (Galois Field New Instructions),<br>VAES 512-bit (Vector AES instructions)</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AVX512_BF16</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AVX512_VP2INTERSECT</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AVX512_FP16</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">-</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">AVX_VNNI (128/256-bit)</td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center"></td>
+          <td style="text-align: center">Y</td>
+          <td style="text-align: center">Y</td>
+      </tr>
+  </tbody>
 </table>
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
@@ -217,7 +219,7 @@ is indicated by CPUID.(EAX=7,ECX=0):EDX[bit 23]</p>
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

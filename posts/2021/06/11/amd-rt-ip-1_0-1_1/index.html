@@ -19,8 +19,12 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="現時点で 2バージョン存在する AMD GPU の HWレイトレーシング IP | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Lib">
-  <meta property="og:description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Lib"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Library)、XGL (Vulkan API Layer) が共にアップデートされたが、
+その中で AMD GPU が搭載するレイトレーシングハードウェアの IPバージョンが 2種類存在することが新たに明かされた。
+レイトレーシングHW は AMD GPU の CU内に、Ray Accelerator という名で搭載されている。1">
+  <meta property="og:description" content="AMD がオープンソースで開発し、公式的に提供している Vulkanドライバー、AMDVLK の v-2021.Q2.5 がリリースされ、それを構成する LLPC (LLVM-Based Pipeline Compiler)、PAL (Platform Abstraction Library)、XGL (Vulkan API Layer) が共にアップデートされたが、
+その中で AMD GPU が搭載するレイトレーシングハードウェアの IPバージョンが 2種類存在することが新たに明かされた。
+レイトレーシングHW は AMD GPU の CU内に、Ray Accelerator という名で搭載されている。1"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, RDNA_2, gfx1013, GPUOpen, Cyan_Skilfish">
@@ -73,7 +77,7 @@
 
 </blockquote>
 <p>そして、他の部分に追加されたコードでは、<em>RDNA 2/GFX10.3</em> とそれ以降の HWレイトレーシング IP が <code>RtIp1_1</code> だとしている。  (<code>IsGfx103Plus()</code> は処理的には <em>RDNA/GFX10.1</em> 以降の場合に true を返すようになっている<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>)</p>
-<p>このことは <a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf">&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide</a> の 「8.2.10 Ray Tracing」セクションでも触れられており、そこでも レイトレーシングHW は重心座標の計算処理を直接サポートするよう設計されていると説明している。</p>
+<p>このことは <a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf">“RDNA 2” Instruction Set Architecture: Reference Guide</a> の 「8.2.10 Ray Tracing」セクションでも触れられており、そこでも レイトレーシングHW は重心座標の計算処理を直接サポートするよう設計されていると説明している。</p>
 <blockquote>
 <pre><code>         if (IsGfx103Plus(pInfo-&gt;gfxLevel))
          {
@@ -86,7 +90,7 @@
 </blockquote>
 <p>そして、<em>RDNA 2/GFX10.3</em> とそれ以降のレイトレーシングHW が <code>RtIp1_1</code> だとされていることからは、<em>RDNA 2/GFX10.3</em> 以前は <code>RtIp1_0</code> を搭載している可能性が示される。<br>
 先日、LLVM に追加された <a href="https://www.coelacanth-dream.com/tags/gfx1013" rel="noopener noreferrer" target="_blank" title="/tags/gfx1013">GPUID: gfx1013</a> は、<em>Navi10 (gfx1010)</em> をベースにしながら <em>RDNA 2/GFX10.3</em> でサポートされているレイトレーシング命令をサポートし、さらには APU という奇妙なものだったが、<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/06/gfx1013-apu-rt/" title="/posts/2021/06/06/gfx1013-apu-rt/">GPUID: gfx1013 は APU で、レイトレーシング命令をサポートしている? | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/06/06/gfx1013-apu-rt/" title="/posts/2021/06/06/gfx1013-apu-rt/">GPUID: gfx1013 は APU で、レイトレーシング命令をサポートしている? | Coelacanth’s Dream</a></span>
 
 今回 PAL に追加された内容と合わせて、 <em>gfx1013</em> で実装されているレイトレーシングHW <em>RDNA 2/GFX10.3</em> とは異なると考えられる。<br>
 そもそも今回追加された部分は、<em>gfx1013</em> に関する LLVM の変更に合わせたか、AMD のソフトウェアエンジニアが <em>gfx1013</em> のサポートに向けて動き始めたことによるものなのかもしれない。</p>
@@ -94,7 +98,7 @@
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf">&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf">“RDNA 2” Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf</a></li>
 <li><a href="https://gpuopen.com/wp-content/uploads/slides/AMD_RDNA2_DirectX12_Ultimate_Raytracing1_1.pdf" rel="noopener noreferrer" target="_blank" title="https://gpuopen.com/wp-content/uploads/slides/AMD_RDNA2_DirectX12_Ultimate_Raytracing1_1.pdf">DirectX ® Ray tracing 1.1 - AMD_RDNA2_DirectX12_Ultimate_Raytracing1_1.pdf</a></li>
 </ul>
 </section>
@@ -121,7 +125,7 @@
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

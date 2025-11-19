@@ -19,8 +19,20 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="新たな CDNA系の GPUID 「gfx940」 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="AMDGPU におけるコンパイラバックエンドとしても採用されている LLVM に、新たな Target/GPU/GFX ID、gfx940 を追加するパッチが投稿されている。 ⚙ D120688 [AMDGPU] Add gfx940 target ISA として gfx90a は gfx90a/CDNA 2/Aldebaran とほぼ一致し">
-  <meta property="og:description" content="AMDGPU におけるコンパイラバックエンドとしても採用されている LLVM に、新たな Target/GPU/GFX ID、gfx940 を追加するパッチが投稿されている。 ⚙ D120688 [AMDGPU] Add gfx940 target ISA として gfx90a は gfx90a/CDNA 2/Aldebaran とほぼ一致し"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="AMDGPU におけるコンパイラバックエンドとしても採用されている LLVM に、新たな Target/GPU/GFX ID、gfx940 を追加するパッチが投稿されている。
+
+⚙ D120688 [AMDGPU] Add gfx940 target
+
+ISA として gfx90a は gfx90a/CDNA 2/Aldebaran とほぼ一致し、その特徴である 行列演算命令 MFMA (Matrix-Fused-Multiply-Add) やフルレートFP64演算 (FullRate64Ops)、パックドFP32演算 (FeaturePackedFP32Ops) をサポートしている。
+そのことから、gfx940 は CDNA系列の GPU を示す Target/GPU/GFX ID と考えられる。
+CPU&#43;GPU のメモリ空間統合に関係する XNACK 機能も同様にサポートされている。">
+  <meta property="og:description" content="AMDGPU におけるコンパイラバックエンドとしても採用されている LLVM に、新たな Target/GPU/GFX ID、gfx940 を追加するパッチが投稿されている。
+
+⚙ D120688 [AMDGPU] Add gfx940 target
+
+ISA として gfx90a は gfx90a/CDNA 2/Aldebaran とほぼ一致し、その特徴である 行列演算命令 MFMA (Matrix-Fused-Multiply-Add) やフルレートFP64演算 (FullRate64Ops)、パックドFP32演算 (FeaturePackedFP32Ops) をサポートしている。
+そのことから、gfx940 は CDNA系列の GPU を示す Target/GPU/GFX ID と考えられる。
+CPU&#43;GPU のメモリ空間統合に関係する XNACK 機能も同様にサポートされている。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, gfx940, CDNA_2, CDNA, LLVM">
@@ -77,7 +89,7 @@ GPU としては、コア部やメモリの規模、I/O部の改良がメイン�
 <p><em>gfx90a</em> と <em>gfx940</em> がサポートする機能の差分が以下。<br>
 主要な命令、機能としては <code>FeatureMadMacF32Insts</code> が削除され、<code>FeatureArchitectedFlatScratch</code> が追加されている。<br>
 <code>FeatureMadMacF32Insts</code> は <code>V_MAD_F32/V_MAC_F32/V_MADAK_F32/V_MADMK_F32</code> 命令をサポートすることを示す機能フラグとなる。<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> それら命令は <em>RDNA 2/GFX10.3</em> 世代ではサポートされておらず、より丸め誤差、ULP (Unit of Last Place) が小さい <code>V_FMA_F32</code> 命令に置き換えられた。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/12/18/radeonsi-force-fma32/" title="/posts/2021/12/18/radeonsi-force-fma32/">RadeonSIドライバーに FMA32命令を強制するオプションが追加 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2021/12/18/radeonsi-force-fma32/" title="/posts/2021/12/18/radeonsi-force-fma32/">RadeonSIドライバーに FMA32命令を強制するオプションが追加 | Coelacanth’s Dream</a></span>
 
 <em>gfx90a</em> ではまだサポートが残されていたが、<code>FeatureMadMacF32Insts</code> が削除されたことから <em>gfx940</em> では <em>RDNA 2/GFX10.3</em> に揃えたと見られる。<br>
 他にも <em>gfx940</em> は、<em>RDNA系アーキテクチャ</em> では <em>RDNA 1/GFX10.1</em> から対応していた、ソースオペランドの 1つに定数を用いる <code>V_FMAMK_F32/V_FMAAK_F32</code> に対応する。<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup></p>
@@ -113,8 +125,8 @@ GPU としては、コア部やメモリの規模、I/O部の改良がメイン�
 <section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
 </h3>
 <ul>
-<li><a href="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf">&ldquo;AMD Instinct MI200&rdquo; Instruction Set Architecture: Reference Guide - CDNA2_Shader_ISA_4February2022.pdf</a></li>
-<li><a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf">&ldquo;RDNA 2&rdquo; Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/CDNA2_Shader_ISA_4February2022.pdf">“AMD Instinct MI200” Instruction Set Architecture: Reference Guide - CDNA2_Shader_ISA_4February2022.pdf</a></li>
+<li><a href="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf" rel="noopener noreferrer" target="_blank" title="https://developer.amd.com/wp-content/resources/RDNA2_Shader_ISA_November2020.pdf">“RDNA 2” Instruction Set Architecture: Reference Guide - RDNA2_Shader_ISA_November2020.pdf</a></li>
 </ul>
 </section>
 
@@ -140,7 +152,7 @@ GPU としては、コア部やメモリの規模、I/O部の改良がメイン�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

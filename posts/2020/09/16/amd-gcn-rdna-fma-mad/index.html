@@ -19,8 +19,42 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="AMD GPU の世代における FMA、MAD 命令の微妙な仕様と違い | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="最近 Mesa3D に組み込まれた変更の中に以下のようなコメントがあった。 /* gfx6-8: use MAD (FMA is 4x slower) * gfx9-10: either is OK (MAD and FMA have the same performance) * gfx10.3: use FMA (MAD doesn&#39;t exist, separate MUL&#43;ADD are 2x slower) * * FMA has no advantage on gfx9-10 and MAD allows more algebraic optimizations. * Keep FMA enabled">
-  <meta property="og:description" content="最近 Mesa3D に組み込まれた変更の中に以下のようなコメントがあった。 /* gfx6-8: use MAD (FMA is 4x slower) * gfx9-10: either is OK (MAD and FMA have the same performance) * gfx10.3: use FMA (MAD doesn&#39;t exist, separate MUL&#43;ADD are 2x slower) * * FMA has no advantage on gfx9-10 and MAD allows more algebraic optimizations. * Keep FMA enabled"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="最近 Mesa3D に組み込まれた変更の中に以下のようなコメントがあった。
+
+ /* gfx6-8: use MAD (FMA is 4x slower)
+  * gfx9-10: either is OK (MAD and FMA have the same performance)
+  * gfx10.3: use FMA (MAD doesn&#39;t exist, separate MUL&#43;ADD are 2x slower)
+  *
+  * FMA has no advantage on gfx9-10 and MAD allows more algebraic optimizations.
+  * Keep FMA enabled on gfx10 to test it, which helps us validate correctness
+  * for gfx10.3 on gfx10.
+  */
+
+引用元:nir,radeonsi: move ffma fusing to late optimizations for better codegen (!6596) · Merge Requests · Mesa / mesa · GitLab
+
+
+
+AMD GPU の各世代における、FMA と MAD の処理性能の違いらしいが、初期の GCN から Polaris1x /VegaM までを含む GFX6-8 では FMA が MAD の 4倍遅いため MAD を使い、
+Vega や Navi の世代である GFX9-10 では FMA も MAD も同じであるため、どちらでも良く、
+そして AMD の次世代 GPU RDNA 2 /GFX10.3 では MAD が存在せず(実装されていない？)、2つに分けて処理するため、FMA を使うとしている。">
+  <meta property="og:description" content="最近 Mesa3D に組み込まれた変更の中に以下のようなコメントがあった。
+
+ /* gfx6-8: use MAD (FMA is 4x slower)
+  * gfx9-10: either is OK (MAD and FMA have the same performance)
+  * gfx10.3: use FMA (MAD doesn&#39;t exist, separate MUL&#43;ADD are 2x slower)
+  *
+  * FMA has no advantage on gfx9-10 and MAD allows more algebraic optimizations.
+  * Keep FMA enabled on gfx10 to test it, which helps us validate correctness
+  * for gfx10.3 on gfx10.
+  */
+
+引用元:nir,radeonsi: move ffma fusing to late optimizations for better codegen (!6596) · Merge Requests · Mesa / mesa · GitLab
+
+
+
+AMD GPU の各世代における、FMA と MAD の処理性能の違いらしいが、初期の GCN から Polaris1x /VegaM までを含む GFX6-8 では FMA が MAD の 4倍遅いため MAD を使い、
+Vega や Navi の世代である GFX9-10 では FMA も MAD も同じであるため、どちらでも良く、
+そして AMD の次世代 GPU RDNA 2 /GFX10.3 では MAD が存在せず(実装されていない？)、2つに分けて処理するため、FMA を使うとしている。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, RadeonSI, RADV, RDNA_2">
@@ -111,7 +145,7 @@ FMA は乗算の結果を掛けた値の倍のビット長で保持してから�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

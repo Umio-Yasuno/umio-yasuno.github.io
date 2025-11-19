@@ -19,8 +19,22 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Alder Lake-N のコア数と TDP (PL1), PL2 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Intel の Vidya Gopalakrishnan 氏より、Coreboot に Alder Lake-N SKU の TDP, Power Limit の設定値を追加するパッチが投稿、公開されている。 パッチでは Alder Lake-N の各設定値以外に、コア数に関する記述も見られる。 soc/intel/alderlake:">
-  <meta property="og:description" content="Intel の Vidya Gopalakrishnan 氏より、Coreboot に Alder Lake-N SKU の TDP, Power Limit の設定値を追加するパッチが投稿、公開されている。 パッチでは Alder Lake-N の各設定値以外に、コア数に関する記述も見られる。 soc/intel/alderlake:"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Intel の Vidya Gopalakrishnan 氏より、Coreboot に Alder Lake-N SKU の TDP, Power Limit の設定値を追加するパッチが投稿、公開されている。
+パッチでは Alder Lake-N の各設定値以外に、コア数に関する記述も見られる。
+
+soc/intel/alderlake: add power limits for Alder Lake-N SKUs (I24c18a27) · Gerrit Code Review
+soc/intel/alderlake: Configure the SKU specific parameters for VR domains (I3d6ae203) · Gerrit Code Review
+
+Alder Lake-N は以下の引用部から、Gracemont (Small) コアのみの構成であり、コア数は 2/4/8 の 3種類が用意されていると思われる。TDP (PL1) は 2/4-Core が 6W、8-Core が 15W。
+以下引用部では、Alder Lake のバリアント、コア構成と GPU GT、TDP (PL1) を次のようなフォーマットで記述している。 ADL_{M,N,P}_{BIG}{SMALL}{GPU_GT}_{TDP}W_CORE">
+  <meta property="og:description" content="Intel の Vidya Gopalakrishnan 氏より、Coreboot に Alder Lake-N SKU の TDP, Power Limit の設定値を追加するパッチが投稿、公開されている。
+パッチでは Alder Lake-N の各設定値以外に、コア数に関する記述も見られる。
+
+soc/intel/alderlake: add power limits for Alder Lake-N SKUs (I24c18a27) · Gerrit Code Review
+soc/intel/alderlake: Configure the SKU specific parameters for VR domains (I3d6ae203) · Gerrit Code Review
+
+Alder Lake-N は以下の引用部から、Gracemont (Small) コアのみの構成であり、コア数は 2/4/8 の 3種類が用意されていると思われる。TDP (PL1) は 2/4-Core が 6W、8-Core が 15W。
+以下引用部では、Alder Lake のバリアント、コア構成と GPU GT、TDP (PL1) を次のようなフォーマットで記述している。 ADL_{M,N,P}_{BIG}{SMALL}{GPU_GT}_{TDP}W_CORE"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Alder_Lake, Coreboot">
@@ -51,7 +65,7 @@
 <p><em>Alder Lake-N</em> は以下の引用部から、<em>Gracemont (Small)</em> コアのみの構成であり、コア数は 2/4/8 の 3種類が用意されていると思われる。TDP (PL1) は 2/4-Core が 6W、8-Core が 15W。<br>
 以下引用部では、<em>Alder Lake</em> のバリアント、コア構成と GPU GT、TDP (PL1) を次のようなフォーマットで記述している。 <code>ADL_{M,N,P}_{BIG}{SMALL}{GPU_GT}_{TDP}W_CORE</code></p>
 <p><em>Alder Lake-N</em> が <em>Alder Lake-S/P/M</em> に搭載されている <em>Golden Cove (Big)</em> コアを持たず <em>Gracemont (Small)</em> コアのみの構成、最大 8-Core/8-Thread、GPU は Gen12 GT1 (32 EU)、といった情報は、これまでに公開されてきたパッチやログの情報と一致する。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/02/04/adl_n-8thread/" title="/posts/2022/02/04/adl_n-8thread/">CPU 8-Thread、GPU 32EU を持つ Alder Lake-N | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2022/02/04/adl_n-8thread/" title="/posts/2022/02/04/adl_n-8thread/">CPU 8-Thread、GPU 32EU を持つ Alder Lake-N | Coelacanth’s Dream</a></span>
 
 ChromeOS に関するパッチのレビューが行われる Chromium Gerrit では、<em>Alder Lake-N (Family: 0x6, Model: 0xBE)</em> を <em>Gracemont</em> とするパッチも公開されている。</p>
 <p><em>Alder Lake-N</em> 2/4-Core SKU の TDP (PL1) 6W というのは、TDP (PL1) 9W をサポートする <em>Alder Lake-M (2+8+2, 2+4+2)</em> SKU より省電力、ファンレス構成等の製品をカバーするためのものと思われる。</p>
@@ -157,66 +171,66 @@ Big コアを持たない <em>Alder Lake-N</em> で、<em>Alder Lake-M (2+8+2)</
 <li><a href="https://edc.intel.com/content/www/us/en/design/ipla/software-development-platforms/client/platforms/alder-lake-desktop/12th-generation-intel-core-processors-datasheet-volume-1-of-2/006/processor-line-thermal-and-power/" rel="noopener noreferrer" target="_blank" title="https://edc.intel.com/content/www/us/en/design/ipla/software-development-platforms/client/platforms/alder-lake-desktop/12th-generation-intel-core-processors-datasheet-volume-1-of-2/006/processor-line-thermal-and-power/">Processor Line Thermal and Power - 006 - ID:655258 | Core™ Processors</a></li>
 </ul>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Alder Lake</th>
-<th style="text-align:center">-S</th>
-<th style="text-align:center">-P</th>
-<th style="text-align:center">-M</th>
-<th style="text-align:center">-N</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Variant (CPUID Model)</td>
-<td style="text-align:center">Desktop (0x97)</td>
-<td style="text-align:center">Mobile (0x9A)</td>
-<td style="text-align:center">Mobile (0x9A)</td>
-<td style="text-align:center">Mobile (0xBE)</td>
-</tr>
-<tr>
-<td style="text-align:left">CPU (big + small)</td>
-<td style="text-align:center">8 + 8</td>
-<td style="text-align:center">6 + 8</td>
-<td style="text-align:center">2 + 8</td>
-<td style="text-align:center">0 + 8</td>
-</tr>
-<tr>
-<td style="text-align:left">GPU (Gen12.2)</td>
-<td style="text-align:center">GT1 32EU</td>
-<td style="text-align:center">GT2 96EU</td>
-<td style="text-align:center">GT2 96EU</td>
-<td style="text-align:center">GT1 32EU</td>
-</tr>
-<tr>
-<td style="text-align:left">Display ver</td>
-<td style="text-align:center">Gen12</td>
-<td style="text-align:center">Gen13 (XE_LPD)</td>
-<td style="text-align:center">Gen13 (XE_LPD)</td>
-<td style="text-align:center">Gen13 (XE_LPD)</td>
-</tr>
-<tr>
-<td style="text-align:left">CPU PCIe</td>
-<td style="text-align:center">Gen5 8L x2,<br>Gen4 4L x2</td>
-<td style="text-align:center">Gen5 8L,<br>Gen4 4L x2</td>
-<td style="text-align:center">Gen4 4L?</td>
-<td style="text-align:center">N/A</td>
-</tr>
-<tr>
-<td style="text-align:left">PCH PCIe</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">9-Lane</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory Bus width</td>
-<td style="text-align:center">128-bit</td>
-<td style="text-align:center">128-bit</td>
-<td style="text-align:center">128-bit</td>
-<td style="text-align:center">64-bit</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Alder Lake</th>
+          <th style="text-align: center">-S</th>
+          <th style="text-align: center">-P</th>
+          <th style="text-align: center">-M</th>
+          <th style="text-align: center">-N</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Variant (CPUID Model)</td>
+          <td style="text-align: center">Desktop (0x97)</td>
+          <td style="text-align: center">Mobile (0x9A)</td>
+          <td style="text-align: center">Mobile (0x9A)</td>
+          <td style="text-align: center">Mobile (0xBE)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">CPU (big + small)</td>
+          <td style="text-align: center">8 + 8</td>
+          <td style="text-align: center">6 + 8</td>
+          <td style="text-align: center">2 + 8</td>
+          <td style="text-align: center">0 + 8</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GPU (Gen12.2)</td>
+          <td style="text-align: center">GT1 32EU</td>
+          <td style="text-align: center">GT2 96EU</td>
+          <td style="text-align: center">GT2 96EU</td>
+          <td style="text-align: center">GT1 32EU</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Display ver</td>
+          <td style="text-align: center">Gen12</td>
+          <td style="text-align: center">Gen13 (XE_LPD)</td>
+          <td style="text-align: center">Gen13 (XE_LPD)</td>
+          <td style="text-align: center">Gen13 (XE_LPD)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">CPU PCIe</td>
+          <td style="text-align: center">Gen5 8L x2,<br>Gen4 4L x2</td>
+          <td style="text-align: center">Gen5 8L,<br>Gen4 4L x2</td>
+          <td style="text-align: center">Gen4 4L?</td>
+          <td style="text-align: center">N/A</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">PCH PCIe</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">9-Lane</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory Bus width</td>
+          <td style="text-align: center">128-bit</td>
+          <td style="text-align: center">128-bit</td>
+          <td style="text-align: center">128-bit</td>
+          <td style="text-align: center">64-bit</td>
+      </tr>
+  </tbody>
 </table>
 <div class="footnotes" role="doc-endnotes">
 <hr>
@@ -237,7 +251,7 @@ Big コアを持たない <em>Alder Lake-N</em> で、<em>Alder Lake-M (2+8+2)</
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

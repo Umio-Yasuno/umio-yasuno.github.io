@@ -19,8 +19,22 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="ブロックチェーン向けの Navi10 SKU とそこから読める文脈 | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="Linux Kenrel (amd-gfx) にブロックチェーン向けの Navi10 SKU をサポートするパッチが投稿された。 [PATCH 1/3] drm/amdgpu: add DID for navi10 blockchain SKU DID (DeviceID) はこれまでに使用されていなかった 0x731E が使われ、RID (RevisionID) には 0xC6 と 0xC7 の 2つが">
-  <meta property="og:description" content="Linux Kenrel (amd-gfx) にブロックチェーン向けの Navi10 SKU をサポートするパッチが投稿された。 [PATCH 1/3] drm/amdgpu: add DID for navi10 blockchain SKU DID (DeviceID) はこれまでに使用されていなかった 0x731E が使われ、RID (RevisionID) には 0xC6 と 0xC7 の 2つが"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="Linux Kenrel (amd-gfx) にブロックチェーン向けの Navi10 SKU をサポートするパッチが投稿された。
+[PATCH 1/3] drm/amdgpu: add DID for navi10 blockchain SKU
+
+DID (DeviceID) はこれまでに使用されていなかった 0x731E が使われ、RID (RevisionID) には 0xC6 と 0xC7 の 2つが用意されており、ブロックチェーン向けの SKU もまた 2種類存在すると思われる。
+ディスプレイコントローラー (DCN2.0) とマルチメディアエンジン (VCN2.0) はサポートされず、ドライバーからは無効化される。
+ブロックチェーン/マイニング向けの AMD GPU と言うと、いつかに話題になった映像出力が実装されていない中古の格安 RX 470 が日本に流れてきたのを思い出す。1
+その時は自力で映像出力を実装する猛者が現れたりしたが、今回のは残念ながらドライバーから無効化されている。(VBOIS書き換えで何とかできるかもしれないが)
+それ用の DID/RID が用意されているあたり、AIB、カードベンダーが独自に既存のカードからただ映像出力を省いた訳ではないように思える。">
+  <meta property="og:description" content="Linux Kenrel (amd-gfx) にブロックチェーン向けの Navi10 SKU をサポートするパッチが投稿された。
+[PATCH 1/3] drm/amdgpu: add DID for navi10 blockchain SKU
+
+DID (DeviceID) はこれまでに使用されていなかった 0x731E が使われ、RID (RevisionID) には 0xC6 と 0xC7 の 2つが用意されており、ブロックチェーン向けの SKU もまた 2種類存在すると思われる。
+ディスプレイコントローラー (DCN2.0) とマルチメディアエンジン (VCN2.0) はサポートされず、ドライバーからは無効化される。
+ブロックチェーン/マイニング向けの AMD GPU と言うと、いつかに話題になった映像出力が実装されていない中古の格安 RX 470 が日本に流れてきたのを思い出す。1
+その時は自力で映像出力を実装する猛者が現れたりしたが、今回のは残念ながらドライバーから無効化されている。(VBOIS書き換えで何とかできるかもしれないが)
+それ用の DID/RID が用意されているあたり、AIB、カードベンダーが独自に既存のカードからただ映像出力を省いた訳ではないように思える。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Navi10">
@@ -71,7 +85,7 @@ DID (DeviceID) はこれまでに使用されていなかった <code>0x731E</co
 <p><a href="https://videocardz.com/newz/amd-radeon-rx-5700-series-reach-end-of-life" rel="noopener noreferrer" target="_blank" title="https://videocardz.com/newz/amd-radeon-rx-5700-series-reach-end-of-life">AMD Radeon RX 5700 series reach end of life - VideoCardz.com</a> <br> <a href="https://www.cowcotland.com/news/73563/les-cartes-graphiques-amd-radeon-rx-5700-custom-sont-passees-en-fin-de-vie.html" rel="noopener noreferrer" target="_blank" title="https://www.cowcotland.com/news/73563/les-cartes-graphiques-amd-radeon-rx-5700-custom-sont-passees-en-fin-de-vie.html">Les cartes graphiques AMD RADEON RX 5700 Custom sont passées en fin de vie - Cartes graphiques</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://news.mydrivers.com/1/718/718219.htm" rel="noopener noreferrer" target="_blank" title="https://news.mydrivers.com/1/718/718219.htm">AMD显卡骚操作：不零售 直接卖给挖矿的！-AMD,显卡,挖矿,矿主,讯景,XFX ——快科技(驱动之家旗下媒体)&ndash;科技改变未来</a> <br> <a href="https://videocardz.com/newz/xfx-china-allegedly-sells-almost-all-available-radeon-rx-stock-to-mining-farms" rel="noopener noreferrer" target="_blank" title="https://videocardz.com/newz/xfx-china-allegedly-sells-almost-all-available-radeon-rx-stock-to-mining-farms">XFX China allegedly sells &lsquo;almost all&rsquo; available Radeon RX stock to mining farms - VideoCardz.com</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://news.mydrivers.com/1/718/718219.htm" rel="noopener noreferrer" target="_blank" title="https://news.mydrivers.com/1/718/718219.htm">AMD显卡骚操作：不零售 直接卖给挖矿的！-AMD,显卡,挖矿,矿主,讯景,XFX ——快科技(驱动之家旗下媒体)–科技改变未来</a> <br> <a href="https://videocardz.com/newz/xfx-china-allegedly-sells-almost-all-available-radeon-rx-stock-to-mining-farms" rel="noopener noreferrer" target="_blank" title="https://videocardz.com/newz/xfx-china-allegedly-sells-almost-all-available-radeon-rx-stock-to-mining-farms">XFX China allegedly sells ‘almost all’ available Radeon RX stock to mining farms - VideoCardz.com</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
@@ -86,7 +100,7 @@ DID (DeviceID) はこれまでに使用されていなかった <code>0x731E</co
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

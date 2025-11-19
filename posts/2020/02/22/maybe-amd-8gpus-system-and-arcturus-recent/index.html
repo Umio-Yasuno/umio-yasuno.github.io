@@ -19,8 +19,20 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Arcturus情報近況 (2020/02/22) | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="新情報は特に無く、推測が9割。 Arcturusでは行列演算に対応 結構今更な情報。 Arcturusではそれぞれが32-bit幅の AccVGPR (Accumulate? Vector General-Purpose Register) が増設され、INT8 /FP16 /FP32">
-  <meta property="og:description" content="新情報は特に無く、推測が9割。 Arcturusでは行列演算に対応 結構今更な情報。 Arcturusではそれぞれが32-bit幅の AccVGPR (Accumulate? Vector General-Purpose Register) が増設され、INT8 /FP16 /FP32"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="新情報は特に無く、推測が9割。
+Arcturusでは行列演算に対応
+
+結構今更な情報。
+Arcturusではそれぞれが32-bit幅の AccVGPR (Accumulate? Vector General-Purpose Register) が増設され、INT8 /FP16 /FP32 /BF16 32x32までの行列演算に対応すると思われる。
+NVIDIA Tensor CoreはVolta、TuringではFP16までの対応であり、BF16には対応してないため、学習精度という点では有利だが、NVIDIAもAmpereで対応しそうである。
+また、専用ハードウェア追加ではなく、CU側での対応という汎用的なものであるから、性能がどこまで出るか。その分割かなければならないダイエリアも少なく済むが。">
+  <meta property="og:description" content="新情報は特に無く、推測が9割。
+Arcturusでは行列演算に対応
+
+結構今更な情報。
+Arcturusではそれぞれが32-bit幅の AccVGPR (Accumulate? Vector General-Purpose Register) が増設され、INT8 /FP16 /FP32 /BF16 32x32までの行列演算に対応すると思われる。
+NVIDIA Tensor CoreはVolta、TuringではFP16までの対応であり、BF16には対応してないため、学習精度という点では有利だが、NVIDIAもAmpereで対応しそうである。
+また、専用ハードウェア追加ではなく、CU側での対応という汎用的なものであるから、性能がどこまで出るか。その分割かなければならないダイエリアも少なく済むが。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Arcturus, gfx908, Radeon, gfx908, GFX9, Arcturus">
@@ -90,7 +102,7 @@ Arcturusはその構成から巨大なダイになるとされ、自然と歩留
 何しろ最適化でのターゲット名に <em>Arcturus</em> ではなく <em>MI100</em> を使うほどだ。<br>
 （その裏で一部ファイル名を <em>MI100</em> から <em>Artus</em> に変えたりと名称、略称がはっきりしない。）<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></p>
 <blockquote>
-<p>関連: <a href="https://umio-yasuno.github.io/posts/2019/12/20/rocm-mi100-ariel/" rel="noopener noreferrer" target="_blank" title="https://umio-yasuno.github.io/posts/2019/12/20/rocm-mi100-ariel/">ROCmのコードにMI100、Arielが追加される | Coelacanth&rsquo;s Dream</a></p>
+<p>関連: <a href="https://umio-yasuno.github.io/posts/2019/12/20/rocm-mi100-ariel/" rel="noopener noreferrer" target="_blank" title="https://umio-yasuno.github.io/posts/2019/12/20/rocm-mi100-ariel/">ROCmのコードにMI100、Arielが追加される | Coelacanth’s Dream</a></p>
 </blockquote>
 <p>このことと、120CUという推測を合わせると、逆算して動作クロックは1628MHzとなる。</p>
 <blockquote>
@@ -133,109 +145,109 @@ Arcturusはその構成から巨大なダイになるとされ、自然と歩留
 <a href="https://github.com/wenkaidu/rccl/blob/55f8e2dec75077773ed414c1ef2f5a48afef4a6f/tools/topo_expl/include/model.h" rel="noopener noreferrer" target="_blank" title="https://github.com/wenkaidu/rccl/blob/55f8e2dec75077773ed414c1ef2f5a48afef4a6f/tools/topo_expl/include/model.h">rccl/model.h at 55f8e2dec75077773ed414c1ef2f5a48afef4a6f · wenkaidu/rccl</a>
 model.h下の表は、あるGPUから見た他のGPUへのリンク数を表しているのだろうか？</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:center"></th>
-<th style="text-align:center">0</th>
-<th style="text-align:center">1</th>
-<th style="text-align:center">2</th>
-<th style="text-align:center">3</th>
-<th style="text-align:center">4</th>
-<th style="text-align:center">5</th>
-<th style="text-align:center">6</th>
-<th style="text-align:center">7</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">0</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td style="text-align:center">1</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td style="text-align:center">2</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td style="text-align:center">3</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td style="text-align:center">4</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td style="text-align:center">5</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td style="text-align:center">6</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td style="text-align:center">7</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: center"></th>
+          <th style="text-align: center">0</th>
+          <th style="text-align: center">1</th>
+          <th style="text-align: center">2</th>
+          <th style="text-align: center">3</th>
+          <th style="text-align: center">4</th>
+          <th style="text-align: center">5</th>
+          <th style="text-align: center">6</th>
+          <th style="text-align: center">7</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: center">0</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">1</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">2</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">3</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">4</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">5</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">6</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+      <tr>
+          <td style="text-align: center">7</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+      </tr>
+  </tbody>
 </table>
 <p>といったように。<br>
 具体的にどのようなネットワークになってるかは自信が全くないため、やめておく。</p>
@@ -258,7 +270,7 @@ model.h下の表は、あるGPUから見た他のGPUへのリンク数を表し�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

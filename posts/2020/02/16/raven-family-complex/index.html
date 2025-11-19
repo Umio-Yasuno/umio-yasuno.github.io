@@ -19,8 +19,56 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="いかに Zen APU は複雑か | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="インデックス Raven2 は Zenベース 前提情報 CPU GPU Device ID アーキテクチャ 製品型番 対策 CPUIDを使う 地道に情報収集 気にしない Raven2 は Zenベース 先日、Chromium OSへのパッ">
-  <meta property="og:description" content="インデックス Raven2 は Zenベース 前提情報 CPU GPU Device ID アーキテクチャ 製品型番 対策 CPUIDを使う 地道に情報収集 気にしない Raven2 は Zenベース 先日、Chromium OSへのパッ"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="インデックス
+
+
+Raven2 は Zenベース
+前提情報
+CPU
+GPU
+
+Device ID
+アーキテクチャ
+
+
+製品型番
+対策
+
+CPUIDを使う
+地道に情報収集
+気にしない
+
+
+
+Raven2 は Zenベース
+
+先日、Chromium OSへのパッチを眺めていたら、Raven2 (Dali, Pollock) を判定するコードの関数名の一部で zen2 が使われていた。
+soc/amd/picasso: Add helper functions for finding SOC type (I24b73145) · Gerrit Code Review">
+  <meta property="og:description" content="インデックス
+
+
+Raven2 は Zenベース
+前提情報
+CPU
+GPU
+
+Device ID
+アーキテクチャ
+
+
+製品型番
+対策
+
+CPUIDを使う
+地道に情報収集
+気にしない
+
+
+
+Raven2 は Zenベース
+
+先日、Chromium OSへのパッチを眺めていたら、Raven2 (Dali, Pollock) を判定するコードの関数名の一部で zen2 が使われていた。
+soc/amd/picasso: Add helper functions for finding SOC type (I24b73145) · Gerrit Code Review"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, , Zen, Raven, Picasso, Raven2, Dali, Pollock, Renoir">
@@ -86,7 +134,7 @@ EPYC 7002シリーズ (Rome)、Ryzen 3000シリーズ (Matisse)、Ryzen Threadri
 </blockquote>
 <p>ただMartin Roth氏は最初、ソースとして WikiChip の Zen2 のページをあげており、<br>
 そのページのリビジョンを見ると、2020/02/13 に Dali はZen2ベースのCPUコアではないと削除されたことが確認できる。<br>
-<a href="https://en.wikichip.org/w/index.php?title=amd/microarchitectures/zen_2&action=history" rel="noopener noreferrer" target="_blank" title="https://en.wikichip.org/w/index.php?title=amd/microarchitectures/zen_2&action=history">Revision history of &ldquo;amd/microarchitectures/zen 2&rdquo; - WikiChip</a><br>
+<a href="https://en.wikichip.org/w/index.php?title=amd/microarchitectures/zen_2&action=history" rel="noopener noreferrer" target="_blank" title="https://en.wikichip.org/w/index.php?title=amd/microarchitectures/zen_2&action=history">Revision history of “amd/microarchitectures/zen 2” - WikiChip</a><br>
 <a href="https://en.wikichip.org/w/index.php?title=amd/microarchitectures/zen_2&diff=next&oldid=95311" rel="noopener noreferrer" target="_blank" title="https://en.wikichip.org/w/index.php?title=amd/microarchitectures/zen_2&diff=next&oldid=95311">Latest revision as of 11:22, 13 February 2020</a></p>
 <p>氏がパッチを投稿したのは 2020/02/12。<br>
 つまりコードを記述している時は WikiChip に Dali は Zen2ベースだよ、とあった訳で、一概に攻める気にはなれない。</p>
@@ -203,10 +251,10 @@ x86_model だ。</p>
 <p>x86_model はCPU内部のデータの1つであり、主にソフトウェアが判別するのに使われる。<br>
 そして、Linux Kernel内の温度センサーを読み取るためのコードを読むと、Zen系は以下のようになっている。</p>
 <blockquote>
-<pre><code>  case 0x1:	/* Zen */
-  case 0x8:	/* Zen+ */
-  case 0x11:	/* Zen APU */
-  case 0x18:	/* Zen+ APU */
+<pre><code> case 0x1:	/* Zen */
+ case 0x8:	/* Zen+ */
+ case 0x11:	/* Zen APU */
+ case 0x18:	/* Zen+ APU */
 </code></pre>
 <p>引用元: <cite><a href="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587" rel="noopener noreferrer" target="_blank" title="https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587">https://github.com/torvalds/linux/blob/b02c6857389da66b09e447103bdb247ccd182456/drivers/hwmon/k10temp.c#L587</a></cite></p>
 </blockquote>
@@ -227,10 +275,10 @@ x86_model だ。</p>
 <p>判別には Device ID だけでなく Revision ID も使われるため、大きな問題がある訳ではないが、<br>
 コードの判定部分を複雑にさせてしまうし、人為的なミスも起こしやすい。</p>
 <p>Linux Kernel では <em>Raven</em> , <em>Picasso</em> , <em>Raven2</em> に別々の内部的なリビジョンIDを割り振ることで、何とか他のコードでの判定を簡略しているが、<br>
-<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n130" rel="noopener noreferrer" target="_blank" title="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n130">Line 130: dal_asic_id.h\include\display\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a><br>
-<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=amd-staging-drm-next&id=b989531b1f192a77c739a2976953e241d78229a3#n1336" rel="noopener noreferrer" target="_blank" title="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=amd-staging-drm-next&id=b989531b1f192a77c739a2976953e241d78229a3#n1336">Line 1336: amdgpu_device.c\amdgpu\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a></p>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n130" rel="noopener noreferrer" target="_blank" title="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n130">Line 130: dal_asic_id.h\include\display\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file ‘description’ to name the repository.</a><br>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=amd-staging-drm-next&id=b989531b1f192a77c739a2976953e241d78229a3#n1336" rel="noopener noreferrer" target="_blank" title="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c?h=amd-staging-drm-next&id=b989531b1f192a77c739a2976953e241d78229a3#n1336">Line 1336: amdgpu_device.c\amdgpu\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file ‘description’ to name the repository.</a></p>
 <p><em>Raven2</em> , <em>Dali</em> , <em>Pollock</em> はそうではなく、判定するための部分が長ったらしくなってしまっている。<br>
-<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n150" rel="noopener noreferrer" target="_blank" title="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n150">Line 150: dal_asic_id.h\include\display\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file &lsquo;description&rsquo; to name the repository.</a></p>
+<a href="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n150" rel="noopener noreferrer" target="_blank" title="https://cgit.freedesktop.org/~agd5f/linux/tree/drivers/gpu/drm/amd/display/include/dal_asic_id.h?h=amd-staging-drm-next#n150">Line 150: dal_asic_id.h\include\display\amd\drm\gpu\drivers - ~agd5f/linux - Unnamed repository; edit this file ‘description’ to name the repository.</a></p>
 <p>ハードウェアの情報を追う趣味を持っている人間にもひたすらにややこしいと不評である。</p>
 <p>またもChromimu OSへのパッチからとなるが、VBIOS部分もDevice IDの複雑さの影響を受けており、<br>
 こんなことをKconfigの説明部分に書かれたりしている。</p>
@@ -269,32 +317,32 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
 <a href="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2040455/" rel="noopener noreferrer" target="_blank" title="https://chromium-review.googlesource.com/c/chromiumos/third_party/coreboot/+/2040455/">Rework map_oprom_vendev to add revision check and mapping (I2978a569) · Gerrit Code Review</a><br>
 （src/soc/amd/picasso/include/soc/cpu.h）</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:center">CPUID</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Raven</td>
-<td style="text-align:center">0x00810f80</td>
-</tr>
-<tr>
-<td style="text-align:left">Picasso</td>
-<td style="text-align:center">0x00810f81</td>
-</tr>
-<tr>
-<td style="text-align:left">Raven2 (Dali, Pollock?)</td>
-<td style="text-align:center">0x00820f01</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: center">CPUID</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Raven</td>
+          <td style="text-align: center">0x00810f80</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Picasso</td>
+          <td style="text-align: center">0x00810f81</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Raven2 (Dali, Pollock?)</td>
+          <td style="text-align: center">0x00820f01</td>
+      </tr>
+  </tbody>
 </table>
 <p><a href="https://github.com/coreboot/coreboot/blob/master/src/soc/amd/picasso/cpu.c#L131" rel="noopener noreferrer" target="_blank" title="https://github.com/coreboot/coreboot/blob/master/src/soc/amd/picasso/cpu.c#L131">coreboot/cpu.c at master · coreboot/coreboot</a></p>
 <h3 id="pick">地道に情報収集<a href="#pick" class="head-cur-link" aria-hidden></a>
 </h3>
 <p>自分がやっているのがこれ。<br>
-<a href="https://www.coelacanth-dream.com/posts/2019/12/30/did-rid-product-matome-p2/" title="/posts/2019/12/30/did-rid-product-matome-p2/">AMDGPUのDID、RID、Productのびみょうまとめ Part2 | Coelacanth&rsquo;s Dream</a></p>
+<a href="https://www.coelacanth-dream.com/posts/2019/12/30/did-rid-product-matome-p2/" title="/posts/2019/12/30/did-rid-product-matome-p2/">AMDGPUのDID、RID、Productのびみょうまとめ Part2 | Coelacanth’s Dream</a></p>
 <p>ソースコード、ドライバー内のファイル、ハードウェア情報を表示するソフトのスクリーンショット等から地道に集めている。<br>
 あるGPU、APUが何であるか判明するまで時間がかかることもあるが、一度わかってしまえば紐は解ける。</p>
 <p>問題点は信頼度と注目度。<br>
@@ -316,7 +364,7 @@ Ryzen Mobile 4000シリーズが、デスクトップ向けのRyzen 3000シリ�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

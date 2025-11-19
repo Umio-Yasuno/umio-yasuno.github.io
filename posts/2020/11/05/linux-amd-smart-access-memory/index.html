@@ -19,8 +19,14 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Linux環境と Ryzen 5 2600、Radeon RX 560 で &#34;Smart Access Memory&#34; 機能を試す | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表された。 AMD Smart Access Memory | AMD AMD Smart Access Memory は、従来の Windows OS をベースと">
-  <meta property="og:description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表された。 AMD Smart Access Memory | AMD AMD Smart Access Memory は、従来の Windows OS をベースと"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表された。
+AMD Smart Access Memory | AMD
+
+AMD Smart Access Memory は、従来の Windows OS をベースとするシステムでは、CPU から GPU VRAM へは一度に 256MB までしかアクセス出来なかったが、その制限を取り払うことでボトルネックを減らし、ゲームにおける性能を高めるというもの。AMD が示している結果では、API に Vulkan または DX12 を用いるゲームで 5〜11% の性能向上となっている。">
+  <meta property="og:description" content="RDNA 2 / GFX10.3 世代の GPU、Radeon RX 6000シリーズ が発表された際、一緒にソフトウェアの新機能 AMD Smart Access Memory が発表された。
+AMD Smart Access Memory | AMD
+
+AMD Smart Access Memory は、従来の Windows OS をベースとするシステムでは、CPU から GPU VRAM へは一度に 256MB までしかアクセス出来なかったが、その制限を取り払うことでボトルネックを減らし、ゲームにおける性能を高めるというもの。AMD が示している結果では、API に Vulkan または DX12 を用いるゲームで 5〜11% の性能向上となっている。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Linux_Kernel, RADV, RadeonSI, Smart_Access_Memory">
@@ -121,38 +127,38 @@
 <h4 id="env">環境<a href="#env" class="head-cur-link" aria-hidden></a>
 </h4>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">Hardware/Software</th>
-<th style="text-align:center">Desc</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">CPU</td>
-<td style="text-align:center">AMD Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
-</tr>
-<tr>
-<td style="text-align:left">M/B</td>
-<td style="text-align:center">GIGABYTE GA-A320-HD2 (rev 1.0)</td>
-</tr>
-<tr>
-<td style="text-align:left">Memory</td>
-<td style="text-align:center">DDR4-2933 16GB</td>
-</tr>
-<tr>
-<td style="text-align:left">GPU</td>
-<td style="text-align:center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 7Gbps<br>PCIe Gen3 x8)</td>
-</tr>
-<tr>
-<td style="text-align:left">Linux Kernel</td>
-<td style="text-align:center">5.9.1</td>
-</tr>
-<tr>
-<td style="text-align:left">User Mode Driver</td>
-<td style="text-align:center">Mesa 20.3.0-devel (git-5957b0c162)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">Hardware/Software</th>
+          <th style="text-align: center">Desc</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">CPU</td>
+          <td style="text-align: center">AMD Ryzen 5 2600<br>(6-Core/12-Thread, 3.4GHz)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">M/B</td>
+          <td style="text-align: center">GIGABYTE GA-A320-HD2 (rev 1.0)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Memory</td>
+          <td style="text-align: center">DDR4-2933 16GB</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GPU</td>
+          <td style="text-align: center">AMD Radeon RX 560<br>(16CU/1024SP, 1080MHz,<br>VRAM 4GB, 7Gbps<br>PCIe Gen3 x8)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Linux Kernel</td>
+          <td style="text-align: center">5.9.1</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">User Mode Driver</td>
+          <td style="text-align: center">Mesa 20.3.0-devel (git-5957b0c162)</td>
+      </tr>
+  </tbody>
 </table>
 <h4 id="how">計測方法<a href="#how" class="head-cur-link" aria-hidden></a>
 </h4>
@@ -170,41 +176,41 @@
 <h4 id="result">結果<a href="#result" class="head-cur-link" aria-hidden></a>
 </h4>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">waifu2x-ncnn-vulkan<br>(real time)</th>
-<th style="text-align:center">SAM Off</th>
-<th style="text-align:center">SAM On</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">cunet</td>
-<td style="text-align:center">14.27s</td>
-<td style="text-align:center">12.71s<br>(+12%)</td>
-</tr>
-<tr>
-<td style="text-align:left">upconv_7_anime_style_art_rgb</td>
-<td style="text-align:center">5.93s</td>
-<td style="text-align:center">5.90s<br>(+0.5%)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">waifu2x-ncnn-vulkan<br>(real time)</th>
+          <th style="text-align: center">SAM Off</th>
+          <th style="text-align: center">SAM On</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">cunet</td>
+          <td style="text-align: center">14.27s</td>
+          <td style="text-align: center">12.71s<br>(+12%)</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">upconv_7_anime_style_art_rgb</td>
+          <td style="text-align: center">5.93s</td>
+          <td style="text-align: center">5.90s<br>(+0.5%)</td>
+      </tr>
+  </tbody>
 </table>
 <table>
-<thead>
-<tr>
-<th style="text-align:left">vkmark<br>1920x1080</th>
-<th style="text-align:center">SAM Off</th>
-<th style="text-align:center">SAM On</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Score</td>
-<td style="text-align:center">4729</td>
-<td style="text-align:center">4748<br>(+0.4%)</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left">vkmark<br>1920x1080</th>
+          <th style="text-align: center">SAM Off</th>
+          <th style="text-align: center">SAM On</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Score</td>
+          <td style="text-align: center">4729</td>
+          <td style="text-align: center">4748<br>(+0.4%)</td>
+      </tr>
+  </tbody>
 </table>
 <p>cunet モデルでの結果は <em>AMD Smart Access Memory</em> 有効で 12% の性能向上が確認できたが、正直有意な性能向上が確認できたのはこれくらいで、他の upconv_7_anime_style_art_rgb モデルでの結果と vkmark の結果は誤差だろう。<br>
 AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、安定して性能向上の効果を得られないからなのかもしれない。<br>
@@ -226,7 +232,7 @@ AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、�
 <p><a href="https://www.asus.com/jp/support/FAQ/1017190/" rel="noopener noreferrer" target="_blank" title="https://www.asus.com/jp/support/FAQ/1017190/">拡張カードを複数取り付けた場合に正しく認識されない | サポート 公式 | ASUS 日本</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://www.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/" title="/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">RADV/ACO 検証: waifu2x-ncnn-vulkan の実行が最大3倍近く高速に | Coelacanth&rsquo;s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+<p><a href="https://www.coelacanth-dream.com/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/" title="/posts/2020/04/26/waifu2x-ncnn-vulkan-speedup-aco/">RADV/ACO 検証: waifu2x-ncnn-vulkan の実行が最大3倍近く高速に | Coelacanth’s Dream</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
 </div>
@@ -241,7 +247,7 @@ AMD が <strong>Zen 3 + RDNA 2</strong> の構成に限定しているのは、�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">

@@ -19,8 +19,68 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Intel Architecture Day 2021 個人的まとめ　―― 用語が整理された Xe GPU | Coelacanth&#39;s Dream">
 <meta name="twitter:card" content="summary">
-<meta name="description" content="相変わらず地味な話を取り上げていく。 Intel Architecture Day 2021 にて、ゲーミング向け Intel GPU アーキテクチャ Xe-HPG と、コンピュート性能に特化した Xe-HPC の一部概要と新たなブロック図が公開された。 Intel">
-  <meta property="og:description" content="相変わらず地味な話を取り上げていく。 Intel Architecture Day 2021 にて、ゲーミング向け Intel GPU アーキテクチャ Xe-HPG と、コンピュート性能に特化した Xe-HPC の一部概要と新たなブロック図が公開された。 Intel"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="description" content="相変わらず地味な話を取り上げていく。
+Intel Architecture Day 2021 にて、ゲーミング向け Intel GPU アーキテクチャ Xe-HPG と、コンピュート性能に特化した Xe-HPC の一部概要と新たなブロック図が公開された。
+
+Intel Architecture Day 2021
+
+Presentation Deck: Intel Architecture Day 2021
+
+
+
+Index
+
+
+用語の再整理
+
+Xe-HPG
+Xe-HPC
+
+Rambo Cache = L2キャッシュ?
+
+
+
+
+
+
+
+用語の再整理
+
+Xe-HPG
+
+まず Xe-HPG GPU の単位となる Xe-Core には、Vector Engine (256-bit) 16基、Matrix Engine (1024-bit) 16基、ロード/ストアユニット、L1キャッシュと命令キャッシュ、SLM (Shared Local Memory) が搭載される。
+今回新たに出てきた Vector Engine と Matrix Engine (XMX, XeMatrix eXtensions) だが、その 2つを統合したものが従来の Intel GPU における EU (Execution Unit) に相当すると考えられる。">
+  <meta property="og:description" content="相変わらず地味な話を取り上げていく。
+Intel Architecture Day 2021 にて、ゲーミング向け Intel GPU アーキテクチャ Xe-HPG と、コンピュート性能に特化した Xe-HPC の一部概要と新たなブロック図が公開された。
+
+Intel Architecture Day 2021
+
+Presentation Deck: Intel Architecture Day 2021
+
+
+
+Index
+
+
+用語の再整理
+
+Xe-HPG
+Xe-HPC
+
+Rambo Cache = L2キャッシュ?
+
+
+
+
+
+
+
+用語の再整理
+
+Xe-HPG
+
+まず Xe-HPG GPU の単位となる Xe-Core には、Vector Engine (256-bit) 16基、Matrix Engine (1024-bit) 16基、ロード/ストアユニット、L1キャッシュと命令キャッシュ、SLM (Shared Local Memory) が搭載される。
+今回新たに出てきた Vector Engine と Matrix Engine (XMX, XeMatrix eXtensions) だが、その 2つを統合したものが従来の Intel GPU における EU (Execution Unit) に相当すると考えられる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, Xe-HPC, DG2, Xe-HPG, Gen12">
@@ -90,7 +150,7 @@
 それが今回、ソフトウェアから L1キャッシュかローカルメモリ (SLM) のどちらかに設定可能なものだということが明かされた。<br>
 ただ、このことは <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> の発表のタイミングで説明されていたことで、最近の NVIDIA GPU のように L1データキャッシュとローカルメモリとで分割可能なのか、<em><span class="xe-gpu-arch">X<sup>e</sup>-LP/HPG</span></em> も同様か、といった点は不明。</p>
 <p>以前 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> の L1データキャッシュを有効化するパッチが Intel GPU のオープンソースドライバーに投稿されており、パッチのコメントによれば Unreal Engine 4 Shooter Demo で 11.84% 、Doom (2016) で 11.40% の性能向上が確認されたとしている。<br>
-<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/10/13/tgl-gen12-l1cache/" title="/posts/2020/10/13/tgl-gen12-l1cache/">Intel Gen12 GPU で増設された L1データキャッシュの効果 | Coelacanth&rsquo;s Dream</a></span>
+<span class="thread-link"><a rel="noopener noreferrer" target="_blank" href="https://www.coelacanth-dream.com/posts/2020/10/13/tgl-gen12-l1cache/" title="/posts/2020/10/13/tgl-gen12-l1cache/">Intel Gen12 GPU で増設された L1データキャッシュの効果 | Coelacanth’s Dream</a></span>
 </p>
 <p><em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> では <span class="xe-gpu-arch">X<sup>e</sup></span>-Core と同数のレイトレーシングユニットとテクスチャサンプラーを持ち、以前はそれら 3つを合わせて Sub-slice(s) と呼称していた。<br>
 全体で共有するキャッシュについても、以前は L3キャッシュと呼んでいたが、今回で L2キャッシュと再定義された。<br>
@@ -103,40 +163,40 @@
 ロード/ストア性能、L1キャッシュ/SLM のサイズは、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></em> では公開されていなかったため比較できないが、参考までに <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> の場合を書くと、<br>
 <em><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></em> では Subslice あたりのロード/ストアは 128B/clk、SLM は 128KB となっていた。</p>
 <table>
-<thead>
-<tr>
-<th style="text-align:left"></th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></th>
-<th style="text-align:center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">Vector Engine</td>
-<td style="text-align:center">256-bit?</td>
-<td style="text-align:center">256-bit</td>
-<td style="text-align:center">512-bit</td>
-</tr>
-<tr>
-<td style="text-align:left">VE per (Subslice or <span class="xe-gpu-arch">X<sup>e</sup></span>-Core)</td>
-<td style="text-align:center">16</td>
-<td style="text-align:center">16</td>
-<td style="text-align:center">8</td>
-</tr>
-<tr>
-<td style="text-align:left">Matrix Engine</td>
-<td style="text-align:center">N/A</td>
-<td style="text-align:center">1024-bit</td>
-<td style="text-align:center">4096-bit</td>
-</tr>
-<tr>
-<td style="text-align:left">Load/Store (SLM)</td>
-<td style="text-align:center">128B?</td>
-<td style="text-align:center">?</td>
-<td style="text-align:center">512B</td>
-</tr>
-</tbody>
+  <thead>
+      <tr>
+          <th style="text-align: left"></th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-LP</span></th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-HPG</span></th>
+          <th style="text-align: center"><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">Vector Engine</td>
+          <td style="text-align: center">256-bit?</td>
+          <td style="text-align: center">256-bit</td>
+          <td style="text-align: center">512-bit</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">VE per (Subslice or <span class="xe-gpu-arch">X<sup>e</sup></span>-Core)</td>
+          <td style="text-align: center">16</td>
+          <td style="text-align: center">16</td>
+          <td style="text-align: center">8</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Matrix Engine</td>
+          <td style="text-align: center">N/A</td>
+          <td style="text-align: center">1024-bit</td>
+          <td style="text-align: center">4096-bit</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Load/Store (SLM)</td>
+          <td style="text-align: center">128B?</td>
+          <td style="text-align: center">?</td>
+          <td style="text-align: center">512B</td>
+      </tr>
+  </tbody>
 </table>
 <p>複数の Subslice (<span class="xe-gpu-arch">X<sup>e</sup></span>-Core + Fixed function) で構成される Slice は、<em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> では Subslice 16基の仕様となっている。<br>
 <strong>Ponte Vecchio</strong> では <em><span class="xe-gpu-arch">X<sup>e</sup>-HPC</span></em> を採用し、実装される Compute Tile は 8基搭載する訳だが、<br>
@@ -182,7 +242,7 @@ AMD の RDNA 2 GPU、<em>Sienna Cichlid (Navi21)</em> も 128MB という巨大�
 <a href="#" class="pagetop sb">Page Top</a>
   </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
 <aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
-</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.131.0</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.152.2</a>
 </aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
 </footer>
 <aside class="side">
