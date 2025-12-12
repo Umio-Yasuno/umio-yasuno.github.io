@@ -23,12 +23,14 @@
 ランダムに発生するメモリアクセスエラー
 
 まず ROCm &#43; RDNA 4 GPU では以前からランダムにメモリアクセスエラーが発生しており、安定性に問題を抱えていた。
-主に PyTorch を使用している際に発生するが、発生する頻度はほとんどランダムであり、発生するタイミングもカーネルを実行中、唐突に発生するということしか分からなかった。">
+主に PyTorch を使用している際に発生するが、発生する頻度はほとんどランダムであり、発生するタイミングもカーネルを実行中、唐突に発生するということしか分からなかった。
+ログを取り、仔細に読み込んでも、割り当てていないメモリアドレスにアクセスしている以外には不明だった。">
   <meta property="og:description" content="ROCm &#43; RDNA 4 GPU という環境で、数ヶ月に渡って発生していたメモリアクセスエラーがようやく修正されるかもしれない。
 ランダムに発生するメモリアクセスエラー
 
 まず ROCm &#43; RDNA 4 GPU では以前からランダムにメモリアクセスエラーが発生しており、安定性に問題を抱えていた。
-主に PyTorch を使用している際に発生するが、発生する頻度はほとんどランダムであり、発生するタイミングもカーネルを実行中、唐突に発生するということしか分からなかった。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+主に PyTorch を使用している際に発生するが、発生する頻度はほとんどランダムであり、発生するタイミングもカーネルを実行中、唐突に発生するということしか分からなかった。
+ログを取り、仔細に読み込んでも、割り当てていないメモリアドレスにアクセスしている以外には不明だった。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, ROCm, RDNA_4">
@@ -49,18 +51,18 @@
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2025-12-13T05:32:49+09:00">Post: 2025-12-13 05:32:49</time>
-    <aside class="update">Update: 2025-12-13 07:40:55</aside>
+    <aside class="update">Update: 2025-12-13 08:34:23</aside>
   </aside><p>ROCm + RDNA 4 GPU という環境で、数ヶ月に渡って発生していたメモリアクセスエラーがようやく修正されるかもしれない。</p>
 <h2 id="memory-error">ランダムに発生するメモリアクセスエラー<a href="#memory-error" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>まず ROCm + RDNA 4 GPU では以前からランダムにメモリアクセスエラーが発生しており、安定性に問題を抱えていた。<br>
-主に PyTorch を使用している際に発生するが、発生する頻度はほとんどランダムであり、発生するタイミングもカーネルを実行中、唐突に発生するということしか分からなかった。</p>
+主に PyTorch を使用している際に発生するが、発生する頻度はほとんどランダムであり、発生するタイミングもカーネルを実行中、唐突に発生するということしか分からなかった。<br>
+ログを取り、仔細に読み込んでも、割り当てていないメモリアドレスにアクセスしている以外には不明だった。</p>
 <ul>
 <li><a href="https://github.com/ROCm/ROCm/issues/5051" rel="noopener noreferrer" target="_blank" title="https://github.com/ROCm/ROCm/issues/5051">[Issue]: Memory access fault by GPU node-1 (Agent handle: 0x5de975b3cc80) on address 0x799bfc063000 · Issue #5051 · ROCm/ROCm</a></li>
 </ul>
-<p>自分が RX 9060 XT 16GB (gfx1200) で試した限りでは ROCm 6.4.1 では発生せず、ROCm 7.0rc から発生するようになったが、その時は原因が不明だったため、ただ運が良かっただけという可能性もある。<br>
-また、Vulkan API を使用したゲームをプレイ中に発生することは一度もなかった。<br>
-<a href="https://github.com/ROCm/TheRock/tree/main" rel="noopener noreferrer" target="_blank" title="https://github.com/ROCm/TheRock/tree/main">TheRock</a> での rc リリースを含めるなら 2025/08 から、正式なリリースでは 2025/09 から発生していたことになる。</p>
+<p>自分が RX 9060 XT 16GB (gfx1200) で試した限りでは ROCm 6.4.1 では発生せず、ROCm 7.0rc から発生するようになったが、<br>
+また、Vulkan API を使用したゲームをプレイ中に発生することは一度もなかった。</p>
 <h2 id="wa-fix">回避策と修正<a href="#wa-fix" class="head-cur-link" aria-hidden></a>
 </h2>
 <p>問題が報告されてから、しばらくの間は特に進展が無かったが、最近になって Linux Kernel のブートパラメータによる回避策が見つかった。<br>
@@ -89,7 +91,9 @@
 <ul>
 <li><a href="https://lists.freedesktop.org/archives/amd-gfx/2025-December/134755.html" rel="noopener noreferrer" target="_blank" title="https://lists.freedesktop.org/archives/amd-gfx/2025-December/134755.html">[PATCH v3] drm/amdkfd: Trap handler support for expert scheduling mode</a></li>
 </ul>
-<p>つまり今までの情報を要約すると、ROCm 7.0 から hipBLASLt は &ldquo;expert scheduling mode&rdquo; を有効化しているが、amdkfd の CWSR における、Wave を中断し、保存、そして再開する処理においては &ldquo;expert scheduling mode&rdquo; をサポートしていなかった、という状況の不一致がメモリアクセスエラーを引き起こしていた可能性が高い。</p>
+<p>つまり今までの情報を要約すると、ROCm 7.0 から hipBLASLt は &ldquo;expert scheduling mode&rdquo; を有効化しているが、amdkfd の CWSR における、Wave を中断し、保存、そして再開する処理においては &ldquo;expert scheduling mode&rdquo; をサポートしていなかった、という状況の不一致がメモリアクセスエラーを引き起こしていた可能性が高い。<br>
+PyTorch は内部的に hipBLASLt を使用しているため、主に PyTorch を実行中に発生していたこととも符号する。<br>
+この問題は TheRock での rc リリースを含めるなら 2025/08 から、正式なリリースでは 2025/09 から発生していたことになる。</p>
 <p>今後は amdkfd から取得可能な情報に &ldquo;expert scheduling mode&rdquo; のサポートについて追加され、hipBLASLt はそれを用いてサポートを切り替える方式となるらしい。</p>
 <ul>
 <li><a href="https://github.com/ROCm/rocm-systems/pull/2241" rel="noopener noreferrer" target="_blank" title="https://github.com/ROCm/rocm-systems/pull/2241">Add HasExpertSchedMode device prop by fjankovi · Pull Request #2241 · ROCm/rocm-systems</a></li>
