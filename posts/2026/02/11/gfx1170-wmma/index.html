@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RDNA4/GFX12 と同じ WMMA 命令をサポートする RDNA4m/GFX11.7 APU | Coelacanth&#39;s Dream</title>
+
+
+
+<link rel="canonical" href="https://www.coelacanth-dream.com/posts/2026/02/11/gfx1170-wmma/">
+
+<link rel="icon" type="image/png" sizes="128x128" href="https://www.coelacanth-dream.com/icon.png">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/posts/index.xml">
+<link rel="alternate" type="application/rss+xml" href="https://www.coelacanth-dream.com/lastmod/index.xml">
+
+<meta property="og:site_name" content="Coelacanth&#39;s Dream">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RDNA4/GFX12 と同じ WMMA 命令をサポートする RDNA4m/GFX11.7 APU | Coelacanth&#39;s Dream">
+<meta name="twitter:card" content="summary">
+<meta name="description" content="AMD の Mirko Brkusanin 氏により RDNA4m/GFX1170 APU に関する新たなパッチが投稿され、RDNA4/GFX12 と同じ WMMA (Wave Matrix Multiply Accumulate) 命令をサポートすることが判明した。
+
+[AMDGPU] Add WMMA and SWMMAC instructions for gfx1170 by mbrkusanin · Pull Request #180731 · llvm/llvm-project
+
+WMMA 命令は RDNA3/GFX11 と RDNA4/GFX12 で入力データの配置に関して異なる点があり、RDNA3/GFX11 では入力データを複製して配置するため、追加のベクタレジスタを必要とする仕様だった。
+それが RDNA4/GFX12 では必要ではなくなり、効率的な仕様となった。
+そして RDNA4m/GFX1170 がサポートするのは RDNA4/GFX12 と同じ仕様となる。">
+  <meta property="og:description" content="AMD の Mirko Brkusanin 氏により RDNA4m/GFX1170 APU に関する新たなパッチが投稿され、RDNA4/GFX12 と同じ WMMA (Wave Matrix Multiply Accumulate) 命令をサポートすることが判明した。
+
+[AMDGPU] Add WMMA and SWMMAC instructions for gfx1170 by mbrkusanin · Pull Request #180731 · llvm/llvm-project
+
+WMMA 命令は RDNA3/GFX11 と RDNA4/GFX12 で入力データの配置に関して異なる点があり、RDNA3/GFX11 では入力データを複製して配置するため、追加のベクタレジスタを必要とする仕様だった。
+それが RDNA4/GFX12 では必要ではなくなり、効率的な仕様となった。
+そして RDNA4m/GFX1170 がサポートするのは RDNA4/GFX12 と同じ仕様となる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+<meta name="author" content="Umio Yasuno">
+<meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
+<meta name="keywords" content="Coelacanth&#39;s Dream, GFX1170, LLVM, GFX11, GFX12">
+    <link rel="preload" href="https://www.coelacanth-dream.com/css/ds.min.css" as="style"><link rel="preload" href="https://www.coelacanth-dream.com/css/page.min.css" as="style"><style>
+  html{background:#034759 fixed no-repeat;font-size:.95rem}body{display:grid;grid-template:var(--body-grid,repeat(4,auto) 2rem/auto .5rem .25rem);gap:1rem 0;scrollbar-width:thin;scrollbar-color:rgba(5,110,138,.9)#0000}.site-title{grid-row:1/2;grid-column:1/-3;margin:.5rem 0 0;font:2rem/1 monospace;word-spacing:100vw;text-align:right;isolation:isolate;text-shadow:.1em -.1em .8em #f1f4f3}.site-title-link{color:#b7c8c4;text-decoration:none;padding:0}.site-title-link:hover{color:#dae3e0}.lain-e{display:inline-block;font:700 .7em/.7 monospace;transform:rotate(-32deg);padding:0 .3ch .3ex;margin:0 -.1em 0 0;background-color:#0005;border-radius:50%}.text{display:grid;grid-row:var(--text-row,2/3);grid-column:var(--text-column,1/-2);color:#fffefe;line-height:1.6;grid-template:auto/.5% .5% auto 1%;gap:.8rem 0;overflow:hidden;overflow-wrap:anywhere;word-break:break-word}footer{display:var(--f-disp,grid);grid-row:3/4;grid-column:1/-1;contain:content}.side,.slide{position:fixed;contain:content}.side{display:var(--side-disp,none)}.slide{display:grid;visibility:var(--slide-vis,hidden)}a{color:#b7ffff;text-decoration:none;margin:0;padding:0 .2rem}hr{background-color:#17736b;padding:0;border-width:0;width:99%;height:1px}::-webkit-scrollbar{width:.2rem;height:.2rem;background-color:#0000}::-webkit-scrollbar-thumb{background-color:rgba(5,110,138,.9)}::-webkit-scrollbar-corner,::-webkit-scrollbar-resizer{display:none}@keyframes flicker{0%{opacity:.4}25%{opacity:.4}50%{opacity:.45}100%{opacity:.45}}.crt{background:radial-gradient(#eee2 4%,#0000 80%,#000a 83%)50%/contain fixed no-repeat,linear-gradient(to bottom,#0000 75%,#0003 75%)50%/100% .5rem fixed repeat-y;animation:flicker 3s infinite alternate;transform:scale(1.5,1);width:100vw;height:100vh;position:fixed;inset:0;z-index:2;pointer-events:none;isolation:isolate;contain:strict}.sb{display:inline-block;font:.8rem/1.2 sans-serif;margin:auto 0;padding:.12rem .5rem .24rem;max-width:max-content;text-align:center;cursor:pointer;color:#eff;border:1px solid var(--sb-brdr,#046a85);text-decoration:none;background-image:linear-gradient(to bottom,#04576d 0%,#034f63 100%);contain:content}.sb:active{--sb-brdr:#04576d}.sb::before{content:attr(data-btn-txt)}.rss::before{content:"RSS: " attr(data-rss-name)}.rss-block{display:flex;gap:.2rem}.share-block{display:flex;flex-flow:row wrap;gap:.2rem .25rem;justify-content:flex-end}@media(min-width:840px){body{--body-grid:repeat(5, auto) 6vh / calc(160px + 1rem) 0.2rem 0.6rem auto 0 0.5rem}.text{--text-row:auto;--text-column:2/-2}.side{--side-disp:block;height:98vh;width:160px;inset:1vh 0 0;padding:0 .5rem;color:#28c8bb;border-right:1px solid #17736b;font-size:1rem;overflow:scroll}.slide{display:none}footer{grid-column:2/-1}}
+  .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
+</style>
+    <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2026-02-11","dateModified":"2026-02-11","datePublished":"2026-02-11","headline":"RDNA4/GFX12 と同じ WMMA 命令をサポートする RDNA4m/GFX11.7 APU","image":"https://www.coelacanth-dream.com/icon.png","name":"RDNA4/GFX12 と同じ WMMA 命令をサポートする RDNA4m/GFX11.7 APU"}</script>
+  </head>
+  <body><header class="site-title">
+  <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
+</header>
+<link rel="stylesheet" href="https://www.coelacanth-dream.com/css/page.min.css">
+
+    <main class="text">
+      <h1 class="page-title">RDNA4/GFX12 と同じ WMMA 命令をサポートする RDNA4m/GFX11.7 APU</h1>
+
+  <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
+    <time datetime="2026-02-11T00:26:46+09:00">Post: 2026-02-11 00:26:46</time>
+    <aside class="update">Update: 2026-02-11 00:47:51</aside>
+  </aside><p>AMD の Mirko Brkusanin 氏により RDNA4m/GFX1170 APU に関する新たなパッチが投稿され、RDNA4/GFX12 と同じ WMMA (Wave Matrix Multiply Accumulate) 命令をサポートすることが判明した。</p>
+<ul>
+<li><a href="https://github.com/llvm/llvm-project/pull/180731" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/180731">[AMDGPU] Add WMMA and SWMMAC instructions for gfx1170 by mbrkusanin · Pull Request #180731 · llvm/llvm-project</a></li>
+</ul>
+<p>WMMA 命令は RDNA3/GFX11 と RDNA4/GFX12 で入力データの配置に関して異なる点があり、RDNA3/GFX11 では入力データを複製して配置するため、追加のベクタレジスタを必要とする仕様だった。<br>
+それが RDNA4/GFX12 では必要ではなくなり、効率的な仕様となった。<br>
+そして RDNA4m/GFX1170 がサポートするのは RDNA4/GFX12 と同じ仕様となる。</p>
+<blockquote>
+<pre><code>    +// Some of these are very similar to their base GFX11 counterparts, but they
+    +// don't require replication of the A,B matrices, so they use fewer vector
+    +// elements. Therefore, we add an &quot;_gfx12&quot; suffix to distinguish them from the
+    +// existing builtins.
+</code></pre>
+<div class="quote-source">引用元:<cite class="source-link"><a href="https://github.com/llvm/llvm-project/pull/180731" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/pull/180731">[AMDGPU] Add WMMA and SWMMAC instructions for gfx1170 by mbrkusanin · Pull Request #180731 · llvm/llvm-project</a></cite>
+</div>
+
+</blockquote>
+<p>RDNA4m/GFX1170 がサポートする WMMA/SWMMAC (Sparse WMMA) 命令も RDNA4/GFX12 と同じであることから、専用の行列積和演算ユニットとそのスループットは RDNA4/GFX12 と同一である可能性が高い。</p>
+<p>そうなると気になるのは、RDNA4m/GFX1170 APU が RDNA4/GFX12 ではない理由だ。<br>
+同じ機能と命令をサポートするなら、最初から RDNA4/GFX12 系列の GPU ID を割り当てればいい話であり、追加のソフトウェア対応も最低限で済む。<br>
+実装面積を削減するために RDNA4/GFX12 から機能か性能を削ったとして、後考えられるのはレイトレーシングユニットくらいだろうか？<br>
+RDNA4/GFX12 では CU に BVH4 に対応したレイトレーシングユニットを 2基搭載することで、RDNA3/GFX11 から倍のレイトレーシング性能の向上を図っている。<br>
+レイトレーシングユニットの内部を倍の規模にした訳ではないため、モジュール的にレイトレーシングユニット 1基だけにした設計も可能ではあるはずだ。</p>
+</article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx1170/" title="GFX1170">#GFX1170</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/llvm/" title="LLVM">#LLVM</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx11/" title="GFX11">#GFX11</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx12/" title="GFX12">#GFX12</a></nav><aside class="article-bottom-misc delay-page">
+  <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2026/02/11/gfx1170-wmma.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
+</aside>
+    </main><link rel="stylesheet" href="https://www.coelacanth-dream.com/css/ds.min.css"><footer class="delay-ds"><hr>
+  <nav class="foot-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+<a href="#" class="pagetop sb">Page Top</a>
+  </nav><nav class="rss-block"><a aria-label="RSS: Home" class="rss sb" data-rss-name="Home" href="https://www.coelacanth-dream.com/posts/index.xml" role="button" tabindex="0" target="_blank"></a><a aria-label="RSS: Updated" class="rss sb" data-rss-name="Updated" href="https://www.coelacanth-dream.com/lastmod/index.xml" role="button" tabindex="0" target="_blank"></a></nav>
+<aside class="site-desc"><aside class="hosted">Hosted by <a href="https://github.com/Umio-Yasuno/umio-yasuno.github.io" rel="noopener noreferrer" target="_blank">Github Pages</a>
+</aside><aside class="hosted powered">Powered by <a href="https://github.com/gohugoio/hugo" rel="noopener noreferrer" target="_blank">Hugo 0.154.5</a>
+</aside></aside><aside class="copyright">&copy; 2019 - 2024 Umio-Yasuno</aside>
+</footer>
+<aside class="side">
+  <aside class="side-block delay-ds" id="side-menu"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/gfx1170/" class="menu-cat-tag-lower">GFX1170</a><a href="https://www.coelacanth-dream.com/tags/gfx12/" class="menu-cat-tag-lower">GFX12</a><a href="https://www.coelacanth-dream.com/tags/llvm/" class="menu-cat-tag-lower">LLVM</a>
+  </nav></nav>
+
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+</nav>
+  </aside>
+</aside>
+<aside class="slide"><input checked id="menu-open" type="checkbox">
+  <label class="menu-label" for="menu-open"></label>
+
+  <nav class="slide-menu-block"><nav class="menu-links">
+
+  <a href="https://www.coelacanth-dream.com/posts/">Posts</a>
+  <a href="https://www.coelacanth-dream.com/lastmod/">Updated</a>
+
+  <a href="https://www.coelacanth-dream.com/gh-search/">Search</a></nav>
+<nav class="menu-cat-tag"><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/categories/" class="menu-cat-tag-title">Category</a><a href="https://www.coelacanth-dream.com/categories/amd/" class="menu-cat-tag-lower">AMD</a><a href="https://www.coelacanth-dream.com/categories/apu/" class="menu-cat-tag-lower">APU</a>
+  </nav><nav class="menu-cat-tag-block"><a href="https://www.coelacanth-dream.com/tags/" class="menu-cat-tag-title">Tag</a><a href="https://www.coelacanth-dream.com/tags/gfx11/" class="menu-cat-tag-lower">GFX11</a><a href="https://www.coelacanth-dream.com/tags/gfx1170/" class="menu-cat-tag-lower">GFX1170</a><a href="https://www.coelacanth-dream.com/tags/gfx12/" class="menu-cat-tag-lower">GFX12</a><a href="https://www.coelacanth-dream.com/tags/llvm/" class="menu-cat-tag-lower">LLVM</a>
+  </nav></nav>
+  
+    <nav class="menu-about"><a href="https://www.coelacanth-dream.com/about/#about">About</a>
+<a href="https://www.coelacanth-dream.com/about/#contact">Contact</a>
+<a href="https://www.coelacanth-dream.com/about/#mail">Mail</a>
+<a href="https://www.coelacanth-dream.com/webring">Webring</a><a onclick="random_page()">Random</a>
+
+    </nav>
+  </nav>
+</aside>
+<div class="crt"></div>
+    <script defer src="https://www.coelacanth-dream.com/js/main.min.js"></script>
+
+    <template id="msg_tmp">
+      <div id="toast_msg" class="toast_msg"></div>
+    </template>
+  </body>
+</html>
