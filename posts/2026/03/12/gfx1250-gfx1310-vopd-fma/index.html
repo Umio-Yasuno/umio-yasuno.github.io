@@ -51,7 +51,7 @@ Dual Issue VALU は RDNA 3 アーキテクチャ (GFX11) から実装された�
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2026-03-12T12:05:03+09:00">Post: 2026-03-12 12:05:03</time>
-    <aside class="update">Update: 2026-03-13 21:29:15</aside>
+    <aside class="update">Update: 2026-03-13 21:34:52</aside>
   </aside><p>LLVM で現在対応が進められている <em>AMD RDNA 5 アーキテクチャ (gfx1310)</em> だが、最近になり Dual Issue VALU/Wave32 に関するプルリクエストが公開された。</p>
 <ul>
 <li><a href="https://github.com/llvm/llvm-project/commit/1911488ca3b27e006588f5e2a02e63dc85ba3f3f" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/commit/1911488ca3b27e006588f5e2a02e63dc85ba3f3f">[AMDGPU] Add VOPD to gfx13 (#182815) · llvm/llvm-project@1911488</a></li>
@@ -61,8 +61,6 @@ Dual Issue VALU は RDNA 3 アーキテクチャ (GFX11) から実装された�
 <p><em>RDNA 5 (gfx1310)</em> では <code>VOPD</code> に <code>V_{MAX,MIN}_I32_e32, V_SUB_U32_e32, V_LSHRREV_B32_e32, V_ASHRREV_I32_e32</code> といった、整数を入力に取る最大値、最小値を取り出す命令、減算命令、ビットシフト命令が追加された。<br>
 一方でビット論理積命令の <code>V_AND_B32</code> は削除されている。<br>
 ここと以降で参照している LLVM のコード中に書いている命令は名前から <code>DUAL</code> を省略し、元となった命令名で表現した疑似命令となっている。</p>
-<p>そして、<em>RDNA 5 (gfx1310)</em> では Dual Issue 系命令として、新たな命令エンコーディングを採用した <code>VOPD3</code> が追加された。<br>
-<code>VOPD3</code> には、<code>V_{FMAAK,FMAMK}_F32</code> 命令を除いた <code>VOPD</code> の命令が含まれており、そして <code>V_FMA_F32_e64</code> 命令が追加されている。</p>
 <blockquote>
 <pre><code>    defvar VOPDPseudosCommon = [
       &quot;V_FMAC_F32_e32&quot;, &quot;V_FMAAK_F32&quot;, &quot;V_FMAMK_F32&quot;, &quot;V_MUL_F32_e32&quot;,
@@ -91,6 +89,8 @@ Dual Issue VALU は RDNA 3 アーキテクチャ (GFX11) から実装された�
 </div>
 
 </blockquote>
+<p>そして、<em>RDNA 5 (gfx1310)</em> では Dual Issue 系命令として、新たな命令エンコーディングを採用した <code>VOPD3</code> が追加された。<br>
+<code>VOPD3</code> には、<code>V_{FMAAK,FMAMK}_F32</code> 命令を除いた <code>VOPD</code> の命令が含まれており、そして <code>V_FMA_F32_e64</code> 命令が追加されている。</p>
 <p><code>V_{FMAAK,FMAMK}_F32</code> 命令と <code>V_FMA_F32</code> 命令の違いは入力にリテラル定数を用いるかどうかであり、<code>V_FMAAK_F32</code> 命令は加算部分の引数に、<code>V_FMAMK_F32</code> 命令は乗算部分の片方の引数にリテラル定数を用いる。<br>
 <code>V_FMA_F32</code> 命令は命令エンコーディングの違いから、3つの入力にそれぞれ別のレジスタを指定可能となっている。<br>
 FMA 系命令には他に <code>V_FMAC_F32</code> 命令が存在するが、こちらは累算向けで、加算部分に指定したレジスタに演算結果を出力する命令となる。</p>
@@ -99,7 +99,8 @@ FMA 系命令には他に <code>V_FMAC_F32</code> 命令が存在するが、こ
 <ul>
 <li><a href="https://www.coelacanth-dream.com/posts/2025/06/22/rx-9060-xt-review/#%e6%80%a7%e8%83%bd" title="/posts/2025/06/22/rx-9060-xt-review/#%e6%80%a7%e8%83%bd">Radeon RX 9060 XT 16GB を購入したので簡易レビュー | Coelacanth’s Dream</a></li>
 </ul>
-<p>それが <em>RDNA 5 (gfx1310)</em> では X側 Y側の両方に <code>V_FMA_F32 (V_DUAL_FMA_F32)</code> 命令を発行可能となったことで改善される可能性がある。</p>
+<p>それが <em>RDNA 5 (gfx1310)</em> では X側 Y側の両方に <code>V_FMA_F32 (V_DUAL_FMA_F32)</code> 命令を発行可能となったことで改善される可能性がある。<br>
+これまで半分のピーク性能しか出なかったケースが改善されれば、性能が倍になったように見えるのは確かだが、ピーク FP32 性能自体は大きく変わらないことが考えられる。</p>
 <blockquote>
 <pre><code>    defvar VOPD3XPseudosExtraGFX13 = [&quot;V_ADD_U32_e32&quot;, &quot;V_LSHLREV_B32_e32&quot;, &quot;V_FMA_F32_e64&quot;, &quot;V_SUB_U32_e32&quot;,
                                       &quot;V_LSHRREV_B32_e32&quot;, &quot;V_ASHRREV_I32_e32&quot;];
