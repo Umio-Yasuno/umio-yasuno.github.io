@@ -23,14 +23,16 @@
 
 [AMDGPU] Add VOPD to gfx13 (#182815) · llvm/llvm-project@1911488
 
-Dual Issue VALU は RDNA 3 アーキテクチャ (GFX11) から実装された機能であり、VOPD 系命令 (V_DUAL_*) を最大 2種類を組み合わせて、X側と Y側に同時に発行することができる。
-ただし、対応する命令は限られており、Y側だけでしか選択できない命令もある。また、Wave32 モードでしか対応しない、レジスタバンクの競合を避けるために X側と Y側で別のレジスタバンクを使用する必要がある等、いくつかの条件がある。">
+Dual Issue VALU は RDNA 3 アーキテクチャ (GFX11) から実装された機能であり、VOPD 系命令 (V_DUAL_*) を最大 2種類を組み合わせて、X側と Y側に同時に発行することができるというものだ。
+ただし、対応する命令は限られており、片側 (Y側) だけでしか選択できない命令もある。また Dual Issue には、Wave32 モードでしか正常に動作しない、レジスタバンクの競合を避けるために X側と Y側で別のレジスタバンクを使用する必要がある等、いくつかの条件がある。
+内部的には、フル機能の SIMD ユニットと、一部の命令のみをサポートしたサブセットとなる SIMD ユニットを組み合わせていると思われる。">
   <meta property="og:description" content="LLVM で現在対応が進められている AMD RDNA 5 アーキテクチャ (gfx1310) だが、最近になり Dual Issue VALU/Wave32 に関するプルリクエストが公開された。
 
 [AMDGPU] Add VOPD to gfx13 (#182815) · llvm/llvm-project@1911488
 
-Dual Issue VALU は RDNA 3 アーキテクチャ (GFX11) から実装された機能であり、VOPD 系命令 (V_DUAL_*) を最大 2種類を組み合わせて、X側と Y側に同時に発行することができる。
-ただし、対応する命令は限られており、Y側だけでしか選択できない命令もある。また、Wave32 モードでしか対応しない、レジスタバンクの競合を避けるために X側と Y側で別のレジスタバンクを使用する必要がある等、いくつかの条件がある。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
+Dual Issue VALU は RDNA 3 アーキテクチャ (GFX11) から実装された機能であり、VOPD 系命令 (V_DUAL_*) を最大 2種類を組み合わせて、X側と Y側に同時に発行することができるというものだ。
+ただし、対応する命令は限られており、片側 (Y側) だけでしか選択できない命令もある。また Dual Issue には、Wave32 モードでしか正常に動作しない、レジスタバンクの競合を避けるために X側と Y側で別のレジスタバンクを使用する必要がある等、いくつかの条件がある。
+内部的には、フル機能の SIMD ユニットと、一部の命令のみをサポートしたサブセットとなる SIMD ユニットを組み合わせていると思われる。"><meta property="og:image" content="https://www.coelacanth-dream.com/icon.png"><meta property="og:locale" content="ja_JP">
 <meta name="author" content="Umio Yasuno">
 <meta name="copyright" content="&copy; 2019 - 2024 Umio-Yasuno">
 <meta name="keywords" content="Coelacanth&#39;s Dream, GFX13, RDNA_5, LLVM">
@@ -39,7 +41,7 @@ Dual Issue VALU は RDNA 3 アーキテクチャ (GFX11) から実装された�
   .page-title{grid-column:2/-2;font:1.1rem sans-serif;color:#e5ebea;margin:0;padding:0}.sect-title{font-size:1rem;margin:0}.delay-ds{visibility:var(--ds,hidden)}.home,.posts,.cat-tag,.tag-comple{grid-column:2/-1}datalist{display:none}.page-main{font-size:.95rem;grid-column:2/-1;overflow:hidden;contain:content;display:flex;flex-flow:column nowrap;gap:.8rem 0}.page-main>p{margin:0}.page-main>p::before{content:'';padding:0 .25rem}.delay-page{visibility:var(--dp,hidden)}.page-title{color:#f7ab39;font:1rem/1.4 sans-serif;grid-column:2/-2;margin:0;overflow-wrap:break-word;word-break:break-word}figure{width:98%;height:54vh}.article-time{grid-column:3/-1;display:flex;text-align:end;margin:0;flex-flow:column nowrap;gap:.1rem 0;color:#28c8bb;font:.9rem/1.1 monospace}
 </style>
     <link rel="preload" href="https://www.coelacanth-dream.com/js/main.min.js" as="script">
-    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2026-03-12","dateModified":"2026-03-13","datePublished":"2026-03-12","headline":"RDNA 5 ではより多くのケースで Dual Issue が機能し、ピーク FP32 性能を出しやすくなる可能性","image":"https://www.coelacanth-dream.com/icon.png","name":"RDNA 5 ではより多くのケースで Dual Issue が機能し、ピーク FP32 性能を出しやすくなる可能性"}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org/","@type":"Article","dateCreated":"2026-03-12","dateModified":"2026-03-16","datePublished":"2026-03-12","headline":"RDNA 5 ではより多くのケースで Dual Issue が機能し、ピーク FP32 性能を出しやすくなる可能性","image":"https://www.coelacanth-dream.com/icon.png","name":"RDNA 5 ではより多くのケースで Dual Issue が機能し、ピーク FP32 性能を出しやすくなる可能性"}</script>
   </head>
   <body><header class="site-title">
   <a href="https://www.coelacanth-dream.com/" class="site-title-link" title="Coelacanth&#39;s Dream">Coelacanth's Dream</a>
@@ -51,13 +53,14 @@ Dual Issue VALU は RDNA 3 アーキテクチャ (GFX11) から実装された�
 
   <article class="page-main delay-page"><aside class="share-block"><button aria-label="Copy URL button" class="share-copy-button sb cp-url" data-btn-txt="Share" onclick="copy_url({ url: true, title: false })" tabindex="0" type="button"></button><button aria-label="Copy URL button" class="share-copy-button sb cp-url-title" data-btn-txt="Copy URL & Title" onclick="copy_url({ url: true, title: true })" tabindex="0" type="button"></button></aside><aside class="article-time">
     <time datetime="2026-03-12T12:05:03+09:00">Post: 2026-03-12 12:05:03</time>
-    <aside class="update">Update: 2026-03-13 21:34:52</aside>
+    <aside class="update">Update: 2026-03-16 06:58:46</aside>
   </aside><p>LLVM で現在対応が進められている <em>AMD RDNA 5 アーキテクチャ (gfx1310)</em> だが、最近になり Dual Issue VALU/Wave32 に関するプルリクエストが公開された。</p>
 <ul>
 <li><a href="https://github.com/llvm/llvm-project/commit/1911488ca3b27e006588f5e2a02e63dc85ba3f3f" rel="noopener noreferrer" target="_blank" title="https://github.com/llvm/llvm-project/commit/1911488ca3b27e006588f5e2a02e63dc85ba3f3f">[AMDGPU] Add VOPD to gfx13 (#182815) · llvm/llvm-project@1911488</a></li>
 </ul>
-<p>Dual Issue VALU は <em>RDNA 3 アーキテクチャ (GFX11)</em> から実装された機能であり、<code>VOPD</code> 系命令 (<code>V_DUAL_*</code>) を最大 2種類を組み合わせて、X側と Y側に同時に発行することができる。<br>
-ただし、対応する命令は限られており、Y側だけでしか選択できない命令もある。また、Wave32 モードでしか対応しない、レジスタバンクの競合を避けるために X側と Y側で別のレジスタバンクを使用する必要がある等、いくつかの条件がある。</p>
+<p>Dual Issue VALU は <em>RDNA 3 アーキテクチャ (GFX11)</em> から実装された機能であり、<code>VOPD</code> 系命令 (<code>V_DUAL_*</code>) を最大 2種類を組み合わせて、X側と Y側に同時に発行することができるというものだ。<br>
+ただし、対応する命令は限られており、片側 (Y側) だけでしか選択できない命令もある。また Dual Issue には、Wave32 モードでしか正常に動作しない、レジスタバンクの競合を避けるために X側と Y側で別のレジスタバンクを使用する必要がある等、いくつかの条件がある。<br>
+内部的には、フル機能の SIMD ユニットと、一部の命令のみをサポートしたサブセットとなる SIMD ユニットを組み合わせていると思われる。</p>
 <p><em>RDNA 5 (gfx1310)</em> では <code>VOPD</code> に <code>V_{MAX,MIN}_I32_e32, V_SUB_U32_e32, V_LSHRREV_B32_e32, V_ASHRREV_I32_e32</code> といった、整数を入力に取る最大値、最小値を取り出す命令、減算命令、ビットシフト命令が追加された。<br>
 一方でビット論理積命令の <code>V_AND_B32</code> は削除されている。<br>
 ここと以降で参照している LLVM のコード中に書いている命令は名前から <code>DUAL</code> を省略し、元となった命令名で表現した疑似命令となっている。</p>
@@ -89,7 +92,7 @@ Dual Issue VALU は RDNA 3 アーキテクチャ (GFX11) から実装された�
 </div>
 
 </blockquote>
-<p>そして、<em>RDNA 5 (gfx1310)</em> では Dual Issue 系命令として、新たな命令エンコーディングを採用した <code>VOPD3</code> が追加された。<br>
+<p>そして重要なのが、<em>RDNA 5 (gfx1310)</em> では Dual Issue 系命令として、新たな命令エンコーディングを採用した <code>VOPD3</code> が追加された。<br>
 <code>VOPD3</code> には、<code>V_{FMAAK,FMAMK}_F32</code> 命令を除いた <code>VOPD</code> の命令が含まれており、そして <code>V_FMA_F32_e64</code> 命令が追加されている。</p>
 <p><code>V_{FMAAK,FMAMK}_F32</code> 命令と <code>V_FMA_F32</code> 命令の違いは入力にリテラル定数を用いるかどうかであり、<code>V_FMAAK_F32</code> 命令は加算部分の引数に、<code>V_FMAMK_F32</code> 命令は乗算部分の片方の引数にリテラル定数を用いる。<br>
 <code>V_FMA_F32</code> 命令は命令エンコーディングの違いから、3つの入力にそれぞれ別のレジスタを指定可能となっている。<br>
@@ -100,7 +103,7 @@ FMA 系命令には他に <code>V_FMAC_F32</code> 命令が存在するが、こ
 <li><a href="https://www.coelacanth-dream.com/posts/2025/06/22/rx-9060-xt-review/#%e6%80%a7%e8%83%bd" title="/posts/2025/06/22/rx-9060-xt-review/#%e6%80%a7%e8%83%bd">Radeon RX 9060 XT 16GB を購入したので簡易レビュー | Coelacanth’s Dream</a></li>
 </ul>
 <p>それが <em>RDNA 5 (gfx1310)</em> では X側 Y側の両方に <code>V_FMA_F32 (V_DUAL_FMA_F32)</code> 命令を発行可能となったことで改善される可能性がある。<br>
-これまで半分のピーク性能しか出なかったケースが改善されれば、性能が倍になったように見えるのは確かだが、ピーク FP32 性能自体は大きく変わらないことが考えられる。</p>
+ただし、これまで半分のピーク性能しか出なかったケースが改善されれば性能が倍になったように見えるのは確かだが、ピーク FP32 性能自体は <em>RDNA 2</em> から <em>RDNA 3</em> に世代が進んだ時のようには大きく変わらないことが考えられる。</p>
 <blockquote>
 <pre><code>    defvar VOPD3XPseudosExtraGFX13 = [&quot;V_ADD_U32_e32&quot;, &quot;V_LSHLREV_B32_e32&quot;, &quot;V_FMA_F32_e64&quot;, &quot;V_SUB_U32_e32&quot;,
                                       &quot;V_LSHRREV_B32_e32&quot;, &quot;V_ASHRREV_I32_e32&quot;];
@@ -126,6 +129,18 @@ FMA 系命令には他に <code>V_FMAC_F32</code> 命令が存在するが、こ
 
 </blockquote>
 <p>また、<em>RDNA 5 (gfx1310)</em> では Dual Issue における制限が一部緩和され、X側と Y側で同じ入力レジスタを指定できるようになっており、これも Dual Issue が使えるケースを増やすのに役立つだろう。</p>
+<p>こうした変更を <em>RDNA 3</em> あるいはそこから世代の進んだ <em>RDNA 4</em> に実装しなかった理由としては、設計が複雑化し、必要な実装面積も増えるからだと思われる。<br>
+サブセットとなる SIMD ユニットがサポートする命令を増やせば、当然必要な回路数は増える。レジスタのデータポートも Dual Issue を活用できるように設計し、増やす必要があるだろう。<br>
+使用できるレジスタ数を増やせば、命令長も増える。<br>
+<em>RDNA 3/4</em> では Dual Issue の導入世代として、命令や制限はそれなりにあるが、ハードウェア側の実装コストを抑えつつ、コンパイラ側の対応を確実に進められる選択を取ったのだと思われる。</p>
+<section class="reference"><h3 id="reference_title">参考リンク<a href="#reference_title" class="head-cur-link" aria-hidden></a>
+</h3>
+<ul>
+<li><a href="https://gpuopen.com/amd-gpu-architecture-programming-documentation/" rel="noopener noreferrer" target="_blank" title="https://gpuopen.com/amd-gpu-architecture-programming-documentation/">AMD GPU architecture programming documentation - AMD GPUOpen</a></li>
+<li><a href="https://docs.amd.com/v/u/en-US/rdna4-instruction-set-architecture" rel="noopener noreferrer" target="_blank" title="https://docs.amd.com/v/u/en-US/rdna4-instruction-set-architecture">“RDNA4” Instruction Set Architecture</a></li>
+</ul>
+</section>
+
 </article><nav class="article-bottom-tags delay-page"><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/gfx13/" title="GFX13">#GFX13</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/rdna_5/" title="RDNA_5">#RDNA 5</a><a class="bottom-tag-link" href="https://www.coelacanth-dream.com/tags/llvm/" title="LLVM">#LLVM</a></nav><aside class="article-bottom-misc delay-page">
   <a href="https://github.com/Umio-Yasuno/coelacanth-dream/commits/master/content/posts/2026/03/12/gfx1250-gfx1310-vopd-fma.md" class="changelog sb" rel="noopener noreferrer" target="_blank">Changelog</a>
 </aside>
